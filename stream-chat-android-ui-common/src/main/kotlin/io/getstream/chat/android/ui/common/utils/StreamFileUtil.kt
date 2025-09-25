@@ -49,7 +49,11 @@ public object StreamFileUtil {
     public fun getUriForFile(context: Context, file: File): Uri =
         FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
 
-    public suspend fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Result<Uri> =
+    public suspend fun writeImageToSharableFile(
+        context: Context,
+        bitmap: Bitmap,
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
+    ): Result<Uri> =
         withContext(DispatcherProvider.IO) {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Success -> {
@@ -60,7 +64,7 @@ public object StreamFileUtil {
                             bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
                             out.flush()
                         }
-                        Success(getUriForFile(context, file))
+                        Success(getUri(file))
                     } catch (_: IOException) {
                         Failure(Error.GenericError("Could not write image to file."))
                     }
@@ -167,6 +171,7 @@ public object StreamFileUtil {
     public suspend fun getFileFromCache(
         context: Context,
         attachment: Attachment,
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
     ): Result<Uri> = withContext(DispatcherProvider.IO) {
         try {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
@@ -187,7 +192,7 @@ public object StreamFileUtil {
                         file.length() == attachment.fileSize.toLong()
 
                     if (isFileCached) {
-                        Success(getUriForFile(context, file))
+                        Success(getUri(file))
                     } else {
                         Failure(Error.GenericError(message = "No such file in cache."))
                     }
@@ -220,6 +225,8 @@ public object StreamFileUtil {
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
+        chatClient: () -> ChatClient = { ChatClient.instance() },
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
     ): Result<Uri> = withContext(DispatcherProvider.IO) {
         val runCatching = runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
@@ -237,13 +244,13 @@ public object StreamFileUtil {
                         attachmentHashCode != null &&
                         file.length() == attachment.fileSize.toLong()
                     ) {
-                        Success(getUriForFile(context, file))
+                        Success(getUri(file))
                     } else {
                         val fileUrl = url ?: return@withContext Failure(
                             Error.GenericError(message = "File URL cannot be null."),
                         )
 
-                        when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
+                        when (val response = chatClient().downloadFile(fileUrl).await()) {
                             is Success -> {
                                 // write the response to a file
                                 response.value.byteStream().use { inputStream ->
@@ -252,10 +259,12 @@ public object StreamFileUtil {
                                     }
                                 }
 
-                                Success(getUriForFile(context, file))
+                                Success(getUri(file))
                             }
 
-                            is Failure -> response
+                            is Failure -> response.also {
+                                println()
+                            }
                         }
                     }
                 }

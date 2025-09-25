@@ -22,6 +22,7 @@ android {
     namespace = "io.getstream.chat.android.ui.common"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
@@ -95,12 +96,14 @@ dependencies {
 
     testImplementation(libs.threetenbp)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.androidx.test.junit)
     testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kluent)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
 
     detektPlugins(libs.detekt.formatting)
 
