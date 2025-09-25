@@ -141,6 +141,27 @@ internal class MediaGalleryPreviewActivityTest : ComposeTest {
         }
     }
 
+    @Test
+    fun `should show large file warning dialog when sharing a large file`() {
+        val message = PreviewMessageData.messageWithUserAndAttachment.run {
+            copy(
+                attachments = attachments.map { it.copy(fileSize = 15 * 1024 * 1024) }, // 15 MB
+            )
+        }
+        val intent = createIntent(message)
+
+        ActivityScenario.launchActivityForResult<MediaGalleryPreviewActivity>(intent).use { scenario ->
+            composeTestRule.waitForIdle()
+
+            composeTestRule.onNodeWithContentDescription("Share").performClick()
+
+            composeTestRule.onNodeWithText("Large file warning").assertExists()
+            composeTestRule.onNodeWithText("15.00 MB needs to be downloaded before sharing.").assertExists()
+            composeTestRule.onNodeWithText("Cancel").assertExists()
+            composeTestRule.onNodeWithText("OK").assertExists()
+        }
+    }
+
     private fun createIntent(message: Message) = MediaGalleryPreviewContract().createIntent(
         context = ApplicationProvider.getApplicationContext(),
         input = MediaGalleryPreviewContract.Input(
