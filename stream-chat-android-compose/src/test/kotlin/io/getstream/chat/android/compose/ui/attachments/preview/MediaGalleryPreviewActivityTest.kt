@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -141,6 +142,7 @@ internal class MediaGalleryPreviewActivityTest : ComposeTest {
         }
     }
 
+    @Ignore("https://linear.app/stream/issue/AND-741")
     @Test
     fun `should show large file warning dialog when sharing a large file`() {
         val message = PreviewMessageData.messageWithUserAndAttachment.run {
