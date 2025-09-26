@@ -31,14 +31,14 @@ import io.getstream.result.Result
 internal class QueryThreadsListenerState(private val logic: LogicRegistry) : QueryThreadsListener {
 
     override suspend fun onQueryThreadsPrecondition(request: QueryThreadsRequest): Result<Unit> {
-        return logic.threads().onQueryThreadsPrecondition(request)
+        return logic.threads(request).onQueryThreadsPrecondition(request)
     }
 
     override suspend fun onQueryThreadsRequest(request: QueryThreadsRequest) {
-        logic.threads().onQueryThreadsRequest(request)
+        logic.threads(request).onQueryThreadsRequest(request)
     }
 
     override suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
-        logic.threads().onQueryThreadsResult(result, request)
+        logic.threads(request).onQueryThreadsResult(result, request)
     }
 }

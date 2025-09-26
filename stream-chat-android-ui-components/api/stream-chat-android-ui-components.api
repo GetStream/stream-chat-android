@@ -5217,9 +5217,9 @@ public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListView
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> ()V
 	public fun <init> (III)V
 	public synthetic fun <init> (IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

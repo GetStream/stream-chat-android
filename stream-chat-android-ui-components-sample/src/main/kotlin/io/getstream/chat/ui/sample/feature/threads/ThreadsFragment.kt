@@ -24,6 +24,7 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.ui.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.ui.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.threads.bindView
@@ -41,7 +42,10 @@ class ThreadsFragment : Fragment() {
     private val binding: FragmentThreadsBinding
         get() = _binding!!
 
-    private val viewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
+    private val viewModel: ThreadListViewModel by viewModels {
+        val query = QueryThreadsRequest()
+        ThreadsViewModelFactory(query)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentThreadsBinding.inflate(inflater, container, false)

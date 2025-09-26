@@ -474,7 +474,7 @@ internal class EventHandlerSequential(
 
     private fun updateQueryThreadsState(batchEvent: BatchEvent) {
         logger.v { "[updateQueryThreadsState] batchEvent.size: ${batchEvent.size}" }
-        logicRegistry.threads().handleEvents(batchEvent.sortedEvents)
+        logicRegistry.getActiveQueryThreadsLogic().forEach { it.handleEvents(batchEvent.sortedEvents) }
     }
 
     private fun updateThreadState(batchEvent: BatchEvent) {

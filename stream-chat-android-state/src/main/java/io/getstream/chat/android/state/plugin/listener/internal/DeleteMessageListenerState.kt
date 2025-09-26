@@ -119,13 +119,13 @@ internal class DeleteMessageListenerState(
 
     private fun updateMessage(message: Message) {
         logic.channelFromMessage(message)?.upsertMessage(message)
-        logic.threads().upsertMessage(message)
+        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
         logic.threadFromMessage(message)?.upsertMessage(message)
     }
 
     private fun deleteMessage(message: Message) {
         logic.channelFromMessage(message)?.deleteMessage(message)
-        logic.threads().deleteMessage(message)
+        logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
         logic.threadFromMessage(message)?.deleteMessage(message)
     }
 }

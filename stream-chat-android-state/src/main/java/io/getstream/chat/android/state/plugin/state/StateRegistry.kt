@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.state.plugin.state
 
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
@@ -66,10 +68,8 @@ public class StateRegistry constructor(
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
-
-    // Note: At the moment, there is no need for multiple instances of QueryThreadsMutableState, as we always load all
-    // threads, without the option for filtering. Update this is we decide to support different queries.
-    private val queryThreads: QueryThreadsMutableState = QueryThreadsMutableState()
+    private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
+        ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
     /**
@@ -140,12 +140,26 @@ public class StateRegistry constructor(
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.
      */
-    public fun queryThreads(): QueryThreadsState = queryThreads
+    @Deprecated(
+        "This method is no longer used internally. " +
+            "Use queryThreads(filter: FilterObject?, sort: QuerySorter<Thread>) instead.",
+    )
+    public fun queryThreads(): QueryThreadsState = queryThreads(filter = null, sort = QueryThreadsRequest.DefaultSort)
 
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.
      */
-    internal fun mutableQueryThreads(): QueryThreadsMutableState = queryThreads
+    internal fun queryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsState =
+        mutableQueryThreads(filter, sort)
+
+    /**
+     * Returns a [QueryThreadsState] holding the current state of the threads data.
+     */
+    internal fun mutableQueryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsMutableState {
+        return queryThreads.getOrPut(filter to sort) {
+            QueryThreadsMutableState(filter, sort)
+        }
+    }
 
     /**
      * Returns [ThreadState] of thread replies with parent message that has id equal to [messageId].
@@ -167,8 +181,6 @@ public class StateRegistry constructor(
         ThreadMutableState(messageId, scope)
     }
 
-    internal fun getActiveQueryChannelsStates(): List<QueryChannelsState> = queryChannels.values.toList()
-
     internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
 
     /**
@@ -180,7 +192,8 @@ public class StateRegistry constructor(
         queryChannels.clear()
         channels.forEach { it.value.destroy() }
         channels.clear()
-        queryThreads.destroy()
+        queryThreads.forEach { it.value.destroy() }
+        queryThreads.clear()
         threads.forEach { it.value.destroy() }
         threads.clear()
     }
@@ -191,9 +204,11 @@ public class StateRegistry constructor(
                 is ChannelDeletedEvent -> {
                     removeChanel(event.channelType, event.channelId)
                 }
+
                 is NotificationChannelDeletedEvent -> {
                     removeChanel(event.channelType, event.channelId)
                 }
+
                 else -> continue
             }
         }

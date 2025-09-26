@@ -104,7 +104,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      */
     private fun updateState(message: Message) {
         logic.channelFromMessage(message)?.upsertMessage(message)
-        logic.threads().upsertMessage(message)
+        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
         logic.threadFromMessage(message)?.upsertMessage(message)
         // Update the flows for currently running queries to ensure the (new) message is properly reflected in
         // the channel list

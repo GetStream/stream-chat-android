@@ -43,6 +43,7 @@ internal fun Thread.toEntity() = ThreadEntity(
     title = title,
     read = read.map(ChannelUserRead::toEntity),
     latestReplyIds = latestReplies.map(Message::id),
+    extraData = extraData,
 )
 
 /**
@@ -73,4 +74,5 @@ internal suspend fun ThreadEntity.toModel(
     read = read.map { it.toModel(getUser) },
     latestReplies = latestReplyIds.mapNotNull { getMessage(it) },
     draft = getDraftMessage(parentMessageId),
+    extraData = extraData,
 )

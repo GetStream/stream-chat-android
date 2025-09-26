@@ -45,6 +45,7 @@ internal class DeleteMessageListenerStateTest {
         on(it.stateLogic()) doReturn channelStateLogic
     }
     private val threadsLogic: QueryThreadsLogic = mock()
+    private val activeThreadsLogic = listOf(threadsLogic)
 
     private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
@@ -54,7 +55,7 @@ internal class DeleteMessageListenerStateTest {
         on(it.channel(any(), any())) doReturn channelLogic
         on(it.channelFromMessageId(any())) doReturn channelLogic
         on(it.channelFromMessage(any())) doReturn channelLogic
-        on(it.threads()) doReturn threadsLogic
+        on(it.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =

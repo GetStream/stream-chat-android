@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add filtering and sorting options for `QueryThreads`. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
 
@@ -61,8 +62,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ❌ Removed
 
@@ -74,9 +77,11 @@
 
 ### ✅ Added
 - Introduce share action to the `ChannelMediaAttachmentsPreviewScreen`. [#5927](https://github.com/GetStream/stream-chat-android/pull/5927)
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
 - Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ❌ Removed
 

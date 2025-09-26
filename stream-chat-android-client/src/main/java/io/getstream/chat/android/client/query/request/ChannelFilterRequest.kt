@@ -23,14 +23,16 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.result.Result
 
-/* Default filter to include FilterObject in a channel by its cid
-*
-* @param filter - the filter to be included.
-* @param offset - the offset to be included with the filter.
-* @param limit - the filter to be included with the filter.
-*/
 @InternalStreamChatApi
 public object ChannelFilterRequest {
+
+    /**
+     *  Default filter to include FilterObject in a channel by its cid
+     *
+     * @param filter - the filter to be included.
+     * @param offset - the offset to be included with the filter.
+     * @param limit - the maximum number of results to return.
+     */
     public suspend fun ChatClient.filterWithOffset(
         filter: FilterObject,
         offset: Int,

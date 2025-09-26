@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.threads
 
 import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import kotlinx.coroutines.test.TestScope
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
@@ -60,6 +61,7 @@ internal class ThreadListViewModelFactoryTest {
         }
 
         fun get() = ThreadsViewModelFactory(
+            query = QueryThreadsRequest(),
             chatClient = mockChatClient,
         )
     }

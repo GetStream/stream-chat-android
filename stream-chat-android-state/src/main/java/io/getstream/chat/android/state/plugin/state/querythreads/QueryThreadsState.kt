@@ -16,13 +16,21 @@
 
 package io.getstream.chat.android.state.plugin.state.querythreads
 
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.querysort.QuerySorter
 import kotlinx.coroutines.flow.StateFlow
 
 /**
  * Contains the state related to threads queries.
  */
 public interface QueryThreadsState {
+
+    /** The filter associated with the query threads state. */
+    public val filter: FilterObject?
+
+    /** The sort object associated with the query threads state. */
+    public val sort: QuerySorter<Thread>
 
     /** Sorted list of [Thread]s. */
     public val threads: StateFlow<List<Thread>>

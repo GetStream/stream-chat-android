@@ -35,17 +35,13 @@ import kotlinx.coroutines.launch
  * Controller responsible for managing the Threads list state. It serves as a central place for the state management and
  * business logic related to the Threads list.
  *
- * @param threadLimit The number of threads to load per page.
- * @param threadReplyLimit The number of replies per thread to load.
- * @param threadParticipantLimit The number of participants per thread to load.
+ * @param query The [QueryThreadsRequest] object containing the parameters for querying threads.
  * @param chatClient The [ChatClient] instance for retrieving the Threads related data.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 public class ThreadListController(
-    private val threadLimit: Int,
-    private val threadReplyLimit: Int,
-    private val threadParticipantLimit: Int,
+    private val query: QueryThreadsRequest,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
 
@@ -57,12 +53,6 @@ public class ThreadListController(
         get() = _state
 
     private val scope = chatClient.inheritScope { DispatcherProvider.IO }
-    private val query = QueryThreadsRequest(
-        limit = threadLimit,
-        replyLimit = threadReplyLimit,
-        participantLimit = threadParticipantLimit,
-        watch = true,
-    )
     private val queryThreadsState = chatClient.queryThreadsAsState(
         request = query,
         coroutineScope = scope,
