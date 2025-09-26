@@ -87,6 +87,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -849,9 +850,14 @@ internal fun MediaGalleryPreviewShareIcon(
         } else {
             R.drawable.stream_compose_ic_share
         }
+        val description = if (isSharingInProgress) {
+            R.string.stream_compose_image_preview_cancel_sharing
+        } else {
+            R.string.stream_compose_image_preview_share
+        }
         Icon(
             painter = painterResource(id = painter),
-            contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
+            contentDescription = stringResource(id = description),
         )
     }
 }
@@ -874,6 +880,8 @@ internal fun MediaGalleryPreviewPageIndicator(
     Text(
         text = text,
         style = ChatTheme.typography.title3Bold,
+        color = ChatTheme.colors.textHighEmphasis,
+        maxLines = 1,
     )
 }
 
@@ -934,7 +942,7 @@ internal fun MediaGalleryPreviewPhotosIcon(
  * @param onDismiss Callback invoked when the user cancels the sharing operation.
  */
 @Composable
-private fun ConfirmShareLargeFileDialog(
+internal fun ConfirmShareLargeFileDialog(
     attachment: Attachment,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -943,17 +951,12 @@ private fun ConfirmShareLargeFileDialog(
         title = stringResource(R.string.stream_compose_media_gallery_share_large_file_prompt_title),
         message = stringResource(
             R.string.stream_compose_media_gallery_share_large_file_prompt_message,
-            (attachment.fileSize.toFloat() / BytesInMegabyte),
+            (attachment.fileSize.toFloat() / Constants.MB_IN_BYTES),
         ),
         onPositiveAction = onConfirm,
         onDismiss = onDismiss,
     )
 }
-
-/**
- * Constant representing the number of bytes in a megabyte.
- */
-private const val BytesInMegabyte = 1024 * 1024
 
 @Composable
 @Preview

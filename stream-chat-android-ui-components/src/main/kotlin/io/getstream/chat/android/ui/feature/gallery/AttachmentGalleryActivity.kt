@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.gallery
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.format.DateUtils
@@ -42,6 +41,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryPagerAdapter
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryViewModel
@@ -58,7 +58,6 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -212,8 +211,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     url = imageUrl,
                 )?.let { bitmap ->
                     StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
-                }?.let {
-                    launchShareActivity(mediaUri = it, attachmentType = attachment.type)
+                }?.onSuccess { uri ->
+                    shareLocalFile(
+                        uri = uri,
+                        mimeType = attachment.mimeType,
+                    )
                 }
                 setNoSharingInProgressUi()
             }
@@ -231,51 +233,25 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
     private fun shareVideo(attachment: Attachment) {
         shareMediaJob?.cancel()
 
-        shareMediaJob = lifecycleScope.launch(DispatcherProvider.IO) {
-            val result = withContext(DispatcherProvider.IO) {
-                StreamFileUtil.writeFileToShareableFile(
-                    context = applicationContext,
-                    attachment = attachment,
-                )
-            }
+        shareMediaJob = lifecycleScope.launch {
+            val result = StreamFileUtil.writeFileToShareableFile(
+                context = applicationContext,
+                attachment = attachment,
+            )
 
             when (result) {
-                is Result.Success -> launchShareActivity(mediaUri = result.value, attachmentType = attachment.type)
-                is Result.Failure -> withContext(DispatcherProvider.Main) {
+                is Result.Success -> {
+                    shareLocalFile(
+                        uri = result.value,
+                        mimeType = attachment.mimeType,
+                    )
+                }
+                is Result.Failure -> {
                     toastFailedShare()
                 }
             }
-            withContext(DispatcherProvider.Main) {
-                setNoSharingInProgressUi()
-            }
+            setNoSharingInProgressUi()
         }
-    }
-
-    private fun launchShareActivity(
-        mediaUri: Uri,
-        attachmentType: String?,
-    ) {
-        val type = when (attachmentType) {
-            AttachmentType.IMAGE -> "image/*"
-            AttachmentType.VIDEO -> "video/*"
-            else -> {
-                toastFailedShare()
-                return
-            }
-        }
-
-        ContextCompat.startActivity(
-            this,
-            Intent.createChooser(
-                Intent(Intent.ACTION_SEND).apply {
-                    this.type = type
-                    putExtra(Intent.EXTRA_STREAM, mediaUri)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                },
-                getString(R.string.stream_ui_attachment_gallery_share),
-            ),
-            null,
-        )
     }
 
     /**

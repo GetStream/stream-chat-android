@@ -45,9 +45,11 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.Config
 import java.io.File
 
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [33])
 internal class StreamFileUploaderTest {
 
     private val channelType = "channelType"

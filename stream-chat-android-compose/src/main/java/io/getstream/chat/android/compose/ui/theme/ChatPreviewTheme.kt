@@ -22,9 +22,11 @@ import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.core.internal.ExcludeFromCoverageGeneratedReport
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 
+@ExcludeFromCoverageGeneratedReport
 @Composable
 internal fun ChatPreviewTheme(content: @Composable () -> Unit) {
     val context = LocalContext.current

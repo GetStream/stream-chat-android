@@ -39,8 +39,10 @@ import kotlinx.parcelize.Parcelize
  * @param originalWidth The original width of the attachment.
  * Provided if the attachment is of type "image".
  * @param type The type of the attachment, e.g. "image" or "video".
+ * @param fileSize The size of the file in bytes.
  * @see [AttachmentType]
  */
+@Suppress("LongParameterList")
 @Parcelize
 internal class MediaGalleryPreviewActivityAttachmentState(
     val name: String?,
@@ -50,6 +52,7 @@ internal class MediaGalleryPreviewActivityAttachmentState(
     val originalWidth: Int?,
     val originalHeight: Int?,
     val type: String?,
+    val fileSize: Int,
 ) : Parcelable
 
 /**
@@ -64,6 +67,7 @@ internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGal
         originalWidth = this.originalWidth,
         originalHeight = this.originalHeight,
         type = this.type,
+        fileSize = this.fileSize,
     )
 
 /**
@@ -77,4 +81,5 @@ internal fun MediaGalleryPreviewActivityAttachmentState.toAttachment(): Attachme
     originalWidth = this.originalWidth,
     originalHeight = this.originalHeight,
     type = this.type,
+    fileSize = this.fileSize,
 )

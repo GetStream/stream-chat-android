@@ -10,6 +10,7 @@ ext.sonar = [
             'stream-chat-android-e2e-test',
             'stream-chat-android-test',
             'stream-chat-android-ui-guides',
+            'stream-chat-android-ui-components',
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-client-test',
             'stream-chat-android-ui-uitests',
@@ -41,6 +42,6 @@ sonarqube {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.java.binaries", "${rootDir}/**/build/tmp/kotlin-classes/debug,${rootDir}/**/build/classes/kotlin/main"
-        property "sonar.coverage.exclusions", rootProject.ext.sonar.excludeFilter
+        property "sonar.exclusions", rootProject.ext.sonar.excludeFilter
     }
 }
