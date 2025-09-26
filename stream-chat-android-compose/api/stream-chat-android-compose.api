@@ -4751,8 +4751,8 @@ public final class io/getstream/chat/android/compose/util/KeyValuePair {
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/channel/attachments/ChannelAttachmentsViewAction;)V
@@ -4760,7 +4760,8 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelAt
 
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

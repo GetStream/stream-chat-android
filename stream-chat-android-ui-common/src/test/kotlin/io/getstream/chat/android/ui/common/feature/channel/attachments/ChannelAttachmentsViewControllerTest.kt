@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.attachments
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.randomAttachment
@@ -52,8 +53,9 @@ internal class ChannelAttachmentsViewControllerTest {
 
     @Test
     fun `when initial load succeeds, should update state with content`() = runTest {
-        val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
-        val attachment2 = randomAttachment(type = ATTACHMENT_TYPE)
+        val attachmentType = randomString()
+        val attachment1 = randomAttachment(type = attachmentType)
+        val attachment2 = randomAttachment(type = attachmentType)
         val message1 = randomMessage(
             cid = CID,
             attachments = listOf(attachment1, randomAttachment()),
@@ -68,7 +70,7 @@ internal class ChannelAttachmentsViewControllerTest {
         )
         val sut = Fixture()
             .givenSearchMessagesResult(result = searchMessagesResult)
-            .get(backgroundScope)
+            .get(backgroundScope, localFilter = { it.type == attachmentType })
 
         sut.state.test {
             skipItems(1) // Skip initial state
@@ -105,14 +107,14 @@ internal class ChannelAttachmentsViewControllerTest {
 
     @Test
     fun `when load more succeeds, should append items to state`() = runTest {
-        val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
+        val attachment1 = randomAttachment()
         val message1 = randomMessage(cid = CID, attachments = listOf(attachment1))
         val nextPage = randomString()
         val firstSearchMessagesResult = SearchMessagesResult(
             messages = listOf(message1),
             next = nextPage,
         )
-        val attachment2 = randomAttachment(type = ATTACHMENT_TYPE)
+        val attachment2 = randomAttachment()
         val message2 = randomMessage(cid = CID, attachments = listOf(attachment2))
         val secondSearchMessagesResult = SearchMessagesResult(
             messages = listOf(message2),
@@ -151,7 +153,7 @@ internal class ChannelAttachmentsViewControllerTest {
 
     @Test
     fun `when load more fails, should emit error event and retain state`() = runTest {
-        val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
+        val attachment1 = randomAttachment()
         val message1 = randomMessage(cid = CID, attachments = listOf(attachment1))
         val nextPage = randomString()
         val firstSearchMessagesResult = SearchMessagesResult(
@@ -271,9 +273,10 @@ private class Fixture {
         ) doAnswer { result?.asCall() ?: error?.asCall() }
     }
 
-    fun get(scope: CoroutineScope) = ChannelAttachmentsViewController(
+    fun get(scope: CoroutineScope, localFilter: (Attachment) -> Boolean = { true }) = ChannelAttachmentsViewController(
         cid = CID,
         attachmentTypes = listOf(ATTACHMENT_TYPE),
+        localFilter = localFilter,
         chatClient = chatClient,
         scope = scope,
     )
