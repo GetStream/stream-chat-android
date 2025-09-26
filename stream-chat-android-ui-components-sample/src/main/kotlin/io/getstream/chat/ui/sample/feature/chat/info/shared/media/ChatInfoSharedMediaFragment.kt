@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModel
@@ -46,8 +47,9 @@ class ChatInfoSharedMediaFragment : Fragment() {
     private val args: ChatInfoSharedMediaFragmentArgs by navArgs()
     private val viewModel: ChannelAttachmentsViewModel by viewModels {
         ChannelAttachmentsViewModelFactory(
-            args.cid!!,
+            cid = args.cid!!,
             attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
+            localFilter = { !it.imagePreviewUrl.isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
         )
     }
 
@@ -122,19 +124,15 @@ class ChatInfoSharedMediaFragment : Fragment() {
                 }
 
                 is ChannelAttachmentsViewState.Content -> {
-                    val results = state.items.mapNotNull {
-                        if (!it.attachment.imageUrl.isNullOrEmpty() && it.attachment.titleLink.isNullOrEmpty()) {
-                            AttachmentGalleryItem(
-                                attachment = it.attachment,
-                                user = it.message.user,
-                                createdAt = it.message.getCreatedAtOrThrow(),
-                                messageId = it.message.id,
-                                cid = it.message.cid,
-                                isMine = it.message.user.id == user?.id,
-                            )
-                        } else {
-                            null
-                        }
+                    val results = state.items.map {
+                        AttachmentGalleryItem(
+                            attachment = it.attachment,
+                            user = it.message.user,
+                            createdAt = it.message.getCreatedAtOrThrow(),
+                            messageId = it.message.id,
+                            cid = it.message.cid,
+                            isMine = it.message.user.id == user?.id,
+                        )
                     }
                     if (results.isEmpty()) {
                         showEmptyState()

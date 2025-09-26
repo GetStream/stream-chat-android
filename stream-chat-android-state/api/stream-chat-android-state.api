@@ -231,9 +231,11 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/que
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/querythreads/QueryThreadsState {
+	public abstract fun getFilter ()Lio/getstream/chat/android/models/FilterObject;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getNext ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getSort ()Lio/getstream/chat/android/models/querysort/QuerySorter;
 	public abstract fun getThreads ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUnseenThreadIds ()Lkotlinx/coroutines/flow/StateFlow;
 }

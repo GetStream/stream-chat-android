@@ -37,6 +37,7 @@ import java.util.Date
  * @param replyCount The number of replies in the thread.
  * @param title The title of the thread.
  * @param updatedAt Date of the most recent update of the thread.
+ * @param extraData Any additional data.
  */
 @Immutable
 public data class ThreadInfo(
@@ -53,4 +54,5 @@ public data class ThreadInfo(
     val replyCount: Int,
     val title: String,
     val updatedAt: Date,
-)
+    override val extraData: Map<String, Any> = emptyMap(),
+) : CustomObject

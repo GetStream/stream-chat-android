@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.viewmodel.threads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
 
 /**
@@ -26,30 +27,48 @@ import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
  *
  * @see ThreadListViewModel
  *
- * @param threadLimit The number of threads to load per page.
- * @param threadReplyLimit The number of replies per thread to load.
- * @param threadParticipantLimit The number of participants per thread to load.
- * @param chatClient The [ChatClient] instance for retrieving the Threads related data.
+ * @param query The [QueryThreadsRequest] used to load threads.
+ * @param chatClient The [ChatClient] instance to use for loading threads.
  */
 public class ThreadsViewModelFactory(
-    private val threadLimit: Int = ThreadListController.DEFAULT_THREAD_LIMIT,
-    private val threadReplyLimit: Int = ThreadListController.DEFAULT_THREAD_REPLY_LIMIT,
-    private val threadParticipantLimit: Int = ThreadListController.DEFAULT_THREAD_PARTICIPANT_LIMIT,
+    private val query: QueryThreadsRequest,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModelProvider.Factory {
+
+    /**
+     * Creates a factory instance with the specified parameters.
+     *
+     * @see ThreadListViewModel
+     *
+     * @param threadLimit The number of threads to load per page.
+     * @param threadReplyLimit The number of replies per thread to load.
+     * @param threadParticipantLimit The number of participants per thread to load.
+     * @param chatClient The [ChatClient] instance to use for loading threads.
+     */
+    @Deprecated(
+        message = "Use ThreadsViewModelFactory(QueryThreadsRequest) instead, to provide more query options such" +
+            " as filtering and sorting.",
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(
+        threadLimit: Int = ThreadListController.DEFAULT_THREAD_LIMIT,
+        threadReplyLimit: Int = ThreadListController.DEFAULT_THREAD_REPLY_LIMIT,
+        threadParticipantLimit: Int = ThreadListController.DEFAULT_THREAD_PARTICIPANT_LIMIT,
+        chatClient: ChatClient = ChatClient.instance(),
+    ) : this(
+        query = QueryThreadsRequest(
+            limit = threadLimit,
+            replyLimit = threadReplyLimit,
+            participantLimit = threadParticipantLimit,
+        ),
+        chatClient = chatClient,
+    )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ThreadListViewModel::class.java) {
             "ThreadsViewModelFactory can only create instances of ThreadListViewModel"
         }
         @Suppress("UNCHECKED_CAST")
-        return ThreadListViewModel(
-            controller = ThreadListController(
-                threadLimit = threadLimit,
-                threadReplyLimit = threadReplyLimit,
-                threadParticipantLimit = threadParticipantLimit,
-                chatClient = chatClient,
-            ),
-        ) as T
+        return ThreadListViewModel(controller = ThreadListController(query, chatClient)) as T
     }
 }

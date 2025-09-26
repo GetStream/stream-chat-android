@@ -119,7 +119,7 @@ internal class QueryThreadsLogic(
                 }
                 stateLogic.setNext(result.value.next)
                 // Update local threads order
-                databaseLogic.setLocalThreadsOrder(threadIdsInSession)
+                databaseLogic.setLocalThreadsOrder(request.filter, request.sort, threadIdsInSession)
             }
 
             is Result.Failure -> {
@@ -245,7 +245,9 @@ internal class QueryThreadsLogic(
     }
 
     private suspend fun queryThreadsOffline(request: QueryThreadsRequest) {
-        val localThreadsOrder = databaseLogic.getLocalThreadsOrder().take(request.limit)
+        val filter = request.filter
+        val sort = request.sort
+        val localThreadsOrder = databaseLogic.getLocalThreadsOrder(filter, sort).take(request.limit)
         if (localThreadsOrder.isEmpty()) return
         val localThreads = databaseLogic.getLocalThreads(localThreadsOrder)
         if (localThreads.isEmpty()) return

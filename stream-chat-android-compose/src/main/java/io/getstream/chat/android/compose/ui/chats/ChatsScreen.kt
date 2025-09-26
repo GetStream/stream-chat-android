@@ -52,6 +52,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
@@ -127,7 +128,7 @@ public fun ChatsScreen(
     navigator: ThreePaneNavigator = rememberThreePaneNavigator(),
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     mentionListViewModelFactory: MentionListViewModelFactory = MentionListViewModelFactory(),
-    threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
+    threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(QueryThreadsRequest()),
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,

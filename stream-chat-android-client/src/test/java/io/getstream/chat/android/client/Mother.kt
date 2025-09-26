@@ -98,6 +98,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
@@ -909,8 +910,6 @@ internal object Mother {
         participantLimit: Int = randomInt(),
         prev: String? = randomString(),
         replyLimit: Int = randomInt(),
-        userId: String? = randomString(),
-        user: User? = randomUser(),
     ): QueryThreadsRequest = QueryThreadsRequest(
         watch = watch,
         limit = limit,
@@ -919,8 +918,6 @@ internal object Mother {
         participantLimit = participantLimit,
         prev = prev,
         replyLimit = replyLimit,
-        userId = userId,
-        user = user,
     )
 
     fun randomGetThreadOptions(
@@ -952,7 +949,9 @@ internal object Mother {
         title: String = randomString(),
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
         read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+        replyCount: Int = randomInt(),
         draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
+        extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
     ): DownstreamThreadDto = DownstreamThreadDto(
         active_participant_count = activeParticipantCount,
         channel_cid = channelCid,
@@ -970,7 +969,9 @@ internal object Mother {
         title = title,
         latest_replies = latestReplies,
         read = read,
+        reply_count = replyCount,
         draft = draft,
+        extraData = extraData,
     )
 
     fun randomDownstreamThreadInfoDto(
@@ -987,6 +988,7 @@ internal object Mother {
         replyCount: Int = randomInt(),
         title: String = randomString(),
         updatedAt: Date = randomDate(),
+        extraData: Map<String, Any> = randomExtraData(maxPossibleEntries = 2),
     ): DownstreamThreadInfoDto = DownstreamThreadInfoDto(
         active_participant_count = activeParticipantCount,
         channel_cid = channelCid,
@@ -1001,6 +1003,7 @@ internal object Mother {
         reply_count = replyCount,
         title = title,
         updated_at = updatedAt,
+        extraData = extraData,
     )
 
     fun randomDownstreamUserBlockDto(

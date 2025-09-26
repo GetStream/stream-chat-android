@@ -4301,15 +4301,16 @@ public final class io/getstream/chat/android/ui/utils/extensions/UserKt {
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelAttachmentsViewModel : androidx/lifecycle/ViewModel {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/channel/attachments/ChannelAttachmentsViewAction;)V
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelAttachmentsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> (Ljava/lang/String;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
@@ -5217,9 +5218,9 @@ public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListView
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
-	public fun <init> ()V
 	public fun <init> (III)V
 	public synthetic fun <init> (IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

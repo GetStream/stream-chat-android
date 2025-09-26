@@ -735,6 +735,7 @@ internal class DomainMappingTest {
             draft = with(sut) {
                 downstreamThreadDto.draft?.toDomain()
             },
+            extraData = downstreamThreadDto.extraData,
         )
         thread shouldBeEqualTo expected
     }
@@ -758,6 +759,7 @@ internal class DomainMappingTest {
             replyCount = downstreamThreadInfoDto.reply_count ?: 0,
             title = downstreamThreadInfoDto.title,
             updatedAt = downstreamThreadInfoDto.updated_at,
+            extraData = downstreamThreadInfoDto.extraData,
         )
         threadInfo shouldBeEqualTo expected
     }

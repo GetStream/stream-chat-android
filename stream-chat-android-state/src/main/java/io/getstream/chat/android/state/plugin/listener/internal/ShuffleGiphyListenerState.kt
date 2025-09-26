@@ -40,7 +40,7 @@ internal class ShuffleGiphyListenerState(private val logic: LogicRegistry) : Shu
         if (result is Result.Success) {
             val processedMessage = result.value.copy(syncStatus = SyncStatus.COMPLETED)
             logic.channelFromMessage(processedMessage)?.upsertMessage(processedMessage)
-            logic.threads().upsertMessage(processedMessage)
+            logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(processedMessage) }
             logic.threadFromMessage(processedMessage)?.upsertMessage(processedMessage)
         }
     }

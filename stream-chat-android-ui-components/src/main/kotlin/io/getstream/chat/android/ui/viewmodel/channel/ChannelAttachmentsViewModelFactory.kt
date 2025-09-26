@@ -18,16 +18,19 @@ package io.getstream.chat.android.ui.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Factory for creating instances of [ChannelAttachmentsViewModel].
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param attachmentTypes The list of attachment types (e.g., "image", "file").
+ * @param localFilter A function to filter attachments locally after fetching.
  */
 public class ChannelAttachmentsViewModelFactory(
     private val cid: String,
     private val attachmentTypes: List<String>,
+    private val localFilter: (attachment: Attachment) -> Boolean = { true },
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -35,6 +38,6 @@ public class ChannelAttachmentsViewModelFactory(
             "ChannelAttachmentsViewModelFactory can only create instances of ChannelAttachmentsViewModel"
         }
         @Suppress("UNCHECKED_CAST")
-        return ChannelAttachmentsViewModel(cid, attachmentTypes) as T
+        return ChannelAttachmentsViewModel(cid, attachmentTypes, localFilter) as T
     }
 }
