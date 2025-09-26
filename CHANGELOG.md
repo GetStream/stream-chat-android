@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
 
 ### ⬆️ Improved
 
@@ -68,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
 
 ### ⬆️ Improved
 - Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
