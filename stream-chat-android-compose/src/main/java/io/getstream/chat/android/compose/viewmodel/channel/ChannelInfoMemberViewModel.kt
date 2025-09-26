@@ -47,7 +47,7 @@ public class ChannelInfoMemberViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelInfoMemberViewController get() = controllerProvider()
+    private val controller: ChannelInfoMemberViewController by lazy { controllerProvider() }
 
     /**
      * @see [ChannelInfoMemberViewController.state]

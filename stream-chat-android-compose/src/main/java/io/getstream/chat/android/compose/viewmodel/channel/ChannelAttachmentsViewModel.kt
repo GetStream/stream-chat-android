@@ -44,7 +44,7 @@ public class ChannelAttachmentsViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelAttachmentsViewController get() = controllerProvider()
+    private val controller: ChannelAttachmentsViewController by lazy { controllerProvider() }
 
     /**
      * @see [ChannelAttachmentsViewController.state]

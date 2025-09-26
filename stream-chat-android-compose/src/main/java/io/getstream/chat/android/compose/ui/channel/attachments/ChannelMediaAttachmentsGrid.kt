@@ -43,6 +43,7 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
+import io.getstream.result.Error
 
 /**
  * Displays the channel media attachments grid.
@@ -54,6 +55,7 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
  * @param headerKeySelector The function to select the group key for each item and group them in the list.
  * @param onLoadMoreRequested The callback to be invoked when more items need to be loaded.
  * @param onVideoPlaybackError The callback to be invoked when there is an error during video playback.
+ * @param onSharingError The callback to be invoked when there is an error during attachment sharing.
  * @param itemContent The composable to display each item in the grid.
  * @param floatingHeader The composable to display as a floating header for each group of items.
  * @param loadingIndicator The composable to display when the grid is loading.
@@ -69,9 +71,11 @@ internal fun ChannelMediaAttachmentsGrid(
     modifier: Modifier = Modifier,
     gridState: LazyGridState = rememberLazyGridState(),
     gridColumnCount: Int? = null,
-    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     onLoadMoreRequested: () -> Unit = {},
     onVideoPlaybackError: (error: Throwable) -> Unit = {},
+    onSharingError: (error: Error) -> Unit = {},
     onItemClick: (
         item: ChannelAttachmentsViewState.Content.Item,
         onClick: () -> Unit,
@@ -132,7 +136,7 @@ internal fun ChannelMediaAttachmentsGrid(
     val gridColumnCount = gridColumnCount ?: run {
         GridColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
     }
-    var previewItem by remember { mutableStateOf<ChannelAttachmentsViewState.Content.Item?>(null) }
+    var previewItemIndex by remember { mutableStateOf<Int?>(null) }
     ContentBox(
         modifier = modifier,
         isLoading = isLoading,
@@ -155,7 +159,7 @@ internal fun ChannelMediaAttachmentsGrid(
                 key = { _, item -> item.id },
             ) { index, item ->
                 itemContent(index, item) {
-                    previewItem = item
+                    previewItemIndex = index
                 }
             }
             if (content.isLoadingMore) {
@@ -174,22 +178,23 @@ internal fun ChannelMediaAttachmentsGrid(
             loadMore = onLoadMoreRequested,
         )
 
-        previewItem?.let { item ->
+        previewItemIndex?.let { itemIndex ->
             val items = content.items
             ModalBottomSheet(
-                onDismissRequest = { previewItem = null },
+                onDismissRequest = { previewItemIndex = null },
                 sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
                 sheetMaxWidth = Dp.Unspecified,
                 shape = RectangleShape,
                 dragHandle = {},
                 containerColor = ChatTheme.colors.barsBackground,
             ) {
-                ChannelMediaAttachmentsPreview(
+                ChannelMediaAttachmentsPreviewScreen(
                     items = items,
-                    initialItem = item,
+                    initialIndex = itemIndex,
                     onLoadMoreRequested = onLoadMoreRequested,
-                    onNavigationIconClick = { previewItem = null },
+                    onNavigationIconClick = { previewItemIndex = null },
                     onVideoPlaybackError = onVideoPlaybackError,
+                    onSharingError = onSharingError,
                 )
             }
         }

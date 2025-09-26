@@ -43,6 +43,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
+import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -3576,11 +3577,18 @@ public interface ChatComponentFactory {
      *
      * @param text The text to display in the bottom bar.
      */
+    @Deprecated(
+        message = "Use ChannelMediaAttachmentsPreviewBottomBar(" +
+            "params: ChannelMediaAttachmentsPreviewBottomBarParams) instead.",
+        replaceWith = ReplaceWith(
+            "ChannelMediaAttachmentsPreviewBottomBar(ChannelMediaAttachmentsPreviewBottomBarParams(" +
+                "centerContent = { Text(text) }))",
+        ),
+    )
     @Composable
     public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
                 .background(ChatTheme.colors.barsBackground)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -3593,5 +3601,27 @@ public interface ChatComponentFactory {
                 maxLines = 1,
             )
         }
+    }
+
+    /**
+     * Factory method for creating the bottom bar of the channel media attachments preview screen.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    public fun ChannelMediaAttachmentsPreviewBottomBar(
+        params: ChannelMediaAttachmentsPreviewBottomBarParams,
+    ) {
+        CenterAlignedTopAppBar(
+            title = { params.centerContent() },
+            navigationIcon = { params.leadingContent() },
+            actions = { params.trailingContent() },
+            windowInsets = BottomAppBarDefaults.windowInsets,
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = ChatTheme.colors.barsBackground,
+                titleContentColor = ChatTheme.colors.textHighEmphasis,
+                navigationIconContentColor = ChatTheme.colors.textHighEmphasis,
+                actionIconContentColor = ChatTheme.colors.textHighEmphasis,
+            ),
+        )
     }
 }

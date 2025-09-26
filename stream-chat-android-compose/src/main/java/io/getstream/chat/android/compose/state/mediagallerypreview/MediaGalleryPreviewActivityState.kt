@@ -30,6 +30,7 @@ import java.util.Date
  * overly large models.
  *
  * @param messageId The ID of the message containing the attachments.
+ * @param parentId The ID of the parent [Message].
  * @param userId The ID of the user who sent the message.
  * @param userName The name of the user who sent the message.
  * @param userImage The image of the user who sent the message.
@@ -41,6 +42,7 @@ import java.util.Date
 @Parcelize
 internal data class MediaGalleryPreviewActivityState(
     val messageId: String,
+    val parentId: String?,
     val userId: String,
     val userName: String,
     val userImage: String,
@@ -55,6 +57,7 @@ internal data class MediaGalleryPreviewActivityState(
 internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewActivityState =
     MediaGalleryPreviewActivityState(
         messageId = this.id,
+        parentId = this.parentId,
         userId = this.user.id,
         userName = this.user.name,
         userImage = this.user.image,
@@ -69,6 +72,7 @@ internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewAc
 internal fun MediaGalleryPreviewActivityState.toMessage(): Message =
     Message(
         id = this.messageId,
+        parentId = this.parentId,
         user = User(
             id = this.userId,
             name = this.userName,

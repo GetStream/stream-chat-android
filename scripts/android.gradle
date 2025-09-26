@@ -22,4 +22,20 @@ android {
         this.targetCompatibility = JavaVersion.VERSION_11.toString()
         this.sourceCompatibility = JavaVersion.VERSION_11.toString()
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+            all {
+                testLogging {
+                    events = ["FAILED"]
+                    showExceptions = true
+                    showCauses = true
+                    showStackTraces = true
+                    exceptionFormat = "full"
+                }
+            }
+        }
+    }
 }

@@ -31,13 +31,6 @@ android {
 
     resourcePrefix = "stream_compose_"
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            unitTests.isReturnDefaultValues = true
-        }
-    }
-
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false

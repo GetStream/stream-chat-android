@@ -35,7 +35,7 @@ public class ChannelHeaderViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelHeaderViewController get() = controllerProvider()
+    private val controller: ChannelHeaderViewController by lazy { controllerProvider() }
 
     /**
      * @see [ChannelHeaderViewController.state]

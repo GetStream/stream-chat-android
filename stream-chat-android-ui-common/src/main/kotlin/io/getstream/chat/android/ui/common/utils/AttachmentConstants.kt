@@ -33,4 +33,9 @@ public object AttachmentConstants {
      * Default max number of attachments.
      */
     public const val MAX_ATTACHMENTS_COUNT: Int = 30
+
+    /**
+     * Default max size in bytes before showing a download warning.
+     */
+    public const val MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES: Long = 10 * 1024 * 1024 // 10 MB
 }

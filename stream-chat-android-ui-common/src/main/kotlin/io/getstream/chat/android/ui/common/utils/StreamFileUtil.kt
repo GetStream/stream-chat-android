@@ -20,10 +20,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
 import io.getstream.result.Error
@@ -31,6 +31,7 @@ import io.getstream.result.Result
 import io.getstream.result.Result.Failure
 import io.getstream.result.Result.Success
 import io.getstream.result.flatMap
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -48,21 +49,30 @@ public object StreamFileUtil {
     public fun getUriForFile(context: Context, file: File): Uri =
         FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
 
-    public fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Uri? {
-        return try {
-            val file = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                "share_image_${System.currentTimeMillis()}.png",
-            )
-            file.outputStream().use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
-                out.flush()
+    public suspend fun writeImageToSharableFile(
+        context: Context,
+        bitmap: Bitmap,
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
+    ): Result<Uri> =
+        withContext(DispatcherProvider.IO) {
+            when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
+                is Success -> {
+                    try {
+                        val streamCacheDir = getOrCreateCacheDirResult.value
+                        val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
+                        file.outputStream().use { out ->
+                            bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
+                            out.flush()
+                        }
+                        Success(getUri(file))
+                    } catch (_: IOException) {
+                        Failure(Error.GenericError("Could not write image to file."))
+                    }
+                }
+
+                is Failure -> getOrCreateCacheDirResult
             }
-            getUriForFile(context, file)
-        } catch (_: IOException) {
-            null
         }
-    }
 
     /**
      * Creates a Stream cache directory if one doesn't exist already.
@@ -158,11 +168,12 @@ public object StreamFileUtil {
      * accessible via [Result.Failure] otherwise.
      */
     @Suppress("TooGenericExceptionCaught")
-    public fun getFileFromCache(
+    public suspend fun getFileFromCache(
         context: Context,
         attachment: Attachment,
-    ): Result<Uri> {
-        return try {
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
+    ): Result<Uri> = withContext(DispatcherProvider.IO) {
+        try {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Failure -> getOrCreateCacheDirResult
                 is Success -> {
@@ -181,7 +192,7 @@ public object StreamFileUtil {
                         file.length() == attachment.fileSize.toLong()
 
                     if (isFileCached) {
-                        Success(getUriForFile(context, file))
+                        Success(getUri(file))
                     } else {
                         Failure(Error.GenericError(message = "No such file in cache."))
                     }
@@ -214,14 +225,17 @@ public object StreamFileUtil {
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
-    ): Result<Uri> {
-        val runCatching = kotlin.runCatching {
+        chatClient: () -> ChatClient = { ChatClient.instance() },
+        getUri: (File) -> Uri = { getUriForFile(context, it) },
+    ): Result<Uri> = withContext(DispatcherProvider.IO) {
+        val runCatching = runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Failure -> getOrCreateCacheDirResult
                 is Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
-                    val attachmentHashCode = (attachment.assetUrl)?.hashCode()
+                    val url = attachment.assetUrl ?: attachment.imageUrl // Supports both images and files
+                    val attachmentHashCode = url?.hashCode()
                     val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
 
                     val file = File(streamCacheDir, fileName)
@@ -230,13 +244,13 @@ public object StreamFileUtil {
                         attachmentHashCode != null &&
                         file.length() == attachment.fileSize.toLong()
                     ) {
-                        Success(getUriForFile(context, file))
+                        Success(getUri(file))
                     } else {
-                        val fileUrl = attachment.assetUrl ?: return Failure(
+                        val fileUrl = url ?: return@withContext Failure(
                             Error.GenericError(message = "File URL cannot be null."),
                         )
 
-                        when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
+                        when (val response = chatClient().downloadFile(fileUrl).await()) {
                             is Success -> {
                                 // write the response to a file
                                 response.value.byteStream().use { inputStream ->
@@ -245,16 +259,19 @@ public object StreamFileUtil {
                                     }
                                 }
 
-                                Success(getUriForFile(context, file))
+                                Success(getUri(file))
                             }
-                            is Failure -> response
+
+                            is Failure -> response.also {
+                                println()
+                            }
                         }
                     }
                 }
             }
         }
 
-        return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
+        runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
     }
 
     private fun createFailureResultFromException(throwable: Throwable?): Failure {

@@ -68,6 +68,13 @@ class ChannelMediaAttachmentsActivity : ComponentActivity() {
                             Toast.LENGTH_SHORT,
                         ).show()
                     },
+                    onSharingError = {
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    },
                 )
                 LaunchedEffect(viewModel) {
                     viewModel.events.collectLatest { event ->

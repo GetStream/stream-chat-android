@@ -40,4 +40,18 @@ internal class ChannelMediaAttachmentsPreviewContentTest : SnapshotTest {
             ChannelMediaAttachmentsPreviewContent()
         }
     }
+
+    @Test
+    fun `preparing to share content`() {
+        snapshot {
+            ChannelMediaAttachmentsPreviewPreparingToShareContent()
+        }
+    }
+
+    @Test
+    fun `preparing to share content in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelMediaAttachmentsPreviewPreparingToShareContent()
+        }
+    }
 }
