@@ -72,6 +72,7 @@
 - Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ✅ Added
+- Introduce share action to the `ChannelMediaAttachmentsPreviewScreen`. [#5927](https://github.com/GetStream/stream-chat-android/pull/5927)
 
 ### ⚠️ Changed
 - Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)

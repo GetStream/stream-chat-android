@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.TestScope
 import org.junit.After
 import org.junit.Before
@@ -56,7 +58,8 @@ internal interface ComposeTest {
             override fun internalBuild(): ChatClient = MockChatClient
         }.build()
         whenever(MockChatClient.clientState) doReturn MockClientState
-        whenever(MockChatClient.inheritScope(any())) doReturn TestScope()
+        whenever(MockChatClient.inheritScope(any())) doReturn
+            TestScope() + CoroutineExceptionHandler { _, _ -> }
     }
 
     @After

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.models.Message
@@ -44,4 +45,17 @@ public data class MessageReactionListParams(
 public data class MessageReactionItemParams(
     val modifier: Modifier = Modifier,
     val state: ReactionOptionItemState,
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.ChannelMediaAttachmentsPreviewBottomBar] component.
+ *
+ * @param centerContent Composable lambda for center content in the bottom bar.
+ * @param leadingContent Composable lambda for leading content in the bottom bar.
+ * @param trailingContent Composable lambda for trailing content in the bottom bar.
+ */
+public data class ChannelMediaAttachmentsPreviewBottomBarParams(
+    val centerContent: @Composable () -> Unit,
+    val leadingContent: @Composable () -> Unit = {},
+    val trailingContent: @Composable () -> Unit = {},
 )

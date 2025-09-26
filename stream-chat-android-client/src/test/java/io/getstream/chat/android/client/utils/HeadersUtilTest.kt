@@ -21,6 +21,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.client.ChatClient
 import org.junit.Assert.assertTrue
@@ -29,10 +30,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [33])
 internal class HeadersUtilTest {
 
     private lateinit var context: Context
