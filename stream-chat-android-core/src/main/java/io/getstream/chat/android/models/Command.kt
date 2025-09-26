@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @Immutable
 public data class Command(
@@ -25,3 +26,28 @@ public data class Command(
     val args: String,
     val set: String,
 )
+
+/**
+ * Contains the default command names supported by Stream Chat.
+ */
+@InternalStreamChatApi
+public object CommandDefaults {
+
+    /**
+     * Command for muting a user.
+     */
+    @InternalStreamChatApi
+    public const val MUTE: String = "mute"
+
+    /**
+     * Command for unmuting a user.
+     */
+    @InternalStreamChatApi
+    public const val UNMUTE: String = "unmute"
+
+    /**
+     * Command for posting a Giphy message.
+     */
+    @InternalStreamChatApi
+    public const val GIPHY: String = "giphy"
+}

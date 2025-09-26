@@ -1639,7 +1639,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.MessageComposerCommandSuggestionItemLeadingContent(command: Command) {
-        DefaultCommandSuggestionItemLeadingContent()
+        DefaultCommandSuggestionItemLeadingContent(command)
     }
 
     /**

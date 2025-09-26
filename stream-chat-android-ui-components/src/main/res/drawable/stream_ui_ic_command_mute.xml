@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    >
+    <path
+        android:fillColor="#005DFF"
+        android:pathData="M12,0L12,0A12,12 0,0 1,24 12L24,12A12,12 0,0 1,12 24L12,24A12,12 0,0 1,0 12L0,12A12,12 0,0 1,12 0z"
+        />
+    <path
+        android:fillColor="#ffffff"
+        android:fillType="evenOdd"
+        android:pathData="M11.18,7.06L11.48,6.82C11.616,6.712 11.816,6.731 11.928,6.864C11.975,6.919 12,6.989 12,7.061V7.47V7.471V7.854V7.898V16.101V16.146V16.529V16.53V16.939C12,17.111 11.858,17.25 11.682,17.25C11.608,17.25 11.537,17.225 11.48,17.18L11.18,16.94L11.179,16.939L10.869,16.691L10.833,16.663L8.112,14.487L8.111,14.487H5.636C5.285,14.487 5,14.208 5,13.865V10.135C5,9.792 5.285,9.513 5.636,9.513H8.111L10.833,7.337L10.87,7.308L11.179,7.061L11.18,7.06ZM8.84,10.425L10.833,8.831V15.169L8.84,13.575L8.52,13.319L8.111,13.32H8.111L8.11,13.32L6.167,13.32V10.68H8.111H8.52L8.84,10.425ZM18.587,13.671L16.917,12L18.587,10.329C18.815,10.101 18.811,9.728 18.583,9.5C18.356,9.272 17.982,9.268 17.754,9.496L16.083,11.167L14.412,9.496C14.184,9.268 13.811,9.272 13.583,9.5C13.355,9.728 13.351,10.101 13.579,10.329L15.25,12L13.579,13.671C13.351,13.899 13.355,14.272 13.583,14.5C13.811,14.728 14.184,14.732 14.412,14.504L16.083,12.833L17.754,14.504C17.982,14.732 18.356,14.728 18.583,14.5C18.811,14.272 18.815,13.899 18.587,13.671Z"
+        />
+</vector>

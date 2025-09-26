@@ -20,9 +20,12 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.CommandDefaults
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiItemCommandBinding
 import io.getstream.chat.android.ui.databinding.StreamUiSuggestionListViewBinding
@@ -206,8 +209,16 @@ private class CommandViewHolder(
      */
     override fun bind(item: Command) {
         this.item = item
-
+        binding.commandIconImageView.setImageResource(item.imageRes)
         binding.commandNameTextView.text = item.name.replaceFirstChar(Char::uppercase)
         binding.commandQueryTextView.text = String.format(commandTemplateText, item.name, item.args)
     }
+
+    private val Command.imageRes: Int
+        @DrawableRes get() = when (name) {
+            CommandDefaults.MUTE -> R.drawable.stream_ui_ic_command_mute
+            CommandDefaults.UNMUTE -> R.drawable.stream_ui_ic_command_unmute
+            // fallback to the 'giphy' icon for backwards compatibility
+            else -> R.drawable.stream_ui_ic_giphy
+        }
 }

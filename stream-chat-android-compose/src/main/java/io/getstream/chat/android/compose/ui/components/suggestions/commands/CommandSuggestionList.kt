@@ -142,15 +142,21 @@ internal fun CommandSuggestionList() {
             commands = listOf(
                 Command(
                     name = "giphy",
-                    description = "Search for a GIF on Giphy",
-                    args = "[search term]",
-                    set = "giphy",
+                    description = "Post a random gif to the channel",
+                    args = "[text]",
+                    set = "fun_set",
                 ),
                 Command(
-                    name = "shout",
-                    description = "Shout your message in uppercase",
-                    args = "[message]",
-                    set = "fun_set",
+                    name = "mute",
+                    description = "Mute a user",
+                    args = "[@username]",
+                    set = "moderation_set",
+                ),
+                Command(
+                    name = "unmute",
+                    description = "Unmute a user",
+                    args = "[@username]",
+                    set = "moderation_set",
                 ),
             ),
         )
