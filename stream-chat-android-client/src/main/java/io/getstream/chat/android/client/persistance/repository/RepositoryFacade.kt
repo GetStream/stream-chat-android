@@ -38,7 +38,7 @@ import kotlinx.coroutines.awaitAll
 import java.util.Date
 
 @InternalStreamChatApi
-@SuppressWarnings("LongParameterList")
+@SuppressWarnings("LongParameterList", "TooManyFunctions")
 public class RepositoryFacade private constructor(
     private val userRepository: UserRepository,
     private val configsRepository: ChannelConfigRepository,

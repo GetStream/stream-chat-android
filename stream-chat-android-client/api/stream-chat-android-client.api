@@ -2394,6 +2394,31 @@ public abstract interface class io/getstream/chat/android/client/events/UserEven
 	public abstract fun getUser ()Lio/getstream/chat/android/models/User;
 }
 
+public final class io/getstream/chat/android/client/events/UserMessagesDeletedEvent : io/getstream/chat/android/client/events/ChatEvent, io/getstream/chat/android/client/events/UserEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/getstream/chat/android/models/User;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun component8 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Z)Lio/getstream/chat/android/client/events/UserMessagesDeletedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/UserMessagesDeletedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/client/events/UserMessagesDeletedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelId ()Ljava/lang/String;
+	public final fun getChannelType ()Ljava/lang/String;
+	public final fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public final fun getHardDelete ()Z
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/events/UserPresenceChangedEvent : io/getstream/chat/android/client/events/ChatEvent, io/getstream/chat/android/client/events/UserEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -2771,6 +2796,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ChannelRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteAllChannelUserMessages (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2798,12 +2824,15 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteDraftMessage (Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deletePoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertDraftMessage (Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectAllChannelUserMessages (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectAllUserMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectDraftMessageByParentId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectDraftMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectDraftMessagesByCid (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

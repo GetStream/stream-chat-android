@@ -82,6 +82,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -309,6 +310,7 @@ public class ChannelClient internal constructor(
             is ReminderUpdatedEvent -> event.cid == cid
             is ReminderDeletedEvent -> event.cid == cid
             is NotificationReminderDueEvent -> event.cid == cid
+            is UserMessagesDeletedEvent -> event.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,

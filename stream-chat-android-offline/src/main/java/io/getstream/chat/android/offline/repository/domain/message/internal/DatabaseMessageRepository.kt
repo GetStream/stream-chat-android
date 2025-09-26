@@ -74,6 +74,14 @@ internal class DatabaseMessageRepository(
         messageDao.messagesForThread(messageId, limit)
             .map { it.toMessage() }
 
+    override suspend fun selectAllUserMessages(userId: String): List<Message> =
+        messageDao.selectByUserId(userId)
+            .map { it.toMessage() }
+
+    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> =
+        messageDao.selectByCidAndUserId(cid, userId)
+            .map { it.toMessage() }
+
     private suspend fun selectRepliedMessage(messageId: String): Message? =
         replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
 
@@ -198,6 +206,16 @@ internal class DatabaseMessageRepository(
         deletedMessageIds.add(message.id)
         messageCache.remove(message.id)
         scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
+    }
+
+    override suspend fun deleteMessages(messages: List<Message>) {
+        val ids = messages.map { it.id }
+        ids.forEach {
+            deletedMessageIds.add(it)
+            messageCache.remove(it)
+            replyMessageCache.remove(it)
+        }
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(ids) }
     }
 
     /**

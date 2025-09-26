@@ -52,6 +52,21 @@ public interface MessageRepository {
     ): List<Message>
 
     /**
+     * Selects all messages from a given user.
+     *
+     * @param userId The user ID to filter messages.
+     */
+    public suspend fun selectAllUserMessages(userId: String): List<Message>
+
+    /**
+     * Selects all messages from a given user in a given channel.
+     *
+     * @param cid The channel ID to filter messages.
+     * @param userId The user ID to filter messages.
+     */
+    public suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message>
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
@@ -111,6 +126,13 @@ public interface MessageRepository {
      * @param message [Message]
      */
     public suspend fun deleteChannelMessage(message: Message)
+
+    /**
+     * Deletes the list of [Message] objects.
+     *
+     * @param messages List of [Message]s to delete.
+     */
+    public suspend fun deleteMessages(messages: List<Message>)
 
     /**
      * Selects all message ids of a [SyncStatus]

@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -135,6 +136,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 import java.util.InputMismatchException
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -228,6 +230,25 @@ internal class EventHandlerSequential(
         logger.i { "[stopListening] no args" }
         eventsDisposable.dispose()
         scope.coroutineContext.job.cancelChildren()
+    }
+
+    private fun handleUserMessagesDeletedEvent(event: UserMessagesDeletedEvent) {
+        if (event.cid != null) {
+            // if cid is present, the event applies to that channel only
+            val (channelType, channelId) = event.cid!!.cidToTypeAndId()
+            if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
+                val channelLogic: ChannelLogic = logicRegistry.channel(
+                    channelType = channelType,
+                    channelId = channelId,
+                )
+                channelLogic.handleEvent(event)
+            }
+        } else {
+            // global - apply to all active channels where the user is present
+            logicRegistry.getActiveChannelsLogic().forEach { channelLogic: ChannelLogic ->
+                channelLogic.handleEvent(event)
+            }
+        }
     }
 
     private suspend fun handleChatEvents(batchEvent: BatchEvent, queryChannelsLogic: QueryChannelsLogic) {
@@ -373,6 +394,7 @@ internal class EventHandlerSequential(
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 
+    @Suppress("LongMethod")
     private suspend fun updateChannelsState(batchEvent: BatchEvent) {
         val first = batchEvent.sortedEvents.firstOrNull()
         val last = batchEvent.sortedEvents.lastOrNull()
@@ -431,6 +453,13 @@ internal class EventHandlerSequential(
                     )
                     channelLogic.handleEvent(userPresenceChanged)
                 }
+        }
+
+        // Handle `user.messages.deleted` event
+        sortedEvents.filterIsInstance<UserMessagesDeletedEvent>().let { events ->
+            events.forEach { event ->
+                handleUserMessagesDeletedEvent(event)
+            }
         }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
@@ -801,6 +830,9 @@ internal class EventHandlerSequential(
                 is PollDeletedEvent -> {
                     repos.deletePoll(event.poll.id)
                 }
+                is UserMessagesDeletedEvent -> {
+                    deleteMessagesFromUser(event.cid, event.user.id, event.hardDelete, event.createdAt)
+                }
                 else -> Unit // Ignore other events
             }
         }
@@ -837,6 +869,26 @@ internal class EventHandlerSequential(
             val (type, id) = cid.cidToTypeAndId()
             val channelData = stateRegistry.channel(type, id).channelData.value
             channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
+        }
+    }
+
+    private suspend fun deleteMessagesFromUser(cid: String?, userId: String, hard: Boolean, deletedAt: Date) {
+        val messages = if (cid != null) {
+            // Delete messages only in the specified channel
+            repos.selectAllChannelUserMessages(cid, userId)
+        } else {
+            // Delete messages in all channels
+            repos.selectAllUserMessages(userId)
+        }
+        if (hard) {
+            // Remove messages from DB
+            repos.deleteMessages(messages)
+            // Remove messages linked to a channel
+            repos.deleteAllChannelUserMessages(cid, userId)
+        } else {
+            // Mark messages as deleted
+            val markedAsDeleted = messages.map { it.copy(deletedAt = deletedAt) }
+            repos.insertMessages(markedAsDeleted)
         }
     }
 

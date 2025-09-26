@@ -931,6 +931,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field UNKNOWN Ljava/lang/String;
 	public static final field USER_BANNED Ljava/lang/String;
 	public static final field USER_DELETED Ljava/lang/String;
+	public static final field USER_MESSAGES_DELETED Ljava/lang/String;
 	public static final field USER_PRESENCE_CHANGED Ljava/lang/String;
 	public static final field USER_UNBANNED Ljava/lang/String;
 	public static final field USER_UPDATED Ljava/lang/String;

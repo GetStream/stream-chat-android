@@ -379,6 +379,64 @@ internal class ChannelStateLogicTest {
         channelStateLogic.getPoll(poll.id) `should be equal to` null
     }
 
+    @Test
+    fun `Given user has no messages, When calling deleteMessagesFromUser, Then no action is taken`() {
+        // given
+        val userId = randomString()
+        val deletedAt = randomDate()
+        whenever(mutableState.getMessagesFromUser(userId)) doReturn emptyList()
+
+        // when
+        channelStateLogic.deleteMessagesFromUser(userId, hard = true, deletedAt = deletedAt)
+
+        // then
+        verify(mutableState, times(0)).deleteMessages(any())
+        verify(mutableState, times(0)).upsertMessages(any())
+    }
+
+    @Test
+    fun `Given user has messages and hardDelete is true, When calling deleteMessagesFromUser, Then messages are removed from state`() {
+        // given
+        val userId = randomString()
+        val user = randomUser(id = userId)
+        val deletedAt = randomDate()
+        val messagesFromUser = listOf(
+            randomMessage(user = user),
+            randomMessage(user = user),
+            randomMessage(user = user),
+        )
+        whenever(mutableState.getMessagesFromUser(userId)) doReturn messagesFromUser
+
+        // when
+        channelStateLogic.deleteMessagesFromUser(userId, hard = true, deletedAt = deletedAt)
+
+        // then
+        verify(mutableState).deleteMessages(eq(messagesFromUser))
+        verify(mutableState, times(0)).upsertMessages(any())
+    }
+
+    @Test
+    fun `Given user has messages and hardDelete is false, When calling deleteMessagesFromUser, Then messages are marked as deleted`() {
+        // given
+        val userId = randomString()
+        val user = randomUser(id = userId)
+        val deletedAt = randomDate()
+        val messagesFromUser = listOf(
+            randomMessage(user = user, deletedAt = null),
+            randomMessage(user = user, deletedAt = null),
+            randomMessage(user = user, deletedAt = null),
+        )
+        val expectedMarkedAsDeleted = messagesFromUser.map { it.copy(deletedAt = deletedAt) }
+        whenever(mutableState.getMessagesFromUser(userId)) doReturn messagesFromUser
+
+        // when
+        channelStateLogic.deleteMessagesFromUser(userId, hard = false, deletedAt = deletedAt)
+
+        // then
+        verify(mutableState).upsertMessages(eq(expectedMarkedAsDeleted))
+        verify(mutableState, times(0)).deleteMessages(any())
+    }
+
     @ParameterizedTest
     @MethodSource("updateCurrentUserReadArguments")
     fun `Given a new message from the current user is added, the current user reads does not need to be updated`(
