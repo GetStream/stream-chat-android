@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix the inconsistency in the channel attachments items between XML and Compose SDKs. [#5939](https://github.com/GetStream/stream-chat-android/pull/5939)
 
 ### ⬆️ Improved
 
@@ -71,6 +72,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix the inconsistency in the channel attachments items between XML and Compose SDKs. [#5939](https://github.com/GetStream/stream-chat-android/pull/5939) 
 
 ### ⬆️ Improved
 - Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)

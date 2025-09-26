@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.attachments
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.update
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param attachmentTypes The list of attachment types to filter by.
+ * @param localFilter A function to filter attachments locally after fetching.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param scope The [CoroutineScope] used for launching coroutines.
  */
@@ -54,6 +56,7 @@ import kotlinx.coroutines.flow.update
 public class ChannelAttachmentsViewController(
     private val cid: String,
     private val attachmentTypes: List<String>,
+    private val localFilter: (attachment: Attachment) -> Boolean = { true },
     private val chatClient: ChatClient = ChatClient.instance(),
     scope: CoroutineScope,
 ) {
@@ -120,7 +123,7 @@ public class ChannelAttachmentsViewController(
         nextPage = result.next
         val items = result.messages.flatMap { message ->
             message.attachments
-                .filter { it.type in attachmentTypes }
+                .filter(localFilter)
                 .map {
                     ChannelAttachmentsViewState.Content.Item(
                         message = message,
