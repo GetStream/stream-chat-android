@@ -262,9 +262,7 @@ public object StreamFileUtil {
                                 Success(getUri(file))
                             }
 
-                            is Failure -> response.also {
-                                println()
-                            }
+                            is Failure -> response
                         }
                     }
                 }
