@@ -1,74 +1,21 @@
-# UNRELEASED CHANGELOG
+# September 26th, 2025 - 6.24.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add support for `user.messages.deleted` event. [#5895](https://github.com/GetStream/stream-chat-android/pull/5895)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add filtering and sorting options for `QueryThreads`. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix the inconsistency in the channel attachments items between XML and Compose SDKs. [#5939](https://github.com/GetStream/stream-chat-android/pull/5939)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
 - Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -84,19 +31,6 @@
 ### ⚠️ Changed
 - Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 - Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 12th, 2025 - 6.23.0
 ## Common changes for all artifacts
