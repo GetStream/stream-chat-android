@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for `user.messages.deleted` event. [#5895](https://github.com/GetStream/stream-chat-android/pull/5895)
 
 ### ⚠️ Changed
 

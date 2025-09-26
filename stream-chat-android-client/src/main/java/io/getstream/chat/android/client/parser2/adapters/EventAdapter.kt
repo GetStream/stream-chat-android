@@ -78,6 +78,7 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
@@ -166,6 +167,7 @@ internal class EventDtoAdapter(
     private val reminderUpdatedEventAdapter = moshi.adapter(ReminderUpdatedEventDto::class.java)
     private val reminderDeletedEventAdapter = moshi.adapter(ReminderDeletedEventDto::class.java)
     private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
+    private val userMessagesDeletedEventAdapter = moshi.adapter(UserMessagesDeletedEventDto::class.java)
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
     private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
@@ -239,6 +241,7 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
             }
+            EventType.USER_MESSAGES_DELETED -> userMessagesDeletedEventAdapter
             EventType.POLL_UPDATED -> pollUpdatedEventAdapter
             EventType.POLL_DELETED -> pollDeletedEventAdapter
             EventType.POLL_CLOSED -> pollClosedEventAdapter

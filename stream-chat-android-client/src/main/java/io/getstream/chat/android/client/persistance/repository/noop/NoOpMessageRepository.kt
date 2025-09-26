@@ -36,6 +36,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) { /* No-Op */ }
     override suspend fun deleteChannelMessages(cid: String) { /* No-Op */ }
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
+    override suspend fun deleteMessages(messages: List<Message>) { /* No-Op */ }
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = emptyList()
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> = emptyList()
@@ -54,4 +55,6 @@ internal object NoOpMessageRepository : MessageRepository {
         pagination: AnyChannelPaginationRequest?,
     ): List<Message> = emptyList()
     override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = emptyList()
+    override suspend fun selectAllUserMessages(userId: String): List<Message> = emptyList()
+    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> = emptyList()
 }

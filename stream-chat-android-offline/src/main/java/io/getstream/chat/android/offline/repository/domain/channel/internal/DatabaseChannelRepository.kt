@@ -109,6 +109,35 @@ internal class DatabaseChannelRepository(
         }
     }
 
+    override suspend fun deleteAllChannelUserMessages(cid: String?, userId: String) {
+        if (cid != null) {
+            deleteAllChannelUserMessages(cid, userId)
+        } else {
+            deleteAllUserMessages(userId)
+        }
+    }
+
+    private fun deleteAllUserMessages(userId: String) {
+        // Find all channels that have messages from the user
+        val cids = channelCache.snapshot().values
+            .filter { channel -> channel.messages.any { msg -> msg.user.id == userId } }
+            .map { it.cid }
+        // Remove messages from the given user from those channels
+        cids.forEach { cid ->
+            deleteAllChannelUserMessages(cid, userId)
+        }
+    }
+
+    private fun deleteAllChannelUserMessages(cid: String, userId: String) {
+        channelCache[cid]?.let { cachedChannel ->
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.filter { msg -> msg.user.id != userId },
+                pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> msg.user.id != userId },
+            )
+            cacheChannel(updatedChannel)
+        }
+    }
+
     override suspend fun updateChannelMessage(message: Message) {
         logger.v { "[updateChannelMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelCache[message.cid]?.let { cachedChannel ->

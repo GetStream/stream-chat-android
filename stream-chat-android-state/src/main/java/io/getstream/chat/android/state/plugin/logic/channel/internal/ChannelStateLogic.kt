@@ -374,6 +374,21 @@ internal class ChannelStateLogic(
         systemMessage?.let(mutableState::upsertMessage)
     }
 
+    fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
+        val messagesFromUser = mutableState.getMessagesFromUser(userId)
+        if (messagesFromUser.isEmpty()) {
+            return
+        }
+        if (hard) {
+            // Remove messages from the state
+            mutableState.deleteMessages(messagesFromUser)
+        } else {
+            // Mark messages as deleted
+            val markedAsDeleted = messagesFromUser.map { it.copy(deletedAt = deletedAt) }
+            mutableState.upsertMessages(markedAsDeleted)
+        }
+    }
+
     /**
      * Hides the messages created before the given date.
      *

@@ -882,6 +882,22 @@ public data class NotificationReminderDueEvent(
 ) : CidEvent(), HasReminder
 
 /**
+ * Event triggered after a user was banned and their messages were deleted. Triggered in two scenarios:
+ * 1. User banned in a channel - all messages of the user in that channel were deleted ([cid] != null).
+ * 2. User banned globally - all messages of the user across all channels were deleted ([cid] == null).
+ */
+public data class UserMessagesDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val user: User,
+    val cid: String?,
+    val channelType: String?,
+    val channelId: String?,
+    val hardDelete: Boolean,
+) : ChatEvent(), UserEvent
+
+/**
  * Triggered when an ai indicator is updated.
  */
 public data class AIIndicatorUpdatedEvent(
