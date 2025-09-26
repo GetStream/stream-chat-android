@@ -910,8 +910,6 @@ internal object Mother {
         participantLimit: Int = randomInt(),
         prev: String? = randomString(),
         replyLimit: Int = randomInt(),
-        userId: String? = randomString(),
-        user: User? = randomUser(),
     ): QueryThreadsRequest = QueryThreadsRequest(
         watch = watch,
         limit = limit,
@@ -920,8 +918,6 @@ internal object Mother {
         participantLimit = participantLimit,
         prev = prev,
         replyLimit = replyLimit,
-        userId = userId,
-        user = user,
     )
 
     fun randomGetThreadOptions(

@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 
 /**
  * Used for querying threads.
@@ -33,8 +32,6 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
  * @param participant_limit The number of thread participants to request per thread. Defaults to 100. Max limit is 100.
  * @param prev The previous pagination token. This token can be used to fetch the previous page of threads.
  * @param reply_limit The number of latest replies to fetch per thread. Defaults to 2. Max limit is 10.
- * @param user The user for which the threads are queried. Defaults to null.
- * @param user_id The user ID for which the threads are queried. Defaults to null.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryThreadsRequest(
@@ -47,6 +44,4 @@ internal data class QueryThreadsRequest(
     val participant_limit: Int = 100,
     val prev: String? = null,
     val reply_limit: Int = 2,
-    val user: UpstreamUserDto? = null,
-    val user_id: String? = null,
 )

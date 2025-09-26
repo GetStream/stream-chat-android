@@ -1414,8 +1414,6 @@ constructor(
                         participant_limit = query.participantLimit,
                         prev = query.prev,
                         reply_limit = query.replyLimit,
-                        user = query.user?.toDto(),
-                        user_id = query.userId,
                     )
                 },
             ).mapDomain { response ->

@@ -64,8 +64,10 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @property participantLimit The number of thread participants to request per thread. Defaults to 100.
  * @property prev The previous pagination token. This token can be used to fetch the previous page of threads.
  * @property replyLimit The number of latest replies to fetch per thread. Defaults to 2.
- * @property user The user for which the threads are queried. Defaults to null.
- * @property userId The user ID for which the threads are queried. Defaults to null.
+ * @property user The user for which the threads are queried. Defaults to null. This property is deprecated and is not
+ * used.
+ * @property userId The user ID for which the threads are queried. Defaults to null. This property is deprecated and is
+ * not used.
  */
 public data class QueryThreadsRequest @JvmOverloads constructor(
     public val filter: FilterObject? = null,
@@ -77,7 +79,9 @@ public data class QueryThreadsRequest @JvmOverloads constructor(
     public val participantLimit: Int = 100,
     public val prev: String? = null,
     public val replyLimit: Int = 2,
+    @Deprecated(message = "Do not use this property, it is ignored in the query.")
     public val user: User? = null,
+    @Deprecated(message = "Do not use this property, it is ignored in the query.")
     public val userId: String? = null,
 ) {
 
