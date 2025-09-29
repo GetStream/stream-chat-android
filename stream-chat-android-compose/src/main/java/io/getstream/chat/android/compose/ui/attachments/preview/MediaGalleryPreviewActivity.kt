@@ -139,6 +139,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val streamCdnImageResizing = intent?.createStreamCdnImageResizing()
             ?: StreamCdnImageResizing.defaultStreamCdnImageResizing()
         val messageId = uiState?.messageId ?: ""
+        if (messageId.isBlank()) {
+            throw IllegalArgumentException("Missing messageId necessary to load images.")
+        }
 
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
             val message = uiState?.toMessage()
@@ -149,10 +152,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
 
         val attachmentPosition = intent?.getIntExtra(KeyAttachmentPosition, 0) ?: 0
-
-        if (messageId.isBlank()) {
-            throw IllegalArgumentException("Missing messageId necessary to load images.")
-        }
 
         setContent {
             ChatTheme(
