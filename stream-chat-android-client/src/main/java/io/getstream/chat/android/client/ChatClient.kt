@@ -185,6 +185,8 @@ import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -1526,6 +1528,93 @@ internal constructor(
     public fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
             .share(userScope) { AddDeviceIdentifier(device) }
+    }
+
+    /**
+     * Sets the push notification preference level for the current user.
+     * This controls which messages will trigger push notifications for the user across all channels.
+     *
+     * @param level The notification level to set. Available options: [PushPreferenceLevel.ALL], [PushPreferenceLevel.MENTIONS], [PushPreferenceLevel.NONE]
+     *
+     * @return Executable async [Call] responsible for setting the user's push preference.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     */
+    @CheckResult
+    public fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
+        return api.setUserPushPreference(level)
+            .doOnResult(userScope) { result ->
+                // Note: Update local user state manually as we don't get WS events for push preference updates
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Temporarily disables push notifications for the current user until the specified date.
+     * This is useful for implementing "Do Not Disturb" functionality where users can snooze
+     * notifications for a specific period of time.
+     *
+     * Once the specified date is reached, notifications will resume according to the user's
+     * previously configured notification level.
+     *
+     * @param until The [Date] until which push notifications should be disabled.
+     * Must be a future date. After this date, notifications will resume automatically.
+     *
+     * @return Executable async [Call] responsible for snoozing the user's push notifications.
+     * Returns a [PushPreference] object containing the updated preference settings with the
+     * `disabledUntil` field set to the specified date.
+     */
+    @CheckResult
+    public fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
+        return api.snoozeUserPushNotifications(until)
+            .doOnResult(userScope) { result ->
+                // Note: Update local user state manually as we don't get WS events for push preference updates
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Sets the push notification preference level for a specific channel.
+
+     *
+     * @param cid The full channel identifier (e.g., "messaging:123") for which to set the preference.
+     * @param level The notification level to set for this channel. Available options: [PushPreferenceLevel.ALL], [PushPreferenceLevel.MENTIONS], [PushPreferenceLevel.NONE]
+     *
+     * @return Executable async [Call] responsible for setting the channel's push preference.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     */
+    @CheckResult
+    public fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
+        return api.setChannelPushPreference(cid, level)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelPushPreferenceSet(cid, level, result) }
+            }
+    }
+
+    /**
+     * Temporarily disables push notifications for a specific channel until the specified date.
+     *
+     * @param cid The full channel identifier (e.g., "messaging:123") for which to snooze notifications.
+     * @param until The [Date] until which push notifications should be disabled for this channel.
+     * Must be a future date. After this date, notifications will resume automatically.
+     *
+     * @return Executable async [Call] responsible for snoozing the channel's push notifications.
+     * Returns a [PushPreference] object containing the updated preference settings with the
+     * `disabledUntil` field set to the specified date.
+     */
+    @CheckResult
+    public fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
+        return api.snoozeChannelPushNotifications(cid, until)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
+            }
     }
 
     /**

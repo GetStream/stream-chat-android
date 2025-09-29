@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui.profile
+package io.getstream.chat.android.offline.repository.domain.push.internal
 
-import io.getstream.result.Error
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 
-sealed interface UserProfileViewEvent {
-    data object UpdateProfilePictureSuccess : UserProfileViewEvent
-    sealed interface Failure : UserProfileViewEvent { val error: Error }
-    data class LoadUnreadCountsError(override val error: Error) : Failure
-    data class UpdateProfilePictureError(override val error: Error) : Failure
-    data class RemoveProfilePictureError(override val error: Error) : Failure
-    data class UpdatePushPreferencesError(override val error: Error) : Failure
-}
+/**
+ * Maps [PushPreference] to [PushPreferenceEntity].
+ */
+internal fun PushPreference.toEntity(): PushPreferenceEntity = PushPreferenceEntity(
+    level = level?.value,
+    disabledUntil = disabledUntil,
+)
+
+/**
+ * Maps [PushPreferenceEntity] to [PushPreference].
+ */
+internal fun PushPreferenceEntity.toModel(): PushPreference = PushPreference(
+    level = PushPreferenceLevel.fromValue(level),
+    disabledUntil = disabledUntil,
+)

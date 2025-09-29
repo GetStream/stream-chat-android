@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui.profile
+package io.getstream.chat.android.client.api2.model.requests
 
-import io.getstream.result.Error
+import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 
-sealed interface UserProfileViewEvent {
-    data object UpdateProfilePictureSuccess : UserProfileViewEvent
-    sealed interface Failure : UserProfileViewEvent { val error: Error }
-    data class LoadUnreadCountsError(override val error: Error) : Failure
-    data class UpdateProfilePictureError(override val error: Error) : Failure
-    data class RemoveProfilePictureError(override val error: Error) : Failure
-    data class UpdatePushPreferencesError(override val error: Error) : Failure
-}
+/**
+ * Request DTO for upserting push notification preferences.
+ *
+ * @param preferences List of push preferences to be upserted.
+ */
+@JsonClass(generateAdapter = true)
+internal data class UpsertPushPreferencesRequest(
+    val preferences: List<UpstreamPushPreferenceInputDto>,
+)

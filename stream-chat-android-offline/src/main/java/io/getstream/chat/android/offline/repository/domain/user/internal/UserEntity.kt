@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.offline.repository.domain.push.internal.PushPreferenceEntity
 import java.util.Date
 
 /**
@@ -43,6 +44,8 @@ import java.util.Date
  * @param teams A list of teams of which the user is a member of.
  * @param teamsRole The roles of the user in the teams they are part of
  * @param extraData A map of custom fields for the user.
+ * @param avgResponseTime Average response time of the user in milliseconds.
+ * @param pushPreference User's push preference.
  */
 @Entity(tableName = USER_ENTITY_TABLE_NAME)
 internal data class UserEntity(
@@ -63,6 +66,7 @@ internal data class UserEntity(
     val teamsRole: Map<String, String> = emptyMap(),
     val extraData: Map<String, Any> = emptyMap(),
     val avgResponseTime: Long? = null,
+    val pushPreference: PushPreferenceEntity? = null,
 )
 
 internal const val USER_ENTITY_TABLE_NAME = "stream_chat_user"
