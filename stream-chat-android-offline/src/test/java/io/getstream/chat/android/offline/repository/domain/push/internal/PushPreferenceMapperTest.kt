@@ -135,7 +135,7 @@ internal class PushPreferenceMapperTest {
         val model = entity.toModel()
 
         // Then
-        assertNull(model.level)
+        assertEquals(PushPreferenceLevel("invalid"), model.level)
         assertNull(model.disabledUntil)
     }
 
