@@ -22,9 +22,9 @@ import java.util.Date
  * Represents the push notification preference for a specific user or channel.
  *
  * @param level The chat level preference for notifications. Possible values are:
- * - [PushPreferenceLevel.ALL]: Receive notifications for all messages.
- * - [PushPreferenceLevel.MENTIONS]: Receive notifications only for mentions.
- * - [PushPreferenceLevel.NONE]: Do not receive any notifications.
+ * - [PushPreferenceLevel.all]: Receive notifications for all messages.
+ * - [PushPreferenceLevel.mentions]: Receive notifications only for mentions.
+ * - [PushPreferenceLevel.none]: Do not receive any notifications.
  * @param disabledUntil Timestamp until which notifications are disabled. If null, notifications are not disabled.
  */
 public data class PushPreference(
@@ -37,13 +37,24 @@ public data class PushPreference(
  *
  * @param value The string representation of the chat level.
  */
-public enum class PushPreferenceLevel(public val value: String) {
-    ALL("all"),
-    MENTIONS("mentions"),
-    NONE("none"),
-    ;
+public data class PushPreferenceLevel(public val value: String) {
 
-    public companion object Companion {
+    public companion object {
+
+        /**
+         * Receive notifications for all messages.
+         */
+        public val all: PushPreferenceLevel = PushPreferenceLevel(value = "all")
+
+        /**
+         * Receive notifications only for mentions.
+         */
+        public val mentions: PushPreferenceLevel = PushPreferenceLevel(value = "mentions")
+
+        /**
+         * Do not receive any notifications.
+         */
+        public val none: PushPreferenceLevel = PushPreferenceLevel(value = "none")
 
         /**
          * Returns the [PushPreferenceLevel] corresponding to the given string value.
@@ -51,6 +62,12 @@ public enum class PushPreferenceLevel(public val value: String) {
          * @param value The string representation of the chat level.
          * @return The corresponding [PushPreferenceLevel] or null if no match is found.
          */
-        public fun fromValue(value: String?): PushPreferenceLevel? = entries.find { it.value == value }
+        public fun fromValue(value: String?): PushPreferenceLevel? = when (value) {
+            all.value -> all
+            mentions.value -> mentions
+            none.value -> none
+            null -> null
+            else -> PushPreferenceLevel(value)
+        }
     }
 }

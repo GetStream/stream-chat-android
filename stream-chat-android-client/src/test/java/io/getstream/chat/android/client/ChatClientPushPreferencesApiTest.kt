@@ -46,7 +46,7 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
     @Test
     fun `setUserPushPreference success should return push preference and update user state`() = runTest {
         // given
-        val level = PushPreferenceLevel.MENTIONS
+        val level = PushPreferenceLevel.mentions
         val pushPreference = PushPreference(level = level, disabledUntil = null)
         val currentUser = User(id = "user1", name = "Test User")
         val userStateFlow = MutableStateFlow(currentUser)
@@ -66,7 +66,7 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
     @Test
     fun `setUserPushPreference error should return error`() = runTest {
         // given
-        val level = PushPreferenceLevel.NONE
+        val level = PushPreferenceLevel.none
         val errorCode = positiveRandomInt()
 
         whenever(api.setUserPushPreference(level))
@@ -121,7 +121,7 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
     fun `setChannelPushPreference success should return push preference and notify plugins`() = runTest {
         // given
         val cid = "messaging:${randomString()}"
-        val level = PushPreferenceLevel.MENTIONS
+        val level = PushPreferenceLevel.mentions
         val pushPreference = PushPreference(level = level, disabledUntil = null)
         val mockPlugin = mock<Plugin>()
         plugins.add(mockPlugin)
@@ -141,7 +141,7 @@ internal class ChatClientPushPreferencesApiTest : BaseChatClientTest() {
     fun `setChannelPushPreference error should return error and notify plugins`() = runTest {
         // given
         val cid = "messaging:${randomString()}"
-        val level = PushPreferenceLevel.ALL
+        val level = PushPreferenceLevel.all
         val errorCode = positiveRandomInt()
         val mockPlugin = mock<Plugin>()
         plugins.add(mockPlugin)

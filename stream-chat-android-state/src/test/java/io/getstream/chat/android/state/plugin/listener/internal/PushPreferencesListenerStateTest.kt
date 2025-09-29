@@ -50,7 +50,7 @@ internal class PushPreferencesListenerStateTest {
     fun `onChannelPushPreferenceSet with success calls updateChannelData`() = runTest {
         // Given
         val cid = "messaging:channel123"
-        val level = PushPreferenceLevel.ALL
+        val level = PushPreferenceLevel.all
         val preference = PushPreference(level = level, disabledUntil = null)
         doNothing().whenever(channelStateLogic).updateChannelData(any<(ChannelData?) -> ChannelData?>())
 
@@ -65,7 +65,7 @@ internal class PushPreferencesListenerStateTest {
     fun `onChannelPushPreferenceSet with failure does not call updateChannelData`() = runTest {
         // Given
         val cid = "messaging:channel123"
-        val level = PushPreferenceLevel.ALL
+        val level = PushPreferenceLevel.all
 
         // When
         sut.onChannelPushPreferenceSet(cid, level, Result.Failure(Error.GenericError("error")))
@@ -79,7 +79,7 @@ internal class PushPreferencesListenerStateTest {
         // Given
         val cid = "messaging:channel456"
         val until = Date()
-        val preference = PushPreference(level = PushPreferenceLevel.NONE, disabledUntil = until)
+        val preference = PushPreference(level = PushPreferenceLevel.none, disabledUntil = until)
         doNothing().whenever(channelStateLogic).updateChannelData(any<(ChannelData?) -> ChannelData?>())
 
         // When

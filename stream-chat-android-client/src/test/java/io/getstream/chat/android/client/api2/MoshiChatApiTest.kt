@@ -2331,7 +2331,7 @@ internal class MoshiChatApiTest {
     fun testSetUserPushPreference() = runTest {
         // given
         val userId = randomString()
-        val level = PushPreferenceLevel.ALL
+        val level = PushPreferenceLevel.all
         val response = PushPreferencesResponse(
             user_channel_preferences = emptyMap(),
             user_preferences = mapOf(userId to DownstreamPushPreferenceDto(level.value, null)),
@@ -2398,7 +2398,7 @@ internal class MoshiChatApiTest {
         // given
         val userId = randomString()
         val cid = randomCID()
-        val level = PushPreferenceLevel.MENTIONS
+        val level = PushPreferenceLevel.mentions
         val response = PushPreferencesResponse(
             user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(level.value, null))),
             user_preferences = emptyMap(),

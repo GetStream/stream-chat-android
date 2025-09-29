@@ -75,7 +75,7 @@ fun UserProfilePushPreferencesScreen(
     onSavePreferences: (PushPreferenceLevel) -> Unit,
     onSnoozeNotifications: (Date) -> Unit,
 ) {
-    var selectedLevel by remember { mutableStateOf(preferences.level ?: PushPreferenceLevel.ALL) }
+    var selectedLevel by remember { mutableStateOf(preferences.level ?: PushPreferenceLevel.all) }
     var isTemporaryDisabled by remember { mutableStateOf(preferences.disabledUntil != null) }
 
     // Initialize disable until date when temporary disable is enabled
@@ -139,27 +139,27 @@ private fun NotificationLevelSection(
     NotificationLevelOption(
         title = "All Notifications",
         subtitle = "Receive notifications for all messages",
-        isSelected = selectedLevel == PushPreferenceLevel.ALL,
+        isSelected = selectedLevel == PushPreferenceLevel.all,
         isEnabled = isEnabled,
-        onSelect = { onLevelSelected(PushPreferenceLevel.ALL) },
+        onSelect = { onLevelSelected(PushPreferenceLevel.all) },
     )
 
     // Mentions Only Option
     NotificationLevelOption(
         title = "Mentions Only",
         subtitle = "Only receive notifications when mentioned",
-        isSelected = selectedLevel == PushPreferenceLevel.MENTIONS,
+        isSelected = selectedLevel == PushPreferenceLevel.mentions,
         isEnabled = isEnabled,
-        onSelect = { onLevelSelected(PushPreferenceLevel.MENTIONS) },
+        onSelect = { onLevelSelected(PushPreferenceLevel.mentions) },
     )
 
     // No Notifications Option
     NotificationLevelOption(
         title = "No Notifications",
         subtitle = "Disable all push notifications",
-        isSelected = selectedLevel == PushPreferenceLevel.NONE,
+        isSelected = selectedLevel == PushPreferenceLevel.none,
         isEnabled = isEnabled,
-        onSelect = { onLevelSelected(PushPreferenceLevel.NONE) },
+        onSelect = { onLevelSelected(PushPreferenceLevel.none) },
     )
 }
 
@@ -458,7 +458,7 @@ private fun UserProfilePushPreferencesScreenEnabledPreview() {
     ChatTheme {
         UserProfilePushPreferencesScreen(
             preferences = PushPreference(
-                level = PushPreferenceLevel.MENTIONS,
+                level = PushPreferenceLevel.mentions,
                 disabledUntil = null,
             ),
             onSavePreferences = { },
@@ -473,7 +473,7 @@ private fun UserProfilePushPreferencesScreenDisabledPreview() {
     ChatTheme {
         UserProfilePushPreferencesScreen(
             preferences = PushPreference(
-                level = PushPreferenceLevel.MENTIONS,
+                level = PushPreferenceLevel.mentions,
                 disabledUntil = Date().apply { time += 1.hours.inWholeMilliseconds },
             ),
             onSavePreferences = { },

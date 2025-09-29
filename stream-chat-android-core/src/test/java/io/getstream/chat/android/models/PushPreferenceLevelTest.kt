@@ -31,32 +31,32 @@ internal class PushPreferenceLevelTest {
 
     @ParameterizedTest
     @MethodSource("invalidPushPreferenceLevelFromValueArguments")
-    fun `test ChatLevel fromValue with invalid values`(value: String?) {
-        Assertions.assertNull(PushPreferenceLevel.fromValue(value))
+    fun `test ChatLevel fromValue with invalid values`(value: String?, expected: PushPreferenceLevel?) {
+        Assertions.assertEquals(expected, PushPreferenceLevel.fromValue(value))
     }
 
     companion object Companion {
 
         @JvmStatic
         fun pushPreferenceLevelFromValueArguments() = listOf(
-            Arguments.of("all", PushPreferenceLevel.ALL),
-            Arguments.of("mentions", PushPreferenceLevel.MENTIONS),
-            Arguments.of("none", PushPreferenceLevel.NONE),
+            Arguments.of("all", PushPreferenceLevel.all),
+            Arguments.of("mentions", PushPreferenceLevel.mentions),
+            Arguments.of("none", PushPreferenceLevel.none),
         )
 
         @JvmStatic
         fun invalidPushPreferenceLevelFromValueArguments() = listOf(
-            Arguments.of(null),
-            Arguments.of(""),
-            Arguments.of("invalid"),
-            Arguments.of("ALL"), // Case sensitive
-            Arguments.of("Mentions"), // Case sensitive
-            Arguments.of("MENTIONS"), // Case sensitive
-            Arguments.of("NONE"), // Case sensitive
-            Arguments.of("all "), // Trailing space
-            Arguments.of(" all"), // Leading space
-            Arguments.of("unknown"),
-            Arguments.of("123"),
+            Arguments.of(null, null),
+            Arguments.of("", PushPreferenceLevel("")),
+            Arguments.of("invalid", PushPreferenceLevel("invalid")),
+            Arguments.of("ALL", PushPreferenceLevel("ALL")),
+            Arguments.of("Mentions", PushPreferenceLevel("Mentions")),
+            Arguments.of("MENTIONS", PushPreferenceLevel("MENTIONS")),
+            Arguments.of("NONE", PushPreferenceLevel("NONE")),
+            Arguments.of("all ", PushPreferenceLevel("all ")),
+            Arguments.of(" all", PushPreferenceLevel(" all")),
+            Arguments.of("unknown", PushPreferenceLevel("unknown")),
+            Arguments.of("123", PushPreferenceLevel("123")),
         )
     }
 }

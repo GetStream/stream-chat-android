@@ -1786,19 +1786,23 @@ public final class io/getstream/chat/android/models/PushPreference {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/models/PushPreferenceLevel : java/lang/Enum {
-	public static final field ALL Lio/getstream/chat/android/models/PushPreferenceLevel;
+public final class io/getstream/chat/android/models/PushPreferenceLevel {
 	public static final field Companion Lio/getstream/chat/android/models/PushPreferenceLevel$Companion;
-	public static final field MENTIONS Lio/getstream/chat/android/models/PushPreferenceLevel;
-	public static final field NONE Lio/getstream/chat/android/models/PushPreferenceLevel;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PushPreferenceLevel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/PushPreferenceLevel;
-	public static fun values ()[Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/PushPreferenceLevel$Companion {
 	public final fun fromValue (Ljava/lang/String;)Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public final fun getAll ()Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public final fun getMentions ()Lio/getstream/chat/android/models/PushPreferenceLevel;
+	public final fun getNone ()Lio/getstream/chat/android/models/PushPreferenceLevel;
 }
 
 public final class io/getstream/chat/android/models/PushProvider : java/lang/Enum {

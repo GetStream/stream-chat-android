@@ -30,7 +30,7 @@ internal class PushPreferenceMapperTest {
         // Given
         val disabledUntil = Date()
         val pushPreference = PushPreference(
-            level = PushPreferenceLevel.ALL,
+            level = PushPreferenceLevel.all,
             disabledUntil = disabledUntil,
         )
 
@@ -62,15 +62,15 @@ internal class PushPreferenceMapperTest {
     @Test
     fun `PushPreferences toEntity should handle all ChatPushLevel values`() {
         // Test ALL
-        val allPreference = PushPreference(level = PushPreferenceLevel.ALL, disabledUntil = null)
+        val allPreference = PushPreference(level = PushPreferenceLevel.all, disabledUntil = null)
         assertEquals("all", allPreference.toEntity().level)
 
         // Test MENTIONS
-        val mentionsPreference = PushPreference(level = PushPreferenceLevel.MENTIONS, disabledUntil = null)
+        val mentionsPreference = PushPreference(level = PushPreferenceLevel.mentions, disabledUntil = null)
         assertEquals("mentions", mentionsPreference.toEntity().level)
 
         // Test NONE
-        val nonePreference = PushPreference(level = PushPreferenceLevel.NONE, disabledUntil = null)
+        val nonePreference = PushPreference(level = PushPreferenceLevel.none, disabledUntil = null)
         assertEquals("none", nonePreference.toEntity().level)
     }
 
@@ -87,7 +87,7 @@ internal class PushPreferenceMapperTest {
         val model = entity.toModel()
 
         // Then
-        assertEquals(PushPreferenceLevel.ALL, model.level)
+        assertEquals(PushPreferenceLevel.all, model.level)
         assertEquals(disabledUntil, model.disabledUntil)
     }
 
@@ -112,15 +112,15 @@ internal class PushPreferenceMapperTest {
     fun `PushPreferencesEntity toModel should handle all valid chatLevel values`() {
         // Test "all"
         val allEntity = PushPreferenceEntity(level = "all", disabledUntil = null)
-        assertEquals(PushPreferenceLevel.ALL, allEntity.toModel().level)
+        assertEquals(PushPreferenceLevel.all, allEntity.toModel().level)
 
         // Test "mentions"
         val mentionsEntity = PushPreferenceEntity(level = "mentions", disabledUntil = null)
-        assertEquals(PushPreferenceLevel.MENTIONS, mentionsEntity.toModel().level)
+        assertEquals(PushPreferenceLevel.mentions, mentionsEntity.toModel().level)
 
         // Test "none"
         val noneEntity = PushPreferenceEntity(level = "none", disabledUntil = null)
-        assertEquals(PushPreferenceLevel.NONE, noneEntity.toModel().level)
+        assertEquals(PushPreferenceLevel.none, noneEntity.toModel().level)
     }
 
     @Test
@@ -144,7 +144,7 @@ internal class PushPreferenceMapperTest {
         // Given
         val disabledUntil = Date()
         val originalPreference = PushPreference(
-            level = PushPreferenceLevel.ALL,
+            level = PushPreferenceLevel.all,
             disabledUntil = disabledUntil,
         )
 

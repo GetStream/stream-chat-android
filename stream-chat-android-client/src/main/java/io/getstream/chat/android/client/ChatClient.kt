@@ -1534,7 +1534,8 @@ internal constructor(
      * Sets the push notification preference level for the current user.
      * This controls which messages will trigger push notifications for the user across all channels.
      *
-     * @param level The notification level to set. Available options: [PushPreferenceLevel.ALL], [PushPreferenceLevel.MENTIONS], [PushPreferenceLevel.NONE]
+     * @param level The notification level to set. Available options: [PushPreferenceLevel.all],
+     * [PushPreferenceLevel.mentions], [PushPreferenceLevel.none]
      *
      * @return Executable async [Call] responsible for setting the user's push preference.
      * Returns a [PushPreference] object containing the updated preference settings on success.
@@ -1585,7 +1586,8 @@ internal constructor(
 
      *
      * @param cid The full channel identifier (e.g., "messaging:123") for which to set the preference.
-     * @param level The notification level to set for this channel. Available options: [PushPreferenceLevel.ALL], [PushPreferenceLevel.MENTIONS], [PushPreferenceLevel.NONE]
+     * @param level The notification level to set for this channel. Available options: [PushPreferenceLevel.all],
+     * [PushPreferenceLevel.mentions], [PushPreferenceLevel.none]
      *
      * @return Executable async [Call] responsible for setting the channel's push preference.
      * Returns a [PushPreference] object containing the updated preference settings on success.

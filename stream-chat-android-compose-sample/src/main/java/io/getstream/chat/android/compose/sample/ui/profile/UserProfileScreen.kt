@@ -165,7 +165,7 @@ fun UserProfileScreen(
             containerColor = ChatTheme.colors.appBackground,
         ) {
             UserProfilePushPreferencesScreen(
-                preferences = state.user?.pushPreference ?: PushPreference(PushPreferenceLevel.ALL, null),
+                preferences = state.user?.pushPreference ?: PushPreference(PushPreferenceLevel.all, null),
                 onSavePreferences = { level ->
                     modalSheet = null
                     viewModel.setPushPreferences(level)
