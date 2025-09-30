@@ -203,6 +203,9 @@ internal interface MessageDao {
     )
     suspend fun deleteMessages(cid: String)
 
+    @Query("DELETE from $MESSAGE_ENTITY_TABLE_NAME WHERE id IN (:ids)")
+    suspend fun deleteMessages(ids: List<String>)
+
     @Transaction
     suspend fun select(ids: List<String>): List<MessageEntity> {
         return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
@@ -229,6 +232,12 @@ internal interface MessageDao {
     )
     @Transaction
     suspend fun selectBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<MessageEntity>
+
+    @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE userId = :userId")
+    suspend fun selectByUserId(userId: String): List<MessageEntity>
+
+    @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid AND userId = :userId")
+    suspend fun selectByCidAndUserId(cid: String, userId: String): List<MessageEntity>
 
     @Query(
         "SELECT id FROM $MESSAGE_ENTITY_TABLE_NAME " +

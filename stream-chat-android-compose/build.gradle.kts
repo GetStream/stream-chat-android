@@ -110,6 +110,7 @@ dependencies {
     testImplementation(project(":stream-chat-android-test"))
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(project(":stream-chat-android-previewdata"))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -118,6 +119,8 @@ dependencies {
     testImplementation(libs.kluent)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
 
     detektPlugins(libs.detekt.formatting)
 

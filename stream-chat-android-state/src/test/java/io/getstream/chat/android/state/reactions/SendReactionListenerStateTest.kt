@@ -75,10 +75,11 @@ internal class SendReactionListenerStateTest {
     private val threadsLogic: QueryThreadsLogic = mock {
         on(it.getMessage(any())) doReturn defaultMessage
     }
+    private val activeThreadsLogic = listOf(threadsLogic)
 
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessageId(any())) doReturn channelLogic
-        on(it.threads()) doReturn threadsLogic
+        on(it.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
     }
 
     private val sendReactionListenerState = SendReactionListenerState(logicRegistry, clientState)

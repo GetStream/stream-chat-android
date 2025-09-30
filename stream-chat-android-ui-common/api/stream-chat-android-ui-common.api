@@ -2773,7 +2773,9 @@ public final class io/getstream/chat/android/ui/common/state/messages/poll/Selec
 
 public final class io/getstream/chat/android/ui/common/state/pinned/PinnedMessageListState {
 	public static final field $stable I
+	public fun <init> ()V
 	public fun <init> (ZLjava/util/List;ZLjava/util/Date;)V
+	public synthetic fun <init> (ZLjava/util/List;ZLjava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Z

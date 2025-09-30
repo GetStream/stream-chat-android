@@ -56,6 +56,14 @@ public interface ChannelRepository {
     public suspend fun deleteChannelMessage(message: Message)
 
     /**
+     * Deletes all messages from a given user in a given channel.
+     *
+     * @param cid The channel ID to filter messages. If null, deletes messages from all channels.
+     * @param userId The user ID to filter messages.
+     */
+    public suspend fun deleteAllChannelUserMessages(cid: String?, userId: String)
+
+    /**
      * Updates a [Message] from a [Channel.messages].
      *
      * @param message [Message] to update.

@@ -1384,6 +1384,8 @@ constructor(
                 connectionId,
                 with(dtoMapping) {
                     io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                        filter = query.filter?.toMap(),
+                        sort = query.sort.toDto(),
                         watch = query.watch,
                         limit = query.limit,
                         member_limit = query.memberLimit,
@@ -1391,8 +1393,6 @@ constructor(
                         participant_limit = query.participantLimit,
                         prev = query.prev,
                         reply_limit = query.replyLimit,
-                        user = query.user?.toDto(),
-                        user_id = query.userId,
                     )
                 },
             ).mapDomain { response ->

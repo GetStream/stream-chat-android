@@ -29,7 +29,7 @@ import kotlinx.parcelize.Parcelize
  * @param resultType The action that will be executed on the message list screen.
  */
 @Parcelize
-public class MediaGalleryPreviewResult(
+public data class MediaGalleryPreviewResult(
     public val messageId: String,
     public val parentMessageId: String?,
     public val resultType: MediaGalleryPreviewResultType,

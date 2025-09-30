@@ -40,4 +40,11 @@ public sealed class ConnectionState {
      */
     @Immutable
     public data object Offline : ConnectionState() { override fun toString(): String = "Offline" }
+
+    public companion object {
+        /**
+         * A list of all possible [ConnectionState]s.
+         */
+        public val values: List<ConnectionState> = listOf(Connected, Connecting, Offline)
+    }
 }

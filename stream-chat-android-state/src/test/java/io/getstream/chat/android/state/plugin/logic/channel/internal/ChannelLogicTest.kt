@@ -18,7 +18,10 @@ package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.client.test.randomUserMessagesDeletedEvent
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -105,5 +108,22 @@ internal class ChannelLogicTest {
         // Then
         verify(channelStateLogic).deleteMember(member)
         verify(channelStateLogic, never()).removeMembership()
+    }
+
+    @Test
+    fun `When handling UserMessagesDeletedEvent, Then operation is handled by ChannelStateLogic`() {
+        // Given
+        val user = randomUser(id = "userId")
+        val createdAt = randomDate()
+        val hardDelete = randomBoolean()
+        val event = randomUserMessagesDeletedEvent(
+            user = user,
+            createdAt = createdAt,
+            hardDelete = hardDelete,
+        )
+        // When
+        sut.handleEvent(event)
+        // Then
+        verify(channelStateLogic).deleteMessagesFromUser(user.id, hardDelete, createdAt)
     }
 }

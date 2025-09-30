@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.state.plugin.state.querythreads.internal
 
+import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,8 +27,14 @@ import kotlinx.coroutines.flow.update
 
 /**
  * Mutable state holder of [QueryThreadsState] type.
+ *
+ * @property filter The filter associated with the query threads state.
+ * @property sort The sort object associated with the query threads state.
  */
-internal class QueryThreadsMutableState : QueryThreadsState {
+internal class QueryThreadsMutableState(
+    override val filter: FilterObject?,
+    override val sort: QuerySorter<Thread>,
+) : QueryThreadsState {
 
     private val _threadMap: LinkedHashMap<String, Thread> = linkedMapOf()
 

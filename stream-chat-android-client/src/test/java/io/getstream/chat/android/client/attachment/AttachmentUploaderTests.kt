@@ -43,11 +43,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.same
 import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
+import org.robolectric.annotation.Config
 import java.io.File
 import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
+@Config(sdk = [33])
 internal class AttachmentUploaderTests {
     private val channelType: String = randomString()
     private val channelId: String = randomString()

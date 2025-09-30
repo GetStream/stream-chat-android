@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.state.querythreads.internal
 
 import app.cash.turbine.test
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadParticipant
@@ -83,10 +84,14 @@ internal class QueryThreadsMutableStateTest {
         ),
     )
 
+    private val mutableState = QueryThreadsMutableState(
+        filter = null,
+        sort = QueryThreadsRequest.DefaultSort,
+    )
+
     @Test
     fun `Given QueryThreadsMutableState When calling setLoading Should update loading`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.loading.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` false
@@ -103,7 +108,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling setLoadingMore Should update loadingMore`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.loadingMore.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` false
@@ -120,7 +124,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling setThreads Should update threads`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptyList()
@@ -135,44 +138,43 @@ internal class QueryThreadsMutableStateTest {
     }
 
     @Test
-    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with new threads Should update threads`() = runTest {
-        // given
-        val mutableState = QueryThreadsMutableState()
-        mutableState.threads.test {
-            val initialValue = awaitItem()
-            initialValue `should be equal to` emptyList()
+    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with new threads Should update threads`() =
+        runTest {
+            // given
+            mutableState.threads.test {
+                val initialValue = awaitItem()
+                initialValue `should be equal to` emptyList()
 
-            // when
-            mutableState.insertThreadsIfAbsent(threadList1)
-            val updatedValue = awaitItem()
-            updatedValue `should be equal to` threadList1
+                // when
+                mutableState.insertThreadsIfAbsent(threadList1)
+                val updatedValue = awaitItem()
+                updatedValue `should be equal to` threadList1
 
-            cancelAndIgnoreRemainingEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
-    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with existing threads Should do nothing`() = runTest {
-        // given
-        val mutableState = QueryThreadsMutableState()
-        mutableState.threads.test {
-            val initialValue = awaitItem()
-            initialValue `should be equal to` emptyList()
+    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with existing threads Should do nothing`() =
+        runTest {
+            // given
+            mutableState.threads.test {
+                val initialValue = awaitItem()
+                initialValue `should be equal to` emptyList()
 
-            mutableState.setThreads(threadList1)
-            val updatedValue = awaitItem()
-            updatedValue `should be equal to` threadList1
+                mutableState.setThreads(threadList1)
+                val updatedValue = awaitItem()
+                updatedValue `should be equal to` threadList1
 
-            // when
-            mutableState.insertThreadsIfAbsent(threadList1)
-            expectNoEvents() // Verify state is not updated
+                // when
+                mutableState.insertThreadsIfAbsent(threadList1)
+                expectNoEvents() // Verify state is not updated
+            }
         }
-    }
 
     @Test
     fun `Given QueryThreadsMutableState When calling upsertThreads with new threads Should insert threads`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptyList()
@@ -191,31 +193,30 @@ internal class QueryThreadsMutableStateTest {
     }
 
     @Test
-    fun `Given QueryThreadsMutableState When calling upsertThreads with existing threads Should update threads`() = runTest {
-        // given
-        val mutableState = QueryThreadsMutableState()
-        mutableState.threads.test {
-            val initialValue = awaitItem()
-            initialValue `should be equal to` emptyList()
+    fun `Given QueryThreadsMutableState When calling upsertThreads with existing threads Should update threads`() =
+        runTest {
+            // given
+            mutableState.threads.test {
+                val initialValue = awaitItem()
+                initialValue `should be equal to` emptyList()
 
-            // when
-            mutableState.upsertThreads(threadList1)
-            val updatedValue1 = awaitItem()
-            updatedValue1 `should be equal to` threadList1
+                // when
+                mutableState.upsertThreads(threadList1)
+                val updatedValue1 = awaitItem()
+                updatedValue1 `should be equal to` threadList1
 
-            val newThreads = listOf(threadList1[0].copy(title = "New thread title"))
-            mutableState.upsertThreads(newThreads)
-            val updatedValue2 = awaitItem()
-            updatedValue2 `should be equal to` newThreads
+                val newThreads = listOf(threadList1[0].copy(title = "New thread title"))
+                mutableState.upsertThreads(newThreads)
+                val updatedValue2 = awaitItem()
+                updatedValue2 `should be equal to` newThreads
 
-            cancelAndIgnoreRemainingEvents()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
-    }
 
     @Test
     fun `Given QueryThreadsMutableState When calling clearThreads Should update threads`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptyList()
@@ -236,7 +237,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling deleteThread Should update threads`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptyList()
@@ -257,7 +257,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling deleteMessageFromThread Should update threads`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptyList()
@@ -280,7 +279,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling setNext Should update next`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.next.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` null
@@ -297,7 +295,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling addUnseenThreadId Should update unseenThreadIds`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.unseenThreadIds.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptySet()
@@ -317,7 +314,6 @@ internal class QueryThreadsMutableStateTest {
     @Test
     fun `Given QueryThreadsMutableState When calling clearUnseenThreadIds Should update unseenThreadIds`() = runTest {
         // given
-        val mutableState = QueryThreadsMutableState()
         mutableState.unseenThreadIds.test {
             val initialValue = awaitItem()
             initialValue `should be equal to` emptySet()

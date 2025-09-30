@@ -97,6 +97,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -576,6 +577,7 @@ class ChatsActivity : ComponentActivity() {
         val viewModelFactory = ChannelAttachmentsViewModelFactory(
             cid = cid,
             attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
+            localFilter = { !it.imagePreviewUrl.isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
         )
         val viewModel = viewModel<ChannelAttachmentsViewModel>(
             factory = viewModelFactory,
@@ -588,6 +590,13 @@ class ChatsActivity : ComponentActivity() {
                 Toast.makeText(
                     applicationContext,
                     stream_ui_message_list_video_display_error,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            },
+            onSharingError = {
+                Toast.makeText(
+                    applicationContext,
+                    R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
                     Toast.LENGTH_SHORT,
                 ).show()
             },

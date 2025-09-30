@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
@@ -139,6 +140,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -739,6 +741,16 @@ internal object EventMappingTestArguments {
         message_id = MESSAGE.id,
         user_id = USER.id,
         reminder = REMINDER,
+    )
+
+    private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
+        type = EventType.USER_MESSAGES_DELETED,
+        created_at = EXACT_DATE,
+        user = USER,
+        cid = CID,
+        channel_type = CHANNEL_TYPE,
+        channel_id = CHANNEL_ID,
+        hard_delete = HARD_DELETE,
     )
 
     private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
@@ -1447,6 +1459,17 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
     )
 
+    private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
+        type = userMessagesDeletedEventDto.type,
+        createdAt = userMessagesDeletedEventDto.created_at.date,
+        rawCreatedAt = userMessagesDeletedEventDto.created_at.rawDate,
+        user = with(domainMapping) { userMessagesDeletedEventDto.user.toDomain() },
+        cid = userMessagesDeletedEventDto.cid,
+        channelType = userMessagesDeletedEventDto.channel_type,
+        channelId = userMessagesDeletedEventDto.channel_id,
+        hardDelete = userMessagesDeletedEventDto.hard_delete == true,
+    )
+
     // END: Domain models
 
     /**
@@ -1519,5 +1542,6 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
+        Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
     )
 }

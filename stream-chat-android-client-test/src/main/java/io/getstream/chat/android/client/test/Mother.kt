@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -681,6 +682,25 @@ public fun randomChannelUserBannedEvent(
         channelId = id,
         expiration = banExpires,
         shadow = shadow,
+    )
+}
+
+public fun randomUserMessagesDeletedEvent(
+    createdAt: Date = randomDate(),
+    user: User = randomUser(),
+    cid: String? = randomCID(),
+    hardDelete: Boolean = randomBoolean(),
+): UserMessagesDeletedEvent {
+    val (type, id) = cid?.cidToTypeAndId() ?: (null to null)
+    return UserMessagesDeletedEvent(
+        type = EventType.USER_MESSAGES_DELETED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        user = user,
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        hardDelete = hardDelete,
     )
 }
 

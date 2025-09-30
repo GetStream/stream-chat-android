@@ -56,6 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -99,11 +100,14 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalStateFlow
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ChannelsActivity : ComponentActivity() {
 
     private val channelsViewModelFactory by lazy {
@@ -126,7 +130,10 @@ class ChannelsActivity : ComponentActivity() {
 
     private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
     private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
-    private val threadsViewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
+    private val threadsViewModel: ThreadListViewModel by viewModels {
+        val query = QueryThreadsRequest()
+        ThreadsViewModelFactory(query)
+    }
 
     @Suppress("LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -437,6 +444,7 @@ class ChannelsActivity : ComponentActivity() {
         startActivity(UserLoginActivity.createIntent(this))
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun signOut() {
         GlobalScope.launch {
             openUserLogin()

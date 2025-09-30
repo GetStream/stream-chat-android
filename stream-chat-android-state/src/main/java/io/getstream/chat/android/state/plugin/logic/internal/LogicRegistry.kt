@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -25,6 +26,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
@@ -51,7 +53,7 @@ import java.util.concurrent.ConcurrentHashMap
  * 3. Query threads
  * 4. Query thread
  */
-@Suppress("LongParameterList")
+@Suppress("LongParameterList", "TooManyFunctions")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
     private val clientState: ClientState,
@@ -66,18 +68,8 @@ internal class LogicRegistry internal constructor(
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
-
-    // Note: At the moment, there is no need for multiple instances of QueryThreadsLogic, as we always load all threads,
-    // without the option for filtering. Update this is we decide to support different queries.
-    private val queryThreads: QueryThreadsLogic = QueryThreadsLogic(
-        stateLogic = QueryThreadsStateLogic(
-            mutableState = stateRegistry.mutableQueryThreads(),
-            mutableGlobalState = mutableGlobalState,
-        ),
-        databaseLogic = QueryThreadsDatabaseLogic(
-            repository = repos,
-        ),
-    )
+    private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>?>, QueryThreadsLogic> =
+        ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
     internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
@@ -214,10 +206,34 @@ internal class LogicRegistry internal constructor(
         return channel(channelType, channelId).stateLogic()
     }
 
+    /** Returns [QueryThreadsLogic] for the given [QueryThreadsRequest]. */
+    fun threads(query: QueryThreadsRequest) = threads(query.filter, query.sort)
+
     /**
      * Provides the [QueryThreadsLogic] handling the business logic and state management related to thread queries.
+     * Provides a separate instance for each unique combination of [filter] and [sort].
+     *
+     * @param filter Optional [FilterObject] to filter the threads.
+     * @param sort Optional [QuerySorter] to sort the threads.
      */
-    fun threads(): QueryThreadsLogic = queryThreads
+    fun threads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsLogic {
+        return queryThreads.getOrPut(filter to sort) {
+            QueryThreadsLogic(
+                stateLogic = QueryThreadsStateLogic(
+                    mutableState = stateRegistry.mutableQueryThreads(filter, sort),
+                    mutableGlobalState = mutableGlobalState,
+                ),
+                databaseLogic = QueryThreadsDatabaseLogic(
+                    repository = repos,
+                ),
+            )
+        }
+    }
+
+    /**
+     * Returns the list of all [QueryThreadsLogic] instances that were created so far.
+     */
+    fun getActiveQueryThreadsLogic(): List<QueryThreadsLogic> = queryThreads.values.toList()
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {

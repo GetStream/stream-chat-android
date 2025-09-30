@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
@@ -1126,4 +1127,23 @@ public fun randomUnreadChannelByType(
     channelType = channelType,
     channelsCount = channelsCount,
     messagesCount = messagesCount,
+)
+
+public fun randomConnectionState(): ConnectionState =
+    ConnectionState.values.random()
+
+public fun randomAttachmentType(): String =
+    attachmentTypes().random()
+
+public fun attachmentTypes(): List<String> = listOf(
+    AttachmentType.IMAGE,
+    AttachmentType.IMGUR,
+    AttachmentType.GIPHY,
+    AttachmentType.VIDEO,
+    AttachmentType.AUDIO,
+    AttachmentType.PRODUCT,
+    AttachmentType.FILE,
+    AttachmentType.LINK,
+    AttachmentType.AUDIO_RECORDING,
+    AttachmentType.UNKNOWN,
 )

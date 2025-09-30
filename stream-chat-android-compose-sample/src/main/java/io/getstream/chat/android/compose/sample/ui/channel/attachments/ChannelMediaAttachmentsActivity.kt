@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsVie
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.flow.collectLatest
 
 class ChannelMediaAttachmentsActivity : ComponentActivity() {
@@ -49,6 +50,7 @@ class ChannelMediaAttachmentsActivity : ComponentActivity() {
         ChannelAttachmentsViewModelFactory(
             cid = requireNotNull(intent.getStringExtra(KEY_CID)),
             attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
+            localFilter = { !it.imagePreviewUrl.isNullOrEmpty() && it.titleLink.isNullOrEmpty() },
         )
     }
 
@@ -65,6 +67,13 @@ class ChannelMediaAttachmentsActivity : ComponentActivity() {
                         Toast.makeText(
                             applicationContext,
                             stream_ui_message_list_video_display_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    },
+                    onSharingError = {
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.stream_compose_media_gallery_preview_could_not_share_attachment,
                             Toast.LENGTH_SHORT,
                         ).show()
                     },

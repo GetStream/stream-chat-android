@@ -39,11 +39,12 @@ internal class SendMessageListenerStateTest {
 
     private val channelLogic: ChannelLogic = mock()
     private val threadsLogic: QueryThreadsLogic = mock()
+    private val activeThreadsLogic = listOf(threadsLogic)
     private val threadLogic: ThreadLogic = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.threadFromMessage(any())) doReturn threadLogic
-        on(it.threads()) doReturn threadsLogic
+        on(it.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         on(it.getMessageById(any())) doReturn null
     }
 

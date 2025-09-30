@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.extensions
 
 import android.net.Uri
 import androidx.core.net.toUri
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE
 import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT
 import io.getstream.chat.android.client.streamcdn.StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH
@@ -29,9 +30,10 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [33])
 internal class StringExtensionsKtTest {
 
     @Test

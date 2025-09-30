@@ -4027,6 +4027,7 @@ internal constructor(
 
     /**
      * Query threads matching [query] request.
+     * To obtain the full response including the pagination cursors, use [queryThreadsResult] instead.
      *
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */

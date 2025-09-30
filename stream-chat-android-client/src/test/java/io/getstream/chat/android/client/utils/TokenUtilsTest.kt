@@ -24,7 +24,7 @@ import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
-@Config(manifest = Config.NONE)
+@Config(sdk = [33])
 internal class TokenUtilsTest(
     private val token: String,
     private val expectedUserId: String,

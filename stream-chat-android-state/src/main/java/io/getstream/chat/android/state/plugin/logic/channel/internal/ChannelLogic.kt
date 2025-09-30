@@ -80,6 +80,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -696,7 +697,11 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
-
+            is UserMessagesDeletedEvent -> channelStateLogic.deleteMessagesFromUser(
+                userId = event.user.id,
+                hard = event.hardDelete,
+                deletedAt = event.createdAt,
+            )
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,

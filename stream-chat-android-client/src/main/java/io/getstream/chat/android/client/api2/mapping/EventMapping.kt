@@ -76,6 +76,7 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
@@ -141,6 +142,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -225,6 +227,7 @@ internal class EventMapping(
             is ReminderUpdatedEventDto -> toDomain()
             is ReminderDeletedEventDto -> toDomain()
             is NotificationReminderDueEventDto -> toDomain()
+            is UserMessagesDeletedEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
             is AIIndicatorStopEventDto -> toDomain()
@@ -1141,6 +1144,19 @@ internal class EventMapping(
             messageId = message_id,
             userId = user_id,
             reminder = reminder.toDomain(),
+        )
+    }
+
+    private fun UserMessagesDeletedEventDto.toDomain(): UserMessagesDeletedEvent = with(domainMapping) {
+        return UserMessagesDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            hardDelete = hard_delete == true,
         )
     }
 

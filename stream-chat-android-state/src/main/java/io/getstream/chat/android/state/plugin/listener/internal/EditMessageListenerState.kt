@@ -46,7 +46,7 @@ internal class EditMessageListenerState(
         val messageToEdit = message.updateMessageOnlineState(isOnline)
 
         logic.channelFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
-        logic.threads().upsertMessage(messageToEdit)
+        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(messageToEdit) }
         logic.threadFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
     }
 
@@ -63,7 +63,7 @@ internal class EditMessageListenerState(
         }
 
         logic.channelFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
-        logic.threads().upsertMessage(parsedMessage)
+        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(parsedMessage) }
         logic.threadFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
     }
 }

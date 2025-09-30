@@ -40,7 +40,9 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
@@ -91,14 +93,14 @@ import kotlin.coroutines.cancellation.CancellationException
 @Suppress("TooManyFunctions")
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
-    initialSort: QuerySorter<Channel>,
-    initialFilters: FilterObject?,
+    initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+    initialFilters: FilterObject? = null,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
-    private val isDraftMessageEnabled: Boolean,
+    private val isDraftMessageEnabled: Boolean = false,
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
 

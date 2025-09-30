@@ -1,5 +1,4 @@
 import io.getstream.chat.android.Configuration
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -23,29 +22,11 @@ android {
     namespace = "io.getstream.chat.android.ui.common"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-proguard-rules.pro")
     }
 
     resourcePrefix = "stream_"
-
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            unitTests.isReturnDefaultValues = true
-            // // Show the result of every unit test, even if it passes.
-            all {
-                it.testLogging {
-                    events = setOf(
-                        TestLogEvent.PASSED,
-                        TestLogEvent.SKIPPED,
-                        TestLogEvent.FAILED,
-                        TestLogEvent.STANDARD_OUT,
-                        TestLogEvent.STANDARD_ERROR,
-                    )
-                }
-            }
-        }
-    }
 
     sourceSets {
         all {
@@ -108,12 +89,14 @@ dependencies {
 
     testImplementation(libs.threetenbp)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.androidx.test.junit)
     testImplementation(libs.test.parameter.injector)
     testImplementation(libs.kluent)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
 
     detektPlugins(libs.detekt.formatting)
 

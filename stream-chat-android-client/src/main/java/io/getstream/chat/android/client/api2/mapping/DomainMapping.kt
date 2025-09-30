@@ -723,6 +723,7 @@ internal class DomainMapping(
                 )
             },
             draft = draft?.toDomain(channel?.toChannelInfo()),
+            extraData = extraData,
         )
 
     /**
@@ -743,6 +744,7 @@ internal class DomainMapping(
             replyCount = reply_count ?: 0,
             title = title,
             updatedAt = updated_at,
+            extraData = extraData,
         )
 
     /**

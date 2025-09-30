@@ -52,10 +52,11 @@ internal class DeleteReactionListenerStateTest {
     private val threadsLogic = mock<QueryThreadsLogic> {
         on(it.getMessage(any())) doReturn defaultMessage
     }
+    private val activeThreadsLogic = listOf(threadsLogic)
     private val logicRegistry = mock<LogicRegistry> {
         on(it.channelFromMessageId(any())) doReturn channelLogic
         on(it.channel(any(), any())) doReturn channelLogic
-        on(it.threads()) doReturn threadsLogic
+        on(it.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
     }
 
     private val deleteReactionListenerDatabase = DeleteReactionListenerState(logicRegistry, clientState)

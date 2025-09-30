@@ -40,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -48,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -57,8 +59,11 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import coil3.ColorImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.request.ImageRequest
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -70,6 +75,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
@@ -118,7 +124,7 @@ public fun MediaAttachmentContent(
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
     onItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
@@ -700,7 +706,7 @@ private const val EqualDimensionsRatio = 1f
  */
 @Suppress("LongParameterList")
 internal fun onMediaAttachmentContentItemClick(
-    mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+    mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
     message: Message,
     attachmentPosition: Int,
     videoThumbnailsEnabled: Boolean,
@@ -710,7 +716,7 @@ internal fun onMediaAttachmentContentItemClick(
     skipEnrichUrl: Boolean,
 ) {
     mediaGalleryPreviewLauncher.launch(
-        MediaGalleryPreviewContract.Input(
+        Input(
             message = message,
             initialPosition = attachmentPosition,
             videoThumbnailsEnabled = videoThumbnailsEnabled,
@@ -720,4 +726,74 @@ internal fun onMediaAttachmentContentItemClick(
             skipEnrichUrl = skipEnrichUrl,
         ),
     )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun SingleMediaAttachmentContentPreview() {
+    ChatTheme {
+        SingleMediaAttachmentContent()
+    }
+}
+
+@Composable
+internal fun SingleMediaAttachmentContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Yellow.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        MediaAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(
+                    attachments = listOf(
+                        Attachment(
+                            type = AttachmentType.IMAGE,
+                            imageUrl = "https://placekitten.com/200/300",
+                        ),
+                    ),
+                ),
+            ),
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun MultipleMediaAttachmentContentPreview() {
+    ChatTheme {
+        MultipleMediaAttachmentContent()
+    }
+}
+
+@Composable
+internal fun MultipleMediaAttachmentContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Blue.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        MediaAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(
+                    attachments = listOf(
+                        Attachment(
+                            type = AttachmentType.VIDEO,
+                            thumbUrl = "https://placekitten.com/100/100",
+                        ),
+                        Attachment(
+                            type = AttachmentType.IMAGE,
+                            imageUrl = "https://placekitten.com/200/200",
+                        ),
+                        Attachment(
+                            type = AttachmentType.VIDEO,
+                            thumbUrl = "https://placekitten.com/300/300",
+                        ),
+                        Attachment(
+                            type = AttachmentType.IMAGE,
+                            imageUrl = "https://placekitten.com/400/400",
+                        ),
+                    ),
+                ),
+            ),
+        )
+    }
 }

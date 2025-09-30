@@ -30,9 +30,11 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be equal to`
 import org.junit.Rule
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -65,15 +67,15 @@ internal class PinnedMessageListControllerTest {
         val errorState = controller.state.value
         // then
         // verify loading state
-        loadingState.canLoadMore `should be equal to` true
-        loadingState.isLoading `should be equal to` true
-        loadingState.results `should be equal to` emptyList()
+        assertTrue(loadingState.canLoadMore)
+        assertTrue(loadingState.isLoading)
+        assertTrue(loadingState.results.isEmpty())
         // verify error state
-        errorState.canLoadMore `should be equal to` true
-        errorState.isLoading `should be equal to` false
-        errorState.results `should be equal to` emptyList()
+        assertTrue(errorState.canLoadMore)
+        assertFalse(errorState.isLoading)
+        assertTrue(errorState.results.isEmpty())
         // verify error emission
-        errorEmissions.size `should be equal to` 1
+        assertEquals(1, errorEmissions.size)
     }
 
     @Test
@@ -89,13 +91,13 @@ internal class PinnedMessageListControllerTest {
         val loadedState = controller.state.value
         // then
         // verify loading state
-        loadingState.canLoadMore `should be equal to` true
-        loadingState.isLoading `should be equal to` true
-        loadingState.results `should be equal to` emptyList()
+        assertTrue(loadingState.canLoadMore)
+        assertTrue(loadingState.isLoading)
+        assertTrue(loadingState.results.isEmpty())
         // verify loaded state
-        loadedState.canLoadMore `should be equal to` false
-        loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` expectedResult
+        assertFalse(loadedState.canLoadMore)
+        assertFalse(loadedState.isLoading)
+        assertEquals(expectedResult, loadedState.results)
     }
 
     @Test
@@ -111,13 +113,13 @@ internal class PinnedMessageListControllerTest {
         val loadedState = controller.state.value
         // then
         // verify loading state
-        loadingState.canLoadMore `should be equal to` true
-        loadingState.isLoading `should be equal to` true
-        loadingState.results `should be equal to` emptyList()
+        assertTrue(loadingState.canLoadMore)
+        assertTrue(loadingState.isLoading)
+        assertTrue(loadingState.results.isEmpty())
         // verify loaded state
-        loadedState.canLoadMore `should be equal to` true
-        loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` expectedResult
+        assertTrue(loadedState.canLoadMore)
+        assertFalse(loadedState.isLoading)
+        assertEquals(expectedResult, loadedState.results)
     }
 
     @Test
@@ -134,9 +136,9 @@ internal class PinnedMessageListControllerTest {
         val loadedState = controller.state.value
         // then
         // verify loaded state
-        loadedState.canLoadMore `should be equal to` false
-        loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` expectedResult
+        assertFalse(loadedState.canLoadMore)
+        assertFalse(loadedState.isLoading)
+        assertEquals(expectedResult, loadedState.results)
         // verify channelClient.getPinnedMessages was called only twice
         verify(channelClient, times(1)).getPinnedMessages(any(), any(), any())
     }
@@ -154,9 +156,9 @@ internal class PinnedMessageListControllerTest {
         val loadedState = controller.state.value
         // then
         // verify loaded state
-        loadedState.canLoadMore `should be equal to` true
-        loadedState.isLoading `should be equal to` false
-        loadedState.results.size `should be equal to` pinnedMessages.size * 2
+        assertTrue(loadedState.canLoadMore)
+        assertFalse(loadedState.isLoading)
+        assertEquals(pinnedMessages.size * 2, loadedState.results.size)
         // verify channelClient.getPinnedMessages was called twice
         verify(channelClient, times(2)).getPinnedMessages(any(), any(), any())
     }
@@ -175,9 +177,9 @@ internal class PinnedMessageListControllerTest {
         controller.loadMore()
         val state = controller.state.value
         // then
-        state.canLoadMore `should be equal to` true
-        state.isLoading `should be equal to` true
-        state.results `should be equal to` emptyList()
+        assertTrue(state.canLoadMore)
+        assertTrue(state.isLoading)
+        assertTrue(state.results.isEmpty())
         // verify channelClient.getPinnedMessages wasn't called
         verify(channelClient, times(0)).getPinnedMessages(any(), any(), any())
     }

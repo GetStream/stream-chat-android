@@ -92,6 +92,40 @@
 
 ### ❌ Removed
 
+# September 26th, 2025 - 6.24.0
+## Common changes for all artifacts
+### ✅ Added
+- Add support for `user.messages.deleted` event. [#5895](https://github.com/GetStream/stream-chat-android/pull/5895)
+
+## stream-chat-android-client
+### ✅ Added
+- Add filtering and sorting options for `QueryThreads`. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix the inconsistency in the channel attachments items between XML and Compose SDKs. [#5939](https://github.com/GetStream/stream-chat-android/pull/5939)
+
+### ✅ Added
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
+
+### ⚠️ Changed
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix the inconsistency in the channel attachments items between XML and Compose SDKs. [#5939](https://github.com/GetStream/stream-chat-android/pull/5939) 
+
+### ⬆️ Improved
+- Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
+
+### ✅ Added
+- Introduce share action to the `ChannelMediaAttachmentsPreviewScreen`. [#5927](https://github.com/GetStream/stream-chat-android/pull/5927)
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
+
+### ⚠️ Changed
+- Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
+
 # September 12th, 2025 - 6.23.0
 ## Common changes for all artifacts
 ### ✅ Added

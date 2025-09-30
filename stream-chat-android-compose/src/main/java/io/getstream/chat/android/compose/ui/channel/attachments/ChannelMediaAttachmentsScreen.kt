@@ -51,6 +51,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.result.Error
 
 /**
  * Displays the channel media attachments screen.
@@ -68,6 +69,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param headerKeySelector The function to select the group key for each media item and group them in the grid.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  * @param onVideoPlaybackError The callback to be invoked when there is an error during video playback.
+ * @param onSharingError The callback to be invoked when there is an error during attachment sharing.
  */
 @Composable
 public fun ChannelMediaAttachmentsScreen(
@@ -78,6 +80,7 @@ public fun ChannelMediaAttachmentsScreen(
         ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onVideoPlaybackError: (error: Throwable) -> Unit = {},
+    onSharingError: (error: Error) -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -90,6 +93,7 @@ public fun ChannelMediaAttachmentsScreen(
         onNavigationIconClick = onNavigationIconClick,
         onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
         onVideoPlaybackError = onVideoPlaybackError,
+        onSharingError = onSharingError,
     )
 }
 
@@ -103,6 +107,7 @@ private fun ChannelMediaAttachmentsContent(
     onNavigationIconClick: () -> Unit = {},
     onLoadMoreRequested: () -> Unit = {},
     onVideoPlaybackError: (error: Throwable) -> Unit = {},
+    onSharingError: (error: Error) -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
     Scaffold(
@@ -125,6 +130,7 @@ private fun ChannelMediaAttachmentsContent(
             gridColumnCount = gridColumnCount,
             onLoadMoreRequested = onLoadMoreRequested,
             onVideoPlaybackError = onVideoPlaybackError,
+            onSharingError = onSharingError,
         )
     }
 }

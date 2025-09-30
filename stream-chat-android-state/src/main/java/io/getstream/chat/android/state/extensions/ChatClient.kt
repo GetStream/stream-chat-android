@@ -402,7 +402,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                 try {
                     require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
                     logic.channelFromMessage(message)?.deleteMessage(message)
-                    logic.threads().deleteMessage(message)
+                    logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
                     logic.threadFromMessage(message)?.removeLocalMessage(message)
                     repositoryFacade.deleteChannelMessage(message)
 

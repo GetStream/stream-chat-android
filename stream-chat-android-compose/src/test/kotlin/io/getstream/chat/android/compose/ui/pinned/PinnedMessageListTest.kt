@@ -26,7 +26,6 @@ import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
 import org.junit.Rule
 import org.junit.Test
-import java.util.Date
 
 internal class PinnedMessageListTest : SnapshotTest {
 
@@ -37,12 +36,7 @@ internal class PinnedMessageListTest : SnapshotTest {
     fun `loading pinned messages`() {
         snapshotWithDarkMode {
             PinnedMessageList(
-                state = PinnedMessageListState(
-                    canLoadMore = false,
-                    results = emptyList(),
-                    isLoading = true,
-                    nextDate = Date(),
-                ),
+                state = PinnedMessageListState(),
                 modifier = Modifier.fillMaxSize(),
                 onPinnedMessageClick = { },
                 onLoadMore = { },
@@ -54,12 +48,7 @@ internal class PinnedMessageListTest : SnapshotTest {
     fun `empty pinned messages`() {
         snapshotWithDarkMode {
             PinnedMessageList(
-                state = PinnedMessageListState(
-                    canLoadMore = false,
-                    results = emptyList(),
-                    isLoading = false,
-                    nextDate = Date(),
-                ),
+                state = PinnedMessageListState(isLoading = false),
                 modifier = Modifier.fillMaxSize(),
                 onPinnedMessageClick = { },
                 onLoadMore = { },
@@ -72,12 +61,10 @@ internal class PinnedMessageListTest : SnapshotTest {
         snapshotWithDarkMode {
             PinnedMessageList(
                 state = PinnedMessageListState(
-                    canLoadMore = false,
                     results = PreviewPinnedMessageData
                         .pinnedMessageList
                         .map { MessageResult(it, null) },
                     isLoading = false,
-                    nextDate = Date(),
                 ),
                 modifier = Modifier.fillMaxSize(),
                 onPinnedMessageClick = { },
@@ -91,12 +78,9 @@ internal class PinnedMessageListTest : SnapshotTest {
         snapshotWithDarkMode {
             PinnedMessageList(
                 state = PinnedMessageListState(
-                    canLoadMore = false,
                     results = PreviewPinnedMessageData
                         .pinnedMessageListWithLoadingMore
                         .map { MessageResult(it, null) },
-                    isLoading = true,
-                    nextDate = Date(),
                 ),
                 modifier = Modifier.fillMaxSize(),
                 onPinnedMessageClick = { },

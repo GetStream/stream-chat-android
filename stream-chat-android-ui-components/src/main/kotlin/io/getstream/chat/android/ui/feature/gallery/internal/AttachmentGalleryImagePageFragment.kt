@@ -22,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentGalleryImageBinding
 import io.getstream.chat.android.ui.utils.load
 
@@ -74,7 +75,7 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
         fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
             return AttachmentGalleryImagePageFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_IMAGE_URL, attachment.imageUrl)
+                    putString(ARG_IMAGE_URL, attachment.imagePreviewUrl)
                 }
                 this.imageClickListener = imageClickListener
             }

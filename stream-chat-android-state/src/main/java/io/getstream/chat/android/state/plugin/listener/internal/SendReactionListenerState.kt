@@ -93,10 +93,11 @@ internal class SendReactionListenerState(
             )
         }
 
-        val threadsLogic = logic.threads()
-        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
-            ?.updateReactionSyncStatus(originReaction = reaction, result = result)
-        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
+        logic.getActiveQueryThreadsLogic().forEach { logic ->
+            val cachedThreadsMessage = logic.getMessage(reaction.messageId)
+                ?.updateReactionSyncStatus(originReaction = reaction, result = result)
+            cachedThreadsMessage?.let(logic::upsertMessage)
+        }
 
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         threadLogic?.getMessage(reaction.messageId)?.let { message ->
@@ -187,10 +188,11 @@ internal class SendReactionListenerState(
             ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
         cachedChannelMessage?.let(channelLogic::upsertMessage)
 
-        val threadsLogic = logic.threads()
-        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
-            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
+        logic.getActiveQueryThreadsLogic().forEach { logic ->
+            val cachedMessage = logic.getMessage(reaction.messageId)
+                ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+            cachedMessage?.let(logic::upsertMessage)
+        }
 
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)

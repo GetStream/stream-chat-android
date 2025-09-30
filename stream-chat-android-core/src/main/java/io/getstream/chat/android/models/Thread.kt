@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
@@ -61,11 +62,27 @@ public data class Thread(
     val latestReplies: List<Message>,
     val read: List<ChannelUserRead>,
     val draft: DraftMessage?,
-) {
+    override val extraData: Map<String, Any> = emptyMap(),
+) : CustomObject, ComparableFieldProvider {
 
     /**
      * The number of replies in the thread (replies to the parent message).
      */
     val replyCount: Int
         get() = parentMessage.replyCount
+
+    /**
+     * For more info, see
+     * [Filtering and Sorting Threads](https://getstream.io/chat/docs/android/threads/#filtering-and-sorting-threads).
+     */
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "active_participant_count", "activeParticipantCount" -> activeParticipantCount
+        "created_at", "createdAt" -> createdAt
+        "last_message_at", "lastMessageAt" -> lastMessageAt
+        "parent_message_id", "parentMessageId" -> parentMessageId
+        "participant_count", "participantCount" -> participantCount
+        "reply_count", "replyCount" -> replyCount
+        "updated_at", "updatedAt" -> updatedAt
+        else -> extraData[fieldName] as? Comparable<*>
+    }
 }
