@@ -73,6 +73,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
 
 ### ❌ Removed
 
