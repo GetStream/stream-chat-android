@@ -43,7 +43,7 @@ package io.getstream.chat.android.ui.common.helper
  * See [Overview](https://getstream.io/chat/docs/android/push_introduction/) and
  * [Legacy Push System](https://getstream.io/chat/docs/android/legacy_push_system/).
  */
-public interface ReactionPushEmojiFactory {
+public fun interface ReactionPushEmojiFactory {
 
     /**
      * Creates an emoji code for the given reaction [type].
