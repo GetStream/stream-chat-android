@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.PayloadValidatorTest.Companion.isFromStreamServerArguments
+import io.getstream.chat.android.client.PayloadValidatorTest.Companion.isValidNewMessageArguments
+import io.getstream.chat.android.client.PayloadValidatorTest.Companion.isValidPayloadArguments
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLong
 import io.getstream.chat.android.randomString
@@ -356,16 +359,352 @@ internal class PayloadValidatorTest {
 
         @JvmStatic
         fun isValidPayloadArguments() =
-            isValidNewMessageV2Arguments() +
-                Arguments.of(
-                    mapOf(
-                        "version" to "v2",
-                        "type" to "notification.reminder_due",
-                        "channel_id" to randomString(),
-                        "message_id" to randomString(),
-                        "channel_type" to randomString(),
-                    ),
-                    true,
-                )
+            isValidPayloadV1Arguments() +
+                isValidPayloadV2Arguments() +
+                isValidPayloadUnknownVersionArguments()
+
+        @Suppress("LongMethod")
+        private fun isValidPayloadV1Arguments() = listOf(
+            // V1 only supports message.new, so these should match isValidNewMessageV1Arguments
+            Arguments.of(emptyMap<String, Any?>(), false),
+            Arguments.of(mapOf("version" to "v1"), false),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to null,
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to null,
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to null,
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to "",
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to "",
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to "",
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
+            ),
+        )
+
+        @Suppress("LongMethod")
+        private fun isValidPayloadV2Arguments() = listOf(
+            // Empty payload
+            Arguments.of(emptyMap<String, Any?>(), false),
+
+            // Missing type
+            Arguments.of(mapOf("version" to "v2"), false),
+
+            // Invalid type (not in supportedNotificationTypes)
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "invalid.type",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Type is null
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to null,
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Type is not a string
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to randomInt(),
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Valid message.new
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
+            ),
+
+            // Valid message.updated
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.updated",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
+            ),
+
+            // Valid reaction.new
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "reaction.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
+            ),
+
+            // Valid notification.reminder_due
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "notification.reminder_due",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
+            ),
+
+            // Missing message_id
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Null message_id
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to null,
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Empty message_id
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to "",
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Missing both channel_id+channel_type and cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "message_id" to randomString(),
+                ),
+                false,
+            ),
+
+            // Missing channel_id but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Missing channel_type but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                ),
+                false,
+            ),
+
+            // Null channel_id but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to null,
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Empty channel_id but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to "",
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+
+            // Null channel_type but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to null,
+                ),
+                false,
+            ),
+
+            // Empty channel_type but no cid
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to "",
+                ),
+                false,
+            ),
+
+            // Valid with cid instead of channel_id+channel_type
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "cid" to "messaging:${randomString()}",
+                    "message_id" to randomString(),
+                ),
+                true,
+            ),
+
+            // Invalid with null cid and missing channel_id+channel_type
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "cid" to null,
+                    "message_id" to randomString(),
+                ),
+                false,
+            ),
+
+            // Invalid with empty cid and missing channel_id+channel_type
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "cid" to "",
+                    "message_id" to randomString(),
+                ),
+                false,
+            ),
+        )
+
+        private fun isValidPayloadUnknownVersionArguments() = listOf(
+            Arguments.of(emptyMap<String, Any?>(), false),
+            Arguments.of(mapOf("version" to ""), false),
+            Arguments.of(mapOf("version" to randomString()), false),
+            Arguments.of(mapOf("version" to null), false),
+            Arguments.of(mapOf("version" to randomInt()), false),
+            Arguments.of(
+                mapOf(
+                    "version" to "v3",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+        )
     }
 }

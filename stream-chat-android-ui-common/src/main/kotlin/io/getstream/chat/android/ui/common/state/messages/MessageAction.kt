@@ -32,10 +32,12 @@ public sealed class MessageAction {
  * Add/remove a reaction on a message.
  *
  * @param reaction The reaction to add or remove from the message.
+ * @param skipPush If set to "true", skips sending push notification when reacting to a message.
  */
 public data class React(
     public val reaction: Reaction,
     override val message: Message,
+    public val skipPush: Boolean = false,
 ) : MessageAction()
 
 /**

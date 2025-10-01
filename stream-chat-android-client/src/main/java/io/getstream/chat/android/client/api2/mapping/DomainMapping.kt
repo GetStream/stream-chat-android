@@ -337,6 +337,7 @@ internal class DomainMapping(
             updatedAt = updated_at,
             user = user?.toDomain(),
             userId = user_id,
+            emojiCode = emoji_code,
             extraData = extraData.toMutableMap(),
         )
 

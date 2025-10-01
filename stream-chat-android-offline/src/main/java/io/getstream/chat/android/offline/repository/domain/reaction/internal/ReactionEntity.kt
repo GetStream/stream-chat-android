@@ -70,8 +70,20 @@ internal data class ReactionEntity(
     val updatedAt: Date? = null,
     /** when the reaction was deleted, this field is only stored in the local db */
     val deletedAt: Date? = null,
-    /** if new reaction should replace all reactions the user has on this message */
+    /**
+     * If new reaction should replace all reactions the user has on this message.
+     * Note: This is not part of the reaction object returned by the server, it is used internally when syncing offline
+     * reaction.
+     */
     val enforceUnique: Boolean = false,
+    /**
+     * If sending a push notification should be skipped for this reaction.
+     * Note: This is not part of the reaction object returned by the server, it is used internally when syncing offline
+     * reaction.
+     */
+    val skipPush: Boolean = false,
+    /** optional emoji to be shown in the push notification delivered for the reaction (instead of :type:). */
+    val emojiCode: String? = null,
     /** all the custom data provided for this reaction */
     val extraData: Map<String, Any>,
     /** if the reaction has been synced to the servers */

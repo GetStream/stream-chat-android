@@ -167,6 +167,36 @@ internal fun randomReminderInfoEntity(
     updatedAt = updatedAt,
 )
 
+internal fun randomReactionEntity(
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    type: String = randomString(),
+    score: Int = randomInt(),
+    createdAt: Date? = randomDate(),
+    createdLocallyAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDate(),
+    enforceUnique: Boolean = randomBoolean(),
+    skipPush: Boolean = randomBoolean(),
+    emojiCode: String? = randomString(),
+    extraData: Map<String, Any> = emptyMap(),
+    syncStatus: SyncStatus = SyncStatus.COMPLETED,
+): ReactionEntity = ReactionEntity(
+    messageId = messageId,
+    userId = userId,
+    type = type,
+    score = score,
+    createdAt = createdAt,
+    createdLocallyAt = createdLocallyAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    enforceUnique = enforceUnique,
+    skipPush = skipPush,
+    emojiCode = emojiCode,
+    extraData = extraData,
+    syncStatus = syncStatus,
+)
+
 internal fun randomReactionGroupEntity(
     type: String = randomString(),
     count: Int = randomInt(),

@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
@@ -614,6 +613,7 @@ internal object Mother {
         type: String = randomString(),
         updatedAt: Date = randomDate(),
         userId: String = randomString(),
+        emojiCode: String? = randomString(),
         user: DownstreamUserDto = randomDownstreamUserDto(id = userId),
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamReactionDto = DownstreamReactionDto(
@@ -624,6 +624,7 @@ internal object Mother {
         updated_at = updatedAt,
         user = user,
         user_id = userId,
+        emoji_code = emojiCode,
         extraData = extraData,
     )
 
@@ -863,18 +864,6 @@ internal object Mother {
 
     fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto =
         ReadReceiptsDto(enabled)
-
-    fun randomSearchMessagesRequest(
-        offset: Int = randomInt(),
-        limit: Int = randomInt(),
-        channelFilter: FilterObject = Filters.neutral(),
-        messageFilter: FilterObject = Filters.neutral(),
-    ): SearchMessagesRequest = SearchMessagesRequest(
-        offset = offset,
-        limit = limit,
-        channelFilter = channelFilter,
-        messageFilter = messageFilter,
-    )
 
     fun randomQueryUsersRequest(
         filter: FilterObject = Filters.neutral(),

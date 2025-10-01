@@ -2417,7 +2417,7 @@ public interface ChatComponentFactory {
             onReactionOptionSelected = {
                 onMessageAction(
                     React(
-                        reaction = Reaction(messageId = message.id, type = it.type),
+                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
                         message = message,
                     ),
                 )
@@ -2492,7 +2492,7 @@ public interface ChatComponentFactory {
             onReactionOptionSelected = {
                 onMessageAction(
                     React(
-                        reaction = Reaction(messageId = message.id, type = it.type),
+                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
                         message = message,
                     ),
                 )

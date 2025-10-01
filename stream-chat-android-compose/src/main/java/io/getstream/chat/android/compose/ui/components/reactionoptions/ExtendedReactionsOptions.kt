@@ -65,11 +65,13 @@ public fun ExtendedReactionsOptions(
         }
     },
 ) {
+    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
     val options = reactionTypes.entries.map { (type, reactionIcon) ->
         val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
         ReactionOptionItemState(
             painter = reactionIcon.getPainter(isSelected),
             type = type,
+            emojiCode = pushEmojiFactory.emojiCode(type),
         )
     }
 

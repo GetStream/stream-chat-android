@@ -43,6 +43,7 @@ public interface SendReactionErrorHandler {
         originalCall: Call<Reaction>,
         reaction: Reaction,
         enforceUnique: Boolean,
+        skipPush: Boolean,
         currentUser: User,
     ): ReturnOnErrorCall<Reaction>
 }
@@ -51,9 +52,10 @@ internal fun Call<Reaction>.onReactionError(
     errorHandlers: List<SendReactionErrorHandler>,
     reaction: Reaction,
     enforceUnique: Boolean,
+    skipPush: Boolean,
     currentUser: User,
 ): Call<Reaction> {
     return errorHandlers.fold(this) { originalCall, errorHandler ->
-        errorHandler.onSendReactionError(originalCall, reaction, enforceUnique, currentUser)
+        errorHandler.onSendReactionError(originalCall, reaction, enforceUnique, skipPush, currentUser)
     }
 }
