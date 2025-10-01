@@ -50,6 +50,9 @@ internal class ChatNotificationHandler(
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     private val notificationBuilderTransformer:
     (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val currentUserProvider: () -> User? = {
+        ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
+    },
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -147,8 +150,7 @@ internal class ChatNotificationHandler(
         channel: Channel,
         message: Message,
     ): NotificationCompat.Builder {
-        val currentUser = ChatClient.instance().getCurrentUser()
-            ?: ChatClient.instance().getStoredUser()
+        val currentUser = currentUserProvider()
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
             contentText = notificationTextFormatter(currentUser, message),
@@ -170,8 +172,7 @@ internal class ChatNotificationHandler(
     }
 
     private fun buildReminderDueNotification(channel: Channel, message: Message): NotificationCompat.Builder {
-        val currentUser = ChatClient.instance().getCurrentUser()
-            ?: ChatClient.instance().getStoredUser()
+        val currentUser = currentUserProvider()
         return getNotificationBuilder(
             contentTitle = context.getString(R.string.stream_chat_notification_reminder_due_title),
             contentText = notificationTextFormatter(currentUser, message),
