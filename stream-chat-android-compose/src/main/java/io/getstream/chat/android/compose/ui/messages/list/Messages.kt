@@ -171,9 +171,7 @@ public fun Messages(
 
             itemsIndexed(
                 items = messages,
-                key = { _, item ->
-                    if (item is HasMessageListItemState) item.message.id else item.toString()
-                },
+                key = { _, item -> item.id },
             ) { index, item ->
                 val messageItemModifier =
                     if (item is MessageItemState && item.focusState == MessageFocused) {
