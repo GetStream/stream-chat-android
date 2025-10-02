@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.ui.common.helper.ReactionDefaults
 
 /**
  * An interface that allows the creation of reaction icons for reaction types.
@@ -70,23 +71,23 @@ public interface ReactionIconFactory {
  */
 private class DefaultReactionIconFactory(
     private val supportedReactions: Map<String, ReactionDrawable> = mapOf(
-        THUMBS_UP to ReactionDrawable(
+        ReactionDefaults.THUMBS_UP to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_thumbs_up,
             selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_up_selected,
         ),
-        LOVE to ReactionDrawable(
+        ReactionDefaults.LOVE to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_love,
             selectedIconResId = R.drawable.stream_compose_ic_reaction_love_selected,
         ),
-        LOL to ReactionDrawable(
+        ReactionDefaults.LOL to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_lol,
             selectedIconResId = R.drawable.stream_compose_ic_reaction_lol_selected,
         ),
-        WUT to ReactionDrawable(
+        ReactionDefaults.WUT to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_wut,
             selectedIconResId = R.drawable.stream_compose_ic_reaction_wut_selected,
         ),
-        THUMBS_DOWN to ReactionDrawable(
+        ReactionDefaults.THUMBS_DOWN to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_thumbs_down,
             selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_down_selected,
         ),
@@ -127,17 +128,6 @@ private class DefaultReactionIconFactory(
         return supportedReactions.mapValues {
             createReactionIcon(it.key)
         }
-    }
-
-    companion object {
-        /**
-         * The reaction types we support by default.
-         */
-        private const val LOVE: String = "love"
-        private const val THUMBS_UP: String = "like"
-        private const val THUMBS_DOWN: String = "sad"
-        private const val LOL: String = "haha"
-        private const val WUT: String = "wow"
     }
 }
 

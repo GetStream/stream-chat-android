@@ -451,6 +451,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val currentUser = randomUser()
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
+        val skipPush = randomBoolean()
         val cid = randomCID()
         val plugin = mock<Plugin>()
         val sut = Fixture()
@@ -459,12 +460,12 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
             .givenSendReactionResult(reaction.asCall())
             .get()
         // when
-        val result = sut.sendReaction(reaction, enforceUnique, cid).await()
+        val result = sut.sendReaction(reaction, enforceUnique, cid, skipPush).await()
         // then
         verifySuccess(result, reaction)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onSendReactionPrecondition(cid, currentUser, reaction)
-        inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(currentUser))
+        inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(skipPush), eq(currentUser))
         inOrder.verify(plugin).onSendReactionResult(eq(cid), any(), eq(enforceUnique), eq(currentUser), eq(result))
     }
 
@@ -475,6 +476,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
         val cid = randomCID()
+        val skipPush = randomBoolean()
         val plugin = mock<Plugin>()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
@@ -483,12 +485,12 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
             .givenSendReactionResult(RetroError<Reaction>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.sendReaction(reaction, enforceUnique, cid).await()
+        val result = sut.sendReaction(reaction, enforceUnique, cid, skipPush).await()
         // then
         verifyNetworkError(result, errorCode)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onSendReactionPrecondition(cid, currentUser, reaction)
-        inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(currentUser))
+        inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(skipPush), eq(currentUser))
         inOrder.verify(plugin).onSendReactionResult(eq(cid), any(), eq(enforceUnique), eq(currentUser), eq(result))
     }
 
@@ -838,7 +840,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         }
 
         fun givenSendReactionResult(result: Call<Reaction>) = apply {
-            whenever(api.sendReaction(any(), any())).thenReturn(result)
+            whenever(api.sendReaction(any(), any(), any())).thenReturn(result)
         }
 
         fun givenDeleteReactionResult(result: Call<Message>) = apply {

@@ -43,10 +43,14 @@ public data class NotificationConfig @JvmOverloads constructor(
      *
      * Supported types:
      * - [ChatNotification.TYPE_MESSAGE_NEW] - new message notification
+     * - [ChatNotification.TYPE_MESSAGE_UPDATED] - message update notification
+     * - [ChatNotification.TYPE_REACTION_NEW] - new reaction notification
      * - [ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE] - reminder notification
      *
      * The default behaviour is:
      * - [ChatNotification.TYPE_MESSAGE_NEW], the push is ignored when the user is online.
+     * - [ChatNotification.TYPE_MESSAGE_UPDATED], the push is ignored when the user is online.
+     * - [ChatNotification.TYPE_REACTION_NEW], the push is ignored when the user is online.
      * - [ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE], the push is shown when the user is online.
      *
      * This function allows you to customize the behavior for different notification types.
@@ -54,6 +58,8 @@ public data class NotificationConfig @JvmOverloads constructor(
     val ignorePushMessageWhenUserOnline: (type: String) -> Boolean = { type ->
         when (type) {
             ChatNotification.TYPE_MESSAGE_NEW -> ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_MESSAGE_UPDATED -> ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_REACTION_NEW -> ignorePushMessagesWhenUserOnline
             ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -> false // Always show reminder notifications
             else -> true // Default behavior for unknown types
         }

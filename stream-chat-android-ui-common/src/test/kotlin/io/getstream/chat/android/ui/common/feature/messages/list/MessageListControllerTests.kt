@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -48,6 +49,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomPollVote
+import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -962,6 +964,130 @@ internal class MessageListControllerTests {
         }
     }
 
+    @Test
+    fun `When reactToMessage is called with skipPush set to true, sendReaction is invoked with skipPush true`() = runTest {
+        val messageId = randomString()
+        val reactionType = "love"
+        val reaction = randomReaction(messageId = messageId, type = reactionType)
+        val message = randomMessage(id = messageId, ownReactions = emptyList())
+        val messagesState = MutableStateFlow(listOf(message))
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenSendReaction(callFrom { reaction })
+            .get()
+
+        controller.reactToMessage(reaction, message, skipPush = true)
+
+        verify(chatClient).sendReaction(
+            enforceUnique = true,
+            reaction = reaction,
+            cid = CID,
+            skipPush = true,
+        )
+    }
+
+    @Test
+    fun `When reactToMessage is called with default skipPush value, sendReaction is invoked with skipPush false`() = runTest {
+        val messageId = randomString()
+        val reactionType = "love"
+        val reaction = randomReaction(messageId = messageId, type = reactionType)
+        val message = randomMessage(id = messageId, ownReactions = emptyList())
+        val messagesState = MutableStateFlow(listOf(message))
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenSendReaction(callFrom { reaction })
+            .get()
+
+        controller.reactToMessage(reaction, message)
+
+        verify(chatClient).sendReaction(
+            enforceUnique = true,
+            reaction = reaction,
+            cid = CID,
+            skipPush = false,
+        )
+    }
+
+    @Test
+    fun `When reactToMessage is called for existing reaction, deleteReaction is invoked`() = runTest {
+        val messageId = randomString()
+        val reactionType = "love"
+        val reaction = randomReaction(messageId = messageId, type = reactionType)
+        val existingReaction = randomReaction(messageId = messageId, type = reactionType)
+        val message = randomMessage(id = messageId, ownReactions = listOf(existingReaction))
+        val messagesState = MutableStateFlow(listOf(message))
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenDeleteReaction(callFrom { message })
+            .get()
+
+        controller.reactToMessage(reaction, message)
+
+        verify(chatClient).deleteReaction(
+            messageId = messageId,
+            reactionType = reactionType,
+            cid = CID,
+        )
+    }
+
+    @Test
+    fun `When reactToMessage fails to send reaction, error is logged but no exception is thrown`() = runTest {
+        val messageId = randomString()
+        val reactionType = "love"
+        val reaction = randomReaction(messageId = messageId, type = reactionType)
+        val message = randomMessage(id = messageId, ownReactions = emptyList())
+        val messagesState = MutableStateFlow(listOf(message))
+        val error = Error.GenericError("Failed to send reaction")
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenSendReaction(TestCall(Result.Failure(error)))
+            .get()
+
+        // Should not throw exception
+        controller.reactToMessage(reaction, message)
+
+        verify(chatClient).sendReaction(
+            enforceUnique = true,
+            reaction = reaction,
+            cid = CID,
+            skipPush = false,
+        )
+    }
+
+    @Test
+    fun `When reactToMessage fails to delete reaction, error is logged but no exception is thrown`() = runTest {
+        val messageId = randomString()
+        val reactionType = "love"
+        val reaction = randomReaction(messageId = messageId, type = reactionType)
+        val existingReaction = randomReaction(messageId = messageId, type = reactionType)
+        val message = randomMessage(id = messageId, ownReactions = listOf(existingReaction))
+        val messagesState = MutableStateFlow(listOf(message))
+        val error = Error.GenericError("Failed to delete reaction")
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenDeleteReaction(TestCall(Result.Failure(error)))
+            .get()
+
+        // Should not throw exception
+        controller.reactToMessage(reaction, message)
+
+        verify(chatClient).deleteReaction(
+            messageId = messageId,
+            reactionType = reactionType,
+            cid = CID,
+        )
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -1063,6 +1189,14 @@ internal class MessageListControllerTests {
 
         fun givenRemoveVote(vote: Call<Vote>) = apply {
             whenever(chatClient.removePollVote(any(), any(), any())) doReturn vote
+        }
+
+        fun givenSendReaction(reaction: Call<Reaction>) = apply {
+            whenever(chatClient.sendReaction(any(), any(), any(), any())) doReturn reaction
+        }
+
+        fun givenDeleteReaction(message: Call<Message>) = apply {
+            whenever(chatClient.deleteReaction(any(), any(), any())) doReturn message
         }
 
         fun get(
