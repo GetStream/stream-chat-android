@@ -405,6 +405,7 @@ internal fun DefaultMessageItemHeaderContent(
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
         val iconFactory = ChatTheme.reactionIconFactory
+        val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
         message.reactionGroups
             .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
@@ -416,6 +417,7 @@ internal fun DefaultMessageItemHeaderContent(
                 ReactionOptionItemState(
                     painter = reactionIcon.getPainter(isSelected),
                     type = type,
+                    emojiCode = pushEmojiFactory.emojiCode(type),
                 )
             }?.let { reactions ->
                 ChatTheme.componentFactory.MessageReactionList(

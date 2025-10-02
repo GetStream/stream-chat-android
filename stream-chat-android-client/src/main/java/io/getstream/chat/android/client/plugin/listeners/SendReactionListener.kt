@@ -34,12 +34,35 @@ public interface SendReactionListener {
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      * @param currentUser The currently logged in user.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionRequest(cid, reaction, enforceUnique, skipPush, currentUser) " +
+            "instead. For backwards compatibility, this method is still called internally by the new, non-deprecated " +
+            "method.",
+    )
     public suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
         enforceUnique: Boolean,
         currentUser: User,
     )
+
+    /**
+     * A method called before making an API call to send the reaction.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param reaction The [Reaction] to send.
+     * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param skipPush If set to "true", skips sending push notification when reacting to a message.
+     * @param currentUser The currently logged in user.
+     */
+    public suspend fun onSendReactionRequest(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        skipPush: Boolean,
+        currentUser: User,
+    ): Unit = onSendReactionRequest(cid, reaction, enforceUnique, currentUser)
 
     /**
      * A method called after receiving the response from the send reaction call.

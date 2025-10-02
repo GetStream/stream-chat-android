@@ -272,6 +272,7 @@ internal class DomainMappingTest {
             updatedAt = downstreamReactionDto.updated_at,
             extraData = downstreamReactionDto.extraData,
             deletedAt = null,
+            emojiCode = downstreamReactionDto.emoji_code,
         )
         reaction shouldBeEqualTo expected
     }

@@ -34,8 +34,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.notifications.handler.ChatNotification
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.zipWith
@@ -78,7 +76,8 @@ internal class LoadNotificationDataWorker(
                         logger.v { "[doWork] fetching thread parent message." }
                         client.getMessage(messageParentId).await()
                     }
-                    createNotification(type, channel, message)?.let(ChatClient::displayNotification)
+                    ChatNotification.create(type, inputData.keyValueMap, channel, message)
+                        ?.let(ChatClient::displayNotification)
                     logger.v { "[doWork] completed" }
                     Result.success()
                 }
@@ -140,12 +139,6 @@ internal class LoadNotificationDataWorker(
         }
     }
 
-    private fun createNotification(type: String, channel: Channel, message: Message): ChatNotification? = when (type) {
-        ChatNotification.TYPE_MESSAGE_NEW -> ChatNotification.MessageNew(channel, message)
-        ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -> ChatNotification.NotificationReminderDue(channel, message)
-        else -> null
-    }
-
     internal companion object {
         private const val TAG = "Chat:Notifications-Loader"
         private const val DATA_TYPE = "DATA_TYPE"
@@ -156,23 +149,24 @@ internal class LoadNotificationDataWorker(
         private const val NOTIFICATION_ID = 1
         private const val LOAD_NOTIFICATION_DATA_WORK_NAME = "LOAD_NOTIFICATION_DATA_WORK_NAME"
 
+        @Suppress("LongParameterList", "SpreadOperator")
         fun start(
             context: Context,
             type: String,
             channelId: String,
             channelType: String,
             messageId: String,
+            payload: Map<String, Any?>,
         ) {
             StreamLog.d(TAG) { "/start/ cid: $channelType:$channelId, messageId: $messageId" }
+            val dataPairs = listOf<Pair<String, Any?>>(
+                DATA_TYPE to type,
+                DATA_CHANNEL_ID to channelId,
+                DATA_CHANNEL_TYPE to channelType,
+                DATA_MESSAGE_ID to messageId,
+            ) + payload.map { entry -> entry.key to entry.value }
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
-                .setInputData(
-                    workDataOf(
-                        DATA_TYPE to type,
-                        DATA_CHANNEL_ID to channelId,
-                        DATA_CHANNEL_TYPE to channelType,
-                        DATA_MESSAGE_ID to messageId,
-                    ),
-                )
+                .setInputData(workDataOf(*dataPairs.toTypedArray()))
                 .build()
 
             WorkManager

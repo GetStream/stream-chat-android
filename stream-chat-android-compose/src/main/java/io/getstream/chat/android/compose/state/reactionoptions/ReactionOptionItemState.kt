@@ -23,8 +23,10 @@ import androidx.compose.ui.graphics.painter.Painter
  *
  * @param painter The icon of the option.
  * @param type The String representation of the reaction, for the API.
+ * @param emojiCode The optional emoji code to be shown in the push notification text, for the API.
  */
 public data class ReactionOptionItemState(
     public val painter: Painter,
     public val type: String,
+    public val emojiCode: String? = null,
 )

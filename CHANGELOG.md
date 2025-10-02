@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for `message.updated` and `reaction.new` push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
+- Add `skipPush` parameter to `ChatClient.sendReaction` to skip sending push notifications for the reaction. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
 
@@ -49,6 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ReactionPushEmojiFactory` for generating emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
 
@@ -61,6 +64,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatUi.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
 
@@ -73,6 +77,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChaTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
 

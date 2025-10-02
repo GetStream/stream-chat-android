@@ -44,6 +44,9 @@ import java.util.Date
  * @param newMessageIntent Function to create an intent for new messages.
  * @param notificationTextFormatter Function to format the text of the notification.
  * @param actionsProvider Function to provide actions for the notification.
+ * @param notificationBuilderTransformer Function to transform the notification builder before building.
+ * @param currentUserProvider Function to get the current user, defaults to fetching from ChatClient. Override for
+ * testing to avoid mocking the [ChatClient].
  */
 @Suppress("LongParameterList")
 @RequiresApi(Build.VERSION_CODES.M)
@@ -57,6 +60,9 @@ internal class MessagingStyleNotificationFactory(
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     private val notificationBuilderTransformer:
     (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val currentUserProvider: () -> User? = {
+        ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
+    },
 ) {
 
     /**
@@ -65,7 +71,10 @@ internal class MessagingStyleNotificationFactory(
     internal fun createNotificationId(notification: ChatNotification): Int = when (notification) {
         is ChatNotification.MessageNew ->
             createChannelNotificationId(notification.channel.type, notification.channel.id)
-
+        is ChatNotification.MessageUpdated ->
+            "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
+        is ChatNotification.ReactionNew ->
+            "${notification.message.id}:${notification.reactionUserId}:${notification.type}".hashCode()
         is ChatNotification.NotificationReminderDue ->
             "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
     }
@@ -86,9 +95,7 @@ internal class MessagingStyleNotificationFactory(
      * @return A [Notification] object if the current user is available, otherwise null.
      */
     internal suspend fun createNotification(notification: ChatNotification): Notification? {
-        val currentUser = ChatClient.instance().getCurrentUser()
-            ?: ChatClient.instance().getStoredUser()
-            ?: return null
+        val currentUser = currentUserProvider() ?: return null
         val notificationId = createNotificationId(notification)
         // Base builder
         val builder = NotificationCompat.Builder(context, notificationChannelId)
@@ -104,6 +111,25 @@ internal class MessagingStyleNotificationFactory(
                     .setContentIntent(createContentIntent(notificationId, channel, message))
                     .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                     .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
+            }
+
+            is ChatNotification.MessageUpdated -> {
+                // Note: Handled the same as MessageNew - perhaps in future we want to differentiate them
+                val channel = notification.channel
+                val message = notification.message
+                val style = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
+                builder
+                    .setContentIntent(createContentIntent(notificationId, channel, message))
+                    .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
+                    .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
+            }
+
+            is ChatNotification.ReactionNew -> {
+                builder
+                    .setContentTitle(notification.title)
+                    .setContentText(notification.body)
+                    .setContentIntent(createContentIntent(notificationId, notification.channel, notification.message))
+                    .setAutoCancel(true)
             }
 
             is ChatNotification.NotificationReminderDue -> {

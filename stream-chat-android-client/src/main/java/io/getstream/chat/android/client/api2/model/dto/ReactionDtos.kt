@@ -37,6 +37,10 @@ internal data class UpstreamReactionDto(
     val updated_at: Date?,
     val user: UpstreamUserDto?,
     val user_id: String,
+    // Note: This is not contextually a top-level field in the API, it should be inside `reaction.extraData`.
+    // But for convenience, we make it a top-level field here, because when serialized, it will be top-level in the
+    // JSON string.
+    val emoji_code: String?,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
@@ -58,7 +62,10 @@ internal data class DownstreamReactionDto(
     val updated_at: Date?,
     val user: DownstreamUserDto?,
     val user_id: String,
-
+    // Note: This is not contextually a top-level field in the API, it should be inside `reaction.extraData`.
+    // But for convenience, we make it a top-level field here, because when serialized, it will be top-level in the
+    // JSON string.
+    val emoji_code: String?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
