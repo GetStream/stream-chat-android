@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represents the command suggestion list popup shown above [MessageComposerView].
@@ -216,8 +217,8 @@ private class CommandViewHolder(
 
     private val Command.imageRes: Int
         @DrawableRes get() = when (name) {
-            CommandDefaults.MUTE -> R.drawable.stream_ui_ic_command_mute
-            CommandDefaults.UNMUTE -> R.drawable.stream_ui_ic_command_unmute
+            CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
+            CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
             // fallback to the 'giphy' icon for backwards compatibility
             else -> R.drawable.stream_ui_ic_giphy
         }

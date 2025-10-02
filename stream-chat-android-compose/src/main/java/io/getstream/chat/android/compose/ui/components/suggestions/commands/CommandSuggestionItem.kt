@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CommandDefaults
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Represents the command suggestion item in the command suggestion list popup.
@@ -145,8 +146,8 @@ internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
 
 private val Command.imageRes: Int
     @DrawableRes get() = when (name) {
-        CommandDefaults.MUTE -> R.drawable.stream_compose_ic_command_mute
-        CommandDefaults.UNMUTE -> R.drawable.stream_compose_ic_command_unmute
+        CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
+        CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
         // fallback to the 'giphy' icon for backwards compatibility
         else -> R.drawable.stream_compose_ic_giphy
     }
