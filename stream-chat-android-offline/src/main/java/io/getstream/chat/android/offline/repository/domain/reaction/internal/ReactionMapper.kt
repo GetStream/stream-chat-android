@@ -31,6 +31,8 @@ internal fun Reaction.toEntity(): ReactionEntity = ReactionEntity(
     extraData = extraData,
     syncStatus = syncStatus,
     enforceUnique = enforceUnique,
+    skipPush = skipPush,
+    emojiCode = emojiCode,
 )
 
 internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) -> User): Reaction = Reaction(
@@ -46,4 +48,6 @@ internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) ->
     syncStatus = syncStatus,
     userId = userId,
     enforceUnique = enforceUnique,
+    skipPush = skipPush,
+    emojiCode = emojiCode,
 )

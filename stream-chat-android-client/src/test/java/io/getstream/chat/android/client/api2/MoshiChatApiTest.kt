@@ -413,7 +413,8 @@ internal class MoshiChatApiTest {
         // when
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
-        val result = sut.sendReaction(reaction, enforceUnique).await()
+        val skipPush = randomBoolean()
+        val result = sut.sendReaction(reaction, enforceUnique, skipPush).await()
         // then
         result `should be instance of` expected
         verify(api, times(1)).sendReaction(eq(reaction.messageId), any())
@@ -1778,31 +1779,6 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).get(url)
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#searchMessagesInput")
-    fun testSearchMessagesWithRequest(call: RetrofitCall<SearchMessagesResponse>, expected: KClass<*>) = runTest {
-        // given
-        val api = mock<GeneralApi>()
-        whenever(api.searchMessages(any())).doReturn(call)
-        val sut = Fixture()
-            .withGeneralApi(api)
-            .get()
-        // when
-        val request = Mother.randomSearchMessagesRequest()
-        val result = sut.searchMessages(request).await()
-        // then
-        val expectedPayload = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = request.channelFilter.toMap(),
-            message_filter_conditions = request.messageFilter.toMap(),
-            offset = request.offset,
-            limit = request.limit,
-            next = request.next,
-            sort = request.sort,
-        )
-        result `should be instance of` expected
-        verify(api, times(1)).searchMessages(expectedPayload)
     }
 
     @ParameterizedTest

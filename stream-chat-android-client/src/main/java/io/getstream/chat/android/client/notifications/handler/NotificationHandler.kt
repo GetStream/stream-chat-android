@@ -75,6 +75,10 @@ public interface NotificationHandler {
         when (notification) {
             is ChatNotification.MessageNew ->
                 showNotification(notification.channel, notification.message)
+            is ChatNotification.MessageUpdated ->
+                showNotification(notification.channel, notification.message)
+            is ChatNotification.ReactionNew ->
+                showNotification(notification.channel, notification.message)
             is ChatNotification.NotificationReminderDue ->
                 showNotification(notification.channel, notification.message)
         }

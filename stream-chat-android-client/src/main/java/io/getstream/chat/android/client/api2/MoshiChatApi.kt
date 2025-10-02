@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -319,6 +318,7 @@ constructor(
             message = UpdateMessageRequest(
                 message = with(dtoMapping) { message.toDto() },
                 skip_enrich_url = message.skipEnrichUrl,
+                skip_push = message.skipPushNotification,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
@@ -395,12 +395,13 @@ constructor(
         }
     }
 
-    override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
+    override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
         return messageApi.sendReaction(
             messageId = reaction.messageId,
             request = ReactionRequest(
                 reaction = with(dtoMapping) { reaction.toDto() },
                 enforce_unique = enforceUnique,
+                skip_push = skipPush,
             ),
         ).mapDomain { response ->
             response.reaction.toDomain()
@@ -1217,28 +1218,6 @@ constructor(
 
     override fun og(url: String): Call<Attachment> =
         ogApi.get(url).mapDomain { it.toDomain() }
-
-    override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
-        val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
-            filter_conditions = request.channelFilter.toMap(),
-            message_filter_conditions = request.messageFilter.toMap(),
-            offset = request.offset,
-            limit = request.limit,
-            next = request.next,
-            sort = request.sort,
-        )
-        return generalApi.searchMessages(newRequest)
-            .mapDomain { response ->
-                response.results.map { resp ->
-                    resp.message.toDomain()
-                        .let { message ->
-                            (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                                ?.let(message::enrichWithCid)
-                                ?: message
-                        }
-                }
-            }
-    }
 
     override fun searchMessages(
         channelFilter: FilterObject,
