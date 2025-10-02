@@ -141,9 +141,6 @@ internal interface ChatApi {
     fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference>
 
     @CheckResult
-    fun searchMessages(request: SearchMessagesRequest): Call<List<Message>>
-
-    @CheckResult
     fun searchMessages(
         channelFilter: FilterObject,
         messageFilter: FilterObject,
