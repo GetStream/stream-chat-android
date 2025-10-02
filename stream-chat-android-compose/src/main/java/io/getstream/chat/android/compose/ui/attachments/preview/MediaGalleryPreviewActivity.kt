@@ -138,6 +138,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
         val streamCdnImageResizing = intent?.createStreamCdnImageResizing()
             ?: StreamCdnImageResizing.defaultStreamCdnImageResizing()
+        val messageId = uiState?.messageId ?: ""
+        require(messageId.isNotBlank()) { "Missing messageId necessary to load images." }
 
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
             val message = uiState?.toMessage()
