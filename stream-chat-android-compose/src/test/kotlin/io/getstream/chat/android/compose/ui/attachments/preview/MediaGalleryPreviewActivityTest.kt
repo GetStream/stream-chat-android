@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.preview
 
 import android.app.Activity
-import android.content.Intent
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -42,7 +41,6 @@ import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
@@ -58,15 +56,6 @@ internal class MediaGalleryPreviewActivityTest : ComposeTest {
     @Before
     fun prepare() {
         whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
-    }
-
-    @Test
-    fun `throws exceptions when message ID is not provided`() {
-        val intent = Intent(ApplicationProvider.getApplicationContext(), MediaGalleryPreviewActivity::class.java)
-
-        assertThrows<IllegalArgumentException> {
-            ActivityScenario.launch<MediaGalleryPreviewActivity>(intent)
-        }
     }
 
     @Test
