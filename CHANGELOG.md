@@ -36,6 +36,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix increasing unread count for muted channels. [#5947](https://github.com/GetStream/stream-chat-android/pull/5947)
 
 ### ⬆️ Improved
 
