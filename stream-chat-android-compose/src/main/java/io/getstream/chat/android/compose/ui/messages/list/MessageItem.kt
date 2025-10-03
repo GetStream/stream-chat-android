@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
@@ -98,6 +99,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
@@ -737,6 +739,7 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
  * @param swipeToReplyContent The content to show when swiping to reply.
  * @param content The swipeable content to show when not swiping to reply.
  */
+@Suppress("LongMethod")
 @Composable
 private fun SwipeToReply(
     modifier: Modifier = Modifier,
@@ -762,9 +765,9 @@ private fun SwipeToReply(
                 .offset {
                     val roundToInt = swipeToReplyWidth.roundToInt()
                     IntOffset(
-                        (offset.value.roundToInt() - roundToInt)
+                        x = (offset.value.roundToInt() - roundToInt)
                             .coerceIn(-roundToInt, roundToInt),
-                        0,
+                        y = 0,
                     )
                 },
             verticalAlignment = Alignment.CenterVertically,
@@ -775,15 +778,20 @@ private fun SwipeToReply(
             modifier = modifier
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
-                .offset { IntOffset(offset.value.roundToInt(), 0) }
+                .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
                 .pointerInput(swipeToReplyWidth) {
                     if (isSwipeable()) {
                         detectHorizontalDragGestures(
-                            onHorizontalDrag = { _, dragAmount ->
-                                scope.launch {
-                                    val newOffset = (offset.value + dragAmount)
-                                        .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
-                                    offset.snapTo(newOffset)
+                            onHorizontalDrag = { change, dragAmount ->
+                                // Only consume if horizontal drag dominates vertical
+                                if (change.positionChange().x.absoluteValue > change.positionChange().y.absoluteValue) {
+                                    scope.launch {
+                                        val newOffset = (offset.value + dragAmount)
+                                            .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
+                                        offset.snapTo(newOffset)
+                                    }
+                                } else {
+                                    change.consume()
                                 }
                             },
                             onDragEnd = {
