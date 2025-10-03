@@ -1,3 +1,14 @@
+ext.coverageModules = [
+        'stream-chat-android-client',
+        'stream-chat-android-compose',
+        'stream-chat-android-core',
+        'stream-chat-android-markdown-transformer',
+        'stream-chat-android-offline',
+        'stream-chat-android-state',
+        'stream-chat-android-ui-common',
+        'stream-chat-android-ui-utils'
+]
+
 ext.koverClassExcludes = [
         '*R',
         '*R$*',
@@ -25,13 +36,20 @@ def configureKoverReports(project) {
     }
 }
 
-// Configure code coverage for modules with tests, excluding specified modules
+def coverageModulesWithTests = subprojects.findAll {
+    rootProject.ext.coverageModules.contains(it.name) && file("${it.projectDir}/src/test").exists()
+}
+println("Setting up coverage for:\n${coverageModulesWithTests.join("\n")}")
+
+// Configure code coverage for modules with tests
 subprojects {
+    def isCoverageModule = coverageModulesWithTests.collect {it.name}.contains(name)
+
     sonar {
-        skipProject = rootProject.ext.sonar.ignoreModules.contains(name)
+        skipProject = !isCoverageModule
     }
 
-    if (!rootProject.ext.sonar.ignoreModules.contains(name) && file("src/test").exists()) {
+    if (isCoverageModule) {
         apply plugin: "org.jetbrains.kotlinx.kover"
 
         afterEvaluate {
@@ -81,11 +99,7 @@ subprojects {
 apply plugin: "org.jetbrains.kotlinx.kover"
 
 // Specify the projects that should be included in the aggregate coverage report
-def coverageModules = subprojects.findAll {
-    !rootProject.ext.sonar.ignoreModules.contains(it.name) && file("${it.projectDir}/src/test").exists()
-}
-println("Set up code coverage for:\n${coverageModules.join("\n")}")
-coverageModules.each { project -> dependencies { kover(project) } }
+coverageModulesWithTests.each { project -> dependencies { kover(project) } }
 
 // Aggregate all submodules' testCoverage + merged reports
 tasks.register("testCoverage") {
