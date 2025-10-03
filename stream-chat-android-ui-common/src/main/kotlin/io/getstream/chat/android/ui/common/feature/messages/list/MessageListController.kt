@@ -418,6 +418,11 @@ public class MessageListController(
 
     private val debouncer = Debouncer(debounceMs = 200L, scope = scope)
 
+    /**
+     * Calculator responsible for computing the unread label state based on channel messages and read state.
+     */
+    private val unreadLabelCalculator = UnreadLabelCalculator()
+
     @Volatile
     private var lastSeenChannelMessageId: String? = null
 
@@ -559,6 +564,25 @@ public class MessageListController(
         observeUnreadLabelState()
     }
 
+    /**
+     * Observes and updates the unread label state by combining multiple data sources:
+     * - Button visibility preference ([showUnreadButtonState])
+     * - Update trigger state ([updateUnreadLabelState])
+     * - Channel state with all messages
+     * - User read state ([ChannelUserRead])
+     *
+     * The unread label is only calculated when all of the following conditions are met:
+     * 1. Updates are enabled ([updateUnreadLabelState] is true)
+     * 2. Not started for a thread ([isStartedForThread] is false)
+     * 3. The last read message ID has changed from the previous state
+     *
+     * Once conditions are met, delegates the actual calculation to [UnreadLabelCalculator] which
+     * handles the complex logic of determining unread message state, including edge cases for
+     * own messages, mark as unread functionality, and offline/pending message scenarios.
+     *
+     * After calculation, updates [unreadLabelState] and resets the update trigger to prevent
+     * unnecessary recalculations until the next state change.
+     */
     @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
         combine(
@@ -572,6 +596,7 @@ public class MessageListController(
             val channel = data[2] as ChannelState
             val read = data[3] as ChannelUserRead?
 
+            // Only proceed with calculation if all conditions are met
             read
                 ?.takeIf { shouldUpdateLabelState }
                 ?.takeIf { !isStartedForThread }
@@ -580,25 +605,17 @@ public class MessageListController(
                     it.lastReadMessageId != null && previousUnreadMessageId != it.lastReadMessageId
                 }
                 ?.let { channelUserRead ->
-                    val unreadMessages = channel.messages.value
-                        .fold(emptyList<Message>()) { acc, message ->
-                            when {
-                                channelUserRead.lastReadMessageId == message.id -> emptyList()
-                                else -> acc + message
-                            }
-                        }
-                    val unreadLabel = channelUserRead.lastReadMessageId
-                        ?.takeUnless { unreadMessages.isEmpty() }
-                        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-                        ?.let { lastReadMessageId ->
-                            UnreadLabel(
-                                unreadCount = channelUserRead.unreadMessages,
-                                lastReadMessageId = lastReadMessageId,
-                                buttonVisibility = shouldShowButton &&
-                                    unreadMessages.any { !it.isDeleted() },
-                            )
-                        }
+                    // Delegate to the calculator for the complex unread label logic
+                    val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
+                        channelUserRead = channelUserRead,
+                        channelState = channel,
+                        currentUserId = clientState.user.value?.id,
+                        shouldShowButton = shouldShowButton,
+                    )
+
+                    // Update the state with the calculated label
                     unreadLabelState.value = unreadLabel
+                    // Prevent recalculation until the next trigger
                     updateUnreadLabelState.value = false
                 }
         }.launchIn(scope)
