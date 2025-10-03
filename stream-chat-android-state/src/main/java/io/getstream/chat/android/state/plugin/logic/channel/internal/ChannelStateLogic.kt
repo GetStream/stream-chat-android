@@ -87,6 +87,12 @@ internal class ChannelStateLogic(
         onUpdated = ::updateTypingStates,
     )
 
+    init {
+        // Mute state is kept in the globalState: Sync the mute state when creating the ChannelStateLogic to ensure
+        // the ChannelState has the correct initial value.
+        syncMuteState()
+    }
+
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
@@ -713,13 +719,14 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Refreshes the mute state for the channel
+     * Syncs the mute state for the channel.
+     * The mute state is not available in the channel object so we need to fetch it from the global state.
      */
-    fun refreshMuteState() {
+    internal fun syncMuteState() {
         val cid = mutableState.cid
-        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel?.cid == cid }
-        StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
-        updateMute(isChannelMuted)
+        val isMuted = globalMutableState.channelMutes.value.any { it.channel?.cid == cid }
+        logger.d { "[syncMuteState] cid: $cid, isMuted: $isMuted" }
+        updateMute(isMuted)
     }
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
@@ -786,9 +793,15 @@ internal class ChannelStateLogic(
      * @param message The message that was received.
      */
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
+        val isMuted = mutableState.muted.value
+        if (isMuted) {
+            // Skip update to the unread count if the channel is muted
+            processedMessageIds.put(message.id, true)
+            return
+        }
         mutableState.read.value
             ?.takeUnless { it.lastReceivedEventDate.after(eventReceivedDate) }
-            ?.takeUnless { processedMessageIds.get(message.id) == true }
+            ?.takeUnless { processedMessageIds[message.id] == true }
             ?.takeUnless {
                 message.user.id == clientState.user.value?.id ||
                     message.parentId?.takeIf { message.showInChannel } != null
