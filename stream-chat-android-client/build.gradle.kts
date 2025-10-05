@@ -82,13 +82,9 @@ dependencies {
     api(project(":stream-chat-android-core"))
 
     implementation(libs.kotlin.reflect)
-
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.process)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.work)
-    implementation(libs.androidx.constraintlayout)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit)
@@ -101,6 +97,13 @@ dependencies {
     ksp(libs.moshi.codegen)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.ok2curl)
+
+    // Unused dependencies: The following dependencies (appcompat, constraintlayout, livedata-ktx) are not used in the
+    // `stream-chat-android-client` module. They are still declared here to prevent potential breaking changes for
+    // integrations that might be relying on them transitively. Consider removing them in future major releases.
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
