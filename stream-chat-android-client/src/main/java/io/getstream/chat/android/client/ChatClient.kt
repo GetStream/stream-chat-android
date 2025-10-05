@@ -149,7 +149,6 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -4542,9 +4541,6 @@ internal constructor(
             )
             setupStreamLog()
 
-            if (ToggleService.isInitialized().not()) {
-                ToggleService.init(appContext, emptyMap())
-            }
             val clientScope = ClientScope()
             val userScope = UserScope(clientScope)
 

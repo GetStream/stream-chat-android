@@ -32,7 +32,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
-import io.getstream.chat.android.client.utils.internal.toggle.dialog.ToggleDialogFragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
@@ -106,16 +105,6 @@ class HomeFragment : Fragment() {
                         ApiRequestsAnalyser.get().clearAll()
                         Toast.makeText(requireContext(), "ApiRequestsAnalyser clean", Toast.LENGTH_SHORT).show()
                     }
-                }
-
-                setOnUserAvatarLongClickListener {
-                    ToggleDialogFragment().apply {
-                        togglesChangesCommittedListener = { changedToggles ->
-                            if (changedToggles.isNotEmpty()) {
-                                activity?.recreate()
-                            }
-                        }
-                    }.show(parentFragmentManager, null)
                 }
             }
         }
