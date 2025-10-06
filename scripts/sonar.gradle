@@ -1,21 +1,6 @@
 apply plugin: "org.sonarqube"
 
 ext.sonar = [
-    ignoreModules : [
-            'stream-chat-android-ai-assistant',
-            'stream-chat-android-previewdata',
-            'stream-chat-android-docs',
-            'stream-chat-android-benchmark',
-            'stream-chat-android-compose-sample',
-            'stream-chat-android-e2e-test',
-            'stream-chat-android-test',
-            'stream-chat-android-ui-guides',
-            'stream-chat-android-ui-components',
-            'stream-chat-android-ui-components-sample',
-            'stream-chat-android-client-test',
-            'stream-chat-android-ui-uitests',
-            'stream-chat-android-metrics'
-    ],
     excludeFilter : [
             '**/test/**',
             '**/androidTest/**',
@@ -24,24 +9,17 @@ ext.sonar = [
             '**/R$*.class',
             '**/BuildConfig.*',
             '**/Manifest*.*',
-            '**/*Test*.*'
+            '**/*.ttf',
     ]
 ]
 
-ext.sonar.ignoreModules.each {
-    ext.sonar.excludeFilter << "**/${it}/**"
-}
-
-sonarqube {
+sonar {
     properties {
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.token", "${System.getenv("SONAR_TOKEN")}")
         property("sonar.organization", "getstream")
         property("sonar.projectKey", "GetStream_stream-chat-android")
         property("sonar.projectName", "stream-chat-android")
-        property "sonar.java.coveragePlugin", "jacoco"
-        property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.java.binaries", "${rootDir}/**/build/tmp/kotlin-classes/debug,${rootDir}/**/build/classes/kotlin/main"
-        property "sonar.exclusions", rootProject.ext.sonar.excludeFilter
+        property "sonar.exclusions", rootProject.ext.sonar.excludeFilter.join(",")
     }
 }
