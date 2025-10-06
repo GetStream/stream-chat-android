@@ -243,15 +243,20 @@ internal fun Poll.toEntity(): PollEntity = PollEntity(
     maxVotesAllowed = maxVotesAllowed,
     allowUserSuggestedOptions = allowUserSuggestedOptions,
     allowAnswers = allowAnswers,
+    voteCount = voteCount,
     voteCountsByOption = voteCountsByOption,
     ownVotes = ownVotes.map { it.toEntity() },
     closed = closed,
+    answersCount = answersCount,
     answers = answers.map { it.toEntity() },
+    createdById = createdBy?.id,
+    extraData = extraData,
 )
 
 internal fun Option.toEntity(): OptionEntity = OptionEntity(
     id = id,
     text = text,
+    extraData = extraData,
 )
 
 internal fun Vote.toEntity(): VoteEntity = VoteEntity(
@@ -292,15 +297,20 @@ internal suspend fun PollEntity.toModel(
     maxVotesAllowed = maxVotesAllowed,
     allowUserSuggestedOptions = allowUserSuggestedOptions,
     allowAnswers = allowAnswers,
+    voteCount = voteCount,
     voteCountsByOption = voteCountsByOption,
     ownVotes = ownVotes.map { it.toModel(getUser) },
     closed = closed,
+    answersCount = answersCount,
     answers = answers.map { it.toModel(getUser) },
+    createdBy = createdById?.let { getUser(it) },
+    extraData = extraData,
 )
 
 private fun OptionEntity.toModel(): Option = Option(
     id = id,
     text = text,
+    extraData = extraData,
 )
 
 private suspend fun VoteEntity.toModel(

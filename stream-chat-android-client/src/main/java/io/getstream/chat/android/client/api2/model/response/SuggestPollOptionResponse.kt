@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 
 /**
  * Response for suggesting a new option for a poll.
@@ -28,5 +28,5 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 @JsonClass(generateAdapter = true)
 internal data class SuggestPollOptionResponse(
     val duration: String,
-    val poll_option: DownstreamOptionDto,
+    val poll_option: DownstreamPollOptionDto,
 )

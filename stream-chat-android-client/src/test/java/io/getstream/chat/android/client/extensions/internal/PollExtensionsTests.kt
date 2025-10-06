@@ -80,13 +80,16 @@ internal class PollExtensionsTests {
         maxVotesAllowed = 1,
         allowUserSuggestedOptions = false,
         allowAnswers = true,
+        voteCount = 2,
         voteCountsByOption = mapOf("option1" to 1, "option2" to 1),
         votes = listOf(vote1, vote2),
         ownVotes = listOf(vote1),
         createdAt = now,
         updatedAt = now,
         closed = false,
+        answersCount = 1,
         answers = listOf(answer1),
+        createdBy = user1,
     )
 
     @Test

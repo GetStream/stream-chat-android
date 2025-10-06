@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
+import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -62,7 +63,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessage
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -1508,18 +1508,24 @@ constructor(
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
         return pollsApi.createPoll(
-            PollRequest(
-                name = pollConfig.name,
+            CreatePollRequest(
+                allow_answers = pollConfig.allowAnswers,
+                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
                 description = pollConfig.description,
-                options = pollConfig.options.map(::UpstreamOptionDto),
-                voting_visibility = when (pollConfig.votingVisibility) {
-                    VotingVisibility.PUBLIC -> PollRequest.VOTING_VISIBILITY_PUBLIC
-                    VotingVisibility.ANONYMOUS -> PollRequest.VOTING_VISIBILITY_ANONYMOUS
-                },
                 enforce_unique_vote = pollConfig.enforceUniqueVote,
                 max_votes_allowed = pollConfig.maxVotesAllowed,
-                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-                allow_answers = pollConfig.allowAnswers,
+                name = pollConfig.name,
+                options = pollConfig.options.map {
+                    UpstreamOptionDto(
+                        text = it.text,
+                        extraData = it.extraData,
+                    )
+                },
+                voting_visibility = when (pollConfig.votingVisibility) {
+                    VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
+                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+                },
+                extraData = pollConfig.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
     }

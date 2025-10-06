@@ -847,6 +847,7 @@ public fun randomPoll(
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
     maxVotesAllowed: Int = positiveRandomInt(),
+    voteCount: Int = positiveRandomInt(),
     voteCountsByOption: Map<String, Int> = emptyMap(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
@@ -856,7 +857,10 @@ public fun randomPoll(
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
     closed: Boolean = randomBoolean(),
+    answersCount: Int = positiveRandomInt(),
     answers: List<Answer> = emptyList(),
+    createdBy: User = randomUser(),
+    extraData: Map<String, Any> = randomExtraData(1),
 ): Poll = Poll(
     id = id,
     name = name,
@@ -864,6 +868,7 @@ public fun randomPoll(
     votingVisibility = votingVisibility,
     enforceUniqueVote = enforceUniqueVote,
     maxVotesAllowed = maxVotesAllowed,
+    voteCount = voteCount,
     voteCountsByOption = voteCountsByOption,
     allowUserSuggestedOptions = allowUserSuggestedOptions,
     allowAnswers = allowAnswers,
@@ -873,7 +878,10 @@ public fun randomPoll(
     createdAt = createdAt,
     updatedAt = updatedAt,
     closed = closed,
+    answersCount = answersCount,
     answers = answers,
+    extraData = extraData,
+    createdBy = createdBy,
 )
 
 public fun randomPollOption(

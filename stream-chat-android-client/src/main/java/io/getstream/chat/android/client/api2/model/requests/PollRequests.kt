@@ -17,50 +17,56 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
+import io.getstream.chat.android.client.api2.model.dto.ExtraDataDto
+
+/**
+ * Request body for creating a new poll.
+ *
+ * @property allow_answers Indicates whether users can suggest user defined answers.
+ * @property allow_user_suggested_options Indicates whether users can suggest new options.
+ * @property description A description of the poll.
+ * @property enforce_unique_vote Indicates whether users can cast multiple votes.
+ * @property max_votes_allowed Indicates the maximum amount of votes a user can cast.
+ * @property name The name of the poll.
+ * @property options The list of options for the poll.
+ * @property voting_visibility The visibility of the poll. Accepted values are "public" and "anonymous".
+ * @property extraData Any additional custom fields.
+ */
+@JsonClass(generateAdapter = true)
+internal data class CreatePollRequest(
+    val allow_answers: Boolean,
+    val allow_user_suggested_options: Boolean,
+    val description: String,
+    val enforce_unique_vote: Boolean,
+    val max_votes_allowed: Int,
+    val name: String,
+    val options: List<UpstreamOptionDto>,
+    val voting_visibility: String,
+    val extraData: Map<String, Any>,
+) : ExtraDataDto {
+
+    internal companion object {
+        internal const val VOTING_VISIBILITY_PUBLIC = "public"
+        internal const val VOTING_VISIBILITY_ANONYMOUS = "anonymous"
+    }
+}
 
 /**
  * Used for creating a new poll.
  *
  * @property text the text of the option.
+ * @property extraData any additional custom fields.
  */
 @JsonClass(generateAdapter = true)
 internal data class UpstreamOptionDto(
     val text: String,
-)
-
-/**
- * Used for creating a new poll.
- *
- * @property name the name of the poll.
- * @property description the description of the poll.
- * @property options the list of options for the poll.
- * @property voting_visibility the visibility of the poll. Accepted values are "public" and "anonymous".
- * @property enforce_unique_vote Indicates whether users can cast multiple votes.
- * @property max_votes_allowed the maximum number of votes allowed per user. min: 1, max: 10
- * @property allow_user_suggested_options Indicates whether users can suggest new options.
- */
-@JsonClass(generateAdapter = true)
-internal data class PollRequest(
-    val name: String,
-    val description: String,
-    val options: List<UpstreamOptionDto>,
-    val voting_visibility: String,
-    val enforce_unique_vote: Boolean,
-    val max_votes_allowed: Int,
-    val allow_user_suggested_options: Boolean,
-    val allow_answers: Boolean,
-) {
-
-    companion object {
-        const val VOTING_VISIBILITY_PUBLIC = "public"
-        const val VOTING_VISIBILITY_ANONYMOUS = "anonymous"
-    }
-}
+    val extraData: Map<String, Any>,
+) : ExtraDataDto
 
 /**
  * Used for suggesting a new option for a poll.
  *
- * @property poll_option the option object.
+ * @property text the option text.
  */
 @JsonClass(generateAdapter = true)
 internal data class SuggestPollOptionRequest(

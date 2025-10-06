@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.requests.PollRequest
+import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
@@ -38,12 +38,12 @@ internal interface PollsApi {
     /**
      * Creates a new poll.
      *
-     * @param pollRequest The poll request.
+     * @param body Body holding the poll properties to be created.
      *
      * @return The poll response.
      */
     @POST("/polls")
-    fun createPoll(@Body pollRequest: PollRequest): RetrofitCall<PollResponse>
+    fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
 
     /**
      * Suggest a new option for a poll.

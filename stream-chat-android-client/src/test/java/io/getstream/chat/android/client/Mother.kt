@@ -40,9 +40,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -1032,7 +1032,7 @@ internal object Mother {
         maxVotesAllowed: Int = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),
         allowAnswers: Boolean = randomBoolean(),
-        options: List<DownstreamOptionDto> = listOf(randomDownstreamOptionDto()),
+        options: List<DownstreamPollOptionDto> = listOf(randomDownstreamOptionDto()),
         voteCountsByOption: Map<String, Int> = emptyMap(),
         latestVotesByOption: Map<String, List<DownstreamVoteDto>> = emptyMap(),
         latestAnswers: List<DownstreamVoteDto> = listOf(randomAnswerDownstreamVoteDto()),
@@ -1042,7 +1042,9 @@ internal object Mother {
         ownVotes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
         updatedAt: Date = randomDate(),
         voteCount: Int = randomInt(),
+        answersCount: Int = randomInt(),
         isClosed: Boolean = randomBoolean(),
+        extraData: Map<String, Any> = randomExtraData(1),
     ): DownstreamPollDto = DownstreamPollDto(
         id = id,
         name = name,
@@ -1062,15 +1064,19 @@ internal object Mother {
         own_votes = ownVotes,
         updated_at = updatedAt,
         vote_count = voteCount,
+        answers_count = answersCount,
         is_closed = isClosed,
+        extraData = extraData,
     )
 
     fun randomDownstreamOptionDto(
         id: String = randomString(),
         text: String = randomString(),
-    ): DownstreamOptionDto = DownstreamOptionDto(
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): DownstreamPollOptionDto = DownstreamPollOptionDto(
         id = id,
         text = text,
+        extraData = extraData,
     )
 
     fun randomDownstreamVoteDto(

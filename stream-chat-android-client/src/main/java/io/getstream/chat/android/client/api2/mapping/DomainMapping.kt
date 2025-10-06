@@ -35,9 +35,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -432,7 +432,7 @@ internal class DomainMapping(
             .values
             .toList()
 
-        val answer = latest_answers?.map { it.toAnswerDomain() } ?: emptyList()
+        val answers = latest_answers?.map { it.toAnswerDomain() } ?: emptyList()
 
         return Poll(
             id = id,
@@ -444,13 +444,17 @@ internal class DomainMapping(
             maxVotesAllowed = max_votes_allowed ?: 1,
             allowUserSuggestedOptions = allow_user_suggested_options,
             allowAnswers = allow_answers,
+            voteCount = vote_count,
             voteCountsByOption = vote_counts_by_option ?: emptyMap(),
             votes = votes,
             ownVotes = ownVotes,
             createdAt = created_at,
             updatedAt = updated_at,
-            closed = is_closed,
-            answers = answer,
+            closed = is_closed ?: false,
+            answersCount = answers_count,
+            answers = answers,
+            createdBy = created_by?.toDomain(),
+            extraData = extraData ?: emptyMap(),
         )
     }
 
@@ -459,9 +463,10 @@ internal class DomainMapping(
      *
      * @return Option
      */
-    internal fun DownstreamOptionDto.toDomain(): Option = Option(
+    internal fun DownstreamPollOptionDto.toDomain(): Option = Option(
         id = id,
         text = text,
+        extraData = extraData ?: emptyMap(),
     )
 
     /**

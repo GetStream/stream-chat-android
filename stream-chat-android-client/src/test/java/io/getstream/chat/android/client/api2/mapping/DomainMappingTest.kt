@@ -382,13 +382,14 @@ internal class DomainMappingTest {
             name = pollDto.name,
             description = pollDto.description,
             options = options.map {
-                Option(it.id, it.text)
+                Option(it.id, it.text, it.extraData ?: emptyMap())
             },
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = pollDto.enforce_unique_vote,
             maxVotesAllowed = pollDto.max_votes_allowed ?: 1,
             allowUserSuggestedOptions = pollDto.allow_user_suggested_options,
             allowAnswers = pollDto.allow_answers,
+            voteCount = pollDto.vote_count,
             voteCountsByOption = pollDto.vote_counts_by_option ?: emptyMap(),
             votes = listOf(
                 Vote(
@@ -420,7 +421,8 @@ internal class DomainMappingTest {
             ),
             createdAt = pollDto.created_at,
             updatedAt = pollDto.updated_at,
-            closed = pollDto.is_closed,
+            closed = pollDto.is_closed ?: false,
+            answersCount = pollDto.answers_count,
             answers = listOf(
                 Answer(
                     id = answer.id,
@@ -431,8 +433,10 @@ internal class DomainMappingTest {
                     user = with(sut) { answer.user?.toDomain() },
                 ),
             ),
+            createdBy = with(sut) { pollDto.created_by?.toDomain() },
+            extraData = pollDto.extraData ?: emptyMap(),
         )
-        poll shouldBeEqualTo expected
+        Assertions.assertEquals(expected, poll)
     }
 
     @Test
