@@ -573,6 +573,9 @@ internal interface ChatApi {
     fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote>
 
     @CheckResult
+    fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll>
+
+    @CheckResult
     fun closePoll(pollId: String): Call<Poll>
 
     @CheckResult

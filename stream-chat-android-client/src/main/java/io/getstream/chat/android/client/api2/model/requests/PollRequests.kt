@@ -90,9 +90,9 @@ internal data class PollVoteRequest(
  * @property unset the fields to unset.
  */
 @JsonClass(generateAdapter = true)
-internal data class PollUpdateRequest(
+internal data class PartialUpdatePollRequest(
     val set: Map<String, Any> = emptyMap(),
-    val unset: Set<String> = emptySet(),
+    val unset: List<String> = emptyList(),
 )
 
 /**

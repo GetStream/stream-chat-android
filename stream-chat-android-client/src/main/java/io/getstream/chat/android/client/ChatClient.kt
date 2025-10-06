@@ -1766,6 +1766,7 @@ internal constructor(
                 }
             }
     }
+
     /**
      * Send a message with a poll to the given channel.
      *
@@ -1855,6 +1856,23 @@ internal constructor(
         vote: Vote,
     ): Call<Vote> {
         return api.removePollVote(messageId, pollId, vote.id)
+    }
+
+    /**
+     * Partially update a poll.
+     *
+     * @param pollId The poll id.
+     * @param set Map of fields to set.
+     * @param unset List of fields to unset.
+     * @return Executable async [Call] responsible for updating a poll.
+     */
+    @CheckResult
+    public fun partialUpdatePoll(
+        pollId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Poll> {
+        return api.partialUpdatePoll(pollId, set, unset)
     }
 
     /**

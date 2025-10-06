@@ -466,6 +466,9 @@ internal object MoshiChatApiTestArguments {
     fun removePollVoteInput() = pollVoteResponseArguments()
 
     @JvmStatic
+    fun partialUpdatePollInput() = pollResponseArguments()
+
+    @JvmStatic
     fun closePollInput() = pollResponseArguments()
 
     @JvmStatic

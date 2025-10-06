@@ -60,10 +60,10 @@ import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
@@ -1492,10 +1492,15 @@ constructor(
             voteId,
         ).mapDomain { it.vote.toDomain() }
 
+    override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
+        val request = PartialUpdatePollRequest(set, unset)
+        return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
+    }
+
     override fun closePoll(pollId: String): Call<Poll> =
-        pollsApi.updatePoll(
+        pollsApi.partialUpdatePoll(
             pollId,
-            PollUpdateRequest(
+            PartialUpdatePollRequest(
                 set = mapOf("is_closed" to true),
             ),
         ).mapDomain { it.poll.toDomain() }

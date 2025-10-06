@@ -53,10 +53,10 @@ import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
@@ -2131,11 +2131,31 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdatePollInput")
+    fun testPartialUpdatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<PollsApi>()
+        whenever(api.partialUpdatePoll(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val pollId = randomString()
+        val set = mapOf("name" to "New poll name")
+        val unset = listOf("custom_property")
+        val result = sut.partialUpdatePoll(pollId, set, unset).await()
+        // then
+        val expectedRequest = PartialUpdatePollRequest(set, unset)
+        result `should be instance of` expected
+        verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#closePollInput")
     fun testClosePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<PollsApi>()
-        whenever(api.updatePoll(any(), any())).doReturn(call)
+        whenever(api.partialUpdatePoll(any(), any())).doReturn(call)
         val sut = Fixture()
             .withPollsApi(api)
             .get()
@@ -2143,9 +2163,9 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val result = sut.closePoll(pollId).await()
         // then
-        val expectedRequest = PollUpdateRequest(set = mapOf("is_closed" to true))
+        val expectedRequest = PartialUpdatePollRequest(set = mapOf("is_closed" to true))
         result `should be instance of` expected
-        verify(api, times(1)).updatePoll(pollId, expectedRequest)
+        verify(api, times(1)).partialUpdatePoll(pollId, expectedRequest)
     }
 
     @ParameterizedTest

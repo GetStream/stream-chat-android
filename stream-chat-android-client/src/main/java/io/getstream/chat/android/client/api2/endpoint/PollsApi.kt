@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
@@ -106,14 +106,14 @@ internal interface PollsApi {
      * Updates a poll.
      *
      * @param pollId The poll ID.
-     * @param pollUpdateRequest The poll update request.
+     * @param body The poll update request.
      *
      * @return The poll response.
      */
     @PATCH("/polls/{poll_id}")
-    fun updatePoll(
+    fun partialUpdatePoll(
         @Path("poll_id") pollId: String,
-        @Body pollUpdateRequest: PollUpdateRequest,
+        @Body body: PartialUpdatePollRequest,
     ): RetrofitCall<PollResponse>
 
     /**
