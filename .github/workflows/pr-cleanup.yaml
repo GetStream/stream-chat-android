@@ -1,0 +1,11 @@
+name: PR cleanup
+
+on:
+  schedule:
+    - cron: "0 7 * * 1"  # every Monday 07:00 UTC (08:00 CET / 09:00 CEST)
+  workflow_dispatch:
+
+jobs:
+  pr-cleanup:
+    uses: GetStream/android-ci-actions/.github/workflows/pr-clean-stale.yaml@main
+    secrets: inherit
