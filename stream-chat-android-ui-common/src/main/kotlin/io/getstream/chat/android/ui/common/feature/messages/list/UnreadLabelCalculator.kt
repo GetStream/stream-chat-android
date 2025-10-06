@@ -92,7 +92,7 @@ internal class UnreadLabelCalculator {
      * - Determining when calculation should be skipped (e.g., for threads)
      *
      * @param channelUserRead The read state for the current user, containing last read message ID and timestamp.
-     * @param channelState The current channel state, providing access to all messages.
+     * @param messages The list of messages in the channel, ordered from oldest to newest.
      * @param currentUserId The ID of the currently logged-in user.
      * @param shouldShowButton Whether the unread button should be visible (controlled by user interactions).
      *
@@ -101,13 +101,13 @@ internal class UnreadLabelCalculator {
      */
     fun calculateUnreadLabel(
         channelUserRead: ChannelUserRead,
-        channelState: ChannelState,
+        messages: List<Message>,
         currentUserId: String?,
         shouldShowButton: Boolean,
     ): MessageListController.UnreadLabel? {
         // Step 1: Calculate the list of unread messages by folding through all messages
         // and accumulating messages that appear after the lastReadMessageId
-        val unreadMessages = channelState.messages.value
+        val unreadMessages = messages
             .fold(emptyList<Message>()) { acc, message ->
                 when {
                     // When we find the last read message, reset the accumulator (start fresh)
@@ -118,7 +118,7 @@ internal class UnreadLabelCalculator {
             }
 
         // Step 2: Find the actual last read message for comparison purposes
-        val lastReadMessage = channelState.messages.value
+        val lastReadMessage = messages
             .firstOrNull { it.id == channelUserRead.lastReadMessageId }
 
         // Step 2.1: If lastReadMessage is not found in the messages list, skip complex ownership
@@ -257,7 +257,7 @@ internal class UnreadLabelCalculator {
                 lastReadMessageId = it.id,
                 // Only show button if requested AND there are non-deleted unread messages
                 buttonVisibility = shouldShowButton &&
-                    unreadMessages.any { msg -> !msg.isDeleted() },
+                    unreadMessages.any { message -> !message.isDeleted() },
             )
         }
     }

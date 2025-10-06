@@ -16,20 +16,15 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
-import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.shouldBe
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import java.util.Date
 
 internal class UnreadLabelCalculatorTest {
@@ -57,7 +52,6 @@ internal class UnreadLabelCalculatorTest {
             unreadMessage2,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-3",
             unreadMessages = 2,
@@ -67,7 +61,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -98,7 +92,6 @@ internal class UnreadLabelCalculatorTest {
             followUpOwnMessage,
         )
 
-        val channelState = createChannelState(messages)
         // Key: lastRead timestamp equals the lastReadMessage createdAt, but the unread message was created after
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
@@ -109,7 +102,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -145,7 +138,6 @@ internal class UnreadLabelCalculatorTest {
             otherMessage2,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 4,
@@ -155,7 +147,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -196,7 +188,6 @@ internal class UnreadLabelCalculatorTest {
             deletedMessage2,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 2,
@@ -206,7 +197,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label with shouldShowButton = true
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -238,7 +229,6 @@ internal class UnreadLabelCalculatorTest {
             activeMessage,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 2,
@@ -248,7 +238,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -273,7 +263,6 @@ internal class UnreadLabelCalculatorTest {
             unreadMessage,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 1,
@@ -283,7 +272,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label with shouldShowButton = false
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = false,
         )
@@ -305,7 +294,6 @@ internal class UnreadLabelCalculatorTest {
             createMessage(id = "msg-3", user = currentUser, createdAt = Date(300)),
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-3",
             unreadMessages = 0,
@@ -315,7 +303,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -338,7 +326,6 @@ internal class UnreadLabelCalculatorTest {
             lastMessage,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-3",
             unreadMessages = 0,
@@ -348,7 +335,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -364,7 +351,7 @@ internal class UnreadLabelCalculatorTest {
     @Test
     fun `should return null when messages list is empty`() {
         // Given: Empty messages list
-        val channelState = createChannelState(emptyList())
+        val messages = emptyList<Message>()
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-1",
             unreadMessages = 0,
@@ -374,7 +361,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -401,7 +388,6 @@ internal class UnreadLabelCalculatorTest {
             ownMessage2,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 0, // Server says no unread
@@ -411,7 +397,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -438,7 +424,6 @@ internal class UnreadLabelCalculatorTest {
             otherMessage,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 2,
@@ -448,7 +433,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -476,7 +461,6 @@ internal class UnreadLabelCalculatorTest {
             createMessage(id = "msg-3", user = otherUser, createdAt = Date(300)),
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-nonexistent",
             unreadMessages = 3,
@@ -486,7 +470,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -516,7 +500,6 @@ internal class UnreadLabelCalculatorTest {
             createMessage(id = "msg-7", user = otherUser, createdAt = Date(700)),
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 5,
@@ -526,7 +509,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -557,7 +540,6 @@ internal class UnreadLabelCalculatorTest {
             otherMessage,
         )
 
-        val channelState = createChannelState(messages)
         val channelUserRead = createChannelUserRead(
             lastReadMessageId = "msg-2",
             unreadMessages = 2,
@@ -567,7 +549,7 @@ internal class UnreadLabelCalculatorTest {
         // When: Calculate unread label
         val result = calculator.calculateUnreadLabel(
             channelUserRead = channelUserRead,
-            channelState = channelState,
+            messages = messages,
             currentUserId = currentUser.id,
             shouldShowButton = true,
         )
@@ -594,12 +576,6 @@ internal class UnreadLabelCalculatorTest {
             createdAt = createdAt,
             deletedAt = deletedAt,
         )
-    }
-
-    private fun createChannelState(messages: List<Message>): ChannelState {
-        val channelState: ChannelState = mock()
-        whenever(channelState.messages) doReturn MutableStateFlow(messages)
-        return channelState
     }
 
     private fun createChannelUserRead(

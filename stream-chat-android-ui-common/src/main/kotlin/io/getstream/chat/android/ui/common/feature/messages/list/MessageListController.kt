@@ -608,7 +608,7 @@ public class MessageListController(
                     // Delegate to the calculator for the complex unread label logic
                     val unreadLabel = unreadLabelCalculator.calculateUnreadLabel(
                         channelUserRead = channelUserRead,
-                        channelState = channel,
+                        messages = channel.messages.value,
                         currentUserId = clientState.user.value?.id,
                         shouldShowButton = shouldShowButton,
                     )
