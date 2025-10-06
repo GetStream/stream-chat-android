@@ -81,6 +81,7 @@
 - Add `ChaTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
+- Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
 
 ### ❌ Removed
 
