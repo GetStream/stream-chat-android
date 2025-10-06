@@ -1626,33 +1626,6 @@ internal constructor(
     }
 
     /**
-     * Send a message with a poll to the given channel.
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param pollConfig The poll configuration.
-     *
-     * @return Executable async [Call] responsible for sending a poll.
-     */
-    @CheckResult
-    public fun sendPoll(
-        channelType: String,
-        channelId: String,
-        pollConfig: PollConfig,
-    ): Call<Message> {
-        return api.createPoll(pollConfig)
-            .flatMap { poll ->
-                sendMessage(
-                    channelType = channelType,
-                    channelId = channelId,
-                    Message(
-                        extraData = mapOf("poll_id" to poll.id),
-                    ),
-                )
-            }
-    }
-
-    /**
      * Sends a static location message to the given channel.
      *
      * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
@@ -1792,6 +1765,43 @@ internal constructor(
                     plugin.onStopLiveLocationSharingResult(location, result)
                 }
             }
+    }
+    /**
+     * Send a message with a poll to the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param pollConfig The poll configuration.
+     *
+     * @return Executable async [Call] responsible for sending a poll.
+     */
+    @CheckResult
+    public fun sendPoll(
+        channelType: String,
+        channelId: String,
+        pollConfig: PollConfig,
+    ): Call<Message> {
+        return api.createPoll(pollConfig)
+            .flatMap { poll ->
+                sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    Message(
+                        extraData = mapOf("poll_id" to poll.id),
+                    ),
+                )
+            }
+    }
+
+    /**
+     * Get a poll by id.
+     *
+     * @param pollId The poll id.
+     * @return Executable async [Call] responsible for fetching a poll.
+     */
+    @CheckResult
+    public fun getPoll(pollId: String): Call<Poll> {
+        return api.getPoll(pollId)
     }
 
     @CheckResult

@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionRes
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -44,6 +45,16 @@ internal interface PollsApi {
      */
     @POST("/polls")
     fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
+
+    /**
+     * Retrieves a poll by its ID.
+     *
+     * @param pollId The poll ID.
+     *
+     * @return The poll response.
+     */
+    @GET("/polls/{poll_id}")
+    fun getPoll(@Path("poll_id") pollId: String): RetrofitCall<PollResponse>
 
     /**
      * Suggest a new option for a poll.

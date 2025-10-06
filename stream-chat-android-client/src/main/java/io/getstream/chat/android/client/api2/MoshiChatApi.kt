@@ -1530,6 +1530,10 @@ constructor(
         ).mapDomain { it.poll.toDomain() }
     }
 
+    override fun getPoll(pollId: String): Call<Poll> {
+        return pollsApi.getPoll(pollId).mapDomain { it.poll.toDomain() }
+    }
+
     override fun deletePoll(pollId: String): Call<Unit> {
         return pollsApi.deletePoll(pollId).toUnitCall()
     }

@@ -558,6 +558,9 @@ internal interface ChatApi {
     fun createPoll(pollConfig: PollConfig): Call<Poll>
 
     @CheckResult
+    fun getPoll(pollId: String): Call<Poll>
+
+    @CheckResult
     fun suggestPollOption(pollId: String, option: String): Call<Option>
 
     @CheckResult
