@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.compose.ui.ComposeTest
 import io.getstream.chat.android.randomString
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
@@ -37,6 +39,8 @@ internal class MediaPreviewActivityTest : ComposeTest {
             title = randomString(),
         )
 
-        ActivityScenario.launch<MediaPreviewActivity>(intent)
+        ActivityScenario.launch<MediaPreviewActivity>(intent).use { scenario ->
+            assertEquals(Lifecycle.State.RESUMED, scenario.state)
+        }
     }
 }

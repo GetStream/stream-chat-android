@@ -75,6 +75,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
+- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944) 
 
 ### ⬆️ Improved
 
@@ -82,6 +83,7 @@
 - Add `ChaTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
+- Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
 
 ### ❌ Removed
 
