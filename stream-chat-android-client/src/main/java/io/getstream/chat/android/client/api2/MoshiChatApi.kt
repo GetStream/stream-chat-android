@@ -1497,13 +1497,10 @@ constructor(
         return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
     }
 
-    override fun closePoll(pollId: String): Call<Poll> =
-        pollsApi.partialUpdatePoll(
-            pollId,
-            PartialUpdatePollRequest(
-                set = mapOf("is_closed" to true),
-            ),
-        ).mapDomain { it.poll.toDomain() }
+    override fun closePoll(pollId: String): Call<Poll> {
+        val set = mapOf("is_closed" to true)
+        return partialUpdatePoll(pollId, set, emptyList())
+    }
 
     override fun suggestPollOption(pollId: String, option: String): Call<Option> =
         pollsApi.suggestPollOption(
