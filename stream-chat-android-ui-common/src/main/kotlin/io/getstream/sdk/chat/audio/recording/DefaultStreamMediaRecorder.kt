@@ -20,6 +20,7 @@ import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
@@ -56,8 +57,9 @@ public class DefaultStreamMediaRecorder(
     /**
      * Holds the current state of the [MediaRecorder] instance.
      */
-    private var mediaRecorderState: MediaRecorderState = MediaRecorderState.UNINITIALIZED
-        set(value) {
+    @VisibleForTesting
+    internal var mediaRecorderState: MediaRecorderState = MediaRecorderState.UNINITIALIZED
+        private set(value) {
             field = value
             onStreamMediaRecorderStateChangedListener?.onStateChanged(field)
 
@@ -158,24 +160,26 @@ public class DefaultStreamMediaRecorder(
      */
     private var onCurrentRecordingDurationChangedListener: StreamMediaRecorder.OnCurrentRecordingDurationChanged? = null
 
-    /**
-     * Initializes the media recorder and sets it to record audio using the device's microphone.
-     *
-     * @param context The [Context] necessary to prepare for recording.
-     * @param recordingFile The [File] the audio will be saved to once the recording stops.
-     */
-    @Throws
-    private fun initializeMediaRecorderForAudio(
-        context: Context,
-        recordingFile: File,
-    ) {
-        release()
-
-        mediaRecorder = if (Build.VERSION.SDK_INT < 31) {
+    @VisibleForTesting
+    internal var buildMediaRecorder: () -> MediaRecorder = {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            @Suppress("DEPRECATION")
             MediaRecorder()
         } else {
             MediaRecorder(context)
-        }.apply {
+        }
+    }
+
+    /**
+     * Initializes the media recorder and sets it to record audio using the device's microphone.
+     *
+     * @param recordingFile The [File] the audio will be saved to once the recording stops.
+     */
+    @Throws
+    private fun initializeMediaRecorderForAudio(recordingFile: File) {
+        release()
+
+        mediaRecorder = buildMediaRecorder().apply {
             setAudioSource(audioSource)
             setOutputFormat(outputFormat)
             setAudioEncoder(audioEncoder)
@@ -209,10 +213,7 @@ public class DefaultStreamMediaRecorder(
             StreamFileUtil.createFileInCacheDir(context, recordingName)
                 .onSuccess {
                     recordingFile = it
-                    initializeMediaRecorderForAudio(
-                        context = context,
-                        recordingFile = it,
-                    )
+                    initializeMediaRecorderForAudio(recordingFile = it)
                     requireNotNull(mediaRecorder)
                     mediaRecorder?.start()
                     onStartRecordingListener?.onStarted()
@@ -252,10 +253,7 @@ public class DefaultStreamMediaRecorder(
         return try {
             this.recordingFile = recordingFile
 
-            initializeMediaRecorderForAudio(
-                context = context,
-                recordingFile = recordingFile,
-            )
+            initializeMediaRecorderForAudio(recordingFile = recordingFile)
 
             requireNotNull(mediaRecorder)
 

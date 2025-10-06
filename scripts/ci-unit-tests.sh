@@ -4,4 +4,4 @@ command_file="build/tmp/unit-tests-command.sh"
 #chmod +x $command_file && \
 #./$command_file && \
 #rm $command_file
-./gradlew testCoverage
+./gradlew :testCoverage

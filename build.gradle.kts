@@ -49,6 +49,7 @@ buildscript {
 
 apply(from = "${rootDir}/scripts/sample-app-versioner.gradle")
 apply(from = "${rootDir}/scripts/sonar.gradle")
+apply(from = "${rootDir}/scripts/coverage.gradle")
 
 subprojects {
     if (name != "stream-chat-android-docs"
@@ -56,7 +57,6 @@ subprojects {
         apply(from = "${rootDir}/spotless/spotless.gradle")
     }
     apply(plugin = "io.gitlab.arturbosch.detekt")
-    apply(from = "${rootDir}/scripts/coverage.gradle")
 }
 
 tasks.withType<DependencyUpdatesTask> {
