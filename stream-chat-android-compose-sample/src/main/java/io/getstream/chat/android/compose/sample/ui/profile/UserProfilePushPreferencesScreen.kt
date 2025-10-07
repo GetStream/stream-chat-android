@@ -77,14 +77,26 @@ fun UserProfilePushPreferencesScreen(
     onSnoozeNotifications: (Date) -> Unit,
 ) {
     var selectedLevel by remember { mutableStateOf(preferences.level ?: PushPreferenceLevel.all) }
-    var isTemporaryDisabled by remember { mutableStateOf(preferences.disabledUntil != null) }
+    val disableExpired by remember(preferences.disabledUntil) {
+        val now = Date()
+        mutableStateOf(preferences.disabledUntil?.before(now) ?: true)
+    }
+    var isTemporaryDisabled by remember {
+        val isDisabled = preferences.disabledUntil != null && !disableExpired
+        mutableStateOf(isDisabled)
+    }
 
     // Initialize disable until date when temporary disable is enabled
     var disableUntilDate by remember {
         val fallback = Calendar.getInstance().apply {
             add(Calendar.HOUR_OF_DAY, 1)
         }.time
-        mutableStateOf(preferences.disabledUntil ?: fallback)
+        val date = if (disableExpired) {
+            fallback
+        } else {
+            preferences.disabledUntil ?: fallback
+        }
+        mutableStateOf(date)
     }
 
     Column(
