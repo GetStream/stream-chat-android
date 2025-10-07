@@ -238,13 +238,13 @@ public class ChannelAvatarView : ViewGroup {
                     }
                     2 -> {
                         imageViews[0].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
-                            .setTopLeftCornerSize(RelativeCornerSize(0.5f))
-                            .setBottomLeftCornerSize(RelativeCornerSize(0.5f))
+                            .setTopLeftCornerSize(RelativeCornerSize(1f))
+                            .setBottomLeftCornerSize(RelativeCornerSize(1f))
                             .build()
 
                         imageViews[1].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
-                            .setTopRightCornerSize(RelativeCornerSize(0.5f))
-                            .setBottomRightCornerSize(RelativeCornerSize(0.5f))
+                            .setTopRightCornerSize(RelativeCornerSize(1f))
+                            .setBottomRightCornerSize(RelativeCornerSize(1f))
                             .build()
                     }
                     3 -> {
@@ -252,8 +252,8 @@ public class ChannelAvatarView : ViewGroup {
                             .setTopLeftCornerSize(RelativeCornerSize(1f))
                             .build()
                         imageViews[1].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
-                            .setTopRightCornerSize(RelativeCornerSize(0.5f))
-                            .setBottomRightCornerSize(RelativeCornerSize(0.5f))
+                            .setTopRightCornerSize(RelativeCornerSize(1f))
+                            .setBottomRightCornerSize(RelativeCornerSize(1f))
                             .build()
                         imageViews[2].shapeAppearanceModel = ShapeAppearanceModel().toBuilder()
                             .setBottomLeftCornerSize(RelativeCornerSize(1f))
