@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -76,7 +77,14 @@ internal class ChannelListTest : PaparazziComposeTest {
                             typingUsers = listOf(PreviewUserData.user2),
                         ),
                         ItemState.ChannelItemState(
-                            channel = PreviewChannelData.channelWithMessages,
+                            channel = PreviewChannelData.channelWithMessages.copy(
+                                members = listOf(
+                                    Member(user = PreviewUserData.user1),
+                                    Member(user = PreviewUserData.user2),
+                                    Member(user = PreviewUserData.user3),
+                                    Member(user = PreviewUserData.user4),
+                                ),
+                            ),
                             isMuted = true,
                         ),
                     ),
