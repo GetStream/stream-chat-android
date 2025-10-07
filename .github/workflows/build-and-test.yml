@@ -36,16 +36,18 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # fetch all history for sonar analysis
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
-      - name: Upload testDebugUnitTest results
+      - name: Upload test results
         uses: actions/upload-artifact@v4.4.3
         if: failure()
         with:
-          name: testDebugUnitTest
-          path: ./**/build/reports/tests/testDebugUnitTest
+          name: testResults
+          path: ./**/build/reports/tests/**
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
         run: bundle exec fastlane run_sonar_analysis

@@ -53,6 +53,8 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix unread separator showing before an uncommitted pending message. [#5945](https://github.com/GetStream/stream-chat-android/pull/5945)
+- Fix unread separator showing before a message that was sent while offline. [#5945](https://github.com/GetStream/stream-chat-android/pull/5945)
 
 ### ⬆️ Improved
 
@@ -65,6 +67,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
 
 ### ⬆️ Improved
 
@@ -77,6 +80,8 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
+- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944) 
 
 ### ⬆️ Improved
 
@@ -84,6 +89,7 @@
 - Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
+- Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
 
 ### ❌ Removed
 
