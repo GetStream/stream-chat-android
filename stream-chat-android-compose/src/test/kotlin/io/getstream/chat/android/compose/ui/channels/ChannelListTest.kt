@@ -23,7 +23,7 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -31,7 +31,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
 
-internal class ChannelListTest : SnapshotTest {
+internal class ChannelListTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)

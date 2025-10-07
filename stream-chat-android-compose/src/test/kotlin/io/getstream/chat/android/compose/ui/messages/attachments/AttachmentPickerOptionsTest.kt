@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -27,7 +27,7 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
 import org.junit.Test
 
-internal class AttachmentPickerOptionsTest : SnapshotTest {
+internal class AttachmentPickerOptionsTest : PaparazziComposeTest {
 
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
