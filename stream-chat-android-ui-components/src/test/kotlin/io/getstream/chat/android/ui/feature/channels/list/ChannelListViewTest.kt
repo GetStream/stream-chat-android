@@ -89,6 +89,7 @@ internal class ChannelListViewTest : PaparazziViewTest() {
                                 Member(user = PreviewUserData.user3),
                                 Member(user = PreviewUserData.user4),
                             ),
+                            extraData = mapOf("mutedChannel" to true),
                         ),
                         typingUsers = emptyList(),
                         draftMessage = null,
