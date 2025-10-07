@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -24,6 +25,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -561,7 +563,10 @@ internal interface ChatApi {
     fun getPoll(pollId: String): Call<Poll>
 
     @CheckResult
-    fun suggestPollOption(pollId: String, option: String): Call<Option>
+    fun createPollOption(pollId: String, option: CreatePollOptionRequest): Call<Option>
+
+    @CheckResult
+    fun updatePollOption(pollId: String, option: UpdatePollOptionRequest): Call<Option>
 
     @CheckResult
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>

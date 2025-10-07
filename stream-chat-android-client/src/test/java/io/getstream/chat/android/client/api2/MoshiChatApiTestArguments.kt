@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
@@ -53,7 +54,6 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
@@ -481,18 +481,10 @@ internal object MoshiChatApiTestArguments {
     fun deletePollInput() = completableResponseArguments()
 
     @JvmStatic
-    fun suggestPollOptionInput() = listOf(
-        Arguments.of(
-            RetroSuccess(
-                SuggestPollOptionResponse(
-                    duration = randomString(),
-                    poll_option = Mother.randomDownstreamOptionDto(),
-                ),
-            ).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<SuggestPollOptionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun createPollOptionInput() = pollOptionResponseArguments()
+
+    @JvmStatic
+    fun updatePollOptionInput() = pollOptionResponseArguments()
 
     @JvmStatic
     fun createReminderInput() = reminderResponseArguments()
@@ -727,6 +719,19 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<PollResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun pollOptionResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                PollOptionResponse(
+                    duration = randomString(),
+                    poll_option = Mother.randomDownstreamOptionDto(),
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<PollOptionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun pollVoteResponseArguments() = listOf(

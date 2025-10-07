@@ -17,12 +17,14 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -76,7 +78,6 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
@@ -1502,11 +1503,22 @@ constructor(
         return partialUpdatePoll(pollId, set, emptyList())
     }
 
-    override fun suggestPollOption(pollId: String, option: String): Call<Option> =
-        pollsApi.suggestPollOption(
-            pollId,
-            SuggestPollOptionRequest(option),
-        ).mapDomain { it.poll_option.toDomain() }
+    override fun createPollOption(pollId: String, option: CreatePollOptionRequest): Call<Option> {
+        val request = io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequest(
+            text = option.text,
+            extraData = option.extraData,
+        )
+        return pollsApi.createPollOption(pollId, request).mapDomain { it.poll_option.toDomain() }
+    }
+
+    override fun updatePollOption(pollId: String, option: UpdatePollOptionRequest): Call<Option> {
+        val request = io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest(
+            id = option.id,
+            text = option.text,
+            extraData = option.extraData,
+        )
+        return pollsApi.updatePollOption(pollId, request).mapDomain { it.poll_option.toDomain() }
+    }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
         return pollsApi.createPoll(

@@ -109,7 +109,7 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         val pollId = randomString()
         val option = randomString()
         val resultOption = randomPollOption()
-        whenever(api.suggestPollOption(any(), any()))
+        whenever(api.createPollOption(any(), any()))
             .thenReturn(RetroSuccess(resultOption).toRetrofitCall())
         // when
         val result = chatClient.suggestPollOption(pollId, option).await()
@@ -123,10 +123,66 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         val pollId = randomString()
         val option = randomString()
         val errorCode = positiveRandomInt()
-        whenever(api.suggestPollOption(any(), any()))
+        whenever(api.createPollOption(any(), any()))
             .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.suggestPollOption(pollId, option).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun createPollOptionSuccess() = runTest {
+        // given
+        val pollId = randomString()
+        val option = Mother.randomCreatePollOptionRequest()
+        val resultOption = randomPollOption()
+        whenever(api.createPollOption(any(), any()))
+            .thenReturn(RetroSuccess(resultOption).toRetrofitCall())
+        // when
+        val result = chatClient.createPollOption(pollId, option).await()
+        // then
+        assert(result.isSuccess)
+    }
+
+    @Test
+    fun createPollOptionError() = runTest {
+        // given
+        val pollId = randomString()
+        val option = Mother.randomCreatePollOptionRequest()
+        val errorCode = positiveRandomInt()
+        whenever(api.createPollOption(any(), any()))
+            .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.createPollOption(pollId, option).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun updatePollOptionSuccess() = runTest {
+        // given
+        val pollId = randomString()
+        val option = Mother.randomUpdatePollOptionRequest()
+        val resultOption = randomPollOption()
+        whenever(api.updatePollOption(any(), any()))
+            .thenReturn(RetroSuccess(resultOption).toRetrofitCall())
+        // when
+        val result = chatClient.updatePollOption(pollId, option).await()
+        // then
+        assert(result.isSuccess)
+    }
+
+    @Test
+    fun updatePollOptionError() = runTest {
+        // given
+        val pollId = randomString()
+        val option = Mother.randomUpdatePollOptionRequest()
+        val errorCode = positiveRandomInt()
+        whenever(api.updatePollOption(any(), any()))
+            .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.updatePollOption(pollId, option).await()
         // then
         verifyNetworkError(result, errorCode)
     }

@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
@@ -1118,6 +1120,24 @@ internal object Mother {
         user_id = userId,
         is_answer = true,
         answer_text = answerText,
+    )
+
+    fun randomCreatePollOptionRequest(
+        text: String = randomString(),
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): CreatePollOptionRequest = CreatePollOptionRequest(
+        text = text,
+        extraData = extraData,
+    )
+
+    fun randomUpdatePollOptionRequest(
+        id: String = randomString(),
+        text: String = randomString(),
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): UpdatePollOptionRequest = UpdatePollOptionRequest(
+        id = id,
+        text = text,
+        extraData = extraData,
     )
 
     fun randomDownstreamReminderDto(

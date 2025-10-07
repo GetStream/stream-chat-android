@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,13 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 
 /**
- * Response for suggesting a new option for a poll.
+ * Response for creating/updating a poll option.
  *
- * @property duration The duration of the request.
- * @property poll_option The option object.
+ * @param duration The duration of the request.
+ * @param poll_option The poll option object.
  */
 @JsonClass(generateAdapter = true)
-internal data class SuggestPollOptionResponse(
+internal data class PollOptionResponse(
     val duration: String,
     val poll_option: DownstreamPollOptionDto,
 )

@@ -17,7 +17,9 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
+import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -64,7 +66,6 @@ import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
-import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -84,6 +85,7 @@ import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
@@ -97,7 +99,6 @@ import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
-import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
@@ -135,6 +136,7 @@ import io.getstream.chat.android.randomChatNetworkError
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
+import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
@@ -2169,22 +2171,48 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#suggestPollOptionInput")
-    fun testSuggestPollOption(call: RetrofitCall<SuggestPollOptionResponse>, expected: KClass<*>) = runTest {
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createPollOptionInput")
+    fun testCreatePollOption(call: RetrofitCall<PollOptionResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<PollsApi>()
-        whenever(api.suggestPollOption(any(), any())).doReturn(call)
+        whenever(api.createPollOption(any(), any())).doReturn(call)
         val sut = Fixture()
             .withPollsApi(api)
             .get()
         // when
         val pollId = randomString()
         val option = randomString()
-        val result = sut.suggestPollOption(pollId, option).await()
+        val extraData = randomExtraData(1)
+        val request = CreatePollOptionRequest(option, extraData)
+        val result = sut.createPollOption(pollId, request).await()
         // then
-        val expectedOption = SuggestPollOptionRequest(option)
+        val expectedOption =
+            io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequest(option, extraData)
         result `should be instance of` expected
-        verify(api, times(1)).suggestPollOption(pollId, expectedOption)
+        verify(api, times(1)).createPollOption(pollId, expectedOption)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updatePollOptionInput")
+    fun testUpdatePollOption(call: RetrofitCall<PollOptionResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<PollsApi>()
+        whenever(api.updatePollOption(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val pollId = randomString()
+        val optionId = randomString()
+        val text = randomString()
+        val extraData = randomExtraData(1)
+        val request = UpdatePollOptionRequest(optionId, text, extraData)
+        val result = sut.updatePollOption(pollId, request).await()
+        // then
+        val expectedOption =
+            io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest(optionId, text, extraData)
+        result `should be instance of` expected
+        verify(api, times(1)).updatePollOption(pollId, expectedOption)
     }
 
     @ParameterizedTest

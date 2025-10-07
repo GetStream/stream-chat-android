@@ -17,20 +17,22 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
+import io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
-import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
-import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 @AuthenticatedApi
@@ -57,18 +59,30 @@ internal interface PollsApi {
     fun getPoll(@Path("poll_id") pollId: String): RetrofitCall<PollResponse>
 
     /**
-     * Suggest a new option for a poll.
+     * Create a new option for a poll.
      *
      * @param pollId The poll ID.
-     * @param suggestPollOptionRequest The suggest poll option request.
+     * @param body The create poll option request.
      *
      * @return The suggest poll option response.
      */
     @POST("/polls/{poll_id}/options")
-    fun suggestPollOption(
+    fun createPollOption(
         @Path("poll_id") pollId: String,
-        @Body suggestPollOptionRequest: SuggestPollOptionRequest,
-    ): RetrofitCall<SuggestPollOptionResponse>
+        @Body body: CreatePollOptionRequest,
+    ): RetrofitCall<PollOptionResponse>
+
+    /**
+     * Update an option for a poll.
+     *
+     * @param pollId The poll ID.
+     * @param body The update poll option request.
+     */
+    @PUT("/polls/{poll_id}/options")
+    fun updatePollOption(
+        @Path("poll_id") pollId: String,
+        @Body body: UpdatePollOptionRequest,
+    ): RetrofitCall<PollOptionResponse>
 
     /**
      * Casts a vote on a poll.

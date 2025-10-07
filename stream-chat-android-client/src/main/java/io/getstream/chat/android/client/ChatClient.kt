@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_S
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -37,6 +38,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
@@ -1805,12 +1807,52 @@ internal constructor(
         return api.getPoll(pollId)
     }
 
+    /**
+     * Create a new option for a poll.
+     * Note: To create an option with custom data, use [createPollOption] instead.
+     *
+     * @param pollId The poll id.
+     * @param option The option to create.
+     *
+     * @return Executable async [Call] responsible for creating a new option.
+     */
     @CheckResult
     public fun suggestPollOption(
         pollId: String,
         option: String,
     ): Call<Option> {
-        return api.suggestPollOption(pollId, option)
+        val request = CreatePollOptionRequest(option)
+        return createPollOption(pollId, request)
+    }
+
+    /**
+     * Create a new option for a poll.
+     *
+     * @param pollId The poll id.
+     * @param option The option to create.
+     *
+     * @return Executable async [Call] responsible for creating a new option.
+     */
+    @CheckResult
+    public fun createPollOption(
+        pollId: String,
+        option: CreatePollOptionRequest,
+    ): Call<Option> {
+        return api.createPollOption(pollId, option)
+    }
+
+    /**
+     * Update an existing option in a poll.
+     *
+     * @param pollId The poll id.
+     * @param option The option to update.
+     */
+    @CheckResult
+    public fun updatePollOption(
+        pollId: String,
+        option: UpdatePollOptionRequest,
+    ): Call<Option> {
+        return api.updatePollOption(pollId, option)
     }
 
     /**
