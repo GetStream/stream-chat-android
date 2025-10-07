@@ -84,6 +84,7 @@
 - Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944) 
 
 ### ⬆️ Improved
+- Improve `SwipeToReply` component in scroller containers. [#5946](https://github.com/GetStream/stream-chat-android/pull/5946)
 
 ### ✅ Added
 - Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
