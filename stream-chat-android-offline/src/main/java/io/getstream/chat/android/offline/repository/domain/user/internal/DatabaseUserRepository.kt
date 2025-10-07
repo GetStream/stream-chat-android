@@ -20,6 +20,8 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.extensions.launchWithMutex
+import io.getstream.chat.android.offline.repository.domain.push.internal.toEntity
+import io.getstream.chat.android.offline.repository.domain.push.internal.toModel
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -132,6 +134,7 @@ internal class DatabaseUserRepository(
             teams = teams,
             teamsRole = teamsRole,
             avgResponseTime = avgResponseTime,
+            pushPreference = pushPreference?.toEntity(),
             extraData = extraData,
         )
 
@@ -150,6 +153,7 @@ internal class DatabaseUserRepository(
             teams = teams,
             teamsRole = teamsRole,
             avgResponseTime = avgResponseTime,
+            pushPreference = pushPreference?.toModel(),
             extraData = extraData.toMutableMap(),
         )
     }

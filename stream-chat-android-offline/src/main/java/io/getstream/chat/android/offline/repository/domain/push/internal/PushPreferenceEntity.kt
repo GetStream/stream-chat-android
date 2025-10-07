@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui.profile
+package io.getstream.chat.android.offline.repository.domain.push.internal
 
-import io.getstream.result.Error
+import com.squareup.moshi.JsonClass
+import java.util.Date
 
-sealed interface UserProfileViewEvent {
-    data object UpdateProfilePictureSuccess : UserProfileViewEvent
-    sealed interface Failure : UserProfileViewEvent { val error: Error }
-    data class LoadUnreadCountsError(override val error: Error) : Failure
-    data class UpdateProfilePictureError(override val error: Error) : Failure
-    data class RemoveProfilePictureError(override val error: Error) : Failure
-    data class UpdatePushPreferencesError(override val error: Error) : Failure
-}
+/**
+ * DB entity holding push notification preferences.
+ */
+@JsonClass(generateAdapter = true)
+internal data class PushPreferenceEntity(
+    val level: String?,
+    val disabledUntil: Date?,
+)

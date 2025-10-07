@@ -18,6 +18,12 @@
 ### ✅ Added
 - Add support for `message.updated` and `reaction.new` push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 - Add `skipPush` parameter to `ChatClient.sendReaction` to skip sending push notifications for the reaction. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
+- Add `ChatClient.setUserPushPreference(level: PushPreferenceLevel)` for setting the global (user) preferences. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
+- Add `ChatClient.setChannelPushPreference(cid: String, level: PushPreferenceLevel)` for setting the channel-specific preferences.  [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
+- Add `ChatClient.snoozeUserPushNotifications(until: Date)` for global (user) snoozing of push notifications. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
+- Add `ChatClient.snoozeChannelPushNotifications(cid: String, until: Date)` for channel-specific snoozing of push notifications. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
+- Add `User.pushPreference` field representing the logged in user's global push notification preferences. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
+- Add `Channel.pushPreference` field representing the logged in user's channel-specific push notification preferences. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
 
 ### ⚠️ Changed
 
@@ -81,7 +87,7 @@
 - Improve `SwipeToReply` component in scroller containers. [#5946](https://github.com/GetStream/stream-chat-android/pull/5946)
 
 ### ✅ Added
-- Add `ChaTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
+- Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 
 ### ⚠️ Changed
 - Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
