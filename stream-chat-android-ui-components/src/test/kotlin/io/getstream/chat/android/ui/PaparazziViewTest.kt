@@ -20,9 +20,21 @@ import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import app.cash.paparazzi.Paparazzi
+import coil3.ComponentRegistry
+import coil3.ImageLoader
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
+import coil3.request.Disposable
+import coil3.request.ErrorResult
+import coil3.request.ImageRequest
+import coil3.request.ImageResult
 import io.getstream.chat.android.client.test.MockedChatClientTest
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.images.internal.StreamCoil
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Before
 import org.junit.Rule
+import java.util.Date
 
 internal abstract class PaparazziViewTest : MockedChatClientTest {
 
@@ -46,6 +58,8 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
     @Before
     fun prepare() {
         ChatUI.appContext = paparazzi.context
+        ChatUI.dateFormatter = TestDateFormatter
+        StreamCoil.setImageLoader { TestImageLoader }
     }
 
     fun snapshot(
@@ -94,4 +108,41 @@ internal abstract class PaparazziViewTest : MockedChatClientTest {
 
         paparazzi.snapshot(container)
     }
+}
+
+private object TestDateFormatter : DateFormatter {
+    private const val TIME = "13:49"
+    override fun formatDate(date: Date?): String = TIME
+    override fun formatTime(date: Date?): String = TIME
+    override fun formatRelativeDate(date: Date): String = "Today"
+    override fun formatRelativeTime(date: Date?): String = "Just now"
+}
+
+private object TestImageLoader : ImageLoader {
+
+    override val defaults = ImageRequest.Defaults()
+    override val components = ComponentRegistry()
+    override val memoryCache: MemoryCache? get() = null
+    override val diskCache: DiskCache? get() = null
+
+    override fun enqueue(request: ImageRequest): Disposable {
+        request.target?.onStart(request.placeholder())
+        return object : Disposable {
+            override val job = CompletableDeferred(value = errorResult(request))
+            override val isDisposed get() = true
+            override fun dispose() = Unit
+        }
+    }
+
+    override suspend fun execute(request: ImageRequest): ImageResult = errorResult(request)
+
+    override fun newBuilder() = throw UnsupportedOperationException()
+
+    override fun shutdown() = Unit
+
+    private fun errorResult(request: ImageRequest) = ErrorResult(
+        image = null,
+        request = request,
+        throwable = RuntimeException(),
+    )
 }
