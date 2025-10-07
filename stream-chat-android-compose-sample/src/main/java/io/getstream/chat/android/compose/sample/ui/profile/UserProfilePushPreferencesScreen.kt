@@ -45,6 +45,7 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -89,8 +90,7 @@ fun UserProfilePushPreferencesScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
-            .padding(16.dp),
+            .background(ChatTheme.colors.appBackground),
     ) {
         // Notification Level Section
         NotificationLevelSection(
@@ -99,7 +99,7 @@ fun UserProfilePushPreferencesScreen(
             onLevelSelected = { level -> if (!isTemporaryDisabled) selectedLevel = level },
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Temporary Disable Section
         TemporaryDisableSection(
@@ -109,7 +109,7 @@ fun UserProfilePushPreferencesScreen(
             onDateTimeSelected = { newDate -> disableUntilDate = newDate },
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Action Buttons
         ActionButtons(
@@ -132,7 +132,7 @@ private fun NotificationLevelSection(
             color = if (isEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
             fontWeight = FontWeight.Medium,
         ),
-        modifier = Modifier.padding(bottom = 16.dp),
+        modifier = Modifier.padding(16.dp),
     )
 
     // All Notifications Option
@@ -177,7 +177,7 @@ private fun TemporaryDisableSection(
             color = ChatTheme.colors.textLowEmphasis,
             fontWeight = FontWeight.Medium,
         ),
-        modifier = Modifier.padding(bottom = 16.dp),
+        modifier = Modifier.padding(16.dp),
     )
 
     // Temporary Disable Toggle
@@ -185,8 +185,12 @@ private fun TemporaryDisableSection(
         modifier = Modifier
             .fillMaxWidth()
             .minimumInteractiveComponentSize()
-            .clickable { onTemporaryDisableToggled() }
-            .padding(vertical = 8.dp),
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = { onTemporaryDisableToggled() },
+            )
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -224,47 +228,49 @@ private fun ActionButtons(
     onSavePreferences: () -> Unit,
     onSnoozeNotifications: () -> Unit,
 ) {
-    Button(
-        onClick = if (isTemporaryDisabled) onSnoozeNotifications else onSavePreferences,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (isTemporaryDisabled) {
-                Color(color = 0xFFFF8A65) // Orange color when temporary disable is ON
-            } else {
-                ChatTheme.colors.primaryAccent // Blue color when temporary disable is OFF
-            },
-        ),
-        shape = RoundedCornerShape(12.dp),
-    ) {
-        if (isTemporaryDisabled) {
-            Text(
-                text = "🔔 Snooze Notifications",
-                style = ChatTheme.typography.bodyBold.copy(
-                    color = Color.White,
-                    fontSize = 16.sp,
-                ),
-            )
-        } else {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-                    contentDescription = null,
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp),
-                )
-                Spacer(modifier = Modifier.size(8.dp))
+    Box(Modifier.padding(16.dp)) {
+        Button(
+            onClick = if (isTemporaryDisabled) onSnoozeNotifications else onSavePreferences,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (isTemporaryDisabled) {
+                    Color(color = 0xFFFF8A65) // Orange color when temporary disable is ON
+                } else {
+                    ChatTheme.colors.primaryAccent // Blue color when temporary disable is OFF
+                },
+            ),
+            shape = RoundedCornerShape(12.dp),
+        ) {
+            if (isTemporaryDisabled) {
                 Text(
-                    text = "Save Preferences",
+                    text = "🔔 Snooze Notifications",
                     style = ChatTheme.typography.bodyBold.copy(
                         color = Color.White,
                         fontSize = 16.sp,
                     ),
                 )
+            } else {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = "Save Preferences",
+                        style = ChatTheme.typography.bodyBold.copy(
+                            color = Color.White,
+                            fontSize = 16.sp,
+                        ),
+                    )
+                }
             }
         }
     }
@@ -288,7 +294,12 @@ private fun DateTimeSelector(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { showDatePicker = true }
-            .padding(vertical = 8.dp),
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = { showDatePicker = true },
+            )
+            .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -402,8 +413,13 @@ private fun NotificationLevelOption(
             modifier = Modifier
                 .fillMaxWidth()
                 .minimumInteractiveComponentSize()
-                .clickable(enabled = isEnabled, onClick = onSelect)
-                .padding(vertical = 8.dp),
+                .clickable(
+                    interactionSource = null,
+                    indication = ripple(),
+                    enabled = isEnabled,
+                    onClick = onSelect,
+                )
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             RadioButton(
@@ -432,21 +448,6 @@ private fun NotificationLevelOption(
                         color = if (isEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
                     ),
                 )
-            }
-
-            if (isSelected && isEnabled) {
-                Box(
-                    modifier = Modifier
-                        .padding(start = 8.dp),
-                ) {
-                    Text(
-                        text = "✓",
-                        style = ChatTheme.typography.body.copy(
-                            color = ChatTheme.colors.primaryAccent,
-                            fontSize = 18.sp,
-                        ),
-                    )
-                }
             }
         }
     }

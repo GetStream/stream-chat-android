@@ -51,7 +51,7 @@ class UserProfileViewModel(
             chatClient.clientState.user
                 .filterNotNull()
                 .collectLatest { user ->
-                    _state.update { it.copy(user = user, progressIndicator = null) }
+                    _state.update { it.copy(user = user) }
                 }
         }
     }
