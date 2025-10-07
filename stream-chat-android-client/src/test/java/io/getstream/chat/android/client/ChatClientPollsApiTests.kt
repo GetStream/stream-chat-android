@@ -333,6 +333,33 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun deletePollOptionSuccess() = runTest {
+        // given
+        val pollId = randomString()
+        val optionId = randomString()
+        whenever(api.deletePollOption(any(), any()))
+            .thenReturn(RetroSuccess(Unit).toRetrofitCall())
+        // when
+        val result = chatClient.deletePollOption(pollId, optionId).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun deletePollOptionError() = runTest {
+        // given
+        val pollId = randomString()
+        val optionId = randomString()
+        val errorCode = positiveRandomInt()
+        whenever(api.deletePollOption(any(), any()))
+            .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.deletePollOption(pollId, optionId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun deletePollSuccess() = runTest {
         // given
         val pollId = randomString()
