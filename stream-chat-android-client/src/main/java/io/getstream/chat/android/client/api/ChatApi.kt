@@ -569,6 +569,9 @@ internal interface ChatApi {
     fun updatePollOption(pollId: String, option: UpdatePollOptionRequest): Call<Option>
 
     @CheckResult
+    fun deletePollOption(pollId: String, optionId: String): Call<Unit>
+
+    @CheckResult
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>
 
     @CheckResult

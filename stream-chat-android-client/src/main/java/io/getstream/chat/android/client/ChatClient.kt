@@ -1856,6 +1856,19 @@ internal constructor(
     }
 
     /**
+     * Delete an option from a poll.
+     *
+     * @param pollId The poll id.
+     * @param optionId The option id to delete.
+     *
+     * @return Executable async [Call] responsible for deleting an option.
+     */
+    @CheckResult
+    public fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
+        return api.deletePollOption(pollId, optionId)
+    }
+
+    /**
      * Cast a vote for a poll in a message.
      *
      * @param messageId The message id where the poll is.

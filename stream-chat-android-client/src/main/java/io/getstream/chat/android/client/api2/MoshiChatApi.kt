@@ -1520,6 +1520,10 @@ constructor(
         return pollsApi.updatePollOption(pollId, request).mapDomain { it.poll_option.toDomain() }
     }
 
+    override fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
+        return pollsApi.deletePollOption(pollId, optionId).toUnitCall()
+    }
+
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
         return pollsApi.createPoll(
             CreatePollRequest(

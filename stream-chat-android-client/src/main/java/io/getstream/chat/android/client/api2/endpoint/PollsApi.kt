@@ -84,6 +84,12 @@ internal interface PollsApi {
         @Body body: UpdatePollOptionRequest,
     ): RetrofitCall<PollOptionResponse>
 
+    @DELETE("/polls/{poll_id}/options/{option_id}")
+    fun deletePollOption(
+        @Path("poll_id") pollId: String,
+        @Path("option_id") optionId: String,
+    ): RetrofitCall<CompletableResponse>
+
     /**
      * Casts a vote on a poll.
      *

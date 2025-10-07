@@ -55,6 +55,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun deletePoll (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun deletePollOption (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun deleteReminder (Ljava/lang/String;)Lio/getstream/result/call/Call;

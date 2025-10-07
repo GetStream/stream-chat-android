@@ -2216,6 +2216,24 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deletePollOptionInput")
+    fun testDeletePollOption(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<PollsApi>()
+        whenever(api.deletePollOption(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val pollId = randomString()
+        val optionId = randomString()
+        val result = sut.deletePollOption(pollId, optionId).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).deletePollOption(pollId, optionId)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createPollInput")
     fun testCreatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
         // given

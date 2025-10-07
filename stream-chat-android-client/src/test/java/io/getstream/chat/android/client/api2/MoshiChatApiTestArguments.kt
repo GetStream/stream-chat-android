@@ -487,6 +487,9 @@ internal object MoshiChatApiTestArguments {
     fun updatePollOptionInput() = pollOptionResponseArguments()
 
     @JvmStatic
+    fun deletePollOptionInput() = completableResponseArguments()
+
+    @JvmStatic
     fun createReminderInput() = reminderResponseArguments()
 
     @JvmStatic
