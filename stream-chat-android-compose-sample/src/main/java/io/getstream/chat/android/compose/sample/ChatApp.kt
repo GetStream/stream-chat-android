@@ -17,11 +17,9 @@
 package io.getstream.chat.android.compose.sample
 
 import android.app.Application
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
 import io.getstream.chat.android.compose.sample.service.SharedLocationService
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -34,8 +32,6 @@ class ChatApp : Application() {
         credentialsRepository = UserCredentialsRepository(this)
         dateFormatter = DateFormatter.from(this)
         sharedLocationService = SharedLocationService(this)
-
-        initializeToggleService()
 
         // Initialize Stream SDK
         ChatHelper.initializeSdk(this, getApiKey())
@@ -51,11 +47,6 @@ class ChatApp : Application() {
 
     private fun getApiKey(): String {
         return credentialsRepository.loadApiKey() ?: PredefinedUserCredentials.API_KEY
-    }
-
-    @OptIn(InternalStreamChatApi::class)
-    private fun initializeToggleService() {
-        ToggleService.init(applicationContext)
     }
 
     companion object {
