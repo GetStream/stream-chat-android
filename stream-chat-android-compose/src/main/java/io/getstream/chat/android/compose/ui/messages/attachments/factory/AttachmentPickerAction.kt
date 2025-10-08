@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.PollConfig
  * An user action event that occurs inside the attachment picker screen.
  */
 @Stable
-public sealed interface AttachmentPickerAction
+public interface AttachmentPickerAction
 
 /**
  * An user action that indicates a back button event.

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
@@ -77,6 +78,7 @@ internal object UserDtoTestData {
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             avg_response_time = null,
+            push_preferences = null,
             extraData = emptyMap(),
         )
 
@@ -128,6 +130,7 @@ internal object UserDtoTestData {
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             avg_response_time = null,
+            push_preferences = null,
             extraData = emptyMap(),
         )
 
@@ -178,7 +181,11 @@ internal object UserDtoTestData {
             "channel_mutes": [],
             "name": "username",
             "image": "image",
-            "avg_response_time": 1000
+            "avg_response_time": 1000,
+            "push_preferences": {
+                "chat_level": "default",
+                "disabled_until": "2020-06-10T11:04:31.588Z"
+            }
          }"""
     val downstreamUser =
         DownstreamUserDto(
@@ -225,6 +232,10 @@ internal object UserDtoTestData {
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             avg_response_time = 1000L,
+            push_preferences = DownstreamPushPreferenceDto(
+                chat_level = "default",
+                disabled_until = Date(1591787071588),
+            ),
             extraData = emptyMap(),
         )
 

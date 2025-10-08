@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListene
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
@@ -60,6 +61,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUser
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.LiveLocationListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.PushPreferencesListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryBlockedUsersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
@@ -131,7 +133,8 @@ public class StatePlugin internal constructor(
     DraftMessageListener by DraftMessageListenerState(mutableGlobalState),
     UnblockUserListener by UnblockUserListenerState(mutableGlobalState),
     LiveLocationListener by LiveLocationListenerState(mutableGlobalState),
-    QueryBlockedUsersListener by QueryBlockedUsersListenerState(mutableGlobalState) {
+    QueryBlockedUsersListener by QueryBlockedUsersListenerState(mutableGlobalState),
+    PushPreferencesListener by PushPreferencesListenerState(logic) {
 
     private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
     override fun getErrorHandler(): ErrorHandler = lazyErrorHandler

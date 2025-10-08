@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.PushPreferencesListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
@@ -56,6 +57,8 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -96,7 +99,8 @@ public interface Plugin :
     BlockUserListener,
     UnblockUserListener,
     QueryBlockedUsersListener,
-    LiveLocationListener {
+    LiveLocationListener,
+    PushPreferencesListener {
 
     public fun getErrorHandler(): ErrorHandler? = null
 
@@ -506,6 +510,22 @@ public interface Plugin :
     }
 
     override suspend fun onStartLiveLocationSharingResult(location: Location, result: Result<Location>) {
+        /* No-Op */
+    }
+
+    override suspend fun onChannelPushPreferenceSet(
+        cid: String,
+        level: PushPreferenceLevel,
+        result: Result<PushPreference>,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onChannelPushNotificationsSnoozed(
+        cid: String,
+        until: Date,
+        result: Result<PushPreference>,
+    ) {
         /* No-Op */
     }
 }

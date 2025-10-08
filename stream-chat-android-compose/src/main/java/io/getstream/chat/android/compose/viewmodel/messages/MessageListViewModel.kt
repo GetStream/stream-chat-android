@@ -46,6 +46,7 @@ import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -70,6 +71,7 @@ public class MessageListViewModel(
         messageListController.messageListState,
         messageListController.threadListState,
     ) { messageListState, threadListState -> if (isInThread) threadListState else messageListState }
+        .distinctUntilChanged() // Only emit when the state actually changes
         .map { it.copy(messageItems = it.messageItems.reversed()) }
         .asState(viewModelScope, MessageListState())
 

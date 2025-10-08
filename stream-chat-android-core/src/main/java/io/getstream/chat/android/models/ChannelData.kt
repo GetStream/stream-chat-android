@@ -42,6 +42,7 @@ import java.util.Date
  * @param membership Represents relationship of the current user to the channel.
  * @param draft The current user's draft message for this channel, if any.
  * @param messageCount The total number of messages in the channel, if known.
+ * @param pushPreference The current user's push notification preference for this channel, if set.
  */
 @Immutable
 public data class ChannelData(
@@ -62,6 +63,7 @@ public data class ChannelData(
     val membership: Member? = null,
     val draft: DraftMessage? = null,
     val messageCount: Int? = null,
+    val pushPreference: PushPreference? = null,
 ) {
 
     /**
@@ -104,6 +106,7 @@ public data class ChannelData(
         membership = channel.membership,
         draft = channel.draftMessage,
         messageCount = channel.messageCount,
+        pushPreference = channel.pushPreference,
     )
 
     @Deprecated(
@@ -181,6 +184,7 @@ public data class ChannelData(
             draftMessage = draft,
             activeLiveLocations = emptyList(),
             messageCount = messageCount,
+            pushPreference = pushPreference,
         )
     }
 
@@ -216,9 +220,10 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
         messageCount = messageCount ?: this.messageCount,
-        /* Do not merge (ownCapabilities, membership) fields.
+        /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,
+        pushPreference = pushPreference ?: this.pushPreference
          */
     )
 }

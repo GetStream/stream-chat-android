@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.robots
 
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
 import io.getstream.chat.android.compose.pages.MessageListPage
@@ -245,7 +244,16 @@ class UserRobot {
     }
 
     fun swipeMessage(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppear(withIndex = messageCellIndex).swipe(Direction.RIGHT, 0.5f)
+        val percent = 0.5f
+        val message = MessageList.messages.waitToAppear(withIndex = messageCellIndex)
+        val rect = message.visibleBounds
+        device.swipe(
+            rect.left, // startX
+            rect.centerY(), // startY
+            (rect.right - (rect.width() * percent)).toInt(), // endX
+            rect.centerY(), // endY
+            20, // steps
+        )
         return this
     }
 

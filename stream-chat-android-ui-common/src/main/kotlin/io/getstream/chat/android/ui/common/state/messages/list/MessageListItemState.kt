@@ -26,7 +26,21 @@ import java.util.Date
 /**
  * Represents a list item inside a message list.
  */
-public sealed class MessageListItemState
+public sealed class MessageListItemState {
+    /**
+     * A unique identifier for this item.
+     */
+    @InternalStreamChatApi
+    public val id: String get() = when (this) {
+        is HasMessageListItemState -> message.id
+        is DateSeparatorItemState -> "date-separator-${date.time}"
+        is ThreadDateSeparatorItemState -> "thread-date-separator-${date.time}"
+        is TypingItemState -> "typing-indicator"
+        is EmptyThreadPlaceholderItemState -> "empty-thread-placeholder"
+        is UnreadSeparatorItemState -> "unread-separator"
+        is StartOfTheChannelItemState -> "start-of-the-channel"
+    }
+}
 
 /**
  * Represents either regular or system message item inside a message list.

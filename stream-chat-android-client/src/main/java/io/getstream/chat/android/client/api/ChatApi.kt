@@ -47,6 +47,8 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -125,6 +127,18 @@ internal interface ChatApi {
 
     @CheckResult
     fun getDevices(): Call<List<Device>>
+
+    @CheckResult
+    fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference>
+
+    @CheckResult
+    fun snoozeUserPushNotifications(until: Date): Call<PushPreference>
+
+    @CheckResult
+    fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference>
+
+    @CheckResult
+    fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference>
 
     @CheckResult
     fun searchMessages(

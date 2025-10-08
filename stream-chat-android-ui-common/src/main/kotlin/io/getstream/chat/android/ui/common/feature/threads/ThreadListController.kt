@@ -21,7 +21,9 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.state.extensions.queryThreadsAsState
+import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,12 +39,21 @@ import kotlinx.coroutines.launch
  *
  * @param query The [QueryThreadsRequest] object containing the parameters for querying threads.
  * @param chatClient The [ChatClient] instance for retrieving the Threads related data.
+ * @param scope The [CoroutineScope] on which coroutines should be launched.
+ * @param queryThreadsAsState Function that returns a [StateFlow] of [QueryThreadsState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 public class ThreadListController(
     private val query: QueryThreadsRequest,
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val scope: CoroutineScope = chatClient.inheritScope { DispatcherProvider.IO },
+    queryThreadsAsState: () -> StateFlow<QueryThreadsState?> = {
+        chatClient.queryThreadsAsState(
+            request = query,
+            coroutineScope = scope,
+        )
+    },
 ) {
 
     /**
@@ -52,11 +63,7 @@ public class ThreadListController(
     public val state: StateFlow<ThreadListState>
         get() = _state
 
-    private val scope = chatClient.inheritScope { DispatcherProvider.IO }
-    private val queryThreadsState = chatClient.queryThreadsAsState(
-        request = query,
-        coroutineScope = scope,
-    )
+    private val queryThreadsState = queryThreadsAsState()
 
     init {
         scope.launch {
@@ -89,19 +96,17 @@ public class ThreadListController(
      * Loads the next page of threads (if possible).
      */
     public fun loadNextPage() {
-        if (!shouldLoadNextPage()) return
-        val next = queryThreadsState.value?.next?.value
-        val nextPageQuery = query.copy(next = next)
+        val nextPage = getNextPage() ?: return
+        val nextPageQuery = query.copy(next = nextPage)
         chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
     }
 
-    private fun shouldLoadNextPage(): Boolean {
+    private fun getNextPage(): String? {
         val currentState = _state.value
         if (currentState.isLoading || currentState.isLoadingMore) {
-            return false
+            return null
         }
-        // Load next page only if the 'next' param exists
-        return queryThreadsState.value?.next?.value != null
+        return queryThreadsState.value?.next?.value
     }
 
     public companion object {

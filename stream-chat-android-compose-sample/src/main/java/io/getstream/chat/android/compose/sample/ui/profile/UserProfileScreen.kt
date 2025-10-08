@@ -60,6 +60,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -85,6 +86,8 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
 import io.getstream.chat.android.models.UnreadCounts
@@ -142,6 +145,9 @@ fun UserProfileScreen(
                 modalSheet = ModalSheet.UnreadCounts
                 viewModel.loadUnreadCounts()
             },
+            onPushPreferencesClick = {
+                modalSheet = ModalSheet.PushPreferences
+            },
             onUpdateProfilePictureClick = {
                 modalSheet = ModalSheet.UpdateProfilePicture
             },
@@ -153,6 +159,24 @@ fun UserProfileScreen(
             containerColor = ChatTheme.colors.appBackground,
         ) {
             UnreadCounts(state.unreadCounts)
+        }
+
+        ModalSheet.PushPreferences -> ModalBottomSheet(
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+            onDismissRequest = { modalSheet = null },
+            containerColor = ChatTheme.colors.appBackground,
+        ) {
+            UserProfilePushPreferencesScreen(
+                preferences = state.user?.pushPreference ?: PushPreference(PushPreferenceLevel.all, null),
+                onSavePreferences = { level ->
+                    modalSheet = null
+                    viewModel.setPushPreferences(level)
+                },
+                onSnoozeNotifications = { until ->
+                    modalSheet = null
+                    viewModel.snoozeNotifications(until)
+                },
+            )
         }
 
         ModalSheet.UpdateProfilePicture -> ModalBottomSheet(
@@ -189,11 +213,13 @@ fun UserProfileScreen(
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
                     }
 
-                    is UserProfileViewEvent.LoadUserError,
                     is UserProfileViewEvent.UpdateProfilePictureError,
                     is UserProfileViewEvent.RemoveProfilePictureError,
                     ->
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+                    is UserProfileViewEvent.UpdatePushPreferencesError -> {
+                        snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+                    }
                 }
 
                 is UserProfileViewEvent.UpdateProfilePictureSuccess ->
@@ -255,6 +281,7 @@ private fun LinearProgressIndicator(
 
 private enum class ModalSheet {
     UnreadCounts,
+    PushPreferences,
     UpdateProfilePicture,
 }
 
@@ -265,6 +292,7 @@ private fun UserProfileScreenContent(
     state: UserProfileViewState,
     modifier: Modifier = Modifier,
     onUnreadCountsClick: () -> Unit = {},
+    onPushPreferencesClick: () -> Unit = {},
     onUpdateProfilePictureClick: () -> Unit = {},
 ) {
     when (val user = state.user) {
@@ -345,6 +373,31 @@ private fun UserProfileScreenContent(
                 ) {
                     Text(
                         text = "Unread Counts",
+                        style = ChatTheme.typography.title3,
+                        color = ChatTheme.colors.textHighEmphasis,
+                    )
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
+                Divider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = null,
+                            indication = ripple(),
+                            onClick = onPushPreferencesClick,
+                        )
+                        .padding(start = 16.dp)
+                        .minimumInteractiveComponentSize(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "Push Preferences",
                         style = ChatTheme.typography.title3,
                         color = ChatTheme.colors.textHighEmphasis,
                     )
