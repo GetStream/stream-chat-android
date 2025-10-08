@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
@@ -148,6 +149,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
@@ -179,7 +181,11 @@ internal object EventMappingTestArguments {
     private val CHANNEL_TYPE = randomString()
     private val CHANNEL_ID = randomString()
     private val CID = "$CHANNEL_TYPE:$CHANNEL_ID"
+    private val CHANNEL_MEMBER_COUNT = positiveRandomInt()
+    private val CHANNEL_NAME = randomString()
+    private val CHANNEL_IMAGE = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
+    private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
     private val DRAFT = Mother.randomDownstreamDraftDto()
     private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val CLEAR_HISTORY = randomBoolean()
@@ -213,7 +219,12 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        message = MESSAGE,
+        channel_member_count = CHANNEL_MEMBER_COUNT,
+        channel_custom = DownstreamChannelCustomDto(
+            name = CHANNEL_NAME,
+            image = CHANNEL_IMAGE,
+        ),
+        message = MESSAGE_WITHOUT_CHANNEL_INFO,
     )
 
     private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
@@ -788,7 +799,17 @@ internal object EventMappingTestArguments {
         cid = newMessageDto.cid,
         channelType = newMessageDto.channel_type,
         channelId = newMessageDto.channel_id,
-        message = with(domainMapping) { newMessageDto.message.toDomain() },
+        message = with(domainMapping) {
+            val channelInfo = ChannelInfo(
+                cid = newMessageDto.cid,
+                id = newMessageDto.channel_id,
+                type = newMessageDto.channel_type,
+                memberCount = newMessageDto.channel_member_count ?: 0,
+                name = newMessageDto.channel_custom?.name,
+                image = newMessageDto.channel_custom?.image,
+            )
+            newMessageDto.message.toDomain(channelInfo)
+        },
         watcherCount = newMessageDto.watcher_count,
         totalUnreadCount = newMessageDto.total_unread_count,
         unreadChannels = newMessageDto.unread_channels,
