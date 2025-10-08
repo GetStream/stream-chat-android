@@ -3461,9 +3461,6 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 	public static final fun isVideo (Lio/getstream/chat/android/models/Attachment;)Z
 }
 
-public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {
-}
-
 public final class io/getstream/chat/android/client/utils/message/MessageUtils {
 	public static final fun belongsToThread (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun hasAudioRecording (Lio/getstream/chat/android/models/Message;)Z

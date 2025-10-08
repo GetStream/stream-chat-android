@@ -17,8 +17,6 @@
 package io.getstream.chat.ui.sample.application
 
 import android.app.Application
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
@@ -30,7 +28,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initializeToggleService()
         chatInitializer.init(getApiKey())
         instance = this
         DebugMetricsHelper.init()
@@ -44,14 +41,6 @@ class App : Application() {
         } else {
             AppConfig.apiKey
         }
-    }
-
-    @OptIn(InternalStreamChatApi::class)
-    private fun initializeToggleService() {
-        ToggleService.init(
-            applicationContext,
-            emptyMap(),
-        )
     }
 
     companion object {
