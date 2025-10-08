@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
@@ -34,6 +33,7 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelCustomDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
