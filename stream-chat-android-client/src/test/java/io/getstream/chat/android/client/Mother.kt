@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -369,6 +370,7 @@ internal object Mother {
         channel_mutes: List<DownstreamChannelMuteDto>? = emptyList(),
         blocked_user_ids: List<String>? = emptyList(),
         avg_response_time: Long? = null,
+        push_preferences: DownstreamPushPreferenceDto? = randomDownstreamPushPreferenceDto(),
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamUserDto = DownstreamUserDto(
         id = id,
@@ -395,6 +397,7 @@ internal object Mother {
         channel_mutes = channel_mutes,
         blocked_user_ids = blocked_user_ids,
         avg_response_time = avg_response_time,
+        push_preferences = push_preferences,
         extraData = extraData,
     )
 
@@ -1256,5 +1259,13 @@ internal object Mother {
         channel_type = channelType,
         channel_count = channelCount,
         unread_count = unreadCount,
+    )
+
+    fun randomDownstreamPushPreferenceDto(
+        chatLevel: String? = randomString(),
+        disabledUntil: Date? = randomDateOrNull(),
+    ): DownstreamPushPreferenceDto = DownstreamPushPreferenceDto(
+        chat_level = chatLevel,
+        disabled_until = disabledUntil,
     )
 }

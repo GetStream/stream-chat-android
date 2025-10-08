@@ -21,8 +21,8 @@ import io.getstream.result.Error
 sealed interface UserProfileViewEvent {
     data object UpdateProfilePictureSuccess : UserProfileViewEvent
     sealed interface Failure : UserProfileViewEvent { val error: Error }
-    data class LoadUserError(override val error: Error) : Failure
     data class LoadUnreadCountsError(override val error: Error) : Failure
     data class UpdateProfilePictureError(override val error: Error) : Failure
     data class RemoveProfilePictureError(override val error: Error) : Failure
+    data class UpdatePushPreferencesError(override val error: Error) : Failure
 }

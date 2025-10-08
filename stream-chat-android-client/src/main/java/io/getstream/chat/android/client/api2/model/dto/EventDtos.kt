@@ -174,6 +174,8 @@ internal data class NewMessageEventDto(
     val created_at: ExactDate,
     val user: DownstreamUserDto,
     val cid: String,
+    val channel_member_count: Int?,
+    val channel_custom: DownstreamChannelCustomDto?,
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,

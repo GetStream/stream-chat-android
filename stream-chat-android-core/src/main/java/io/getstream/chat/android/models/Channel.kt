@@ -59,6 +59,8 @@ import java.util.Date
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  * @param draftMessage The draft message for the channel.
  * @param activeLiveLocations The list of active live locations in the channel.
+ * @param messageCount The total number of messages in the channel.
+ * @param pushPreference Channel-specific push preferences (if set).
  */
 @Immutable
 public data class Channel(
@@ -101,6 +103,7 @@ public data class Channel(
     val draftMessage: DraftMessage? = null,
     val activeLiveLocations: List<Location> = emptyList(),
     val messageCount: Int? = null,
+    val pushPreference: PushPreference? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -195,6 +198,7 @@ public data class Channel(
         private var draft: DraftMessage? = null
         private var activeLiveLocations: List<Location> = emptyList()
         private var messageCount: Int? = null
+        private var pushPreference: PushPreference? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -228,6 +232,7 @@ public data class Channel(
             draft = channel.draftMessage
             activeLiveLocations = channel.activeLiveLocations
             messageCount = channel.messageCount
+            pushPreference = channel.pushPreference
             extraData = channel.extraData
         }
 
@@ -275,6 +280,9 @@ public data class Channel(
         public fun withMessageCount(messageCount: Int?): Builder = apply {
             this.messageCount = messageCount
         }
+        public fun withPushPreference(pushPreference: PushPreference?): Builder = apply {
+            this.pushPreference = pushPreference
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -316,6 +324,7 @@ public data class Channel(
             draftMessage = draft,
             activeLiveLocations = activeLiveLocations,
             messageCount = messageCount,
+            pushPreference = pushPreference,
             extraData = extraData,
         )
     }
@@ -378,5 +387,6 @@ public fun Channel.toChannelData(): ChannelData {
         membership = membership,
         draft = draftMessage,
         messageCount = messageCount,
+        pushPreference = pushPreference,
     )
 }

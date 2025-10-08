@@ -19,27 +19,22 @@ package io.getstream.chat.android.compose.sample.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.UserId
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.result.Error
-import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Date
 
 class UserProfileViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -52,24 +47,12 @@ class UserProfileViewModel(
     val events: SharedFlow<UserProfileViewEvent> = _events.asSharedFlow()
 
     init {
-        queryUser(userId = chatClient.getCurrentUser()?.id)
-            .onEach { user -> _state.update { currentState -> currentState.copy(user = user) } }
-            .launchIn(viewModelScope)
-    }
-
-    /**
-     * Query updated user information from the server.
-     */
-    private fun queryUser(userId: UserId?): Flow<User?> = flow {
-        if (userId == null) {
-            emit(null)
-        } else {
-            val filter = Filters.eq("id", userId)
-            val request = QueryUsersRequest(filter, offset = 0, limit = 1)
-            chatClient.queryUsers(request)
-                .await()
-                .onSuccessSuspend { users -> emit(users.firstOrNull()) }
-                .onErrorSuspend { error -> _events.emit(UserProfileViewEvent.LoadUserError(error)) }
+        viewModelScope.launch {
+            chatClient.clientState.user
+                .filterNotNull()
+                .collectLatest { user ->
+                    _state.update { it.copy(user = user) }
+                }
         }
     }
 
@@ -157,6 +140,26 @@ class UserProfileViewModel(
                         .onError(::onError)
                 }
                 .onError(::onError)
+        }
+    }
+
+    fun setPushPreferences(level: PushPreferenceLevel) {
+        viewModelScope.launch {
+            chatClient.setUserPushPreference(level)
+                .await()
+                .onError {
+                    _events.tryEmit(UserProfileViewEvent.UpdatePushPreferencesError(it))
+                }
+        }
+    }
+
+    fun snoozeNotifications(until: Date) {
+        viewModelScope.launch {
+            chatClient.snoozeUserPushNotifications(until)
+                .await()
+                .onError {
+                    _events.tryEmit(UserProfileViewEvent.UpdatePushPreferencesError(it))
+                }
         }
     }
 }
