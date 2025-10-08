@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953](https://github.com/GetStream/stream-chat-android/pull/5953)
 
 ### ⬆️ Improved
 
