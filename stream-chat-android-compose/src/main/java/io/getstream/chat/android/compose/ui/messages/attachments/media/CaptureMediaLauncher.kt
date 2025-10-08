@@ -52,6 +52,9 @@ import java.io.File
  * // Launch the camera
  * captureMediaLauncher?.launch(Unit)
  * ```
+ *
+ * Note: This function doesn't check for camera permissions. Ensure that the necessary permissions
+ * are granted before invoking the launcher.
  */
 @Composable
 public fun rememberCaptureMediaLauncher(
