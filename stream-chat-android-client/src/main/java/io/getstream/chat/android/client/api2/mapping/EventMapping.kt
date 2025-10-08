@@ -151,6 +151,7 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.ChannelInfo
 
 @Suppress("LargeClass")
 internal class EventMapping(
@@ -442,6 +443,15 @@ internal class EventMapping(
      * Transforms [NewMessageEventDto] to [NewMessageEvent].
      */
     private fun NewMessageEventDto.toDomain(): NewMessageEvent = with(domainMapping) {
+        // build ChannelInfo from the event data, as it is not delivered within the `message` field
+        val channelInfo = ChannelInfo(
+            cid = cid,
+            id = channel_id,
+            type = channel_type,
+            memberCount = channel_member_count ?: 0,
+            name = channel_custom?.name,
+            image = channel_custom?.image,
+        )
         NewMessageEvent(
             type = type,
             createdAt = created_at.date,
@@ -450,7 +460,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            message = message.toDomain(),
+            message = message.toDomain(channelInfo),
             watcherCount = watcher_count,
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
