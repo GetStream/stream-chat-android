@@ -2306,6 +2306,10 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/media/CaptureMediaLauncherKt {
+	public static final fun rememberCaptureMediaLauncher (ZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Landroidx/activity/compose/ManagedActivityResultLauncher;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollCreationDiscardDialogKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollCreationDiscardDialogKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;

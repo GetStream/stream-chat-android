@@ -72,17 +72,16 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsP
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import java.io.File
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -163,9 +162,6 @@ public class AttachmentsPickerSystemTabFactory(
     @Deprecated(message = "Use config.pollAllowed instead.", level = DeprecationLevel.WARNING)
     public val pollAllowed: Boolean = config.pollAllowed
 
-    private val mediaPickerContract = resolveMediaPickerMode(config.captureImageAllowed, config.captureVideoAllowed)
-        ?.let(::CaptureMediaContract)
-
     private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
 
     /**
@@ -236,7 +232,10 @@ public class AttachmentsPickerSystemTabFactory(
                 onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(uris))
             }
 
-        val captureLauncher = rememberCaptureMediaLauncher { file ->
+        val captureLauncher = rememberCaptureMediaLauncher(
+            photo = config.captureImageAllowed,
+            video = config.captureVideoAllowed,
+        ) { file ->
             onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
         }
         var cameraRationaleShown by remember { mutableStateOf(false) }
@@ -254,7 +253,7 @@ public class AttachmentsPickerSystemTabFactory(
         val buttonsConfig = ButtonsConfig(
             filesAllowed = config.filesAllowed,
             mediaAllowed = config.visualMediaAllowed,
-            captureAllowed = mediaPickerContract != null,
+            captureAllowed = captureLauncher != null,
             pollAllowed = config.pollAllowed,
         )
         val visualMediaType = config.visualMediaType.toContractVisualMediaType()
@@ -326,21 +325,6 @@ public class AttachmentsPickerSystemTabFactory(
                 }
             }
         }
-
-    @Composable
-    private fun rememberCaptureMediaLauncher(onResult: (File) -> Unit) =
-        mediaPickerContract?.let {
-            rememberLauncherForActivityResult(mediaPickerContract) { file ->
-                file?.let(onResult)
-            }
-        }
-
-    private fun resolveMediaPickerMode(captureImageAllowed: Boolean, captureVideoAllowed: Boolean) = when {
-        captureImageAllowed && captureVideoAllowed -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
-        captureImageAllowed -> CaptureMediaContract.Mode.PHOTO
-        captureVideoAllowed -> CaptureMediaContract.Mode.VIDEO
-        else -> null
-    }
 
     private fun filePickerIntent(): Intent {
         val attachmentFilter = AttachmentFilter()
