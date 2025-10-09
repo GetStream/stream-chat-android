@@ -108,6 +108,7 @@ dependencies {
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
+    testImplementation(project(":stream-chat-android-client-test"))
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(project(":stream-chat-android-previewdata"))
     testImplementation(libs.androidx.compose.ui.test.junit4)

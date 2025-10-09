@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
+    alias(libs.plugins.paparazzi)
 }
 
 rootProject.extra.apply {
@@ -84,6 +85,8 @@ dependencies {
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
+    testImplementation(project(":stream-chat-android-previewdata"))
+    testImplementation(project(":stream-chat-android-client-test"))
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)

@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelUserBannedEvent
@@ -33,6 +34,7 @@ import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelMute
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateAfter
@@ -74,7 +76,7 @@ internal class ChannelStateLogicTest {
 
     @BeforeEach
     fun setup() {
-        clientState = mock() {
+        clientState = mock {
             on(it.user) doReturn this@ChannelStateLogicTest.userFlow
         }
         spyMutableGlobalState = spy(MutableGlobalState(user.id))
@@ -102,6 +104,7 @@ internal class ChannelStateLogicTest {
         _insideSearch.value = false
         _watcherCount.value = 0
         _watcherCount.value = 0
+        _muted.value = false
     }
 
     private val userFlow = MutableStateFlow(user)
@@ -129,6 +132,7 @@ internal class ChannelStateLogicTest {
     private val _cachedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _quotedMessagesMap = MutableStateFlow<Map<String, List<String>>>(emptyMap())
     private val _members = MutableStateFlow<List<Member>>(emptyList())
+    private val _muted = MutableStateFlow(false)
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -146,6 +150,7 @@ internal class ChannelStateLogicTest {
         on(mock.cachedLatestMessages) doReturn _cachedMessages
         on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
         on(mock.members) doReturn _members
+        on(mock.muted) doReturn _muted
     }
     private lateinit var clientState: ClientState
     private lateinit var spyMutableGlobalState: MutableGlobalState
@@ -451,6 +456,74 @@ internal class ChannelStateLogicTest {
         channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
 
         verify(mutableState, mode = verificationMode).upsertReads(eq(listOf(expectedChannelUserRead)))
+    }
+
+    @Test
+    fun `Given channel is muted, When updateCurrentUserRead is called, Then upsertReads is not called`() {
+        // given
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = 0,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+        _muted.value = true
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given channel is in global mutes, When syncMuteState is called, Then setMuted is called with true`() {
+        // given
+        val cid = mutableState.cid
+        val (type, id) = cid.cidToTypeAndId()
+        val channelMute = randomChannelMute(
+            channel = randomChannel(type = type, id = id),
+        )
+        spyMutableGlobalState.setChannelMutes(listOf(channelMute))
+
+        // when
+        channelStateLogic.syncMuteState()
+
+        // then
+        // Verify called twice:
+        // once in the `init` block (initially)
+        verify(mutableState).setMuted(false)
+        // and then with true
+        verify(mutableState).setMuted(true)
+    }
+
+    @Test
+    fun `Given channel is not in global mutes, When syncMuteState is called, Then setMuted is called with false`() {
+        // given
+        val differentCid = randomCID()
+        val (type, id) = differentCid.cidToTypeAndId()
+        val channelMute = randomChannelMute(
+            channel = randomChannel(type = type, id = id),
+        )
+        spyMutableGlobalState.setChannelMutes(listOf(channelMute))
+
+        // when
+        channelStateLogic.syncMuteState()
+
+        // then
+        // Verify called twice, once in the `init` block and once in the function call
+        verify(mutableState, times(2)).setMuted(false)
     }
 
     companion object {
