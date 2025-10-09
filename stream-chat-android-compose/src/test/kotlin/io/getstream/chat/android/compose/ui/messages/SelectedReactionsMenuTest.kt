@@ -22,7 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -34,7 +34,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
 
-internal class SelectedReactionsMenuTest : SnapshotTest {
+internal class SelectedReactionsMenuTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)

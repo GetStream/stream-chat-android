@@ -19,12 +19,12 @@ package io.getstream.chat.android.compose.ui.channel.info
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import org.junit.Rule
 import org.junit.Test
 
-internal class ChannelInfoScreenModelTest : SnapshotTest {
+internal class ChannelInfoScreenModelTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
