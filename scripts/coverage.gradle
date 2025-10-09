@@ -39,7 +39,7 @@ def configureKoverReports(project) {
 def coverageModulesWithTests = subprojects.findAll {
     rootProject.ext.coverageModules.contains(it.name) && file("${it.projectDir}/src/test").exists()
 }
-println("Setting up coverage for:\n${coverageModulesWithTests.join("\n")}")
+println("\nSetting up coverage for:\n${coverageModulesWithTests.join("\n")}\n")
 
 // Configure code coverage for modules with tests
 subprojects {
@@ -106,8 +106,14 @@ tasks.register("testCoverage") {
     group = "verification"
     description = "Run all tests in all modules and generate merged coverage report"
 
-    dependsOn(subprojects.collect { it.tasks.matching { it.name == "testCoverage" } })
-    dependsOn("koverXmlReportCoverage", "koverHtmlReportCoverage")
+    // Run Paparazzi tests of the UI Components module but do not include its coverage in the report
+    // until we can update Paparazzi and Kover libraries alongside Kotlin and Compose.
+    // See https://linear.app/stream/issue/AND-819/update-paparazzi-and-kover-libraries
+    dependsOn("stream-chat-android-ui-components:verifyPaparazziDebug")
+
+    dependsOn coverageModulesWithTests.collect { ":${it.name}:testCoverage" }
+
+    finalizedBy("koverXmlReportCoverage", "koverHtmlReportCoverage")
 }
 
 kover {

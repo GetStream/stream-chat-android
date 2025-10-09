@@ -224,46 +224,103 @@ internal fun DefaultChannelListHeaderTrailingContent(
     }
 }
 
-/**
- * Preview of [ChannelListHeader] for the client that is connected to the WS.
- *
- * Should show a user avatar, a title, and an action button.
- */
-@Preview(name = "ChannelListHeader Preview (Connected state)")
+@Preview
 @Composable
-private fun ChannelListHeaderForConnectedStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.Connected)
-}
-
-/**
- * Preview of [ChannelListHeader] for the client that is trying to connect to the WS.
- *
- * Should show a user avatar, "Waiting for network" caption, and an action button.
- */
-@Preview(name = "ChannelListHeader Preview (Connecting state)")
-@Composable
-private fun ChannelListHeaderForConnectingStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.Connecting)
-}
-
-/**
- * Shows [ChannelListHeader] preview for the provided parameters.
- *
- * @param title The title used to show the preview.
- * @param currentUser The currently logged in user.
- * @param connectionState The state of WS connection.
- */
-@Composable
-private fun ChannelListHeaderPreview(
-    title: String = "Stream Chat",
-    currentUser: User? = PreviewUserData.user1,
-    connectionState: ConnectionState = ConnectionState.Connected,
-) {
+private fun ChannelListHeaderConnectedNoUserPreview() {
     ChatTheme {
-        ChannelListHeader(
-            title = title,
-            currentUser = currentUser,
-            connectionState = connectionState,
-        )
+        ChannelListHeaderConnectedNoUser()
     }
 }
+
+@Preview
+@Composable
+private fun ChannelListHeaderConnectedWithUserPreview() {
+    ChatTheme {
+        ChannelListHeaderConnectedWithUser()
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelListHeaderConnectingNoUserPreview() {
+    ChatTheme {
+        ChannelListHeaderConnectingNoUser()
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelListHeaderConnectingWithUserPreview() {
+    ChatTheme {
+        ChannelListHeaderConnectingWithUser()
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelListHeaderOfflineNoUserPreview() {
+    ChatTheme {
+        ChannelListHeaderOfflineNoUser()
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelListHeaderOfflineWithUserPreview() {
+    ChatTheme {
+        ChannelListHeaderOfflineWithUser()
+    }
+}
+
+@Composable
+internal fun ChannelListHeaderConnectedNoUser() {
+    ChannelListHeader(
+        title = Title,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Composable
+internal fun ChannelListHeaderConnectedWithUser() {
+    ChannelListHeader(
+        title = Title,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connected,
+    )
+}
+
+@Composable
+internal fun ChannelListHeaderConnectingNoUser() {
+    ChannelListHeader(
+        title = Title,
+        connectionState = ConnectionState.Connecting,
+    )
+}
+
+@Composable
+internal fun ChannelListHeaderConnectingWithUser() {
+    ChannelListHeader(
+        title = Title,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Connecting,
+    )
+}
+
+@Composable
+internal fun ChannelListHeaderOfflineNoUser() {
+    ChannelListHeader(
+        title = Title,
+        connectionState = ConnectionState.Offline,
+    )
+}
+
+@Composable
+internal fun ChannelListHeaderOfflineWithUser() {
+    ChannelListHeader(
+        title = Title,
+        currentUser = PreviewUserData.user1,
+        connectionState = ConnectionState.Offline,
+    )
+}
+
+private const val Title = "Stream Chat"

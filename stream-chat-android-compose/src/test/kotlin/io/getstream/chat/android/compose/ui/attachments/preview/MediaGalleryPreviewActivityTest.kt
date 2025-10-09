@@ -25,9 +25,9 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.ui.ComposeTest
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -50,7 +50,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class MediaGalleryPreviewActivityTest : ComposeTest {
+internal class MediaGalleryPreviewActivityTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

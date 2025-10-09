@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.ui.messages
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import org.junit.Rule
 import org.junit.Test
 
-internal class MessageComposerTest : SnapshotTest {
+internal class MessageComposerTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)

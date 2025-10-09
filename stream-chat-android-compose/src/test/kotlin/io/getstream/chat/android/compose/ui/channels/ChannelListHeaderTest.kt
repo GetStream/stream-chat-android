@@ -18,63 +18,60 @@ package io.getstream.chat.android.compose.ui.channels
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
-import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderConnectedNoUser
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderConnectedWithUser
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderConnectingNoUser
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderConnectingWithUser
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderOfflineNoUser
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeaderOfflineWithUser
 import org.junit.Rule
 import org.junit.Test
 
-internal class ChannelListHeaderTest : SnapshotTest {
+internal class ChannelListHeaderTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `titled, connected, no user`() {
+    fun `connected, no user`() {
         snapshotWithDarkMode {
-            ChannelListHeader(
-                title = "title",
-                connectionState = ConnectionState.Connected,
-            )
+            ChannelListHeaderConnectedNoUser()
         }
     }
 
     @Test
-    fun `titled, connected, with user`() {
+    fun `connected, with user`() {
         snapshotWithDarkMode {
-            ChannelListHeader(
-                title = "title",
-                currentUser = PreviewUserData.user1,
-                connectionState = ConnectionState.Connected,
-            )
+            ChannelListHeaderConnectedWithUser()
         }
     }
 
     @Test
-    fun `untitled, connected, no user`() {
+    fun `connecting, no user`() {
         snapshotWithDarkMode {
-            ChannelListHeader(
-                connectionState = ConnectionState.Connected,
-            )
+            ChannelListHeaderConnectingNoUser()
         }
     }
 
     @Test
-    fun `untitled, offline, no user`() {
+    fun `connecting, with user`() {
         snapshotWithDarkMode {
-            ChannelListHeader(
-                connectionState = ConnectionState.Offline,
-            )
+            ChannelListHeaderConnectingWithUser()
         }
     }
 
     @Test
-    fun `untitled, connecting, no user`() {
+    fun `offline, no user`() {
         snapshotWithDarkMode {
-            ChannelListHeader(
-                connectionState = ConnectionState.Connecting,
-            )
+            ChannelListHeaderOfflineNoUser()
+        }
+    }
+
+    @Test
+    fun `offline, with user`() {
+        snapshotWithDarkMode {
+            ChannelListHeaderOfflineWithUser()
         }
     }
 }

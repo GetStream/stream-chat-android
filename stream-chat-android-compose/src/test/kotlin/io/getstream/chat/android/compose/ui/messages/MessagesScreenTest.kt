@@ -22,7 +22,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.compose.ui.ComposeTest
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.ConnectionState
@@ -39,7 +39,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class MessagesScreenTest : ComposeTest {
+internal class MessagesScreenTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

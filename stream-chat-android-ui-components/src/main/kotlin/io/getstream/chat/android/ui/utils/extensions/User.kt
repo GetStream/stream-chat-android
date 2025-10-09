@@ -46,5 +46,7 @@ internal fun User.isCurrentUser(): Boolean {
     return id == ChatUI.currentUserProvider.getCurrentUser()?.id
 }
 
-internal fun User.asMention(context: Context): String =
-    context.getString(R.string.stream_ui_mention, name)
+internal fun User.asMention(context: Context): String? =
+    name.takeIf(String::isNotEmpty)?.let {
+        context.getString(R.string.stream_ui_mention, it)
+    }
