@@ -18,12 +18,12 @@ package io.getstream.chat.android.compose.ui.threads
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.previewdata.PreviewThreadData
 import org.junit.Rule
 import org.junit.Test
 
-internal class ThreadItemTest : SnapshotTest {
+internal class ThreadItemTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)

@@ -26,7 +26,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.compose.ui.ComposeTest
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -43,7 +43,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class ChannelMediaAttachmentsGridTest : ComposeTest {
+internal class ChannelMediaAttachmentsGridTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

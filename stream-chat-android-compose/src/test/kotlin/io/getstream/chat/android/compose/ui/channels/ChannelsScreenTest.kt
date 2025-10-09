@@ -22,7 +22,7 @@ import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.compose.ui.ComposeTest
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.randomUser
@@ -37,7 +37,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class ChannelsScreenTest : ComposeTest {
+internal class ChannelsScreenTest : MockedChatClientTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()

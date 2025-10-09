@@ -18,11 +18,11 @@ package io.getstream.chat.android.compose.ui.components.poll
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollMoreOptionsDialogTest : SnapshotTest {
+internal class PollMoreOptionsDialogTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
