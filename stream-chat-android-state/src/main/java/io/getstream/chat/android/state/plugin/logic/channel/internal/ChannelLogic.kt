@@ -137,7 +137,7 @@ internal class ChannelLogic(
     suspend fun updateStateFromDatabase(request: QueryChannelRequest) {
         logger.d { "[updateStateFromDatabase] request: $request" }
         if (request.isNotificationUpdate) return
-        channelStateLogic.refreshMuteState()
+        channelStateLogic.syncMuteState()
 
         /* It is not possible to guarantee that the next page of newer messages is the same of backend,
          * so we force the backend usage */
