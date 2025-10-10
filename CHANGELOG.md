@@ -91,6 +91,7 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 
 ### ✅ Added
 - Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
+- Add `rememberCaptureMediaLauncher` for registering an activity result launcher to capture media using the device camera. [#5955](https://github.com/GetStream/stream-chat-android/pull/5955)
 
 ### ⚠️ Changed
 - Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
