@@ -13,7 +13,6 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs.addAll(
             listOf(
                 "-progressive",
-                "-Xexplicit-api=strict",
                 "-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi",
             ),
         )
@@ -40,6 +39,9 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.work)
 
+    implementation(libs.androidx.test.junit)
+    implementation(libs.mockito.kotlin)
+
     // Tests
     testImplementation(libs.moshi.kotlin)
     testImplementation(libs.junit.jupiter.api)
@@ -48,7 +50,6 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testImplementation(libs.androidx.test.core)
-    testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.androidx.recyclerview) // for performance test
     testImplementation(libs.androidx.room.testing)
@@ -58,7 +59,6 @@ dependencies {
 
     testImplementation(libs.kluent)
     testImplementation(libs.mockito)
-    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.turbine)
 
     // Instrumentation tests

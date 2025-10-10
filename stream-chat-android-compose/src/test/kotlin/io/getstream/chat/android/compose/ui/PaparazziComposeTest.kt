@@ -36,10 +36,11 @@ import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import app.cash.paparazzi.Paparazzi
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import org.junit.Rule
 
-internal interface SnapshotTest : ComposeTest {
+internal interface PaparazziComposeTest : MockedChatClientTest {
 
     @get:Rule
     val paparazzi: Paparazzi

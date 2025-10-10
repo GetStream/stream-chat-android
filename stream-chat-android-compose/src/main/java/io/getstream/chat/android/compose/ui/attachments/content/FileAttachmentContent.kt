@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -144,7 +143,6 @@ public fun FileAttachmentItem(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(50.dp)
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -201,6 +199,8 @@ internal fun RowScope.FileAttachmentDescription(
                 modifier = Modifier.testTag("Stream_FileAttachmentSize"),
                 text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
                 style = fileAttachmentTheme.fileMetadataTextStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

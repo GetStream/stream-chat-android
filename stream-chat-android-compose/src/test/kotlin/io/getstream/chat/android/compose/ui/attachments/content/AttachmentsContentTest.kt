@@ -20,11 +20,11 @@ import androidx.compose.foundation.layout.Column
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class AttachmentsContentTest : SnapshotTest {
+internal class AttachmentsContentTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
