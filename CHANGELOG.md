@@ -83,13 +83,15 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
-- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944) 
+- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944)
+- Fix poll creation screen not persisting its state after an orientation change. [#5958](https://github.com/GetStream/stream-chat-android/pull/5958)
 
 ### ⬆️ Improved
 - Improve `SwipeToReply` component in scroller containers. [#5946](https://github.com/GetStream/stream-chat-android/pull/5946)
 
 ### ✅ Added
 - Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
+- Add `CreatePollScreen` composable to expose the poll creation functionality outside of attachment picker factories. [#5958](https://github.com/GetStream/stream-chat-android/pull/5958)
 
 ### ⚠️ Changed
 - Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
