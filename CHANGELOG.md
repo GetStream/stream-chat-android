@@ -1,21 +1,5 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# October 10th, 2025 - 6.25.0
 ## stream-chat-android-client
-### 🐞 Fixed
-Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953](https://github.com/GetStream/stream-chat-android/pull/5953)
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add support for `message.updated` and `reaction.new` push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
 - Add `skipPush` parameter to `ChatClient.sendReaction` to skip sending push notifications for the reaction. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
@@ -26,32 +10,9 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 - Add `User.pushPreference` field representing the logged in user's global push notification preferences. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
 - Add `Channel.pushPreference` field representing the logged in user's channel-specific push notification preferences. [#5942](https://github.com/GetStream/stream-chat-android/pull/5942)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix increasing unread count for muted channels. [#5947](https://github.com/GetStream/stream-chat-android/pull/5947)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -59,28 +20,16 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 - Fix unread separator showing before a message that was sent while offline. [#5945](https://github.com/GetStream/stream-chat-android/pull/5945)
 - Expose `StorageHelper` and `AttachmentFilter` as public to fix `StorageHelperWrapper` not instantiable. [#5954](https://github.com/GetStream/stream-chat-android/pull/5954)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ReactionPushEmojiFactory` for generating emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
 - Show "Leave Conversation" and "Add Member" only for group channels. [#5960](https://github.com/GetStream/stream-chat-android/pull/5960)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatUi.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -98,19 +47,6 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 
 ### ⚠️ Changed
 - Change `AttachmentPickerAction` from `sealed interface` to `interface` to allow extension outside of the SDK. [#5943](https://github.com/GetStream/stream-chat-android/pull/5943)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 26th, 2025 - 6.24.0
 ## Common changes for all artifacts
