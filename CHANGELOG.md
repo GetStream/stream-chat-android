@@ -70,6 +70,7 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
+- Show "Leave Conversation" and "Add Member" only for group channels. [#5960](https://github.com/GetStream/stream-chat-android/pull/5960)
 
 ### ⬆️ Improved
 
@@ -83,7 +84,8 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix mute/unmute instant command icons. [#5938](https://github.com/GetStream/stream-chat-android/pull/5938)
-- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944) 
+- Fix recompositions of `MessageListStartOfTheChannelItemContent`. [#5944](https://github.com/GetStream/stream-chat-android/pull/5944)
+- Show "Leave Conversation" and "Add Member" only for group channels. [#5960](https://github.com/GetStream/stream-chat-android/pull/5960)
 
 ### ⬆️ Improved
 - Improve `SwipeToReply` component in scroller containers. [#5946](https://github.com/GetStream/stream-chat-android/pull/5946)
