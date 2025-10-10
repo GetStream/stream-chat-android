@@ -29,10 +29,15 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +58,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemSt
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import io.getstream.chat.android.ui.common.state.messages.list.Other
+import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
@@ -299,17 +306,28 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
     }
 
-    LaunchedEffect(newMessageState) {
-        val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
-            focusedItemIndex = focusedItemIndex,
-            firstVisibleItemIndex = firstVisibleItemIndex,
-            newMessageState = newMessageState,
-            areNewestMessagesLoaded = areNewestMessagesLoaded,
-            isScrollInProgress = lazyListState.isScrollInProgress,
-        )
+    // Keep track of the last new message state that triggered a scroll to bottom.
+    // If a configuration change happens, we want to keep the same state
+    // and not scroll to bottom again if the newMessageState is the same as before the configuration change.
+    var lastScrollToBottomOnNewMessage by rememberSaveable(saver = MutableStateNewMessageStateSaver) {
+        mutableStateOf(newMessageState)
+    }
 
-        if (shouldScrollToBottom) {
-            lazyListState.animateScrollToItem(0)
+    LaunchedEffect(newMessageState) {
+        if (newMessageState != lastScrollToBottomOnNewMessage) {
+            val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
+                focusedItemIndex = focusedItemIndex,
+                firstVisibleItemIndex = firstVisibleItemIndex,
+                newMessageState = newMessageState,
+                areNewestMessagesLoaded = areNewestMessagesLoaded,
+                isScrollInProgress = lazyListState.isScrollInProgress,
+            )
+
+            if (shouldScrollToBottom) {
+                lazyListState.animateScrollToItem(0)
+
+                lastScrollToBottomOnNewMessage = newMessageState
+            }
         }
     }
 
@@ -333,6 +351,36 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         )
     }
 }
+
+/**
+ * Saves and restores a [MutableState] of [NewMessageState] across recompositions and configuration changes.
+ */
+private val MutableStateNewMessageStateSaver = Saver<MutableState<NewMessageState?>, String>(
+    save = { state -> with(NewMessageStateSaver) { save(state.value) } },
+    restore = { saved -> mutableStateOf(NewMessageStateSaver.restore(saved)) },
+)
+
+/**
+ * Saves and restores the [NewMessageState] across recompositions and configuration changes.
+ */
+private val NewMessageStateSaver = Saver<NewMessageState?, String>(
+    save = { value ->
+        when (value) {
+            is MyOwn -> "my:${value.ts}"
+            is Other -> "other:${value.ts}"
+            is Typing -> "typing"
+            null -> null
+        }
+    },
+    restore = { saved ->
+        when {
+            saved.startsWith("my:") -> MyOwn(saved.removePrefix("my:").toLongOrNull())
+            saved.startsWith("other:") -> Other(saved.removePrefix("other:").toLongOrNull())
+            saved == "typing" -> Typing
+            else -> null
+        }
+    },
+)
 
 /**
  * Determines if the list should scroll to the bottom when a new message arrives, except for certain conditions:
