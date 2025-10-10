@@ -53,8 +53,6 @@ io.getstream.chat.android.client.utils.attachment
 io.getstream.chat.android.client.utils.buffer
 io.getstream.chat.android.client.utils.channel
 io.getstream.chat.android.client.utils.internal
-io.getstream.chat.android.client.utils.internal.toggle
-io.getstream.chat.android.client.utils.internal.toggle.dialog
 io.getstream.chat.android.client.utils.message
 io.getstream.chat.android.client.utils.observable
 module:stream-chat-android-compose
@@ -104,6 +102,7 @@ io.getstream.chat.android.compose.ui.mentions
 io.getstream.chat.android.compose.ui.messages
 io.getstream.chat.android.compose.ui.messages.attachments
 io.getstream.chat.android.compose.ui.messages.attachments.factory
+io.getstream.chat.android.compose.ui.messages.attachments.media
 io.getstream.chat.android.compose.ui.messages.attachments.poll
 io.getstream.chat.android.compose.ui.messages.composer
 io.getstream.chat.android.compose.ui.messages.composer.actions

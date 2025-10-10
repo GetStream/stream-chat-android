@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.24.0
+            <div class="library-version">6.25.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -65,6 +65,8 @@
     <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">NotificationConfig</a>&nbsp;<span><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a>&nbsp;</span><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>pushNotificationsEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ignorePushMessagesWhenUserOnline<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ignorePushMessageWhenUserOnline<span class="token operator">: </span><span class="token punctuation">(</span>type<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span>{ type -&gt;
         when (type) {
             ChatNotification.TYPE_MESSAGE_NEW -&gt; ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_MESSAGE_UPDATED -&gt; ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_REACTION_NEW -&gt; ignorePushMessagesWhenUserOnline
             ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -&gt; false // Always show reminder notifications
             else -&gt; true // Default behavior for unknown types
         }
@@ -88,6 +90,8 @@
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pushNotificationsEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">ignorePushMessagesWhenUserOnline<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter ">ignorePushMessageWhenUserOnline<span class="token operator">: </span><span class="token punctuation">(</span>type<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span>{ type -&gt;
         when (type) {
             ChatNotification.TYPE_MESSAGE_NEW -&gt; ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_MESSAGE_UPDATED -&gt; ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_REACTION_NEW -&gt; ignorePushMessagesWhenUserOnline
             ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -&gt; false // Always show reminder notifications
             else -&gt; true // Default behavior for unknown types
         }

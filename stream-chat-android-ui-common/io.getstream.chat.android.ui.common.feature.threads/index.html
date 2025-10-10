@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.24.0
+            <div class="library-version">6.25.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -78,7 +78,12 @@
                   </span></span></div>
               <div>
                 <div class="title">
-                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-thread-list-controller/index.html">ThreadListController</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">query<span class="token operator">: </span><a href="../../stream-chat-android-client/io.getstream.chat.android.client.api.models/-query-threads-request/index.html">QueryThreadsRequest</a><span class="token punctuation">, </span></span><span class="parameter ">chatClient<span class="token operator">: </span><a href="../../stream-chat-android-client/io.getstream.chat.android.client/-chat-client/index.html">ChatClient</a><span class="token operator"> = </span>ChatClient.instance()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Controller responsible for managing the Threads list state. It serves as a central place for the state management and business logic related to the Threads list.</p></div></div></div>
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="-thread-list-controller/index.html">ThreadListController</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">query<span class="token operator">: </span><a href="../../stream-chat-android-client/io.getstream.chat.android.client.api.models/-query-threads-request/index.html">QueryThreadsRequest</a><span class="token punctuation">, </span></span><span class="parameter ">chatClient<span class="token operator">: </span><a href="../../stream-chat-android-client/io.getstream.chat.android.client/-chat-client/index.html">ChatClient</a><span class="token operator"> = </span>ChatClient.instance()<span class="token punctuation">, </span></span><span class="parameter ">scope<span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines/CoroutineScope///PointingToDeclaration/">CoroutineScope</span><span class="token operator"> = </span>chatClient.inheritScope { DispatcherProvider.IO }<span class="token punctuation">, </span></span><span class="parameter ">queryThreadsAsState<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../stream-chat-android-state/io.getstream.chat.android.state.plugin.state.querythreads/-query-threads-state/index.html">QueryThreadsState</a><span class="token operator">?</span><span class="token operator">&gt;</span><span class="token operator"> = </span>{
+        chatClient.queryThreadsAsState(
+            request = query,
+            coroutineScope = scope,
+        )
+    }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Controller responsible for managing the Threads list state. It serves as a central place for the state management and business logic related to the Threads list.</p></div></div></div>
                 </div>
               </div>
             </div>
