@@ -87,6 +87,7 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 
 ### ⬆️ Improved
 - Improve `SwipeToReply` component in scroller containers. [#5946](https://github.com/GetStream/stream-chat-android/pull/5946)
+- Preserve scroll position on configuration changes in `MessageList`. [#5957](https://github.com/GetStream/stream-chat-android/pull/5957)
 
 ### ✅ Added
 - Add `ChatTheme.reactionPushEmojiFactory` for customizing the emoji codes for reaction push notifications. [#5935](https://github.com/GetStream/stream-chat-android/pull/5935)
