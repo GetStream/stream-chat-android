@@ -36,8 +36,6 @@ import io.getstream.chat.android.ui.common.feature.messages.list.MessageListCont
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.helper.ClipboardHandlerImpl
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
@@ -163,11 +161,7 @@ public class MessagesViewModelFactory(
             )
         },
         AttachmentsPickerViewModel::class.java to {
-            AttachmentsPickerViewModel(
-                StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
-                channelStateFlow,
-
-            )
+            AttachmentsPickerViewModel(StorageHelperWrapper(context), channelStateFlow)
         },
     )
 

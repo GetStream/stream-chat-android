@@ -42,8 +42,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -101,7 +99,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val storageHelper: StorageHelperWrapper =
-            remember { StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()) }
+            remember { StorageHelperWrapper(context) }
         val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
             if (value != VisualMediaAccess.DENIED) {
                 val media = storageHelper.getMedia()
