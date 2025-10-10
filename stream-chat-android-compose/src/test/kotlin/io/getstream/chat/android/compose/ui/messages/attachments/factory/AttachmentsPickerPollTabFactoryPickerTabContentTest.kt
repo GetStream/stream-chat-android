@@ -16,6 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
@@ -30,26 +37,50 @@ internal class AttachmentsPickerPollTabFactoryPickerTabContentTest : SnapshotTes
     @Test
     fun `light mode`() {
         snapshot(isInDarkMode = false) {
-            AttachmentsPickerPollTabFactory().PickerTabContent(
-                onAttachmentPickerAction = {},
-                attachments = listOf(),
-                onAttachmentsChanged = {},
-                onAttachmentItemSelected = {},
-                onAttachmentsSubmitted = {},
-            )
+            WithLocalViewModelStore {
+                AttachmentsPickerPollTabFactory().PickerTabContent(
+                    onAttachmentPickerAction = {},
+                    attachments = listOf(),
+                    onAttachmentsChanged = {},
+                    onAttachmentItemSelected = {},
+                    onAttachmentsSubmitted = {},
+                )
+            }
         }
     }
 
     @Test
     fun `dark mode`() {
         snapshot(isInDarkMode = true) {
-            AttachmentsPickerPollTabFactory().PickerTabContent(
-                onAttachmentPickerAction = {},
-                attachments = listOf(),
-                onAttachmentsChanged = {},
-                onAttachmentItemSelected = {},
-                onAttachmentsSubmitted = {},
-            )
+            WithLocalViewModelStore {
+                AttachmentsPickerPollTabFactory().PickerTabContent(
+                    onAttachmentPickerAction = {},
+                    attachments = listOf(),
+                    onAttachmentsChanged = {},
+                    onAttachmentItemSelected = {},
+                    onAttachmentsSubmitted = {},
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun WithLocalViewModelStore(content: @Composable () -> Unit) {
+        val viewModelStore = remember { ViewModelStore() }
+        val viewModelStoreOwner = remember(viewModelStore) {
+            object : ViewModelStoreOwner {
+                override val viewModelStore: ViewModelStore get() = viewModelStore
+            }
+        }
+
+        DisposableEffect(Unit) {
+            onDispose {
+                viewModelStore.clear()
+            }
+        }
+
+        CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
+            content()
         }
     }
 }
