@@ -138,6 +138,8 @@ public fun FileUploadItem(
                             text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L),
                             style = ChatTheme.typography.footnote,
                             color = ChatTheme.colors.textLowEmphasis,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
