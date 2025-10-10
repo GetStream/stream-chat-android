@@ -279,9 +279,89 @@ internal class ChannelInfoViewControllerTest {
         }
     }
 
+    @Suppress("LongMethod")
     @Test
-    fun `channel options`() = runTest {
-        val channel = randomChannel(ownCapabilities = emptySet())
+    fun `direct channel options`() = runTest {
+        val currentMember = randomMember()
+        val otherMember = randomMember()
+        val channel = randomChannel(
+            id = "!members-${currentMember.getUserId()},${otherMember.getUserId()}",
+            createdBy = otherMember.user,
+            members = listOf(currentMember, otherMember),
+            memberCount = 2,
+            ownCapabilities = emptySet(),
+        )
+        val fixture = Fixture()
+            .given(
+                currentUser = currentMember.user,
+                channel = channel,
+            )
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
+                    members = ExpandableList(
+                        items = listOf(otherMember),
+                        minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
+                ),
+                awaitItem(),
+            )
+
+            val updatedChannel = channel.copy(
+                ownCapabilities = setOf(
+                    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                    ChannelCapabilities.UPDATE_CHANNEL,
+                    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                    ChannelCapabilities.MUTE_CHANNEL,
+                    ChannelCapabilities.LEAVE_CHANNEL,
+                    ChannelCapabilities.DELETE_CHANNEL,
+                ),
+            )
+            fixture.given(channel = updatedChannel)
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = updatedChannel.createdBy,
+                    members = ExpandableList(
+                        items = listOf(otherMember),
+                        minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
+                    ),
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Suppress("LongMethod")
+    @Test
+    fun `group channel options`() = runTest {
+        val channel = randomChannel(
+            members = randomMembers(10),
+            ownCapabilities = emptySet(),
+        )
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -291,7 +371,10 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     owner = channel.createdBy,
-                    members = emptyMembers(),
+                    members = ExpandableList(
+                        items = channel.members,
+                        minimumVisibleItems = 5,
+                    ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
@@ -319,7 +402,10 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     owner = updatedChannel.createdBy,
-                    members = emptyMembers(),
+                    members = ExpandableList(
+                        items = channel.members,
+                        minimumVisibleItems = 5,
+                    ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.AddMember,
                         ChannelInfoViewState.Content.Option.RenameChannel(
@@ -333,7 +419,6 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.LeaveChannel,
-                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -997,7 +1082,6 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
-                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -1036,7 +1120,6 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MediaAttachments,
                         ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
-                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
