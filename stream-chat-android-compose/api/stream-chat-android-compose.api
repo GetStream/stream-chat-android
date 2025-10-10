@@ -2357,6 +2357,10 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/CreatePollScreenKt {
+	public static final fun CreatePollScreen (Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollCreationDiscardDialogKt {
 	public static final fun PollCreationDiscardDialog (ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
