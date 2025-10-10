@@ -20,7 +20,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -73,7 +72,6 @@ public fun FileAttachmentPreviewContent(
                 Row(
                     modifier = Modifier
                         .width(200.dp)
-                        .height(50.dp)
                         .padding(vertical = 8.dp, horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -107,6 +105,8 @@ public fun FileAttachmentPreviewContent(
                                 text = fileSize,
                                 style = ChatTheme.typography.footnote,
                                 color = ChatTheme.colors.textLowEmphasis,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
                     }
