@@ -4669,6 +4669,7 @@ public final class io/getstream/chat/android/compose/ui/util/SearchResultNameFor
 public final class io/getstream/chat/android/compose/ui/util/StorageHelperWrapper {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/ui/common/helper/internal/StorageHelper;Lio/getstream/chat/android/ui/common/helper/internal/AttachmentFilter;)V
+	public synthetic fun <init> (Landroid/content/Context;Lio/getstream/chat/android/ui/common/helper/internal/StorageHelper;Lio/getstream/chat/android/ui/common/helper/internal/AttachmentFilter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getAttachmentsForUpload (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsFromUris (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsMetadataFromUris (Ljava/util/List;)Ljava/util/List;

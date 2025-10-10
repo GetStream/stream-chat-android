@@ -57,6 +57,7 @@ Fix `Message.channelInfo` not populated when parsing `message.new` event. [#5953
 ### 🐞 Fixed
 - Fix unread separator showing before an uncommitted pending message. [#5945](https://github.com/GetStream/stream-chat-android/pull/5945)
 - Fix unread separator showing before a message that was sent while offline. [#5945](https://github.com/GetStream/stream-chat-android/pull/5945)
+- Expose `StorageHelper` and `AttachmentFilter` as public to fix `StorageHelperWrapper` not instantiable. [#5954](https://github.com/GetStream/stream-chat-android/pull/5954)
 
 ### ⬆️ Improved
 

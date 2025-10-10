@@ -35,8 +35,8 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  */
 public class StorageHelperWrapper(
     private val context: Context,
-    private val storageHelper: StorageHelper,
-    private val attachmentFilter: AttachmentFilter,
+    private val storageHelper: StorageHelper = StorageHelper(),
+    private val attachmentFilter: AttachmentFilter = AttachmentFilter(),
 ) {
 
     /**

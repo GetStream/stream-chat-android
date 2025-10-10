@@ -1105,6 +1105,27 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Video
 	public abstract fun getVideoRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
+public final class io/getstream/chat/android/ui/common/helper/internal/AttachmentFilter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun filterAttachments (Ljava/util/List;)Ljava/util/List;
+	public final fun getSupportedMimeTypes ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion;
+	public static final field FILE_NAME_PREFIX Ljava/lang/String;
+	public static final field TIME_FORMAT Ljava/lang/String;
+	public fun <init> ()V
+	public final fun getAttachmentsFromUriList (Landroid/content/Context;Ljava/util/List;)Ljava/util/List;
+	public final fun getCachedFileFromUri (Landroid/content/Context;Lio/getstream/chat/android/ui/common/state/messages/composer/AttachmentMetaData;)Ljava/io/File;
+	public final fun getFileAttachments (Landroid/content/Context;)Ljava/util/List;
+	public final fun getMediaAttachments (Landroid/content/Context;)Ljava/util/List;
+}
+
 public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion {
 }
 

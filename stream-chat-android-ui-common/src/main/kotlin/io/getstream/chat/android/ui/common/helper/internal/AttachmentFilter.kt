@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.helper.internal
 
 import androidx.core.content.MimeTypeFilter
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.log.taggedLogger
@@ -31,7 +30,6 @@ import io.getstream.log.taggedLogger
  *
  * @param chatClient An instance of the low level chat client to fetch upload config.
  */
-@InternalStreamChatApi
 public class AttachmentFilter(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
