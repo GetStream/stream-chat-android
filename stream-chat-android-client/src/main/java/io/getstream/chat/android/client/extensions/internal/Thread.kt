@@ -44,8 +44,11 @@ public fun Thread.updateParentOrReply(message: Message): Thread {
 public fun Thread.updateParent(parent: Message): Thread {
     // Skip update if [parent] is not related to this Thread
     if (this.parentMessageId != parent.id) return this
+    // Enrich the poll as it might not be present in the event
+    val poll = parent.poll ?: this.parentMessage.poll
+    val updatedParent = parent.copy(poll = poll)
     return this.copy(
-        parentMessage = parent,
+        parentMessage = updatedParent,
         deletedAt = parent.deletedAt,
         updatedAt = parent.updatedAt ?: this.updatedAt,
     )
