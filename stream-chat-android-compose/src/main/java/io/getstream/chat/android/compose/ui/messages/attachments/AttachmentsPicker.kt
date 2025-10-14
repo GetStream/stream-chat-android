@@ -37,8 +37,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,8 +101,7 @@ public fun AttachmentsPicker(
         .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
         .takeIf { it >= 0 }
         ?: 0
-    var selectedTabIndex by remember { mutableIntStateOf(defaultTabIndex) }
-    var selectedAttachmentsPickerMode: AttachmentsPickerMode? by remember { mutableStateOf(null) }
+    var selectedTabIndex by rememberSaveable { mutableIntStateOf(defaultTabIndex) }
 
     Box(
         modifier = Modifier
@@ -121,7 +120,7 @@ public fun AttachmentsPicker(
                 onClick = {},
                 interactionSource = null,
             ),
-            shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+            shape = if (attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
                 RoundedCornerShape(0.dp)
             } else {
                 shape
@@ -129,7 +128,7 @@ public fun AttachmentsPicker(
             colors = CardDefaults.cardColors(containerColor = ChatTheme.attachmentPickerTheme.backgroundSecondary),
         ) {
             Column {
-                if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {
+                if (!attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
                     AttachmentPickerOptions(
                         hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
                         tabFactories = allowedFactories,
@@ -138,7 +137,6 @@ public fun AttachmentsPicker(
                         onTabClick = { index, attachmentPickerMode ->
                             onTabClick.invoke(index, attachmentPickerMode)
                             selectedTabIndex = index
-                            selectedAttachmentsPickerMode = attachmentPickerMode
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
@@ -149,7 +147,7 @@ public fun AttachmentsPicker(
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+                    shape = if (attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
                         RoundedCornerShape(0.dp)
                     } else {
                         shape

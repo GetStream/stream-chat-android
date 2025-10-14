@@ -68,10 +68,12 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix unsent messages should be placed as the last ones in the message list. [#5959](https://github.com/GetStream/stream-chat-android/pull/5959)
+- Fix poll creation screen not persisting its state after an orientation change. [#5958](https://github.com/GetStream/stream-chat-android/pull/5958)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `CreatePollScreen` composable to expose the poll creation functionality outside of attachment picker factories. [#5958](https://github.com/GetStream/stream-chat-android/pull/5958)
 
 ### ⚠️ Changed
 
