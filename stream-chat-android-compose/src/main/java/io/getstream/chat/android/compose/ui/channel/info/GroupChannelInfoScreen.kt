@@ -413,7 +413,6 @@ internal fun GroupChannelInfoCollapsedMembers() {
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.Separator,
                 ChannelInfoViewState.Content.Option.LeaveChannel,
-                ChannelInfoViewState.Content.Option.DeleteChannel,
             ),
         ),
     )
@@ -456,7 +455,6 @@ internal fun GroupChannelInfoExpandedMembers() {
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.Separator,
                 ChannelInfoViewState.Content.Option.LeaveChannel,
-                ChannelInfoViewState.Content.Option.DeleteChannel,
             ),
         ),
     )

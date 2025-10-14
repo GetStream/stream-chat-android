@@ -77,7 +77,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -210,7 +209,7 @@ public class AttachmentsPickerSystemTabFactory(
     ) {
         val context = LocalContext.current
         val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
+            StorageHelperWrapper(context)
         }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->

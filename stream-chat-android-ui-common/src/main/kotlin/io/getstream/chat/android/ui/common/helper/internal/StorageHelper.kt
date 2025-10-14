@@ -22,7 +22,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import java.io.File
@@ -30,11 +29,40 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@InternalStreamChatApi
+/**
+ * Helper class for managing file and media attachments from device storage.
+ *
+ * This class provides utilities to:
+ * - Query files and media from the device's MediaStore
+ * - Cache remote or content URI files to local storage
+ * - Parse attachment metadata from content URIs
+ *
+ * The class uses Android's MediaStore API to retrieve file information and should be called
+ * from a background thread when querying large datasets to avoid blocking the main thread.
+ *
+ * @see AttachmentMetaData
+ */
 @Suppress("TooManyFunctions")
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
 
+    /**
+     * Retrieves or creates a cached copy of a file from the given attachment metadata.
+     *
+     * This method handles two scenarios:
+     * 1. If [AttachmentMetaData.file] is already set, it returns the file directly
+     * 2. If only [AttachmentMetaData.uri] is available, it copies the content to a cache file
+     *
+     * The cached file is stored in a unique timestamped folder within the app's cache directory
+     * to prevent naming conflicts. The file name is derived from the attachment's title with
+     * proper extension handling.
+     *
+     * @param context The Android context used to access the content resolver and cache directory.
+     * @param attachmentMetaData The attachment metadata containing either a file or URI reference.
+     * @return A [File] object pointing to the cached file, or `null` if both file and URI are null.
+     *
+     * @throws java.io.IOException If there's an error reading from the URI or writing to cache.
+     */
     public fun getCachedFileFromUri(
         context: Context,
         attachmentMetaData: AttachmentMetaData,
@@ -55,6 +83,22 @@ public class StorageHelper {
         return cachedFile
     }
 
+    /**
+     * Retrieves all file attachments from the device's external storage.
+     *
+     * This method queries the MediaStore for all files that have a valid MIME type, excluding
+     * folders and files with unknown types. The results are sorted by date added in descending
+     * order (most recent first).
+     *
+     * Note: This method performs a potentially expensive query operation and should be called
+     * from a background thread to avoid blocking the UI.
+     *
+     * @param context The Android context used to access the content resolver.
+     * @return A list of [AttachmentMetaData] objects representing all files on the device,
+     *         or an empty list if the query fails or returns no results.
+     *
+     * @see getMediaAttachments For retrieving only images and videos.
+     */
     public fun getFileAttachments(context: Context): List<AttachmentMetaData> {
         // Excluding files with empty mime type just to be sure that we won't include folder and unknown files
         return getFilteredAttachments(
@@ -64,6 +108,25 @@ public class StorageHelper {
         )
     }
 
+    /**
+     * Retrieves all media attachments (images and videos) from the device's external storage.
+     *
+     * This method queries the MediaStore specifically for files with media type IMAGE or VIDEO,
+     * filtering out all other file types. The results are sorted by date added in descending
+     * order (most recent first).
+     *
+     * The returned metadata includes video duration for video files, which is useful for
+     * displaying in the UI or for validation purposes.
+     *
+     * Note: This method performs a potentially expensive query operation and should be called
+     * from a background thread to avoid blocking the UI.
+     *
+     * @param context The Android context used to access the content resolver.
+     * @return A list of [AttachmentMetaData] objects representing all images and videos on the device,
+     *         or an empty list if the query fails or returns no results.
+     *
+     * @see getFileAttachments For retrieving all file types.
+     */
     public fun getMediaAttachments(context: Context): List<AttachmentMetaData> {
         val selection = (
             MediaStore.Files.FileColumns.MEDIA_TYPE + "=" +
@@ -75,35 +138,27 @@ public class StorageHelper {
         return getFilteredAttachments(context, selection)
     }
 
-    private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
-        val columns = arrayOf(
-            MediaStore.Files.FileColumns._ID,
-            MediaStore.Files.FileColumns.DISPLAY_NAME,
-            MediaStore.Files.FileColumns.MIME_TYPE,
-            MediaStore.Files.FileColumns.SIZE,
-            MediaStore.Files.FileColumns.DURATION,
-        )
-        context.contentResolver.query(
-            MediaStore.Files.getContentUri("external"),
-            columns,
-            selection,
-            null,
-            "${MediaStore.Files.FileColumns.DATE_ADDED} DESC",
-        )?.use { cursor ->
-            return mutableListOf<AttachmentMetaData>().apply {
-                while (cursor.moveToNext()) {
-                    add(getAttachmentFromCursor(cursor))
-                }
-            }
-        }
-        return emptyList()
-    }
-
     /**
-     * Queries the given list of content URI and returns the parsed metadata.
+     * Queries a list of content URIs and returns parsed attachment metadata for each.
      *
-     * @param uriList The list of URIs, using the content:// scheme.
-     * @return A list of objects with parsed metadata for the list of URIs.
+     * This method is useful when you have specific URIs (e.g., from an intent or file picker)
+     * and need to extract their metadata for attachment processing. Each URI is queried
+     * individually using the content resolver to retrieve:
+     * - Display name
+     * - MIME type (with fallback to content resolver type)
+     * - File size
+     *
+     * URIs that cannot be queried or return no data are filtered out from the result.
+     * The attachment type (image, video, or file) is automatically determined based on
+     * the MIME type.
+     *
+     * @param context The Android context used to access the content resolver.
+     * @param uriList The list of content URIs (using the `content://` scheme) to query.
+     * @return A list of [AttachmentMetaData] objects with parsed metadata. URIs that fail
+     *         to resolve are omitted from the result.
+     *
+     * @see getFileAttachments For querying all files from device storage.
+     * @see getMediaAttachments For querying all media from device storage.
      */
     public fun getAttachmentsFromUriList(context: Context, uriList: List<Uri>): List<AttachmentMetaData> {
         return uriList.mapNotNull { uri ->
@@ -150,6 +205,30 @@ public class StorageHelper {
                     }
                 }
         }
+    }
+
+    private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
+        val columns = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.SIZE,
+            MediaStore.Files.FileColumns.DURATION,
+        )
+        context.contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            columns,
+            selection,
+            null,
+            "${MediaStore.Files.FileColumns.DATE_ADDED} DESC",
+        )?.use { cursor ->
+            return mutableListOf<AttachmentMetaData>().apply {
+                while (cursor.moveToNext()) {
+                    add(getAttachmentFromCursor(cursor))
+                }
+            }
+        }
+        return emptyList()
     }
 
     private fun getAttachmentFromCursor(cursor: Cursor): AttachmentMetaData {

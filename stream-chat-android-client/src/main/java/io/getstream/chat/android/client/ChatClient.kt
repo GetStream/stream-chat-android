@@ -157,6 +157,7 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -2255,13 +2256,14 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return message.copy(createdLocallyAt = message.createdLocallyAt ?: now())
-            .ensureId(getCurrentUser() ?: getStoredUser())
-            .let { processedMessage ->
-                CoroutineCall(userScope) {
-                    val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
-                    debugger.onStart(processedMessage)
-                    sendAttachments(channelType, channelId, processedMessage, isRetrying, debugger)
+        val messageWithId = message.ensureId(getCurrentUser() ?: getStoredUser())
+        return CoroutineCall(userScope) {
+            messageWithId.ensureCreatedLocallyAt(cid = "$channelType:$channelId")
+                .let { messageWithLocalDate ->
+                    val debugger =
+                        clientDebugger.debugSendMessage(channelType, channelId, messageWithLocalDate, isRetrying)
+                    debugger.onStart(messageWithLocalDate)
+                    sendAttachments(channelType, channelId, messageWithLocalDate, isRetrying, debugger)
                         .flatMapSuspend { newMessage ->
                             debugger.onSendStart(newMessage)
                             doSendMessage(channelType, channelId, newMessage).also { result ->
@@ -2269,10 +2271,24 @@ internal constructor(
                                 debugger.onStop(result, newMessage)
                             }
                         }
-                }.share(userScope) {
-                    SendMessageIdentifier(channelType, channelId, processedMessage.id)
                 }
-            }
+        }.share(userScope) {
+            SendMessageIdentifier(channelType, channelId, messageWithId.id)
+        }
+    }
+
+    /**
+     * Ensure the message has a [Message.createdLocallyAt] timestamp.
+     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and [now].
+     * This ensures that the message appears in the correct order in the channel.
+     */
+    private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
+        val lastMessageAt = repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
+        val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+            Date(it.time + 1)
+        }
+        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, now())
+        return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
     }
 
     /**
