@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix unsent messages should be placed as the last ones in the message list. [#5959](https://github.com/GetStream/stream-chat-android/pull/5959)
 
 ### ⬆️ Improved
 
