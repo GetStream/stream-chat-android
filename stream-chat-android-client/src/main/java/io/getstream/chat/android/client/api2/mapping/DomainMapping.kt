@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -95,6 +96,8 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
@@ -322,6 +325,7 @@ internal class DomainMapping(
             channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
             blockedUserIds = blocked_user_ids.orEmpty(),
             avgResponseTime = avg_response_time,
+            pushPreference = push_preferences?.toDomain(),
             extraData = extraData.toMutableMap(),
         ).let(userTransformer::transform)
 
@@ -838,5 +842,10 @@ internal class DomainMapping(
         channelType = channel_type,
         channelsCount = channel_count,
         messagesCount = unread_count,
+    )
+
+    internal fun DownstreamPushPreferenceDto.toDomain(): PushPreference = PushPreference(
+        level = PushPreferenceLevel.fromValue(chat_level),
+        disabledUntil = disabled_until,
     )
 }

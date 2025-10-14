@@ -20,7 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.compose.ui.ComposeTest
+import io.getstream.chat.android.client.test.MockedChatClientTest
 import io.getstream.chat.android.randomString
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -29,7 +29,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
-internal class MediaPreviewActivityTest : ComposeTest {
+internal class MediaPreviewActivityTest : MockedChatClientTest {
 
     @Test
     fun `launch activity with no crash`() {

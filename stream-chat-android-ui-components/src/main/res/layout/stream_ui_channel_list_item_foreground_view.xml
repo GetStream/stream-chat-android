@@ -149,6 +149,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/lastMessageLabel"
         app:layout_constraintEnd_toStartOf="@+id/messageStatusImageView"
         app:layout_constraintTop_toTopOf="@+id/lastMessageLabel"
+        android:visibility="gone"
         tools:text="3"
         />
 

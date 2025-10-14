@@ -46,6 +46,7 @@ import java.util.Date
  * @param channelMutes A list of channels muted by the current user.
  * @param blockedUserIds A list of user ids blocked by the current user.
  * @param avgResponseTime The average time (in seconds) the user took to respond to messages.
+ * @param pushPreference The push notification preference for the user.
  * @param extraData A map of custom fields for the user.
  * @param deactivatedAt Date/time of deactivation.
  */
@@ -73,6 +74,7 @@ public data class User(
     val channelMutes: List<ChannelMute> = emptyList(),
     val blockedUserIds: List<String> = emptyList(),
     val avgResponseTime: Long? = null,
+    val pushPreference: PushPreference? = null,
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
@@ -146,6 +148,7 @@ public data class User(
         private var channelMutes: List<ChannelMute> = emptyList()
         private var blockedUserIds: List<String> = emptyList()
         private var avgResponseTime: Long? = null
+        private var pushPreference: PushPreference? = null
         private var extraData: Map<String, Any> = mutableMapOf()
         private var deactivatedAt: Date? = null
 
@@ -172,6 +175,7 @@ public data class User(
             channelMutes = user.channelMutes
             blockedUserIds = user.blockedUserIds
             avgResponseTime = user.avgResponseTime
+            pushPreference = user.pushPreference
             extraData = user.extraData
             deactivatedAt = user.deactivatedAt
         }
@@ -206,6 +210,9 @@ public data class User(
         public fun withAvgResponseTime(avgResponseTime: Long): Builder = apply {
             this.avgResponseTime = avgResponseTime
         }
+        public fun withPushPreference(pushPreference: PushPreference?): Builder = apply {
+            this.pushPreference = pushPreference
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withDeactivatedAt(deactivatedAt: Date?): Builder = apply { this.deactivatedAt = deactivatedAt }
 
@@ -233,6 +240,7 @@ public data class User(
                 channelMutes = channelMutes,
                 blockedUserIds = blockedUserIds,
                 avgResponseTime = avgResponseTime,
+                pushPreference = pushPreference,
                 extraData = extraData.toMutableMap(),
                 deactivatedAt = deactivatedAt,
             )

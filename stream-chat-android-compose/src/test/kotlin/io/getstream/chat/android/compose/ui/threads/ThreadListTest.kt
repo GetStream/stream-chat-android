@@ -21,14 +21,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
+import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.previewdata.PreviewThreadData
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import org.junit.Rule
 import org.junit.Test
 
-internal class ThreadListTest : SnapshotTest {
+internal class ThreadListTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)

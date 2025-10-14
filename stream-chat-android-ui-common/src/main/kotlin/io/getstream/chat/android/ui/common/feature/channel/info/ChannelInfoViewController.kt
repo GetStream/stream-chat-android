@@ -447,7 +447,9 @@ private fun buildChannelOptionList(
     isMuted: Boolean,
     isHidden: Boolean,
 ) = buildList {
-    if (channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
+    if (channelData.isGroupChannel &&
+        channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)
+    ) {
         add(ChannelInfoViewState.Content.Option.AddMember)
     }
     if (singleMember != null) {
@@ -468,11 +470,14 @@ private fun buildChannelOptionList(
     add(ChannelInfoViewState.Content.Option.MediaAttachments)
     add(ChannelInfoViewState.Content.Option.FilesAttachments)
     add(ChannelInfoViewState.Content.Option.Separator)
-    if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
-        add(ChannelInfoViewState.Content.Option.LeaveChannel)
-    }
-    if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
-        add(ChannelInfoViewState.Content.Option.DeleteChannel)
+    if (channelData.isGroupChannel) {
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.LeaveChannel)
+        }
+    } else {
+        if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
+            add(ChannelInfoViewState.Content.Option.DeleteChannel)
+        }
     }
 }
 

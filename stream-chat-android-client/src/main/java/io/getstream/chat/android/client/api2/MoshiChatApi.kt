@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
+import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -35,6 +36,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -45,6 +47,7 @@ import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
@@ -88,14 +91,18 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRe
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
+import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
+import io.getstream.chat.android.client.api2.model.response.getUserChannelPreference
+import io.getstream.chat.android.client.api2.model.response.getUserPreference
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
@@ -127,6 +134,8 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -143,8 +152,11 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
+import io.getstream.result.call.flatMap
 import io.getstream.result.call.map
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.CoroutineScope
@@ -178,6 +190,7 @@ constructor(
     private val threadsApi: ThreadsApi,
     private val pollsApi: PollsApi,
     private val remindersApi: RemindersApi,
+    private val pushPreferencesApi: PushPreferencesApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -426,6 +439,58 @@ constructor(
         return deviceApi.getDevices().mapDomain { response ->
             response.devices.map { it.toDomain() }
         }
+    }
+
+    override fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = null,
+            chat_level = level.value,
+            disabled_until = null,
+            remove_disable = true,
+        )
+        val request = UpsertPushPreferencesRequest(listOf(input))
+        return pushPreferencesApi
+            .upsertPushPreferences(request)
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = null,
+            chat_level = null,
+            disabled_until = until,
+            remove_disable = null,
+        )
+        val request = UpsertPushPreferencesRequest(listOf(input))
+        return pushPreferencesApi
+            .upsertPushPreferences(request)
+            .parseUserPushPreferencesResponse()
+    }
+
+    override fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = cid,
+            chat_level = level.value,
+            disabled_until = null,
+            remove_disable = true,
+        )
+        val request = UpsertPushPreferencesRequest(listOf(input))
+        return pushPreferencesApi
+            .upsertPushPreferences(request)
+            .parseChannelPushPreferencesResponse(cid)
+    }
+
+    override fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
+        val input = UpstreamPushPreferenceInputDto(
+            channel_cid = cid,
+            chat_level = null,
+            disabled_until = until,
+            remove_disable = null,
+        )
+        val request = UpsertPushPreferencesRequest(listOf(input))
+        return pushPreferencesApi
+            .upsertPushPreferences(request)
+            .parseChannelPushPreferencesResponse(cid)
     }
 
     override fun muteCurrentUser(): Call<Mute> {
@@ -1029,6 +1094,7 @@ constructor(
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
+                pushPreference = response.push_preferences?.toDomain(),
                 watchers = response.watchers.map {
                     it.toDomain()
                 },
@@ -1629,4 +1695,37 @@ constructor(
 
     private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
         map { domainMapping.transform(it) }
+
+    private fun RetrofitCall<PushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
+        val currentUserId = currentUserIdProvider().orEmpty()
+        val preference = it.getUserPreference(currentUserId)
+        if (preference != null) {
+            val result = Result.Success(preference.toDomain())
+            CoroutineCall(coroutineScope) { result }
+        } else {
+            // this should never happen as the server should always return the preference for the current user
+            val error = Error.GenericError(
+                "Push preferences response for user $currentUserId did not contain user preference",
+            )
+            ErrorCall(coroutineScope, error)
+        }
+    }
+
+    private fun RetrofitCall<PushPreferencesResponse>.parseChannelPushPreferencesResponse(cid: String) = flatMapDomain {
+        val currentUserId = currentUserIdProvider().orEmpty()
+        val preference = it.getUserChannelPreference(currentUserId, cid)
+        if (preference != null) {
+            val result = Result.Success(preference.toDomain())
+            CoroutineCall(coroutineScope) { result }
+        } else {
+            // this should never happen as the server should always return the preference for the current user and cid
+            val error = Error.GenericError(
+                "Push preferences response for user $currentUserId did not contain channel preference for $cid",
+            )
+            ErrorCall(coroutineScope, error)
+        }
+    }
+
+    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
+        flatMap { domainMapping.transform(it) }
 }

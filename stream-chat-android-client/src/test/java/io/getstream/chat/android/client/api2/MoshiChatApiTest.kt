@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.PushPreferencesApi
 import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
@@ -39,8 +40,10 @@ import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamPushPreferenceInputDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
@@ -72,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownReques
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
+import io.getstream.chat.android.client.api2.model.requests.UpsertPushPreferencesRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
@@ -88,6 +92,7 @@ import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
+import io.getstream.chat.android.client.api2.model.response.PushPreferencesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
@@ -126,12 +131,14 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChatNetworkError
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDevice
@@ -153,6 +160,7 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.amshove.kluent.`should be instance of`
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -2384,6 +2392,140 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).queryReminders(expectedBody)
     }
 
+    @Test
+    fun testSetUserPushPreference() = runTest {
+        // given
+        val userId = randomString()
+        val level = PushPreferenceLevel.all
+        val response = PushPreferencesResponse(
+            user_channel_preferences = emptyMap(),
+            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(level.value, null)),
+        )
+        val call = RetroSuccess(response).toRetrofitCall()
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(call)
+        val sut = Fixture()
+            .withCurrentUserId(userId)
+            .withPushPreferencesApi(api)
+            .get()
+        // when
+        val result = sut.setUserPushPreference(level).await()
+        // then
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = null,
+                    chat_level = level.value,
+                    disabled_until = null,
+                    remove_disable = true,
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSnoozeUserPushNotifications() = runTest {
+        // given
+        val userId = randomString()
+        val until = randomDate()
+        val response = PushPreferencesResponse(
+            user_channel_preferences = emptyMap(),
+            user_preferences = mapOf(userId to DownstreamPushPreferenceDto(null, until)),
+        )
+        val call = RetroSuccess(response).toRetrofitCall()
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(call)
+        val sut = Fixture()
+            .withCurrentUserId(userId)
+            .withPushPreferencesApi(api)
+            .get()
+        // when
+        val result = sut.snoozeUserPushNotifications(until).await()
+        // then
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = null,
+                    chat_level = null,
+                    disabled_until = until,
+                    remove_disable = null,
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSetChannelPushPreference() = runTest {
+        // given
+        val userId = randomString()
+        val cid = randomCID()
+        val level = PushPreferenceLevel.mentions
+        val response = PushPreferencesResponse(
+            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(level.value, null))),
+            user_preferences = emptyMap(),
+        )
+        val call = RetroSuccess(response).toRetrofitCall()
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(call)
+        val sut = Fixture()
+            .withCurrentUserId(userId)
+            .withPushPreferencesApi(api)
+            .get()
+        // when
+        val result = sut.setChannelPushPreference(cid, level).await()
+        // then
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = cid,
+                    chat_level = level.value,
+                    disabled_until = null,
+                    remove_disable = true,
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
+    @Test
+    fun testSnoozeChannelPushNotifications() = runTest {
+        // given
+        val userId = randomString()
+        val cid = randomCID()
+        val until = randomDate()
+        val response = PushPreferencesResponse(
+            user_channel_preferences = mapOf(userId to mapOf(cid to DownstreamPushPreferenceDto(null, until))),
+            user_preferences = emptyMap(),
+        )
+        val call = RetroSuccess(response).toRetrofitCall()
+        val api = mock<PushPreferencesApi>()
+        whenever(api.upsertPushPreferences(any())).doReturn(call)
+        val sut = Fixture()
+            .withCurrentUserId(userId)
+            .withPushPreferencesApi(api)
+            .get()
+        // when
+        val result = sut.snoozeChannelPushNotifications(cid, until).await()
+        // then
+        val expectedRequest = UpsertPushPreferencesRequest(
+            preferences = listOf(
+                UpstreamPushPreferenceInputDto(
+                    channel_cid = cid,
+                    chat_level = null,
+                    disabled_until = until,
+                    remove_disable = null,
+                ),
+            ),
+        )
+        Assertions.assertInstanceOf(Result.Success::class.java, result)
+        verify(api, times(1)).upsertPushPreferences(expectedRequest)
+    }
+
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateLiveLocation")
     fun testUpdateLiveLocation(
@@ -2457,13 +2599,7 @@ internal class MoshiChatApiTest {
 
     private class Fixture {
 
-        private var domainMapping = DomainMapping(
-            currentUserIdProvider = { "" },
-            channelTransformer = NoOpChannelTransformer,
-            messageTransformer = NoOpMessageTransformer,
-            userTransformer = NoOpUserTransformer,
-        )
-        private var eventMapping = EventMapping(domainMapping)
+        private var currentUserId: String = ""
         private var dtoMapping = DtoMapping(
             messageTransformer = NoOpMessageTransformer,
             userTransformer = NoOpUserTransformer,
@@ -2482,9 +2618,14 @@ internal class MoshiChatApiTest {
         private var threadsApi: ThreadsApi = mock()
         private var pollsApi: PollsApi = mock()
         private var remindersApi: RemindersApi = mock()
+        private var pushPreferencesApi: PushPreferencesApi = mock()
 
         private var fileUploader: FileUploader = mock()
         private var fileTransformer: FileTransformer = NoOpFileTransformer
+
+        fun withCurrentUserId(userId: String) = apply {
+            this.currentUserId = userId
+        }
 
         fun withUserApi(userApi: UserApi) = apply {
             this.userApi = userApi
@@ -2538,6 +2679,10 @@ internal class MoshiChatApiTest {
             this.remindersApi = remindersApi
         }
 
+        fun withPushPreferencesApi(pushPreferencesApi: PushPreferencesApi) = apply {
+            this.pushPreferencesApi = pushPreferencesApi
+        }
+
         fun withFileUploader(fileUploader: FileUploader) = apply {
             this.fileUploader = fileUploader
         }
@@ -2547,9 +2692,15 @@ internal class MoshiChatApiTest {
         }
 
         fun get(): MoshiChatApi {
+            val domainMapping = DomainMapping(
+                currentUserIdProvider = { currentUserId },
+                channelTransformer = NoOpChannelTransformer,
+                messageTransformer = NoOpMessageTransformer,
+                userTransformer = NoOpUserTransformer,
+            )
             return MoshiChatApi(
                 domainMapping = domainMapping,
-                eventMapping = eventMapping,
+                eventMapping = EventMapping(domainMapping),
                 dtoMapping = dtoMapping,
                 fileUploader = fileUploader,
                 fileTransformer = fileTransformer,
@@ -2567,6 +2718,7 @@ internal class MoshiChatApiTest {
                 threadsApi = threadsApi,
                 pollsApi = pollsApi,
                 remindersApi = remindersApi,
+                pushPreferencesApi = pushPreferencesApi,
                 userScope = UserScope(ClientScope()),
                 coroutineScope = testCoroutineExtension.scope,
             )

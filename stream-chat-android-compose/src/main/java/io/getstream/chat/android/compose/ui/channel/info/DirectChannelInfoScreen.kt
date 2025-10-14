@@ -282,7 +282,6 @@ internal fun DirectChannelInfoContent() {
                 ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                 ChannelInfoViewState.Content.Option.PinnedMessages,
                 ChannelInfoViewState.Content.Option.Separator,
-                ChannelInfoViewState.Content.Option.LeaveChannel,
                 ChannelInfoViewState.Content.Option.DeleteChannel,
             ),
         ),

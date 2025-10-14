@@ -51,8 +51,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -109,7 +107,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
+            StorageHelperWrapper(context)
         }
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
         val permissionLauncher =

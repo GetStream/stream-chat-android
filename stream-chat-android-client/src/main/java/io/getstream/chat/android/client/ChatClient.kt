@@ -151,7 +151,6 @@ import io.getstream.chat.android.client.user.storage.SharedPreferencesCredential
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
@@ -160,6 +159,7 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.core.utils.date.max
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -187,6 +187,8 @@ import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.PushPreference
+import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -1538,6 +1540,95 @@ internal constructor(
     }
 
     /**
+     * Sets the push notification preference level for the current user.
+     * This controls which messages will trigger push notifications for the user across all channels.
+     *
+     * @param level The notification level to set. Available options: [PushPreferenceLevel.all],
+     * [PushPreferenceLevel.mentions], [PushPreferenceLevel.none]
+     *
+     * @return Executable async [Call] responsible for setting the user's push preference.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     */
+    @CheckResult
+    public fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
+        return api.setUserPushPreference(level)
+            .doOnResult(userScope) { result ->
+                // Note: Update local user state manually as we don't get WS events for push preference updates
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Temporarily disables push notifications for the current user until the specified date.
+     * This is useful for implementing "Do Not Disturb" functionality where users can snooze
+     * notifications for a specific period of time.
+     *
+     * Once the specified date is reached, notifications will resume according to the user's
+     * previously configured notification level.
+     *
+     * @param until The [Date] until which push notifications should be disabled.
+     * Must be a future date. After this date, notifications will resume automatically.
+     *
+     * @return Executable async [Call] responsible for snoozing the user's push notifications.
+     * Returns a [PushPreference] object containing the updated preference settings with the
+     * `disabledUntil` field set to the specified date.
+     */
+    @CheckResult
+    public fun snoozeUserPushNotifications(until: Date): Call<PushPreference> {
+        return api.snoozeUserPushNotifications(until)
+            .doOnResult(userScope) { result ->
+                // Note: Update local user state manually as we don't get WS events for push preference updates
+                if (result is Result.Success) {
+                    val currentUser = mutableClientState.user.value ?: return@doOnResult
+                    val updatedUser = currentUser.copy(pushPreference = result.value)
+                    mutableClientState.setUser(updatedUser)
+                }
+            }
+    }
+
+    /**
+     * Sets the push notification preference level for a specific channel.
+
+     *
+     * @param cid The full channel identifier (e.g., "messaging:123") for which to set the preference.
+     * @param level The notification level to set for this channel. Available options: [PushPreferenceLevel.all],
+     * [PushPreferenceLevel.mentions], [PushPreferenceLevel.none]
+     *
+     * @return Executable async [Call] responsible for setting the channel's push preference.
+     * Returns a [PushPreference] object containing the updated preference settings on success.
+     */
+    @CheckResult
+    public fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
+        return api.setChannelPushPreference(cid, level)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelPushPreferenceSet(cid, level, result) }
+            }
+    }
+
+    /**
+     * Temporarily disables push notifications for a specific channel until the specified date.
+     *
+     * @param cid The full channel identifier (e.g., "messaging:123") for which to snooze notifications.
+     * @param until The [Date] until which push notifications should be disabled for this channel.
+     * Must be a future date. After this date, notifications will resume automatically.
+     *
+     * @return Executable async [Call] responsible for snoozing the channel's push notifications.
+     * Returns a [PushPreference] object containing the updated preference settings with the
+     * `disabledUntil` field set to the specified date.
+     */
+    @CheckResult
+    public fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
+        return api.snoozeChannelPushNotifications(cid, until)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
+            }
+    }
+
+    /**
      * Dismiss notifications from a given [channelType] and [channelId].
      * Be sure to initialize ChatClient before calling this method!
      *
@@ -2248,13 +2339,14 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return message.copy(createdLocallyAt = message.createdLocallyAt ?: now())
-            .ensureId(getCurrentUser() ?: getStoredUser())
-            .let { processedMessage ->
-                CoroutineCall(userScope) {
-                    val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
-                    debugger.onStart(processedMessage)
-                    sendAttachments(channelType, channelId, processedMessage, isRetrying, debugger)
+        val messageWithId = message.ensureId(getCurrentUser() ?: getStoredUser())
+        return CoroutineCall(userScope) {
+            messageWithId.ensureCreatedLocallyAt(cid = "$channelType:$channelId")
+                .let { messageWithLocalDate ->
+                    val debugger =
+                        clientDebugger.debugSendMessage(channelType, channelId, messageWithLocalDate, isRetrying)
+                    debugger.onStart(messageWithLocalDate)
+                    sendAttachments(channelType, channelId, messageWithLocalDate, isRetrying, debugger)
                         .flatMapSuspend { newMessage ->
                             debugger.onSendStart(newMessage)
                             doSendMessage(channelType, channelId, newMessage).also { result ->
@@ -2262,10 +2354,24 @@ internal constructor(
                                 debugger.onStop(result, newMessage)
                             }
                         }
-                }.share(userScope) {
-                    SendMessageIdentifier(channelType, channelId, processedMessage.id)
                 }
-            }
+        }.share(userScope) {
+            SendMessageIdentifier(channelType, channelId, messageWithId.id)
+        }
+    }
+
+    /**
+     * Ensure the message has a [Message.createdLocallyAt] timestamp.
+     * If not, set it to the max of the channel's [Channel.lastMessageAt] + 1 millisecond and [now].
+     * This ensures that the message appears in the correct order in the channel.
+     */
+    private suspend fun Message.ensureCreatedLocallyAt(cid: String): Message {
+        val lastMessageAt = repositoryFacade.selectChannel(cid = cid)?.lastMessageAt
+        val lastMessageAtPlusOneMillisecond = lastMessageAt?.let {
+            Date(it.time + 1)
+        }
+        val createdLocallyAt = max(lastMessageAtPlusOneMillisecond, now())
+        return copy(createdLocallyAt = this.createdLocallyAt ?: createdLocallyAt)
     }
 
     /**
@@ -4625,9 +4731,6 @@ internal constructor(
             )
             setupStreamLog()
 
-            if (ToggleService.isInitialized().not()) {
-                ToggleService.init(appContext, emptyMap())
-            }
             val clientScope = ClientScope()
             val userScope = UserScope(clientScope)
 
