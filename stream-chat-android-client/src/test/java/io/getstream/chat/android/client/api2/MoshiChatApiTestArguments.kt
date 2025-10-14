@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersRes
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
@@ -479,6 +480,18 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun deletePollInput() = completableResponseArguments()
+
+    @JvmStatic
+    fun queryPollsInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomQueryPollsResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            RetroError<QueryPollsResponse>(statusCode = 500).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+    )
 
     @JvmStatic
     fun createPollOptionInput() = pollOptionResponseArguments()

@@ -21,9 +21,12 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPoll
@@ -35,6 +38,9 @@ import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
@@ -380,6 +386,60 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
             .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.deletePoll(pollId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun queryPollsSuccessWithAllParameters() = runTest {
+        // given
+        val filter = Filters.eq("is_closed", false)
+        val limit = positiveRandomInt(10)
+        val next = randomString()
+        val sort = QuerySortByField.descByName<Poll>("created_at")
+        val poll1 = randomPoll()
+        val poll2 = randomPoll()
+        val expectedResult = QueryPollsResult(
+            polls = listOf(poll1, poll2),
+            next = randomString(),
+        )
+        whenever(api.queryPolls(any(), any(), any(), any()))
+            .thenReturn(RetroSuccess(expectedResult).toRetrofitCall())
+        // when
+        val result = chatClient.queryPolls(filter, limit, next, sort).await()
+        // then
+        verifySuccess(result, expectedResult)
+        verify(api).queryPolls(eq(filter), eq(limit), eq(next), eq(sort))
+    }
+
+    @Test
+    fun queryPollsSuccessWithMinimalParameters() = runTest {
+        // given
+        val expectedResult = QueryPollsResult(
+            polls = listOf(randomPoll()),
+            next = null,
+        )
+        whenever(api.queryPolls(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()))
+            .thenReturn(RetroSuccess(expectedResult).toRetrofitCall())
+        // when
+        val result = chatClient.queryPolls().await()
+        // then
+        verifySuccess(result, expectedResult)
+        verify(api).queryPolls(eq(null), eq(null), eq(null), eq(null))
+    }
+
+    @Test
+    fun queryPollsError() = runTest {
+        // given
+        val filter = Filters.eq("is_closed", true)
+        val limit = positiveRandomInt(10)
+        val next = randomString()
+        val sort = QuerySortByField.descByName<Poll>("updated_at")
+        val errorCode = positiveRandomInt()
+        whenever(api.queryPolls(any(), any(), any(), any()))
+            .thenReturn(RetroError<QueryPollsResult>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.queryPolls(filter, limit, next, sort).await()
         // then
         verifyNetworkError(result, errorCode)
     }

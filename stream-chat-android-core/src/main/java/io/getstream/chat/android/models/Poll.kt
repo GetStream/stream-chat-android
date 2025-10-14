@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
@@ -66,7 +67,7 @@ public data class Poll(
     val answers: List<Answer> = emptyList(),
     val createdBy: User?,
     val extraData: Map<String, Any> = emptyMap(),
-) {
+) : ComparableFieldProvider {
 
     /**
      * Get the votes for a specific option.
@@ -75,6 +76,15 @@ public data class Poll(
      * @return The list of votes for the option.
      */
     public fun getVotes(option: Option): List<Vote> = votes.filter { it.optionId == option.id }
+
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "id" -> id
+        "name" -> name
+        "created_at", "createdAt" -> createdAt
+        "updated_at", "updatedAt" -> updatedAt
+        "is_closed", "isClosed" -> closed
+        else -> null
+    }
 }
 
 /**

@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
@@ -1167,6 +1168,16 @@ internal object Mother {
     ): QueryRemindersResponse = QueryRemindersResponse(
         reminders = reminders,
         next = next,
+    )
+
+    fun randomQueryPollsResponse(
+        polls: List<DownstreamPollDto> = listOf(randomDownstreamPollDto()),
+        next: String? = randomString(),
+        prev: String? = randomString(),
+    ): QueryPollsResponse = QueryPollsResponse(
+        polls = polls,
+        next = next,
+        prev = prev,
     )
 
     fun randomUploadFileResponse(

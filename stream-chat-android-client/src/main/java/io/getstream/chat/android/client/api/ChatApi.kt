@@ -52,6 +52,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -584,6 +585,14 @@ internal interface ChatApi {
 
     @CheckResult
     fun deletePollOption(pollId: String, optionId: String): Call<Unit>
+
+    @CheckResult
+    fun queryPolls(
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Poll>?,
+    ): Call<QueryPollsResult>
 
     @CheckResult
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>

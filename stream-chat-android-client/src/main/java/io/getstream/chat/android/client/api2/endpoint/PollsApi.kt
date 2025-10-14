@@ -21,11 +21,13 @@ import io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequ
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -41,6 +43,8 @@ internal interface PollsApi {
     /**
      * Creates a new poll.
      *
+     * See [Create poll](https://getstream.github.io/protocol/#/product%3Achat/CreatePoll).
+     *
      * @param body Body holding the poll properties to be created.
      *
      * @return The poll response.
@@ -48,8 +52,22 @@ internal interface PollsApi {
     @POST("/polls")
     fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
 
+    // MISSING: Update poll
+
+    /**
+     * Deletes a poll.
+     *
+     * See [Delete poll](https://getstream.github.io/protocol/#/product%3Achat/DeletePoll).
+     *
+     * @param pollId The ID of the poll to delete.
+     */
+    @DELETE("/polls/{poll_id}")
+    fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<CompletableResponse>
+
     /**
      * Retrieves a poll by its ID.
+     *
+     * See [Get poll](https://getstream.github.io/protocol/#/product%3Achat/GetPoll).
      *
      * @param pollId The poll ID.
      *
@@ -59,7 +77,25 @@ internal interface PollsApi {
     fun getPoll(@Path("poll_id") pollId: String): RetrofitCall<PollResponse>
 
     /**
+     * Updates a poll.
+     *
+     * See [Partial update poll](https://getstream.github.io/protocol/#/product%3Achat/UpdatePollPartial).
+     *
+     * @param pollId The poll ID.
+     * @param body The poll update request.
+     *
+     * @return The poll response.
+     */
+    @PATCH("/polls/{poll_id}")
+    fun partialUpdatePoll(
+        @Path("poll_id") pollId: String,
+        @Body body: PartialUpdatePollRequest,
+    ): RetrofitCall<PollResponse>
+
+    /**
      * Create a new option for a poll.
+     *
+     * See [Create poll option](https://getstream.github.io/protocol/#/product%3Achat/CreatePollOption).
      *
      * @param pollId The poll ID.
      * @param body The create poll option request.
@@ -75,6 +111,8 @@ internal interface PollsApi {
     /**
      * Update an option for a poll.
      *
+     * See [Update poll option](https://getstream.github.io/protocol/#/product%3Achat/UpdatePollOption).
+     *
      * @param pollId The poll ID.
      * @param body The update poll option request.
      */
@@ -84,14 +122,38 @@ internal interface PollsApi {
         @Body body: UpdatePollOptionRequest,
     ): RetrofitCall<PollOptionResponse>
 
+    /**
+     * Deletes an option from a poll.
+     *
+     * See [Delete poll option](https://getstream.github.io/protocol/#/product%3Achat/DeletePollOption).
+     *
+     * @param pollId The poll ID.
+     * @param optionId The option ID.
+     */
     @DELETE("/polls/{poll_id}/options/{option_id}")
     fun deletePollOption(
         @Path("poll_id") pollId: String,
         @Path("option_id") optionId: String,
     ): RetrofitCall<CompletableResponse>
 
+    // MISSING: Get poll option
+
+    // MISSING: Query votes
+
+    /**
+     * Queries polls based on the provided criteria.
+     *
+     * See: [Query polls](https://getstream.github.io/protocol/#/product%3Achat/QueryPolls).
+     *
+     * @param body The query polls request.
+     */
+    @POST("/polls/query")
+    fun queryPolls(@Body body: QueryPollsRequest): RetrofitCall<QueryPollsResponse>
+
     /**
      * Casts a vote on a poll.
+     *
+     * See: [Cast poll vote](https://getstream.github.io/protocol/#/product%3Achat/CastPollVote).
      *
      * @param messageId The message ID.
      * @param pollId The poll ID.
@@ -107,7 +169,9 @@ internal interface PollsApi {
     ): RetrofitCall<PollVoteResponse>
 
     /**
-     * Removes a vote on a poll.
+     * Deletes a vote on a poll.
+     *
+     * See: [Delete poll vote](https://getstream.github.io/protocol/#/product%3Achat/DeletePollVote).
      *
      * @param messageId The message ID.
      * @param pollId The poll ID.
@@ -121,26 +185,4 @@ internal interface PollsApi {
         @Path("poll_id") pollId: String,
         @Path("vote_id") voteId: String,
     ): RetrofitCall<PollVoteResponse>
-
-    /**
-     * Updates a poll.
-     *
-     * @param pollId The poll ID.
-     * @param body The poll update request.
-     *
-     * @return The poll response.
-     */
-    @PATCH("/polls/{poll_id}")
-    fun partialUpdatePoll(
-        @Path("poll_id") pollId: String,
-        @Body body: PartialUpdatePollRequest,
-    ): RetrofitCall<PollResponse>
-
-    /**
-     * Deletes a poll.
-     *
-     * @param pollId The ID of the poll to delete.
-     */
-    @DELETE("/polls/{poll_id}")
-    fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<CompletableResponse>
 }
