@@ -268,6 +268,12 @@ public data class Message(
      * The role of the member(who sent the message) in the channel.
      */
     val channelRole: String? = null,
+
+    /**
+     * Whether the message was deleted for the current user.
+     */
+    val deletedForMe: Boolean = false,
+
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -387,6 +393,7 @@ public data class Message(
         if (moderation != null) append(", moderation=").append(moderation)
         if (poll != null) append(", poll=").append(poll)
         if (channelRole != null) append(", channelRole=").append(channelRole)
+        append(", deletedForMe=").append(deletedForMe)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -444,6 +451,7 @@ public data class Message(
         private var reminder: MessageReminderInfo? = null
         private var sharedLocation: Location? = null
         private var channelRole: String? = null
+        private var deletedForMe: Boolean = false
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -493,6 +501,7 @@ public data class Message(
             reminder = message.reminder
             sharedLocation = message.sharedLocation
             channelRole = message.channelRole
+            deletedForMe = message.deletedForMe
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -624,6 +633,7 @@ public data class Message(
                 reminder = reminder,
                 sharedLocation = sharedLocation,
                 channelRole = channelRole,
+                deletedForMe = deletedForMe,
             )
         }
     }
