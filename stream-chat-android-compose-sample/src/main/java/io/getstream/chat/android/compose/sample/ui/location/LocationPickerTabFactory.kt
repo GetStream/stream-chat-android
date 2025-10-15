@@ -47,6 +47,7 @@ internal class LocationPickerTabFactory(
             imageVector = Icons.Rounded.ShareLocation,
             contentDescription = "Share Location",
             tint = when {
+                isSelected -> ChatTheme.colors.primaryAccent
                 isEnabled -> ChatTheme.colors.textLowEmphasis
                 else -> ChatTheme.colors.disabled
             },
