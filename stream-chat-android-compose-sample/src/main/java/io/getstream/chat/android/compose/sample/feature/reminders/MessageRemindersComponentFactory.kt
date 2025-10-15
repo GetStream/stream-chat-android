@@ -29,8 +29,8 @@ import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.component.DeleteMessageForMeComponentFactory
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
@@ -44,7 +44,7 @@ import java.util.Date
  * Factory for creating components related to message reminders.
  */
 class MessageRemindersComponentFactory(
-    private val delegate: ChatComponentFactory = object : ChatComponentFactory {},
+    private val delegate: ChatComponentFactory = DeleteMessageForMeComponentFactory(),
 ) : ChatComponentFactory by delegate {
 
     /**
@@ -159,13 +159,13 @@ class MessageRemindersComponentFactory(
             messageOptions
         }
 
-        SelectedMessageMenu(
+        delegate.MessageMenu(
             modifier = modifier,
             message = message,
             messageOptions = allOptions,
             ownCapabilities = ownCapabilities,
             onMessageAction = extendedAction,
-            onShowMoreReactionsSelected = onShowMore,
+            onShowMore = onShowMore,
             onDismiss = onDismiss,
         )
     }
