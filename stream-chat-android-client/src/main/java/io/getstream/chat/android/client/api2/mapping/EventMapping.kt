@@ -930,6 +930,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
         )
     }
@@ -947,6 +948,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
         )
     }
@@ -964,6 +966,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
         )
     }
@@ -991,6 +994,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
             newVote = pollVote,
         )
@@ -1009,6 +1013,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = poll.toDomain(),
             newAnswer = newAnswer,
         )
@@ -1037,6 +1042,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
             newVote = pollVote,
         )
@@ -1056,6 +1062,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
+            messageId = message_id,
             poll = newPoll,
             removedVote = removedVote,
         )

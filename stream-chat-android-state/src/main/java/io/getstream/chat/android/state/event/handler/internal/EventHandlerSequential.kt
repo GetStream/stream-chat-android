@@ -492,6 +492,15 @@ internal class EventHandlerSequential(
             .forEach { (messageId, events) ->
                 logicRegistry.thread(messageId).handleReminderEvents(events)
             }
+        sortedEvents.filterIsInstance<HasPoll>()
+            .groupBy { it.messageId }
+            .filterKeys { it != null && logicRegistry.isActiveThread(it) }
+            .forEach { (messageId, events) ->
+                messageId?.let {
+                    logicRegistry.thread(it).handlePollEvents(currentUserId, events)
+                }
+            }
+
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }
 

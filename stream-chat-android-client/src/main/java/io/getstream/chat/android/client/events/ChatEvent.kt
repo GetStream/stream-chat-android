@@ -74,6 +74,7 @@ public sealed interface HasOwnUser {
 }
 
 public sealed interface HasPoll {
+    public val messageId: String?
     public val poll: Poll
 }
 
@@ -736,6 +737,7 @@ public data class PollUpdatedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
 ) : CidEvent(), HasPoll
 
@@ -749,6 +751,7 @@ public data class PollDeletedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
 ) : CidEvent(), HasPoll
 
@@ -762,6 +765,7 @@ public data class PollClosedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
 ) : CidEvent(), HasPoll
 
@@ -775,6 +779,7 @@ public data class VoteCastedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
     val newVote: Vote,
 ) : CidEvent(), HasPoll
@@ -789,6 +794,7 @@ public data class AnswerCastedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
     val newAnswer: Answer,
 ) : CidEvent(), HasPoll
@@ -803,6 +809,7 @@ public data class VoteChangedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
     val newVote: Vote,
 ) : CidEvent(), HasPoll
@@ -817,6 +824,7 @@ public data class VoteRemovedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val messageId: String?,
     override val poll: Poll,
     val removedVote: Vote,
 ) : CidEvent(), HasPoll

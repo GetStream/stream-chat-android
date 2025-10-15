@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.test
 
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
@@ -39,7 +40,9 @@ import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
@@ -48,9 +51,13 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
@@ -61,6 +68,7 @@ import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
@@ -73,6 +81,8 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageReminder
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollAnswer
+import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -707,6 +717,7 @@ public fun randomUserMessagesDeletedEvent(
 public fun randomPollDeletedEvent(
     createdAt: Date = randomDate(),
     cid: String = randomCID(),
+    messageId: String = randomString(),
     poll: Poll = randomPoll(),
 ): PollDeletedEvent {
     val (type, id) = cid.cidToTypeAndId()
@@ -717,6 +728,129 @@ public fun randomPollDeletedEvent(
         cid = cid,
         channelType = type,
         channelId = id,
+        messageId = messageId,
         poll = poll,
+    )
+}
+
+public fun randomPollUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+): PollUpdatedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return PollUpdatedEvent(
+        type = EventType.POLL_UPDATED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+    )
+}
+
+public fun randomPollClosedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+): PollClosedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return PollClosedEvent(
+        type = EventType.POLL_CLOSED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+    )
+}
+
+public fun randomVoteCastedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+    newVote: Vote = randomPollVote(),
+): VoteCastedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return VoteCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+        newVote = newVote,
+    )
+}
+
+public fun randomAnswerCastedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+    newAnswer: Answer = randomPollAnswer(),
+): AnswerCastedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return AnswerCastedEvent(
+        type = EventType.POLL_VOTE_CASTED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+        newAnswer = newAnswer,
+    )
+}
+
+public fun randomVoteChangedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+    newVote: Vote = randomPollVote(),
+): VoteChangedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return VoteChangedEvent(
+        type = EventType.POLL_VOTE_CHANGED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+        newVote = newVote,
+    )
+}
+
+public fun randomVoteRemovedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    poll: Poll = randomPoll(),
+    removedVote: Vote = randomPollVote(),
+): VoteRemovedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return VoteRemovedEvent(
+        type = EventType.POLL_VOTE_REMOVED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        messageId = messageId,
+        poll = poll,
+        removedVote = removedVote,
     )
 }
