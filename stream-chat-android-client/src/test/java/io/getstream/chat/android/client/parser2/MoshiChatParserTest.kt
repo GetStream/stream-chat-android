@@ -16,31 +16,20 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.MockChatClientBuilder
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.randomUser
-import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import org.mockito.Mockito.mock
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 
 internal class MoshiChatParserTest {
 
     private val parser = ParserFactory.createMoshiChatParser()
-    private val chatClient: ChatClient = MockChatClientBuilder {
-        mock<ChatClient>().also {
-            whenever(it.getCurrentUser()) doReturn randomUser()
-        }
-    }.build()
 
     /** [io.getstream.chat.android.client.parser.EventArguments.eventAdapterArgumentsList] */
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.parser.EventArguments#eventAdapterArgumentsList")
     fun `Should create proper event`(eventData: String, expectedEvent: ChatEvent) {
         val parsedEvent = parser.fromJson(eventData, ChatEvent::class.java)
-        parsedEvent shouldBeEqualTo expectedEvent
+        assertEquals(expectedEvent, parsedEvent)
     }
 }

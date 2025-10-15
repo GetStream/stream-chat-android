@@ -276,6 +276,7 @@ public data class MessageDeletedEvent(
     val user: User?,
     val hardDelete: Boolean,
     val channelMessageCount: Int?,
+    val deletedForMe: Boolean,
 ) : CidEvent(), HasMessage
 
 /**
