@@ -88,6 +88,7 @@ internal object MessageDtoTestData {
             ]
           },
           "member": ${MemberInfoDtoTestData.downstreamJson},
+          "deleted_for_me": true,
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -188,6 +189,7 @@ internal object MessageDtoTestData {
             ),
         ),
         member = MemberInfoDtoTestData.downstreamMemberInfo,
+        deleted_for_me = true,
     )
 
     @Language("JSON")
@@ -240,7 +242,8 @@ internal object MessageDtoTestData {
               }
             ]
           },
-          "member": ${MemberInfoDtoTestData.downstreamJson}
+          "member": ${MemberInfoDtoTestData.downstreamJson},
+          "deleted_for_me": false
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -304,6 +307,7 @@ internal object MessageDtoTestData {
             ),
         ),
         member = MemberInfoDtoTestData.downstreamMemberInfo,
+        deleted_for_me = false,
     )
 
     @Language("JSON")
@@ -369,6 +373,7 @@ internal object MessageDtoTestData {
         pin_expires = null,
         message_text_updated_at = null,
         channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount,
+        deleted_for_me = null,
     )
 
     @Language("JSON")
