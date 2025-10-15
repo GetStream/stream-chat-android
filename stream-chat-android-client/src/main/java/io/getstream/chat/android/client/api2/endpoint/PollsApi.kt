@@ -21,12 +21,14 @@ import io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequ
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
@@ -37,6 +39,10 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
+/**
+ * Retrofit interface defining the Polls API.
+ */
+@Suppress("TooManyFunctions")
 @AuthenticatedApi
 internal interface PollsApi {
 
@@ -138,7 +144,19 @@ internal interface PollsApi {
 
     // MISSING: Get poll option
 
-    // MISSING: Query votes
+    /**
+     * Queries votes for a specific poll based on the provided criteria.
+     *
+     * See: [Query poll votes](https://getstream.github.io/protocol/#/product%3Achat/QueryPollVotes).
+     *
+     * @param pollId The poll ID.
+     * @param body The query poll votes request.
+     */
+    @POST("/polls/{poll_id}/votes")
+    fun queryPollVotes(
+        @Path("poll_id") pollId: String,
+        @Body body: QueryPollVotesRequest,
+    ): RetrofitCall<QueryPollVotesResponse>
 
     /**
      * Queries polls based on the provided criteria.

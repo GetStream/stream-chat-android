@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
@@ -138,6 +139,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -1592,6 +1594,22 @@ constructor(
         return pollsApi.deletePollOption(pollId, optionId).toUnitCall()
     }
 
+    override fun queryPollVotes(
+        pollId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Vote>?,
+    ): Call<QueryPollVotesResult> {
+        val request = QueryPollVotesRequest(
+            filter = filter?.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort?.toDto(),
+        )
+        return pollsApi.queryPollVotes(pollId, request).mapDomain { it.toDomain() }
+    }
+
     override fun queryPolls(
         filter: FilterObject?,
         limit: Int?,
@@ -1604,7 +1622,7 @@ constructor(
             next = next,
             sort = sort?.toDto(),
         )
-        return pollsApi.queryPolls(body = request).mapDomain { it.toDomain() }
+        return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
     }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {

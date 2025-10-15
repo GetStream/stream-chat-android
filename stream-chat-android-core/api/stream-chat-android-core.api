@@ -1864,6 +1864,19 @@ public final class io/getstream/chat/android/models/QueryDraftsResult {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/QueryPollVotesResult {
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/models/QueryPollVotesResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/QueryPollVotesResult;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/QueryPollVotesResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNext ()Ljava/lang/String;
+	public final fun getVotes ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/QueryPollsResult {
 	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/util/List;
@@ -2488,7 +2501,7 @@ public final class io/getstream/chat/android/models/VideoCallToken {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/models/Vote {
+public final class io/getstream/chat/android/models/Vote : io/getstream/chat/android/models/querysort/ComparableFieldProvider {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
@@ -2499,6 +2512,7 @@ public final class io/getstream/chat/android/models/Vote {
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Vote;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Vote;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/models/Vote;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getId ()Ljava/lang/String;
 	public final fun getOptionId ()Ljava/lang/String;

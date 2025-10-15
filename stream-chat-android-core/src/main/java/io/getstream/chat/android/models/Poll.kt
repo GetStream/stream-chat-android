@@ -210,7 +210,13 @@ public data class Vote(
     val createdAt: Date,
     val updatedAt: Date,
     val user: User?,
-)
+) : ComparableFieldProvider {
+
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "created_at", "createdAt" -> createdAt
+        else -> null
+    }
+}
 
 /**
  * Represents the visibility of the votes.

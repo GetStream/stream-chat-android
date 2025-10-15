@@ -190,6 +190,7 @@ import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
@@ -1958,6 +1959,30 @@ internal constructor(
     @CheckResult
     public fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
         return api.deletePollOption(pollId, optionId)
+    }
+
+    /**
+     * Query votes for a specific poll with optional filtering, pagination, and sorting.
+     *
+     * @param pollId The poll id.
+     * @param filter The filter conditions to filter the votes. For available fields check
+     * [Votes Queryable Fields](https://getstream.io/chat/docs/android/polls_api/#votes-queryable-built-in-fields).
+     * @param limit The maximum number of votes to return.
+     * @param next The pagination token for fetching the next set of results.
+     * @param sort The sort object for the query: Supported fields:
+     *  - `created_at` Vote creation timestamp
+     *
+     * @return Executable async [Call] responsible for querying votes for a specific poll.
+     */
+    @CheckResult
+    public fun queryPollVotes(
+        pollId: String,
+        filter: FilterObject? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySorter<Vote>? = null,
+    ): Call<QueryPollVotesResult> {
+        return api.queryPollVotes(pollId, filter, limit, next, sort)
     }
 
     /**

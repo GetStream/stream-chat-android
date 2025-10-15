@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
@@ -92,6 +93,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -1178,6 +1180,24 @@ internal object Mother {
         polls = polls,
         next = next,
         prev = prev,
+    )
+
+    fun randomQueryPollVotesResponse(
+        votes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
+        next: String? = randomString(),
+        prev: String? = randomString(),
+    ): QueryPollVotesResponse = QueryPollVotesResponse(
+        votes = votes,
+        next = next,
+        prev = prev,
+    )
+
+    fun randomQueryPollVotesResult(
+        votes: List<io.getstream.chat.android.models.Vote> = listOf(io.getstream.chat.android.randomPollVote()),
+        next: String? = randomString(),
+    ): QueryPollVotesResult = QueryPollVotesResult(
+        votes = votes,
+        next = next,
     )
 
     fun randomUploadFileResponse(

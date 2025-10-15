@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -100,6 +101,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
@@ -516,6 +518,14 @@ internal class DomainMapping(
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
     }
+
+    /**
+     * Transforms [DownstreamPushPreferenceDto] to [PushPreference].
+     */
+    internal fun QueryPollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
+        votes = votes.map { it.toDomain() },
+        next = next,
+    )
 
     /**
      * Transforms the network [QueryPollsResponse] to a domain [QueryPollsResult].

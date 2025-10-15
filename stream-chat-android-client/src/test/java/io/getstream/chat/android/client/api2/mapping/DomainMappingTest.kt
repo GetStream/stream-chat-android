@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
+import io.getstream.chat.android.client.Mother.randomQueryPollVotesResponse
 import io.getstream.chat.android.client.Mother.randomQueryPollsResponse
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
@@ -91,6 +92,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
@@ -824,6 +826,18 @@ internal class DomainMappingTest {
         val result = with(sut) { input.toDomain() }
         val expected = QueryRemindersResult(
             reminders = input.reminders.map { with(sut) { it.toDomain() } },
+            next = input.next,
+        )
+        result shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `QueryPollVotesResponse is correctly mapped to QueryPollVotesResult`() {
+        val input = randomQueryPollVotesResponse()
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = QueryPollVotesResult(
+            votes = input.votes.map { with(sut) { it.toDomain() } },
             next = input.next,
         )
         result shouldBeEqualTo expected
