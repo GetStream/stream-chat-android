@@ -1909,6 +1909,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for creating a new option.
      */
+    @Deprecated("ChatClient.suggestPollOption doesn't allow passing custom data. Use createPollOption instead.")
     @CheckResult
     public fun suggestPollOption(
         pollId: String,

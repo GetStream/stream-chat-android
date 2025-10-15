@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -2417,9 +2418,15 @@ public class MessageListController(
         }
     }
 
+    /**
+     * Creates a new poll option for the given poll.
+     *
+     * @param poll The poll to which the option will be added.
+     * @param option The text of the new option to be added.
+     */
     public fun addPollOption(poll: Poll, option: String) {
         scope.launch {
-            chatClient.suggestPollOption(poll.id, option).await()
+            chatClient.createPollOption(poll.id, CreatePollOptionRequest(option)).await()
         }
     }
 
