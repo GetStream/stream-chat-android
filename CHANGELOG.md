@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix polls not updated live when they are a thread parent message. [#5968](https://github.com/GetStream/stream-chat-android/pull/5968)
 
 ### ⬆️ Improved
 
