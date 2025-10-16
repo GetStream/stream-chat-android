@@ -325,6 +325,14 @@ class ChatFragment : Fragment() {
                 CustomMessageOptions.actionHandler(
                     onTranslate = { chatViewModel.onAction(ChatViewModel.Action.Translate(it)) },
                     onClearTranslation = { chatViewModel.onAction(ChatViewModel.Action.ClearTranslation(it)) },
+                    onDeleteForMe = {
+                        ConfirmationDialogFragment.newDeleteMessageForMeInstance(requireContext())
+                            .apply {
+                                confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                                    chatViewModel.onAction(ChatViewModel.Action.DeleteMessageForMe(it))
+                                }
+                            }.show(parentFragmentManager, null)
+                    },
                 ),
             )
         }

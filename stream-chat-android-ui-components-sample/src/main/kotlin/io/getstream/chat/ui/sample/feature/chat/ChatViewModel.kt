@@ -37,7 +37,6 @@ import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -98,6 +97,10 @@ class ChatViewModel(
             }
             is Action.ClearTranslation -> {
                 clearTranslation(action.message)
+            }
+            is Action.DeleteMessageForMe -> {
+                chatClient.deleteMessageForMe(messageId = action.message.id)
+                    .enqueue()
             }
         }
     }
@@ -163,6 +166,7 @@ class ChatViewModel(
         class HeaderClicked(val members: List<Member>) : Action()
         class Translate(val message: Message) : Action()
         class ClearTranslation(val message: Message) : Action()
+        class DeleteMessageForMe(val message: Message) : Action()
     }
 
     sealed class NavigationEvent {
