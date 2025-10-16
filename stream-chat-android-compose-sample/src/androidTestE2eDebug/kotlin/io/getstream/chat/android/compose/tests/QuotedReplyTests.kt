@@ -126,6 +126,7 @@ class QuotedReplyTests : StreamTestCase() {
     @AllureId("5685")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message() {
+        val firstMessage = 1.toString()
         step("GIVEN user opens the channel") {
             backendRobot.generateChannels(channelsCount = 1, messagesCount = messagesCount)
             userRobot.login().openChannel()
@@ -135,7 +136,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user observes the quote reply in message list") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -143,7 +144,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
