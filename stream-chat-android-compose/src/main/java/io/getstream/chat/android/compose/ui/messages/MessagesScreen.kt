@@ -747,7 +747,7 @@ public fun MessageModerationDialog(
                 {
                         message, action ->
                     when (action) {
-                        DeleteMessage -> listViewModel.deleteMessage(message = message, hard = true)
+                        DeleteMessage -> listViewModel.deleteMessage(message = message, true)
                         EditMessage -> composerViewModel.performMessageAction(Edit(message))
                         SendAnyway -> listViewModel.performMessageAction(
                             Resend(

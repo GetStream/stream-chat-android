@@ -62,9 +62,14 @@ internal class ChannelExtensionsTests {
     @Test
     fun `lastMessage should return the most recent non-deleted message`() {
         // given
-        val oldestMsg = randomMessage(createdAt = Date(1000), deletedAt = null)
-        val newestMsg = randomMessage(createdAt = Date(3000), deletedAt = null)
-        val middleMsg = randomMessage(createdAt = null, createdLocallyAt = Date(2000), deletedAt = null)
+        val oldestMsg = randomMessage(createdAt = Date(1000), deletedAt = null, deletedForMe = false)
+        val newestMsg = randomMessage(createdAt = Date(3000), deletedAt = null, deletedForMe = false)
+        val middleMsg = randomMessage(
+            createdAt = null,
+            createdLocallyAt = Date(2000),
+            deletedAt = null,
+            deletedForMe = false,
+        )
         val deletedMsg = randomMessage(createdAt = Date(4000), deletedAt = Date(5000))
 
         val channel = randomChannel(
@@ -96,8 +101,19 @@ internal class ChannelExtensionsTests {
             unreadMessages = 0,
             lastReadMessageId = null,
         )
-        val existingMessage = randomMessage(id = "existing", createdAt = Date(1000), deletedAt = null)
-        val newMessage = randomMessage(id = "new", createdAt = Date(2000), deletedAt = null, silent = false)
+        val existingMessage = randomMessage(
+            id = "existing",
+            createdAt = Date(1000),
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val newMessage = randomMessage(
+            id = "new",
+            createdAt = Date(2000),
+            deletedAt = null,
+            deletedForMe = false,
+            silent = false,
+        )
         val receivedEventDate = Date(2500)
 
         val channel = randomChannel(
@@ -141,8 +157,19 @@ internal class ChannelExtensionsTests {
             unreadMessages = 0,
             lastReadMessageId = null,
         )
-        val existingMessage = randomMessage(id = "existing", createdAt = Date(1000), deletedAt = null)
-        val newMessage = randomMessage(id = "new", createdAt = Date(2000), deletedAt = null, silent = true)
+        val existingMessage = randomMessage(
+            id = "existing",
+            createdAt = Date(1000),
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val newMessage = randomMessage(
+            id = "new",
+            createdAt = Date(2000),
+            deletedAt = null,
+            deletedForMe = false,
+            silent = true,
+        )
         val receivedEventDate = Date(2500)
 
         val channel = randomChannel(

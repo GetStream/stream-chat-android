@@ -106,6 +106,7 @@ internal class MessageMapperTest {
                 )
             },
             channelRole = messageEntity.messageInnerEntity.channelRole,
+            deletedForMe = messageEntity.messageInnerEntity.deletedForMe,
         )
 
         val result = messageEntity.toModel(
@@ -177,6 +178,7 @@ internal class MessageMapperTest {
                     )
                 },
                 channelRole = message.channelRole,
+                deletedForMe = message.deletedForMe,
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
                 attachment.toEntity(
