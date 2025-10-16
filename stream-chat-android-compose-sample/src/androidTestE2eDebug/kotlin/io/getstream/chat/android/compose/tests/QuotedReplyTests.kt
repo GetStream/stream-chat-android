@@ -37,7 +37,7 @@ import org.junit.Test
 class QuotedReplyTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.UserLogin
-    private val sampleText = "Test"
+    private val sampleText = "Test message"
     private var quoteReply = "Alright"
     private val messagesCount = 30
 
@@ -45,12 +45,10 @@ class QuotedReplyTests : StreamTestCase() {
     @Test
     fun test_whenSwipingMessage_thenMessageIsQuotedReply() {
         step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1, messagesText = sampleText)
             userRobot.login().openChannel()
         }
-        step("AND participant replies") {
-            participantRobot.sendMessage(sampleText)
-        }
-        step("WHEN user swipes a participant's message") {
+        step("WHEN user swipes a message") {
             userRobot.swipeMessage()
         }
         step("AND user sends a message") {

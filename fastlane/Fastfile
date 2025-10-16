@@ -25,7 +25,7 @@ lane :start_mock_server do |options|
   if options[:local_server]
     mock_server_repo = options[:local_server]
   else
-    branch = options[:branch] || 'main'
+    branch = options[:branch].to_s.empty? ? 'main' : options[:branch]
     sh("rm -rf #{mock_server_repo}") if File.directory?(mock_server_repo)
     sh("git clone -b #{branch} https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
   end
