@@ -17,15 +17,15 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
+import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -4682,15 +4682,18 @@ internal constructor(
 
             val audioPlayer: AudioPlayer = StreamMediaPlayer(
                 mediaPlayer = NativeMediaPlayerImpl {
-                    MediaPlayer().apply {
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-                            .let(this::setAudioAttributes)
-                    }
+                    ExoPlayer.Builder(appContext)
+                        .setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                                .setUsage(C.USAGE_MEDIA)
+                                .build(),
+                            /* handleAudioFocus = */
+                            true,
+                        )
+                        .build()
                 },
                 userScope = userScope,
-                isMarshmallowOrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             )
 
             return ChatClient(

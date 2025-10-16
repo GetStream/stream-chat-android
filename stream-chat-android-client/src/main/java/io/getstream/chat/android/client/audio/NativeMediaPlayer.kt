@@ -16,9 +16,14 @@
 
 package io.getstream.chat.android.client.audio
 
-import android.media.MediaPlayer
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.log.taggedLogger
 import java.io.IOException
@@ -170,8 +175,8 @@ public interface NativeMediaPlayer {
      * initialized or has been released.
      * @throws IllegalArgumentException when setting if params is not supported.
      */
-    @get:RequiresApi(Build.VERSION_CODES.M)
-    @set:RequiresApi(Build.VERSION_CODES.M)
+    // @get:RequiresApi(Build.VERSION_CODES.M)
+    // @set:RequiresApi(Build.VERSION_CODES.M)
     @get:Throws(IllegalStateException::class)
     @set:Throws(IllegalStateException::class, IllegalArgumentException::class)
     public var speed: Float
@@ -334,7 +339,7 @@ public enum class NativeMediaPlayerState {
 }
 
 internal class NativeMediaPlayerImpl(
-    private val builder: () -> MediaPlayer,
+    private val builder: () -> ExoPlayer,
 ) : NativeMediaPlayer {
 
     companion object {
@@ -342,37 +347,6 @@ internal class NativeMediaPlayerImpl(
     }
 
     private val logger by taggedLogger("Chat:NativeMediaPlayer")
-
-    private val _onErrorListener = MediaPlayer.OnErrorListener { mp, what, extra ->
-        if (DEBUG) logger.e { "[onError] what: $what, extra: $extra, mp: ${mp.hashCode()}" }
-        state = NativeMediaPlayerState.ERROR
-        onErrorListener?.invoke(what, extra) ?: false
-    }
-
-    private val _onPreparedListener = MediaPlayer.OnPreparedListener {
-        if (DEBUG) logger.d { "[onPrepared] no args" }
-        state = NativeMediaPlayerState.PREPARED
-        onPreparedListener?.invoke()
-    }
-
-    private val _onCompletionListener = MediaPlayer.OnCompletionListener {
-        if (DEBUG) logger.d { "[onCompletion] no args" }
-        state = NativeMediaPlayerState.PLAYBACK_COMPLETED
-        onCompletionListener?.invoke()
-    }
-
-    private var _mediaPlayer: MediaPlayer? = null
-        set(value) {
-            if (DEBUG) logger.i { "[setMediaPlayerInstance] instance: $value" }
-            field = value
-        }
-
-    private val mediaPlayer: MediaPlayer get() {
-        return _mediaPlayer ?: builder().also {
-            _mediaPlayer = it.setupListeners()
-            state = NativeMediaPlayerState.IDLE
-        }
-    }
 
     private var onCompletionListener: (() -> Unit)? = null
     private var onErrorListener: ((what: Int, extra: Int) -> Boolean)? = null
@@ -384,23 +358,117 @@ internal class NativeMediaPlayerImpl(
             field = value
         }
 
-    override var speed: Float
-        @RequiresApi(Build.VERSION_CODES.M)
-        @Throws(IllegalStateException::class)
-        get() = mediaPlayer.playbackParams.speed
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (DEBUG) logger.d { "[onPlaybackStateChanged] playbackState: $playbackState" }
+            updateState()
+        }
 
-        @RequiresApi(Build.VERSION_CODES.M)
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            if (DEBUG) logger.d { "[onPlayWhenReadyChanged] playWhenReady: $playWhenReady, reason: $reason" }
+            updateState()
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            if (DEBUG) logger.e { "[onPlayerError] error: ${error.message}" }
+            state = NativeMediaPlayerState.ERROR
+            val errorCode = when (error.errorCode) {
+                PlaybackException.ERROR_CODE_IO_NETWORK_CONNECTION_FAILED,
+                PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND,
+                PlaybackException.ERROR_CODE_IO_READ_POSITION_OUT_OF_RANGE,
+                PlaybackException.ERROR_CODE_IO_CLEARTEXT_NOT_PERMITTED,
+                -> NativeMediaPlayer.MEDIA_ERROR_IO
+
+                PlaybackException.ERROR_CODE_PARSING_CONTAINER_MALFORMED,
+                PlaybackException.ERROR_CODE_PARSING_MANIFEST_MALFORMED,
+                -> NativeMediaPlayer.MEDIA_ERROR_MALFORMED
+
+                PlaybackException.ERROR_CODE_DECODER_INIT_FAILED,
+                PlaybackException.ERROR_CODE_DECODING_FAILED,
+                -> NativeMediaPlayer.MEDIA_ERROR_UNSUPPORTED
+
+                PlaybackException.ERROR_CODE_TIMEOUT,
+                -> NativeMediaPlayer.MEDIA_ERROR_TIMED_OUT
+
+                else -> NativeMediaPlayer.MEDIA_ERROR_UNKNOWN
+            }
+            onErrorListener?.invoke(errorCode, 0)
+        }
+
+        private fun updateState() {
+            val player = _exoPlayer ?: return
+            val newState = when {
+                player.playbackState == Player.STATE_IDLE -> NativeMediaPlayerState.IDLE
+                player.playbackState == Player.STATE_BUFFERING -> NativeMediaPlayerState.PREPARING
+                player.playbackState == Player.STATE_READY && !player.playWhenReady -> {
+                    // Player is ready but paused
+                    if (state == NativeMediaPlayerState.PREPARING) {
+                        // This is the first time we're ready after prepare
+                        NativeMediaPlayerState.PREPARED
+                    } else {
+                        NativeMediaPlayerState.PAUSED
+                    }
+                }
+                player.playbackState == Player.STATE_READY && player.playWhenReady -> NativeMediaPlayerState.STARTED
+                player.playbackState == Player.STATE_ENDED -> NativeMediaPlayerState.PLAYBACK_COMPLETED
+                else -> state
+            }
+
+            if (newState != state) {
+                val previousState = state
+                state = newState
+
+                // Trigger callbacks based on state transitions
+                when (newState) {
+                    NativeMediaPlayerState.PREPARED -> {
+                        if (previousState == NativeMediaPlayerState.PREPARING) {
+                            onPreparedListener?.invoke()
+                        }
+                    }
+                    NativeMediaPlayerState.PLAYBACK_COMPLETED -> {
+                        onCompletionListener?.invoke()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private var _exoPlayer: ExoPlayer? = null
+        set(value) {
+            if (DEBUG) logger.i { "[setExoPlayerInstance] instance: $value" }
+            field = value
+        }
+
+    private val exoPlayer: ExoPlayer
+        get() {
+            return _exoPlayer ?: builder().also {
+                _exoPlayer = it.apply {
+                    addListener(playerListener)
+                }
+                state = NativeMediaPlayerState.IDLE
+            }
+        }
+
+    override var speed: Float
+        @Throws(IllegalStateException::class)
+        get() = exoPlayer.playbackParameters.speed
+
         @Throws(IllegalStateException::class, IllegalArgumentException::class)
         set(value) {
-            val mediaPlayer = mediaPlayer
-            if (DEBUG) logger.d { "[setSpeed] mediaPlayer: ${mediaPlayer.hashCode()}, speed: $value" }
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(value)
+            val player = exoPlayer
+            if (DEBUG) logger.d { "[setSpeed] player: ${player.hashCode()}, speed: $value" }
+            player.playbackParameters = PlaybackParameters(value)
         }
+
     override val currentPosition: Int
-        get() = mediaPlayer.currentPosition
+        get() = exoPlayer.currentPosition.toInt()
 
     override val duration: Int
-        get() = mediaPlayer.duration
+        get() {
+            val duration = exoPlayer.duration
+            return if (duration == C.TIME_UNSET) -1 else duration.toInt()
+        }
 
     @Throws(
         IOException::class,
@@ -409,75 +477,78 @@ internal class NativeMediaPlayerImpl(
         IllegalStateException::class,
     )
     override fun setDataSource(path: String) {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[setDataSource] mediaPlayer: ${mediaPlayer.hashCode()}, path: $path" }
-        mediaPlayer.setDataSource(path)
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[setDataSource] player: ${player.hashCode()}, path: $path" }
+        val mediaItem = MediaItem.fromUri(path)
+        player.setMediaItem(mediaItem)
         state = NativeMediaPlayerState.INITIALIZED
     }
 
     @Throws(IllegalStateException::class)
     override fun prepareAsync() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[prepareAsync] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.prepareAsync()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[prepareAsync] player: ${player.hashCode()}" }
         state = NativeMediaPlayerState.PREPARING
+        player.prepare()
     }
 
     @Throws(IOException::class, IllegalStateException::class)
     override fun prepare() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[prepare] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.prepare()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[prepare] player: ${player.hashCode()}" }
+        player.prepare()
         state = NativeMediaPlayerState.PREPARED
     }
 
     @Throws(IllegalStateException::class)
     override fun seekTo(msec: Int) {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[seekTo] mediaPlayer: ${mediaPlayer.hashCode()}, msec: $msec" }
-        mediaPlayer.seekTo(msec)
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[seekTo] player: ${player.hashCode()}, msec: $msec" }
+        player.seekTo(msec.toLong())
     }
 
     @Throws(IllegalStateException::class)
     override fun start() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[start] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.start()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[start] player: ${player.hashCode()}" }
+        player.playWhenReady = true
         state = NativeMediaPlayerState.STARTED
     }
 
     @Throws(IllegalStateException::class)
     override fun pause() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[pause] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.pause()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[pause] player: ${player.hashCode()}" }
+        player.playWhenReady = false
         state = NativeMediaPlayerState.PAUSED
     }
 
     @Throws(IllegalStateException::class)
     override fun stop() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[stop] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.stop()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[stop] player: ${player.hashCode()}" }
+        player.stop()
         state = NativeMediaPlayerState.STOPPED
     }
 
     override fun reset() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[reset] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.reset()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[reset] player: ${player.hashCode()}" }
+        player.stop()
+        player.clearMediaItems()
         state = NativeMediaPlayerState.IDLE
     }
 
     override fun release() {
-        val mediaPlayer = _mediaPlayer ?: run {
-            if (DEBUG) logger.d { "[release] mediaPlayer is null" }
+        val player = _exoPlayer ?: run {
+            if (DEBUG) logger.d { "[release] player is null" }
             return
         }
-        if (DEBUG) logger.d { "[release] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.clearListeners().release()
+        if (DEBUG) logger.d { "[release] player: ${player.hashCode()}" }
+        player.removeListener(playerListener)
+        player.release()
         state = NativeMediaPlayerState.END
-        _mediaPlayer = null
+        _exoPlayer = null
     }
 
     override fun setOnPreparedListener(listener: () -> Unit) {
@@ -493,21 +564,5 @@ internal class NativeMediaPlayerImpl(
     override fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean) {
         if (DEBUG) logger.d { "[setOnErrorListener] listener: $listener" }
         this.onErrorListener = listener
-    }
-
-    private fun MediaPlayer.setupListeners(): MediaPlayer {
-        if (DEBUG) logger.d { "[setupListeners] mediaPlayer: ${this.hashCode()}" }
-        setOnErrorListener(_onErrorListener)
-        setOnPreparedListener(_onPreparedListener)
-        setOnCompletionListener(_onCompletionListener)
-        return this
-    }
-
-    private fun MediaPlayer.clearListeners(): MediaPlayer {
-        if (DEBUG) logger.d { "[clearListeners] mediaPlayer: ${this.hashCode()}" }
-        setOnErrorListener(null)
-        setOnPreparedListener(null)
-        setOnCompletionListener(null)
-        return this
     }
 }

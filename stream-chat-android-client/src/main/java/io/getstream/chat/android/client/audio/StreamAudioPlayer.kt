@@ -32,8 +32,9 @@ import java.util.concurrent.atomic.AtomicInteger
 internal class StreamMediaPlayer(
     private val mediaPlayer: NativeMediaPlayer,
     private val userScope: UserScope,
+    @Deprecated("No longer needed as ExoPlayer supports speed control on all API levels")
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-    private val isMarshmallowOrHigher: Boolean,
+    private val isMarshmallowOrHigher: Boolean = true,
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
@@ -137,7 +138,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun changeSpeed() {
-        if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
+        if (mediaPlayer.isSpeedSettable()) {
             logger.i { "[changeSpeed] no args" }
             val currentSpeed = playingSpeed
             val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
@@ -158,8 +159,7 @@ internal class StreamMediaPlayer(
         }
     }
 
-    override fun currentSpeed(): Float =
-        if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
+    override fun currentSpeed(): Float = mediaPlayer.speed
 
     override fun dispose() {
         userScope.launch(DispatcherProvider.Main) {
@@ -266,7 +266,7 @@ internal class StreamMediaPlayer(
                 return
             }
             mediaPlayer.seekTo(seekTo)
-            if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
+            if (mediaPlayer.isSpeedSettable()) {
                 mediaPlayer.speed = playingSpeed
                 publishSpeed(currentAudioHash, playingSpeed)
             }
