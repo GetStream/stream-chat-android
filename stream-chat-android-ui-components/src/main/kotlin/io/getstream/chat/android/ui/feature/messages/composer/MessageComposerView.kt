@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
@@ -389,7 +390,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
 
         renderSuggestion(state)
-        arePollEnabled = state.pollsEnabled && state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+        arePollEnabled = arePollsEnabled(state)
         validationErrorRenderer.renderValidationErrors(state.validationErrors)
     }
 
@@ -700,6 +701,17 @@ public class MessageComposerView : ConstraintLayout {
         attachContext(messageComposerContext)
         return this
     }
+
+    /**
+     * Checks if the current state allows sending polls as attachments:
+     * 1. The message mode is [MessageMode.Normal] (polls are not allowed in threads).
+     * 2. Polls are enabled in the channel.
+     * 3. The user has the [ChannelCapabilities.SEND_POLL] capability.
+     */
+    private fun arePollsEnabled(state: MessageComposerState): Boolean =
+        state.messageMode is MessageMode.Normal &&
+            state.pollsEnabled &&
+            state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
 
     /**
      * A listener that helps to hide the currently visible command suggestions popup when the
