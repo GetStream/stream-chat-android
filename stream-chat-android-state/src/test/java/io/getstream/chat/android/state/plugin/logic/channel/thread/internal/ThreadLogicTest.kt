@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNotificationReminderDueEvent
 import io.getstream.chat.android.client.test.randomReminderCreatedEvent
 import io.getstream.chat.android.client.test.randomReminderDeletedEvent
@@ -26,6 +27,8 @@ import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageReminder
+import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -271,6 +274,109 @@ internal class ThreadLogicTest {
 
         // then
         val expectedMessage = existingMessage.copy(reminder = newReminder.toMessageReminderInfo())
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent with existing message with ownReactions When handleMessageEvents is called Should preserve original ownReactions`() {
+        // given
+        val messageId = randomString()
+        val originalReactions = listOf(randomReaction(), randomReaction())
+        val existingMessage = randomMessage(id = messageId, ownReactions = originalReactions)
+        val updatedMessage = randomMessage(id = messageId, text = "Updated text", ownReactions = emptyList())
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(mapOf(messageId to existingMessage)))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(emptyList()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        val expectedMessage = updatedMessage.copy(
+            replyTo = null,
+            ownReactions = originalReactions,
+            poll = null,
+        )
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent with no existing message When handleMessageEvents is called Should use event ownReactions`() {
+        // given
+        val messageId = randomString()
+        val eventReactions = listOf(randomReaction())
+        val updatedMessage = randomMessage(id = messageId, ownReactions = eventReactions)
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(emptyMap()))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(emptyList()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        val expectedMessage = updatedMessage.copy(
+            replyTo = null,
+            ownReactions = eventReactions,
+            poll = null,
+        )
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent with existing message with poll When handleMessageEvents is called Should preserve original poll`() {
+        // given
+        val messageId = randomString()
+        val originalPoll = randomPoll()
+        val existingMessage = randomMessage(id = messageId, poll = originalPoll)
+        val updatedMessage = randomMessage(id = messageId, text = "Updated text", poll = null)
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(mapOf(messageId to existingMessage)))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(emptyList()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        val expectedMessage = updatedMessage.copy(
+            replyTo = null,
+            ownReactions = updatedMessage.ownReactions,
+            poll = originalPoll,
+        )
+        verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
+    }
+
+    @Test
+    fun `Given MessageUpdatedEvent with event poll When handleMessageEvents is called Should use event poll`() {
+        // given
+        val messageId = randomString()
+        val existingMessage = randomMessage(id = messageId, poll = null)
+        val eventPoll = randomPoll()
+        val updatedMessage = randomMessage(id = messageId, text = "Updated text", poll = eventPoll)
+        val event = randomMessageUpdateEvent(message = updatedMessage)
+
+        whenever(threadMutableState.rawMessage)
+            .doReturn(MutableStateFlow(mapOf(messageId to existingMessage)))
+        whenever(threadMutableState.messages)
+            .doReturn(MutableStateFlow(emptyList()))
+
+        // when
+        threadLogic.handleMessageEvents(listOf(event))
+
+        // then
+        val expectedMessage = updatedMessage.copy(
+            replyTo = null,
+            ownReactions = updatedMessage.ownReactions,
+            poll = eventPoll,
+        )
         verify(threadStateLogic, times(1)).upsertMessages(listOf(expectedMessage))
     }
 }

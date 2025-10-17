@@ -148,6 +148,78 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         verify(channelStateLogic, times(2)).upsertMessage(messageUpdateEvent.message)
     }
 
+    @Test
+    fun `when message update event arrives, channel should be toggled to not hidden`() = runTest {
+        val message = randomMessage(
+            id = randomString(),
+            user = User(id = "otherUserId"),
+            silent = false,
+            showInChannel = true,
+        )
+        channelMutableState.setMessages(listOf(message))
+
+        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
+
+        channelLogic.handleEvent(messageUpdateEvent)
+
+        verify(channelStateLogic).toggleHidden(false)
+    }
+
+    @Test
+    fun `when message update event arrives without poll but original message has poll, poll should be preserved`() = runTest {
+        val poll = randomPoll()
+        val originalMessage = randomMessage(
+            id = randomString(),
+            user = User(id = "otherUserId"),
+            silent = false,
+            showInChannel = true,
+            poll = poll,
+        )
+        channelMutableState.setMessages(listOf(originalMessage))
+
+        val updatedMessageWithoutPoll = originalMessage.copy(
+            text = "Updated text",
+            poll = null,
+        )
+        val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessageWithoutPoll)
+
+        channelLogic.handleEvent(messageUpdateEvent)
+
+        verify(channelStateLogic).upsertMessage(
+            org.mockito.kotlin.argThat { message ->
+                message.poll == poll && message.text == "Updated text"
+            },
+        )
+    }
+
+    @Test
+    fun `when message update event arrives with poll, event poll should be used`() = runTest {
+        val originalPoll = randomPoll(id = "poll1")
+        val originalMessage = randomMessage(
+            id = randomString(),
+            user = User(id = "otherUserId"),
+            silent = false,
+            showInChannel = true,
+            poll = originalPoll,
+        )
+        channelMutableState.setMessages(listOf(originalMessage))
+
+        val eventPoll = randomPoll(id = "poll2")
+        val updatedMessage = originalMessage.copy(
+            text = "Updated text",
+            poll = eventPoll,
+        )
+        val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessage)
+
+        channelLogic.handleEvent(messageUpdateEvent)
+
+        verify(channelStateLogic).upsertMessage(
+            org.mockito.kotlin.argThat { message ->
+                message.poll == eventPoll && message.text == "Updated text"
+            },
+        )
+    }
+
     // Member added event
     @Test
     fun `when member is added, it should be propagated`(): Unit = runTest {

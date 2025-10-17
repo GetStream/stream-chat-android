@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix poll state getting overridden by `message.new` events. [#5963](https://github.com/GetStream/stream-chat-android/pull/5963)
 
 ### ⬆️ Improved
 
