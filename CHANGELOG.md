@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 
 ### ⚠️ Changed
 
@@ -27,6 +28,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 
 ### ⚠️ Changed
 
