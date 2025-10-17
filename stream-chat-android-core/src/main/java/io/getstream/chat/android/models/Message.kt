@@ -128,7 +128,7 @@ public data class Message(
     val updatedAt: Date? = null,
 
     /**
-     * When the message was deleted
+     * When the message is deleted, either for soft delete or hard deleted.
      */
     val deletedAt: Date? = null,
 
