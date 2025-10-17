@@ -218,6 +218,7 @@ class MessagesActivity : ComponentActivity() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val currentMessagesState by listViewModel.currentMessagesState
         val selectedMessageState = currentMessagesState.selectedMessageState
+        val messageMode by composerViewModel.messageMode.collectAsState()
         val user by listViewModel.user.collectAsState()
         val lazyListState = rememberMessageListState()
 
@@ -294,6 +295,7 @@ class MessagesActivity : ComponentActivity() {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         attachmentsPickerViewModel.dismissAttachments()
                     },
+                    messageMode = messageMode,
                 )
             }
 

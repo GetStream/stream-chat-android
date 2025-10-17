@@ -1719,6 +1719,8 @@ internal constructor(
     /**
      * Send a message with a poll to the given channel.
      *
+     * IMPORTANT: Polls cannot be sent inside a thread!
+     *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      * @param pollConfig The poll configuration.

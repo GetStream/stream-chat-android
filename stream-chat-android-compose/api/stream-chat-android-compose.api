@@ -2186,7 +2186,7 @@ public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenK
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
-	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Landroidx/compose/runtime/Composer;II)V
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerAction {

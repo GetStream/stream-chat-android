@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
@@ -74,7 +75,9 @@ import io.getstream.chat.android.models.Channel
  * @param modifier Modifier for styling.
  * @param tabFactories The list of attachment picker tab factories.
  * @param shape The shape of the dialog.
+ * @param messageMode The message mode, used to determine if the default "Polls" tab is enabled.
  */
+@Suppress("LongMethod")
 @Composable
 public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
@@ -85,6 +88,7 @@ public fun AttachmentsPicker(
     modifier: Modifier = Modifier,
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
+    messageMode: MessageMode = MessageMode.Normal,
 ) {
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
@@ -96,7 +100,7 @@ public fun AttachmentsPicker(
     BackHandler(onBack = dismissAction)
     // Cross-validate requested tabFactories with the allowed ones from BE
     val filter = remember { AttachmentsPickerTabFactoryFilter() }
-    val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel)
+    val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel, messageMode)
     val defaultTabIndex = allowedFactories
         .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
         .takeIf { it >= 0 }
