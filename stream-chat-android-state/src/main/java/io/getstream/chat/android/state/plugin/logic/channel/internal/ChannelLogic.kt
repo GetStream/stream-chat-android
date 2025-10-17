@@ -549,10 +549,14 @@ internal class ChannelLogic(
                     }
 
                     is MessageUpdatedEvent -> {
+                        val originalMessage = mutableState.getMessageById(event.message.id)
+                        // Enrich the poll as it might not be present in the event
+                        val poll = event.message.poll ?: originalMessage?.poll
                         event.message.copy(
                             replyTo = event.message.replyMessageId
                                 ?.let { mutableState.getMessageById(it) }
                                 ?: event.message.replyTo,
+                            poll = poll,
                         ).let(::upsertEventMessage)
                         channelStateLogic.toggleHidden(false)
                     }
