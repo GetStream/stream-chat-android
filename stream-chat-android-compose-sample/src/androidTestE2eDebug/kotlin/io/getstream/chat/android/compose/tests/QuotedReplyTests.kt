@@ -37,7 +37,7 @@ import org.junit.Test
 class QuotedReplyTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.UserLogin
-    private val sampleText = "Test"
+    private val sampleText = "Test message"
     private var quoteReply = "Alright"
     private val messagesCount = 30
 
@@ -45,12 +45,10 @@ class QuotedReplyTests : StreamTestCase() {
     @Test
     fun test_whenSwipingMessage_thenMessageIsQuotedReply() {
         step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1, messagesText = sampleText)
             userRobot.login().openChannel()
         }
-        step("AND participant replies") {
-            participantRobot.sendMessage(sampleText)
-        }
-        step("WHEN user swipes a participant's message") {
+        step("WHEN user swipes a message") {
             userRobot.swipeMessage()
         }
         step("AND user sends a message") {
@@ -128,6 +126,7 @@ class QuotedReplyTests : StreamTestCase() {
     @AllureId("5685")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message() {
+        val firstMessage = 1.toString()
         step("GIVEN user opens the channel") {
             backendRobot.generateChannels(channelsCount = 1, messagesCount = messagesCount)
             userRobot.login().openChannel()
@@ -137,7 +136,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user observes the quote reply in message list") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = true)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -145,7 +144,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = messagesCount.toString(), isDisplayed = false)
+                .assertQuotedMessage(text = quoteReply, quote = firstMessage, isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }

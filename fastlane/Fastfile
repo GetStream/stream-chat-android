@@ -25,8 +25,9 @@ lane :start_mock_server do |options|
   if options[:local_server]
     mock_server_repo = options[:local_server]
   else
+    branch = options[:branch].to_s.empty? ? 'main' : options[:branch]
     sh("rm -rf #{mock_server_repo}") if File.directory?(mock_server_repo)
-    sh("git clone https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
+    sh("git clone -b #{branch} https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
   end
 
   Dir.chdir(mock_server_repo) do
@@ -60,7 +61,12 @@ end
 
 lane :build_and_run_e2e_test do |options|
   build_e2e_test
-  run_e2e_test(batch: options[:batch], batch_count: options[:batch_count], local_server: options[:local_server])
+  run_e2e_test(
+    batch: options[:batch],
+    batch_count: options[:batch_count],
+    local_server: options[:local_server],
+    mock_server_branch: options[:mock_server_branch]
+  )
 end
 
 lane :build_e2e_test do
@@ -80,7 +86,7 @@ lane :run_e2e_test do |options|
   sh("rm -rf #{allure_results_path}")
   sh("adb shell rm -rf #{adb_test_results_path}/#{allure_results_path}")
 
-  start_mock_server(local_server: options[:local_server])
+  start_mock_server(local_server: options[:local_server], branch: options[:mock_server_branch])
   install_test_services
   upload_attachments
 
