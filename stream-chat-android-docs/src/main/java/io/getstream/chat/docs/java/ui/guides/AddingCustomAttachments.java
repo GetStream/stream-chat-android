@@ -1,7 +1,7 @@
 package io.getstream.chat.docs.java.ui.guides;
 
-import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.MessageComposerCapabilitiesKt.canSendMessage;
-import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.MessageComposerCapabilitiesKt.canUploadFile;
+import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.MessageComposerCapabilitiesKt.canSendMessage;
+import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.MessageComposerCapabilitiesKt.canUploadFile;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.models.Attachment;
-import io.getstream.chat.android.models.ChannelCapabilities;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
@@ -40,8 +39,8 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners;
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.BaseAttachmentFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.BaseAttachmentFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.InnerAttachmentViewHolder;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactory;

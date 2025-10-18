@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState

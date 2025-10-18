@@ -21,8 +21,8 @@ import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canSendMessage
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canUploadFile
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState

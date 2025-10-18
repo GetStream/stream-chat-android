@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal
+package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities
 
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
