@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities
+package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -36,7 +35,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @return `true` if the user can send a message or reply based on both capabilities and
  * the send enabled flag; `false` otherwise.
  */
-@InternalStreamChatApi
 public fun canSendMessage(state: MessageComposerState): Boolean {
     val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val canSendReply = state.ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
@@ -48,4 +46,18 @@ public fun canSendMessage(state: MessageComposerState): Boolean {
     }
     // The final send capability depends on the channel capabilities, and potentially the user-set sendEnabled flag
     return state.sendEnabled && canSend
+}
+
+/**
+ * Determines whether the user can upload files in the current state.
+ *
+ * This function checks if the user has the [ChannelCapabilities.UPLOAD_FILE] capability
+ * for the current channel. This capability allows users to attach and upload files
+ * (documents, images, videos, etc.) through the message composer.
+ *
+ * @param state The current [MessageComposerState] containing capability information.
+ * @return `true` if the user has the [ChannelCapabilities.UPLOAD_FILE] capability; `false` otherwise.
+ */
+public fun canUploadFile(state: MessageComposerState): Boolean {
+    return state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 }

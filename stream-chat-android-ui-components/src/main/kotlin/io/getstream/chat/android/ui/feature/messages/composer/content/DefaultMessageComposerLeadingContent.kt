@@ -20,9 +20,9 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canUploadFile
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -140,7 +140,7 @@ public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageCom
      */
     override fun renderState(state: MessageComposerState) {
         val canSendMessage = canSendMessage(state)
-        val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+        val canUploadFile = canUploadFile(state)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val hasCommandInput = state.inputValue.startsWith("/")

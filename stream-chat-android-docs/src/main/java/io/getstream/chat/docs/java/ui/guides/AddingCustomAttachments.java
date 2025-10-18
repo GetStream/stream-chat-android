@@ -1,5 +1,8 @@
 package io.getstream.chat.docs.java.ui.guides;
 
+import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.MessageComposerCapabilitiesKt.canSendMessage;
+import static io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.MessageComposerCapabilitiesKt.canUploadFile;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -109,8 +112,8 @@ public class AddingCustomAttachments extends Fragment {
 
             @Override
             public void renderState(@NonNull MessageComposerState state) {
-                boolean canSendMessage = state.getOwnCapabilities().contains(ChannelCapabilities.SEND_MESSAGE);
-                boolean canUploadFile = state.getOwnCapabilities().contains(ChannelCapabilities.UPLOAD_FILE);
+                boolean canSendMessage = canSendMessage(state);
+                boolean canUploadFile = canUploadFile(state);
                 boolean hasTextInput = !state.getInputValue().isEmpty();
                 boolean hasAttachments = !state.getAttachments().isEmpty();
                 boolean hasCommandInput = state.getInputValue().startsWith("/");

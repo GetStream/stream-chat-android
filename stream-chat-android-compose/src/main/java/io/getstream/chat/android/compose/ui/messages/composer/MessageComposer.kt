@@ -70,7 +70,8 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -513,8 +514,6 @@ internal fun DefaultComposerIntegrations(
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
     val canSendMessage = canSendMessage(messageInputState)
-    val canSendAttachments = messageInputState.sendEnabled &&
-        ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 
     val isRecording = messageInputState.recording !is RecordingState.Idle
 
@@ -525,7 +524,8 @@ internal fun DefaultComposerIntegrations(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (canSendAttachments) {
+            val canUploadFile = canUploadFile(messageInputState)
+            if (canUploadFile) {
                 with(ChatTheme.componentFactory) {
                     MessageComposerAttachmentsButton(
                         enabled = isAttachmentsButtonEnabled,

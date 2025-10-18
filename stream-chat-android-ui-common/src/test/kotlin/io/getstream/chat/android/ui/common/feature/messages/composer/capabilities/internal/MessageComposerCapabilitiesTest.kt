@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities
+package io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.internal
 
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import org.amshove.kluent.`should be`
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class MessageComposerCapabilitiesHelperTest {
+internal class MessageComposerCapabilitiesTest {
 
     @ParameterizedTest
     @MethodSource("canSendMessageArguments")
@@ -33,18 +33,27 @@ internal class MessageComposerCapabilitiesHelperTest {
         sendEnabled: Boolean,
         messageMode: MessageMode,
         ownCapabilities: Set<String>,
-        expectedResult: Boolean,
+        expected: Boolean,
     ) {
         val state = MessageComposerState(
             sendEnabled = sendEnabled,
             messageMode = messageMode,
             ownCapabilities = ownCapabilities,
         )
-
-        canSendMessage(state) `should be` expectedResult
+        Assertions.assertEquals(expected, canSendMessage(state))
     }
 
-    companion object {
+    @ParameterizedTest
+    @MethodSource("canUploadFileArguments")
+    fun `canUploadFile returns the expected result based on capabilities`(
+        ownCapabilities: Set<String>,
+        expected: Boolean,
+    ) {
+        val state = MessageComposerState(ownCapabilities = ownCapabilities)
+        Assertions.assertEquals(expected, canUploadFile(state))
+    }
+
+    companion object Companion {
 
         @Suppress("LongMethod")
         @JvmStatic
@@ -146,6 +155,28 @@ internal class MessageComposerCapabilitiesHelperTest {
                 true,
                 MessageMode.MessageThread(Message()),
                 setOf(ChannelCapabilities.DELETE_OWN_MESSAGE, ChannelCapabilities.QUOTE_MESSAGE),
+                false,
+            ),
+        )
+
+        @JvmStatic
+        fun canUploadFileArguments() = listOf(
+            // With UPLOAD_FILE capability -> true
+            Arguments.of(setOf(ChannelCapabilities.UPLOAD_FILE), true),
+            // With UPLOAD_FILE + other capabilities -> true
+            Arguments.of(
+                setOf(
+                    ChannelCapabilities.UPLOAD_FILE,
+                    ChannelCapabilities.SEND_MESSAGE,
+                    ChannelCapabilities.PIN_MESSAGE,
+                ),
+                true,
+            ),
+            // Without UPLOAD_FILE capability -> false
+            Arguments.of(emptySet<String>(), false),
+            // With other capabilities but no UPLOAD_FILE -> false
+            Arguments.of(
+                setOf(ChannelCapabilities.SEND_MESSAGE, ChannelCapabilities.SEND_REPLY),
                 false,
             ),
         )
