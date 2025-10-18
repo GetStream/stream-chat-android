@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -169,7 +170,7 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         val appSettings = ChatClient.instance().getAppSettings()
         val blockedMimeTypes = appSettings.app.fileUploadConfig.blockedMimeTypes
         val blockedFileExtensions = appSettings.app.fileUploadConfig.blockedFileExtensions
-        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendMessage = canSendMessage(state)
         val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
         val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO) &&
             !blockedFileExtensions.contains(AAC_EXTENSION)

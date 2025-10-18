@@ -22,6 +22,7 @@ import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -138,7 +139,7 @@ public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageCom
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
-        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendMessage = canSendMessage(state)
         val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
