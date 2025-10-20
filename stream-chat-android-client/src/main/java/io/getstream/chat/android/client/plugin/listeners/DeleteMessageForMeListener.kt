@@ -28,8 +28,8 @@ public interface DeleteMessageForMeListener {
     /**
      * Runs precondition check for [ChatClient.deleteMessageForMe].
      *
-     * The request proceeds only if the method returns [Result.Success]; otherwise,
-     * it is aborted if it returns [Result.Failure].
+     * The request proceeds only if the method returns [Result.Success];
+     * otherwise, it is aborted if it returns [Result.Failure].
      *
      * @param messageId The message id to be deleted.
      *
@@ -50,5 +50,5 @@ public interface DeleteMessageForMeListener {
      *
      * @param result the result of the API call.
      */
-    public suspend fun onDeleteMessageForMeResult(originalMessageId: String, result: Result<Message>) { /* No-Op */ }
+    public suspend fun onDeleteMessageForMeResult(messageId: String, result: Result<Message>) { /* No-Op */ }
 }
