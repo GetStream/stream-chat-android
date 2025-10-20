@@ -346,6 +346,7 @@ internal object EventArguments {
         message = message,
         hardDelete = false,
         channelMessageCount = 1,
+        deletedForMe = false,
     )
     private val messageDeletedServerSideEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
@@ -358,6 +359,7 @@ internal object EventArguments {
         message = message,
         hardDelete = true,
         channelMessageCount = 1,
+        deletedForMe = true,
     )
     private val messageReadEvent = MessageReadEvent(
         type = EventType.MESSAGE_READ,

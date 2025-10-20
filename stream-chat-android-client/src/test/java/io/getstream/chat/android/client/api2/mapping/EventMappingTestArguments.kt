@@ -209,6 +209,7 @@ internal object EventMappingTestArguments {
     private val REMINDER = Mother.randomDownstreamReminderDto()
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
+    private val DELETED_FOR_ME = randomBoolean()
 
     // BEGIN: DTO Models
 
@@ -415,6 +416,7 @@ internal object EventMappingTestArguments {
         user = USER,
         message = MESSAGE,
         hard_delete = HARD_DELETE,
+        deleted_for_me = DELETED_FOR_ME,
     )
 
     private val messageReadDto = MessageReadEventDto(
@@ -1034,6 +1036,7 @@ internal object EventMappingTestArguments {
         message = with(domainMapping) { messageDeletedDto.message.toDomain() },
         hardDelete = messageDeletedDto.hard_delete ?: false,
         channelMessageCount = messageDeletedDto.channel_message_count,
+        deletedForMe = messageDeletedDto.deleted_for_me ?: false,
     )
 
     private val messageRead = MessageReadEvent(

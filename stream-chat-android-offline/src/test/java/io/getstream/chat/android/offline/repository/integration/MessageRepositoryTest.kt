@@ -41,6 +41,7 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
             val message = randomMessage(
                 attachments = mutableListOf(attachment1, attachment2, attachment3),
                 deletedAt = null,
+                deletedForMe = false,
             )
             repos.insertMessage(message)
 

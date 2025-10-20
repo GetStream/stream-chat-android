@@ -575,6 +575,7 @@ internal class UnreadLabelCalculatorTest {
             user = user,
             createdAt = createdAt,
             deletedAt = deletedAt,
+            deletedForMe = false,
         )
     }
 

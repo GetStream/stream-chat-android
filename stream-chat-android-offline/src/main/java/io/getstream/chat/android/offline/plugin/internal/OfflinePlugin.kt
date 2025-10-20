@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.internal
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
@@ -42,6 +43,7 @@ import kotlin.reflect.KClass
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
  * of its dependencies, so avoid to add logic here.
  *
+ * @param activeUser User associated with [OfflinePlugin] instance.
  * @param queryChannelListener [QueryChannelListener]
  * @param threadQueryListener [ThreadQueryListener]
  * @param editMessageListener [EditMessageListener]
@@ -49,13 +51,17 @@ import kotlin.reflect.KClass
  * @param deleteReactionListener [DeleteReactionListener]
  * @param sendReactionListener [SendReactionListener]
  * @param deleteMessageListener [DeleteMessageListener]
+ * @param deleteMessageForMeListener [DeleteMessageForMeListener]
+ * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
+ * @param sendAttachmentListener [SendAttachmentListener]
  * @param queryMembersListener [QueryMembersListener]
  * @param createChannelListener [CreateChannelListener]
  * @param deleteChannelListener [DeleteChannelListener]
  * @param getMessageListener [GetMessageListener]
  * @param fetchCurrentUserListener [FetchCurrentUserListener]
- * @param activeUser User associated with [OfflinePlugin] instance.
+ * @param queryThreadsListener [QueryThreadsListener]
+ * @param draftMessageListener [DraftMessageListener]
  * @param provideDependency Resolves dependency within [OfflinePlugin].
  */
 @Suppress("LongParameterList")
@@ -68,6 +74,7 @@ internal class OfflinePlugin(
     private val deleteReactionListener: DeleteReactionListener,
     private val sendReactionListener: SendReactionListener,
     private val deleteMessageListener: DeleteMessageListener,
+    private val deleteMessageForMeListener: DeleteMessageForMeListener,
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val sendAttachmentListener: SendAttachmentListener,
@@ -87,6 +94,7 @@ internal class OfflinePlugin(
     DeleteReactionListener by deleteReactionListener,
     SendReactionListener by sendReactionListener,
     DeleteMessageListener by deleteMessageListener,
+    DeleteMessageForMeListener by deleteMessageForMeListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,

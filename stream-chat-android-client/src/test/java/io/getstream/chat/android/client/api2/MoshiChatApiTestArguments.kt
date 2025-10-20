@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
+import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
 import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
@@ -71,6 +72,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
@@ -119,17 +121,50 @@ internal object MoshiChatApiTestArguments {
     fun deleteMessageInput() = listOf(
         Arguments.of(
             true,
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
+            false,
+            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             false,
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
+            true,
+            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            false,
+            false,
+            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(
             true,
-            RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(),
+            true,
+            RetroSuccess(MessageResponse(randomDownstreamMessageDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(
+            true,
+            false,
+            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(
+            false,
+            true,
+            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(
+            false,
+            false,
+            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
+            Result.Failure::class,
+        ),
+        Arguments.of(
+            true,
+            true,
+            RetroError<MessageResponse>(statusCode = randomInt()).toRetrofitCall(),
             Result.Failure::class,
         ),
     )
@@ -647,7 +682,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 MessageResponse(
-                    message = Mother.randomDownstreamMessageDto(),
+                    message = randomDownstreamMessageDto(),
                     pending_message_metadata = randomPendingMessageMetadata(),
                 ),
             ).toRetrofitCall(),
@@ -666,7 +701,7 @@ internal object MoshiChatApiTestArguments {
 
     private fun messagesResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessagesResponse(listOf(Mother.randomDownstreamMessageDto()))).toRetrofitCall(),
+            RetroSuccess(MessagesResponse(listOf(randomDownstreamMessageDto()))).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
@@ -686,7 +721,7 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(
             RetroSuccess(
                 SearchMessagesResponse(
-                    results = listOf(MessageResponse(Mother.randomDownstreamMessageDto())),
+                    results = listOf(MessageResponse(randomDownstreamMessageDto())),
                     next = randomString(),
                     previous = randomString(),
                     resultsWarning = Mother.randomSearchWarningDto(),

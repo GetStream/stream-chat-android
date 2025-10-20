@@ -174,7 +174,8 @@ internal fun createMessageDeletedServerSideEventStringJson() =
             "message": ${createMessageJsonString()},
             "hard_delete": true,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
-            "channel_message_count": 1
+            "channel_message_count": 1,
+            "deleted_for_me": true
         """.trimIndent(),
     )
 

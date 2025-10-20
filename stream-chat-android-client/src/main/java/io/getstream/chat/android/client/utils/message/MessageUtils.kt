@@ -73,9 +73,9 @@ public fun Message.isFailed(): Boolean = this.syncStatus == SyncStatus.FAILED_PE
 public fun Message.isErrorOrFailed(): Boolean = isError() || isFailed()
 
 /**
- * @return If the message is deleted.
+ * @return If the message is deleted, either for soft delete, hard delete or deleted for the current user.
  */
-public fun Message.isDeleted(): Boolean = deletedAt != null
+public fun Message.isDeleted(): Boolean = deletedAt != null || deletedForMe
 
 /**
  * @return If the message is pinned and not deleted.

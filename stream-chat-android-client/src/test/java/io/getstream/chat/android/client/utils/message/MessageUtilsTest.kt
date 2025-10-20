@@ -167,14 +167,20 @@ internal class MessageUtilsTest {
     }
 
     @Test
+    fun `isDeleted should return true for deleted message for me`() {
+        val message = randomMessage(deletedAt = null, deletedForMe = true)
+        message.isDeleted() shouldBeEqualTo true
+    }
+
+    @Test
     fun `isDeleted should return false for non-deleted message`() {
-        val message = randomMessage(deletedAt = null)
+        val message = randomMessage(deletedAt = null, deletedForMe = false)
         message.isDeleted() shouldBeEqualTo false
     }
 
     @Test
     fun `isPinnedAndNotDeleted should return true for pinned and not deleted message`() {
-        val message = randomMessage(pinned = true, deletedAt = null)
+        val message = randomMessage(pinned = true, deletedAt = null, deletedForMe = false)
         message.isPinnedAndNotDeleted() shouldBeEqualTo true
     }
 
@@ -192,8 +198,12 @@ internal class MessageUtilsTest {
 
     @Test
     fun `isPinned should return true for valid pinned message`() {
-        val message =
-            randomMessage(pinned = true, deletedAt = null, pinExpires = Date(System.currentTimeMillis() + 1000))
+        val message = randomMessage(
+            pinned = true,
+            deletedAt = null,
+            deletedForMe = false,
+            pinExpires = Date(System.currentTimeMillis() + 1000),
+        )
         message.isPinned() shouldBeEqualTo true
     }
 

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
@@ -105,7 +104,8 @@ internal interface MessageApi {
     @DELETE("/messages/{id}")
     fun deleteMessage(
         @Path("id") messageId: String,
-        @Query(QueryParams.HARD_DELETE) hard: Boolean?,
+        @Query("hard") hard: Boolean?,
+        @Query("delete_for_me") deleteForMe: Boolean?,
     ): RetrofitCall<MessageResponse>
 
     @POST("/messages/{id}/action")

@@ -336,6 +336,7 @@ public fun randomMessage(
     i18n: Map<String, String> = emptyMap(),
     reminder: MessageReminderInfo? = randomMessageReminderInfo(),
     channelRole: String? = null,
+    deletedForMe: Boolean = randomBoolean(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -382,6 +383,7 @@ public fun randomMessage(
     i18n = i18n,
     reminder = reminder,
     channelRole = channelRole,
+    deletedForMe = deletedForMe,
 )
 
 public fun randomPendingMessage(

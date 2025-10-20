@@ -464,7 +464,8 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
             }
         }
 
-        message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
+        message.isDeleted() && !message.deletedForMe &&
+            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             if (messageContentFactory == MessageContentFactory.Deprecated) {
                 ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
                     messageItem = messageItem,
