@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.UNREAD_SEPARATOR
+import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapperTest.Companion.generateGetViewTypeValueInput
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.randomMessageItem
 import org.amshove.kluent.`should be equal to`
@@ -105,6 +106,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         type = MessageType.ERROR,
                     ),
                 ),
@@ -115,6 +117,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         type = MessageType.SYSTEM,
                     ),
                 ),
@@ -125,6 +128,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         type = MessageType.EPHEMERAL,
                         command = AttachmentType.GIPHY,
                     ),
@@ -136,6 +140,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = listOf(Attachment(type = randomString())),
                     ),
                 ),
@@ -146,6 +151,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = listOf(
                             Attachment(
                                 type = AttachmentType.GIPHY,
@@ -161,6 +167,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = listOf(Attachment(titleLink = randomString())),
                     ),
                 ),
@@ -171,6 +178,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = listOf(randomMediaAttachment()),
                     ),
                 ),
@@ -181,6 +189,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = listOf(Attachment(type = AttachmentType.FILE)),
                     ),
                 ),
@@ -191,6 +200,7 @@ internal class MessageListItemViewTypeMapperTest {
                 randomMessageItem(
                     message = randomMessage(
                         deletedAt = null,
+                        deletedForMe = false,
                         attachments = emptyList(),
                     ),
                 ),

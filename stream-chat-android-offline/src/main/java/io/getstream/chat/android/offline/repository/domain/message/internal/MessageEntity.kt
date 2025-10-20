@@ -139,6 +139,8 @@ internal data class MessageInnerEntity(
     val sharedLocation: LocationEntity? = null,
     /** The role of the member(who sent the message) in the channel */
     val channelRole: String? = null,
+    /** Whether the message was deleted for the current user */
+    val deletedForMe: Boolean = false,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

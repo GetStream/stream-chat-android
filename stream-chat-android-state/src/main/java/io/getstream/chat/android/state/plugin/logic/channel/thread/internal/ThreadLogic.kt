@@ -103,11 +103,15 @@ internal class ThreadLogic(
     internal fun handleMessageEvents(events: List<HasMessage>) {
         val messages = events
             .map { event ->
-                val ownReactions = getMessage(event.message.id)?.ownReactions ?: event.message.ownReactions
+                val originalMessage = getMessage(event.message.id)
+                val ownReactions = originalMessage?.ownReactions ?: event.message.ownReactions
+                // Enrich the poll as might not be present in the event
+                val poll = event.message.poll ?: originalMessage?.poll
                 if (event is MessageUpdatedEvent) {
                     event.message.copy(
                         replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId },
                         ownReactions = ownReactions,
+                        poll = poll,
                     )
                 } else {
                     event.message.copy(

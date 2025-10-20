@@ -57,6 +57,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -642,6 +643,7 @@ public fun BoxScope.AttachmentsPickerMenu(
     composerViewModel: MessageComposerViewModel,
 ) {
     val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+    val messageMode by composerViewModel.messageMode.collectAsStateWithLifecycle()
 
     // Ensure keyboard is closed when the attachments picker is shown (if instructed by ChatTheme)
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -708,6 +710,7 @@ public fun BoxScope.AttachmentsPickerMenu(
                     attachmentsPickerViewModel.dismissAttachments()
                 }
             },
+            messageMode = messageMode,
         )
     }
 }

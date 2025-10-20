@@ -601,6 +601,7 @@ internal class QueryThreadsLogicTest {
             message = Message(id = "mId1", text = "Deleted thread parent"),
             hardDelete = false,
             channelMessageCount = 1,
+            deletedForMe = false,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -628,6 +629,7 @@ internal class QueryThreadsLogicTest {
             message = Message(id = "mId2", text = "Deleted thread reply"),
             hardDelete = false,
             channelMessageCount = 1,
+            deletedForMe = false,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()

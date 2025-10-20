@@ -383,6 +383,7 @@ public class TestDataHelper {
             message = message1Deleted,
             hardDelete = false,
             channelMessageCount = 1,
+            deletedForMe = false,
         )
     }
 
@@ -400,6 +401,7 @@ public class TestDataHelper {
             message = message1Deleted,
             hardDelete = true,
             channelMessageCount = 1,
+            deletedForMe = false,
         )
     }
 

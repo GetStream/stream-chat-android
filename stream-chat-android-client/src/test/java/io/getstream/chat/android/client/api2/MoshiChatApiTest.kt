@@ -364,22 +364,24 @@ internal class MoshiChatApiTest {
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteMessageInput")
     fun testDeleteMessage(
         hard: Boolean,
+        deleteForMe: Boolean,
         call: RetrofitCall<MessageResponse>,
         expected: KClass<*>,
     ) = runTest {
         // given
         val api = mock<MessageApi>()
-        whenever(api.deleteMessage(any(), anyOrNull())).doReturn(call)
+        whenever(api.deleteMessage(messageId = any(), hard = anyOrNull(), deleteForMe = anyOrNull())).doReturn(call)
         val sut = Fixture()
             .withMessageApi(api)
             .get()
         // when
         val messageId = randomString()
-        val result = sut.deleteMessage(messageId, hard).await()
+        val result = sut.deleteMessage(messageId, hard, deleteForMe).await()
         // then
         val expectedHard = if (hard) true else null
+        val expectedDeleteForMe = if (deleteForMe) true else null
         result `should be instance of` expected
-        verify(api, times(1)).deleteMessage(messageId, expectedHard)
+        verify(api, times(1)).deleteMessage(messageId, expectedHard, expectedDeleteForMe)
     }
 
     @ParameterizedTest

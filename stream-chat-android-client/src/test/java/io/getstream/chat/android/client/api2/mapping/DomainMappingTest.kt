@@ -106,6 +106,7 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
@@ -132,6 +133,29 @@ internal class DomainMappingTest {
 
         val result = with(sut) {
             randomDownstreamMessageDto().toDomain()
+        }
+
+        result `should be equal to` transformedMessage
+    }
+
+    @Test
+    fun `Message should be transformed with optionals properties after it is mapped`() {
+        val transformedMessage = randomMessage()
+        val messageTransformer = MessageTransformer { transformedMessage }
+
+        val sut = Fixture()
+            .withMessageTransformer(messageTransformer)
+            .get()
+
+        val result = with(sut) {
+            randomDownstreamMessageDto(
+                pinned_by = randomDownstreamUserDto(),
+                quoted_message = randomDownstreamMessageDto(),
+                moderation_details = randomDownstreamModerationDetailsDto(),
+                moderation = randomDownstreamModerationDto(),
+                poll = randomDownstreamPollDto(),
+                deleted_for_me = randomBoolean(),
+            ).toDomain()
         }
 
         result `should be equal to` transformedMessage

@@ -197,6 +197,18 @@ internal fun DeleteMessageIdentifier(
 }
 
 /**
+ * Identifier for a [ChatClient.deleteMessageForMe] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun DeleteMessageForMeIdentifier(
+    messageId: String,
+): Int {
+    var result = "DeleteMessageForMe".hashCode()
+    result = 31 * result + messageId.hashCode()
+    return result
+}
+
+/**
  * Identifier for [ChatClient.keystroke] and [ChatClient.stopTyping] calls.
  */
 @Suppress("FunctionName", "MagicNumber")

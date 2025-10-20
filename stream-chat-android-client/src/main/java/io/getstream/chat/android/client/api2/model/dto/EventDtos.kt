@@ -143,6 +143,7 @@ internal data class MessageDeletedEventDto(
     val message: DownstreamMessageDto,
     val hard_delete: Boolean?,
     val channel_message_count: Int? = null,
+    val deleted_for_me: Boolean? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

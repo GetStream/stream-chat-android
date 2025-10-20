@@ -581,7 +581,9 @@ internal class EventHandlerSequential(
                         }
                 }
                 is MessageUpdatedEvent -> {
-                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    val enrichedMessage = event.message
+                        .enrichWithOwnReactions(batch, currentUserId, event.user)
+                        .enrichWithOwnPoll(batch)
                     batch.addMessageData(
                         event.createdAt,
                         event.cid,
@@ -915,6 +917,11 @@ internal class EventHandlerSequential(
             ).toMutableList()
         },
     )
+
+    private fun Message.enrichWithOwnPoll(batch: EventBatchUpdate): Message {
+        val localMessage = batch.getCurrentMessage(id)
+        return copy(poll = poll ?: localMessage?.poll)
+    }
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {
         if (this != currentUserId) {

@@ -21,6 +21,8 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelCapabilities
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
@@ -29,7 +31,7 @@ import org.junit.jupiter.api.Test
 internal class AttachmentsPickerTabFactoryFilterTest {
 
     @Test
-    fun `Given channel with polls enabled and capabilities to send poll, when filtering attachment factories with polls, poll factory is returned`() {
+    fun `Given channel with polls enabled and capabilities to send poll in Normal mode, when filtering attachment factories with polls, poll factory is returned`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -38,15 +40,35 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             ),
         )
         val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = true)
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         filteredFactories `should be equal to` factories
     }
 
     @Test
-    fun `Given channel with polls enabled and capabilities to send poll, when filtering attachment factories without polls, poll factory is returned`() {
+    fun `Given channel with polls enabled and capabilities to send poll in MessageThread mode, when filtering attachment factories with polls, poll factory is not returned`() {
+        // given
+        val channel = randomChannel(
+            config = Config(pollsEnabled = true),
+            ownCapabilities = randomChannelCapabilities(
+                include = setOf(ChannelCapabilities.SEND_POLL),
+            ),
+        )
+        val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = true)
+        val messageMode = MessageMode.MessageThread(parentMessage = randomMessage())
+        // when
+        val filter = AttachmentsPickerTabFactoryFilter()
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
+        // then
+        val expected = factories.filterNot { it.attachmentsPickerMode == Poll }
+        filteredFactories `should be equal to` expected
+    }
+
+    @Test
+    fun `Given channel with polls enabled and capabilities to send poll in Normal mode, when filtering attachment factories without polls, poll factory is not returned`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -55,16 +77,17 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             ),
         )
         val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = false)
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         val expected = factories.filterNot { it.attachmentsPickerMode == Poll }
         filteredFactories `should be equal to` expected
     }
 
     @Test
-    fun `Given channel with polls enabled without capabilities to send poll, when filtering attachment factories without polls, poll factory is returned`() {
+    fun `Given channel with polls enabled without capabilities to send poll in Normal mode, when filtering attachment factories without polls, poll factory is not returned`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -73,31 +96,33 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             ),
         )
         val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = false)
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         val expected = factories.filterNot { it.attachmentsPickerMode == Poll }
         filteredFactories `should be equal to` expected
     }
 
     @Test
-    fun `Given channel with polls disabled, when filtering attachment factories with polls, poll factory is not returned`() {
+    fun `Given channel with polls disabled in Normal mode, when filtering attachment factories with polls, poll factory is not returned`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = false),
         )
         val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = true)
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         val expected = factories.filterNot { it.attachmentsPickerMode == Poll }
         filteredFactories `should be equal to` expected
     }
 
     @Test
-    fun `Given channel without capabilities to send poll, when filtering attachment factories with polls, poll factory is not returned`() {
+    fun `Given channel without capabilities to send poll in Normal mode, when filtering attachment factories with polls, poll factory is not returned`() {
         // given
         val channel = randomChannel(
             ownCapabilities = randomChannelCapabilities(
@@ -105,16 +130,17 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             ),
         )
         val factories = AttachmentsPickerTabFactories.defaultFactories(pollEnabled = true)
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         val expected = factories.filterNot { it.attachmentsPickerMode == Poll }
         filteredFactories `should be equal to` expected
     }
 
     @Test
-    fun `Given channel with polls enabled and capabilities to send poll, when filtering system attachment factories with polls, poll option is enabled`() {
+    fun `Given channel with polls enabled and capabilities to send poll in Normal mode, when filtering system attachment factories with polls, poll option is enabled`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -129,9 +155,10 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             captureVideoAllowed = true,
             pollAllowed = true,
         )
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
@@ -140,7 +167,34 @@ internal class AttachmentsPickerTabFactoryFilterTest {
     }
 
     @Test
-    fun `Given channel with polls enabled, when filtering system attachment factories without polls, poll option is disabled`() {
+    fun `Given channel with polls enabled and capabilities to send poll in MessageThread mode, when filtering system attachment factories with polls, poll option is disabled`() {
+        // given
+        val channel = randomChannel(
+            config = Config(pollsEnabled = true),
+            ownCapabilities = randomChannelCapabilities(
+                include = setOf(ChannelCapabilities.SEND_POLL),
+            ),
+        )
+        val factories = AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions(
+            filesAllowed = true,
+            mediaAllowed = true,
+            captureImageAllowed = true,
+            captureVideoAllowed = true,
+            pollAllowed = true,
+        )
+        val messageMode = MessageMode.MessageThread(parentMessage = randomMessage())
+        // when
+        val filter = AttachmentsPickerTabFactoryFilter()
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
+        // then
+        filteredFactories.size `should be equal to` 1
+        filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
+        val systemFactory = filteredFactories[0] as AttachmentsPickerSystemTabFactory
+        systemFactory.config.pollAllowed `should be` false
+    }
+
+    @Test
+    fun `Given channel with polls enabled in Normal mode, when filtering system attachment factories without polls, poll option is disabled`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -155,9 +209,10 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             captureVideoAllowed = true,
             pollAllowed = false,
         )
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
@@ -166,7 +221,7 @@ internal class AttachmentsPickerTabFactoryFilterTest {
     }
 
     @Test
-    fun `Given channel with polls disabled, when filtering system attachment factories with polls, poll option is disabled`() {
+    fun `Given channel with polls disabled in Normal mode, when filtering system attachment factories with polls, poll option is disabled`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = false),
@@ -178,9 +233,10 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             captureVideoAllowed = true,
             pollAllowed = true,
         )
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
@@ -189,7 +245,7 @@ internal class AttachmentsPickerTabFactoryFilterTest {
     }
 
     @Test
-    fun `Given channel with polls enabled without capabilities to send poll, when filtering system attachment factories with polls, poll option is disabled`() {
+    fun `Given channel with polls enabled without capabilities to send poll in Normal mode, when filtering system attachment factories with polls, poll option is disabled`() {
         // given
         val channel = randomChannel(
             config = Config(pollsEnabled = true),
@@ -204,9 +260,10 @@ internal class AttachmentsPickerTabFactoryFilterTest {
             captureVideoAllowed = true,
             pollAllowed = true,
         )
+        val messageMode = MessageMode.Normal
         // when
         val filter = AttachmentsPickerTabFactoryFilter()
-        val filteredFactories = filter.filterAllowedFactories(factories, channel)
+        val filteredFactories = filter.filterAllowedFactories(factories, channel, messageMode)
         // then
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
