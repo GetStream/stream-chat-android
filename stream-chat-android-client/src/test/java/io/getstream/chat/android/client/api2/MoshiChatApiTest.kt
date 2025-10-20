@@ -2263,7 +2263,7 @@ internal class MoshiChatApiTest {
         val expectedBody = CreatePollRequest(
             name = pollConfig.name,
             description = pollConfig.description,
-            options = pollConfig.options.map {
+            options = pollConfig.optionsWithExtraData.map {
                 UpstreamOptionDto(
                     text = it.text,
                     extraData = it.extraData,
