@@ -1901,6 +1901,46 @@ internal constructor(
     }
 
     /**
+     * Partially update a poll.
+     *
+     * @param pollId The poll id.
+     * @param set Map of fields to set.
+     * @param unset List of fields to unset.
+     * @return Executable async [Call] responsible for updating a poll.
+     */
+    @CheckResult
+    public fun partialUpdatePoll(
+        pollId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Poll> {
+        return api.partialUpdatePoll(pollId, set, unset)
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     *
+     * @return Executable async [Call] responsible for closing a poll.
+     */
+    @CheckResult
+    public fun closePoll(pollId: String): Call<Poll> {
+        return api.closePoll(pollId)
+    }
+
+    /**
+     * Deletes a poll.
+     *
+     * @param pollId The ID of the poll to delete.
+     * @return Executable async [Call] responsible for deleting a poll.
+     */
+    @CheckResult
+    public fun deletePoll(pollId: String): Call<Unit> {
+        return api.deletePoll(pollId)
+    }
+
+    /**
      * Create a new option for a poll.
      * Note: To create an option with custom data, use [createPollOption] instead.
      *
@@ -2055,46 +2095,6 @@ internal constructor(
         vote: Vote,
     ): Call<Vote> {
         return api.removePollVote(messageId, pollId, vote.id)
-    }
-
-    /**
-     * Partially update a poll.
-     *
-     * @param pollId The poll id.
-     * @param set Map of fields to set.
-     * @param unset List of fields to unset.
-     * @return Executable async [Call] responsible for updating a poll.
-     */
-    @CheckResult
-    public fun partialUpdatePoll(
-        pollId: String,
-        set: Map<String, Any> = emptyMap(),
-        unset: List<String> = emptyList(),
-    ): Call<Poll> {
-        return api.partialUpdatePoll(pollId, set, unset)
-    }
-
-    /**
-     * Close a poll in a message.
-     *
-     * @param pollId The poll id.
-     *
-     * @return Executable async [Call] responsible for closing a poll.
-     */
-    @CheckResult
-    public fun closePoll(pollId: String): Call<Poll> {
-        return api.closePoll(pollId)
-    }
-
-    /**
-     * Deletes a poll.
-     *
-     * @param pollId The ID of the poll to delete.
-     * @return Executable async [Call] responsible for deleting a poll.
-     */
-    @CheckResult
-    public fun deletePoll(pollId: String): Call<Unit> {
-        return api.deletePoll(pollId)
     }
 
     /**
