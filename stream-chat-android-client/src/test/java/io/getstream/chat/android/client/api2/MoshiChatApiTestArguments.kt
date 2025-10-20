@@ -83,7 +83,7 @@ import io.getstream.result.Result
 import okhttp3.ResponseBody
 import org.junit.jupiter.params.provider.Arguments
 
-@Suppress("UNUSED")
+@Suppress("UNUSED", "LargeClass")
 internal object MoshiChatApiTestArguments {
 
     @JvmStatic
