@@ -283,7 +283,7 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun partialUpdatePollSuccess() = runTest {
+    fun partialUpdatePollSuccessWithAllParameters() = runTest {
         // given
         val pollId = randomString()
         val set = mapOf("name" to "New poll name")
@@ -295,6 +295,21 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         val result = chatClient.partialUpdatePoll(pollId, set, unset).await()
         // then
         verifySuccess(result, poll)
+        verify(api).partialUpdatePoll(eq(pollId), eq(set), eq(unset))
+    }
+
+    @Test
+    fun partialUpdatePollSuccessWithMinimalParameters() = runTest {
+        // given
+        val pollId = randomString()
+        val poll = randomPoll()
+        whenever(api.partialUpdatePoll(eq(pollId), eq(emptyMap()), eq(emptyList())))
+            .thenReturn(RetroSuccess(poll).toRetrofitCall())
+        // when
+        val result = chatClient.partialUpdatePoll(pollId).await()
+        // then
+        verifySuccess(result, poll)
+        verify(api).partialUpdatePoll(eq(pollId), eq(emptyMap()), eq(emptyList()))
     }
 
     @Test
