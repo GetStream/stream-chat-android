@@ -18,11 +18,15 @@ package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
 import java.util.Date
 
@@ -155,6 +159,139 @@ internal class ThreadExtensionsTests {
 
         // then
         result shouldBeEqualTo baseThread
+    }
+
+    @Test
+    fun `updateParent should preserve existing poll when updated parent has no poll`() {
+        // given
+        val originalPoll = Poll(
+            id = "poll1",
+            name = "Test Poll",
+            description = "Test Description",
+            options = listOf(
+                Option(id = "option1", text = "Option 1"),
+                Option(id = "option2", text = "Option 2"),
+            ),
+            votingVisibility = VotingVisibility.PUBLIC,
+            enforceUniqueVote = true,
+            maxVotesAllowed = 1,
+            allowUserSuggestedOptions = false,
+            allowAnswers = false,
+            voteCountsByOption = emptyMap(),
+            votes = emptyList(),
+            ownVotes = emptyList(),
+            createdAt = now,
+            updatedAt = now,
+            closed = false,
+        )
+        val threadWithPoll = baseThread.copy(
+            parentMessage = parentMessage.copy(poll = originalPoll),
+        )
+        val updatedParent = parentMessage.copy(
+            text = "Updated parent message",
+            poll = null,
+        )
+
+        // when
+        val result = threadWithPoll.updateParent(updatedParent)
+
+        // then
+        result.parentMessage.poll.shouldNotBeNull()
+        result.parentMessage.poll shouldBeEqualTo originalPoll
+    }
+
+    @Test
+    fun `updateParent should use new poll when updated parent has poll`() {
+        // given
+        val originalPoll = Poll(
+            id = "poll1",
+            name = "Original Poll",
+            description = "Original Description",
+            options = listOf(
+                Option(id = "option1", text = "Option 1"),
+            ),
+            votingVisibility = VotingVisibility.PUBLIC,
+            enforceUniqueVote = true,
+            maxVotesAllowed = 1,
+            allowUserSuggestedOptions = false,
+            allowAnswers = false,
+            voteCountsByOption = emptyMap(),
+            votes = emptyList(),
+            ownVotes = emptyList(),
+            createdAt = now,
+            updatedAt = now,
+            closed = false,
+        )
+        val newPoll = Poll(
+            id = "poll2",
+            name = "Updated Poll",
+            description = "Updated Description",
+            options = listOf(
+                Option(id = "option1", text = "Option 1"),
+                Option(id = "option2", text = "Option 2"),
+            ),
+            votingVisibility = VotingVisibility.ANONYMOUS,
+            enforceUniqueVote = false,
+            maxVotesAllowed = 2,
+            allowUserSuggestedOptions = true,
+            allowAnswers = true,
+            voteCountsByOption = mapOf("option1" to 5),
+            votes = emptyList(),
+            ownVotes = emptyList(),
+            createdAt = now,
+            updatedAt = now,
+            closed = true,
+        )
+        val threadWithPoll = baseThread.copy(
+            parentMessage = parentMessage.copy(poll = originalPoll),
+        )
+        val updatedParent = parentMessage.copy(
+            text = "Updated parent message",
+            poll = newPoll,
+        )
+
+        // when
+        val result = threadWithPoll.updateParent(updatedParent)
+
+        // then
+        result.parentMessage.poll.shouldNotBeNull()
+        result.parentMessage.poll shouldBeEqualTo newPoll
+    }
+
+    @Test
+    fun `updateParent should add poll when original parent has no poll but updated parent has poll`() {
+        // given
+        val newPoll = Poll(
+            id = "poll1",
+            name = "New Poll",
+            description = "New Description",
+            options = listOf(
+                Option(id = "option1", text = "Option 1"),
+                Option(id = "option2", text = "Option 2"),
+            ),
+            votingVisibility = VotingVisibility.PUBLIC,
+            enforceUniqueVote = true,
+            maxVotesAllowed = 1,
+            allowUserSuggestedOptions = false,
+            allowAnswers = false,
+            voteCountsByOption = emptyMap(),
+            votes = emptyList(),
+            ownVotes = emptyList(),
+            createdAt = now,
+            updatedAt = now,
+            closed = false,
+        )
+        val updatedParent = parentMessage.copy(
+            text = "Updated parent message",
+            poll = newPoll,
+        )
+
+        // when
+        val result = baseThread.updateParent(updatedParent)
+
+        // then
+        result.parentMessage.poll.shouldNotBeNull()
+        result.parentMessage.poll shouldBeEqualTo newPoll
     }
 
     @Test
