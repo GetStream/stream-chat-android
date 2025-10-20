@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
-import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 
@@ -42,6 +42,6 @@ internal class EventMappingTest {
         val actual = with(eventMapping) {
             dto.toDomain()
         }
-        actual shouldBeEqualTo expected
+        assertEquals(expected, actual)
     }
 }

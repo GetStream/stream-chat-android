@@ -650,7 +650,9 @@ internal class MessageListControllerTests {
 
     @Test
     fun `When showSystemMessages is false, Then system messages should be hidden`() = runTest {
-        val messages = listOf(randomMessage(user = user1, type = MessageType.SYSTEM, deletedAt = null))
+        val messages = listOf(
+            randomMessage(user = user1, type = MessageType.SYSTEM, deletedAt = null, deletedForMe = false),
+        )
         val messagesState = MutableStateFlow(messages)
         val controller = Fixture()
             .givenCurrentUser()
@@ -697,10 +699,10 @@ internal class MessageListControllerTests {
     fun `Show unread label, when unread message is loaded`() =
         runTest {
             val user = randomUser()
-            val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null)
+            val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
             val messages = listOf(
                 firstMessage,
-                randomMessage(id = "first_unread_message_id", deletedAt = null),
+                randomMessage(id = "first_unread_message_id", deletedAt = null, deletedForMe = false),
             )
             val channelRead = MutableStateFlow(
                 randomChannelUserRead(

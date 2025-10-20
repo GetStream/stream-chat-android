@@ -55,6 +55,6 @@ class CustomDecoratorProvider(
     getLanguageDisplayName: (code: String) -> String,
 ) : DecoratorProvider {
     override val decorators by lazy {
-        listOf(ForwardedDecorator())
+        listOf(ForwardedDecorator(), DeletedForMeDecorator())
     }
 }

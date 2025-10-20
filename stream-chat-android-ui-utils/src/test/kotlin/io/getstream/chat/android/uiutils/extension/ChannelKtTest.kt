@@ -93,6 +93,7 @@ internal class ChannelKtTest {
             createdAt = Date(1000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -103,6 +104,7 @@ internal class ChannelKtTest {
             createdAt = Date(2000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -126,6 +128,7 @@ internal class ChannelKtTest {
             createdAt = Date(1000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -136,6 +139,7 @@ internal class ChannelKtTest {
             createdAt = Date(2000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -162,6 +166,7 @@ internal class ChannelKtTest {
             createdAt = Date(1000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -172,6 +177,7 @@ internal class ChannelKtTest {
             createdAt = Date(2000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )
@@ -197,6 +203,7 @@ internal class ChannelKtTest {
             createdAt = Date(1000L),
             createdLocallyAt = null,
             deletedAt = null,
+            deletedForMe = false,
             user = user,
             shadowed = false,
         )

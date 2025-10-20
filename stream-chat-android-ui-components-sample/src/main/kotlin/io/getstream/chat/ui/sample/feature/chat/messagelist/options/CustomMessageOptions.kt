@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
+import io.getstream.chat.android.ui.common.utils.canDeleteMessage
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
@@ -46,9 +47,12 @@ internal object CustomMessageOptions {
     fun actionHandler(
         onTranslate: (Message) -> Unit,
         onClearTranslation: (Message) -> Unit,
-    ): MessageListView.CustomActionHandler {
-        return CustomMessageOptionHandler(onTranslate, onClearTranslation)
-    }
+        onDeleteForMe: (Message) -> Unit,
+    ): MessageListView.CustomActionHandler = CustomMessageOptionHandler(
+        onTranslate,
+        onClearTranslation,
+        onDeleteForMe,
+    )
 }
 
 /**
@@ -57,6 +61,7 @@ internal object CustomMessageOptions {
 private class CustomMessageOptionHandler(
     private val onTranslate: (Message) -> Unit,
     private val onClearTranslation: (Message) -> Unit,
+    private val onDeleteForMe: (Message) -> Unit,
 ) : MessageListView.CustomActionHandler {
 
     override fun onCustomAction(message: Message, extraProperties: Map<String, Any>) {
@@ -64,6 +69,8 @@ private class CustomMessageOptionHandler(
             onTranslate(message)
         } else if (TranslationOption.isClearTranslationAction(extraProperties)) {
             onClearTranslation(message)
+        } else if (DeleteForMeOption.isDeleteForMeAction(extraProperties)) {
+            onDeleteForMe(message)
         }
     }
 }
@@ -109,6 +116,15 @@ private class CustomMessageOptionItemsFactory(
                     selectedMessage,
                 ),
             )
+        }
+        val canDeleteMessage = canDeleteMessage(
+            deleteMessageEnabled = style.deleteMessageEnabled,
+            currentUser = currentUser,
+            message = selectedMessage,
+            ownCapabilities = ownCapabilities,
+        )
+        if (canDeleteMessage) {
+            messageOptions.add(DeleteForMeOption(context, style, selectedMessage))
         }
         return messageOptions
     }
@@ -160,4 +176,30 @@ private class TranslationOption private constructor() {
             return extra[ACTION] == CLEAR_TRANSLATION
         }
     }
+}
+
+private object DeleteForMeOption {
+
+    private const val ACTION = "action"
+    private const val DELETE_FOR_ME = "delete_for_me"
+
+    operator fun invoke(
+        context: Context,
+        style: MessageListViewStyle,
+        message: Message,
+    ): MessageOptionItem {
+        val icon = ContextCompat.getDrawable(context, style.deleteIcon) ?: error("Drawable not found")
+        return MessageOptionItem(
+            optionText = "Delete Message for Me",
+            optionIcon = icon,
+            messageAction = CustomAction(
+                message = message,
+                extraProperties = mapOf(ACTION to DELETE_FOR_ME),
+            ),
+            isWarningItem = true,
+        )
+    }
+
+    fun isDeleteForMeAction(extra: Map<String, Any>): Boolean =
+        extra[ACTION] == DELETE_FOR_ME
 }

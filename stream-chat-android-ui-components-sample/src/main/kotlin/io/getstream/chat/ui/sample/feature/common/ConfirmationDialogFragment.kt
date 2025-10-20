@@ -216,6 +216,15 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             hasConfirmButton = false,
         )
 
+        fun newDeleteMessageForMeInstance(context: Context): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.ic_delete,
+            iconTintResId = R.color.red,
+            title = "Delete for Me",
+            description = "Are you sure you want to delete this message for you?",
+            confirmText = context.getString(R.string.stream_ui_message_list_delete_confirmation_positive_button),
+            cancelText = context.getString(R.string.cancel),
+        )
+
         fun newInstance(
             @DrawableRes iconResId: Int,
             @ColorRes iconTintResId: Int,

@@ -532,7 +532,7 @@ internal class SyncManager(
     }
 
     @VisibleForTesting
-    private suspend fun retryMessages() {
+    internal suspend fun retryMessages() {
         logger.d { "[retryMessages] no args" }
         retryMessagesWithSyncedAttachments()
         retryMessagesWithPendingAttachments()
@@ -562,7 +562,10 @@ internal class SyncManager(
             val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
-                message.isDeleted() -> retryDeletionOfMessageWithSyncedAttachments(id, message, channelClient)
+                message.isDeleted() && !message.deletedForMe -> {
+                    retryDeletionOfMessageWithSyncedAttachments(id, message, channelClient)
+                }
+                message.deletedForMe -> retryDeleteMessageForMe(id)
                 message.updatedLocallyAt != null && message.createdAt != null -> {
                     retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
@@ -571,6 +574,11 @@ internal class SyncManager(
             }
             logger.v { "[retryMgsWithSyncedAttachments] result(${message.id}).isSuccess: ${result is Result.Success}" }
         }
+    }
+
+    private suspend fun retryDeleteMessageForMe(messageId: String): Result<Message> {
+        logger.d { "[retryDeleteMessageForMe] messageId: $messageId" }
+        return chatClient.deleteMessageForMe(messageId).await()
     }
 
     /**

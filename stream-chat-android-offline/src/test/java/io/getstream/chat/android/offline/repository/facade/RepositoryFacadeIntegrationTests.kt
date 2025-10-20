@@ -39,7 +39,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     fun `Given a message in the database When persisting the updated message Should store the update`(): Unit =
         runTest {
             val id = randomString()
-            val originalMessage = randomMessage(id = id, deletedAt = null)
+            val originalMessage = randomMessage(id = id, deletedAt = null, deletedForMe = false)
             val updatedText = randomString()
             val updatedMessage = originalMessage.copy(text = updatedText)
 

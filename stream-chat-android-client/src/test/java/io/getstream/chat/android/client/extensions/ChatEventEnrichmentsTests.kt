@@ -74,6 +74,7 @@ internal class ChatEventEnrichmentsTests {
             channelId = randomString(),
             hardDelete = randomBoolean(),
             channelMessageCount = positiveRandomInt(),
+            deletedForMe = randomBoolean(),
         )
         val enrichedEvent = event.enrichIfNeeded() as MessageDeletedEvent
         enrichedEvent.message.cid shouldBeEqualTo cid

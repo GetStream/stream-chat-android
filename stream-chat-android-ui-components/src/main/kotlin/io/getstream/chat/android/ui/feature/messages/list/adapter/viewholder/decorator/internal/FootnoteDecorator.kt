@@ -314,7 +314,7 @@ internal class FootnoteDecorator(
             }
 
             data.isBottomPosition() &&
-                data.message.isDeleted() &&
+                data.message.isDeleted() && !data.message.deletedForMe &&
                 deletedMessageVisibilityHandler() == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                 showOnlyVisibleToYou(textView, style)
             }

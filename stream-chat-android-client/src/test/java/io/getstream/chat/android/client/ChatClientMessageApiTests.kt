@@ -45,7 +45,7 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.mock
@@ -59,6 +59,7 @@ import org.mockito.kotlin.whenever
 /**
  * Tests for the [ChatClient] message endpoints.
  */
+@Suppress("LargeClass")
 internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
     @Test
@@ -164,6 +165,46 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun deleteMessageForMeSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val plugin = mock<Plugin>()
+        val message = randomMessage(id = messageId)
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenDeleteMessageResult(message.asCall())
+            .get()
+        // when
+        val result = sut.deleteMessageForMe(messageId).await()
+        // then
+        verifySuccess(result, message)
+        val inOrder = Mockito.inOrder(plugin)
+        inOrder.verify(plugin).onDeleteMessageForMePrecondition(messageId)
+        inOrder.verify(plugin).onDeleteMessageForMeRequest(messageId)
+        inOrder.verify(plugin).onDeleteMessageForMeResult(messageId, result)
+    }
+
+    @Test
+    fun deleteMessageForMeError() = runTest {
+        // given
+        val messageId = randomString()
+        val plugin = mock<Plugin>()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenDeleteMessageResult(RetroError<Message>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.deleteMessageForMe(messageId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+        val inOrder = Mockito.inOrder(plugin)
+        inOrder.verify(plugin).onDeleteMessageForMePrecondition(messageId)
+        inOrder.verify(plugin).onDeleteMessageForMeRequest(messageId)
+        inOrder.verify(plugin).onDeleteMessageForMeResult(messageId, result)
+    }
+
+    @Test
     fun sendMessageSuccess() = runTest {
         // given
         val channelType = randomString()
@@ -200,7 +241,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // when
         val result = sut.sendMessage(channelType, channelId, message).await()
         // then
-        result `should be equal to` requestResult
+        assertEquals(requestResult, result)
         verify(plugin, never()).onMessageSendResult(any(), any(), any(), any())
     }
 
@@ -812,7 +853,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         }
 
         fun givenDeleteMessageResult(result: Call<Message>) = apply {
-            whenever(api.deleteMessage(any(), any())).thenReturn(result)
+            whenever(api.deleteMessage(messageId = any(), hard = any(), deleteForMe = any())).thenReturn(result)
         }
 
         fun givenSendMessageResult(result: Call<Message>) = apply {
