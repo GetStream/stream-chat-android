@@ -28,7 +28,7 @@ public data class CreatePollOptionRequest(
 )
 
 /**
- * Model hodling request data for updating a poll option.
+ * Model holding request data for updating a poll option.
  *
  * @param id The unique identifier of the poll option to be updated.
  * @param text The new text for the poll option.
