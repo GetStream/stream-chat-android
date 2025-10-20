@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -125,40 +126,45 @@ public data class Option(
  * The PollConfig object is used to configure a poll.
  *
  * @property name The name of the poll.
- * @property options The list of options for the poll.
  * @property description The description of the poll.
- * @property votingVisibility The visibility of the votes. Default is [VotingVisibility.PUBLIC].
+ * @property votingVisibility The visibility of the votes.
  * If set to [VotingVisibility.ANONYMOUS], the votes will be anonymous.
- * @property enforceUniqueVote If set to true, a user can only vote once. Default is true.
- * @property maxVotesAllowed The maximum number of votes a user can cast. Default is 1.
- * @property allowUserSuggestedOptions If set to true, users can suggest new options. Default is false.
- * @property allowAnswers If set to true, users can send answers. Default is false.
+ * @property enforceUniqueVote If set to true, a user can only vote once.
+ * @property maxVotesAllowed The maximum number of votes a user can cast.
+ * @property allowUserSuggestedOptions If set to true, users can suggest new options.
+ * @property allowAnswers If set to true, users can send answers.
  * @property extraData Any additional data associated with the poll.
+ * @property optionsWithExtraData The list of options for the poll.
  */
-public data class PollConfig(
+public data class PollConfig internal constructor(
     val name: String,
-    val options: List<PollOption>,
-    val description: String = "",
-    val votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
-    val enforceUniqueVote: Boolean = true,
-    val maxVotesAllowed: Int = 1,
-    val allowUserSuggestedOptions: Boolean = false,
-    val allowAnswers: Boolean = false,
-    val extraData: Map<String, Any> = emptyMap(),
+    val description: String,
+    val votingVisibility: VotingVisibility,
+    val enforceUniqueVote: Boolean,
+    val maxVotesAllowed: Int,
+    val allowUserSuggestedOptions: Boolean,
+    val allowAnswers: Boolean,
+    val extraData: Map<String, Any>,
+    @InternalStreamChatApi
+    val optionsWithExtraData: List<PollOption>,
 ) {
 
     /**
-     * Alternative constructor to create a PollConfig with a list of option texts.
+     * Constructor to create a PollConfig with a list of option texts.
      *
      * @param name The name of the poll.
      * @param options The list of option texts for the poll.
-     * @param description The description of the poll.
-     * @param votingVisibility The visibility of the votes. Default is [VotingVisibility.PUBLIC].
-     * @param enforceUniqueVote If set to true, a user can only vote once. Default is true.
-     * @param maxVotesAllowed The maximum number of votes a user can cast. Default is 1.
-     * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default is false.
-     * @param allowAnswers If set to true, users can send answers. Default is false.
+     * @param description The description of the poll. Default: empty.
+     * @param votingVisibility The visibility of the votes. Default: [VotingVisibility.PUBLIC].
+     * @param enforceUniqueVote If set to true, a user can only vote once. Default: true.
+     * @param maxVotesAllowed The maximum number of votes a user can cast. Default: 1.
+     * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default: false.
+     * @param allowAnswers If set to true, users can send answers. Default: false.
      */
+    @Deprecated(
+        "This constructor doesn't allow passing extra data for options. " +
+            "Use the constructor with List<PollOption> instead.",
+    )
     public constructor(
         name: String,
         options: List<String>,
@@ -170,7 +176,7 @@ public data class PollConfig(
         allowAnswers: Boolean = false,
     ) : this(
         name = name,
-        options = options.map { PollOption(it) },
+        optionsWithExtraData = options.map { PollOption(it) },
         description = description,
         votingVisibility = votingVisibility,
         enforceUniqueVote = enforceUniqueVote,
@@ -179,6 +185,47 @@ public data class PollConfig(
         allowAnswers = allowAnswers,
         extraData = emptyMap(),
     )
+
+    /**
+     * Alternative constructor to create a PollConfig with a list of options with extra data.
+     *
+     * @param name The name of the poll.
+     * @param options The list of options (with optional extra data) for the poll.
+     * @param description The description of the poll. Default: empty.
+     * @param votingVisibility The visibility of the votes. Default: [VotingVisibility.PUBLIC].
+     * @param enforceUniqueVote If set to true, a user can only vote once. Default: true.
+     * @param maxVotesAllowed The maximum number of votes a user can cast. Default: 1.
+     * @param allowUserSuggestedOptions If set to true, users can suggest new options. Default: false.
+     * @param allowAnswers If set to true, users can send answers. Default: false.
+     * @param extraData Any additional data associated with the poll.
+     */
+    public constructor(
+        name: String,
+        options: List<PollOption>,
+        description: String = "",
+        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote: Boolean = true,
+        maxVotesAllowed: Int = 1,
+        allowUserSuggestedOptions: Boolean = false,
+        allowAnswers: Boolean = false,
+        extraData: Map<String, Any> = emptyMap(),
+    ) : this(
+        name = name,
+        optionsWithExtraData = options,
+        description = description,
+        votingVisibility = votingVisibility,
+        enforceUniqueVote = enforceUniqueVote,
+        maxVotesAllowed = maxVotesAllowed,
+        allowUserSuggestedOptions = allowUserSuggestedOptions,
+        allowAnswers = allowAnswers,
+        extraData = extraData,
+    )
+
+    /**
+     * The list of option texts for the poll.
+     */
+    public val options: List<String>
+        get() = optionsWithExtraData.map { it.text }
 }
 
 /**

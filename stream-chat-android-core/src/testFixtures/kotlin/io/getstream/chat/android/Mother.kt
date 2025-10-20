@@ -50,6 +50,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
@@ -832,7 +833,7 @@ public fun randomPollConfig(
 ): PollConfig = PollConfig(
     name = name,
     description = description,
-    options = options,
+    options = options.map(::PollOption),
     votingVisibility = votingVisibility,
     enforceUniqueVote = enforceUniqueVote,
     maxVotesAllowed = maxVotesAllowed,

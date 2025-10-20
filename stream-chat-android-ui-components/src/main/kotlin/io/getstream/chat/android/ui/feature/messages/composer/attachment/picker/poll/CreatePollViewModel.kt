@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
@@ -98,7 +99,7 @@ public class CreatePollViewModel : ViewModel() {
             ) { title, options, allowMultipleVotes, maxAnswers ->
                 PollConfig(
                     name = title,
-                    options = options.map(PollAnswer::text),
+                    options = options.map { PollOption(it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,
                     allowUserSuggestedOptions = suggestAnOption,
                     maxVotesAllowed = maxAnswers.takeIf { allowMultipleVotes } ?: 1,

@@ -1634,7 +1634,7 @@ constructor(
                 enforce_unique_vote = pollConfig.enforceUniqueVote,
                 max_votes_allowed = pollConfig.maxVotesAllowed,
                 name = pollConfig.name,
-                options = pollConfig.options.map {
+                options = pollConfig.optionsWithExtraData.map {
                     UpstreamOptionDto(
                         text = it.text,
                         extraData = it.extraData,

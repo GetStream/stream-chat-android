@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 
 /**
@@ -62,7 +63,7 @@ internal fun pollConfigFrom(
     }
     return PollConfig(
         name = pollQuestion,
-        options = options,
+        options = options.map(::PollOption),
         allowUserSuggestedOptions = allowUserSuggestedOptions,
         allowAnswers = allowAnswers,
         votingVisibility = votingVisibility,

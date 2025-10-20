@@ -58,8 +58,6 @@ internal interface PollsApi {
     @POST("/polls")
     fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
 
-    // MISSING: Update poll
-
     /**
      * Deletes a poll.
      *

@@ -26,13 +26,11 @@ import com.squareup.moshi.JsonClass
  * @param sort The sort conditions for the query.
  * @param limit The number of polls to return.
  * @param next The next pagination token. This token can be used to fetch the next page of polls.
- * @param prev The previous pagination token. This token can be used to fetch the previous page of polls.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryPollsRequest(
     val filter: Map<*, *>? = null,
     val limit: Int? = null,
     val next: String? = null,
-    val prev: String? = null,
     val sort: List<Map<String, Any>>? = null,
 )
