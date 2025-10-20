@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
+import io.getstream.chat.android.client.api.models.identifier.DeleteMessageForMeIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetDevicesIdentifier
@@ -2322,8 +2323,7 @@ internal constructor(
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
         logger.d { "[deleteMessage] messageId: $messageId, hard: $hard" }
-
-        return api.deleteMessage(messageId, hard)
+        return api.deleteMessage(messageId, hard, deleteForMe = false)
             .doOnStart(userScope) {
                 plugins.forEach { listener ->
                     logger.v { "[deleteMessage] #doOnStart; plugin: ${listener::class.qualifiedName}" }
@@ -2340,6 +2340,33 @@ internal constructor(
                 onMessageDeletePrecondition(messageId)
             }
             .share(userScope) { DeleteMessageIdentifier(messageId, hard) }
+    }
+
+    /**
+     * Deletes a message for the current user only, making it invisible for them while keeping it visible for others.
+     *
+     * @param messageId The ID of the message to be deleted.
+     */
+    @CheckResult
+    public fun deleteMessageForMe(messageId: String): Call<Message> {
+        logger.d { "[deleteMessageForMe] messageId: $messageId" }
+        return api.deleteMessage(messageId, hard = false, deleteForMe = true)
+            .doOnStart(userScope) {
+                plugins.forEach { listener ->
+                    logger.v { "[deleteMessageForMe] #doOnStart; plugin: ${listener::class.qualifiedName}" }
+                    listener.onDeleteMessageForMeRequest(messageId)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { listener ->
+                    logger.v { "[deleteMessageForMe] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onDeleteMessageForMeResult(messageId, result)
+                }
+            }
+            .precondition(plugins) {
+                onDeleteMessageForMePrecondition(messageId)
+            }
+            .share(userScope) { DeleteMessageForMeIdentifier(messageId) }
     }
 
     /**

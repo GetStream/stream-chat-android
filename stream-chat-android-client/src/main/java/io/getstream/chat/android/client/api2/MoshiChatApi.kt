@@ -375,10 +375,15 @@ constructor(
         return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
     }
 
-    override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
+    override fun deleteMessage(
+        messageId: String,
+        hard: Boolean,
+        deleteForMe: Boolean,
+    ): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
             hard = if (hard) true else null,
+            deleteForMe = if (deleteForMe) true else null,
         ).mapDomain { response ->
             response.message.toDomain()
         }

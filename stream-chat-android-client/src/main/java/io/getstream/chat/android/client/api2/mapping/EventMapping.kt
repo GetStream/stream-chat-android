@@ -403,6 +403,7 @@ internal class EventMapping(
             message = message.toDomain(),
             hardDelete = hard_delete ?: false,
             channelMessageCount = channel_message_count,
+            deletedForMe = deleted_for_me ?: false,
         )
     }
 

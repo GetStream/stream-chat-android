@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 - Add `ChatClient.getPoll(pollId: String)` for retrieving a poll by its ID. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Add `ChatClient.partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>)` for partially updating a poll. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Add `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)` for creating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
@@ -37,6 +38,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 
 ### ⚠️ Changed
 

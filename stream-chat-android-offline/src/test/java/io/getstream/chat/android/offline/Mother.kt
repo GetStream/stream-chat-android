@@ -118,6 +118,7 @@ internal fun randomMessageEntity(
     reminder: ReminderInfoEntity = randomReminderInfoEntity(),
     sharedLocation: LocationEntity? = randomLocationEntity(),
     channelRole: String? = null,
+    deletedForMe: Boolean = randomBoolean(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -151,6 +152,7 @@ internal fun randomMessageEntity(
         reminder = reminder,
         sharedLocation = sharedLocation,
         channelRole = channelRole,
+        deletedForMe = deletedForMe,
     ),
     attachments = attachments,
     latestReactions = latestReactions,

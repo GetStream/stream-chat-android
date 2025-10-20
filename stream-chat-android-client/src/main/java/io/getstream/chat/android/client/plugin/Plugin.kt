@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.plugin.listeners.BlockUserListener
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteMessageForMeListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
@@ -100,7 +101,8 @@ public interface Plugin :
     UnblockUserListener,
     QueryBlockedUsersListener,
     LiveLocationListener,
-    PushPreferencesListener {
+    PushPreferencesListener,
+    DeleteMessageForMeListener {
 
     public fun getErrorHandler(): ErrorHandler? = null
 

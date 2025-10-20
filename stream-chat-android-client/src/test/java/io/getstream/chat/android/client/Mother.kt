@@ -306,6 +306,7 @@ internal object Mother {
         moderation: DownstreamModerationDto? = null,
         poll: DownstreamPollDto? = null,
         member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
+        deleted_for_me: Boolean? = null,
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamMessageDto {
         return DownstreamMessageDto(
@@ -346,6 +347,7 @@ internal object Mother {
             moderation = moderation,
             poll = poll,
             member = member,
+            deleted_for_me = deleted_for_me,
             extraData = extraData,
         )
     }

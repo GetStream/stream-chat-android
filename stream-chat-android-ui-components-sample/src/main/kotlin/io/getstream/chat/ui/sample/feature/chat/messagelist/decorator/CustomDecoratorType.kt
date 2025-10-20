@@ -20,4 +20,5 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.dec
 
 enum class CustomDecoratorType : Decorator.Type {
     FORWARDED,
+    DELETED_FOR_ME,
 }

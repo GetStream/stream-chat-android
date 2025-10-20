@@ -84,6 +84,7 @@ internal suspend fun MessageEntity.toModel(
         reminder = reminder?.toModel(),
         sharedLocation = sharedLocation?.toModel(),
         channelRole = channelRole,
+        deletedForMe = deletedForMe,
     )
 }
 
@@ -132,6 +133,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         restrictedVisibility = restrictedVisibility,
         sharedLocation = sharedLocation?.toEntity(),
         channelRole = channelRole,
+        deletedForMe = deletedForMe,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),

@@ -70,6 +70,7 @@ internal class ChannelMutableStateTests {
             createdAt = Date(now),
             updatedAt = null,
             deletedAt = null,
+            deletedForMe = false,
             pinned = true,
             pinnedAt = Date(now),
             pinExpires = Date(now + 1.minutes.inWholeMilliseconds),

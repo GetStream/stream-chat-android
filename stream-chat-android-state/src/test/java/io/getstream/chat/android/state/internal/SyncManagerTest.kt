@@ -226,8 +226,8 @@ internal class SyncManagerTest {
     fun `test sync max threshold for messages`() = runTest(testDispatcher) {
         /* Given */
         val message1 = localRandomMessage()
-        val message2 = randomMessage(deletedAt = localDate())
-        val message3 = randomMessage(deletedAt = null)
+        val message2 = randomMessage(deletedAt = localDate(), deletedForMe = false)
+        val message3 = randomMessage(deletedAt = null, deletedForMe = false)
         val message4 = localRandomMessage()
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(
             message1.id, message2.id, message3.id,
@@ -424,11 +424,26 @@ internal class SyncManagerTest {
         verify(chatClient, never()).partialUpdateMessage(messageId = message1.id, set = set)
     }
 
+    @Test
+    fun `retryMessages should retry deleting messages for me`() = runTest(testDispatcher) {
+        val message = randomMessage(deletedAt = null, deletedForMe = true, syncStatus = SyncStatus.SYNC_NEEDED)
+        whenever(repositoryFacade.selectMessageIdsBySyncState(syncStatus = SyncStatus.SYNC_NEEDED)) doReturn
+            listOf(message.id)
+        whenever(repositoryFacade.selectMessage(message.id)) doReturn message
+        whenever(chatClient.deleteMessageForMe(message.id)) doReturn message.asCall()
+
+        val sut = buildSyncManager()
+        sut.retryMessages()
+
+        verify(chatClient).deleteMessageForMe(message.id)
+    }
+
     private fun TestScope.localRandomMessage() = randomMessage(
         createdLocallyAt = Date(currentTime),
         createdAt = null,
         updatedAt = null,
         deletedAt = null,
+        deletedForMe = false,
     )
 
     private fun TestScope.localDate() = Date(currentTime)
