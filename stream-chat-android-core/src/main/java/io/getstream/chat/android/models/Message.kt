@@ -583,6 +583,7 @@ public data class Message(
             this.sharedLocation = sharedLocation
         }
         public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
+        public fun withDeletedForMe(deletedForMe: Boolean): Builder = apply { this.deletedForMe = deletedForMe }
 
         public fun build(): Message {
             return Message(

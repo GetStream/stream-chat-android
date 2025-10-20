@@ -1344,6 +1344,7 @@ public final class io/getstream/chat/android/models/Message$Builder {
 	public final fun withCreatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withCreatedLocallyAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withDeletedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Message$Builder;
+	public final fun withDeletedForMe (Z)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withDeletedReplyCount (I)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withExtraData (Ljava/util/Map;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withHtml (Ljava/lang/String;)Lio/getstream/chat/android/models/Message$Builder;
