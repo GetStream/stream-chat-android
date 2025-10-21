@@ -35,6 +35,7 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageReminder
 import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
@@ -106,7 +107,8 @@ internal class ThreadLogicTest {
     fun `Given ReminderDeletedEvent When handleReminderEvents is called Should upsert message with null reminder`() {
         // given
         val messageId = randomString()
-        val existingMessage = randomMessage(id = messageId, reminder = MessageReminderInfo(Date(), randomDate(), randomDate()))
+        val existingMessage =
+            randomMessage(id = messageId, reminder = MessageReminderInfo(Date(), randomDate(), randomDate()))
         val reminder = randomMessageReminder(messageId = messageId, message = existingMessage)
         val event = randomReminderDeletedEvent(messageId = messageId, reminder = reminder)
 
@@ -444,11 +446,11 @@ internal class ThreadLogicTest {
         // given
         val pollId = randomString()
         val currentUserId = randomString()
-        val poll = randomPoll(id = pollId)
+        val poll = randomPoll(id = pollId, closed = false)
         val parentMessageId = randomString()
         val parentMessage = randomMessage(id = parentMessageId, poll = poll)
-        val updatedPoll = randomPoll(id = pollId)
-        val event = randomPollClosedEvent(poll = updatedPoll)
+        val closedPoll = poll.copy(closed = true)
+        val event = randomPollClosedEvent(poll = closedPoll)
 
         whenever(threadMutableState.parentMessage).doReturn(parentMessage)
 
@@ -594,14 +596,111 @@ internal class ThreadLogicTest {
 
         val matchingEvent1 = randomPollUpdatedEvent(poll = matchingPoll)
         val nonMatchingEvent = randomVoteCastedEvent(poll = nonMatchingPoll)
-        val matchingEvent2 = randomPollClosedEvent(poll = matchingPoll)
 
         whenever(threadMutableState.parentMessage).doReturn(parentMessage)
 
         // when
-        threadLogic.handlePollEvents(currentUserId = currentUserId, events = listOf(matchingEvent1, nonMatchingEvent, matchingEvent2))
+        threadLogic.handlePollEvents(currentUserId = currentUserId, events = listOf(matchingEvent1, nonMatchingEvent))
 
         // then
-        verify(threadMutableState, times(2)).updateParentMessagePoll(any())
+        verify(threadMutableState, times(1)).updateParentMessagePoll(matchingEvent1.poll)
+    }
+
+    @Test
+    fun `Given batch of poll events When handlePollEvents is called Should process all events sequentially and update poll state`() {
+        // given
+        val pollId = randomString()
+        val currentUserId = randomString()
+        val optionId1 = randomPollOption()
+        val optionId2 = randomPollOption()
+        val initialPoll = randomPoll(
+            id = pollId,
+            options = listOf(optionId1, optionId2),
+            voteCountsByOption = mapOf(optionId1.id to 0, optionId2.id to 0),
+            closed = false,
+        )
+        val parentMessageId = randomString()
+        val parentMessage = randomMessage(id = parentMessageId, poll = initialPoll)
+
+        val updatedPoll = initialPoll.copy(
+            voteCountsByOption = mapOf(optionId1.id to 2, optionId2.id to 0),
+            closed = false,
+        )
+        val pollUpdatedEvent = randomPollUpdatedEvent(poll = updatedPoll)
+        val closedPoll = updatedPoll.copy(closed = true)
+        val pollClosedEvent = randomPollClosedEvent(poll = closedPoll)
+
+        whenever(threadMutableState.parentMessage).doReturn(parentMessage)
+
+        // when
+        threadLogic.handlePollEvents(
+            currentUserId = currentUserId,
+            events = listOf(pollUpdatedEvent, pollClosedEvent),
+        )
+
+        // then
+        val expectedPoll = initialPoll.copy(
+            voteCountsByOption = mapOf(optionId1.id to 2, optionId2.id to 0),
+            closed = true,
+        )
+        verify(threadMutableState, times(1)).updateParentMessagePoll(expectedPoll)
+    }
+
+    @Test
+    fun `Given batch with poll deleted at end When handlePollEvents is called Should end with null poll`() {
+        // given
+        val pollId = randomString()
+        val currentUserId = randomString()
+        val optionId = randomString()
+        val initialPoll = randomPoll(
+            id = pollId,
+            voteCountsByOption = mapOf(optionId to 0),
+            closed = false,
+        )
+        val parentMessageId = randomString()
+        val parentMessage = randomMessage(id = parentMessageId, poll = initialPoll)
+
+        val voteCastedEvent = randomVoteCastedEvent(
+            poll = randomPoll(id = pollId, voteCountsByOption = mapOf(optionId to 1)),
+        )
+        val pollClosedEvent = randomPollClosedEvent(
+            poll = randomPoll(id = pollId, voteCountsByOption = mapOf(optionId to 1), closed = true),
+        )
+        val pollDeletedEvent = randomPollDeletedEvent(poll = randomPoll(id = pollId))
+
+        whenever(threadMutableState.parentMessage).doReturn(parentMessage)
+
+        // when
+        threadLogic.handlePollEvents(
+            currentUserId = currentUserId,
+            events = listOf(voteCastedEvent, pollClosedEvent, pollDeletedEvent),
+        )
+
+        // then
+        verify(threadMutableState, times(1)).updateParentMessagePoll(null)
+    }
+
+    @Test
+    fun `Given batch with all non-matching poll IDs When handlePollEvents is called Should not update poll`() {
+        // given
+        val pollId = randomString()
+        val differentPollId1 = randomString()
+        val differentPollId2 = randomString()
+        val currentUserId = randomString()
+        val poll = randomPoll(id = pollId)
+        val parentMessageId = randomString()
+        val parentMessage = randomMessage(id = parentMessageId, poll = poll)
+
+        val event1 = randomVoteCastedEvent(poll = randomPoll(id = differentPollId1))
+        val event2 = randomPollUpdatedEvent(poll = randomPoll(id = differentPollId2))
+        val event3 = randomPollClosedEvent(poll = randomPoll(id = differentPollId1))
+
+        whenever(threadMutableState.parentMessage).doReturn(parentMessage)
+
+        // when
+        threadLogic.handlePollEvents(currentUserId = currentUserId, events = listOf(event1, event2, event3))
+
+        // then
+        verify(threadMutableState, never()).updateParentMessagePoll(any())
     }
 }

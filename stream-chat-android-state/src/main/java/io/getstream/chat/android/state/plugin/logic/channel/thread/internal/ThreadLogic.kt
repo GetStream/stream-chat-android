@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 
 /** Logic class for thread state management. Implements [ThreadQueryListener] as listener for LLC requests. */
@@ -146,20 +147,24 @@ internal class ThreadLogic(
         // Don't handle poll events if there is no poll in the parent message (should never happen)
         val parentMessage = mutableState.parentMessage ?: return
         val poll = parentMessage.poll ?: return
+        // The processed poll after applying each event sequentially
+        var processedPoll: Poll? = poll
         // Don't handle poll events if the poll in the parent message is different (should never happen)
         events
             .filter { it.poll.id == poll.id }
             .forEach { event ->
-                val processedPoll = when (event) {
-                    is AnswerCastedEvent -> event.processPoll { poll }
-                    is PollClosedEvent -> event.processPoll { poll }
-                    is PollUpdatedEvent -> event.processPoll { poll }
-                    is VoteRemovedEvent -> event.processPoll { poll }
-                    is VoteCastedEvent -> event.processPoll(currentUserId) { poll }
-                    is VoteChangedEvent -> event.processPoll(currentUserId) { poll }
+                processedPoll = when (event) {
+                    is AnswerCastedEvent -> event.processPoll { processedPoll }
+                    is PollClosedEvent -> event.processPoll { processedPoll }
+                    is PollUpdatedEvent -> event.processPoll { processedPoll }
+                    is VoteRemovedEvent -> event.processPoll { processedPoll }
+                    is VoteCastedEvent -> event.processPoll(currentUserId) { processedPoll }
+                    is VoteChangedEvent -> event.processPoll(currentUserId) { processedPoll }
                     is PollDeletedEvent -> null // poll is deleted, remove from state
                 }
-                mutableState.updateParentMessagePoll(processedPoll)
             }
+        if (processedPoll != poll) {
+            mutableState.updateParentMessagePoll(processedPoll)
+        }
     }
 }
