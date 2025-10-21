@@ -184,6 +184,7 @@ internal object EventMappingTestArguments {
     private val CHANNEL_MEMBER_COUNT = positiveRandomInt()
     private val CHANNEL_NAME = randomString()
     private val CHANNEL_IMAGE = randomString()
+    private val MESSAGE_ID = randomString()
     private val MESSAGE = Mother.randomDownstreamMessageDto()
     private val MESSAGE_WITHOUT_CHANNEL_INFO = MESSAGE.copy(channel = null)
     private val DRAFT = Mother.randomDownstreamDraftDto()
@@ -671,6 +672,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_CLOSED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
     )
 
@@ -678,6 +680,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_DELETED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
     )
 
@@ -685,6 +688,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_UPDATED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
     )
 
@@ -692,6 +696,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CASTED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -700,6 +705,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CHANGED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -708,6 +714,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_REMOVED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -716,6 +723,7 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CASTED,
         created_at = EXACT_DATE,
         cid = CID,
+        message_id = MESSAGE_ID,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -1336,6 +1344,7 @@ internal object EventMappingTestArguments {
         cid = pollClosedDto.cid,
         channelType = pollClosedDto.cid.split(":").first(),
         channelId = pollClosedDto.cid.split(":").last(),
+        messageId = pollClosedDto.message_id,
         poll = with(domainMapping) { pollClosedDto.poll.toDomain() },
     )
 
@@ -1346,6 +1355,7 @@ internal object EventMappingTestArguments {
         cid = pollDeletedDto.cid,
         channelType = pollDeletedDto.cid.split(":").first(),
         channelId = pollDeletedDto.cid.split(":").last(),
+        messageId = pollDeletedDto.message_id,
         poll = with(domainMapping) { pollDeletedDto.poll.toDomain() },
     )
 
@@ -1356,6 +1366,7 @@ internal object EventMappingTestArguments {
         cid = pollUpdatedDto.cid,
         channelType = pollUpdatedDto.cid.split(":").first(),
         channelId = pollUpdatedDto.cid.split(":").last(),
+        messageId = pollUpdatedDto.message_id,
         poll = with(domainMapping) { pollUpdatedDto.poll.toDomain() },
     )
 
@@ -1366,6 +1377,7 @@ internal object EventMappingTestArguments {
         cid = voteCastedDto.cid,
         channelType = voteCastedDto.cid.split(":").first(),
         channelId = voteCastedDto.cid.split(":").last(),
+        messageId = voteCastedDto.message_id,
         poll = with(domainMapping) { voteCastedDto.poll.toDomain() },
         newVote = with(domainMapping) { voteCastedDto.poll_vote.toDomain() },
     )
@@ -1377,6 +1389,7 @@ internal object EventMappingTestArguments {
         cid = voteChangedDto.cid,
         channelType = voteChangedDto.cid.split(":").first(),
         channelId = voteChangedDto.cid.split(":").last(),
+        messageId = voteChangedDto.message_id,
         poll = with(domainMapping) { voteChangedDto.poll.toDomain() },
         newVote = with(domainMapping) { voteChangedDto.poll_vote.toDomain() },
     )
@@ -1388,6 +1401,7 @@ internal object EventMappingTestArguments {
         cid = voteRemovedDto.cid,
         channelType = voteRemovedDto.cid.split(":").first(),
         channelId = voteRemovedDto.cid.split(":").last(),
+        messageId = voteRemovedDto.message_id,
         poll = with(domainMapping) { voteRemovedDto.poll.toDomain() },
         removedVote = with(domainMapping) { voteRemovedDto.poll_vote.toDomain() },
     )
@@ -1399,6 +1413,7 @@ internal object EventMappingTestArguments {
         cid = answerCastedDto.cid,
         channelType = answerCastedDto.cid.split(":").first(),
         channelId = answerCastedDto.cid.split(":").last(),
+        messageId = answerCastedDto.message_id,
         poll = with(domainMapping) { answerCastedDto.poll.toDomain() },
         newAnswer = with(domainMapping) { answerCastedDto.poll_vote.toAnswerDomain() },
     )
