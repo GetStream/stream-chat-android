@@ -16,122 +16,103 @@
 
 package io.getstream.chat.android.client.notifications
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.extensions.getNonNullString
-import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 
-internal class PushTokenUpdateHandler(context: Context) {
-    private val logger by taggedLogger("Chat:Notifications-UH")
+/**
+ * Manages the lifecycle of push notification devices for the current user.
+ *
+ * This handler is responsible for registering and unregistering push notification devices
+ * with the Stream Chat backend. It tracks the currently active device and ensures that
+ * device state stays synchronized with the server, avoiding duplicate registrations.
+ *
+ * The handler skips operations when:
+ * - A device is already registered for the user (during [addDevice])
+ * - No current device exists (during [deleteDevice])
+ *
+ */
+internal class PushTokenUpdateHandler {
 
-    private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(
-        PREFS_NAME,
-        Context.MODE_PRIVATE,
-    )
+    private val logger by taggedLogger("Chat:Notifications-UH")
 
     private val chatClient: ChatClient get() = ChatClient.instance()
 
-    private val updateDebouncer = Debouncer(DEBOUNCE_TIMEOUT)
-
-    private var userPushToken: UserPushToken
-        set(value) {
-            prefs.edit(true) {
-                putString(KEY_USER_ID, value.userId)
-                putString(KEY_TOKEN, value.token)
-                putString(KEY_PUSH_PROVIDER, value.pushProvider)
-                putString(KEY_PUSH_PROVIDER_NAME, value.providerName)
-            }
-        }
-        get() {
-            return UserPushToken(
-                userId = prefs.getNonNullString(KEY_USER_ID, ""),
-                token = prefs.getNonNullString(KEY_TOKEN, ""),
-                pushProvider = prefs.getNonNullString(KEY_PUSH_PROVIDER, ""),
-                providerName = prefs.getString(KEY_PUSH_PROVIDER_NAME, null),
-            )
-        }
+    private var currentDevice: Device? = null
 
     /**
-     * Registers the current device on the server if necessary. Does no do
-     * anything if the token has already been sent to the server previously.
+     * Registers a new push notification device for the current user.
+     *
+     * This method attempts to add a device to the server if it is not already registered.
+     * Before sending the request, it checks whether the device is already in the user's
+     * registered devices list, and if so, skips the registration to avoid redundant operations.
+     *
+     * Upon successful registration, [currentDevice] is updated to track the newly added device.
+     * Upon failure, the operation is logged but does not rethrow the error.
+     *
+     * @param user The current user, or `null` if no user is logged in. Used to check if the
+     *             device is already registered. If `null`, the device will be treated as
+     *             unregistered.
+     * @param device The device to register. Must contain a valid token and push provider.
+     *
+     * **Behavior**:
+     * - If the device is already registered (found in [user.devices]), logs a message and returns early.
+     * - If not registered, sends an add device request to the server.
+     * - On success: updates [currentDevice] and logs the device token.
+     * - On error: logs the failure but does not propagate the exception.
      */
-    suspend fun updateDeviceIfNecessary(device: Device) {
-        val userPushToken = device.toUserPushToken()
-        if (!device.isValid()) return
-        if (this.userPushToken == userPushToken) {
-            logger.d { "[updateDeviceIfNecessary] skip update device: same as previous" }
+    suspend fun addDevice(user: User?, device: Device) {
+        val isDeviceRegistered = isDeviceRegistered(user, device)
+        if (isDeviceRegistered) {
+            logger.d { "[addDevice] skip adding device: already registered on server" }
+            currentDevice = device
             return
         }
-        updateDebouncer.submitSuspendable {
-            logger.d { "[updateDeviceIfNecessary] device: $device" }
-            val removed = removeStoredDeviceInternal()
-            logger.v { "[updateDeviceIfNecessary] removed: $removed" }
-            val result = chatClient.addDevice(device).await()
-            if (result.isSuccess) {
-                this.userPushToken = userPushToken
-                val pushProvider = device.pushProvider.key
-                logger.i { "[updateDeviceIfNecessary] device registered with token($pushProvider): ${device.token}" }
-            } else {
-                logger.e { "[updateDeviceIfNecessary] failed registering device ${result.errorOrNull()?.message}" }
+        chatClient.addDevice(device).await()
+            .onSuccess {
+                currentDevice = device
+                logger.d { "[addDevice] successfully added ${device.pushProvider.key} device ${device.token}" }
             }
-        }
-    }
-
-    suspend fun removeStoredDevice() {
-        logger.v { "[removeStoredDevice] no args" }
-        val removed = removeStoredDeviceInternal()
-        logger.i { "[removeStoredDevice] removed: $removed" }
-    }
-
-    private suspend fun removeStoredDeviceInternal(): Boolean {
-        val device = userPushToken.toDevice()
-            .takeIf { it.isValid() }
-            ?: return false
-        userPushToken = UserPushToken("", "", "", null)
-        return chatClient.deleteDevice(device).await()
             .onError {
-                if (!it.isPermanent()) {
-                    userPushToken = device.toUserPushToken()
-                }
-                logger.e { "[removeStoredDeviceInternal] failed: $it" }
+                logger.d { "[addDevice] failed to add ${device.pushProvider.key} device ${device.token}" }
             }
-            .isSuccess
     }
 
-    private data class UserPushToken(
-        val userId: String,
-        val token: String,
-        val pushProvider: String,
-        val providerName: String?,
-    )
-
-    companion object {
-        private const val PREFS_NAME = "stream_firebase_token_store"
-        private const val KEY_USER_ID = "user_id"
-        private const val KEY_TOKEN = "token"
-        private const val KEY_PUSH_PROVIDER = "push_provider"
-        private const val KEY_PUSH_PROVIDER_NAME = "push_provider_name"
-        private const val DEBOUNCE_TIMEOUT = 200L
+    /**
+     * Unregisters the currently tracked push notification device from the server.
+     *
+     * This method attempts to delete the device that is stored in [currentDevice].
+     * If no device is currently tracked, the operation is skipped.
+     *
+     * Upon successful deletion, [currentDevice] is cleared to reflect that no device
+     * is currently registered. Upon failure, the operation is logged but does not
+     * rethrow the error, and [currentDevice] remains unchanged.
+     *
+     * **Behavior**:
+     * - If [currentDevice] is `null`, logs a message and returns early.
+     * - If a device is tracked, sends a delete device request to the server.
+     * - On success: clears [currentDevice] and logs the device token.
+     * - On error: logs the failure but does not propagate the exception.
+     */
+    suspend fun deleteDevice() {
+        val device = currentDevice
+        if (device == null) {
+            logger.d { "[deleteDevice] skip deleting device: no current device" }
+            return
+        }
+        chatClient.deleteDevice(device).await()
+            .onSuccess {
+                currentDevice = null
+                logger.d { "[deleteDevice] successfully deleted ${device.pushProvider.key} device ${device.token}" }
+            }
+            .onError {
+                logger.d { "[deleteDevice] failed to delete ${device.pushProvider.key} device ${device.token}" }
+            }
     }
 
-    private fun Device.toUserPushToken() = UserPushToken(
-        userId = chatClient.getCurrentUser()?.id ?: "",
-        token = token,
-        pushProvider = pushProvider.key,
-        providerName = providerName,
-    )
-
-    private fun UserPushToken.toDevice() = Device(
-        token = token,
-        pushProvider = PushProvider.fromKey(pushProvider),
-        providerName = providerName,
-    )
-
-    private fun Device.isValid() = pushProvider != PushProvider.UNKNOWN
+    private fun isDeviceRegistered(user: User?, device: Device): Boolean {
+        val registeredDevices = user?.devices ?: return false
+        return registeredDevices.any { it == device }
+    }
 }

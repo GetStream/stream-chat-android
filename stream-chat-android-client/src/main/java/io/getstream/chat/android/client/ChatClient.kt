@@ -441,7 +441,7 @@ internal constructor(
                 val user = event.me
                 val connectionId = event.connectionId
                 api.setConnection(user.id, connectionId)
-                notifications.onSetUser()
+                notifications.onSetUser(user)
 
                 mutableClientState.setConnectionState(ConnectionState.Connected)
                 mutableClientState.setUser(user)
