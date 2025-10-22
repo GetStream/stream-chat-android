@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
+import org.jetbrains.annotations.VisibleForTesting
 
 /**
  * Manages the lifecycle of push notification devices for the current user.
@@ -32,14 +33,19 @@ import io.getstream.log.taggedLogger
  * - A device is already registered for the user (during [addDevice])
  * - No current device exists (during [deleteDevice])
  *
+ * @param getChatClient A function that provides the current [ChatClient] instance.
  */
-internal class PushTokenUpdateHandler {
+internal class PushTokenUpdateHandler(
+    private val getChatClient: () -> ChatClient = { ChatClient.instance() },
+) {
 
     private val logger by taggedLogger("Chat:Notifications-UH")
 
-    private val chatClient: ChatClient get() = ChatClient.instance()
-
-    private var currentDevice: Device? = null
+    /**
+     * The registered device in this ChatClient session.
+     */
+    @VisibleForTesting
+    internal var currentDevice: Device? = null
 
     /**
      * Registers a new push notification device for the current user.
@@ -57,7 +63,7 @@ internal class PushTokenUpdateHandler {
      * @param device The device to register. Must contain a valid token and push provider.
      *
      * **Behavior**:
-     * - If the device is already registered (found in [user.devices]), logs a message and returns early.
+     * - If the device is already registered (found in [User.devices]), logs a message and returns early.
      * - If not registered, sends an add device request to the server.
      * - On success: updates [currentDevice] and logs the device token.
      * - On error: logs the failure but does not propagate the exception.
@@ -69,7 +75,7 @@ internal class PushTokenUpdateHandler {
             currentDevice = device
             return
         }
-        chatClient.addDevice(device).await()
+        getChatClient().addDevice(device).await()
             .onSuccess {
                 currentDevice = device
                 logger.d { "[addDevice] successfully added ${device.pushProvider.key} device ${device.token}" }
@@ -101,7 +107,7 @@ internal class PushTokenUpdateHandler {
             logger.d { "[deleteDevice] skip deleting device: no current device" }
             return
         }
-        chatClient.deleteDevice(device).await()
+        getChatClient().deleteDevice(device).await()
             .onSuccess {
                 currentDevice = null
                 logger.d { "[deleteDevice] successfully deleted ${device.pushProvider.key} device ${device.token}" }
