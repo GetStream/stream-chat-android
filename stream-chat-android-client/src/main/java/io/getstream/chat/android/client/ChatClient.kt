@@ -2893,6 +2893,22 @@ internal constructor(
     }
 
     /**
+     * Marks the given messages as delivered.
+     *
+     * @param messages The list of messages to mark as delivered.
+     */
+    @CheckResult
+    public fun markMessagesAsDelivered(messages: List<Message>): Call<Unit> {
+        return api.markDelivered(messages)
+            .doOnStart(userScope) {
+                logger.d { "[markMessagesAsDelivered] #doOnStart; messages: ${messages.size}" }
+            }
+            .doOnResult(userScope) { result ->
+                logger.v { "[markMessagesAsDelivered] #doOnResult; completed: $result" }
+            }
+    }
+
+    /**
      * Marks a given thread as read.
      *
      * @param channelType The type of the channel in which the thread resides.

@@ -339,6 +339,11 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
+    fun markDelivered(
+        messages: List<Message>,
+    ): Call<Unit>
+
+    @CheckResult
     fun markThreadRead(
         channelType: String,
         channelId: String,

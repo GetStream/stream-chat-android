@@ -114,6 +114,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun markAllRead ()Lio/getstream/result/call/Call;
 	public final fun markMessageRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markMessagesAsDelivered (Ljava/util/List;)Lio/getstream/result/call/Call;
 	public final fun markRead (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;

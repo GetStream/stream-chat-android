@@ -44,6 +44,7 @@ import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
@@ -988,6 +989,33 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun markMessagesAsDeliveredSuccess() = runTest {
+        // given
+        val messages = randomMessageList(10)
+        val sut = Fixture()
+            .givenMarkDeliveredResult(RetroSuccess(Unit).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markMessagesAsDelivered(messages).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun markMessagesAsDeliveredError() = runTest {
+        // given
+        val messages = randomMessageList(10)
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenMarkDeliveredResult(RetroError<Unit>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markMessagesAsDelivered(messages).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun markReadSuccess() = runTest {
         // given
         val channelType = randomString()
@@ -1526,6 +1554,10 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
 
         fun givenMarkReadResult(result: Call<Unit>) = apply {
             whenever(api.markRead(any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenMarkDeliveredResult(result: Call<Unit>) = apply {
+            whenever(api.markDelivered(any())).thenReturn(result)
         }
 
         fun givenMarkUnreadResult(result: Call<Unit>) = apply {
