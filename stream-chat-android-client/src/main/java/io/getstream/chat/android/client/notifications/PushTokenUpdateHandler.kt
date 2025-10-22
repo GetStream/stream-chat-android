@@ -64,7 +64,10 @@ internal class PushTokenUpdateHandler(context: Context) {
     suspend fun updateDeviceIfNecessary(device: Device) {
         val userPushToken = device.toUserPushToken()
         if (!device.isValid()) return
-        if (this.userPushToken == userPushToken) return
+        if (this.userPushToken == userPushToken) {
+            logger.d { "[updateDeviceIfNecessary] skip update device: same as previous" }
+            return
+        }
         updateDebouncer.submitSuspendable {
             logger.d { "[updateDeviceIfNecessary] device: $device" }
             val removed = removeStoredDeviceInternal()

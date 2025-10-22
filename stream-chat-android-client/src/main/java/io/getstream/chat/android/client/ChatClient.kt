@@ -738,6 +738,7 @@ internal constructor(
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
             userScope.userId.value = user.id
+            notifications.deleteDevice() // always delete device if switching users
             disconnectUserSuspend(flushPersistence = true)
             onDisconnectionComplete()
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
@@ -1449,15 +1450,23 @@ internal constructor(
      * You shouldn't call this method, if the user will continue using the Chat in the future.
      *
      * @param flushPersistence if true will clear user data.
+     * @param deleteDevice If set to true, will attempt to delete the registered device from Stream backend. For
+     * backwards compatibility, by default it's set to the value of [flushPersistence].
      *
      * @return Executable async [Call] which performs the disconnection.
      */
     @CheckResult
-    public fun disconnect(flushPersistence: Boolean): Call<Unit> =
+    public fun disconnect(
+        flushPersistence: Boolean,
+        deleteDevice: Boolean = flushPersistence,
+    ): Call<Unit> =
         CoroutineCall(clientScope) {
             logger.d { "[disconnect] flushPersistence: $flushPersistence" }
             when (isUserSet()) {
                 true -> {
+                    if (deleteDevice) {
+                        notifications.deleteDevice()
+                    }
                     disconnectSuspend(flushPersistence)
                     Result.Success(Unit)
                 }
@@ -1483,7 +1492,7 @@ internal constructor(
         initializedUserId.set(null)
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
-        notifications.onLogout(flushPersistence)
+        notifications.onLogout()
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()
