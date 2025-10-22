@@ -146,7 +146,6 @@ internal class PushTokenUpdateHandlerTest {
         val user = randomUser(devices = listOf(device))
 
         // First, add the device
-        // First, add the device
         whenever(chatClientMock.addDevice(any()))
             .thenReturn(RetroSuccess(Unit).toRetrofitCall())
         handler.addDevice(user, device)
