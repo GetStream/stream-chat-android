@@ -60,6 +60,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteReminder (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun disconnect (Z)Lio/getstream/result/call/Call;
 	public final fun disconnect (ZZ)Lio/getstream/result/call/Call;
 	public static synthetic fun disconnect$default (Lio/getstream/chat/android/client/ChatClient;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun disconnectSocket ()Lio/getstream/result/call/Call;
