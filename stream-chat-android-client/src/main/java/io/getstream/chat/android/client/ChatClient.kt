@@ -1456,6 +1456,7 @@ internal constructor(
      * @return Executable async [Call] which performs the disconnection.
      */
     @CheckResult
+    @JvmOverloads
     public fun disconnect(
         flushPersistence: Boolean,
         deleteDevice: Boolean = flushPersistence,
