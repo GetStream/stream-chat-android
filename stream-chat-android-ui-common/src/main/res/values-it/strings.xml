@@ -15,9 +15,166 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_list_attachment_display_error">"Errore. Impossibile visualizzare il file"</string>
-  <string name="stream_ui_message_list_attachment_invalid_mime_type">"Qualcosa è andato storto. Impossibile aprire l\'allegato: %s"</string>
-  <string name="stream_ui_message_list_attachment_invalid_url">"Caricamento non riuscito a causa di un URL non valido."</string>
-  <string name="stream_ui_message_list_attachment_load_failed">"Caricamento non riuscito a causa di un errore sconosciuto."</string>
-  <string name="stream_ui_yesterday">"Ieri"</string>
+
+  <!-- Common -->
+  <string name="stream_ui_back_button">Indietro</string>
+
+  <!--Message Date-->
+  <string name="stream_ui_yesterday">Ieri</string>
+
+  <!-- Media capture -->
+  <string name="stream_ui_message_composer_capture_media">Cattura immagine o video</string>
+  <string name="stream_ui_message_composer_capture_media_take_photo">Cattura immagine</string>
+  <string name="stream_ui_message_composer_capture_media_video">Cattura video</string>
+
+  <!-- Permissions -->
+  <string name="stream_ui_message_composer_permission_camera_title">Permesso di accesso a fotocamera e memoria</string>
+  <string name="stream_ui_message_composer_permission_camera_message">I permessi di accesso a fotocamera e memoria sono necessari per poter scattare foto e video</string>
+  <string name="stream_ui_message_composer_permission_storage_title">Permessi di accesso alla memoria</string>
+  <string name="stream_ui_message_composer_permission_storage_message">Il permesso di accesso alla memoria è necessario per poter inviare e salvare foto, video, musica e altri file</string>
+  <string name="stream_ui_message_composer_permission_audio_record_title">Permessi di registrazione audio</string>
+  <string name="stream_ui_message_composer_permission_audio_record_message">Il permesso di registrazione audio è necessario per poter registrare e inviare file audio</string>
+  <string name="stream_ui_message_composer_permission_setting_message">Abilita i permessi nelle impostazioni dell\'app</string>
+  <string name="stream_ui_message_composer_permissions_setting_button">Impostazioni</string>
+  <string name="stream_ui_message_composer_permissions_visual_media_add_more">Aggiungi altro</string>
+  <string name="stream_ui_message_composer_permissions_files_allow_audio_access">Consenti l\'accesso ai file audio</string>
+  <string name="stream_ui_message_composer_permissions_files_allow_visual_media_access">Consenti l\'accesso ai contenuti visivi</string>
+  <string name="stream_ui_message_composer_permissions_files_allow_more_visual_media">Consenti l\'accesso a più contenuti visivi</string>
+
+  <!-- Attachment system picker -->
+  <string name="stream_ui_message_composer_attachment_picker_files">File</string>
+  <string name="stream_ui_message_composer_attachment_picker_media">Media</string>
+  <string name="stream_ui_message_composer_attachment_picker_capture">Cattura</string>
+  <string name="stream_ui_message_composer_attachment_picker_poll">Sondaggio</string>
+
+  <!--Attachment View-->
+  <string name="stream_ui_message_list_attachment_load_failed">Il caricamento è fallito a causa di un errore sconosciuto.</string>
+  <string name="stream_ui_message_list_attachment_invalid_url">Il caricamento è fallito a causa di un url non valido.</string>
+  <string name="stream_ui_message_list_attachment_invalid_mime_type">Qualcosa è andato storto. Impossibile aprire l\'allegato: %s</string>
+  <string name="stream_ui_message_list_attachment_display_error">Errore. Il file non può essere visualizzato</string>
+  <string name="stream_ui_message_list_video_display_error">Errore. Il video non può essere visualizzato</string>
+  <string name="stream_ui_message_list_error_cannot_open_link">Non c\'è nessuna app per visualizzare questo url:\n%s</string>
+  <string name="stream_ui_message_list_footnote_edited_now">poco fa</string>
+
+  <!-- Message List -->
+  <string name="stream_ui_message_list_message_deleted">Questo messaggio è stato eliminato.</string>
+  <string name="stream_ui_message_list_semantics_message_status_read">Messaggio letto</string>
+  <string name="stream_ui_message_list_semantics_message_status_read_by">Messaggio letto da %d membri</string>
+  <string name="stream_ui_message_list_semantics_message_status_pending">Messaggio in sospeso</string>
+  <string name="stream_ui_message_list_semantics_message_status_sent">Messaggio inviato</string>
+  <string name="stream_ui_message_list_semantics_message_attachments">%d allegati</string>
+  <string name="stream_ui_message_list_semantics_message_attachment_image">Immagine allegata</string>
+  <string name="stream_ui_message_list_semantics_message_attachment_video">Video allegato</string>
+  <plurals name="stream_ui_message_list_semantics_message_reactions">
+    <item quantity="one">%d reazione al messaggio</item>
+    <item quantity="other">%d reazioni al messaggio</item>
+  </plurals>
+
+  <!--Moderation Dialog-->
+  <string name="stream_ui_moderation_dialog_title">Invio messaggio fallito</string>
+  <string name="stream_ui_moderation_dialog_description">Questo messaggio potrebbe violare le nostre regole di moderazione. Sei sicuro di volerlo inviare? Dai un\'occhiata alle nostre linee guida della community.</string>
+  <string name="stream_ui_moderation_dialog_send">Invia comunque</string>
+  <string name="stream_ui_moderation_dialog_edit">Modifica messaggio</string>
+  <string name="stream_ui_moderation_dialog_delete">Elimina messaggio</string>
+
+  <string name="stream_ui_channel_list_untitled_channel">Canale senza nome</string>
+
+  <!-- Mention List -->
+  <string name="stream_ui_mention_list_empty">Ancora nessuna menzione…</string>
+  <string name="stream_ui_mention_list_error">Si è verificato un errore</string>
+
+  <!-- Channel Info -->
+
+  <string name="stream_ui_channel_info_group_title">Info gruppo</string>
+  <string name="stream_ui_channel_info_member_add_button">Aggiungi membro</string>
+  <string name="stream_ui_channel_info_member_owner">Proprietario</string>
+  <string name="stream_ui_channel_info_member_moderator">Moderatore</string>
+  <string name="stream_ui_channel_info_expand_button">Altri %d</string>
+  <string name="stream_ui_channel_info_copy_user_handle">Copia identificativo utente</string>
+  <string name="stream_ui_channel_info_name_field_label">NOME</string>
+  <string name="stream_ui_channel_info_name_field_placeholder">Aggiungi un nome al gruppo</string>
+
+  <string name="stream_ui_channel_info_rename_group_error">Impossibile rinominare il gruppo</string>
+  <string name="stream_ui_channel_info_mute_conversation_error">Impossibile modificare lo stato di silenziamento della conversazione</string>
+  <string name="stream_ui_channel_info_mute_group_error">Impossibile modificare lo stato di silenziamento del gruppo</string>
+  <string name="stream_ui_channel_info_hide_conversation_error">Impossibile modificare lo stato di visibilità della conversazione</string>
+  <string name="stream_ui_channel_info_hide_group_error">Impossibile modificare lo stato di visibilità del gruppo</string>
+  <string name="stream_ui_channel_info_leave_conversation_error">Impossibile abbandonare la conversazione</string>
+  <string name="stream_ui_channel_info_leave_group_error">Impossibile abbandonare il gruppo</string>
+  <string name="stream_ui_channel_info_delete_conversation_error">Impossibile eliminare la conversazione</string>
+  <string name="stream_ui_channel_info_delete_group_error">Impossibile eliminare il gruppo</string>
+  <string name="stream_ui_channel_info_ban_member_error">Impossibile bannare il membro</string>
+  <string name="stream_ui_channel_info_unban_member_error">Impossibile rimuovere il ban al membro</string>
+  <string name="stream_ui_channel_info_remove_member_error">Impossibile rimuovere il membro</string>
+
+  <string name="stream_ui_channel_info_option_mute_conversation">Silenzia conversazione</string>
+  <string name="stream_ui_channel_info_option_mute_group">Silenzia gruppo</string>
+  <string name="stream_ui_channel_info_option_hide_conversation">Nascondi conversazione</string>
+  <string name="stream_ui_channel_info_option_hide_group">Nascondi gruppo</string>
+  <string name="stream_ui_channel_info_option_leave_conversation">Abbandona conversazione</string>
+  <string name="stream_ui_channel_info_option_leave_group">Abbandona gruppo</string>
+  <string name="stream_ui_channel_info_option_pinned_messages">Messaggi fissati</string>
+  <string name="stream_ui_channel_info_option_media_attachments">Foto &amp; Video</string>
+  <string name="stream_ui_channel_info_option_files_attachments">File</string>
+  <string name="stream_ui_channel_info_option_delete_conversation">Elimina conversazione</string>
+  <string name="stream_ui_channel_info_option_delete_group">Elimina gruppo</string>
+
+  <string name="stream_ui_channel_info_hide_conversation_modal_message">Sei sicuro di voler nascondere questa conversazione?</string>
+  <string name="stream_ui_channel_info_hide_conversation_modal_clear_history">Cancella anche la cronologia della conversazione</string>
+  <string name="stream_ui_channel_info_hide_group_modal_message">Sei sicuro di voler nascondere questo gruppo?</string>
+  <string name="stream_ui_channel_info_hide_group_modal_clear_history">Cancella anche la cronologia del gruppo</string>
+  <string name="stream_ui_channel_info_leave_conversation_modal_message">Sei sicuro di voler abbandonare questa conversazione?</string>
+  <string name="stream_ui_channel_info_leave_group_modal_message">Sei sicuro di voler abbandonare questo gruppo?</string>
+  <string name="stream_ui_channel_info_delete_conversation_modal_message">Sei sicuro di voler eliminare questa conversazione?</string>
+  <string name="stream_ui_channel_info_delete_group_modal_message">Sei sicuro di voler eliminare questo gruppo?</string>
+
+  <!-- Channel Info Member -->
+
+  <string name="stream_ui_channel_info_member_modal_ban_no_expiration">Il ban non ha scadenza</string>
+  <string name="stream_ui_channel_info_member_modal_ban_expires_at">Il ban scade %s</string>
+  <string name="stream_ui_channel_info_member_modal_ban_expired">Il ban è già scaduto</string>
+  <string name="stream_ui_channel_info_member_modal_option_message_member">Messaggio</string>
+  <string name="stream_ui_channel_info_member_modal_option_ban_member">Banna</string>
+  <string name="stream_ui_channel_info_member_modal_option_unban_member">Rimuovi ban</string>
+  <string name="stream_ui_channel_info_member_modal_option_remove_member">Rimuovi dal gruppo</string>
+
+  <string name="stream_ui_channel_info_ban_member_modal_title">Bannare %s per:</string>
+  <string name="stream_ui_channel_info_ban_member_modal_timeout_one_hour">Un\'ora</string>
+  <string name="stream_ui_channel_info_ban_member_modal_timeout_one_day">Un giorno</string>
+  <string name="stream_ui_channel_info_ban_member_modal_timeout_one_week">Una settimana</string>
+  <string name="stream_ui_channel_info_ban_member_modal_no_timeout">Permanentemente</string>
+
+  <string name="stream_ui_channel_info_remove_member_modal_message">Sei sicuro di voler rimuovere\n%s ?</string>
+
+  <!-- Channel List -->
+
+  <string name="stream_ui_location_static_message_text">📍Posizione</string>
+  <string name="stream_ui_location_live_message_text">📍Posizione in tempo reale</string>
+
+  <!-- Polls -->
+
+  <string name="stream_ui_poll_multiple_answers_error">Digita un numero da %s a %s</string>
+  <string name="stream_ui_poll_description_closed">Votazione terminata</string>
+  <string name="stream_ui_poll_description_single_answer">Seleziona una</string>
+  <string name="stream_ui_poll_description_multiple_answers">Seleziona fino a %d</string>
+  <string name="stream_ui_poll_action_see_all">Vedi tutte le %d opzioni</string>
+  <plurals name="stream_ui_poll_action_view_comments">
+    <item quantity="one">Visualizza %d commento</item>
+    <item quantity="other">Visualizza %d commenti</item>
+  </plurals>
+
+  <!-- Channel Attachments -->
+
+  <string name="stream_ui_channel_attachments_media_title">Foto &amp; Video</string>
+  <string name="stream_ui_channel_attachments_media_empty_title">Nessun media</string>
+  <string name="stream_ui_channel_attachments_media_empty_text">I media inviati in questa chat appariranno qui.</string>
+  <string name="stream_ui_channel_attachments_media_load_error">Impossibile caricare gli allegati media!</string>
+  <!-- TODO Remove this string when the deprecated MediaGalleryPreviewPageIndicator component is removed -->
+  <string name="stream_ui_channel_attachments_media_preview_index">%d di %d</string>
+
+  <string name="stream_ui_channel_attachments_files_title">File</string>
+  <string name="stream_ui_channel_attachments_files_empty_title">Nessun file</string>
+  <string name="stream_ui_channel_attachments_files_empty_text">I file inviati in questa chat appariranno qui.</string>
+  <string name="stream_ui_channel_attachments_files_load_error">Impossibile caricare gli allegati file!</string>
+
 </resources>

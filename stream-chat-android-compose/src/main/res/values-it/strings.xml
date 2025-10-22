@@ -15,66 +15,241 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <!-- Channel List Header -->
+  <string name="stream_compose_channel_list_header_new_chat">Nuova chat</string>
+
+  <!-- Search Input -->
+  <string name="stream_compose_search_input_cancel">Annulla</string>
+  <string name="stream_compose_search_input_hint">Cerca</string>
+
+  <!-- Channel List -->
+  <string name="stream_compose_channel_list_draft">Bozza: </string>
+  <string name="stream_compose_channel_list_you">Tu</string>
+  <string name="stream_compose_channel_list_empty_channels">Nessun canale disponibile</string>
+  <string name="stream_compose_channel_list_empty_search_results">Nessun risultato per \"%1$s\"</string>
+
+  <!-- Selected Channel Menu -->
+  <string name="stream_compose_selected_channel_menu_view_info">Visualizza info</string>
+  <string name="stream_compose_selected_channel_menu_leave_group">Abbandona gruppo</string>
+  <string name="stream_compose_selected_channel_menu_pin_channel">Fissa canale</string>
+  <string name="stream_compose_selected_channel_menu_unpin_channel">Rimuovi canale</string>
+  <string name="stream_compose_selected_channel_menu_archive_channel">Archivia canale</string>
+  <string name="stream_compose_selected_channel_menu_unarchive_channel">Ripristina canale</string>
+  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">Abbandona gruppo</string>
+  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">Vuoi abbandonare il gruppo %1$s?</string>
+  <string name="stream_compose_selected_channel_menu_mute_channel">Silenzia canale</string>
+  <string name="stream_compose_selected_channel_menu_unmute_channel">Riattiva canale</string>
+  <string name="stream_compose_selected_channel_menu_delete_conversation">Elimina conversazione</string>
+  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">Elimina conversazione</string>
+  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">Vuoi eliminare il canale %1$s?</string>
+  <string name="stream_compose_selected_channel_menu_dismiss">Annulla</string>
+
+  <!-- Common -->
+  <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
   <plurals name="stream_compose_member_count">
-    <item quantity="one">"%1d Membro"</item>
-    <item quantity="other">"%1d Membri"</item>
+    <item quantity="one">%1d Membro</item>
+    <item quantity="other">%1d Membri</item>
   </plurals>
+  <string name="stream_compose_ok">OK</string>
+  <string name="stream_compose_cancel">Annulla</string>
+  <string name="stream_compose_waiting_for_network">In attesa della rete</string>
+  <string name="stream_compose_user_status_online">Online</string>
+  <string name="stream_compose_user_status_last_seen">Visto %1$s</string>
+  <string name="stream_compose_user_status_last_seen_just_now">Visto poco fa</string>
+  <string name="stream_compose_disconnected">Disconnesso</string>
+
+  <!-- Message List Header -->
   <plurals name="stream_compose_message_list_header_typing_users">
-    <item quantity="one">"%s sta scrivendo"</item>
-    <item quantity="other">"%s e altri %d stanno scrivendo"</item>
+    <item quantity="one">%s sta scrivendo</item>
+    <item quantity="other">%s e altri %d stanno scrivendo</item>
   </plurals>
-  <plurals name="stream_compose_message_list_thread_footnote">
-    <item quantity="one">"%d Risposta nella Conversazione"</item>
-    <item quantity="other">"%d Risposte nella Conversazione"</item>
+
+  <!-- Message List -->
+  <string name="stream_compose_message_list_giphy_title">Giphy</string>
+  <string name="stream_compose_message_list_giphy_send">Invia</string>
+  <string name="stream_compose_message_list_giphy_cancel">Annulla</string>
+  <string name="stream_compose_message_list_giphy_shuffle">Cambia</string>
+  <string name="stream_compose_message_list_footnote_edited">Modificato</string>
+  <string name="stream_compose_message_list_thread_footnote_thread_reply">Risposta nel thread</string>
+  <string name="stream_compose_message_list_thread_footnote_thread_replies">%d Risposte nel thread</string>
+  <plurals name="stream_compose_message_list_thread_footnote" translatable="false">
+    <item quantity="one">@string/stream_compose_message_list_thread_footnote_thread_reply</item>
+    <item quantity="other">@string/stream_compose_message_list_thread_footnote_thread_replies</item>
   </plurals>
   <plurals name="stream_compose_message_list_thread_separator">
-    <item quantity="one">"%d Risposta"</item>
-    <item quantity="other">"%d Risposte"</item>
+    <item quantity="one">%d Risposta</item>
+    <item quantity="other">%d Risposte</item>
   </plurals>
-  <string name="stream_compose_cancel">"Annulla"</string>
-  <string name="stream_compose_channel_list_empty_channels">"Nessun canale disponibile"</string>
-  <string name="stream_compose_channel_list_empty_search_results">"Nessun risultato per %1$s"</string>
-  <string name="stream_compose_channel_list_header_new_chat">"Nuova chat"</string>
-  <string name="stream_compose_channel_list_you">"Tu"</string>
-  <string name="stream_compose_copy_message">"Copia messaggio"</string>
-  <string name="stream_compose_delete_message">"Cancella messaggio"</string>
-  <string name="stream_compose_delete_message_text">"Sei sicuro di voler definitivamente cancellare questo messaggio?"</string>
-  <string name="stream_compose_delete_message_title">"Cancella messaggio"</string>
-  <string name="stream_compose_edit_message">"Modifica messaggio"</string>
-  <string name="stream_compose_flag_message">"Segnala messaggio"</string>
-  <string name="stream_compose_flag_message_text">"Vuoi mandare una copia di questo messaggio ad un moderatore?"</string>
-  <string name="stream_compose_flag_message_title">"Segnala messaggio"</string>
-  <string name="stream_compose_member_count_online">"%1$s, %2$d Online"</string>
-  <string name="stream_compose_message_composer_command_template">"/%1$s %2$s"</string>
-  <string name="stream_compose_message_composer_error_attachment_count">"Attenzione: il limite massimo di %1$d file è stato superato."</string>
-  <string name="stream_compose_message_composer_error_file_size">"File troppo grande - max %1$s."</string>
-  <string name="stream_compose_message_composer_error_message_length">"La lunghezza massima del messaggio (%1$d) è stata superata."</string>
-  <string name="stream_compose_message_composer_instant_commands">"Commandi istantanei"</string>
-  <string name="stream_compose_message_composer_show_in_channel">"Inviato anche come messaggio diretto"</string>
-  <string name="stream_compose_message_list_empty_messages">"Nessun messaggio"</string>
-  <string name="stream_compose_message_list_giphy_cancel">"Annulla"</string>
-  <string name="stream_compose_message_list_giphy_send">"Invia"</string>
-  <string name="stream_compose_message_list_giphy_shuffle">"Casuale"</string>
-  <string name="stream_compose_message_list_giphy_title">"Giphy"</string>
-  <string name="stream_compose_mute_user">"Silenzia Utente"</string>
-  <string name="stream_compose_ok">"OK"</string>
-  <string name="stream_compose_reply">"Rispondi"</string>
-  <string name="stream_compose_search_input_cancel">"Annulla"</string>
-  <string name="stream_compose_search_input_hint">"Cerca i canali per nome"</string>
-  <string name="stream_compose_selected_channel_menu_delete_conversation">"Elimina canale"</string>
-  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"Vuoi eliminare il canale% 1$s?"</string>
-  <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"Elimina canale"</string>
-  <string name="stream_compose_selected_channel_menu_dismiss">"Annulla"</string>
-  <string name="stream_compose_selected_channel_menu_leave_group">"Esci dal gruppo"</string>
-  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">"Vuoi lasciare il gruppo %1$s?"</string>
-  <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">"Esci dal gruppo"</string>
-  <string name="stream_compose_selected_channel_menu_mute_channel">"Disattiva canale"</string>
-  <string name="stream_compose_selected_channel_menu_unmute_channel">"Riattiva canale"</string>
-  <string name="stream_compose_selected_channel_menu_view_info">"Vedi info"</string>
-  <string name="stream_compose_thread_reply">"Rispondi nella conversazione"</string>
-  <string name="stream_compose_unmute_user">"Riattiva Utente"</string>
-  <string name="stream_compose_user_status_last_seen">"Ultimo accesso %1$s fa"</string>
-  <string name="stream_compose_user_status_last_seen_just_now">"Ultimo accesso di recente"</string>
-  <string name="stream_compose_user_status_online">"Online"</string>
-  <string name="stream_compose_waiting_for_network">"Attendo la rete"</string>
+  <string name="stream_compose_message_list_unread_separator">Messaggi non letti</string>
+  <string name="stream_compose_message_list_empty_messages">Nessun messaggio</string>
+  <string name="stream_compose_message_list_error_cannot_open_link">Non c\'è nessuna app per visualizzare questo url:\n%s</string>
+  <string name="stream_compose_message_list_unsupported_attachment">Allegato non supportato</string>
+  <string name="stream_compose_message_list_translated">Tradotto in %s</string>
+  <string name="stream_compose_message_list_show_original">&#160;· Mostra originale</string>
+  <string name="stream_compose_message_list_show_translation">Mostra traduzione</string>
+
+  <!--  Quoted Message  -->
+  <string name="stream_compose_quoted_message_image_tag">Immagine</string>
+  <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
+  <string name="stream_compose_quoted_message_file_tag">File</string>
+  <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
+
+  <!-- Selected Message Menu -->
+  <string name="stream_compose_block_user">Blocca utente</string>
+  <string name="stream_compose_unblock_user">Sblocca utente</string>
+  <string name="stream_compose_resend_message">Reinvia</string>
+  <string name="stream_compose_reply">Rispondi</string>
+  <string name="stream_compose_thread_reply">Risposta nel thread</string>
+  <string name="stream_compose_mark_as_unread">Segna come non letto</string>
+  <string name="stream_compose_copy_message">Copia messaggio</string>
+  <string name="stream_compose_edit_message">Modifica messaggio</string>
+  <string name="stream_compose_delete_message">Elimina messaggio</string>
+  <string name="stream_compose_mute_user">Silenzia utente</string>
+  <string name="stream_compose_unmute_user">Riattiva utente</string>
+  <string name="stream_compose_unpin_message">Rimuovi da questa chat</string>
+  <string name="stream_compose_pin_message">Fissa in questa chat</string>
+  <string name="stream_compose_flag_message">Segnala messaggio</string>
+  <plurals name="stream_compose_message_reactions">
+    <item quantity="one">%d Reazione al messaggio</item>
+    <item quantity="other">%d Reazioni al messaggio</item>
+  </plurals>
+
+  <!-- Reactions Picker -->
+  <string name="stream_compose_show_more_reactions">Mostra più reazioni</string>
+
+  <!-- Message Action Prompts -->
+  <string name="stream_compose_delete_message_title">Elimina messaggio</string>
+  <string name="stream_compose_delete_message_text">Sei sicuro di voler eliminare questo messaggio?</string>
+  <string name="stream_compose_flag_message_title">Segnala messaggio</string>
+  <string name="stream_compose_flag_message_text">Vuoi inviare una copia di questo messaggio a un moderatore per ulteriori indagini?</string>
+
+  <!-- Message Composer -->
+  <string name="stream_compose_message_composer_error_message_length">Lunghezza massima del messaggio (%1$d) superata.</string>
+  <string name="stream_compose_message_composer_error_file_size">Il file è troppo grande - massimo %1$s.</string>
+  <string name="stream_compose_message_composer_error_attachment_count">Numero di allegati (%1$d) superato.</string>
+  <string name="stream_compose_message_composer_error_sending_links_not_allowed">L\'invio di link non è consentito in questa conversazione.</string>
+  <string name="stream_compose_message_composer_instant_commands">Comandi istantanei</string>
+  <string name="stream_compose_message_composer_command_template">/%1$s %2$s</string>
+  <string name="stream_compose_message_composer_show_in_channel">Invia anche come messaggio diretto</string>
+  <string name="stream_compose_message_composer_file_not_supported">Tipo di file non supportato</string>
+
+  <!-- Audio Recording -->
+  <string name="stream_compose_message_composer_slide_to_cancel">Scorri per annullare</string>
+  <string name="stream_compose_message_composer_hold_to_record">Tieni premuto per iniziare, rilascia per inviare.</string>
+  <string name="stream_compose_audio_recording_preview">Messaggio vocale</string>
+
+  <string name="stream_compose_message_label">Invia un messaggio</string>
+  <string name="stream_compose_cannot_send_messages_label">Non puoi inviare messaggi in questo canale</string>
+  <string name="stream_compose_send_message">Invia</string>
+  <string name="stream_compose_record_audio_message">Registra messaggio audio</string>
+  <string name="stream_compose_attachments">Allegati</string>
+  <string name="stream_compose_images_option">Immagini</string>
+  <string name="stream_compose_files_option">File</string>
+  <string name="stream_compose_poll_option">Sondaggio</string>
+  <string name="stream_compose_capture_option">Cattura media</string>
+  <string name="stream_compose_send_attachment">Invia allegato</string>
+  <string name="stream_compose_recent_files">File recenti</string>
+  <string name="stream_compose_thread_title">Risposta nel thread</string>
+  <string name="stream_compose_thread_subtitle">con %1$s</string>
+  <string name="stream_compose_reply_to_message">Rispondi al messaggio</string>
+  <string name="stream_compose_message_deleted">Messaggio eliminato</string>
+  <string name="stream_compose_message_moderated">Il messaggio è stato bloccato dalle regole di moderazione</string>
+  <string name="stream_compose_only_visible_to_you">Visibile solo a te</string>
+  <string name="stream_compose_download">Scarica</string>
+  <string name="stream_compose_share">Condividi</string>
+  <string name="stream_compose_photos">Foto</string>
+  <string name="stream_compose_image_order">%1$d di %2$d</string>
+  <string name="stream_compose_scroll_to_bottom">Scorri fino in fondo</string>
+  <string name="stream_compose_new_message">Nuovo messaggio</string>
+  <string name="stream_compose_storage_permission_title">Permesso di lettura della memoria mancante!</string>
+  <string name="stream_compose_grant_permission">Concedi permesso</string>
+  <string name="stream_compose_remaining_images_count">+%1$d</string>
+  <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
+  <string name="stream_compose_attachment_gallery_share">Condividi immagine</string>
+  <string name="stream_compose_giphy_label">GIPHY</string>
+  <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
+  <string name="stream_compose_upload_file_count">Caricamento %1$d / %2$d …</string>
+  <string name="stream_compose_pinned_to_channel_by">Fissato da %1$s</string>
+  <string name="stream_compose_message_list_you">Tu</string>
+  <string name="stream_compose_also_sent_to_channel">Inviato anche al canale</string>
+  <string name="stream_compose_replied_to_thread">Ha risposto a un thread</string>
+  <string name="stream_compose_replied_to">ha risposto a:&#160;</string>
+
+  <!--  Image Preview  -->
+  <string name="stream_compose_image_options">Opzioni immagine</string>
+  <string name="stream_compose_image_preview_reply">Rispondi</string>
+  <string name="stream_compose_image_preview_show_in_chat">Mostra nella chat</string>
+  <string name="stream_compose_image_preview_save_image">Salva immagine</string>
+  <string name="stream_compose_image_preview_delete">Elimina</string>
+  <string name="stream_compose_image_preview_share">Condividi</string>
+  <string name="stream_compose_image_preview_cancel_sharing">Annulla condivisione</string>
+  <string name="stream_compose_image_preview_photos">Foto</string>
+
+  <!--  Media Gallery Preview  -->
+  <string name="stream_compose_media_gallery_preview_options">Opzioni media</string>
+  <string name="stream_compose_media_gallery_preview_reply">Rispondi</string>
+  <string name="stream_compose_media_gallery_preview_show_in_chat">Mostra nella chat</string>
+  <string name="stream_compose_media_gallery_preview_save_image">Salva media</string>
+  <string name="stream_compose_media_gallery_preview_delete">Elimina</string>
+  <string name="stream_compose_media_gallery_preview_share">Condividi</string>
+  <string name="stream_compose_media_gallery_preview_photos">Foto</string>
+  <string name="stream_compose_media_gallery_preview_preparing">Preparazione...</string>
+  <string name="stream_compose_media_gallery_preview_could_not_share_attachment">Impossibile condividere l\'allegato</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_title">Avviso file grande</string>
+  <string name="stream_compose_media_gallery_share_large_file_prompt_message">%.2f MB devono essere scaricati prima della condivisione.</string>
+
+  <!-- Content Description -->
+  <string name="stream_compose_cd_channel_item" translatable="false">Elemento canale</string>
+  <string name="stream_compose_cd_message_item" translatable="false">Elemento messaggio</string>
+  <string name="stream_compose_cd_message_input" translatable="false">Input messaggio</string>
+  <string name="stream_compose_cd_play_button" translatable="false">Pulsante riproduci</string>
+  <string name="stream_compose_cd_record_audio_message" translatable="false">Registra messaggio audio</string>
+
+  <!--  Poll  -->
+  <string name="stream_compose_poll_title" translatable="false">Crea sondaggio</string>
+  <string name="stream_compose_poll_questions_title" translatable="false">Domande</string>
+  <string name="stream_compose_poll_questions_description" translatable="false">Fai una domanda</string>
+  <string name="stream_compose_poll_option_title" translatable="false">Opzioni</string>
+  <string name="stream_compose_poll_option_description" translatable="false">Aggiungi un\'opzione</string>
+  <string name="stream_compose_poll_option_hint" translatable="false">Aggiungi un\'opzione</string>
+  <string name="stream_compose_poll_option_error_duplicated" translatable="false">Questa è già un\'opzione</string>
+  <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Elimina sondaggio</string>
+  <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Sei sicuro di voler eliminare il sondaggio?</string>
+  <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Continua a modificare</string>
+  <string name="stream_compose_poll_option_discard_dialog_confirm" translatable="false">Elimina</string>
+  <string name="stream_compose_poll_option_switch_multiple_answers" translatable="false">Risposte multiple</string>
+  <string name="stream_compose_poll_option_switch_anonymous_poll" translatable="false">Sondaggio anonimo</string>
+  <string name="stream_compose_poll_option_switch_suggest_option" translatable="false">Suggerisci un\'opzione</string>
+  <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Aggiungi un commento</string>
+  <string name="stream_compose_poll_option_max_number_of_answers_hint">Numero massimo di risposte</string>
+  <string name="stream_compose_poll_view_result" translatable="false">Visualizza risultati</string>
+  <string name="stream_compose_poll_end_vote" translatable="false">Termina votazione</string>
+  <string name="stream_compose_poll_suggest_option">Suggerisci opzione</string>
+  <string name="stream_compose_poll_options" translatable="false">Opzioni sondaggio</string>
+  <string name="stream_compose_poll_results" translatable="false">Risultati sondaggio</string>
+  <string name="stream_compose_poll_answers">Commenti sondaggio</string>
+  <string name="stream_compose_add_answer">Aggiungi un commento</string>
+  <string name="stream_compose_edit_answer">Aggiorna commento</string>
+  <string name="stream_compose_poll_vote_counts" translatable="false">%d voti</string>
+  <string name="stream_compose_poll_created_preview" translatable="false">📊 Sondaggio creato: %s</string>
+  <string name="stream_compose_poll_closed_preview" translatable="false">📊 Sondaggio chiuso: %s</string>
+
+  <!--  Pinned message list  -->
+  <string name="stream_compose_pinned_message_list_empty_title">Nessun messaggio fissato</string>
+  <string name="stream_compose_pinned_message_list_empty_description"><![CDATA[Tieni premuto un messaggio importante e scegli <b>Fissa alla conversazione</b>]]></string>
+  <string name="stream_compose_pinned_message_list_results_error">Si è verificato un errore</string>
+
+  <!--  Message preview (User in mentions / pinned messages / search results)  -->
+  <string name="stream_compose_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
+  <string name="stream_compose_suggest_an_option">Suggerisci un\'opzione</string>
+  <string name="stream_compose_confirm">Conferma</string>
+  <string name="stream_compose_dismiss">Chiudi</string>
+
+  <!--  Threads  -->
+  <string name="stream_compose_thread_list_empty_title">Ancora nessun thread qui…</string>
+  <string name="stream_compose_in">" in "</string>
+  <plurals name="stream_compose_thread_list_new_threads">
+    <item quantity="one">%d nuovo thread</item>
+    <item quantity="other">%d nuovi thread</item>
+  </plurals>
 </resources>
