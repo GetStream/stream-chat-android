@@ -43,159 +43,159 @@ public interface NativeMediaPlayer {
         /**
          * Unspecified media player error.
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNKNOWN: Int = 1
 
         /**
          * Media server died. In this case, the application must release the
          * MediaPlayer object and instantiate a new one.
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_SERVER_DIED: Int = 100
 
         /**
          * The video is streamed and its container is not valid for progressive
          * playback i.e the video's index (e.g moov atom) is not at the start of the file.
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK: Int = 200
 
         /** File or network related operation errors.  */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_IO: Int = -1004
 
         /** Bitstream is not conforming to the related coding standard or file spec.  */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_MALFORMED: Int = -1007
 
         /**
          * Bitstream is conforming to the related coding standard or file spec, but
          * the media framework does not support the feature.
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNSUPPORTED: Int = -1010
 
         /** Some operation takes too long to complete, usually more than 3-5 seconds.  */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_TIMED_OUT: Int = -110
 
         /**
          * Unspecified low-level system error. This value originated from UNKNOWN_ERROR in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_SYSTEM: Int = -2147483648
 
         /**
          * Unspecified low-level system error. This value originated from OK in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_OK: Int = 0
 
         /**
          * Unspecified low-level system error. This value originated from UNKNOWN_ERROR in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNKNOWN_ERROR: Int = -2147483648
 
         /**
          * Unspecified low-level system error. This value originated from NO_MEMORY in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NO_MEMORY: Int = -12
 
         /**
          * Unspecified low-level system error. This value originated from INVALID_OPERATION in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_INVALID_OPERATION: Int = -38
 
         /**
          * Unspecified low-level system error. This value originated from BAD_VALUE in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_VALUE: Int = -22
 
         /**
          * Unspecified low-level system error. This value originated from BAD_TYPE in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_TYPE: Int = -2147483647
 
         /**
          * Unspecified low-level system error. This value originated from NAME_NOT_FOUND in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NAME_NOT_FOUND: Int = -2
 
         /**
          * Unspecified low-level system error. This value originated from PERMISSION_DENIED in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_PERMISSION_DENIED: Int = -1
 
         /**
          * Unspecified low-level system error. This value originated from NO_INIT in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NO_INIT: Int = -19
 
         /**
          * Unspecified low-level system error. This value originated from ALREADY_EXISTS in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_ALREADY_EXISTS: Int = -17
 
         /**
          * Unspecified low-level system error. This value originated from DEAD_OBJECT in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_DEAD_OBJECT: Int = -32
 
         /**
          * Unspecified low-level system error. This value originated from FAILED_TRANSACTION in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_FAILED_TRANSACTION: Int = -2147483646
 
         /**
          * Unspecified low-level system error. This value originated from JPARKS_BROKE_IT in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_JPARKS_BROKE_IT: Int = -32
 
         /**
          * Unspecified low-level system error. This value originated from BAD_INDEX in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_INDEX: Int = -75
 
         /**
          * Unspecified low-level system error. This value originated from NOT_ENOUGH_DATA in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NOT_ENOUGH_DATA: Int = -61
 
         /**
          * Unspecified low-level system error. This value originated from WOULD_BLOCK in
          * system/core/include/utils/Errors.h
          */
-        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
+        @Deprecated("This constant is no longer used. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_WOULD_BLOCK: Int = -11
     }
 
