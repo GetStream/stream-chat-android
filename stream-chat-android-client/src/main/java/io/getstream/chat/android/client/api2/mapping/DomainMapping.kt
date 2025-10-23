@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
@@ -675,6 +676,7 @@ internal class DomainMapping(
      */
     internal fun PrivacySettingsDto.toDomain(): PrivacySettings = PrivacySettings(
         typingIndicators = typing_indicators?.toDomain(),
+        deliveryReceipts = delivery_receipts?.toDomain(),
         readReceipts = read_receipts?.toDomain(),
     )
 
@@ -684,6 +686,11 @@ internal class DomainMapping(
     internal fun TypingIndicatorsDto.toDomain(): TypingIndicators = TypingIndicators(
         enabled = enabled,
     )
+
+    /**
+     * Transforms [DeliveryReceiptsDto] to [DeliveryReceipts].
+     */
+    internal fun DeliveryReceiptsDto.toDomain() = DeliveryReceipts(enabled = enabled)
 
     /**
      * Transforms [ReadReceiptsDto] to [ReadReceipts].
