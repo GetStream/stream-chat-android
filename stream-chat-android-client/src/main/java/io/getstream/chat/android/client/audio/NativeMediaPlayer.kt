@@ -387,6 +387,10 @@ internal class NativeMediaPlayerImpl(
             }
         }
 
+    /**
+     * We need to build the factory with constant bitrate seeking enabled to allow seeking in the audio file.
+     * For more info see [ExoPlayer Progressive](https://developer.android.com/media/media3/exoplayer/progressive).
+     */
     private val mediaSourceFactory: MediaSource.Factory = ProgressiveMediaSource.Factory(
         DefaultDataSource.Factory(context),
         DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true),
@@ -396,7 +400,6 @@ internal class NativeMediaPlayerImpl(
     private var onErrorListener: ((errorCode: Int) -> Boolean)? = null
     private var onPreparedListener: (() -> Unit)? = null
 
-    private var pendingSourceUrl: String? = null
     private var isPreparing: Boolean = false
 
     override var state: NativeMediaPlayerState = NativeMediaPlayerState.END
@@ -475,7 +478,6 @@ internal class NativeMediaPlayerImpl(
     override fun setDataSource(path: String) {
         val player = exoPlayer
         logger.d { "[setDataSource] exoPlayer: ${player.hashCode()}, path: $path" }
-        pendingSourceUrl = path
         val mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(path))
         player.setMediaSource(mediaSource)
         state = NativeMediaPlayerState.INITIALIZED
@@ -526,7 +528,6 @@ internal class NativeMediaPlayerImpl(
         if (DEBUG) logger.d { "[reset] exoPlayer: ${player.hashCode()}" }
         player.stop()
         player.clearMediaItems()
-        pendingSourceUrl = null
         isPreparing = false
         state = NativeMediaPlayerState.IDLE
     }
