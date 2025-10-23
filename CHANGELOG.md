@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
 - Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
