@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.audio
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -34,7 +33,7 @@ import io.getstream.log.taggedLogger
 import java.io.IOException
 
 /**
- * Defines the contract for communicating with a native media player implementation (ex. ExoPayer).
+ * Defines the contract for communicating with a native media player implementation (ex. ExoPlayer).
  */
 @InternalStreamChatApi
 public interface NativeMediaPlayer {
@@ -362,6 +361,7 @@ public enum class NativeMediaPlayerState {
  * @param context The context.
  * @param builder A builder function to create an [ExoPlayer] instance.
  */
+@OptIn(UnstableApi::class)
 internal class NativeMediaPlayerImpl(
     context: Context,
     private val builder: () -> ExoPlayer,
@@ -387,7 +387,6 @@ internal class NativeMediaPlayerImpl(
             }
         }
 
-    @SuppressLint("UnsafeOptInUsageError")
     private val mediaSourceFactory: MediaSource.Factory = ProgressiveMediaSource.Factory(
         DefaultDataSource.Factory(context),
         DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true),
@@ -467,7 +466,6 @@ internal class NativeMediaPlayerImpl(
     override val duration: Int
         get() = exoPlayer.duration.toInt()
 
-    @OptIn(UnstableApi::class)
     @Throws(
         IOException::class,
         IllegalArgumentException::class,
