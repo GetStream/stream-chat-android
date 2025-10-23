@@ -60,6 +60,8 @@ import io.getstream.chat.android.offline.repository.domain.queryChannels.interna
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.receipts.MessageReceiptDao
+import io.getstream.chat.android.offline.repository.domain.receipts.MessageReceiptEntity
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateDao
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateEntity
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadDao
@@ -86,8 +88,9 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         ThreadEntity::class,
         ThreadOrderEntity::class,
         DraftMessageEntity::class,
+        MessageReceiptEntity::class,
     ],
-    version = 95,
+    version = 96,
     exportSchema = false,
 )
 @TypeConverters(
@@ -124,6 +127,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun pollDao(): PollDao
     abstract fun threadDao(): ThreadDao
     abstract fun threadOrderDao(): ThreadOrderDao
+    abstract fun messageReceiptDao(): MessageReceiptDao
 
     companion object {
         @Volatile
