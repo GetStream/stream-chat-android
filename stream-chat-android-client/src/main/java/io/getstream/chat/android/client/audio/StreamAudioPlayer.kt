@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.client.audio
 
-import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
-import androidx.core.net.toUri
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.log.taggedLogger
@@ -29,11 +26,9 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("TooManyFunctions")
-internal class StreamMediaPlayer(
+internal class StreamAudioPlayer(
     private val mediaPlayer: NativeMediaPlayer,
     private val userScope: UserScope,
-    @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-    private val isMarshmallowOrHigher: Boolean,
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
@@ -43,7 +38,7 @@ internal class StreamMediaPlayer(
         private const val SPEED_INCREMENT = 0.5F
     }
 
-    private val logger by taggedLogger("Chat:StreamMediaPlayer")
+    private val logger by taggedLogger("Chat:StreamAudioPlayer")
 
     private val onStateListeners: MutableMap<Int, MutableList<(AudioState) -> Unit>> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, MutableList<(ProgressData) -> Unit>> = mutableMapOf()
@@ -137,7 +132,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun changeSpeed() {
-        if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
+        if (mediaPlayer.isSpeedSettable()) {
             logger.i { "[changeSpeed] no args" }
             val currentSpeed = playingSpeed
             val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
@@ -158,8 +153,7 @@ internal class StreamMediaPlayer(
         }
     }
 
-    override fun currentSpeed(): Float =
-        if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
+    override fun currentSpeed(): Float = mediaPlayer.speed
 
     override fun dispose() {
         userScope.launch(DispatcherProvider.Main) {
@@ -238,8 +232,8 @@ internal class StreamMediaPlayer(
                 onComplete(audioHash)
             }
 
-            setOnErrorListener { what, extra ->
-                onError(audioHash, what, extra)
+            setOnErrorListener { errorCode ->
+                onError(audioHash, errorCode)
             }
 
             playerState = PlayerState.LOADING
@@ -266,7 +260,7 @@ internal class StreamMediaPlayer(
                 return
             }
             mediaPlayer.seekTo(seekTo)
-            if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
+            if (mediaPlayer.isSpeedSettable()) {
                 mediaPlayer.speed = playingSpeed
                 publishSpeed(currentAudioHash, playingSpeed)
             }
@@ -331,8 +325,8 @@ internal class StreamMediaPlayer(
         }
     }
 
-    private fun onError(audioHash: Int, what: Int, extra: Int): Boolean {
-        logger.e { "[onError] audioHash: $audioHash, what: $what, extra: $extra" }
+    private fun onError(audioHash: Int, errorCode: Int): Boolean {
+        logger.e { "[onError] audioHash: $audioHash, errorCode: $errorCode" }
         complete(audioHash)
         resetPlayer()
         mediaPlayer.release()
@@ -428,14 +422,6 @@ internal class StreamMediaPlayer(
 
     private fun publishSpeed(audioHash: Int, speed: Float) {
         onSpeedListeners[audioHash]?.forEach { listener -> listener.invoke(speed) }
-    }
-
-    private fun normalize(uri: String): String {
-        try {
-            return uri.toUri().toString()
-        } catch (_: Throwable) {
-            return uri
-        }
     }
 
     private fun NativeMediaPlayer.isSeekable(): Boolean {

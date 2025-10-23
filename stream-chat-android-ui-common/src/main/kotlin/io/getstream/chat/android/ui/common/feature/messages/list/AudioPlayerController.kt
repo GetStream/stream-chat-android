@@ -37,7 +37,7 @@ public class AudioPlayerController(
     private val getRecordingUri: (Attachment) -> String?,
 ) {
 
-    private val logger by taggedLogger("Chat:PlayerController")
+    private val logger by taggedLogger("Chat:AudioPlayerController")
 
     public val state: MutableStateFlow<AudioPlayerState> = MutableStateFlow(
         AudioPlayerState(getRecordingUri = getRecordingUri),
@@ -205,11 +205,11 @@ public class AudioPlayerController(
         val initialState = curState.newCurrentState(audioHash, recordingUri, waveform, playbackInMs, durationInMs)
         setState(initialState)
 
-        if (seekTo > 0) audioPlayer.seekTo(playbackInMs, audioHash)
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
         audioPlayer.play(recordingUri, audioHash)
+        if (seekTo > 0) audioPlayer.seekTo(playbackInMs, audioHash)
 
         val audioState = audioPlayer.currentState
         val nowState = state.value

@@ -84,6 +84,7 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.work)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)

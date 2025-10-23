@@ -16,13 +16,26 @@
 
 package io.getstream.chat.android.client.audio
 
-import android.media.MediaPlayer
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.extractor.DefaultExtractorsFactory
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.log.taggedLogger
 import java.io.IOException
 
+/**
+ * Defines the contract for communicating with a native media player implementation (ex. ExoPayer).
+ */
 @InternalStreamChatApi
 public interface NativeMediaPlayer {
 
@@ -30,135 +43,159 @@ public interface NativeMediaPlayer {
         /**
          * Unspecified media player error.
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNKNOWN: Int = 1
 
         /**
          * Media server died. In this case, the application must release the
          * MediaPlayer object and instantiate a new one.
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_SERVER_DIED: Int = 100
 
         /**
          * The video is streamed and its container is not valid for progressive
          * playback i.e the video's index (e.g moov atom) is not at the start of the file.
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK: Int = 200
 
         /** File or network related operation errors.  */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_IO: Int = -1004
 
         /** Bitstream is not conforming to the related coding standard or file spec.  */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_MALFORMED: Int = -1007
 
         /**
          * Bitstream is conforming to the related coding standard or file spec, but
          * the media framework does not support the feature.
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNSUPPORTED: Int = -1010
 
         /** Some operation takes too long to complete, usually more than 3-5 seconds.  */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_TIMED_OUT: Int = -110
 
         /**
          * Unspecified low-level system error. This value originated from UNKNOWN_ERROR in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_SYSTEM: Int = -2147483648
 
         /**
          * Unspecified low-level system error. This value originated from OK in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_OK: Int = 0
 
         /**
          * Unspecified low-level system error. This value originated from UNKNOWN_ERROR in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_UNKNOWN_ERROR: Int = -2147483648
 
         /**
          * Unspecified low-level system error. This value originated from NO_MEMORY in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NO_MEMORY: Int = -12
 
         /**
          * Unspecified low-level system error. This value originated from INVALID_OPERATION in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_INVALID_OPERATION: Int = -38
 
         /**
          * Unspecified low-level system error. This value originated from BAD_VALUE in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_VALUE: Int = -22
 
         /**
          * Unspecified low-level system error. This value originated from BAD_TYPE in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_TYPE: Int = -2147483647
 
         /**
          * Unspecified low-level system error. This value originated from NAME_NOT_FOUND in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NAME_NOT_FOUND: Int = -2
 
         /**
          * Unspecified low-level system error. This value originated from PERMISSION_DENIED in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_PERMISSION_DENIED: Int = -1
 
         /**
          * Unspecified low-level system error. This value originated from NO_INIT in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NO_INIT: Int = -19
 
         /**
          * Unspecified low-level system error. This value originated from ALREADY_EXISTS in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_ALREADY_EXISTS: Int = -17
 
         /**
          * Unspecified low-level system error. This value originated from DEAD_OBJECT in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_DEAD_OBJECT: Int = -32
 
         /**
          * Unspecified low-level system error. This value originated from FAILED_TRANSACTION in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_FAILED_TRANSACTION: Int = -2147483646
 
         /**
          * Unspecified low-level system error. This value originated from JPARKS_BROKE_IT in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_JPARKS_BROKE_IT: Int = -32
 
         /**
          * Unspecified low-level system error. This value originated from BAD_INDEX in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_BAD_INDEX: Int = -75
 
         /**
          * Unspecified low-level system error. This value originated from NOT_ENOUGH_DATA in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_NOT_ENOUGH_DATA: Int = -61
 
         /**
          * Unspecified low-level system error. This value originated from WOULD_BLOCK in
          * system/core/include/utils/Errors.h
          */
+        @Deprecated("This constant is no longer. Check for [PlaybackException.errorCode] instead.")
         public const val MEDIA_ERROR_WOULD_BLOCK: Int = -11
     }
 
@@ -170,8 +207,6 @@ public interface NativeMediaPlayer {
      * initialized or has been released.
      * @throws IllegalArgumentException when setting if params is not supported.
      */
-    @get:RequiresApi(Build.VERSION_CODES.M)
-    @set:RequiresApi(Build.VERSION_CODES.M)
     @get:Throws(IllegalStateException::class)
     @set:Throws(IllegalStateException::class, IllegalArgumentException::class)
     public var speed: Float
@@ -211,18 +246,6 @@ public interface NativeMediaPlayer {
         IllegalStateException::class,
     )
     public fun setDataSource(path: String)
-
-    /**
-     * Prepares the player for playback, synchronously.
-     *
-     * After setting the datasource and the display surface, you need to either
-     * call prepare() or prepareAsync(). For files, it is OK to call prepare(),
-     * which blocks until MediaPlayer is ready for playback.
-     *
-     * @throws IllegalStateException if it is called in an invalid state
-     */
-    @Throws(IOException::class, IllegalStateException::class)
-    public fun prepare()
 
     /**
      * Prepares the player for playback, asynchronously.
@@ -308,7 +331,7 @@ public interface NativeMediaPlayer {
      * Returning false, or not having an OnErrorListener at all, will
      * cause the OnCompletionListener to be called.
      */
-    public fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean)
+    public fun setOnErrorListener(listener: (errorCode: Int) -> Boolean)
 
     /**
      * Register a callback to be invoked when the media source is ready
@@ -333,8 +356,15 @@ public enum class NativeMediaPlayerState {
     ERROR,
 }
 
+/**
+ * Default implementation of [NativeMediaPlayer] based on ExoPlayer.
+ *
+ * @param context The context.
+ * @param builder A builder function to create an [ExoPlayer] instance.
+ */
 internal class NativeMediaPlayerImpl(
-    private val builder: () -> MediaPlayer,
+    context: Context,
+    private val builder: () -> ExoPlayer,
 ) : NativeMediaPlayer {
 
     companion object {
@@ -343,40 +373,32 @@ internal class NativeMediaPlayerImpl(
 
     private val logger by taggedLogger("Chat:NativeMediaPlayer")
 
-    private val _onErrorListener = MediaPlayer.OnErrorListener { mp, what, extra ->
-        if (DEBUG) logger.e { "[onError] what: $what, extra: $extra, mp: ${mp.hashCode()}" }
-        state = NativeMediaPlayerState.ERROR
-        onErrorListener?.invoke(what, extra) ?: false
-    }
-
-    private val _onPreparedListener = MediaPlayer.OnPreparedListener {
-        if (DEBUG) logger.d { "[onPrepared] no args" }
-        state = NativeMediaPlayerState.PREPARED
-        onPreparedListener?.invoke()
-    }
-
-    private val _onCompletionListener = MediaPlayer.OnCompletionListener {
-        if (DEBUG) logger.d { "[onCompletion] no args" }
-        state = NativeMediaPlayerState.PLAYBACK_COMPLETED
-        onCompletionListener?.invoke()
-    }
-
-    private var _mediaPlayer: MediaPlayer? = null
+    private var _exoPlayer: ExoPlayer? = null
         set(value) {
-            if (DEBUG) logger.i { "[setMediaPlayerInstance] instance: $value" }
+            if (DEBUG) logger.i { "[setExoPlayerInstance] instance: $value" }
             field = value
         }
 
-    private val mediaPlayer: MediaPlayer get() {
-        return _mediaPlayer ?: builder().also {
-            _mediaPlayer = it.setupListeners()
-            state = NativeMediaPlayerState.IDLE
+    private val exoPlayer: ExoPlayer
+        get() {
+            return _exoPlayer ?: builder().also {
+                _exoPlayer = it.setupListeners()
+                state = NativeMediaPlayerState.IDLE
+            }
         }
-    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private val mediaSourceFactory: MediaSource.Factory = ProgressiveMediaSource.Factory(
+        DefaultDataSource.Factory(context),
+        DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true),
+    )
 
     private var onCompletionListener: (() -> Unit)? = null
-    private var onErrorListener: ((what: Int, extra: Int) -> Boolean)? = null
+    private var onErrorListener: ((errorCode: Int) -> Boolean)? = null
     private var onPreparedListener: (() -> Unit)? = null
+
+    private var pendingSourceUrl: String? = null
+    private var isPreparing: Boolean = false
 
     override var state: NativeMediaPlayerState = NativeMediaPlayerState.END
         set(value) {
@@ -384,24 +406,68 @@ internal class NativeMediaPlayerImpl(
             field = value
         }
 
-    override var speed: Float
-        @RequiresApi(Build.VERSION_CODES.M)
-        @Throws(IllegalStateException::class)
-        get() = mediaPlayer.playbackParams.speed
+    private val playerListener = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (DEBUG) logger.d { "[onPlaybackStateChanged] playbackState: $playbackState" }
+            when (playbackState) {
+                Player.STATE_IDLE -> {
+                    // Do nothing - we manage IDLE state explicitly
+                }
 
-        @RequiresApi(Build.VERSION_CODES.M)
-        @Throws(IllegalStateException::class, IllegalArgumentException::class)
-        set(value) {
-            val mediaPlayer = mediaPlayer
-            if (DEBUG) logger.d { "[setSpeed] mediaPlayer: ${mediaPlayer.hashCode()}, speed: $value" }
-            mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(value)
+                Player.STATE_BUFFERING -> {
+                    if (isPreparing) {
+                        state = NativeMediaPlayerState.PREPARING
+                    }
+                }
+
+                Player.STATE_READY -> {
+                    if (isPreparing) {
+                        isPreparing = false
+                        state = NativeMediaPlayerState.PREPARED
+                        onPreparedListener?.invoke()
+                    }
+                }
+
+                Player.STATE_ENDED -> {
+                    state = NativeMediaPlayerState.PLAYBACK_COMPLETED
+                    onCompletionListener?.invoke()
+                }
+            }
         }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            if (DEBUG) logger.d { "[onIsPlayingChanged] isPlaying: $isPlaying" }
+            if (isPlaying && state != NativeMediaPlayerState.STARTED) {
+                state = NativeMediaPlayerState.STARTED
+            } else if (!isPlaying && state == NativeMediaPlayerState.STARTED &&
+                exoPlayer.playbackState != Player.STATE_ENDED
+            ) {
+                state = NativeMediaPlayerState.PAUSED
+            }
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            if (DEBUG) logger.e { "[onPlayerError] error: ${error.message}" }
+            state = NativeMediaPlayerState.ERROR
+            onErrorListener?.invoke(error.errorCode)
+        }
+    }
+
+    override var speed: Float
+        get() = exoPlayer.playbackParameters.speed
+        set(value) {
+            val player = exoPlayer
+            if (DEBUG) logger.d { "[setSpeed] exoPlayer: ${player.hashCode()}, speed: $value" }
+            player.playbackParameters = PlaybackParameters(value)
+        }
+
     override val currentPosition: Int
-        get() = mediaPlayer.currentPosition
+        get() = exoPlayer.currentPosition.toInt()
 
     override val duration: Int
-        get() = mediaPlayer.duration
+        get() = exoPlayer.duration.toInt()
 
+    @OptIn(UnstableApi::class)
     @Throws(
         IOException::class,
         IllegalArgumentException::class,
@@ -409,75 +475,73 @@ internal class NativeMediaPlayerImpl(
         IllegalStateException::class,
     )
     override fun setDataSource(path: String) {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[setDataSource] mediaPlayer: ${mediaPlayer.hashCode()}, path: $path" }
-        mediaPlayer.setDataSource(path)
+        val player = exoPlayer
+        logger.d { "[setDataSource] exoPlayer: ${player.hashCode()}, path: $path" }
+        pendingSourceUrl = path
+        val mediaSource = mediaSourceFactory.createMediaSource(MediaItem.fromUri(path))
+        player.setMediaSource(mediaSource)
         state = NativeMediaPlayerState.INITIALIZED
     }
 
     @Throws(IllegalStateException::class)
     override fun prepareAsync() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[prepareAsync] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.prepareAsync()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[prepareAsync] exoPlayer: ${player.hashCode()}" }
+        isPreparing = true
         state = NativeMediaPlayerState.PREPARING
-    }
-
-    @Throws(IOException::class, IllegalStateException::class)
-    override fun prepare() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[prepare] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.prepare()
-        state = NativeMediaPlayerState.PREPARED
+        player.prepare()
     }
 
     @Throws(IllegalStateException::class)
     override fun seekTo(msec: Int) {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[seekTo] mediaPlayer: ${mediaPlayer.hashCode()}, msec: $msec" }
-        mediaPlayer.seekTo(msec)
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[seekTo] exoPlayer: ${player.hashCode()}, msec: $msec" }
+        player.seekTo(msec.toLong())
     }
 
     @Throws(IllegalStateException::class)
     override fun start() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[start] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.start()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[start] exoPlayer: ${player.hashCode()}" }
+        player.playWhenReady = true
         state = NativeMediaPlayerState.STARTED
     }
 
     @Throws(IllegalStateException::class)
     override fun pause() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[pause] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.pause()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[pause] exoPlayer: ${player.hashCode()}" }
+        player.playWhenReady = false
         state = NativeMediaPlayerState.PAUSED
     }
 
     @Throws(IllegalStateException::class)
     override fun stop() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[stop] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.stop()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[stop] exoPlayer: ${player.hashCode()}" }
+        player.stop()
         state = NativeMediaPlayerState.STOPPED
     }
 
     override fun reset() {
-        val mediaPlayer = mediaPlayer
-        if (DEBUG) logger.d { "[reset] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.reset()
+        val player = exoPlayer
+        if (DEBUG) logger.d { "[reset] exoPlayer: ${player.hashCode()}" }
+        player.stop()
+        player.clearMediaItems()
+        pendingSourceUrl = null
+        isPreparing = false
         state = NativeMediaPlayerState.IDLE
     }
 
     override fun release() {
-        val mediaPlayer = _mediaPlayer ?: run {
-            if (DEBUG) logger.d { "[release] mediaPlayer is null" }
+        val player = _exoPlayer ?: run {
+            if (DEBUG) logger.d { "[release] exoPlayer is null" }
             return
         }
-        if (DEBUG) logger.d { "[release] mediaPlayer: ${mediaPlayer.hashCode()}" }
-        mediaPlayer.clearListeners().release()
+        if (DEBUG) logger.d { "[release] exoPlayer: ${player.hashCode()}" }
+        player.clearListeners().release()
         state = NativeMediaPlayerState.END
-        _mediaPlayer = null
+        _exoPlayer = null
     }
 
     override fun setOnPreparedListener(listener: () -> Unit) {
@@ -490,24 +554,20 @@ internal class NativeMediaPlayerImpl(
         this.onCompletionListener = listener
     }
 
-    override fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean) {
+    override fun setOnErrorListener(listener: (errorCode: Int) -> Boolean) {
         if (DEBUG) logger.d { "[setOnErrorListener] listener: $listener" }
         this.onErrorListener = listener
     }
 
-    private fun MediaPlayer.setupListeners(): MediaPlayer {
-        if (DEBUG) logger.d { "[setupListeners] mediaPlayer: ${this.hashCode()}" }
-        setOnErrorListener(_onErrorListener)
-        setOnPreparedListener(_onPreparedListener)
-        setOnCompletionListener(_onCompletionListener)
+    private fun ExoPlayer.setupListeners(): ExoPlayer {
+        if (DEBUG) logger.d { "[setupListeners] exoPlayer: ${this.hashCode()}" }
+        addListener(playerListener)
         return this
     }
 
-    private fun MediaPlayer.clearListeners(): MediaPlayer {
-        if (DEBUG) logger.d { "[clearListeners] mediaPlayer: ${this.hashCode()}" }
-        setOnErrorListener(null)
-        setOnPreparedListener(null)
-        setOnCompletionListener(null)
+    private fun ExoPlayer.clearListeners(): ExoPlayer {
+        if (DEBUG) logger.d { "[clearListeners] exoPlayer: ${this.hashCode()}" }
+        removeListener(playerListener)
         return this
     }
 }
