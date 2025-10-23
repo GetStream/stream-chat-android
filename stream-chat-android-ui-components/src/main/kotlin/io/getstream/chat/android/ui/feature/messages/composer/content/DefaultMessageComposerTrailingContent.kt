@@ -169,8 +169,8 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         val appSettings = ChatClient.instance().getAppSettings()
         val blockedMimeTypes = appSettings.app.fileUploadConfig.blockedMimeTypes
         val blockedFileExtensions = appSettings.app.fileUploadConfig.blockedFileExtensions
-        val canSendMessage = canSendMessage(state)
-        val canUploadFile = canUploadFile(state)
+        val canSendMessage = state.canSendMessage()
+        val canUploadFile = state.canUploadFile()
         val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO) &&
             !blockedFileExtensions.contains(AAC_EXTENSION)
         val hasTextInput = state.inputValue.isNotEmpty()

@@ -513,7 +513,7 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    val canSendMessage = canSendMessage(messageInputState)
+    val canSendMessage = messageInputState.canSendMessage()
 
     val isRecording = messageInputState.recording !is RecordingState.Idle
 
@@ -524,7 +524,7 @@ internal fun DefaultComposerIntegrations(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val canUploadFile = canUploadFile(messageInputState)
+            val canUploadFile = messageInputState.canUploadFile()
             if (canUploadFile) {
                 with(ChatTheme.componentFactory) {
                     MessageComposerAttachmentsButton(
@@ -556,12 +556,10 @@ internal fun DefaultComposerIntegrations(
  */
 @Composable
 internal fun DefaultComposerLabel(state: MessageComposerState) {
-    val text = with(state) {
-        if (canSendMessage(state)) {
-            stringResource(id = R.string.stream_compose_message_label)
-        } else {
-            stringResource(id = R.string.stream_compose_cannot_send_messages_label)
-        }
+    val text = if (state.canSendMessage()) {
+        stringResource(id = R.string.stream_compose_message_label)
+    } else {
+        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
     }
 
     Text(
@@ -627,7 +625,7 @@ internal fun DefaultMessageComposerTrailingContent(
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
     val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
 
-    val canSendMessage = canSendMessage(messageComposerState)
+    val canSendMessage = messageComposerState.canSendMessage()
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0 && !isInEditMode) {

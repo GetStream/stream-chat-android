@@ -31,21 +31,20 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * The final decision also considers the [MessageComposerState.sendEnabled] flag, which allows
  * temporary disabling of sending (e.g., while uploading attachments or validating input).
  *
- * @param state The current [MessageComposerState] containing capability and mode information.
  * @return `true` if the user can send a message or reply based on both capabilities and
  * the send enabled flag; `false` otherwise.
  */
-public fun canSendMessage(state: MessageComposerState): Boolean {
-    val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-    val canSendReply = state.ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
-    val isInThread = state.messageMode is MessageMode.MessageThread
+public fun MessageComposerState.canSendMessage(): Boolean {
+    val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+    val isInThread = messageMode is MessageMode.MessageThread
     val canSend = if (isInThread) {
         canSendReply
     } else {
         canSendMessage
     }
     // The final send capability depends on the channel capabilities, and potentially the user-set sendEnabled flag
-    return state.sendEnabled && canSend
+    return sendEnabled && canSend
 }
 
 /**
@@ -55,9 +54,8 @@ public fun canSendMessage(state: MessageComposerState): Boolean {
  * for the current channel. This capability allows users to attach and upload files
  * (documents, images, videos, etc.) through the message composer.
  *
- * @param state The current [MessageComposerState] containing capability information.
  * @return `true` if the user has the [ChannelCapabilities.UPLOAD_FILE] capability; `false` otherwise.
  */
-public fun canUploadFile(state: MessageComposerState): Boolean {
-    return state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+public fun MessageComposerState.canUploadFile(): Boolean {
+    return ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 }

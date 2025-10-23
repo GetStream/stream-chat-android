@@ -86,8 +86,8 @@ class AddingCustomAttachments {
             }
 
             override fun renderState(state: MessageComposerState) {
-                val canSendMessage = canSendMessage(state)
-                val canUploadFile = canUploadFile(state)
+                val canSendMessage = state.canSendMessage()
+                val canUploadFile = state.canUploadFile()
                 val hasTextInput = state.inputValue.isNotEmpty()
                 val hasAttachments = state.attachments.isNotEmpty()
                 val hasCommandInput = state.inputValue.startsWith("/")

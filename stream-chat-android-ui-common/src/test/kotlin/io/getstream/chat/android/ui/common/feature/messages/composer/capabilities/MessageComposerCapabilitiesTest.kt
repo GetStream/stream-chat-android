@@ -20,7 +20,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -40,7 +40,7 @@ internal class MessageComposerCapabilitiesTest {
             messageMode = messageMode,
             ownCapabilities = ownCapabilities,
         )
-        Assertions.assertEquals(expected, canSendMessage(state))
+        assertEquals(expected, state.canSendMessage())
     }
 
     @ParameterizedTest
@@ -50,7 +50,7 @@ internal class MessageComposerCapabilitiesTest {
         expected: Boolean,
     ) {
         val state = MessageComposerState(ownCapabilities = ownCapabilities)
-        Assertions.assertEquals(expected, canUploadFile(state))
+        assertEquals(expected, state.canUploadFile())
     }
 
     companion object Companion {

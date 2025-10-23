@@ -174,7 +174,7 @@ public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComp
             }
         }
 
-        val canSendMessage = canSendMessage(state)
+        val canSendMessage = state.canSendMessage()
         if (canSendMessage) {
             binding.messageEditText.isEnabled = true
             binding.messageEditText.hint = style.messageInputTextStyle.hint
