@@ -34,6 +34,7 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Reac
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReminderInfoEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.receipts.MessageReceiptEntity
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
@@ -272,4 +273,16 @@ internal fun randomThreadEntity(
     read = read,
     latestReplyIds = latestReplyIds,
     extraData = extraData,
+)
+
+internal fun randomMessageReceiptEntity(
+    messageId: String = randomString(),
+    type: String = randomString(),
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+) = MessageReceiptEntity(
+    messageId = messageId,
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
 )

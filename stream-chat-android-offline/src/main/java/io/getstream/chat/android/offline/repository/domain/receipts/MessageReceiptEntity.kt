@@ -8,7 +8,7 @@ import java.util.Date
 internal data class MessageReceiptEntity(
     @PrimaryKey
     val messageId: String,
-    val receiptType: String,
+    val type: String,
     val createdAt: Date,
     val cid: String,
 )
