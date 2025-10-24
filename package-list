@@ -176,6 +176,7 @@ io.getstream.chat.android.ui.common.feature.channel.info
 io.getstream.chat.android.ui.common.feature.documents
 io.getstream.chat.android.ui.common.feature.mentions
 io.getstream.chat.android.ui.common.feature.messages.composer
+io.getstream.chat.android.ui.common.feature.messages.composer.capabilities
 io.getstream.chat.android.ui.common.feature.messages.composer.mention
 io.getstream.chat.android.ui.common.feature.messages.composer.query.filter
 io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter
