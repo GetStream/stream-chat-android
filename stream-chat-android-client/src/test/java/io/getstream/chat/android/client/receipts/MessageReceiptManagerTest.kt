@@ -18,43 +18,54 @@ package io.getstream.chat.android.client.receipts
 
 import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.asCall
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verifyBlocking
 import java.util.Date
 
-internal class DeliveryReceiptsManagerTest {
+internal class MessageReceiptManagerTest {
 
     @Test
-    fun `mark messages as delivered`() {
-        val deliveredMessage = randomMessage()
+    fun `store message delivery receipts success`() = runTest {
+        val deliveredMessage = randomMessage(deletedAt = null, deletedForMe = false)
         val messages = listOf(
             deliveredMessage,
             randomMessage(user = CurrentUser),
             randomMessage(type = "system"),
-            randomMessage(deletedAt = Date()),
+            randomMessage(deletedAt = randomDate()),
         )
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyMarkMessagesAsDelivered(listOf(deliveredMessage))
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = deliveredMessage.id,
+                type = MessageReceipt.TYPE_DELIVERY,
+                createdAt = Now,
+                cid = deliveredMessage.cid,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts)
     }
 
     @Test
-    fun `should not mark messages as delivered when current user is null`() {
+    fun `should not store message delivery receipts when current user is null`() = runTest {
         val messages = randomMessageList(10) { randomMessage() }
         val fixture = Fixture().givenCurrentUser(user = null)
         val sut = fixture.get()
@@ -65,7 +76,7 @@ internal class DeliveryReceiptsManagerTest {
     }
 
     @Test
-    fun `should skip mark messages as delivered when current user privacy settings are undefined`() {
+    fun `should skip storing message delivery receipts when current user privacy settings are undefined`() = runTest {
         val currentUser = randomUser(privacySettings = null)
         val messages = randomMessageList(10) { randomMessage() }
         val fixture = Fixture().givenCurrentUser(currentUser)
@@ -73,11 +84,11 @@ internal class DeliveryReceiptsManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
-    fun `should skip mark messages as delivered when delivery receipts are disabled`() {
+    fun `should skip storing message delivery receipts when delivery receipts are disabled`() = runTest {
         val currentUser = randomUser(
             privacySettings = PrivacySettings(
                 deliveryReceipts = DeliveryReceipts(enabled = false),
@@ -89,77 +100,79 @@ internal class DeliveryReceiptsManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
-    fun `should skip mark messages as delivered with empty list`() {
+    fun `should skip storing message delivery receipts with empty list`() = runTest {
         val messages = emptyList<Message>()
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
-    fun `should skip mark messages from the current user as delivered`() {
+    fun `should skip storing message delivery receipts from the current user`() = runTest {
         val messages = randomMessageList(10) { randomMessage(user = CurrentUser) }
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
-    fun `should skip mark system messages as delivered`() {
+    fun `should skip storing message delivery receipts from system messages`() = runTest {
         val messages = randomMessageList(10) { randomMessage(type = "system") }
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
-    fun `should skip mark deleted messages as delivered`() {
+    fun `should skip storing message delivery receipts from deleted messages`() = runTest {
         val messages = randomMessageList(10) { randomMessage(deletedAt = Date()) }
         val fixture = Fixture()
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyNoInteractions()
+        fixture.verifyUpsertNotCalled()
     }
 
     private class Fixture {
-        private val mockChatClient = mock<ChatClient> {
-            on { markMessagesAsDelivered(any()) } doReturn Unit.asCall()
-        }
+        private val mockMessageReceiptRepository = mock<MessageReceiptRepository>()
         private var getCurrentUser: () -> User? = { CurrentUser }
 
         fun givenCurrentUser(user: User?) = apply {
             getCurrentUser = { user }
         }
 
-        fun verifyNoInteractions() {
-            verifyNoInteractions(mockChatClient)
+        fun verifyUpsertMessageReceiptsCalled(receipts: List<MessageReceipt>) {
+            verifyBlocking(mockMessageReceiptRepository) { upsert(receipts) }
         }
 
-        fun verifyMarkMessagesAsDelivered(messages: List<Message>) {
-            verify(mockChatClient).markMessagesAsDelivered(messages)
+        fun verifyUpsertNotCalled() {
+            verifyBlocking(mockMessageReceiptRepository, never()) { upsert(any()) }
         }
 
-        fun get() = DeliveryReceiptsManager(
-            chatClient = mockChatClient,
+        fun get() = MessageReceiptManager(
+            scope = CoroutineScope(UnconfinedTestDispatcher()),
+            now = { Now },
             getCurrentUser = getCurrentUser,
+            messageReceiptRepository = mockMessageReceiptRepository,
         )
     }
 }
+
+private val Now = Date()
 
 private val CurrentUser = randomUser(
     privacySettings = PrivacySettings(

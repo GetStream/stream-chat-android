@@ -16,23 +16,32 @@
 
 package io.getstream.chat.android.client.receipts
 
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import java.util.Date
 
-internal class DeliveryReceiptsManager(
-    private val chatClient: ChatClient,
+/**
+ * Manages message delivery receipts: creating and storing them in the repository.
+ */
+internal class MessageReceiptManager(
+    private val scope: CoroutineScope,
+    private val now: () -> Date,
     private val getCurrentUser: () -> User?,
+    private val messageReceiptRepository: MessageReceiptRepository,
 ) {
 
-    private val logger by taggedLogger("MessageDeliveryReceiptsManager")
+    private val logger by taggedLogger("MessageReceiptManager")
 
     fun markMessagesAsDelivered(messages: List<Message>) {
-        logger.d { "[markMessagesAsDelivered] Preparing to send delivery receipts for ${messages.size} messages" }
+        logger.d { "[markMessagesAsDelivered] Preparing delivery receipts for ${messages.size} messages…" }
 
         val currentUser = requireNotNull(getCurrentUser()) {
             "Cannot send delivery receipts: current user is null"
@@ -44,6 +53,7 @@ internal class DeliveryReceiptsManager(
             return
         }
 
+        // Filter out messages that shouldn't have delivery receipts sent
         val filteredMessages = messages.filter { message ->
             shouldSendDeliveryReceipt(currentUserId = currentUser.id, message = message)
         }
@@ -59,9 +69,12 @@ internal class DeliveryReceiptsManager(
             return
         }
 
-        logger.d { "[markMessagesAsDelivered] Sending ${filteredMessages.size} delivery receipts" }
-        chatClient.markMessagesAsDelivered(filteredMessages)
-            .execute()
+        scope.launch {
+            val receipts = filteredMessages.map { message -> message.toDeliveryReceipt() }
+            messageReceiptRepository.upsert(receipts)
+
+            logger.d { "[markMessagesAsDelivered] ${filteredMessages.size} delivery receipts upserted" }
+        }
     }
 
     private fun shouldSendDeliveryReceipt(currentUserId: UserId, message: Message): Boolean {
@@ -82,6 +95,13 @@ internal class DeliveryReceiptsManager(
 
         return true
     }
+
+    private fun Message.toDeliveryReceipt() = MessageReceipt(
+        messageId = id,
+        type = MessageReceipt.TYPE_DELIVERY,
+        createdAt = now(),
+        cid = cid,
+    )
 }
 
 private fun User.isDeliveryReceiptsEnabled(): Boolean =
