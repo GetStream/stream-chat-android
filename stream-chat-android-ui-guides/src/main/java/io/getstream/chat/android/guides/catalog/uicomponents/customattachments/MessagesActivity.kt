@@ -30,7 +30,8 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.guides.databinding.ActivityMessagesBinding
 import io.getstream.chat.android.guides.databinding.CustomMessageComposerLeadingContentBinding
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -167,8 +168,8 @@ class MessagesActivity : AppCompatActivity() {
         }
 
         override fun renderState(state: MessageComposerState) {
-            val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-            val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+            val canSendMessage = state.canSendMessage()
+            val canUploadFile = state.canUploadFile()
             val hasTextInput = state.inputValue.isNotEmpty()
             val hasAttachments = state.attachments.isNotEmpty()
             val hasCommandInput = state.inputValue.startsWith("/")

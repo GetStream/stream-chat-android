@@ -60,6 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix `MessageComposerView` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 
 ### ⬆️ Improved
 
@@ -71,6 +72,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `MessageComposer` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 
 ### ⬆️ Improved
 

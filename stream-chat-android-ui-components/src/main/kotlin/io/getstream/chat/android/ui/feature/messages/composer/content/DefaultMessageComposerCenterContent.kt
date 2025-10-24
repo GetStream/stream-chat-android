@@ -28,8 +28,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -174,7 +174,7 @@ public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComp
             }
         }
 
-        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+        val canSendMessage = state.canSendMessage()
         if (canSendMessage) {
             binding.messageEditText.isEnabled = true
             binding.messageEditText.hint = style.messageInputTextStyle.hint

@@ -34,7 +34,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -68,8 +68,7 @@ public fun MessageInput(
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val (value, attachments, activeAction) = messageComposerState
-    val canSendMessage = messageComposerState.sendEnabled &&
-        messageComposerState.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendMessage = messageComposerState.canSendMessage()
 
     InputField(
         modifier = modifier,
