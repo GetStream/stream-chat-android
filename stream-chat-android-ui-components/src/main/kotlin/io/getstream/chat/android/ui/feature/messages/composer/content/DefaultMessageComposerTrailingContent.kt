@@ -21,14 +21,14 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.internal.getColorList
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -169,8 +169,8 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         val appSettings = ChatClient.instance().getAppSettings()
         val blockedMimeTypes = appSettings.app.fileUploadConfig.blockedMimeTypes
         val blockedFileExtensions = appSettings.app.fileUploadConfig.blockedFileExtensions
-        val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-        val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+        val canSendMessage = state.canSendMessage()
+        val canUploadFile = state.canUploadFile()
         val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO) &&
             !blockedFileExtensions.contains(AAC_EXTENSION)
         val hasTextInput = state.inputValue.isNotEmpty()
@@ -219,14 +219,7 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
     }
 
     internal companion object {
-
         private const val RECORD_AUDIO_TAG = "record_audio"
-        internal fun recordAudioButton(container: ViewGroup): View {
-            return container.findViewById(R.id.recordAudioButton)
-                ?: container.findViewWithTag(RECORD_AUDIO_TAG)
-                ?: error("recordAudioButton not found in $container")
-        }
-
         private const val AAC_EXTENSION = "aac"
     }
 }

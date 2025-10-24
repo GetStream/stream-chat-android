@@ -577,6 +577,11 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
 
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/capabilities/MessageComposerCapabilitiesKt {
+	public static final fun canSendMessage (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)Z
+	public static final fun canUploadFile (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;)Z
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler {
 	public abstract fun handleCompatUserLookup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
 }
