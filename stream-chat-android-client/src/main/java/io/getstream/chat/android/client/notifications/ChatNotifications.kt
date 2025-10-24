@@ -29,22 +29,24 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 internal interface ChatNotifications {
-    fun onSetUser()
+    fun onSetUser(user: User)
     fun setDevice(device: Device)
+    suspend fun deleteDevice()
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onChatEvent(event: ChatEvent)
-    suspend fun onLogout(flushPersistence: Boolean)
+    suspend fun onLogout()
     fun displayNotification(notification: ChatNotification)
     fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 @Suppress("TooManyFunctions")
-internal class ChatNotificationsImpl constructor(
+internal class ChatNotificationsImpl(
     private val handler: NotificationHandler,
     private val notificationConfig: NotificationConfig,
     private val context: Context,
@@ -52,7 +54,7 @@ internal class ChatNotificationsImpl constructor(
 ) : ChatNotifications {
     private val logger by taggedLogger("Chat:Notifications")
 
-    private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
+    private val pushTokenUpdateHandler = PushTokenUpdateHandler()
     private val showedMessages = mutableSetOf<String>()
     private val permissionManager: NotificationPermissionManager =
         NotificationPermissionManager.createNotificationPermissionsManager(
@@ -68,23 +70,28 @@ internal class ChatNotificationsImpl constructor(
         logger.i { "<init> no args" }
     }
 
-    override fun onSetUser() {
-        logger.i { "[onSetUser] no args" }
+    override fun onSetUser(user: User) {
+        logger.i { "[onSetUser] user: $user" }
         permissionManager
             .takeIf { notificationConfig.requestPermissionOnAppLaunch() }
             ?.start()
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice() }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
-                it.asyncGeneratePushDevice { setDevice(it.toDevice()) }
+                it.asyncGeneratePushDevice { pushDevice ->
+                    setDeviceForUser(user, pushDevice.toDevice())
+                }
             }
     }
 
     override fun setDevice(device: Device) {
         logger.i { "[setDevice] device: $device" }
-        scope.launch {
-            pushTokenUpdateHandler.updateDeviceIfNecessary(device)
-        }
+        // If no user is passed, we assume the device is NOT already registered
+        setDeviceForUser(null, device)
+    }
+
+    override suspend fun deleteDevice() {
+        pushTokenUpdateHandler.deleteDevice()
     }
 
     override fun onPushMessage(
@@ -111,14 +118,11 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override suspend fun onLogout(flushPersistence: Boolean) {
-        logger.i { "[onLogout] flushPersistence: $flushPersistence" }
+    override suspend fun onLogout() {
+        logger.i { "[onLogout]" }
         permissionManager.stop()
         handler.dismissAllNotifications()
         cancelLoadDataWork()
-        if (flushPersistence) {
-            removeStoredDevice()
-        }
     }
 
     /**
@@ -193,21 +197,25 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    private suspend fun removeStoredDevice() {
-        pushTokenUpdateHandler.removeStoredDevice()
+    private fun setDeviceForUser(user: User?, device: Device) {
+        logger.i { "[setDeviceForUser] userId: ${user?.id}, device: $device" }
+        scope.launch {
+            pushTokenUpdateHandler.addDevice(user, device)
+        }
     }
 }
 
 internal object NoOpChatNotifications : ChatNotifications {
-    override fun onSetUser() = Unit
+    override fun onSetUser(user: User) = Unit
     override fun setDevice(device: Device) = Unit
+    override suspend fun deleteDevice() = Unit
     override fun onPushMessage(
         message: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 
     override fun onChatEvent(event: ChatEvent) = Unit
-    override suspend fun onLogout(flushPersistence: Boolean) = Unit
+    override suspend fun onLogout() = Unit
     override fun displayNotification(notification: ChatNotification) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }
