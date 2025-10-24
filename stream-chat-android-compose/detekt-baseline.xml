@@ -47,7 +47,6 @@
     <ID>MagicNumber:WaveformSlider.kt$50</ID>
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
-    <ID>MaxLineLength:MessageItem.kt$message.isDeleted() &amp;&amp; messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:PollCreationHeader.kt$*</ID>

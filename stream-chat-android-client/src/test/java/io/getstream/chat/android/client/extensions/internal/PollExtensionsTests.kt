@@ -103,6 +103,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             newVote = newVote,
         )
@@ -126,6 +127,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             newVote = newVote,
         )
@@ -156,6 +158,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             newVote = newVote,
         )
@@ -179,6 +182,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             removedVote = vote1,
         )
@@ -209,6 +213,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             newAnswer = newAnswer,
         )
@@ -232,6 +237,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
         )
 
@@ -252,6 +258,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
         )
 
@@ -273,6 +280,7 @@ internal class PollExtensionsTests {
             cid = "channel1",
             channelType = "messaging",
             channelId = "channel1",
+            messageId = "message1",
             poll = basePoll,
             newVote = vote1,
         )

@@ -47,6 +47,7 @@
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix poll state getting overridden by `message.updated` events. [#5963](https://github.com/GetStream/stream-chat-android/pull/5963)
+- Fix polls not updated live when they are a thread parent message. [#5968](https://github.com/GetStream/stream-chat-android/pull/5968)
 
 ### ⬆️ Improved
 
@@ -69,6 +70,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix `MessageComposerView` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 - Disallow creating polls in threads. [#5970](https://github.com/GetStream/stream-chat-android/pull/5970)
 
 ### ⬆️ Improved
@@ -81,6 +83,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `MessageComposer` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 - Disallow creating polls in threads. [#5970](https://github.com/GetStream/stream-chat-android/pull/5970)
 
 ### ⬆️ Improved
