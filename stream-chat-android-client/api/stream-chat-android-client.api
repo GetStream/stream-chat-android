@@ -2983,6 +2983,24 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createRepositoryFactory (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 }
 
+public final class io/getstream/chat/android/client/persistence/db/ChatClientDatabase_Impl {
+	public static final field Companion Lio/getstream/chat/android/client/persistence/db/ChatClientDatabase$Companion;
+	public fun <init> ()V
+	public fun clearAllTables ()V
+	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
+	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
+	public fun messageReceiptDao ()Lio/getstream/chat/android/client/persistence/db/dao/MessageReceiptDao;
+}
+
+public final class io/getstream/chat/android/client/persistence/db/dao/MessageReceiptDao_Impl : io/getstream/chat/android/client/persistence/db/dao/MessageReceiptDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteByMessageIds (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun selectAllByType (Ljava/lang/String;I)Lkotlinx/coroutines/flow/Flow;
+	public fun upsert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public abstract interface class io/getstream/chat/android/client/plugin/Plugin : io/getstream/chat/android/client/plugin/DependencyResolver, io/getstream/chat/android/client/plugin/listeners/BlockUserListener, io/getstream/chat/android/client/plugin/listeners/ChannelMarkReadListener, io/getstream/chat/android/client/plugin/listeners/CreateChannelListener, io/getstream/chat/android/client/plugin/listeners/DeleteChannelListener, io/getstream/chat/android/client/plugin/listeners/DeleteMessageForMeListener, io/getstream/chat/android/client/plugin/listeners/DeleteMessageListener, io/getstream/chat/android/client/plugin/listeners/DeleteReactionListener, io/getstream/chat/android/client/plugin/listeners/DraftMessageListener, io/getstream/chat/android/client/plugin/listeners/EditMessageListener, io/getstream/chat/android/client/plugin/listeners/FetchCurrentUserListener, io/getstream/chat/android/client/plugin/listeners/GetMessageListener, io/getstream/chat/android/client/plugin/listeners/HideChannelListener, io/getstream/chat/android/client/plugin/listeners/LiveLocationListener, io/getstream/chat/android/client/plugin/listeners/MarkAllReadListener, io/getstream/chat/android/client/plugin/listeners/PushPreferencesListener, io/getstream/chat/android/client/plugin/listeners/QueryBlockedUsersListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelListener, io/getstream/chat/android/client/plugin/listeners/QueryChannelsListener, io/getstream/chat/android/client/plugin/listeners/QueryMembersListener, io/getstream/chat/android/client/plugin/listeners/QueryThreadsListener, io/getstream/chat/android/client/plugin/listeners/SendAttachmentListener, io/getstream/chat/android/client/plugin/listeners/SendGiphyListener, io/getstream/chat/android/client/plugin/listeners/SendMessageListener, io/getstream/chat/android/client/plugin/listeners/SendReactionListener, io/getstream/chat/android/client/plugin/listeners/ShuffleGiphyListener, io/getstream/chat/android/client/plugin/listeners/ThreadQueryListener, io/getstream/chat/android/client/plugin/listeners/TypingEventListener, io/getstream/chat/android/client/plugin/listeners/UnblockUserListener {
 	public fun getErrorHandler ()Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public fun onAttachmentSendRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

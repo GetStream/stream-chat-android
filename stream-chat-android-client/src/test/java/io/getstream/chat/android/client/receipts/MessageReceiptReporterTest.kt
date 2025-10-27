@@ -17,10 +17,9 @@
 package io.getstream.chat.android.client.receipts
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
+import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
+import io.getstream.chat.android.client.randomMessageReceipt
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageReceipt
-import io.getstream.chat.android.randomMessageReceipt
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
@@ -158,7 +157,8 @@ internal class MessageReceiptReporterTest {
         private val receiptsStateFlow = MutableStateFlow<List<MessageReceipt>>(emptyList())
 
         private val mockMessageReceiptRepository = mock<MessageReceiptRepository> {
-            onBlocking { getAllByType(type = MessageReceipt.TYPE_DELIVERY, limit = 100) } doReturn receiptsStateFlow
+            onBlocking { getAllMessageReceiptsByType(type = MessageReceipt.TYPE_DELIVERY, limit = 100) } doReturn
+                receiptsStateFlow
         }
 
         fun givenMessageReceipts(receipts: List<MessageReceipt>) = apply {
@@ -175,7 +175,9 @@ internal class MessageReceiptReporterTest {
         }
 
         fun verifyDeleteByMessageIdsCalled(mode: VerificationMode = times(1), messageIds: List<String>? = null) {
-            verifyBlocking(mockMessageReceiptRepository, mode) { deleteByMessageIds(messageIds ?: any()) }
+            verifyBlocking(mockMessageReceiptRepository, mode) {
+                deleteMessageReceiptsByMessageIds(messageIds ?: any())
+            }
         }
 
         fun get(scope: CoroutineScope) = MessageReceiptReporter(

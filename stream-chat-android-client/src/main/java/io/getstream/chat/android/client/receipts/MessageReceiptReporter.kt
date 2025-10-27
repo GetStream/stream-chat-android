@@ -17,9 +17,8 @@
 package io.getstream.chat.android.client.receipts
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
+import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.log.taggedLogger
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +43,11 @@ internal class MessageReceiptReporter(
 
     @OptIn(FlowPreview::class)
     fun init() {
-        messageReceiptRepository.getAllByType(type = MessageReceipt.TYPE_DELIVERY, limit = MAX_BATCH_SIZE)
+        logger.d { "[init] Handling message receipts reporting…" }
+        messageReceiptRepository.getAllMessageReceiptsByType(
+            type = MessageReceipt.TYPE_DELIVERY,
+            limit = MAX_BATCH_SIZE,
+        )
             .sample(REPORT_INTERVAL_IN_MS)
             .filterNot(List<MessageReceipt>::isEmpty)
             .map { receipts ->
@@ -60,8 +63,15 @@ internal class MessageReceiptReporter(
                 chatClient.markMessagesAsDelivered(messages)
                     .execute()
                     .onSuccessSuspend {
+                        logger.d { "[init] Successfully reported delivery receipts for ${messages.size} messages" }
                         val deliveredMessageIds = messages.map(Message::id)
-                        messageReceiptRepository.deleteByMessageIds(deliveredMessageIds)
+                        messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
+                    }
+                    .onError { error ->
+                        logger.e {
+                            "[init] Failed to report delivery receipts for ${messages.size} messages: " +
+                                error.message
+                        }
                     }
             }
             .launchIn(scope)

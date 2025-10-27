@@ -41,7 +41,6 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
-import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Moderation
@@ -1149,16 +1148,4 @@ public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.LINK,
     AttachmentType.AUDIO_RECORDING,
     AttachmentType.UNKNOWN,
-)
-
-public fun randomMessageReceipt(
-    messageId: String = randomString(),
-    type: String = randomString(),
-    createdAt: Date = randomDate(),
-    cid: String = randomCID(),
-): MessageReceipt = MessageReceipt(
-    messageId = messageId,
-    type = type,
-    createdAt = createdAt,
-    cid = cid,
 )

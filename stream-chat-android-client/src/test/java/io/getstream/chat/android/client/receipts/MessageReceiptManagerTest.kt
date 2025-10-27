@@ -18,9 +18,8 @@ package io.getstream.chat.android.client.receipts
 
 import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
+import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
@@ -76,15 +75,23 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
-    fun `should skip storing message delivery receipts when current user privacy settings are undefined`() = runTest {
+    fun `should store message delivery receipts when current user privacy settings are undefined`() = runTest {
         val currentUser = randomUser(privacySettings = null)
-        val messages = randomMessageList(10) { randomMessage() }
+        val messages = randomMessageList(10) { randomMessage(deletedAt = null, deletedForMe = false) }
         val fixture = Fixture().givenCurrentUser(currentUser)
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        val receipts = messages.map { message ->
+            MessageReceipt(
+                messageId = message.id,
+                type = MessageReceipt.TYPE_DELIVERY,
+                createdAt = Now,
+                cid = message.cid,
+            )
+        }
+        fixture.verifyUpsertMessageReceiptsCalled(receipts)
     }
 
     @Test
@@ -156,11 +163,11 @@ internal class MessageReceiptManagerTest {
         }
 
         fun verifyUpsertMessageReceiptsCalled(receipts: List<MessageReceipt>) {
-            verifyBlocking(mockMessageReceiptRepository) { upsert(receipts) }
+            verifyBlocking(mockMessageReceiptRepository) { upsertMessageReceipts(receipts) }
         }
 
         fun verifyUpsertNotCalled() {
-            verifyBlocking(mockMessageReceiptRepository, never()) { upsert(any()) }
+            verifyBlocking(mockMessageReceiptRepository, never()) { upsertMessageReceipts(any()) }
         }
 
         fun get() = MessageReceiptManager(

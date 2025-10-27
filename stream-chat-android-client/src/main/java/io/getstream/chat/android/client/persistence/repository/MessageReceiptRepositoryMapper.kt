@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.client.persistence.repository
 
-import androidx.compose.runtime.Immutable
-import java.util.Date
+import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
+import io.getstream.chat.android.client.receipts.MessageReceipt
 
-@Immutable
-public data class MessageReceipt(
-    public val messageId: String,
-    public val type: String,
-    public val createdAt: Date,
-    public val cid: String,
-) {
-    public companion object {
-        public const val TYPE_DELIVERED: String = "delivered"
-    }
-}
+internal fun MessageReceipt.toEntity() = MessageReceiptEntity(
+    messageId = messageId,
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
+)
+
+internal fun MessageReceiptEntity.toModel() = MessageReceipt(
+    messageId = messageId,
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
+)

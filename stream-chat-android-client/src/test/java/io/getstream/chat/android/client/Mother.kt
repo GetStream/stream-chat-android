@@ -81,6 +81,8 @@ import io.getstream.chat.android.client.logger.ChatLoggerConfig
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
+import io.getstream.chat.android.client.receipts.MessageReceipt
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
@@ -1271,3 +1273,27 @@ internal object Mother {
         disabled_until = disabledUntil,
     )
 }
+
+internal fun randomMessageReceipt(
+    messageId: String = randomString(),
+    type: String = randomString(),
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+) = MessageReceipt(
+    messageId = messageId,
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
+)
+
+internal fun randomMessageReceiptEntity(
+    messageId: String = randomString(),
+    type: String = randomString(),
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+) = MessageReceiptEntity(
+    messageId = messageId,
+    type = type,
+    createdAt = createdAt,
+    cid = cid,
+)

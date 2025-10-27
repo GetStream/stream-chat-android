@@ -16,10 +16,9 @@
 
 package io.getstream.chat.android.client.receipts
 
-import io.getstream.chat.android.client.persistance.repository.MessageReceiptRepository
+import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageReceipt
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
@@ -29,7 +28,8 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
- * Manages message delivery receipts: creating and storing them in the repository.
+ * Manages message delivery receipts: creating and storing them in the repository
+ * for later reporting to the server.
  */
 internal class MessageReceiptManager(
     private val scope: CoroutineScope,
@@ -48,7 +48,7 @@ internal class MessageReceiptManager(
         }
 
         // Check if delivery receipts are enabled for the current user
-        if (!currentUser.isDeliveryReceiptsEnabled()) {
+        if (!currentUser.isDeliveryReceiptsEnabled) {
             logger.w { "[markMessagesAsDelivered] Delivery receipts disabled for user ${currentUser.id}" }
             return
         }
@@ -71,7 +71,7 @@ internal class MessageReceiptManager(
 
         scope.launch {
             val receipts = filteredMessages.map { message -> message.toDeliveryReceipt() }
-            messageReceiptRepository.upsert(receipts)
+            messageReceiptRepository.upsertMessageReceipts(receipts)
 
             logger.d { "[markMessagesAsDelivered] ${filteredMessages.size} delivery receipts upserted" }
         }
@@ -103,6 +103,3 @@ internal class MessageReceiptManager(
         cid = cid,
     )
 }
-
-private fun User.isDeliveryReceiptsEnabled(): Boolean =
-    privacySettings?.deliveryReceipts?.enabled ?: false

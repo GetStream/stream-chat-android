@@ -22,7 +22,6 @@ public final class io/getstream/chat/android/offline/repository/database/interna
 	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
 	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
 	public fun messageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageDao;
-	public fun messageReceiptDao ()Lio/getstream/chat/android/offline/repository/domain/receipts/MessageReceiptDao;
 	public fun pollDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/PollDao;
 	public fun queryChannelsDao ()Lio/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao;
@@ -186,15 +185,6 @@ public final class io/getstream/chat/android/offline/repository/domain/reaction/
 	public fun selectUserReactionToMessage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectUserReactionsToMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setDeleteAt (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class io/getstream/chat/android/offline/repository/domain/receipts/MessageReceiptDao_Impl : io/getstream/chat/android/offline/repository/domain/receipts/MessageReceiptDao {
-	public fun <init> (Landroidx/room/RoomDatabase;)V
-	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun deleteByMessageIds (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun getRequiredConverters ()Ljava/util/List;
-	public fun selectAllByType (Ljava/lang/String;I)Lkotlinx/coroutines/flow/Flow;
-	public fun upsert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateDao_Impl : io/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateDao {
