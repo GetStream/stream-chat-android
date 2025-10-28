@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.persistence.repository
 
-import app.cash.turbine.test
 import io.getstream.chat.android.client.persistence.db.dao.MessageReceiptDao
 import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
 import io.getstream.chat.android.client.randomMessageReceipt
@@ -24,7 +23,6 @@ import io.getstream.chat.android.client.randomMessageReceiptEntity
 import io.getstream.chat.android.client.receipts.MessageReceipt
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
@@ -68,19 +66,17 @@ internal class MessageReceiptRepositoryImplTest {
             )
         val sut = fixture.get()
 
-        sut.getAllMessageReceiptsByType(type, limit).test {
-            val actual = awaitItem()
+        val actual = sut.getAllMessageReceiptsByType(type, limit)
 
-            val expected = listOf(
-                MessageReceipt(
-                    messageId = receipt.messageId,
-                    type = receipt.type,
-                    createdAt = receipt.createdAt,
-                    cid = receipt.cid,
-                ),
-            )
-            Assertions.assertEquals(expected, actual)
-        }
+        val expected = listOf(
+            MessageReceipt(
+                messageId = receipt.messageId,
+                type = receipt.type,
+                createdAt = receipt.createdAt,
+                cid = receipt.cid,
+            ),
+        )
+        Assertions.assertEquals(expected, actual)
     }
 
     @Test
@@ -106,16 +102,13 @@ internal class MessageReceiptRepositoryImplTest {
 
     private class Fixture {
 
-        private val receiptsStateFlow = MutableStateFlow<List<MessageReceiptEntity>>(emptyList())
-
         private val mockDao = mock<MessageReceiptDao> {
             onBlocking { upsert(any()) } doReturn Unit
             onBlocking { deleteByMessageIds(any()) } doReturn Unit
         }
 
         fun givenMessageReceiptsByType(type: String, limit: Int, receipts: List<MessageReceiptEntity>) = apply {
-            wheneverBlocking { mockDao.selectAllByType(type, limit) } doReturn
-                receiptsStateFlow.apply { value = receipts }
+            wheneverBlocking { mockDao.selectAllByType(type, limit) } doReturn receipts
         }
 
         fun verifyUpsertCalled(receipts: List<MessageReceiptEntity>) {

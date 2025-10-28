@@ -21,7 +21,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface MessageReceiptDao {
@@ -30,7 +29,7 @@ internal interface MessageReceiptDao {
     suspend fun upsert(receipts: List<MessageReceiptEntity>)
 
     @Query("SELECT * FROM message_receipt WHERE type = :type ORDER BY createdAt ASC LIMIT :limit")
-    fun selectAllByType(type: String, limit: Int): Flow<List<MessageReceiptEntity>>
+    suspend fun selectAllByType(type: String, limit: Int): List<MessageReceiptEntity>
 
     @Query("DELETE FROM message_receipt WHERE messageId IN (:messageIds)")
     suspend fun deleteByMessageIds(messageIds: List<String>)

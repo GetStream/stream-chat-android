@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.persistence.repository
 
 import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
 import io.getstream.chat.android.client.receipts.MessageReceipt
-import kotlinx.coroutines.flow.Flow
 
 internal interface MessageReceiptRepository {
 
@@ -31,7 +30,7 @@ internal interface MessageReceiptRepository {
 
     suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>)
 
-    fun getAllMessageReceiptsByType(type: String, limit: Int): Flow<List<MessageReceipt>>
+    suspend fun getAllMessageReceiptsByType(type: String, limit: Int): List<MessageReceipt>
 
     suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>)
 

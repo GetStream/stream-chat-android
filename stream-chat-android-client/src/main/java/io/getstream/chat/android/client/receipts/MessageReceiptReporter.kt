@@ -22,12 +22,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 /**
  * Reports message delivery receipts to the server in batches of [MAX_BATCH_SIZE]
@@ -39,42 +36,42 @@ internal class MessageReceiptReporter(
     private val messageReceiptRepository: MessageReceiptRepository,
 ) {
 
-    private val logger by taggedLogger("MessageReceiptReporter")
+    private val logger by taggedLogger("Chat:MessageReceiptReporter")
 
-    @OptIn(FlowPreview::class)
     fun init() {
-        logger.d { "[init] Handling message receipts reporting…" }
-        messageReceiptRepository.getAllMessageReceiptsByType(
-            type = MessageReceipt.TYPE_DELIVERY,
-            limit = MAX_BATCH_SIZE,
-        )
-            .sample(REPORT_INTERVAL_IN_MS)
-            .filterNot(List<MessageReceipt>::isEmpty)
-            .map { receipts ->
-                receipts.map { receipt ->
+        logger.d { "Initializing…" }
+        scope.launch {
+            while (isActive) {
+                val messages = messageReceiptRepository.getAllMessageReceiptsByType(
+                    type = MessageReceipt.TYPE_DELIVERY,
+                    limit = MAX_BATCH_SIZE,
+                ).map { receipt ->
                     Message(
                         id = receipt.messageId,
                         cid = receipt.cid,
                     )
                 }
-            }
-            .onEach { messages ->
-                logger.d { "[init] Reporting delivery receipts for ${messages.size} messages…" }
-                chatClient.markMessagesAsDelivered(messages)
-                    .execute()
-                    .onSuccessSuspend {
-                        logger.d { "[init] Successfully reported delivery receipts for ${messages.size} messages" }
-                        val deliveredMessageIds = messages.map(Message::id)
-                        messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
-                    }
-                    .onError { error ->
-                        logger.e {
-                            "[init] Failed to report delivery receipts for ${messages.size} messages: " +
-                                error.message
+
+                if (messages.isNotEmpty()) {
+                    logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
+                    chatClient.markMessagesAsDelivered(messages)
+                        .execute()
+                        .onSuccessSuspend {
+                            logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
+                            val deliveredMessageIds = messages.map(Message::id)
+                            messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
                         }
-                    }
+                        .onError { error ->
+                            logger.e {
+                                "Failed to report delivery receipts for ${messages.size} messages: " +
+                                    error.message
+                            }
+                        }
+                }
+
+                delay(REPORT_INTERVAL_IN_MS)
             }
-            .launchIn(scope)
+        }
     }
 }
 

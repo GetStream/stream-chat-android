@@ -25,7 +25,6 @@ import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -37,6 +36,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
 import org.mockito.verification.VerificationMode
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -60,7 +60,7 @@ internal class MessageReceiptReporterTest {
         val sut = fixture.get(backgroundScope)
 
         sut.init()
-        advanceTimeBy(1100) // Advance time to after the interval window
+        advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyMarkMessagesAsDeliveredCalled(messages = messages)
         val messageIds = messages.map(Message::id)
@@ -71,19 +71,18 @@ internal class MessageReceiptReporterTest {
     fun `should not delete receipts when marking messages as delivered fails`() = runTest {
         val fixture = Fixture()
             .givenMessageReceipts(listOf(randomMessageReceipt()))
+            // Simulate an error when marking messages as delivered
             .givenMarkMessagesAsDelivered(error = mock())
         val sut = fixture.get(backgroundScope)
 
         sut.init()
-        advanceTimeBy(1100) // Allow initial execution
+        advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyDeleteByMessageIdsCalled(never())
 
-        // Keep processing subsequent success emissions
-        fixture.givenMessageReceipts(listOf(randomMessageReceipt()))
+        // Keep processing in the next time window
         fixture.givenMarkMessagesAsDelivered()
-
-        advanceTimeBy(1100)
+        advanceTimeBy(1000)
 
         fixture.verifyMarkMessagesAsDeliveredCalled(times(2))
         fixture.verifyDeleteByMessageIdsCalled()
@@ -96,7 +95,7 @@ internal class MessageReceiptReporterTest {
         val sut = fixture.get(backgroundScope)
 
         sut.init()
-        advanceTimeBy(1100)
+        advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyMarkMessagesAsDeliveredCalled(never())
         fixture.verifyDeleteByMessageIdsCalled(never())
@@ -110,25 +109,15 @@ internal class MessageReceiptReporterTest {
         val sut = fixture.get(backgroundScope)
 
         sut.init()
+        advanceTimeBy(100) // Allow initial execution
 
-        // Trigger multiple emissions
+        advanceTimeBy(1000) // Advance to the second interval
 
-        advanceTimeBy(1100) // Collecting the first emission
+        advanceTimeBy(1000) // Advance to the third interval
 
-        // Trigger a new list
-        fixture.givenMessageReceipts(listOf(randomMessageReceipt()))
-        advanceTimeBy(1000) // Wait for delay
+        advanceTimeBy(1000) // Advance to the fourth interval
 
-        // Trigger a new list
-        fixture.givenMessageReceipts(listOf(randomMessageReceipt()))
-        advanceTimeBy(100) // Collecting the second emission
-
-        // Trigger a new list
-        fixture.givenMessageReceipts(listOf(randomMessageReceipt()))
-        advanceTimeBy(1000) // Wait for delay
-        advanceTimeBy(100) // Collecting the third emission
-
-        fixture.verifyMarkMessagesAsDeliveredCalled(times(3))
+        fixture.verifyMarkMessagesAsDeliveredCalled(times(4))
     }
 
     @Test
@@ -139,14 +128,11 @@ internal class MessageReceiptReporterTest {
         val sut = fixture.get(backgroundScope)
 
         sut.init()
-        advanceTimeBy(1100) // Allow initial execution
+        advanceTimeBy(100) // Allow initial execution
 
         backgroundScope.cancel()
 
-        // Trigger a new list
-        fixture.givenMessageReceipts(listOf(randomMessageReceipt()))
-
-        advanceTimeBy(2000) // Try to advance time after cancellation
+        advanceTimeBy(1000) // Try to advance time after cancellation
 
         fixture.verifyMarkMessagesAsDeliveredCalled(times(1))
     }
@@ -154,15 +140,15 @@ internal class MessageReceiptReporterTest {
     private class Fixture {
         private val mockChatClient = mock<ChatClient>()
 
-        private val receiptsStateFlow = MutableStateFlow<List<MessageReceipt>>(emptyList())
-
-        private val mockMessageReceiptRepository = mock<MessageReceiptRepository> {
-            onBlocking { getAllMessageReceiptsByType(type = MessageReceipt.TYPE_DELIVERY, limit = 100) } doReturn
-                receiptsStateFlow
-        }
+        private val mockMessageReceiptRepository = mock<MessageReceiptRepository>()
 
         fun givenMessageReceipts(receipts: List<MessageReceipt>) = apply {
-            receiptsStateFlow.value = receipts
+            wheneverBlocking {
+                mockMessageReceiptRepository.getAllMessageReceiptsByType(
+                    type = MessageReceipt.TYPE_DELIVERY,
+                    limit = 100,
+                )
+            } doReturn receipts
         }
 
         fun givenMarkMessagesAsDelivered(messages: List<Message>? = null, error: Error? = null) = apply {
