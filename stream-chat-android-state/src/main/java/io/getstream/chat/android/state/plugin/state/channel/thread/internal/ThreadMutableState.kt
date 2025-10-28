@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.state.channel.thread.internal
 
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,6 +57,12 @@ internal class ThreadMutableState(
     override val oldestInThread: StateFlow<Message?> = _oldestInThread!!
     override val newestInThread: StateFlow<Message?> = _newestInThread!!
 
+    /**
+     * Retrieves the parent message of the thread.
+     */
+    val parentMessage: Message?
+        get() = _messages?.value?.get(parentId)
+
     fun setLoading(isLoading: Boolean) {
         _loading?.value = isLoading
     }
@@ -82,6 +89,22 @@ internal class ThreadMutableState(
 
     fun upsertMessages(messages: List<Message>) {
         _messages?.apply { value += (messages.associateBy(Message::id) - deletedMessagesIds) }
+    }
+
+    /**
+     * Updates the poll object related to the parent message of the thread.
+     * Note: This is relevant only for the parent message, as polls cannot be added to replies.
+     *
+     * @param poll The updated poll object.
+     */
+    fun updateParentMessagePoll(poll: Poll?) {
+        val parent = parentMessage ?: return
+        val parentPoll = parent.poll ?: return
+        // Allow deleting poll (when poll == null), or overriding the poll (when poll.id == parent.poll.id)
+        if (poll == null || poll.id == parentPoll.id) {
+            val updatedParent = parent.copy(poll = poll)
+            upsertMessages(listOf(updatedParent))
+        }
     }
 
     fun destroy() {

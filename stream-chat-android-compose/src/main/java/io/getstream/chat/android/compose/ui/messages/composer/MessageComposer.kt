@@ -70,6 +70,8 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -511,10 +513,7 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    val canSendMessage = messageInputState.sendEnabled &&
-        ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-    val canSendAttachments = messageInputState.sendEnabled &&
-        ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+    val canSendMessage = messageInputState.canSendMessage()
 
     val isRecording = messageInputState.recording !is RecordingState.Idle
 
@@ -525,7 +524,8 @@ internal fun DefaultComposerIntegrations(
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (canSendAttachments) {
+            val canUploadFile = messageInputState.canUploadFile()
+            if (canUploadFile) {
                 with(ChatTheme.componentFactory) {
                     MessageComposerAttachmentsButton(
                         enabled = isAttachmentsButtonEnabled,
@@ -556,12 +556,10 @@ internal fun DefaultComposerIntegrations(
  */
 @Composable
 internal fun DefaultComposerLabel(state: MessageComposerState) {
-    val text = with(state) {
-        if (sendEnabled && ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)) {
-            stringResource(id = R.string.stream_compose_message_label)
-        } else {
-            stringResource(id = R.string.stream_compose_cannot_send_messages_label)
-        }
+    val text = if (state.canSendMessage()) {
+        stringResource(id = R.string.stream_compose_message_label)
+    } else {
+        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
     }
 
     Text(
@@ -621,15 +619,13 @@ internal fun DefaultMessageComposerTrailingContent(
     val coolDownTime = messageComposerState.coolDownTime
     val validationErrors = messageComposerState.validationErrors
     val attachments = messageComposerState.attachments
-    val ownCapabilities = messageComposerState.ownCapabilities
     val isInEditMode = messageComposerState.action is Edit
 
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
     val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
 
-    val isSendButtonEnabled = messageComposerState.sendEnabled &&
-        ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendMessage = messageComposerState.canSendMessage()
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0 && !isInEditMode) {
@@ -637,20 +633,20 @@ internal fun DefaultMessageComposerTrailingContent(
     } else {
         val isRecording = messageComposerState.recording !is RecordingState.Idle
 
-        val sendEnabled = isSendButtonEnabled && isInputValid
-        val sendVisible = when {
+        val sendButtonEnabled = canSendMessage && isInputValid
+        val sendButtonVisible = when {
             !isRecordingEnabled -> true
             isRecording -> false
-            showRecordOverSend -> sendEnabled
+            showRecordOverSend -> sendButtonEnabled
             else -> true
         }
-        if (sendVisible) {
+        if (sendButtonVisible) {
             Box(
                 modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
                 contentAlignment = Center,
             ) {
                 ChatTheme.componentFactory.MessageComposerSendButton(
-                    enabled = sendEnabled,
+                    enabled = sendButtonEnabled,
                     isInputValid = isInputValid,
                     onClick = {
                         if (isInputValid) {
@@ -661,12 +657,12 @@ internal fun DefaultMessageComposerTrailingContent(
             }
         }
 
-        val recordVisible = when {
-            !isRecordingEnabled -> false
-            showRecordOverSend -> !sendEnabled
+        val recordButtonVisible = when {
+            !canSendMessage || !isRecordingEnabled -> false
+            showRecordOverSend -> !sendButtonEnabled
             else -> true
         }
-        if (recordVisible) {
+        if (recordButtonVisible) {
             ChatTheme.componentFactory.MessageComposerAudioRecordButton(
                 state = messageComposerState.recording,
                 recordingActions = recordingActions,
