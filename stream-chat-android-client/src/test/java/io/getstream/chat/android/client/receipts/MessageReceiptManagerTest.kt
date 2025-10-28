@@ -18,9 +18,12 @@ package io.getstream.chat.android.client.receipts
 
 import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
@@ -29,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -64,14 +66,14 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
-    fun `should not store message delivery receipts when current user is null`() = runTest {
+    fun `should skip storing message delivery receipts when current user is null`() = runTest {
         val messages = randomMessageList(10) { randomMessage() }
         val fixture = Fixture().givenCurrentUser(user = null)
         val sut = fixture.get()
 
-        assertThrows<IllegalArgumentException>(message = "Cannot send delivery receipts: current user is null") {
-            sut.markMessagesAsDelivered(messages)
-        }
+        sut.markMessagesAsDelivered(messages)
+
+        fixture.verifyUpsertNotCalled()
     }
 
     @Test
@@ -150,6 +152,155 @@ internal class MessageReceiptManagerTest {
         val sut = fixture.get()
 
         sut.markMessagesAsDelivered(messages)
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `store channel delivery receipts success`() = runTest {
+        val deliveredMessage = randomMessage(
+            createdAt = Now,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val channel = randomChannel(
+            messages = listOf(
+                deliveredMessage,
+                randomMessage(user = CurrentUser, createdAt = NEVER),
+                randomMessage(type = "system", createdAt = NEVER),
+                randomMessage(deletedAt = randomDate(), createdAt = NEVER),
+            ),
+            read = listOf(
+                randomChannelUserRead(
+                    user = CurrentUser,
+                    lastRead = NEVER,
+                    lastDeliveredAt = null,
+                ),
+            ),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = deliveredMessage.id,
+                type = MessageReceipt.TYPE_DELIVERY,
+                createdAt = Now,
+                cid = deliveredMessage.cid,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts)
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when current user is null`() = runTest {
+        val channel = randomChannel()
+        val fixture = Fixture().givenCurrentUser(user = null)
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels = listOf(channel))
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when user read is not found`() = runTest {
+        val channel = randomChannel(
+            messages = randomMessageList(10),
+            read = listOf(randomChannelUserRead()),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when last message is not found`() = runTest {
+        val channel = randomChannel(
+            messages = emptyList(),
+            read = listOf(randomChannelUserRead(user = CurrentUser)),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when last non-deleted message is not found`() = runTest {
+        val channel = randomChannel(
+            messages = randomMessageList(10) { randomMessage(deletedAt = Now) },
+            read = listOf(randomChannelUserRead(user = CurrentUser)),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when last message is already read`() = runTest {
+        val channel = randomChannel(
+            messages = listOf(
+                randomMessage(
+                    createdAt = Now,
+                    deletedAt = null,
+                    deletedForMe = false,
+                ),
+            ),
+            read = listOf(
+                randomChannelUserRead(
+                    user = CurrentUser,
+                    lastRead = Now,
+                    lastDeliveredAt = null,
+                ),
+            ),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
+
+        fixture.verifyUpsertNotCalled()
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when last message is already delivered`() = runTest {
+        val channel = randomChannel(
+            messages = listOf(
+                randomMessage(
+                    createdAt = Now,
+                    deletedAt = null,
+                    deletedForMe = false,
+                ),
+            ),
+            read = listOf(
+                randomChannelUserRead(
+                    user = CurrentUser,
+                    lastRead = NEVER,
+                    lastDeliveredAt = Now,
+                ),
+            ),
+        )
+        val channels = listOf(channel)
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels)
 
         fixture.verifyUpsertNotCalled()
     }
