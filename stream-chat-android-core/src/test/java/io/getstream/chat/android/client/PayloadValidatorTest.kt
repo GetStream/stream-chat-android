@@ -62,10 +62,9 @@ internal class PayloadValidatorTest {
     companion object {
 
         @JvmStatic
-        fun isFromStreamServerArguments() =
-            isFromStreamServerV1Arguments() +
-                isFromStreamServerV2Arguments() +
-                isFromStreamServerUnknownVersionArguments()
+        fun isFromStreamServerArguments() = isFromStreamServerV1Arguments() +
+            isFromStreamServerV2Arguments() +
+            isFromStreamServerUnknownVersionArguments()
 
         private fun isFromStreamServerV1Arguments() = listOf(
             Arguments.of(mapOf("version" to "v1"), false),
@@ -124,9 +123,8 @@ internal class PayloadValidatorTest {
         )
 
         @JvmStatic
-        fun isValidNewMessageArguments() =
-            isValidNewMessageV1Arguments() +
-                isValidNewMessageV2Arguments()
+        fun isValidNewMessageArguments() = isValidNewMessageV1Arguments() +
+            isValidNewMessageV2Arguments()
 
         @Suppress("LongMethod")
         private fun isValidNewMessageV1Arguments() = listOf(
@@ -358,10 +356,9 @@ internal class PayloadValidatorTest {
         )
 
         @JvmStatic
-        fun isValidPayloadArguments() =
-            isValidPayloadV1Arguments() +
-                isValidPayloadV2Arguments() +
-                isValidPayloadUnknownVersionArguments()
+        fun isValidPayloadArguments() = isValidPayloadV1Arguments() +
+            isValidPayloadV2Arguments() +
+            isValidPayloadUnknownVersionArguments()
 
         @Suppress("LongMethod")
         private fun isValidPayloadV1Arguments() = listOf(

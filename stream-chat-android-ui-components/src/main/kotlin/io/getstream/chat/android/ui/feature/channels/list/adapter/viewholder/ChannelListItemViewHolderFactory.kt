@@ -60,11 +60,9 @@ public open class ChannelListItemViewHolderFactory {
      *
      * For built-in view types, see [ChannelListItemType] and its constants.
      */
-    public open fun getItemViewType(item: ChannelListItem): Int {
-        return when (item) {
-            is ChannelListItem.LoadingMoreItem -> ChannelListItemViewType.LOADING_MORE
-            is ChannelListItem.ChannelItem -> ChannelListItemViewType.DEFAULT
-        }
+    public open fun getItemViewType(item: ChannelListItem): Int = when (item) {
+        is ChannelListItem.LoadingMoreItem -> ChannelListItemViewType.LOADING_MORE
+        is ChannelListItem.ChannelItem -> ChannelListItemViewType.DEFAULT
     }
 
     /**
@@ -74,12 +72,10 @@ public open class ChannelListItemViewHolderFactory {
     public open fun createViewHolder(
         parentView: ViewGroup,
         viewType: Int,
-    ): BaseChannelListItemViewHolder {
-        return when (viewType) {
-            ChannelListItemViewType.DEFAULT -> createChannelViewHolder(parentView)
-            ChannelListItemViewType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
-            else -> throw IllegalArgumentException("Unhandled ChannelList view type: $viewType")
-        }
+    ): BaseChannelListItemViewHolder = when (viewType) {
+        ChannelListItemViewType.DEFAULT -> createChannelViewHolder(parentView)
+        ChannelListItemViewType.LOADING_MORE -> createLoadingMoreViewHolder(parentView)
+        else -> throw IllegalArgumentException("Unhandled ChannelList view type: $viewType")
     }
 
     protected open fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
@@ -101,9 +97,7 @@ public open class ChannelListItemViewHolderFactory {
         )
     }
 
-    protected open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-        return ChannelListLoadingMoreViewHolder(parentView, style)
-    }
+    protected open fun createLoadingMoreViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder = ChannelListLoadingMoreViewHolder(parentView, style)
 
     /**
      * Initializes the fields with the default values for testing.

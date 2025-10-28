@@ -55,10 +55,8 @@ internal class ChannelViewModelFactoryTest {
             on { clientState } doReturn mock()
         }
 
-        fun get(): ChannelViewModelFactory {
-            return ChannelViewModelFactory(
-                chatClient = mockChatClient,
-            )
-        }
+        fun get(): ChannelViewModelFactory = ChannelViewModelFactory(
+            chatClient = mockChatClient,
+        )
     }
 }

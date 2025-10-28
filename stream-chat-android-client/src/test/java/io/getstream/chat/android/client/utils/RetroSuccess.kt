@@ -28,43 +28,29 @@ import retrofit2.Response
 
 internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
 
-    fun toRetrofitCall(): RetrofitCall<T> {
-        return RetrofitCall(
-            call = this,
-            parser = ParserFactory.createMoshiChatParser(),
-            CoroutineScope(DispatcherProvider.IO),
-        )
-    }
+    fun toRetrofitCall(): RetrofitCall<T> = RetrofitCall(
+        call = this,
+        parser = ParserFactory.createMoshiChatParser(),
+        CoroutineScope(DispatcherProvider.IO),
+    )
 
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }
 
-    override fun isExecuted(): Boolean {
-        return true
-    }
+    override fun isExecuted(): Boolean = true
 
-    override fun clone(): Call<T> {
-        return this
-    }
+    override fun clone(): Call<T> = this
 
-    override fun isCanceled(): Boolean {
-        return false
-    }
+    override fun isCanceled(): Boolean = false
 
     override fun cancel() {
         // no-op
     }
 
-    override fun execute(): Response<T> {
-        return Response.success(result)
-    }
+    override fun execute(): Response<T> = Response.success(result)
 
-    override fun request(): Request {
-        return null!!
-    }
+    override fun request(): Request = null!!
 
-    override fun timeout(): Timeout {
-        return Timeout()
-    }
+    override fun timeout(): Timeout = Timeout()
 }

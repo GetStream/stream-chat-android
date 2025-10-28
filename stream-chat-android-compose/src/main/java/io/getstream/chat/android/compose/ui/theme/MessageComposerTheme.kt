@@ -68,16 +68,14 @@ public data class MessageComposerTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): MessageComposerTheme {
-            return MessageComposerTheme(
-                attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
-                linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
-                inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
-                actionsTheme = ComposerActionsTheme.defaultTheme(colors),
-                audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
-                attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
-            )
-        }
+        ): MessageComposerTheme = MessageComposerTheme(
+            attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
+            linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
+            inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+            actionsTheme = ComposerActionsTheme.defaultTheme(colors),
+            audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
+            attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
+        )
     }
 }
 
@@ -107,14 +105,12 @@ public data class ComposerCancelIconStyle(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): ComposerCancelIconStyle {
-            return ComposerCancelIconStyle(
-                backgroundShape = CircleShape,
-                backgroundColor = colors.overlayDark,
-                painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                tint = colors.appBackground,
-            )
-        }
+        ): ComposerCancelIconStyle = ComposerCancelIconStyle(
+            backgroundShape = CircleShape,
+            backgroundColor = colors.overlayDark,
+            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            tint = colors.appBackground,
+        )
     }
 }
 
@@ -153,30 +149,28 @@ public data class ComposerLinkPreviewTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): ComposerLinkPreviewTheme {
-            return ComposerLinkPreviewTheme(
-                imageSize = ComponentSize(width = 48.dp, height = 48.dp),
-                imageShape = RectangleShape,
-                imagePadding = 4.dp,
-                separatorSize = ComponentSize(width = 2.dp, height = 48.dp),
-                separatorMarginStart = 4.dp,
-                separatorMarginEnd = 8.dp,
-                title = TextComponentStyle(
-                    color = colors.textHighEmphasis,
-                    style = typography.bodyBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                ),
-                titleToSubtitle = 4.dp,
-                subtitle = TextComponentStyle(
-                    color = colors.textHighEmphasis,
-                    style = typography.footnote,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                ),
-                cancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
-            )
-        }
+        ): ComposerLinkPreviewTheme = ComposerLinkPreviewTheme(
+            imageSize = ComponentSize(width = 48.dp, height = 48.dp),
+            imageShape = RectangleShape,
+            imagePadding = 4.dp,
+            separatorSize = ComponentSize(width = 2.dp, height = 48.dp),
+            separatorMarginStart = 4.dp,
+            separatorMarginEnd = 8.dp,
+            title = TextComponentStyle(
+                color = colors.textHighEmphasis,
+                style = typography.bodyBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            ),
+            titleToSubtitle = 4.dp,
+            subtitle = TextComponentStyle(
+                color = colors.textHighEmphasis,
+                style = typography.footnote,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            ),
+            cancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
+        )
     }
 }
 
@@ -204,17 +198,15 @@ public data class ComposerInputFieldTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): ComposerInputFieldTheme {
-            return ComposerInputFieldTheme(
-                borderShape = shapes.inputField,
-                backgroundColor = colors.inputBackground,
-                textStyle = typography.body.copy(
-                    color = colors.textHighEmphasis,
-                    textDirection = TextDirection.Content,
-                ),
-                cursorBrushColor = colors.primaryAccent,
-            )
-        }
+        ): ComposerInputFieldTheme = ComposerInputFieldTheme(
+            borderShape = shapes.inputField,
+            backgroundColor = colors.inputBackground,
+            textStyle = typography.body.copy(
+                color = colors.textHighEmphasis,
+                textDirection = TextDirection.Content,
+            ),
+            cursorBrushColor = colors.primaryAccent,
+        )
     }
 }
 

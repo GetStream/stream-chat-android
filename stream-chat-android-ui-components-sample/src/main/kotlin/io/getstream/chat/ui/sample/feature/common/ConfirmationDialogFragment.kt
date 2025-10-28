@@ -132,41 +132,39 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             cancelText = context.getString(R.string.stream_ui_message_list_delete_confirmation_negative_button),
         )
 
-        fun newDeleteChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment =
-            newInstance(
-                iconResId = R.drawable.ic_delete,
-                iconTintResId = R.color.red,
-                title = if (isGroupChannel) {
-                    context.getString(R.string.stream_ui_channel_info_option_delete_group)
-                } else {
-                    context.getString(R.string.stream_ui_channel_info_option_delete_conversation)
-                },
-                description = if (isGroupChannel) {
-                    context.getString(R.string.stream_ui_channel_info_delete_group_modal_message)
-                } else {
-                    context.getString(R.string.stream_ui_channel_info_delete_conversation_modal_message)
-                },
-                confirmText = context.getString(R.string.delete),
-                cancelText = context.getString(R.string.cancel),
-            )
+        fun newDeleteChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.ic_delete,
+            iconTintResId = R.color.red,
+            title = if (isGroupChannel) {
+                context.getString(R.string.stream_ui_channel_info_option_delete_group)
+            } else {
+                context.getString(R.string.stream_ui_channel_info_option_delete_conversation)
+            },
+            description = if (isGroupChannel) {
+                context.getString(R.string.stream_ui_channel_info_delete_group_modal_message)
+            } else {
+                context.getString(R.string.stream_ui_channel_info_delete_conversation_modal_message)
+            },
+            confirmText = context.getString(R.string.delete),
+            cancelText = context.getString(R.string.cancel),
+        )
 
-        fun newLeaveChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment =
-            newInstance(
-                iconResId = R.drawable.ic_leave_group,
-                iconTintResId = R.color.red,
-                title = if (isGroupChannel) {
-                    context.getString(R.string.stream_ui_channel_info_option_leave_group)
-                } else {
-                    context.getString(R.string.stream_ui_channel_info_option_leave_conversation)
-                },
-                description = if (isGroupChannel) {
-                    context.getString(R.string.stream_ui_channel_info_leave_group_modal_message)
-                } else {
-                    context.getString(R.string.stream_ui_channel_info_leave_conversation_modal_message)
-                },
-                confirmText = context.getString(R.string.leave),
-                cancelText = context.getString(R.string.cancel),
-            )
+        fun newLeaveChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.ic_leave_group,
+            iconTintResId = R.color.red,
+            title = if (isGroupChannel) {
+                context.getString(R.string.stream_ui_channel_info_option_leave_group)
+            } else {
+                context.getString(R.string.stream_ui_channel_info_option_leave_conversation)
+            },
+            description = if (isGroupChannel) {
+                context.getString(R.string.stream_ui_channel_info_leave_group_modal_message)
+            } else {
+                context.getString(R.string.stream_ui_channel_info_leave_conversation_modal_message)
+            },
+            confirmText = context.getString(R.string.leave),
+            cancelText = context.getString(R.string.cancel),
+        )
 
         fun newHideChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.stream_ic_hide,

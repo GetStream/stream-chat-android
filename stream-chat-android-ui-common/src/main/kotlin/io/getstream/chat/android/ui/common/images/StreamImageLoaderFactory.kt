@@ -40,47 +40,45 @@ private const val DISK_CACHE_DIRECTORY = "image_cache"
 public class StreamImageLoaderFactory(
     private val builder: ImageLoader.Builder.() -> Unit = {},
 ) : SingletonImageLoader.Factory {
-    override fun newImageLoader(context: PlatformContext): ImageLoader {
-        return ImageLoader.Builder(context)
-            .memoryCache { MemoryCache.Builder().maxSizePercent(context, DEFAULT_MEMORY_PERCENTAGE).build() }
-            .allowHardware(false)
-            .crossfade(true)
-            .components {
-                add(
-                    OkHttpNetworkFetcherFactory(
-                        callFactory = {
-                            val cacheControlInterceptor = Interceptor { chain ->
-                                chain.proceed(chain.request())
-                                    .newBuilder()
-                                    .header("Cache-Control", "max-age=3600,public")
-                                    .build()
-                            }
-                            // Don't limit concurrent network requests by host.
-                            val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
-
-                            OkHttpClient.Builder()
-                                .dispatcher(dispatcher)
-                                .addNetworkInterceptor(cacheControlInterceptor)
+    override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(context)
+        .memoryCache { MemoryCache.Builder().maxSizePercent(context, DEFAULT_MEMORY_PERCENTAGE).build() }
+        .allowHardware(false)
+        .crossfade(true)
+        .components {
+            add(
+                OkHttpNetworkFetcherFactory(
+                    callFactory = {
+                        val cacheControlInterceptor = Interceptor { chain ->
+                            chain.proceed(chain.request())
+                                .newBuilder()
+                                .header("Cache-Control", "max-age=3600,public")
                                 .build()
-                        },
-                    ),
-                )
+                        }
+                        // Don't limit concurrent network requests by host.
+                        val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
+
+                        OkHttpClient.Builder()
+                            .dispatcher(dispatcher)
+                            .addNetworkInterceptor(cacheControlInterceptor)
+                            .build()
+                    },
+                ),
+            )
+        }
+        .diskCache {
+            DiskCache.Builder()
+                .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY).toOkioPath())
+                .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
+                .build()
+        }
+        .components {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
+            } else {
+                add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
             }
-            .diskCache {
-                DiskCache.Builder()
-                    .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY).toOkioPath())
-                    .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
-                    .build()
-            }
-            .components {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
-                } else {
-                    add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
-                }
-                add(VideoFrameDecoder.Factory())
-            }
-            .apply(builder)
-            .build()
-    }
+            add(VideoFrameDecoder.Factory())
+        }
+        .apply(builder)
+        .build()
 }

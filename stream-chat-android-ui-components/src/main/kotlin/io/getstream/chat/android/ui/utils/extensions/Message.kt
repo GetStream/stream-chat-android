@@ -40,9 +40,7 @@ import java.util.Date
     ),
     level = DeprecationLevel.WARNING,
 )
-public fun Message.isFailed(): Boolean {
-    return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || isError()
-}
+public fun Message.isFailed(): Boolean = this.syncStatus == SyncStatus.FAILED_PERMANENTLY || isError()
 
 public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
@@ -56,13 +54,9 @@ public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull
     "a message needs to have a non null value for either createdAt or createdLocallyAt"
 }
 
-public fun Message.hasSingleReaction(): Boolean {
-    return supportedReactionGroups.size == 1
-}
+public fun Message.hasSingleReaction(): Boolean = supportedReactionGroups.size == 1
 
-public fun Message.hasReactions(): Boolean {
-    return supportedReactionGroups.isNotEmpty()
-}
+public fun Message.hasReactions(): Boolean = supportedReactionGroups.isNotEmpty()
 
 public val Message.supportedLatestReactions: List<Reaction>
     get() {
@@ -87,12 +81,11 @@ public val Message.supportedReactionCounts: Map<String, Int>
 
 public fun Message.hasText(): Boolean = text.isNotEmpty()
 
-internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: Boolean = false): String? =
-    when {
-        user.isCurrentUser() -> context.getString(R.string.stream_ui_channel_list_you)
-        isDirectMessaging -> null
-        else -> user.asMention(context)
-    }
+internal fun Message.getSenderDisplayName(context: Context, isDirectMessaging: Boolean = false): String? = when {
+    user.isCurrentUser() -> context.getString(R.string.stream_ui_channel_list_you)
+    isDirectMessaging -> null
+    else -> user.asMention(context)
+}
 
 internal fun Message.getPinnedText(context: Context): String? {
     val pinnedBy = pinnedBy ?: return null
@@ -108,44 +101,35 @@ internal fun Message.getPinnedText(context: Context): String? {
 /**
  * Returns a string representation of message attachments or null if the attachment list is empty.
  */
-internal fun Message.getAttachmentsText(): SpannableString? {
-    return attachments.takeIf { it.isNotEmpty() }
-        ?.mapNotNull { attachment ->
-            attachment.title?.let { title ->
-                val prefix = getAttachmentPrefix(attachment)
-                if (prefix != null) {
-                    "$prefix $title"
-                } else {
-                    title
-                }
-            } ?: attachment.name ?: attachment.fallback
-        }
-        ?.joinToString()
-        ?.italicize()
-}
-
-private fun getAttachmentPrefix(attachment: Attachment): String? =
-    when (attachment.type) {
-        AttachmentType.GIPHY -> "/giphy"
-        else -> null
+internal fun Message.getAttachmentsText(): SpannableString? = attachments.takeIf { it.isNotEmpty() }
+    ?.mapNotNull { attachment ->
+        attachment.title?.let { title ->
+            val prefix = getAttachmentPrefix(attachment)
+            if (prefix != null) {
+                "$prefix $title"
+            } else {
+                title
+            }
+        } ?: attachment.name ?: attachment.fallback
     }
+    ?.joinToString()
+    ?.italicize()
 
-internal fun Message.getTranslatedText(currentUser: User?): String {
-    return getTranslatedText { currentUser }
+private fun getAttachmentPrefix(attachment: Attachment): String? = when (attachment.type) {
+    AttachmentType.GIPHY -> "/giphy"
+    else -> null
 }
 
-internal inline fun Message.getTranslatedText(getCurrentUser: () -> User?): String {
-    return when (ChatUI.autoTranslationEnabled) {
-        true -> getCurrentUser()?.language?.let { userLanguage ->
-            getTranslation(userLanguage).ifEmpty { text }
-        } ?: text
-        else -> text
-    }
+internal fun Message.getTranslatedText(currentUser: User?): String = getTranslatedText { currentUser }
+
+internal inline fun Message.getTranslatedText(getCurrentUser: () -> User?): String = when (ChatUI.autoTranslationEnabled) {
+    true -> getCurrentUser()?.language?.let { userLanguage ->
+        getTranslation(userLanguage).ifEmpty { text }
+    } ?: text
+    else -> text
 }
 
-internal fun Message.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String {
-    return getTranslatedText(currentUserProvider::getCurrentUser)
-}
+internal fun Message.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String = getTranslatedText(currentUserProvider::getCurrentUser)
 
 /**
  * Returns the appropriate message text based on auto-translation settings and the user's preference.
@@ -164,21 +148,19 @@ internal fun Message.getTranslatedText(currentUserProvider: CurrentUserProvider 
 internal fun Message.getToggleableTranslatedText(
     showOriginalText: Boolean,
     currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider,
-): String {
-    return when (ChatUI.autoTranslationEnabled) {
-        true -> {
-            // If auto-translation is enabled, we check if the message is showing original text.
-            // If it is, we return the original text, otherwise we return the translated text.
-            if (showOriginalText) {
-                text
-            } else {
-                // If the message is not showing original text, we check if the current user has a language set.
-                // If they do, we return the translated text, otherwise we return the original text.
-                currentUserProvider.getCurrentUser()?.language?.let { userLanguage ->
-                    getTranslation(userLanguage).ifEmpty { text }
-                } ?: text
-            }
+): String = when (ChatUI.autoTranslationEnabled) {
+    true -> {
+        // If auto-translation is enabled, we check if the message is showing original text.
+        // If it is, we return the original text, otherwise we return the translated text.
+        if (showOriginalText) {
+            text
+        } else {
+            // If the message is not showing original text, we check if the current user has a language set.
+            // If they do, we return the translated text, otherwise we return the original text.
+            currentUserProvider.getCurrentUser()?.language?.let { userLanguage ->
+                getTranslation(userLanguage).ifEmpty { text }
+            } ?: text
         }
-        else -> text
     }
+    else -> text
 }

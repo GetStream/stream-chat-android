@@ -92,7 +92,5 @@ internal class PrepareMessageLogicImpl(
             }
     }
 
-    private fun generateUploadId(): String {
-        return "upload_id_${UUID.randomUUID()}"
-    }
+    private fun generateUploadId(): String = "upload_id_${UUID.randomUUID()}"
 }

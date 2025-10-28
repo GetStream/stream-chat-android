@@ -62,12 +62,10 @@ class UserLoginAdapter(
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (position == items.size) {
-            VIEW_TYPE_OPTIONS
-        } else {
-            super.getItemViewType(position)
-        }
+    override fun getItemViewType(position: Int): Int = if (position == items.size) {
+        VIEW_TYPE_OPTIONS
+    } else {
+        super.getItemViewType(position)
     }
 
     companion object {

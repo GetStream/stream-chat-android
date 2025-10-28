@@ -24,7 +24,9 @@ public sealed class DisconnectCause {
     /**
      * Happens when networks is not available anymore.
      */
-    public object NetworkNotAvailable : DisconnectCause() { override fun toString(): String = "NetworkNotAvailable" }
+    public object NetworkNotAvailable : DisconnectCause() {
+        override fun toString(): String = "NetworkNotAvailable"
+    }
 
     /**
      * Happens when Web Socket connection is not available.
@@ -49,5 +51,7 @@ public sealed class DisconnectCause {
      * Happens when disconnection has been done intentionally. E.g. we release connection when app went to background
      * or when the user logout.
      */
-    public object ConnectionReleased : DisconnectCause() { override fun toString(): String = "ConnectionReleased" }
+    public object ConnectionReleased : DisconnectCause() {
+        override fun toString(): String = "ConnectionReleased"
+    }
 }

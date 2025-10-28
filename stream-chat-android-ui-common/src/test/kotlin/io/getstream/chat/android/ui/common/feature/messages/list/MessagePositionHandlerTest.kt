@@ -31,16 +31,14 @@ internal class MessagePositionHandlerTest {
     private val user1 = User(id = "user1")
     private val user2 = User(id = "user2")
 
-    private fun createMessage(user: User, isSystem: Boolean = false, isError: Boolean = false): Message {
-        return randomMessage(
-            user = user,
-            type = when {
-                isSystem -> MessageType.SYSTEM
-                isError -> MessageType.ERROR
-                else -> MessageType.REGULAR
-            },
-        )
-    }
+    private fun createMessage(user: User, isSystem: Boolean = false, isError: Boolean = false): Message = randomMessage(
+        user = user,
+        type = when {
+            isSystem -> MessageType.SYSTEM
+            isError -> MessageType.ERROR
+            else -> MessageType.REGULAR
+        },
+    )
 
     @Test
     fun `Message should be TOP when it starts a new user sequence`() {

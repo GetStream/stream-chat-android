@@ -202,8 +202,7 @@ public fun ChannelsScreen(
                 currentUser = user,
                 isMuted = listViewModel.isChannelMuted(channel.cid),
                 onChannelOptionClick = remember(listViewModel) {
-                    {
-                            action ->
+                    { action ->
                         when (action) {
                             is ViewInfo -> {
                                 listViewModel.dismissChannelAction()

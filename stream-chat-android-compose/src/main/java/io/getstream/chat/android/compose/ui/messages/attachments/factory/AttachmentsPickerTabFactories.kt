@@ -32,9 +32,7 @@ public object AttachmentsPickerTabFactories {
         replaceWith = ReplaceWith(expression = "systemAttachmentsPickerTabFactories(config)"),
         level = DeprecationLevel.ERROR,
     )
-    public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
-        return systemAttachmentsPickerTabFactories(SystemAttachmentsPickerConfig())
-    }
+    public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> = systemAttachmentsPickerTabFactories(SystemAttachmentsPickerConfig())
 
     /**
      * Builds the default list of attachment picker tab factories (without requesting storage permission).
@@ -95,29 +93,27 @@ public object AttachmentsPickerTabFactories {
         takeImageEnabled: Boolean = true,
         recordVideoEnabled: Boolean = true,
         pollEnabled: Boolean = true,
-    ): List<AttachmentsPickerTabFactory> {
-        return listOfNotNull(
-            if (imagesTabEnabled) AttachmentsPickerImagesTabFactory() else null,
-            if (filesTabEnabled) AttachmentsPickerFilesTabFactory() else null,
-            when {
-                takeImageEnabled && recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
-                    )
+    ): List<AttachmentsPickerTabFactory> = listOfNotNull(
+        if (imagesTabEnabled) AttachmentsPickerImagesTabFactory() else null,
+        if (filesTabEnabled) AttachmentsPickerFilesTabFactory() else null,
+        when {
+            takeImageEnabled && recordVideoEnabled ->
+                AttachmentsPickerMediaCaptureTabFactory(
+                    AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
+                )
 
-                takeImageEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
-                    )
+            takeImageEnabled ->
+                AttachmentsPickerMediaCaptureTabFactory(
+                    AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
+                )
 
-                recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
-                    )
+            recordVideoEnabled ->
+                AttachmentsPickerMediaCaptureTabFactory(
+                    AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
+                )
 
-                else -> null
-            },
-            if (pollEnabled) AttachmentsPickerPollTabFactory() else null,
-        )
-    }
+            else -> null
+        },
+        if (pollEnabled) AttachmentsPickerPollTabFactory() else null,
+    )
 }

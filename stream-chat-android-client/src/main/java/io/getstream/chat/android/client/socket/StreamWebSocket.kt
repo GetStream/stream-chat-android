@@ -77,30 +77,29 @@ internal class StreamWebSocket(
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
     fun listen(): Flow<StreamWebSocketEvent> = eventFlow.asSharedFlow()
 
-    private fun parseMessage(text: String): StreamWebSocketEvent =
-        parser.fromJsonOrError(text, ChatEvent::class.java)
-            .map { StreamWebSocketEvent.Message(it) }
-            .recover { parseChatError ->
-                val errorResponse =
-                    when (val chatErrorResult = parser.fromJsonOrError(text, SocketErrorMessage::class.java)) {
-                        is Result.Success -> {
-                            chatErrorResult.value.error
-                        }
-                        is Result.Failure -> null
+    private fun parseMessage(text: String): StreamWebSocketEvent = parser.fromJsonOrError(text, ChatEvent::class.java)
+        .map { StreamWebSocketEvent.Message(it) }
+        .recover { parseChatError ->
+            val errorResponse =
+                when (val chatErrorResult = parser.fromJsonOrError(text, SocketErrorMessage::class.java)) {
+                    is Result.Success -> {
+                        chatErrorResult.value.error
                     }
-                StreamWebSocketEvent.Error(
-                    errorResponse?.let {
-                        Error.NetworkError(
-                            message = it.message,
-                            statusCode = it.statusCode,
-                            serverErrorCode = it.code,
-                        )
-                    } ?: Error.NetworkError.fromChatErrorCode(
-                        chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
-                        cause = parseChatError.extractCause(),
-                    ),
-                )
-            }.value
+                    is Result.Failure -> null
+                }
+            StreamWebSocketEvent.Error(
+                errorResponse?.let {
+                    Error.NetworkError(
+                        message = it.message,
+                        statusCode = it.statusCode,
+                        serverErrorCode = it.code,
+                    )
+                } ?: Error.NetworkError.fromChatErrorCode(
+                    chatErrorCode = ChatErrorCode.CANT_PARSE_EVENT,
+                    cause = parseChatError.extractCause(),
+                ),
+            )
+        }.value
 }
 
 internal sealed class StreamWebSocketEvent {

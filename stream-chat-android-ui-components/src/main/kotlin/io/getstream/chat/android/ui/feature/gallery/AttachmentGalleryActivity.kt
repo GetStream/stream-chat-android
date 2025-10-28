@@ -447,12 +447,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
      *
      * @param isMine If the message belongs to the current user.
      */
-    private fun shouldShowOptionsButton(isMine: Boolean): Boolean {
-        return replyOptionEnabled ||
-            showInChatOptionEnabled ||
-            saveMediaOptionEnabled ||
-            (deleteOptionEnabled && isMine)
-    }
+    private fun shouldShowOptionsButton(isMine: Boolean): Boolean = replyOptionEnabled ||
+        showInChatOptionEnabled ||
+        saveMediaOptionEnabled ||
+        (deleteOptionEnabled && isMine)
 
     /**
      * Clear the cache when the activity is
@@ -499,10 +497,8 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         internal const val EXTRA_ATTACHMENT_OPTION_RESULT = "extra_attachment_option_result"
 
         @JvmStatic
-        public fun createIntent(context: Context, initialIndex: Int): Intent {
-            return Intent(context, AttachmentGalleryActivity::class.java).apply {
-                putExtra(EXTRA_KEY_INITIAL_INDEX, initialIndex)
-            }
+        public fun createIntent(context: Context, initialIndex: Int): Intent = Intent(context, AttachmentGalleryActivity::class.java).apply {
+            putExtra(EXTRA_KEY_INITIAL_INDEX, initialIndex)
         }
     }
 }

@@ -32,13 +32,9 @@ internal class QueryChannelPaginationRequest(var messageLimit: Int = 30) : Query
     var watcherLimit: Int = 30
     var watcherOffset: Int = 0
 
-    fun hasFilter(): Boolean {
-        return messageFilterDirection != null
-    }
+    fun hasFilter(): Boolean = messageFilterDirection != null
 
-    fun isFirstPage(): Boolean {
-        return messageFilterDirection == null
-    }
+    fun isFirstPage(): Boolean = messageFilterDirection == null
 
     internal fun toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
         val originalRequest = this

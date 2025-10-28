@@ -69,16 +69,12 @@ internal inline fun TypedArray.use(block: (TypedArray) -> Unit) {
     recycle()
 }
 
-internal inline fun <reified T : Enum<T>> TypedArray.getEnum(index: Int, default: T): T {
-    return getInt(index, -1).let {
-        if (it >= 0) enumValues<T>()[it] else default
-    }
+internal inline fun <reified T : Enum<T>> TypedArray.getEnum(index: Int, default: T): T = getInt(index, -1).let {
+    if (it >= 0) enumValues<T>()[it] else default
 }
 
 @ColorInt
-internal fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? =
-    runCatching { getColorOrThrow(index) }.getOrNull()
+internal fun TypedArray.getColorOrNull(@StyleableRes index: Int): Int? = runCatching { getColorOrThrow(index) }.getOrNull()
 
 @Px
-internal fun TypedArray.getDimensionOrNull(@StyleableRes index: Int): Float? =
-    runCatching { getDimensionOrThrow(index) }.getOrNull()
+internal fun TypedArray.getDimensionOrNull(@StyleableRes index: Int): Float? = runCatching { getDimensionOrThrow(index) }.getOrNull()

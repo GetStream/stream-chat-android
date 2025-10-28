@@ -67,9 +67,7 @@ public data class Reaction(
     // this is a workaround around a backend issue
     // for some reason we sometimes only get the user id and not the user object
     // this needs more investigation on the backend side of things
-    public fun fetchUserId(): String {
-        return user?.id ?: userId
-    }
+    public fun fetchUserId(): String = user?.id ?: userId
 
     @SinceKotlin("99999.9")
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
@@ -124,22 +122,20 @@ public data class Reaction(
         public fun withEnforceUnique(enforceUnique: Boolean): Builder = apply { this.enforceUnique = enforceUnique }
         public fun withEmojiCode(emojiCode: String?): Builder = apply { this.emojiCode = emojiCode }
 
-        public fun build(): Reaction {
-            return Reaction(
-                messageId = messageId,
-                type = type,
-                score = score,
-                user = user,
-                userId = userId,
-                createdAt = createdAt,
-                createdLocallyAt = createdLocallyAt,
-                updatedAt = updatedAt,
-                deletedAt = deletedAt,
-                syncStatus = syncStatus,
-                extraData = extraData.toMutableMap(),
-                enforceUnique = enforceUnique,
-                emojiCode = emojiCode,
-            )
-        }
+        public fun build(): Reaction = Reaction(
+            messageId = messageId,
+            type = type,
+            score = score,
+            user = user,
+            userId = userId,
+            createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt,
+            syncStatus = syncStatus,
+            extraData = extraData.toMutableMap(),
+            enforceUnique = enforceUnique,
+            emojiCode = emojiCode,
+        )
     }
 }

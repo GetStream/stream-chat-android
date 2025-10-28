@@ -329,8 +329,6 @@ class CustomLoginActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context): Intent {
-            return Intent(context, CustomLoginActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, CustomLoginActivity::class.java)
     }
 }

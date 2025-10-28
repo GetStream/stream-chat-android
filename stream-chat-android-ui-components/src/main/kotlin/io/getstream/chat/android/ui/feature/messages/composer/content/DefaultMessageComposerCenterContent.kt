@@ -62,7 +62,9 @@ public interface MessageComposerCenterContent : MessageComposerContent {
  * Represents the default content shown at the center of [MessageComposerView].
  */
 @OptIn(InternalStreamChatApi::class)
-public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerCenterContent {
+public open class DefaultMessageComposerCenterContent :
+    FrameLayout,
+    MessageComposerCenterContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -114,14 +116,12 @@ public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComp
     @Suppress("UNCHECKED_CAST")
     protected open fun <T, VH> buildAdapter(
         style: MessageComposerViewStyle,
-    ): T where T : RecyclerView.Adapter<VH>, T : AttachmentAdapter, VH : RecyclerView.ViewHolder {
-        return AttachmentPreviewAdapter(
-            factoryManager = ChatUI.attachmentPreviewFactoryManager,
-            style = style,
-        ) { attachment ->
-            attachmentRemovalListener?.invoke(attachment)
-        } as T
-    }
+    ): T where T : RecyclerView.Adapter<VH>, T : AttachmentAdapter, VH : RecyclerView.ViewHolder = AttachmentPreviewAdapter(
+        factoryManager = ChatUI.attachmentPreviewFactoryManager,
+        style = style,
+    ) { attachment ->
+        attachmentRemovalListener?.invoke(attachment)
+    } as T
 
     /**
      * Initializes the content view with [MessageComposerContext].
@@ -246,7 +246,8 @@ private class AttachmentPreviewAdapter(
     private val factoryManager: AttachmentPreviewFactoryManager,
     private val style: MessageComposerViewStyle,
     private val attachmentRemovalListener: (Attachment) -> Unit,
-) : RecyclerView.Adapter<AttachmentPreviewViewHolder>(), AttachmentAdapter {
+) : RecyclerView.Adapter<AttachmentPreviewViewHolder>(),
+    AttachmentAdapter {
 
     /**
      * The attachments that will be displayed in the list.
@@ -271,14 +272,12 @@ private class AttachmentPreviewAdapter(
      * @param parentView The parent container.
      * @return An instance of attachment preview ViewHolder.
      */
-    override fun onCreateViewHolder(parentView: ViewGroup, viewType: Int): AttachmentPreviewViewHolder {
-        return factoryManager.onCreateViewHolder(
-            parentView = parentView,
-            viewType = viewType,
-            attachmentRemovalListener = attachmentRemovalListener,
-            style = style,
-        )
-    }
+    override fun onCreateViewHolder(parentView: ViewGroup, viewType: Int): AttachmentPreviewViewHolder = factoryManager.onCreateViewHolder(
+        parentView = parentView,
+        viewType = viewType,
+        attachmentRemovalListener = attachmentRemovalListener,
+        style = style,
+    )
 
     /**
      * Binds the created View in the ViewHolder to the attachment data.
@@ -295,9 +294,7 @@ private class AttachmentPreviewAdapter(
      *
      * @param position The position of the item in the list.
      */
-    override fun getItemViewType(position: Int): Int {
-        return factoryManager.getItemViewType(attachments[position])
-    }
+    override fun getItemViewType(position: Int): Int = factoryManager.getItemViewType(attachments[position])
 
     /**
      * Returns the number of attachment items.

@@ -152,21 +152,20 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `create with memberIds and extraData should return error when ChatClient returns error`() =
-        runTest {
-            // given
-            val memberIds = listOf(randomString(), randomString())
-            val extraData = mapOf(randomString() to randomString())
-            val errorCode = positiveRandomInt()
-            val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
-            whenever(chatClient.createChannel(any(), any(), any<List<String>>(), any()))
-                .thenReturn(errorCall)
-            // when
-            val result = channelClient.create(memberIds, extraData).await()
-            // then
-            verifyNetworkError(result, errorCode)
-            verify(chatClient).createChannel(channelType, channelId, memberIds, extraData)
-        }
+    fun `create with memberIds and extraData should return error when ChatClient returns error`() = runTest {
+        // given
+        val memberIds = listOf(randomString(), randomString())
+        val extraData = mapOf(randomString() to randomString())
+        val errorCode = positiveRandomInt()
+        val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
+        whenever(chatClient.createChannel(any(), any(), any<List<String>>(), any()))
+            .thenReturn(errorCall)
+        // when
+        val result = channelClient.create(memberIds, extraData).await()
+        // then
+        verifyNetworkError(result, errorCode)
+        verify(chatClient).createChannel(channelType, channelId, memberIds, extraData)
+    }
 
     @Test
     fun `create with params should return success when ChatClient returns success`() = runTest {
@@ -1385,21 +1384,20 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `getReactions with firstReactionId and limit should return success when ChatClient returns success`() =
-        runTest {
-            // given
-            val messageId = randomString()
-            val firstReactionId = randomString()
-            val limit = positiveRandomInt()
-            val messages = listOf<Message>(mock(), mock())
-            val successCall = RetroSuccess(messages).toRetrofitCall()
-            whenever(chatClient.getRepliesMore(any(), any(), any())).thenReturn(successCall)
-            // when
-            val result = channelClient.getReactions(messageId, firstReactionId, limit).await()
-            // then
-            verifySuccess(result, messages)
-            verify(chatClient).getRepliesMore(messageId, firstReactionId, limit)
-        }
+    fun `getReactions with firstReactionId and limit should return success when ChatClient returns success`() = runTest {
+        // given
+        val messageId = randomString()
+        val firstReactionId = randomString()
+        val limit = positiveRandomInt()
+        val messages = listOf<Message>(mock(), mock())
+        val successCall = RetroSuccess(messages).toRetrofitCall()
+        whenever(chatClient.getRepliesMore(any(), any(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.getReactions(messageId, firstReactionId, limit).await()
+        // then
+        verifySuccess(result, messages)
+        verify(chatClient).getRepliesMore(messageId, firstReactionId, limit)
+    }
 
     @Test
     fun `getReactions with firstReactionId and limit should return error when ChatClient returns error`() = runTest {
@@ -1520,19 +1518,18 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `partialUpdateMember should return success when ChatClient returns success with default parameters`() =
-        runTest {
-            // given
-            val userId = randomString()
-            val member = randomMember()
-            val successCall = RetroSuccess(member).toRetrofitCall()
-            whenever(chatClient.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(successCall)
-            // when
-            val result = channelClient.partialUpdateMember(userId).await()
-            // then
-            verifySuccess(result, member)
-            verify(chatClient).partialUpdateMember(channelType, channelId, userId, emptyMap(), emptyList())
-        }
+    fun `partialUpdateMember should return success when ChatClient returns success with default parameters`() = runTest {
+        // given
+        val userId = randomString()
+        val member = randomMember()
+        val successCall = RetroSuccess(member).toRetrofitCall()
+        whenever(chatClient.partialUpdateMember(any(), any(), any(), any(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.partialUpdateMember(userId).await()
+        // then
+        verifySuccess(result, member)
+        verify(chatClient).partialUpdateMember(channelType, channelId, userId, emptyMap(), emptyList())
+    }
 
     @Test
     fun `partialUpdateMember should return error when ChatClient returns error`() = runTest {
@@ -1568,28 +1565,27 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `addMembers with memberIds should return success when ChatClient returns success with default parameters`() =
-        runTest {
-            // given
-            val memberIds = listOf(randomString(), randomString())
-            val channel = randomChannel()
-            val successCall = RetroSuccess(channel).toRetrofitCall()
-            whenever(
-                chatClient.addMembers(
-                    any(),
-                    any(),
-                    any<List<String>>(),
-                    anyOrNull(),
-                    anyOrNull(),
-                    anyOrNull(),
-                ),
-            ).thenReturn(successCall)
-            // when
-            val result = channelClient.addMembers(memberIds).await()
-            // then
-            verifySuccess(result, channel)
-            verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null)
-        }
+    fun `addMembers with memberIds should return success when ChatClient returns success with default parameters`() = runTest {
+        // given
+        val memberIds = listOf(randomString(), randomString())
+        val channel = randomChannel()
+        val successCall = RetroSuccess(channel).toRetrofitCall()
+        whenever(
+            chatClient.addMembers(
+                any(),
+                any(),
+                any<List<String>>(),
+                anyOrNull(),
+                anyOrNull(),
+                anyOrNull(),
+            ),
+        ).thenReturn(successCall)
+        // when
+        val result = channelClient.addMembers(memberIds).await()
+        // then
+        verifySuccess(result, channel)
+        verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null)
+    }
 
     @Test
     fun `addMembers with memberIds should return error when ChatClient returns error`() = runTest {
@@ -2356,19 +2352,18 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `pinMessage with expirationDate should return success when ChatClient returns success with null expirationDate`() =
-        runTest {
-            // given
-            val message = randomMessage(pinned = false)
-            val updatedMessage = randomMessage(pinned = true)
-            val successCall = RetroSuccess(updatedMessage).toRetrofitCall()
-            whenever(chatClient.pinMessage(any(), anyOrNull<Date>())).thenReturn(successCall)
-            // when
-            val result = channelClient.pinMessage(message, null).await()
-            // then
-            verifySuccess(result, updatedMessage)
-            verify(chatClient).pinMessage(message, null)
-        }
+    fun `pinMessage with expirationDate should return success when ChatClient returns success with null expirationDate`() = runTest {
+        // given
+        val message = randomMessage(pinned = false)
+        val updatedMessage = randomMessage(pinned = true)
+        val successCall = RetroSuccess(updatedMessage).toRetrofitCall()
+        whenever(chatClient.pinMessage(any(), anyOrNull<Date>())).thenReturn(successCall)
+        // when
+        val result = channelClient.pinMessage(message, null).await()
+        // then
+        verifySuccess(result, updatedMessage)
+        verify(chatClient).pinMessage(message, null)
+    }
 
     @Test
     fun `pinMessage with expirationDate should return error when ChatClient returns error`() = runTest {

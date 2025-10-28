@@ -63,110 +63,106 @@ internal class TypingEventsTest {
     }
 
     @Test
-    fun `When a user started typing Then subsequent keystroke events within a certain interval should not be sent to the server`() =
-        runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsEnabled(channelType, channelId)
-                .get()
+    fun `When a user started typing Then subsequent keystroke events within a certain interval should not be sent to the server`() = runTest {
+        val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            .givenTypingEventsEnabled(channelType, channelId)
+            .get()
 
-            Thread.sleep(3001) // Just to cool down because other tests can run before this.
-            val eventTime = Date()
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                eventTime,
-            ) shouldBeInstanceOf Result.Success::class
+        Thread.sleep(3001) // Just to cool down because other tests can run before this.
+        val eventTime = Date()
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            eventTime,
+        ) shouldBeInstanceOf Result.Success::class
 
-            sut.onTypingEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
-            sut.onTypingEventResult(mock(), EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
+        sut.onTypingEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
+        sut.onTypingEventResult(mock(), EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
 
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            ) shouldBeInstanceOf Result.Failure::class
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        ) shouldBeInstanceOf Result.Failure::class
 
-            Thread.sleep(3001)
+        Thread.sleep(3001)
 
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            ) shouldBeInstanceOf Result.Success::class
-        }
-
-    @Test
-    fun `When stop typing event is sent without sending start typing event before Should not send event to the server`() =
-        runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsEnabled(channelType, channelId)
-                .get()
-
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_STOP,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            ) shouldBeInstanceOf Result.Failure::class
-        }
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        ) shouldBeInstanceOf Result.Success::class
+    }
 
     @Test
-    fun `When stop typing event is sent after sending start typing event before Should send event to the server`() =
-        runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsEnabled(channelType, channelId)
-                .get()
+    fun `When stop typing event is sent without sending start typing event before Should not send event to the server`() = runTest {
+        val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            .givenTypingEventsEnabled(channelType, channelId)
+            .get()
 
-            sut.onTypingEventRequest(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            )
-
-            sut.onTypingEventPrecondition(
-                EventType.TYPING_STOP,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            ) shouldBeInstanceOf Result.Success::class
-
-            sut.onTypingEventRequest(
-                EventType.TYPING_STOP,
-                channelType,
-                channelId,
-                emptyMap(),
-                Date(),
-            )
-        }
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_STOP,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        ) shouldBeInstanceOf Result.Failure::class
+    }
 
     @Test
-    fun `When sending start typing event Should update lastStartTypeEvent`() =
-        runTest {
-            val (sut, stateRegistry) = Fixture(testCoroutines.scope, randomUser())
-                .givenTypingEventsEnabled(channelType, channelId)
-                .get()
+    fun `When stop typing event is sent after sending start typing event before Should send event to the server`() = runTest {
+        val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            .givenTypingEventsEnabled(channelType, channelId)
+            .get()
 
-            val eventTime = Date()
-            sut.onTypingEventRequest(
-                EventType.TYPING_START,
-                channelType,
-                channelId,
-                emptyMap(),
-                eventTime,
-            )
+        sut.onTypingEventRequest(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        )
 
-            stateRegistry.mutableChannel(channelType, channelId).lastStartTypingEvent `should be equal to` eventTime
-        }
+        sut.onTypingEventPrecondition(
+            EventType.TYPING_STOP,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        ) shouldBeInstanceOf Result.Success::class
+
+        sut.onTypingEventRequest(
+            EventType.TYPING_STOP,
+            channelType,
+            channelId,
+            emptyMap(),
+            Date(),
+        )
+    }
+
+    @Test
+    fun `When sending start typing event Should update lastStartTypeEvent`() = runTest {
+        val (sut, stateRegistry) = Fixture(testCoroutines.scope, randomUser())
+            .givenTypingEventsEnabled(channelType, channelId)
+            .get()
+
+        val eventTime = Date()
+        sut.onTypingEventRequest(
+            EventType.TYPING_START,
+            channelType,
+            channelId,
+            emptyMap(),
+            eventTime,
+        )
+
+        stateRegistry.mutableChannel(channelType, channelId).lastStartTypingEvent `should be equal to` eventTime
+    }
 
     private class Fixture(scope: CoroutineScope, user: User) {
         private val stateRegistry = StateRegistry(
@@ -199,8 +195,6 @@ internal class TypingEventsTest {
             return this
         }
 
-        fun get(): Pair<TypingEventListener, StateRegistry> {
-            return TypingEventListenerState(state = stateRegistry) to stateRegistry
-        }
+        fun get(): Pair<TypingEventListener, StateRegistry> = TypingEventListenerState(state = stateRegistry) to stateRegistry
     }
 }

@@ -149,135 +149,129 @@ internal class DomainMapping(
      * Transforms [DownstreamChannelDto] into [Channel]
      *
      */
-    internal fun DownstreamChannelDto.toDomain(): Channel =
-        Channel(
-            id = id,
-            type = type,
-            name = name ?: "",
-            image = image ?: "",
-            watcherCount = watcher_count,
-            frozen = frozen,
-            createdAt = created_at,
-            deletedAt = deleted_at,
-            updatedAt = updated_at,
-            memberCount = member_count,
-            messages = messages.map { it.toDomain(this.toChannelInfo()) },
-            members = members.map { it.toDomain() },
-            watchers = watchers.map { it.toDomain() },
-            read = read.map {
-                it.toDomain(
-                    lastReceivedEventDate = last_message_at ?: it.last_read,
-                )
-            },
-            config = config.toDomain(),
-            createdBy = created_by?.toDomain() ?: User(),
-            team = team,
-            cooldown = cooldown,
-            pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
-            ownCapabilities = own_capabilities.toSet(),
-            membership = membership?.toDomain(),
-            activeLiveLocations = active_live_locations.map { it.toDomain() },
-            messageCount = message_count,
-            extraData = extraData.toMutableMap(),
-        ).syncUnreadCountWithReads(currentUserIdProvider())
-            .let(channelTransformer::transform)
+    internal fun DownstreamChannelDto.toDomain(): Channel = Channel(
+        id = id,
+        type = type,
+        name = name ?: "",
+        image = image ?: "",
+        watcherCount = watcher_count,
+        frozen = frozen,
+        createdAt = created_at,
+        deletedAt = deleted_at,
+        updatedAt = updated_at,
+        memberCount = member_count,
+        messages = messages.map { it.toDomain(this.toChannelInfo()) },
+        members = members.map { it.toDomain() },
+        watchers = watchers.map { it.toDomain() },
+        read = read.map {
+            it.toDomain(
+                lastReceivedEventDate = last_message_at ?: it.last_read,
+            )
+        },
+        config = config.toDomain(),
+        createdBy = created_by?.toDomain() ?: User(),
+        team = team,
+        cooldown = cooldown,
+        pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
+        ownCapabilities = own_capabilities.toSet(),
+        membership = membership?.toDomain(),
+        activeLiveLocations = active_live_locations.map { it.toDomain() },
+        messageCount = message_count,
+        extraData = extraData.toMutableMap(),
+    ).syncUnreadCountWithReads(currentUserIdProvider())
+        .let(channelTransformer::transform)
 
-    internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo =
-        ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = member_count,
-            name = name,
-            type = type,
-            image = image,
-        )
+    internal fun DownstreamChannelDto.toChannelInfo(): ChannelInfo = ChannelInfo(
+        cid = cid,
+        id = id,
+        memberCount = member_count,
+        name = name,
+        type = type,
+        image = image,
+    )
 
     /**
      * Transforms [DownstreamMessageDto] to [Message].
      */
-    internal fun DownstreamMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message =
-        (channel?.toDomain() ?: fallbackChannelInfo).let { channelInfo: ChannelInfo? ->
-            Message(
-                attachments = attachments.map { it.toDomain() },
-                channelInfo = channelInfo,
-                cid = cid,
-                command = command,
-                createdAt = created_at,
-                deletedAt = deleted_at,
-                html = html,
-                i18n = i18n,
-                id = id,
-                latestReactions = latest_reactions.toDomain(
-                    messageId = id,
-                ),
-                mentionedUsers = mentioned_users.map { it.toDomain() },
-                ownReactions = own_reactions.toDomain(
-                    messageId = id,
-                ),
-                parentId = parent_id,
-                pinExpires = pin_expires,
-                pinned = pinned,
-                pinnedAt = pinned_at,
-                pinnedBy = pinned_by?.toDomain(),
-                reactionCounts = reaction_counts.orEmpty().toMutableMap(),
-                reactionScores = reaction_scores.orEmpty().toMutableMap(),
-                reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain(it.key) },
-                replyCount = reply_count,
-                deletedReplyCount = deleted_reply_count,
-                replyMessageId = quoted_message_id,
-                replyTo = quoted_message?.toDomain(channelInfo),
-                shadowed = shadowed,
-                showInChannel = show_in_channel,
-                silent = silent,
-                text = text,
-                threadParticipants = thread_participants.map { it.toDomain() },
-                type = type,
-                updatedAt = lastUpdateTime(),
-                user = user.toDomain(),
-                moderationDetails = moderation_details?.toDomain(),
-                moderation = moderation?.toDomain(),
-                messageTextUpdatedAt = message_text_updated_at,
-                poll = poll?.toDomain(),
-                restrictedVisibility = emptyList(),
-                reminder = reminder?.toDomain(),
-                sharedLocation = shared_location?.toDomain(),
-                channelRole = member?.channel_role,
-                deletedForMe = deleted_for_me ?: false,
-                extraData = extraData.toMutableMap(),
-            ).let(messageTransformer::transform)
-        }
+    internal fun DownstreamMessageDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): Message = (channel?.toDomain() ?: fallbackChannelInfo).let { channelInfo: ChannelInfo? ->
+        Message(
+            attachments = attachments.map { it.toDomain() },
+            channelInfo = channelInfo,
+            cid = cid,
+            command = command,
+            createdAt = created_at,
+            deletedAt = deleted_at,
+            html = html,
+            i18n = i18n,
+            id = id,
+            latestReactions = latest_reactions.toDomain(
+                messageId = id,
+            ),
+            mentionedUsers = mentioned_users.map { it.toDomain() },
+            ownReactions = own_reactions.toDomain(
+                messageId = id,
+            ),
+            parentId = parent_id,
+            pinExpires = pin_expires,
+            pinned = pinned,
+            pinnedAt = pinned_at,
+            pinnedBy = pinned_by?.toDomain(),
+            reactionCounts = reaction_counts.orEmpty().toMutableMap(),
+            reactionScores = reaction_scores.orEmpty().toMutableMap(),
+            reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain(it.key) },
+            replyCount = reply_count,
+            deletedReplyCount = deleted_reply_count,
+            replyMessageId = quoted_message_id,
+            replyTo = quoted_message?.toDomain(channelInfo),
+            shadowed = shadowed,
+            showInChannel = show_in_channel,
+            silent = silent,
+            text = text,
+            threadParticipants = thread_participants.map { it.toDomain() },
+            type = type,
+            updatedAt = lastUpdateTime(),
+            user = user.toDomain(),
+            moderationDetails = moderation_details?.toDomain(),
+            moderation = moderation?.toDomain(),
+            messageTextUpdatedAt = message_text_updated_at,
+            poll = poll?.toDomain(),
+            restrictedVisibility = emptyList(),
+            reminder = reminder?.toDomain(),
+            sharedLocation = shared_location?.toDomain(),
+            channelRole = member?.channel_role,
+            deletedForMe = deleted_for_me ?: false,
+            extraData = extraData.toMutableMap(),
+        ).let(messageTransformer::transform)
+    }
 
-    internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
-        DraftMessage(
-            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
-            cid = channel_cid,
-            id = message.id,
-            parentId = parent_message?.id ?: parent_id,
-            replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
-            showInChannel = message.show_in_channel,
-            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
-            silent = message.silent,
-            text = message.text,
-            extraData = message.extraData ?: emptyMap(),
-        )
+    internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage = DraftMessage(
+        attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
+        cid = channel_cid,
+        id = message.id,
+        parentId = parent_message?.id ?: parent_id,
+        replyMessage = quoted_message?.toDomain(fallbackChannelInfo),
+        showInChannel = message.show_in_channel,
+        mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
+        silent = message.silent,
+        text = message.text,
+        extraData = message.extraData ?: emptyMap(),
+    )
 
     /**
      * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
      */
-    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
-        PendingMessage(
-            message = message.toDomain(),
-            metadata = metadata.orEmpty(),
-        )
+    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage = PendingMessage(
+        message = message.toDomain(),
+        metadata = metadata.orEmpty(),
+    )
 
     /**
      * Transforms [MessageResponse] to [PendingMessage].
      */
-    internal fun MessageResponse.toDomain(): PendingMessage =
-        PendingMessage(
-            message = message.toDomain(),
-            metadata = pending_message_metadata.orEmpty(),
-        )
+    internal fun MessageResponse.toDomain(): PendingMessage = PendingMessage(
+        message = message.toDomain(),
+        metadata = pending_message_metadata.orEmpty(),
+    )
 
     /**
      * Map a list of [DownstreamReactionDto] to a list of [Reaction].
@@ -290,9 +284,8 @@ internal class DomainMapping(
     )
     private fun List<DownstreamReactionDto>.toDomain(
         messageId: String,
-    ): List<Reaction> =
-        filter { it.message_id == messageId }
-            .map { it.toDomain() }
+    ): List<Reaction> = filter { it.message_id == messageId }
+        .map { it.toDomain() }
 
     private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
         updated_at,
@@ -302,118 +295,111 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamUserDto] to [User].
      */
-    internal fun DownstreamUserDto.toDomain(): User =
-        User(
-            id = id,
-            name = name ?: "",
-            image = image ?: "",
-            role = role,
-            invisible = invisible,
-            language = language ?: "",
-            banned = banned,
-            devices = devices.orEmpty().map { it.toDomain() },
-            online = online,
-            createdAt = created_at,
-            deactivatedAt = deactivated_at,
-            updatedAt = updated_at,
-            lastActive = last_active,
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            unreadThreads = unread_threads,
-            mutes = mutes.orEmpty().map { it.toDomain() },
-            teams = teams,
-            teamsRole = teams_role.orEmpty(),
-            channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
-            blockedUserIds = blocked_user_ids.orEmpty(),
-            avgResponseTime = avg_response_time,
-            pushPreference = push_preferences?.toDomain(),
-            extraData = extraData.toMutableMap(),
-        ).let(userTransformer::transform)
+    internal fun DownstreamUserDto.toDomain(): User = User(
+        id = id,
+        name = name ?: "",
+        image = image ?: "",
+        role = role,
+        invisible = invisible,
+        language = language ?: "",
+        banned = banned,
+        devices = devices.orEmpty().map { it.toDomain() },
+        online = online,
+        createdAt = created_at,
+        deactivatedAt = deactivated_at,
+        updatedAt = updated_at,
+        lastActive = last_active,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
+        unreadThreads = unread_threads,
+        mutes = mutes.orEmpty().map { it.toDomain() },
+        teams = teams,
+        teamsRole = teams_role.orEmpty(),
+        channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
+        blockedUserIds = blocked_user_ids.orEmpty(),
+        avgResponseTime = avg_response_time,
+        pushPreference = push_preferences?.toDomain(),
+        extraData = extraData.toMutableMap(),
+    ).let(userTransformer::transform)
 
     /**
      * Transforms [DownstreamReactionDto] to [Reaction].
      */
-    internal fun DownstreamReactionDto.toDomain(): Reaction =
-        Reaction(
-            createdAt = created_at,
-            messageId = message_id,
-            score = score,
-            type = type,
-            updatedAt = updated_at,
-            user = user?.toDomain(),
-            userId = user_id,
-            emojiCode = emoji_code,
-            extraData = extraData.toMutableMap(),
-        )
+    internal fun DownstreamReactionDto.toDomain(): Reaction = Reaction(
+        createdAt = created_at,
+        messageId = message_id,
+        score = score,
+        type = type,
+        updatedAt = updated_at,
+        user = user?.toDomain(),
+        userId = user_id,
+        emojiCode = emoji_code,
+        extraData = extraData.toMutableMap(),
+    )
 
     /**
      * Transforms [DownstreamReactionGroupDto] to [ReactionGroup].
      */
-    internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
-        ReactionGroup(
-            type = type,
-            count = count,
-            sumScore = sum_scores,
-            firstReactionAt = first_reaction_at,
-            lastReactionAt = last_reaction_at,
-        )
+    internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup = ReactionGroup(
+        type = type,
+        count = count,
+        sumScore = sum_scores,
+        firstReactionAt = first_reaction_at,
+        lastReactionAt = last_reaction_at,
+    )
 
     /**
      * Transforms [DownstreamMuteDto] to [Mute].
      */
-    internal fun DownstreamMuteDto.toDomain(): Mute =
-        Mute(
-            user = user?.toDomain(),
-            target = target?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
-        )
+    internal fun DownstreamMuteDto.toDomain(): Mute = Mute(
+        user = user?.toDomain(),
+        target = target?.toDomain(),
+        createdAt = created_at,
+        updatedAt = updated_at,
+        expires = expires,
+    )
 
     /**
      * Transforms [DownstreamChannelMuteDto] into [ChannelMute]
      */
-    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
-        ChannelMute(
-            user = user?.toDomain(),
-            channel = channel?.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            expires = expires,
-        )
+    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute = ChannelMute(
+        user = user?.toDomain(),
+        channel = channel?.toDomain(),
+        createdAt = created_at,
+        updatedAt = updated_at,
+        expires = expires,
+    )
 
     /**
      * Transforms [DownstreamMemberDto] to [Member].
      */
-    internal fun DownstreamMemberDto.toDomain(): Member =
-        Member(
-            user = user.toDomain(),
-            createdAt = created_at,
-            updatedAt = updated_at,
-            isInvited = invited,
-            inviteAcceptedAt = invite_accepted_at,
-            inviteRejectedAt = invite_rejected_at,
-            shadowBanned = shadow_banned ?: false,
-            banned = banned ?: false,
-            channelRole = channel_role,
-            notificationsMuted = notifications_muted,
-            status = status,
-            banExpires = ban_expires,
-            pinnedAt = pinned_at,
-            archivedAt = archived_at,
-            extraData = extraData,
-        )
+    internal fun DownstreamMemberDto.toDomain(): Member = Member(
+        user = user.toDomain(),
+        createdAt = created_at,
+        updatedAt = updated_at,
+        isInvited = invited,
+        inviteAcceptedAt = invite_accepted_at,
+        inviteRejectedAt = invite_rejected_at,
+        shadowBanned = shadow_banned ?: false,
+        banned = banned ?: false,
+        channelRole = channel_role,
+        notificationsMuted = notifications_muted,
+        status = status,
+        banExpires = ban_expires,
+        pinnedAt = pinned_at,
+        archivedAt = archived_at,
+        extraData = extraData,
+    )
 
-    internal fun DownstreamLocationDto.toDomain(): Location =
-        Location(
-            cid = channel_cid,
-            messageId = message_id,
-            userId = user_id,
-            latitude = latitude,
-            longitude = longitude,
-            deviceId = created_by_device_id,
-            endAt = end_at,
-        )
+    internal fun DownstreamLocationDto.toDomain(): Location = Location(
+        cid = channel_cid,
+        messageId = message_id,
+        userId = user_id,
+        latitude = latitude,
+        longitude = longitude,
+        deviceId = created_by_device_id,
+        endAt = end_at,
+    )
 
     /**
      * Transforms DownstreamPollDto to Poll
@@ -518,67 +504,62 @@ internal class DomainMapping(
      */
     internal fun DownstreamChannelUserRead.toDomain(
         lastReceivedEventDate: Date,
-    ): ChannelUserRead =
-        ChannelUserRead(
-            user = user.toDomain(),
-            lastReceivedEventDate = lastReceivedEventDate,
-            lastRead = last_read,
-            unreadMessages = unread_messages,
-            lastReadMessageId = last_read_message_id,
-        )
+    ): ChannelUserRead = ChannelUserRead(
+        user = user.toDomain(),
+        lastReceivedEventDate = lastReceivedEventDate,
+        lastRead = last_read,
+        unreadMessages = unread_messages,
+        lastReadMessageId = last_read_message_id,
+    )
 
     /**
      * Transforms [AttachmentDto] to [Attachment].
      */
-    internal fun AttachmentDto.toDomain(): Attachment =
-        Attachment(
-            assetUrl = asset_url,
-            authorName = author_name,
-            authorLink = author_link,
-            fallback = fallback,
-            fileSize = file_size,
-            image = image,
-            imageUrl = image_url,
-            mimeType = mime_type,
-            name = name,
-            ogUrl = og_scrape_url,
-            text = text,
-            thumbUrl = thumb_url,
-            title = title,
-            titleLink = title_link,
-            type = type,
-            originalHeight = original_height,
-            originalWidth = original_width,
-            extraData = extraData.toMutableMap(),
-        )
+    internal fun AttachmentDto.toDomain(): Attachment = Attachment(
+        assetUrl = asset_url,
+        authorName = author_name,
+        authorLink = author_link,
+        fallback = fallback,
+        fileSize = file_size,
+        image = image,
+        imageUrl = image_url,
+        mimeType = mime_type,
+        name = name,
+        ogUrl = og_scrape_url,
+        text = text,
+        thumbUrl = thumb_url,
+        title = title,
+        titleLink = title_link,
+        type = type,
+        originalHeight = original_height,
+        originalWidth = original_width,
+        extraData = extraData.toMutableMap(),
+    )
 
     /**
      * Transforms [BannedUserResponse] to [BannedUser].
      */
-    internal fun BannedUserResponse.toDomain(): BannedUser {
-        return BannedUser(
-            user = user.toDomain(),
-            bannedBy = banned_by?.toDomain(),
-            channel = channel?.toDomain(),
-            createdAt = created_at,
-            expires = expires,
-            shadow = shadow,
-            reason = reason,
-        )
-    }
+    internal fun BannedUserResponse.toDomain(): BannedUser = BannedUser(
+        user = user.toDomain(),
+        bannedBy = banned_by?.toDomain(),
+        channel = channel?.toDomain(),
+        createdAt = created_at,
+        expires = expires,
+        shadow = shadow,
+        reason = reason,
+    )
 
     /**
      * Transforms [ChannelInfoDto] to [ChannelInfo].
      */
-    internal fun ChannelInfoDto.toDomain(): ChannelInfo =
-        ChannelInfo(
-            cid = cid,
-            id = id,
-            memberCount = member_count,
-            name = name,
-            type = type,
-            image = image,
-        )
+    internal fun ChannelInfoDto.toDomain(): ChannelInfo = ChannelInfo(
+        cid = cid,
+        id = id,
+        memberCount = member_count,
+        name = name,
+        type = type,
+        image = image,
+    )
 
     /**
      * Transforms [CommandDto] to [Command].
@@ -633,20 +614,18 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamFlagDto] to [Flag].
      */
-    internal fun DownstreamFlagDto.toDomain(): Flag {
-        return Flag(
-            user = user.toDomain(),
-            targetUser = target_user?.toDomain(),
-            targetMessageId = target_message_id.orEmpty(),
-            reviewedBy = created_at,
-            createdByAutomod = created_by_automod,
-            createdAt = approved_at,
-            updatedAt = updated_at,
-            reviewedAt = reviewed_at,
-            approvedAt = approved_at,
-            rejectedAt = rejected_at,
-        )
-    }
+    internal fun DownstreamFlagDto.toDomain(): Flag = Flag(
+        user = user.toDomain(),
+        targetUser = target_user?.toDomain(),
+        targetMessageId = target_message_id.orEmpty(),
+        reviewedBy = created_at,
+        createdByAutomod = created_by_automod,
+        createdAt = approved_at,
+        updatedAt = updated_at,
+        reviewedAt = reviewed_at,
+        approvedAt = approved_at,
+        rejectedAt = rejected_at,
+    )
 
     /**
      * Maps an [DownstreamModerationDetailsDto] to its [MessageModerationDetails] representation.
@@ -705,52 +684,50 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamThreadDto] into [Thread]
      */
-    internal fun DownstreamThreadDto.toDomain(): Thread =
-        Thread(
-            activeParticipantCount = active_participant_count ?: 0,
-            cid = channel_cid,
-            channel = channel?.toDomain(),
-            parentMessageId = parent_message_id,
-            parentMessage = parent_message.toDomain(channel?.toChannelInfo()),
-            createdByUserId = created_by_user_id,
-            createdBy = created_by?.toDomain(),
-            participantCount = participant_count,
-            threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
-            lastMessageAt = last_message_at,
-            createdAt = created_at,
-            updatedAt = updated_at,
-            deletedAt = deleted_at,
-            title = title,
-            latestReplies = latest_replies.map { it.toDomain(channel?.toChannelInfo()) },
-            read = read.orEmpty().map {
-                it.toDomain(
-                    lastReceivedEventDate = last_message_at,
-                )
-            },
-            draft = draft?.toDomain(channel?.toChannelInfo()),
-            extraData = extraData,
-        )
+    internal fun DownstreamThreadDto.toDomain(): Thread = Thread(
+        activeParticipantCount = active_participant_count ?: 0,
+        cid = channel_cid,
+        channel = channel?.toDomain(),
+        parentMessageId = parent_message_id,
+        parentMessage = parent_message.toDomain(channel?.toChannelInfo()),
+        createdByUserId = created_by_user_id,
+        createdBy = created_by?.toDomain(),
+        participantCount = participant_count,
+        threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
+        lastMessageAt = last_message_at,
+        createdAt = created_at,
+        updatedAt = updated_at,
+        deletedAt = deleted_at,
+        title = title,
+        latestReplies = latest_replies.map { it.toDomain(channel?.toChannelInfo()) },
+        read = read.orEmpty().map {
+            it.toDomain(
+                lastReceivedEventDate = last_message_at,
+            )
+        },
+        draft = draft?.toDomain(channel?.toChannelInfo()),
+        extraData = extraData,
+    )
 
     /**
      * Transforms [DownstreamThreadInfoDto] into [ThreadInfo]
      */
-    internal fun DownstreamThreadInfoDto.toDomain(): ThreadInfo =
-        ThreadInfo(
-            activeParticipantCount = active_participant_count ?: 0,
-            cid = channel_cid,
-            createdAt = created_at,
-            createdBy = created_by?.toDomain(),
-            createdByUserId = created_by_user_id,
-            deletedAt = deleted_at,
-            lastMessageAt = last_message_at,
-            parentMessage = parent_message?.toDomain(),
-            parentMessageId = parent_message_id,
-            participantCount = participant_count ?: 0,
-            replyCount = reply_count ?: 0,
-            title = title,
-            updatedAt = updated_at,
-            extraData = extraData,
-        )
+    internal fun DownstreamThreadInfoDto.toDomain(): ThreadInfo = ThreadInfo(
+        activeParticipantCount = active_participant_count ?: 0,
+        cid = channel_cid,
+        createdAt = created_at,
+        createdBy = created_by?.toDomain(),
+        createdByUserId = created_by_user_id,
+        deletedAt = deleted_at,
+        lastMessageAt = last_message_at,
+        parentMessage = parent_message?.toDomain(),
+        parentMessageId = parent_message_id,
+        participantCount = participant_count ?: 0,
+        replyCount = reply_count ?: 0,
+        title = title,
+        updatedAt = updated_at,
+        extraData = extraData,
+    )
 
     /**
      * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]

@@ -38,8 +38,7 @@ internal class LocationPickerTabFactory(
     override val attachmentsPickerMode: AttachmentsPickerMode =
         CustomPickerMode()
 
-    override fun isPickerTabEnabled(channel: Channel): Boolean =
-        channel.config.sharedLocationsEnabled
+    override fun isPickerTabEnabled(channel: Channel): Boolean = channel.config.sharedLocationsEnabled
 
     @Composable
     override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {

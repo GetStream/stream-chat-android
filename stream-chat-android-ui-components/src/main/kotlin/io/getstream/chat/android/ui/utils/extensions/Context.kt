@@ -46,36 +46,24 @@ internal val Context.isRtlLayout: Boolean
 
 @Px
 @InternalStreamChatApi
-public fun Context.getDimension(@DimenRes dimen: Int): Int {
-    return resources.getDimensionPixelSize(dimen)
-}
+public fun Context.getDimension(@DimenRes dimen: Int): Int = resources.getDimensionPixelSize(dimen)
 
-internal fun Context.getIntArray(@ArrayRes id: Int): IntArray {
-    return resources.getIntArray(id)
-}
+internal fun Context.getIntArray(@ArrayRes id: Int): IntArray = resources.getIntArray(id)
 
 @ColorInt
 @InternalStreamChatApi
-public fun Context.getColorCompat(@ColorRes color: Int): Int {
-    return ContextCompat.getColor(this, color)
-}
+public fun Context.getColorCompat(@ColorRes color: Int): Int = ContextCompat.getColor(this, color)
 
 @InternalStreamChatApi
-public fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? {
-    return ContextCompat.getColorStateList(this, color)
-}
+public fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? = ContextCompat.getColorStateList(this, color)
 
 @InternalStreamChatApi
-public fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
-    return ContextCompat.getDrawable(this, id)
-}
+public fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? = ContextCompat.getDrawable(this, id)
 
-internal fun Context?.getFragmentManager(): FragmentManager? {
-    return when (this) {
-        is AppCompatActivity -> supportFragmentManager
-        is ContextWrapper -> baseContext.getFragmentManager()
-        else -> null
-    }
+internal fun Context?.getFragmentManager(): FragmentManager? = when (this) {
+    is AppCompatActivity -> supportFragmentManager
+    is ContextWrapper -> baseContext.getFragmentManager()
+    else -> null
 }
 
 internal fun Context.copyToClipboard(text: String) {

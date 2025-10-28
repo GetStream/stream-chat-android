@@ -23,8 +23,6 @@ internal data class UpdateCooldownRequest(
     val set: Map<String, Any>,
 ) {
     companion object {
-        fun create(cooldownTimeInSeconds: Int): UpdateCooldownRequest {
-            return UpdateCooldownRequest(mapOf("cooldown" to cooldownTimeInSeconds))
-        }
+        fun create(cooldownTimeInSeconds: Int): UpdateCooldownRequest = UpdateCooldownRequest(mapOf("cooldown" to cooldownTimeInSeconds))
     }
 }

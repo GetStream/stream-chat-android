@@ -40,19 +40,15 @@ public data class MessageListItemWrapper(
     internal val newMessageState: NewMessageState? = null,
 ) {
 
-    override fun toString(): String {
-        return stringify()
-    }
+    override fun toString(): String = stringify()
 
-    private fun stringify(): String {
-        return "MessageListItemWrapper(" +
-            "endOfNewMessagesReached=$areNewestMessagesLoaded" +
-            ", hasNewMessages=$hasNewMessages" +
-            ", newMessageState=$newMessageState" +
-            ", items=${items.size}" +
-            ", first: ${items.firstOrNull()?.stringify()}" +
-            ", isTyping=$isTyping" +
-            ", isThread=$isThread" +
-            ")"
-    }
+    private fun stringify(): String = "MessageListItemWrapper(" +
+        "endOfNewMessagesReached=$areNewestMessagesLoaded" +
+        ", hasNewMessages=$hasNewMessages" +
+        ", newMessageState=$newMessageState" +
+        ", items=${items.size}" +
+        ", first: ${items.firstOrNull()?.stringify()}" +
+        ", isTyping=$isTyping" +
+        ", isThread=$isThread" +
+        ")"
 }

@@ -84,7 +84,5 @@ internal class MembersViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MembersViewModel(cid, chatClient) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = MembersViewModel(cid, chatClient) as T
 }

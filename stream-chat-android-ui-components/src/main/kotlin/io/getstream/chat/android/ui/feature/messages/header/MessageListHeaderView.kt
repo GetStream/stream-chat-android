@@ -328,18 +328,16 @@ public class MessageListHeaderView : FrameLayout {
     }
 
     private companion object {
-        private fun createInitialHeaderState(context: Context): HeaderState {
-            return HeaderState(
-                isThread = false,
-                isTitleEnabled = true,
-                normalModeTitle = String.EMPTY,
-                threadModeTitle = context.getString(R.string.stream_ui_message_list_header_thread_title),
-                isSubtitleEnabled = true,
-                normalModeSubtitle = String.EMPTY,
-                threadModeSubtitle = String.EMPTY,
-                typingUsers = emptyList(),
-                onlineState = OnlineState.NONE,
-            )
-        }
+        private fun createInitialHeaderState(context: Context): HeaderState = HeaderState(
+            isThread = false,
+            isTitleEnabled = true,
+            normalModeTitle = String.EMPTY,
+            threadModeTitle = context.getString(R.string.stream_ui_message_list_header_thread_title),
+            isSubtitleEnabled = true,
+            normalModeSubtitle = String.EMPTY,
+            threadModeSubtitle = String.EMPTY,
+            typingUsers = emptyList(),
+            onlineState = OnlineState.NONE,
+        )
     }
 }

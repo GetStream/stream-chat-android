@@ -85,9 +85,7 @@ public fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
  *
  * @return The requested giphy [size].
  */
-private fun getGiphySize(map: Map<String, String>, size: String, defaultValue: Int): Int {
-    return if (!map[size].isNullOrBlank()) map[size]?.toInt() ?: defaultValue else defaultValue
-}
+private fun getGiphySize(map: Map<String, String>, size: String, defaultValue: Int): Int = if (!map[size].isNullOrBlank()) map[size]?.toInt() ?: defaultValue else defaultValue
 
 /**
  * Contains extra information about Giphy attachments.

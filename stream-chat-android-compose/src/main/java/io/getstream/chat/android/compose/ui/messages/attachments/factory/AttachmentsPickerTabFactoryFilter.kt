@@ -36,18 +36,16 @@ internal class AttachmentsPickerTabFactoryFilter {
         factories: List<AttachmentsPickerTabFactory>,
         channel: Channel,
         messageMode: MessageMode,
-    ): List<AttachmentsPickerTabFactory> {
-        return factories
-            .filter { factory ->
-                factory.isEnabledForMessageMode(messageMode) && factory.isPickerTabEnabled(channel)
+    ): List<AttachmentsPickerTabFactory> = factories
+        .filter { factory ->
+            factory.isEnabledForMessageMode(messageMode) && factory.isPickerTabEnabled(channel)
+        }
+        .map { factory ->
+            when (factory) {
+                is AttachmentsPickerSystemTabFactory -> adjustSystemFactory(factory, channel, messageMode)
+                else -> factory
             }
-            .map { factory ->
-                when (factory) {
-                    is AttachmentsPickerSystemTabFactory -> adjustSystemFactory(factory, channel, messageMode)
-                    else -> factory
-                }
-            }
-    }
+        }
 
     private fun adjustSystemFactory(
         factory: AttachmentsPickerSystemTabFactory,
@@ -64,11 +62,9 @@ internal class AttachmentsPickerTabFactoryFilter {
         return AttachmentsPickerSystemTabFactory(config)
     }
 
-    private fun AttachmentsPickerTabFactory.isEnabledForMessageMode(mode: MessageMode): Boolean {
-        return when (this) {
-            // The default "Polls" tab is only shown in Normal mode
-            is AttachmentsPickerPollTabFactory -> mode is MessageMode.Normal
-            else -> true
-        }
+    private fun AttachmentsPickerTabFactory.isEnabledForMessageMode(mode: MessageMode): Boolean = when (this) {
+        // The default "Polls" tab is only shown in Normal mode
+        is AttachmentsPickerPollTabFactory -> mode is MessageMode.Normal
+        else -> true
     }
 }

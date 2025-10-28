@@ -29,17 +29,13 @@ internal class VoteConverter {
     private val entityListAdapter = moshi.adapter<List<VoteEntity>>()
 
     @TypeConverter
-    fun stringToVote(data: String?): VoteEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
+    fun stringToVote(data: String?): VoteEntity? = data?.let {
+        entityAdapter.fromJson(it)
     }
 
     @TypeConverter
-    fun voteToString(entity: VoteEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
+    fun voteToString(entity: VoteEntity?): String? = entity?.let {
+        entityAdapter.toJson(it)
     }
 
     @TypeConverter
@@ -51,9 +47,7 @@ internal class VoteConverter {
     }
 
     @TypeConverter
-    fun voteListToString(entities: List<VoteEntity>?): String? {
-        return entities?.let {
-            entityListAdapter.toJson(it)
-        }
+    fun voteListToString(entities: List<VoteEntity>?): String? = entities?.let {
+        entityListAdapter.toJson(it)
     }
 }

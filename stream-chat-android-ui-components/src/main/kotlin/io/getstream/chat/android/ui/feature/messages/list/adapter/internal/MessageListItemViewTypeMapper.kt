@@ -53,17 +53,15 @@ import io.getstream.chat.android.uiutils.extension.isUploading
 
 internal object MessageListItemViewTypeMapper {
 
-    fun getViewTypeValue(messageListItem: MessageListItem, attachmentFactoryManager: AttachmentFactoryManager): Int {
-        return when (messageListItem) {
-            is MessageListItem.DateSeparatorItem -> DATE_DIVIDER
-            is MessageListItem.LoadingMoreIndicatorItem -> LOADING_INDICATOR
-            is MessageListItem.ThreadSeparatorItem -> THREAD_SEPARATOR
-            is MessageListItem.MessageItem -> messageItemToViewType(messageListItem, attachmentFactoryManager)
-            is MessageListItem.TypingItem -> TYPING_INDICATOR
-            is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
-            is MessageListItem.UnreadSeparatorItem -> UNREAD_SEPARATOR
-            is MessageListItem.StartOfTheChannelItem -> START_OF_THE_CHANNEL
-        }
+    fun getViewTypeValue(messageListItem: MessageListItem, attachmentFactoryManager: AttachmentFactoryManager): Int = when (messageListItem) {
+        is MessageListItem.DateSeparatorItem -> DATE_DIVIDER
+        is MessageListItem.LoadingMoreIndicatorItem -> LOADING_INDICATOR
+        is MessageListItem.ThreadSeparatorItem -> THREAD_SEPARATOR
+        is MessageListItem.MessageItem -> messageItemToViewType(messageListItem, attachmentFactoryManager)
+        is MessageListItem.TypingItem -> TYPING_INDICATOR
+        is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
+        is MessageListItem.UnreadSeparatorItem -> UNREAD_SEPARATOR
+        is MessageListItem.StartOfTheChannelItem -> START_OF_THE_CHANNEL
     }
 
     /**
@@ -107,11 +105,9 @@ internal object MessageListItemViewTypeMapper {
     /**
      * Checks if the message contains only image or video attachments (Can also optionally contain links).
      */
-    private fun Message.isMediaAttachment(): Boolean {
-        return attachments.isNotEmpty() &&
-            attachments.all { it.isImage() || it.isVideo() || it.hasLink() || it.isAudioRecording() } &&
-            attachments.none { it.isUploading() || it.isFailed() }
-    }
+    private fun Message.isMediaAttachment(): Boolean = attachments.isNotEmpty() &&
+        attachments.all { it.isImage() || it.isVideo() || it.hasLink() || it.isAudioRecording() } &&
+        attachments.none { it.isUploading() || it.isFailed() }
 
     /**
      * Checks if all attachments are link attachments.

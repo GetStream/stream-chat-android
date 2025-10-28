@@ -36,14 +36,12 @@ internal interface ChatParser {
     fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder
 
     @Suppress("TooGenericExceptionCaught")
-    fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> {
-        return try {
-            Result.Success(fromJson(raw, clazz))
-        } catch (expected: Throwable) {
-            Result.Failure(
-                Error.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected),
-            )
-        }
+    fun <T : Any> fromJsonOrError(raw: String, clazz: Class<T>): Result<T> = try {
+        Result.Success(fromJson(raw, clazz))
+    } catch (expected: Throwable) {
+        Result.Failure(
+            Error.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected),
+        )
     }
 
     @Suppress("TooGenericExceptionCaught", "NestedBlockDepth")
@@ -83,38 +81,32 @@ internal interface ChatParser {
         }
     }
 
-    fun toError(errorResponseBody: ResponseBody): Error.NetworkError {
-        return try {
-            val errorResponse: ErrorResponse = fromJson(errorResponseBody.string(), ErrorResponse::class.java)
-            val (code, message, statusCode, _, moreInfo) = errorResponse
+    fun toError(errorResponseBody: ResponseBody): Error.NetworkError = try {
+        val errorResponse: ErrorResponse = fromJson(errorResponseBody.string(), ErrorResponse::class.java)
+        val (code, message, statusCode, _, moreInfo) = errorResponse
 
-            Error.NetworkError(
-                serverErrorCode = code,
-                message = message + moreInfoTemplate(moreInfo),
-                statusCode = statusCode,
-            )
-        } catch (expected: Throwable) {
-            StreamLog.e(tag, expected) { "[toError] failed" }
-            Error.NetworkError.fromChatErrorCode(
-                chatErrorCode = ChatErrorCode.NETWORK_FAILED,
-                cause = expected,
-            )
-        }
+        Error.NetworkError(
+            serverErrorCode = code,
+            message = message + moreInfoTemplate(moreInfo),
+            statusCode = statusCode,
+        )
+    } catch (expected: Throwable) {
+        StreamLog.e(tag, expected) { "[toError] failed" }
+        Error.NetworkError.fromChatErrorCode(
+            chatErrorCode = ChatErrorCode.NETWORK_FAILED,
+            cause = expected,
+        )
     }
 
-    private fun moreInfoTemplate(moreInfo: String): String {
-        return if (moreInfo.isNotBlank()) {
-            "\nMore information available at $moreInfo"
-        } else {
-            ""
-        }
+    private fun moreInfoTemplate(moreInfo: String): String = if (moreInfo.isNotBlank()) {
+        "\nMore information available at $moreInfo"
+    } else {
+        ""
     }
 
-    private fun buildDetailsTemplate(details: List<ErrorDetail>): String {
-        return if (details.isNotEmpty()) {
-            "\nError details: $details"
-        } else {
-            ""
-        }
+    private fun buildDetailsTemplate(details: List<ErrorDetail>): String = if (details.isNotEmpty()) {
+        "\nError details: $details"
+    } else {
+        ""
     }
 }

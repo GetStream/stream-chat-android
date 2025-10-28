@@ -57,24 +57,23 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling queryChannel with same argument and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.queryChannel(any(), any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val channelType = randomString()
-            val channelId = randomString()
-            val request = Mother.randomQueryChannelRequest()
-            // when
-            val call1 = distinctChatApi.queryChannel(channelType, channelId, request)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.queryChannel(channelType, channelId, request)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling queryChannel with same argument and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.queryChannel(any(), any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val channelType = randomString()
+        val channelId = randomString()
+        val request = Mother.randomQueryChannelRequest()
+        // when
+        val call1 = distinctChatApi.queryChannel(channelType, channelId, request)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.queryChannel(channelType, channelId, request)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling queryChannel with different arguments, Then different instance of Call is returned`() {
@@ -108,24 +107,23 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getRepliesMore with same argument and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getRepliesMore(any(), any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val messageId = randomString()
-            val firstId = randomString()
-            val limit = randomInt()
-            // when
-            val call1 = distinctChatApi.getRepliesMore(messageId, firstId, limit)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getRepliesMore(messageId, firstId, limit)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getRepliesMore with same argument and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getRepliesMore(any(), any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val messageId = randomString()
+        val firstId = randomString()
+        val limit = randomInt()
+        // when
+        val call1 = distinctChatApi.getRepliesMore(messageId, firstId, limit)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getRepliesMore(messageId, firstId, limit)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getRepliesMore with different arguments, Then different instance of Call is returned`() {
@@ -158,23 +156,22 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getReplies with same argument and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getReplies(any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val messageId = randomString()
-            val limit = randomInt()
-            // when
-            val call1 = distinctChatApi.getReplies(messageId, limit)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getReplies(messageId, limit)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getReplies with same argument and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getReplies(any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val messageId = randomString()
+        val limit = randomInt()
+        // when
+        val call1 = distinctChatApi.getReplies(messageId, limit)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getReplies(messageId, limit)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getReplies with different arguments, Then different instance of Call is returned`() {
@@ -207,24 +204,23 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getNewerReplies with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getNewerReplies(any(), any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val parentId = randomString()
-            val limit = randomInt()
-            val lastId = randomString()
-            // when
-            val call1 = distinctChatApi.getNewerReplies(parentId, limit, lastId)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getNewerReplies(parentId, limit, lastId)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getNewerReplies with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getNewerReplies(any(), any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val parentId = randomString()
+        val limit = randomInt()
+        val lastId = randomString()
+        // when
+        val call1 = distinctChatApi.getNewerReplies(parentId, limit, lastId)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getNewerReplies(parentId, limit, lastId)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getNewerReplies with different arguments, Then different instance of Call is returned`() {
@@ -258,24 +254,23 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getReactions with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getReactions(any(), any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val messageId = randomString()
-            val offset = randomInt()
-            val limit = randomInt()
-            // when
-            val call1 = distinctChatApi.getReactions(messageId, offset, limit)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getReactions(messageId, offset, limit)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getReactions with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getReactions(any(), any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val messageId = randomString()
+        val offset = randomInt()
+        val limit = randomInt()
+        // when
+        val call1 = distinctChatApi.getReactions(messageId, offset, limit)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getReactions(messageId, offset, limit)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getReactions with different arguments, Then different instance of Call is returned`() {
@@ -307,22 +302,21 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getMessage with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getMessage(any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val messageId = randomString()
-            // when
-            val call1 = distinctChatApi.getMessage(messageId)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getMessage(messageId)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getMessage with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getMessage(any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val messageId = randomString()
+        // when
+        val call1 = distinctChatApi.getMessage(messageId)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getMessage(messageId)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getMessage with different arguments, Then different instance of Call is returned`() {
@@ -352,22 +346,21 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getPendingMessage with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getPendingMessage(any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val messageId = randomString()
-            // when
-            val call1 = distinctChatApi.getPendingMessage(messageId)
-            // Complete first call
-            call1.await()
-            val call2 = distinctChatApi.getPendingMessage(messageId)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getPendingMessage with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getPendingMessage(any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val messageId = randomString()
+        // when
+        val call1 = distinctChatApi.getPendingMessage(messageId)
+        // Complete first call
+        call1.await()
+        val call2 = distinctChatApi.getPendingMessage(messageId)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getPendingMessage with different arguments, Then different instance of Call is returned`() {
@@ -401,25 +394,24 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling getPinnedMessages with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.getPinnedMessages(any(), any(), any(), any(), any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val channelType = randomString()
-            val channelId = randomString()
-            val limit = randomInt()
-            val sort = QuerySortByField.ascByName<Message>("created_at")
-            val pagination = PinnedMessagesPagination.AroundMessage(randomString())
-            // when
-            val call1 = distinctChatApi.getPinnedMessages(channelType, channelId, limit, sort, pagination)
-            call1.await()
-            val call2 = distinctChatApi.getPinnedMessages(channelType, channelId, limit, sort, pagination)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling getPinnedMessages with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.getPinnedMessages(any(), any(), any(), any(), any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val channelType = randomString()
+        val channelId = randomString()
+        val limit = randomInt()
+        val sort = QuerySortByField.ascByName<Message>("created_at")
+        val pagination = PinnedMessagesPagination.AroundMessage(randomString())
+        // when
+        val call1 = distinctChatApi.getPinnedMessages(channelType, channelId, limit, sort, pagination)
+        call1.await()
+        val call2 = distinctChatApi.getPinnedMessages(channelType, channelId, limit, sort, pagination)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling getPinnedMessages with different arguments, Then different instance of Call is returned`() {
@@ -453,21 +445,20 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling queryChannels with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val delegateApi = mock<ChatApi>()
-            whenever(delegateApi.queryChannels(any())).thenReturn(mock())
-            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
-            val request = Mother.randomQueryChannelsRequest()
-            // when
-            val call1 = distinctChatApi.queryChannels(request)
-            call1.await()
-            val call2 = distinctChatApi.queryChannels(request)
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling queryChannels with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val delegateApi = mock<ChatApi>()
+        whenever(delegateApi.queryChannels(any())).thenReturn(mock())
+        val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+        val request = Mother.randomQueryChannelsRequest()
+        // when
+        val call1 = distinctChatApi.queryChannels(request)
+        call1.await()
+        val call2 = distinctChatApi.queryChannels(request)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling queryChannels with different arguments, Then different instance of Call is returned`() {
@@ -522,48 +513,47 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling queryBannedUsers with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val api = mock<ChatApi>()
-            whenever(
-                api.queryBannedUsers(any(), any(), any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
-            ).thenReturn(TestCall(Result.Success(emptyList())))
-            val distinctChatApi = DistinctChatApi(backgroundScope, api)
-            val filter = Filters.neutral()
-            val sort = QuerySortByField.ascByName<BannedUsersSort>("created_at")
-            val offset = randomInt()
-            val limit = randomInt()
-            val createdAtAfter = randomDate()
-            val createdAtAfterOrEqual = randomDate()
-            val createdAtBefore = randomDate()
-            val createdAtBeforeOrEqual = randomDate()
-            // when
-            val call1 = distinctChatApi.queryBannedUsers(
-                filter = filter,
-                sort = sort,
-                offset = offset,
-                limit = limit,
-                createdAtAfter = createdAtAfter,
-                createdAtAfterOrEqual = createdAtAfterOrEqual,
-                createdAtBefore = createdAtBefore,
-                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
-            )
-            call1.await()
-            val call2 = distinctChatApi.queryBannedUsers(
-                filter = filter,
-                sort = sort,
-                offset = offset,
-                limit = limit,
-                createdAtAfter = createdAtAfter,
-                createdAtAfterOrEqual = createdAtAfterOrEqual,
-                createdAtBefore = createdAtBefore,
-                createdAtBeforeOrEqual = createdAtBeforeOrEqual,
-            )
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling queryBannedUsers with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val api = mock<ChatApi>()
+        whenever(
+            api.queryBannedUsers(any(), any(), any(), any(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull()),
+        ).thenReturn(TestCall(Result.Success(emptyList())))
+        val distinctChatApi = DistinctChatApi(backgroundScope, api)
+        val filter = Filters.neutral()
+        val sort = QuerySortByField.ascByName<BannedUsersSort>("created_at")
+        val offset = randomInt()
+        val limit = randomInt()
+        val createdAtAfter = randomDate()
+        val createdAtAfterOrEqual = randomDate()
+        val createdAtBefore = randomDate()
+        val createdAtBeforeOrEqual = randomDate()
+        // when
+        val call1 = distinctChatApi.queryBannedUsers(
+            filter = filter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        )
+        call1.await()
+        val call2 = distinctChatApi.queryBannedUsers(
+            filter = filter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        )
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling queryBannedUsers with different arguments, Then different instance of Call is returned`() {
@@ -640,45 +630,44 @@ internal class DistinctChatApiTest {
     }
 
     @Test
-    fun `When calling queryMembers with same arguments and first call finishes, Then different instance of Call is returned`() =
-        runTest {
-            // given
-            val api = mock<ChatApi>()
-            whenever(
-                api.queryMembers(any(), any(), any(), any(), any(), any(), any()),
-            ).thenReturn(TestCall(Result.Success(emptyList())))
-            val distinctChatApi = DistinctChatApi(backgroundScope, api)
-            val channelType = randomString()
-            val channelId = randomString()
-            val offset = randomInt()
-            val limit = randomInt()
-            val filter = Filters.neutral()
-            val sort = QuerySortByField.ascByName<Member>("name")
-            val members = listOf(randomMember())
-            // when
-            val call1 = distinctChatApi.queryMembers(
-                channelType = channelType,
-                channelId = channelId,
-                offset = offset,
-                limit = limit,
-                filter = filter,
-                sort = sort,
-                members = members,
-            )
-            call1.await()
-            val call2 = distinctChatApi.queryMembers(
-                channelType = channelType,
-                channelId = channelId,
-                offset = offset,
-                limit = limit,
-                filter = filter,
-                sort = sort,
-                members = members,
-            )
-            // then
-            // verify different instance of call is returned
-            Assert.assertFalse(call1 === call2)
-        }
+    fun `When calling queryMembers with same arguments and first call finishes, Then different instance of Call is returned`() = runTest {
+        // given
+        val api = mock<ChatApi>()
+        whenever(
+            api.queryMembers(any(), any(), any(), any(), any(), any(), any()),
+        ).thenReturn(TestCall(Result.Success(emptyList())))
+        val distinctChatApi = DistinctChatApi(backgroundScope, api)
+        val channelType = randomString()
+        val channelId = randomString()
+        val offset = randomInt()
+        val limit = randomInt()
+        val filter = Filters.neutral()
+        val sort = QuerySortByField.ascByName<Member>("name")
+        val members = listOf(randomMember())
+        // when
+        val call1 = distinctChatApi.queryMembers(
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = sort,
+            members = members,
+        )
+        call1.await()
+        val call2 = distinctChatApi.queryMembers(
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = sort,
+            members = members,
+        )
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
 
     @Test
     fun `When calling queryMembers with different arguments, Then different instance of Call is returned`() {

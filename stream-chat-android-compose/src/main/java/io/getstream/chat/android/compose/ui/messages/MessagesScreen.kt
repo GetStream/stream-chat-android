@@ -235,8 +235,7 @@ public fun MessagesScreen(
                 verticalArrangement = verticalArrangement,
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
-                    {
-                            message ->
+                    { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     }
@@ -246,8 +245,7 @@ public fun MessagesScreen(
                 onUserMentionClick = onUserMentionClick,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
-                    {
-                            result ->
+                    { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
                                 val message = listViewModel.getMessageById(result.messageId)
@@ -372,8 +370,7 @@ internal fun DefaultBottomBarContent(
         },
         onLinkPreviewClick = onComposerLinkPreviewClick,
         onSendMessage = remember(composerViewModel) {
-            {
-                    message ->
+            { message ->
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,
@@ -495,8 +492,7 @@ private fun BoxScope.MessagesScreenMenus(
             message = selectedMessage,
             ownCapabilities = ownCapabilities,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -538,8 +534,7 @@ private fun BoxScope.MessagesScreenMenus(
             currentUser = user,
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -608,8 +603,7 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 ),
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -692,8 +686,7 @@ public fun BoxScope.AttachmentsPickerMenu(
                 ChatTheme.shapes.bottomSheet
             },
             onAttachmentsSelected = remember(attachmentsPickerViewModel) {
-                {
-                        attachments ->
+                { attachments ->
                     attachmentsPickerViewModel.changeAttachmentState(false)
                     composerViewModel.addSelectedAttachments(attachments)
                 }
@@ -744,8 +737,7 @@ public fun MessageModerationDialog(
             ),
             onDismissRequest = remember(listViewModel) { { listViewModel.removeOverlay() } },
             onDialogOptionInteraction = remember(listViewModel, composerViewModel) {
-                {
-                        message, action ->
+                { message, action ->
                     when (action) {
                         DeleteMessage -> listViewModel.deleteMessage(message = message, true)
                         EditMessage -> composerViewModel.performMessageAction(Edit(message))

@@ -233,14 +233,12 @@ public data class ViewReactionsViewStyle(
             }
         }
 
-        private fun Int.getReactionSorting(): ReactionSorting {
-            return when (this) {
-                REACTION_SORTING_BY_FIRST_REACTION_AT -> ReactionSortingByFirstReactionAt
-                REACTION_SORTING_BY_LAST_REACTION_AT -> ReactionSortingByLastReactionAt
-                REACTION_SORTING_BY_SUM_SCORE -> ReactionSortingBySumScore
-                REACTION_SORTING_BY_COUNT -> ReactionSortingByCount
-                else -> ReactionSortingByFirstReactionAt
-            }
+        private fun Int.getReactionSorting(): ReactionSorting = when (this) {
+            REACTION_SORTING_BY_FIRST_REACTION_AT -> ReactionSortingByFirstReactionAt
+            REACTION_SORTING_BY_LAST_REACTION_AT -> ReactionSortingByLastReactionAt
+            REACTION_SORTING_BY_SUM_SCORE -> ReactionSortingBySumScore
+            REACTION_SORTING_BY_COUNT -> ReactionSortingByCount
+            else -> ReactionSortingByFirstReactionAt
         }
     }
 }

@@ -32,16 +32,14 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-): Disposable {
-    return StreamImageLoader.instance().load(
-        target = this,
-        data = data,
-        placeholderResId = placeholderResId,
-        transformation = transformation,
-        onStart = onStart,
-        onComplete = onComplete,
-    )
-}
+): Disposable = StreamImageLoader.instance().load(
+    target = this,
+    data = data,
+    placeholderResId = placeholderResId,
+    transformation = transformation,
+    onStart = onStart,
+    onComplete = onComplete,
+)
 
 @InternalStreamChatApi
 public fun ImageView.load(
@@ -50,16 +48,14 @@ public fun ImageView.load(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-): Disposable {
-    return StreamImageLoader.instance().load(
-        target = this,
-        data = data,
-        placeholderDrawable = placeholderDrawable,
-        transformation = transformation,
-        onStart = onStart,
-        onComplete = onComplete,
-    )
-}
+): Disposable = StreamImageLoader.instance().load(
+    target = this,
+    data = data,
+    placeholderDrawable = placeholderDrawable,
+    transformation = transformation,
+    onStart = onStart,
+    onComplete = onComplete,
+)
 
 /**
  * Loads an image into a drawable and then applies the drawable to the container, resizing it based on the scale types
@@ -96,13 +92,11 @@ public fun ImageView.loadVideoThumbnail(
     transformation: ImageTransformation = ImageTransformation.None,
     onStart: () -> Unit = {},
     onComplete: () -> Unit = {},
-): Disposable {
-    return StreamImageLoader.instance().loadVideoThumbnail(
-        target = this,
-        uri = uri,
-        placeholderResId = placeholderResId,
-        transformation = transformation,
-        onStart = onStart,
-        onComplete = onComplete,
-    )
-}
+): Disposable = StreamImageLoader.instance().loadVideoThumbnail(
+    target = this,
+    uri = uri,
+    placeholderResId = placeholderResId,
+    transformation = transformation,
+    onStart = onStart,
+    onComplete = onComplete,
+)

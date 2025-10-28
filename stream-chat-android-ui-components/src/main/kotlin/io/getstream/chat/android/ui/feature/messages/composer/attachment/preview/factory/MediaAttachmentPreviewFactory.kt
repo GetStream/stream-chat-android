@@ -65,17 +65,15 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder {
-        return StreamUiMediaAttachmentPreviewBinding
-            .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { binding ->
-                MediaAttachmentPreviewViewHolder(
-                    binding = binding,
-                    attachmentRemovalListener = attachmentRemovalListener,
-                    style = style,
-                )
-            }
-    }
+    ): AttachmentPreviewViewHolder = StreamUiMediaAttachmentPreviewBinding
+        .inflate(parentView.context.streamThemeInflater, parentView, false)
+        .let { binding ->
+            MediaAttachmentPreviewViewHolder(
+                binding = binding,
+                attachmentRemovalListener = attachmentRemovalListener,
+                style = style,
+            )
+        }
 
     /**
      * A ViewHolder for image and video attachment previews.

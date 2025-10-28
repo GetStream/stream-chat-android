@@ -167,63 +167,60 @@ internal class MessageListControllerTests {
 
     // test message grouping
     @Test
-    fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
-        runTest {
-            val messages = randomMessageList(3) { randomMessage(user = user1) }
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(dateSeparatorHandler = { _, _ -> false })
+    fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() = runTest {
+        val messages = randomMessageList(3) { randomMessage(user = user1) }
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.MIDDLE)
-            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
+        val expectedPosition = listOf(MessagePosition.MIDDLE)
+        val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
-            messagePosition `should be equal to` expectedPosition
-        }
-
-    @Test
-    fun `Given regular message followed and preceded by other user message When grouping messages Should add none position to the regular message`() =
-        runTest {
-            val messages = listOf(
-                randomMessage(user = user1), // First message from user1
-                randomMessage(user = user2), // Second message from user2
-                randomMessage(user = user1), // Third message from user1
-            )
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(dateSeparatorHandler = { _, _ -> false })
-
-            val expectedPosition = listOf(MessagePosition.NONE)
-            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
-
-            messagePosition `should be equal to` expectedPosition
-        }
+        messagePosition `should be equal to` expectedPosition
+    }
 
     @Test
-    fun `Given regular message followed by system message When grouping messages Should add none position to the regular message`() =
-        runTest {
-            val messages = listOf(
-                randomMessage(user = user1, type = MessageType.REGULAR),
-                randomMessage(user = user2, type = MessageType.REGULAR), // Regular message from user2
-                randomMessage(user = user1, type = MessageType.SYSTEM), // System message from user1
-            )
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(dateSeparatorHandler = { _, _ -> false })
+    fun `Given regular message followed and preceded by other user message When grouping messages Should add none position to the regular message`() = runTest {
+        val messages = listOf(
+            randomMessage(user = user1), // First message from user1
+            randomMessage(user = user2), // Second message from user2
+            randomMessage(user = user1), // Third message from user1
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.NONE)
-            val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
+        val expectedPosition = listOf(MessagePosition.NONE)
+        val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
-            messagePosition `should be equal to` expectedPosition
-        }
+        messagePosition `should be equal to` expectedPosition
+    }
+
+    @Test
+    fun `Given regular message followed by system message When grouping messages Should add none position to the regular message`() = runTest {
+        val messages = listOf(
+            randomMessage(user = user1, type = MessageType.REGULAR),
+            randomMessage(user = user2, type = MessageType.REGULAR), // Regular message from user2
+            randomMessage(user = user1, type = MessageType.SYSTEM), // System message from user1
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false })
+
+        val expectedPosition = listOf(MessagePosition.NONE)
+        val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
+
+        messagePosition `should be equal to` expectedPosition
+    }
 
     // test date separators
     @Test
@@ -303,46 +300,44 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() =
-        runTest {
-            var message = 0
-            val messages = randomMessageList {
-                message++
-                randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-            }
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
-
-            val deletedMessageCount =
-                controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-            deletedMessageCount `should be equal to` 0
+    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() = runTest {
+        var message = 0
+        val messages = randomMessageList {
+            message++
+            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState)
+            .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
+
+        val deletedMessageCount =
+            controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
+        deletedMessageCount `should be equal to` 0
+    }
 
     // footer visibility
     @Test
-    fun `When footer visibility is with time difference When message is after specified time Show message footer`() =
-        runTest {
-            var message = 0
-            val messages = randomMessageList(3) {
-                message++
-                randomMessage(createdAt = createDate(2022, 5, message))
-            }
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messagesState = messagesState)
-                .get(dateSeparatorHandler = { _, _ -> false })
-
-            val dateSeparatorCount =
-                controller.messageListState.value.messageItems.count { it is MessageItemState && it.showMessageFooter }
-
-            dateSeparatorCount `should be equal to` 3
+    fun `When footer visibility is with time difference When message is after specified time Show message footer`() = runTest {
+        var message = 0
+        val messages = randomMessageList(3) {
+            message++
+            randomMessage(createdAt = createDate(2022, 5, message))
         }
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false })
+
+        val dateSeparatorCount =
+            controller.messageListState.value.messageItems.count { it is MessageItemState && it.showMessageFooter }
+
+        dateSeparatorCount `should be equal to` 3
+    }
 
     @Test
     fun `When repetitive markLastMessageRead calls appear only single API call should be sent`() = runTest {
@@ -664,102 +659,99 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When scroll to first unread message is called, and message is already loaded, Then message is focused`() =
-        runTest {
-            val user = randomUser()
-            val messages = listOf(
-                randomMessage(id = "last_read_message_id"),
-                randomMessage(id = "first_unread_message_id"),
+    fun `When scroll to first unread message is called, and message is already loaded, Then message is focused`() = runTest {
+        val user = randomUser()
+        val messages = listOf(
+            randomMessage(id = "last_read_message_id"),
+            randomMessage(id = "first_unread_message_id"),
+        )
+        val channelRead = MutableStateFlow(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = "last_read_message_id",
+            ),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(
+                messagesState = messagesState,
+                read = channelRead,
             )
-            val channelRead = MutableStateFlow(
-                randomChannelUserRead(
-                    user = user,
-                    lastReadMessageId = "last_read_message_id",
-                ),
-            )
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser(user)
-                .givenChannelState(
-                    messagesState = messagesState,
-                    read = channelRead,
-                )
-                .get(dateSeparatorHandler = { _, _ -> false })
-            controller.scrollToFirstUnreadMessage()
-            val items = controller.messageListState.value.messageItems
-            val lastReadMessage = items.first() as MessageItemState
-            val firstUnreadMessage = items.last() as MessageItemState
-            lastReadMessage.message.id `should be equal to` "last_read_message_id"
-            lastReadMessage.focusState `should be equal to` null
-            firstUnreadMessage.message.id `should be equal to` "first_unread_message_id"
-            firstUnreadMessage.focusState `should be equal to` MessageFocused
-        }
+            .get(dateSeparatorHandler = { _, _ -> false })
+        controller.scrollToFirstUnreadMessage()
+        val items = controller.messageListState.value.messageItems
+        val lastReadMessage = items.first() as MessageItemState
+        val firstUnreadMessage = items.last() as MessageItemState
+        lastReadMessage.message.id `should be equal to` "last_read_message_id"
+        lastReadMessage.focusState `should be equal to` null
+        firstUnreadMessage.message.id `should be equal to` "first_unread_message_id"
+        firstUnreadMessage.focusState `should be equal to` MessageFocused
+    }
 
     @Test
-    fun `Show unread label, when unread message is loaded`() =
-        runTest {
-            val user = randomUser()
-            val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
-            val messages = listOf(
-                firstMessage,
-                randomMessage(id = "first_unread_message_id", deletedAt = null, deletedForMe = false),
+    fun `Show unread label, when unread message is loaded`() = runTest {
+        val user = randomUser()
+        val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
+        val messages = listOf(
+            firstMessage,
+            randomMessage(id = "first_unread_message_id", deletedAt = null, deletedForMe = false),
+        )
+        val channelRead = MutableStateFlow(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = firstMessage.id,
+                unreadMessages = 0,
+            ),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(
+                messagesState = messagesState,
+                read = channelRead,
             )
-            val channelRead = MutableStateFlow(
-                randomChannelUserRead(
-                    user = user,
-                    lastReadMessageId = firstMessage.id,
-                    unreadMessages = 0,
-                ),
-            )
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser(user)
-                .givenChannelState(
-                    messagesState = messagesState,
-                    read = channelRead,
-                )
-                .get()
+            .get()
 
-            val unreadLabel = controller.unreadLabelState.value
-            unreadLabel.`should not be null`()
-            unreadLabel.lastReadMessageId `should be equal to` firstMessage.id
-            unreadLabel.buttonVisibility.`should be true`()
-        }
+        val unreadLabel = controller.unreadLabelState.value
+        unreadLabel.`should not be null`()
+        unreadLabel.lastReadMessageId `should be equal to` firstMessage.id
+        unreadLabel.buttonVisibility.`should be true`()
+    }
 
     @Test
-    fun `Show unread label, when message is marked as unread`() =
-        runTest {
-            val user = randomUser()
-            val lastReadMessage = randomMessage(id = "last_read_message_id")
-            val messages = listOf(
-                lastReadMessage,
-                randomMessage(id = "first_unread_message_id"),
+    fun `Show unread label, when message is marked as unread`() = runTest {
+        val user = randomUser()
+        val lastReadMessage = randomMessage(id = "last_read_message_id")
+        val messages = listOf(
+            lastReadMessage,
+            randomMessage(id = "first_unread_message_id"),
+        )
+        val channelUserRead = MutableStateFlow<ChannelUserRead?>(null)
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(
+                messagesState = messagesState,
+                read = channelUserRead,
             )
-            val channelUserRead = MutableStateFlow<ChannelUserRead?>(null)
-            val messagesState = MutableStateFlow(messages)
-            val controller = Fixture()
-                .givenCurrentUser(user)
-                .givenChannelState(
-                    messagesState = messagesState,
-                    read = channelUserRead,
-                )
-                .givenMarkMessageUnread()
-                .get()
+            .givenMarkMessageUnread()
+            .get()
 
-            controller.markUnread(lastReadMessage)
-            channelUserRead.emit(
-                randomChannelUserRead(
-                    user = user,
-                    lastReadMessageId = lastReadMessage.id,
-                    unreadMessages = 0,
-                ),
-            )
+        controller.markUnread(lastReadMessage)
+        channelUserRead.emit(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = lastReadMessage.id,
+                unreadMessages = 0,
+            ),
+        )
 
-            val unreadLabel = controller.unreadLabelState.value
-            unreadLabel.`should not be null`()
-            unreadLabel.lastReadMessageId `should be equal to` lastReadMessage.id
-            unreadLabel.buttonVisibility.`should be false`()
-        }
+        val unreadLabel = controller.unreadLabelState.value
+        unreadLabel.`should not be null`()
+        unreadLabel.lastReadMessageId `should be equal to` lastReadMessage.id
+        unreadLabel.buttonVisibility.`should be false`()
+    }
 
     @Test
     fun `When deleting message with playing audio, audio is stopped before deletion`() = runTest {
@@ -1205,18 +1197,16 @@ internal class MessageListControllerTests {
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
             deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             showSystemMessages: Boolean = true,
-        ): MessageListController {
-            return MessageListController(
-                cid = cid,
-                chatClient = chatClient,
-                clipboardHandler = mock(),
-                dateSeparatorHandler = dateSeparatorHandler,
-                deletedMessageVisibility = deletedMessageVisibility,
-                showSystemMessages = showSystemMessages,
-                threadLoadOrderOlderToNewer = false,
-                channelState = MutableStateFlow(channelState),
-            )
-        }
+        ): MessageListController = MessageListController(
+            cid = cid,
+            chatClient = chatClient,
+            clipboardHandler = mock(),
+            dateSeparatorHandler = dateSeparatorHandler,
+            deletedMessageVisibility = deletedMessageVisibility,
+            showSystemMessages = showSystemMessages,
+            threadLoadOrderOlderToNewer = false,
+            channelState = MutableStateFlow(channelState),
+        )
     }
 
     companion object {

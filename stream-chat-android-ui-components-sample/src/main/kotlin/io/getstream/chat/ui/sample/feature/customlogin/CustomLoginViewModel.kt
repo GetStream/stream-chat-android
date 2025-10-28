@@ -84,17 +84,15 @@ class CustomLoginViewModel : ViewModel() {
             }
     }
 
-    private fun getInvalidFields(credentials: LoginCredentials): List<ValidatedField> {
-        return ArrayList<ValidatedField>().apply {
-            if (credentials.apiKey.isEmpty()) {
-                add(ValidatedField.API_KEY)
-            }
-            if (credentials.userId.isEmpty()) {
-                add(ValidatedField.USER_ID)
-            }
-            if (credentials.userToken.isEmpty()) {
-                add(ValidatedField.USER_TOKEN)
-            }
+    private fun getInvalidFields(credentials: LoginCredentials): List<ValidatedField> = ArrayList<ValidatedField>().apply {
+        if (credentials.apiKey.isEmpty()) {
+            add(ValidatedField.API_KEY)
+        }
+        if (credentials.userId.isEmpty()) {
+            add(ValidatedField.USER_ID)
+        }
+        if (credentials.userToken.isEmpty()) {
+            add(ValidatedField.USER_TOKEN)
         }
     }
 }

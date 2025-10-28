@@ -23,7 +23,9 @@ import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
 import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 import io.getstream.chat.android.uitests.app.login.LoginActivity
 
-class UiComponentsChannelsActivity : ChannelListActivity(), ChannelListFragment.HeaderUserAvatarClickListener {
+class UiComponentsChannelsActivity :
+    ChannelListActivity(),
+    ChannelListFragment.HeaderUserAvatarClickListener {
 
     /**
      * Logs out and navigated to the login screen.
@@ -43,8 +45,6 @@ class UiComponentsChannelsActivity : ChannelListActivity(), ChannelListFragment.
          * @param context The context used to create the intent.
          * @return The [Intent] to start [UiComponentsChannelsActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, UiComponentsChannelsActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, UiComponentsChannelsActivity::class.java)
     }
 }

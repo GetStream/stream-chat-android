@@ -70,15 +70,13 @@ public object Filters {
     public fun greaterThan(fieldName: String, value: Any): FilterObject = GreaterThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject =
-        GreaterThanOrEqualsFilterObject(fieldName, value)
+    public fun greaterThanEquals(fieldName: String, value: Any): FilterObject = GreaterThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun lessThan(fieldName: String, value: Any): FilterObject = LessThanFilterObject(fieldName, value)
 
     @JvmStatic
-    public fun lessThanEquals(fieldName: String, value: Any): FilterObject =
-        LessThanOrEqualsFilterObject(fieldName, value)
+    public fun lessThanEquals(fieldName: String, value: Any): FilterObject = LessThanOrEqualsFilterObject(fieldName, value)
 
     @JvmStatic
     public fun `in`(fieldName: String, vararg values: String): FilterObject = InFilterObject(fieldName, values.toSet())
@@ -94,8 +92,7 @@ public object Filters {
         message = "This filter will stop to be supported in the future.",
         level = DeprecationLevel.WARNING,
     )
-    public fun nin(fieldName: String, vararg values: String): FilterObject =
-        NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: String): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     @Deprecated(
@@ -109,8 +106,7 @@ public object Filters {
         message = "This filter will stop to be supported in the future.",
         level = DeprecationLevel.WARNING,
     )
-    public fun nin(fieldName: String, vararg values: Number): FilterObject =
-        NotInFilterObject(fieldName, values.toSet())
+    public fun nin(fieldName: String, vararg values: Number): FilterObject = NotInFilterObject(fieldName, values.toSet())
 
     @JvmStatic
     public fun autocomplete(fieldName: String, value: String): FilterObject = AutocompleteFilterObject(fieldName, value)

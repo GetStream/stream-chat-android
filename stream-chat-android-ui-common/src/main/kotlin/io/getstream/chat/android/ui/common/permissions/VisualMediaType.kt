@@ -46,9 +46,8 @@ public enum class VisualMediaType(public val value: String) {
  * Maps the given [VisualMediaType] to the corresponding [ActivityResultContracts.PickVisualMedia.VisualMediaType].
  */
 @InternalStreamChatApi
-public fun VisualMediaType.toContractVisualMediaType(): ActivityResultContracts.PickVisualMedia.VisualMediaType =
-    when (this) {
-        VisualMediaType.IMAGE -> ActivityResultContracts.PickVisualMedia.ImageOnly
-        VisualMediaType.VIDEO -> ActivityResultContracts.PickVisualMedia.VideoOnly
-        VisualMediaType.IMAGE_AND_VIDEO -> ActivityResultContracts.PickVisualMedia.ImageAndVideo
-    }
+public fun VisualMediaType.toContractVisualMediaType(): ActivityResultContracts.PickVisualMedia.VisualMediaType = when (this) {
+    VisualMediaType.IMAGE -> ActivityResultContracts.PickVisualMedia.ImageOnly
+    VisualMediaType.VIDEO -> ActivityResultContracts.PickVisualMedia.VideoOnly
+    VisualMediaType.IMAGE_AND_VIDEO -> ActivityResultContracts.PickVisualMedia.ImageAndVideo
+}

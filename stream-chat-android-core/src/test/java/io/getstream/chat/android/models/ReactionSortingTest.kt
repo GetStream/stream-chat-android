@@ -27,54 +27,52 @@ internal class ReactionSortingTest {
 
     companion object {
         @JvmStatic
-        fun provideTestCases(): Stream<ReactionSortingTestCase> {
-            return Stream.of(
-                listOf(
-                    randomReactionGroup(sumScore = 5),
-                    randomReactionGroup(sumScore = 7),
-                    randomReactionGroup(sumScore = 10),
-                ).let {
-                    ReactionSortingTestCase(
-                        it.shuffled(),
-                        ReactionSortingBySumScore,
-                        it,
-                    )
-                },
-                listOf(
-                    randomReactionGroup(count = 5),
-                    randomReactionGroup(count = 7),
-                    randomReactionGroup(count = 10),
-                ).let {
-                    ReactionSortingTestCase(
-                        it.shuffled(),
-                        ReactionSortingByCount,
-                        it,
-                    )
-                },
-                listOf(
-                    randomReactionGroup(lastReactionAt = Date(0)),
-                    randomReactionGroup(lastReactionAt = Date(5000)),
-                    randomReactionGroup(lastReactionAt = Date(10000)),
-                ).let {
-                    ReactionSortingTestCase(
-                        it.shuffled(),
-                        ReactionSortingByLastReactionAt,
-                        it,
-                    )
-                },
-                listOf(
-                    randomReactionGroup(firstReactionAt = Date(0)),
-                    randomReactionGroup(firstReactionAt = Date(5000)),
-                    randomReactionGroup(firstReactionAt = Date(10000)),
-                ).let {
-                    ReactionSortingTestCase(
-                        it.shuffled(),
-                        ReactionSortingByFirstReactionAt,
-                        it,
-                    )
-                },
-            )
-        }
+        fun provideTestCases(): Stream<ReactionSortingTestCase> = Stream.of(
+            listOf(
+                randomReactionGroup(sumScore = 5),
+                randomReactionGroup(sumScore = 7),
+                randomReactionGroup(sumScore = 10),
+            ).let {
+                ReactionSortingTestCase(
+                    it.shuffled(),
+                    ReactionSortingBySumScore,
+                    it,
+                )
+            },
+            listOf(
+                randomReactionGroup(count = 5),
+                randomReactionGroup(count = 7),
+                randomReactionGroup(count = 10),
+            ).let {
+                ReactionSortingTestCase(
+                    it.shuffled(),
+                    ReactionSortingByCount,
+                    it,
+                )
+            },
+            listOf(
+                randomReactionGroup(lastReactionAt = Date(0)),
+                randomReactionGroup(lastReactionAt = Date(5000)),
+                randomReactionGroup(lastReactionAt = Date(10000)),
+            ).let {
+                ReactionSortingTestCase(
+                    it.shuffled(),
+                    ReactionSortingByLastReactionAt,
+                    it,
+                )
+            },
+            listOf(
+                randomReactionGroup(firstReactionAt = Date(0)),
+                randomReactionGroup(firstReactionAt = Date(5000)),
+                randomReactionGroup(firstReactionAt = Date(10000)),
+            ).let {
+                ReactionSortingTestCase(
+                    it.shuffled(),
+                    ReactionSortingByFirstReactionAt,
+                    it,
+                )
+            },
+        )
     }
 
     @ParameterizedTest

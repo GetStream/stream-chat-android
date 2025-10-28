@@ -33,10 +33,8 @@ public class QuotedAttachmentFactoryManager(
      * @param message The quoted message containing attachments that we are going to render.
      * @return True if there is a factory that can handle the attachments from this quoted message.
      */
-    public fun canHandle(message: Message): Boolean {
-        return quotedAttachmentFactories.any { it.canHandle(message) } ||
-            ChatUI.attachmentFactoryManager.canHandle(message)
-    }
+    public fun canHandle(message: Message): Boolean = quotedAttachmentFactories.any { it.canHandle(message) } ||
+        ChatUI.attachmentFactoryManager.canHandle(message)
 
     /**
      * Create and add a view for the quoted attachments.

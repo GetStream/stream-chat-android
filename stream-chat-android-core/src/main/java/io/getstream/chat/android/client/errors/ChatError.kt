@@ -43,14 +43,12 @@ public fun Error.NetworkError.Companion.fromChatErrorCode(
     chatErrorCode: ChatErrorCode,
     statusCode: Int = UNKNOWN_STATUS_CODE,
     cause: Throwable? = null,
-): Error.NetworkError {
-    return Error.NetworkError(
-        message = chatErrorCode.description,
-        serverErrorCode = chatErrorCode.code,
-        statusCode = statusCode,
-        cause = cause,
-    )
-}
+): Error.NetworkError = Error.NetworkError(
+    message = chatErrorCode.description,
+    serverErrorCode = chatErrorCode.code,
+    statusCode = statusCode,
+    cause = cause,
+)
 
 /**
  * Returns true if an error is a permanent failure instead of a temporary one (broken network, 500, rate limit etc.)
@@ -64,19 +62,17 @@ public fun Error.NetworkError.Companion.fromChatErrorCode(
  * https://getstream.io/chat/docs/api_errors_response/?language=js
  */
 @InternalStreamChatApi
-public fun Error.isPermanent(): Boolean {
-    return if (this is Error.NetworkError) {
-        // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
-        val temporaryErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT, HTTP_API_ERROR)
+public fun Error.isPermanent(): Boolean = if (this is Error.NetworkError) {
+    // stream errors are mostly permanent. the exception to this are the rate limit and timeout error
+    val temporaryErrors = listOf(HTTP_TOO_MANY_REQUESTS, HTTP_TIMEOUT, HTTP_API_ERROR)
 
-        when {
-            statusCode in temporaryErrors -> false
-            cause is UnknownHostException || cause is ConnectException -> false
-            else -> true
-        }
-    } else {
-        false
+    when {
+        statusCode in temporaryErrors -> false
+        cause is UnknownHostException || cause is ConnectException -> false
+        else -> true
     }
+} else {
+    false
 }
 
 /**
@@ -87,12 +83,10 @@ public fun Error.isPermanent(): Boolean {
  * @return New [Error] instance.
  */
 @InternalStreamChatApi
-public fun Error.copyWithMessage(message: String): Error {
-    return when (this) {
-        is Error.GenericError -> this.copy(message = message)
-        is Error.NetworkError -> this.copy(message = message)
-        is Error.ThrowableError -> this.copy(message = message)
-    }
+public fun Error.copyWithMessage(message: String): Error = when (this) {
+    is Error.GenericError -> this.copy(message = message)
+    is Error.NetworkError -> this.copy(message = message)
+    is Error.ThrowableError -> this.copy(message = message)
 }
 
 /**
@@ -101,10 +95,8 @@ public fun Error.copyWithMessage(message: String): Error {
  * @return The [Throwable] that is the error's cause or null if not available.
  */
 @InternalStreamChatApi
-public fun Error.extractCause(): Throwable? {
-    return when (this) {
-        is Error.GenericError -> null
-        is Error.NetworkError -> cause
-        is Error.ThrowableError -> cause
-    }
+public fun Error.extractCause(): Throwable? = when (this) {
+    is Error.GenericError -> null
+    is Error.NetworkError -> cause
+    is Error.ThrowableError -> cause
 }

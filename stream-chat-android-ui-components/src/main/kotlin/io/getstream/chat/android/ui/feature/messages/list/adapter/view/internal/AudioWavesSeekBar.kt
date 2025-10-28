@@ -178,46 +178,44 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
      * The progress of the view will change accordingly with the horizontal movement of the user. The wave bars and
      * the tracker will move accordingly with the progress.
      */
-    override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
-        return when (motionEvent.action) {
-            MotionEvent.ACTION_DOWN -> {
-                performClick()
-                isDragging = true
-                onStartDrag()
-                parent.requestDisallowInterceptTouchEvent(true)
-                tracker.updateLayoutParams {
-                    width = pressedScrubberWidth
-                }
-                forceProgress(xToProgress(motionEvent.x))
-                true
+    override fun onTouchEvent(motionEvent: MotionEvent): Boolean = when (motionEvent.action) {
+        MotionEvent.ACTION_DOWN -> {
+            performClick()
+            isDragging = true
+            onStartDrag()
+            parent.requestDisallowInterceptTouchEvent(true)
+            tracker.updateLayoutParams {
+                width = pressedScrubberWidth
             }
-
-            MotionEvent.ACTION_MOVE -> {
-                forceProgress(xToProgress(motionEvent.x))
-                true
-            }
-
-            MotionEvent.ACTION_UP -> {
-                isDragging = false
-                onEndDrag(xToProgress(motionEvent.x).toInt())
-                parent.requestDisallowInterceptTouchEvent(false)
-                tracker.updateLayoutParams {
-                    width = defaultScrubberWidth
-                }
-                true
-            }
-
-            MotionEvent.ACTION_CANCEL -> {
-                isDragging = false
-                parent.requestDisallowInterceptTouchEvent(false)
-                tracker.updateLayoutParams {
-                    width = defaultScrubberWidth
-                }
-                true
-            }
-
-            else -> super.onTouchEvent(motionEvent)
+            forceProgress(xToProgress(motionEvent.x))
+            true
         }
+
+        MotionEvent.ACTION_MOVE -> {
+            forceProgress(xToProgress(motionEvent.x))
+            true
+        }
+
+        MotionEvent.ACTION_UP -> {
+            isDragging = false
+            onEndDrag(xToProgress(motionEvent.x).toInt())
+            parent.requestDisallowInterceptTouchEvent(false)
+            tracker.updateLayoutParams {
+                width = defaultScrubberWidth
+            }
+            true
+        }
+
+        MotionEvent.ACTION_CANCEL -> {
+            isDragging = false
+            parent.requestDisallowInterceptTouchEvent(false)
+            tracker.updateLayoutParams {
+                width = defaultScrubberWidth
+            }
+            true
+        }
+
+        else -> super.onTouchEvent(motionEvent)
     }
 
     private val rect = RectF()

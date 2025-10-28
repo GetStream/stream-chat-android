@@ -49,13 +49,11 @@ public data class PollMessageStyle(
                 else -> StreamColors.defaultColors()
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-        ): PollMessageStyle {
-            return PollMessageStyle(
-                backgroundColor = when (own) {
-                    true -> colors.linkBackground
-                    else -> colors.otherMessagesBackground
-                },
-            )
-        }
+        ): PollMessageStyle = PollMessageStyle(
+            backgroundColor = when (own) {
+                true -> colors.linkBackground
+                else -> colors.otherMessagesBackground
+            },
+        )
     }
 }

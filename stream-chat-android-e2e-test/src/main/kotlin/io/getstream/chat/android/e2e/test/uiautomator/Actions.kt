@@ -47,7 +47,10 @@ public fun UiObject2.longPress(steps: Int = 100) {
     device.swipe(centerX, centerY, centerX, centerY, steps)
 }
 
-public fun UiDevice.swipeDown(times: Int = 1, steps: Int = 10) {
+public fun UiDevice.swipeDown(
+    times: Int = 1,
+    steps: Int = 10,
+) {
     repeat(times) {
         val middleOfTheScreenHorizontally = displayWidth / 2
         val middleOfTheScreenVertically = displayHeight / 2
@@ -61,7 +64,10 @@ public fun UiDevice.swipeDown(times: Int = 1, steps: Int = 10) {
     }
 }
 
-public fun UiDevice.swipeUp(times: Int = 1, steps: Int = 10) {
+public fun UiDevice.swipeUp(
+    times: Int = 1,
+    steps: Int = 10,
+) {
     repeat(times) {
         val middleOfTheScreenHorizontally = displayWidth / 2
         val middleOfTheScreenVertically = displayHeight / 2
@@ -102,7 +108,10 @@ public fun UiDevice.disableInternetConnection() {
 }
 
 @SuppressLint("NewApi")
-public fun UiDevice.waitForInternetConnection(timeoutMs: Long = 10000, intervalMs: Long = 500) {
+public fun UiDevice.waitForInternetConnection(
+    timeoutMs: Long = 10000,
+    intervalMs: Long = 500,
+) {
     val connectivityManager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     val startTime = System.currentTimeMillis()
@@ -129,7 +138,10 @@ public fun UiDevice.dumpWindowHierarchy(print: Boolean = true): String {
     return outputString
 }
 
-public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: () -> T): T {
+public fun <T> UiDevice.retryOnStaleObjectException(
+    retries: Int = 3,
+    action: () -> T,
+): T {
     repeat(retries - 1) {
         try {
             return action()
@@ -140,6 +152,7 @@ public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: ()
     }
     return action()
 }
+
 public fun UiDevice.allureScreenshot(name: String) {
     val screenshot: Bitmap? = instrumentation.uiAutomation.takeScreenshot()
 

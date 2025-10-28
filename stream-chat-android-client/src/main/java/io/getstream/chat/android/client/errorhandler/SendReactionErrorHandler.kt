@@ -54,8 +54,6 @@ internal fun Call<Reaction>.onReactionError(
     enforceUnique: Boolean,
     skipPush: Boolean,
     currentUser: User,
-): Call<Reaction> {
-    return errorHandlers.fold(this) { originalCall, errorHandler ->
-        errorHandler.onSendReactionError(originalCall, reaction, enforceUnique, skipPush, currentUser)
-    }
+): Call<Reaction> = errorHandlers.fold(this) { originalCall, errorHandler ->
+    errorHandler.onSendReactionError(originalCall, reaction, enforceUnique, skipPush, currentUser)
 }

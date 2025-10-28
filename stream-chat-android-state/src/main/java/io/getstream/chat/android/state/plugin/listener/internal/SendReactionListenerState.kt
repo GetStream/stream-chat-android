@@ -121,21 +121,19 @@ internal class SendReactionListenerState(
             "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
             "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
     )
-    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
-        return when {
-            currentUser == null -> {
-                Result.Failure(Error.GenericError(message = "Current user is null!"))
-            }
-            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(
-                    Error.GenericError(
-                        message = "Reaction::messageId and Reaction::type cannot be empty!",
-                    ),
-                )
-            }
-            else -> {
-                Result.Success(Unit)
-            }
+    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> = when {
+        currentUser == null -> {
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
+        }
+        reaction.messageId.isBlank() || reaction.type.isBlank() -> {
+            Result.Failure(
+                Error.GenericError(
+                    message = "Reaction::messageId and Reaction::type cannot be empty!",
+                ),
+            )
+        }
+        else -> {
+            Result.Success(Unit)
         }
     }
 
@@ -150,21 +148,19 @@ internal class SendReactionListenerState(
         cid: String?,
         currentUser: User?,
         reaction: Reaction,
-    ): Result<Unit> {
-        return when {
-            currentUser == null -> {
-                Result.Failure(Error.GenericError(message = "Current user is null!"))
-            }
-            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.Failure(
-                    Error.GenericError(
-                        message = "Reaction::messageId and Reaction::type cannot be empty!",
-                    ),
-                )
-            }
-            else -> {
-                Result.Success(Unit)
-            }
+    ): Result<Unit> = when {
+        currentUser == null -> {
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
+        }
+        reaction.messageId.isBlank() || reaction.type.isBlank() -> {
+            Result.Failure(
+                Error.GenericError(
+                    message = "Reaction::messageId and Reaction::type cannot be empty!",
+                ),
+            )
+        }
+        else -> {
+            Result.Success(Unit)
         }
     }
 

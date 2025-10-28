@@ -39,9 +39,8 @@ class ChannelFilesAttachmentsActivity : ComponentActivity() {
     companion object {
         private const val KEY_CID = "cid"
 
-        fun createIntent(context: Context, cid: String) =
-            Intent(context, ChannelFilesAttachmentsActivity::class.java)
-                .putExtra(KEY_CID, cid)
+        fun createIntent(context: Context, cid: String) = Intent(context, ChannelFilesAttachmentsActivity::class.java)
+            .putExtra(KEY_CID, cid)
     }
 
     private val viewModelFactory by lazy {

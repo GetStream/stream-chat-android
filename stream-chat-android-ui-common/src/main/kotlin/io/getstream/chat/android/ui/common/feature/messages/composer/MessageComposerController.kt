@@ -1016,16 +1016,14 @@ public class MessageComposerController(
      *
      * @param message [Message]
      */
-    private fun getEditMessageCall(message: Message): Call<Message> {
-        return chatClient.partialUpdateMessage(
-            messageId = message.id,
-            set = mapOf(
-                "text" to message.text,
-                "attachments" to message.attachments,
-                "mentioned_users" to message.mentionedUsersIds,
-            ),
-        )
-    }
+    private fun getEditMessageCall(message: Message): Call<Message> = chatClient.partialUpdateMessage(
+        messageId = message.id,
+        set = mapOf(
+            "text" to message.text,
+            "attachments" to message.attachments,
+            "mentioned_users" to message.mentionedUsersIds,
+        ),
+    )
 
     /**
      * Makes an API call signaling that a typing event has occurred.
@@ -1084,8 +1082,7 @@ public class MessageComposerController(
         val isDraftMessageEnabled: Boolean = false,
     )
 
-    private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
-        getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
+    private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage = getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
 
     private fun getDraftMessage(messageMode: MessageMode): DraftMessage? = when (messageMode) {
         is MessageMode.MessageThread -> threadDraftMessages.value[messageMode.parentMessage.id]

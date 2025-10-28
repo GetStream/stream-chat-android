@@ -159,9 +159,8 @@ internal class DatabaseChannelRepository(
      *
      * @param cid String
      */
-    override suspend fun selectChannel(cid: String): Channel? =
-        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage, getDraftMessage)
-            ?.also { cacheChannel(it) }
+    override suspend fun selectChannel(cid: String): Channel? = channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage, getDraftMessage)
+        ?.also { cacheChannel(it) }
 
     /**
      * Select a list of channels by cid.
@@ -187,16 +186,12 @@ internal class DatabaseChannelRepository(
     /**
      * Read which channel cids need sync.
      */
-    override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> {
-        return channelDao.selectCidsBySyncNeeded(limit = limit)
-    }
+    override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> = channelDao.selectCidsBySyncNeeded(limit = limit)
 
     /**
      * Read which channels need sync.
      */
-    override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> {
-        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage, getDraftMessage) }
-    }
+    override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> = channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage, getDraftMessage) }
 
     /**
      * Sets the Channel.deleteAt for a channel.
@@ -237,8 +232,7 @@ internal class DatabaseChannelRepository(
      *
      * @param cid String.
      */
-    override suspend fun selectMembersForChannel(cid: String): List<Member> =
-        selectChannel(cid)?.members ?: emptyList()
+    override suspend fun selectMembersForChannel(cid: String): List<Member> = selectChannel(cid)?.members ?: emptyList()
 
     /**
      * Updates the members of a [Channel]
@@ -280,8 +274,7 @@ internal class DatabaseChannelRepository(
             read = read,
         ).syncUnreadCountWithReads()
     }
-    private fun Message.after(date: Date?): Boolean =
-        date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
+    private fun Message.after(date: Date?): Boolean = date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
 
     override suspend fun evictChannel(cid: String) {
         logger.v { "[evictChannel] cid: $cid" }

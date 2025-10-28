@@ -43,9 +43,7 @@ public class FallbackQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
      *
      * @return [DefaultQuotedAttachmentView] that will be rendered inside the quoted message.
      */
-    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View {
-        return DefaultQuotedAttachmentView(parent.context).apply {
-            setImageResource(R.drawable.stream_ui_ic_file)
-        }
+    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View = DefaultQuotedAttachmentView(parent.context).apply {
+        setImageResource(R.drawable.stream_ui_ic_file)
     }
 }

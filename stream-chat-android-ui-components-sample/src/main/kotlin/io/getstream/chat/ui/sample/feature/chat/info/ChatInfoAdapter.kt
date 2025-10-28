@@ -27,55 +27,48 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.ChatInfoStatefulOptionItemBinding
 import java.lang.IllegalStateException
 
-open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
-    object : DiffUtil.ItemCallback<ChatInfoItem>() {
-        override fun areItemsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean {
-            return oldItem.id == newItem.id
-        }
+open class ChatInfoAdapter :
+    ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
+        object : DiffUtil.ItemCallback<ChatInfoItem>() {
+            override fun areItemsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean {
-            return oldItem == newItem
-        }
-    },
-) {
+            override fun areContentsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean = oldItem == newItem
+        },
+    ) {
 
     private var chatInfoOptionClickListener: ChatInfoOptionClickListener? = null
     private var chatInfoStatefulOptionChangedListener: ChatInfoStatefulOptionChangedListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return when (viewType) {
-            TYPE_MEMBER_ITEM ->
-                ChatInfoMemberItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let(::ChatInfoMemberViewHolder)
-            TYPE_OPTION ->
-                ChatInfoOptionItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoOptionViewHolder(it, chatInfoOptionClickListener) }
-            TYPE_STATEFUL_OPTION ->
-                ChatInfoStatefulOptionItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoStatefulOptionViewHolder(it, chatInfoStatefulOptionChangedListener) }
-            TYPE_SEPARATOR ->
-                ChatInfoSeparatorItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let(::ChatInfoSeparatorViewHolder)
-            else -> throw IllegalArgumentException("Unhandled chat info view type ($viewType)")
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> = when (viewType) {
+        TYPE_MEMBER_ITEM ->
+            ChatInfoMemberItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let(::ChatInfoMemberViewHolder)
+        TYPE_OPTION ->
+            ChatInfoOptionItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoOptionViewHolder(it, chatInfoOptionClickListener) }
+        TYPE_STATEFUL_OPTION ->
+            ChatInfoStatefulOptionItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoStatefulOptionViewHolder(it, chatInfoStatefulOptionChangedListener) }
+        TYPE_SEPARATOR ->
+            ChatInfoSeparatorItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let(::ChatInfoSeparatorViewHolder)
+        else -> throw IllegalArgumentException("Unhandled chat info view type ($viewType)")
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         holder.bindListItem(getItem(position))
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (val item = getItem(position)) {
-            is ChatInfoItem.MemberItem -> TYPE_MEMBER_ITEM
-            ChatInfoItem.Separator -> TYPE_SEPARATOR
-            is ChatInfoItem.Option.Stateful -> TYPE_STATEFUL_OPTION
-            is ChatInfoItem.Option -> TYPE_OPTION
-            else -> throw IllegalStateException("ChatInfoAdapter doesn't support that option type: $item")
-        }
+    override fun getItemViewType(position: Int): Int = when (val item = getItem(position)) {
+        is ChatInfoItem.MemberItem -> TYPE_MEMBER_ITEM
+        ChatInfoItem.Separator -> TYPE_SEPARATOR
+        is ChatInfoItem.Option.Stateful -> TYPE_STATEFUL_OPTION
+        is ChatInfoItem.Option -> TYPE_OPTION
+        else -> throw IllegalStateException("ChatInfoAdapter doesn't support that option type: $item")
     }
 
     fun setChatInfoOptionClickListener(listener: ChatInfoOptionClickListener?) {

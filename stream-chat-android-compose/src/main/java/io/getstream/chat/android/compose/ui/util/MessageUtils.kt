@@ -35,12 +35,10 @@ import kotlinx.coroutines.flow.map
  * @return A [State] that contains true if the original text should be shown, false otherwise.
  */
 @Composable
-public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolean> {
-    return MessageOriginalTranslationsStore.forChannel(cid)
-        .originalTextMessageIds
-        .map { it.contains(messageId) }
-        .collectAsStateWithLifecycle(false)
-}
+public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolean> = MessageOriginalTranslationsStore.forChannel(cid)
+    .originalTextMessageIds
+    .map { it.contains(messageId) }
+    .collectAsStateWithLifecycle(false)
 
 /**
  * Takes the current message and returns the sender display name.
@@ -50,11 +48,10 @@ public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolea
 internal fun Message.getSenderDisplayName(
     context: Context,
     currentUser: User?,
-): String? =
-    when (user.id) {
-        currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
-        else -> null
-    }
+): String? = when (user.id) {
+    currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
+    else -> null
+}
 
 /**
  * @return If the message contains an attachment that is currently being uploaded.

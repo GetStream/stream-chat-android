@@ -27,20 +27,16 @@ internal class MoshiUrlQueryPayloadFactory(private val moshi: Moshi) : Converter
         type: Type,
         annotations: Array<Annotation?>,
         retrofit: Retrofit,
-    ): Converter<*, String>? {
-        return if (annotations.filterIsInstance<UrlQueryPayload>().isNotEmpty()) {
-            UrlQueryPayloadConverted(moshi, type)
-        } else {
-            super.stringConverter(type, annotations, retrofit)
-        }
+    ): Converter<*, String>? = if (annotations.filterIsInstance<UrlQueryPayload>().isNotEmpty()) {
+        UrlQueryPayloadConverted(moshi, type)
+    } else {
+        super.stringConverter(type, annotations, retrofit)
     }
 
     private class UrlQueryPayloadConverted(
         private val moshi: Moshi,
         private val type: Type,
     ) : Converter<Any, String> {
-        override fun convert(value: Any): String {
-            return moshi.adapter<Any>(type).toJson(value)
-        }
+        override fun convert(value: Any): String = moshi.adapter<Any>(type).toJson(value)
     }
 }

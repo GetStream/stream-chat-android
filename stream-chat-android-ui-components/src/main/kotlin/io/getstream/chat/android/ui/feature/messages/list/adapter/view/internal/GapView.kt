@@ -71,7 +71,6 @@ internal class GapView : LinearLayout {
     companion object {
         private const val SMALL_GAP_HEIGHT_DP = 2
         private const val BIG_GAP_HEIGHT_DP = 8
-        private fun createLayoutParams(height: Int): ViewGroup.LayoutParams =
-            LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
+        private fun createLayoutParams(height: Int): ViewGroup.LayoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height)
     }
 }

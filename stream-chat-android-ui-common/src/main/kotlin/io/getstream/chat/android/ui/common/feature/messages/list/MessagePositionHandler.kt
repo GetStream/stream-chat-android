@@ -57,44 +57,38 @@ public fun interface MessagePositionHandler {
          */
         @InternalStreamChatApi
         @Suppress("ComplexCondition")
-        public fun defaultHandler(): MessagePositionHandler {
-            return MessagePositionHandler {
-                    prevMessage: Message?,
-                    curMessage: Message,
-                    nextMessage: Message?,
-                    isAfterDateSeparator: Boolean,
-                    isBeforeDateSeparator: Boolean,
-                    _: Boolean,
-                ->
+        public fun defaultHandler(): MessagePositionHandler = MessagePositionHandler {
+                prevMessage: Message?,
+                curMessage: Message,
+                nextMessage: Message?,
+                isAfterDateSeparator: Boolean,
+                isBeforeDateSeparator: Boolean,
+                _: Boolean,
+            ->
 
-                val curUser = curMessage.user
-                mutableListOf<MessagePosition>().apply {
-                    val isTop = !isBeforeDateSeparator &&
-                        (isAfterDateSeparator || prevMessage.isInvalidMessageFromUser(curUser)) &&
-                        nextMessage.isValidMessageFromUser(curUser)
+            val curUser = curMessage.user
+            mutableListOf<MessagePosition>().apply {
+                val isTop = !isBeforeDateSeparator &&
+                    (isAfterDateSeparator || prevMessage.isInvalidMessageFromUser(curUser)) &&
+                    nextMessage.isValidMessageFromUser(curUser)
 
-                    val isMiddle = !isAfterDateSeparator && !isBeforeDateSeparator &&
-                        prevMessage.isValidMessageFromUser(curUser) &&
-                        nextMessage.isValidMessageFromUser(curUser)
+                val isMiddle = !isAfterDateSeparator && !isBeforeDateSeparator &&
+                    prevMessage.isValidMessageFromUser(curUser) &&
+                    nextMessage.isValidMessageFromUser(curUser)
 
-                    val isBottom = !isAfterDateSeparator &&
-                        (isBeforeDateSeparator || nextMessage.isInvalidMessageFromUser(curUser)) &&
-                        prevMessage.isValidMessageFromUser(curUser)
+                val isBottom = !isAfterDateSeparator &&
+                    (isBeforeDateSeparator || nextMessage.isInvalidMessageFromUser(curUser)) &&
+                    prevMessage.isValidMessageFromUser(curUser)
 
-                    if (isTop) add(MessagePosition.TOP)
-                    if (isMiddle) add(MessagePosition.MIDDLE)
-                    if (isBottom) add(MessagePosition.BOTTOM)
-                    if (isEmpty()) add(MessagePosition.NONE)
-                }
+                if (isTop) add(MessagePosition.TOP)
+                if (isMiddle) add(MessagePosition.MIDDLE)
+                if (isBottom) add(MessagePosition.BOTTOM)
+                if (isEmpty()) add(MessagePosition.NONE)
             }
         }
 
-        private fun Message?.isValidMessageFromUser(user: User): Boolean {
-            return this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
-        }
+        private fun Message?.isValidMessageFromUser(user: User): Boolean = this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
 
-        private fun Message?.isInvalidMessageFromUser(user: User): Boolean {
-            return isValidMessageFromUser(user).not()
-        }
+        private fun Message?.isInvalidMessageFromUser(user: User): Boolean = isValidMessageFromUser(user).not()
     }
 }

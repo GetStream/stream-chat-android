@@ -109,18 +109,16 @@ public class ViewReactionsView : RecyclerView {
         }.also { reactionsAdapter = it }
     }
 
-    private fun createReactionItems(message: Message): List<ReactionItem> {
-        return message.supportedReactionGroups
-            .toList()
-            .sortedWith { o1, o2 -> reactionsViewStyle.reactionSorting.compare(o1.second, o2.second) }
-            .mapNotNull { (type, _) ->
-                ChatUI.supportedReactions.getReactionDrawable(type)?.let {
-                    ReactionItem(
-                        type = type,
-                        isMine = message.ownReactions.any { it.type == type },
-                        reactionDrawable = it,
-                    )
-                }
+    private fun createReactionItems(message: Message): List<ReactionItem> = message.supportedReactionGroups
+        .toList()
+        .sortedWith { o1, o2 -> reactionsViewStyle.reactionSorting.compare(o1.second, o2.second) }
+        .mapNotNull { (type, _) ->
+            ChatUI.supportedReactions.getReactionDrawable(type)?.let {
+                ReactionItem(
+                    type = type,
+                    isMine = message.ownReactions.any { it.type == type },
+                    reactionDrawable = it,
+                )
             }
-    }
+        }
 }

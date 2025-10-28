@@ -68,9 +68,7 @@ internal data class AttachmentEntity(
     companion object {
         internal const val EXTRA_DATA_ID_KEY = "extra_data_id_key"
         internal const val ATTACHMENT_ENTITY_TABLE_NAME = "attachment_inner_entity"
-        internal fun generateId(messageId: String, index: Int): String {
-            return messageId + "_$index"
-        }
+        internal fun generateId(messageId: String, index: Int): String = messageId + "_$index"
     }
 }
 

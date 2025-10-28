@@ -607,8 +607,7 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
-        insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now())))
+    private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) = insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now())))
 
     private suspend fun retryReactionDeletion(
         id: Int,
@@ -688,40 +687,36 @@ internal class SyncManager(
         }
     }
 
-    private suspend fun removeReaction(reaction: Reaction): Call<Unit> {
-        return CoroutineCall(syncScope) {
-            try {
-                logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
-                repos.deleteReaction(reaction)
-                logicRegistry.channelFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
-                logicRegistry.threadFromMessageId(reaction.messageId)
-                    ?.getMessage(reaction.messageId)
-                    ?.removeMyReaction(reaction)
-                logger.v { "[removeReaction] completed: ${reaction.id}" }
-                Result.Success(Unit)
-            } catch (e: Throwable) {
-                logger.e { "[removeReaction] failed(${reaction.id}): $e" }
-                Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
-            }
+    private suspend fun removeReaction(reaction: Reaction): Call<Unit> = CoroutineCall(syncScope) {
+        try {
+            logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
+            repos.deleteReaction(reaction)
+            logicRegistry.channelFromMessageId(reaction.messageId)
+                ?.getMessage(reaction.messageId)
+                ?.removeMyReaction(reaction)
+            logicRegistry.threadFromMessageId(reaction.messageId)
+                ?.getMessage(reaction.messageId)
+                ?.removeMyReaction(reaction)
+            logger.v { "[removeReaction] completed: ${reaction.id}" }
+            Result.Success(Unit)
+        } catch (e: Throwable) {
+            logger.e { "[removeReaction] failed(${reaction.id}): $e" }
+            Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
         }
     }
 
-    private suspend fun removeMessage(message: Message): Call<Unit> {
-        return CoroutineCall(syncScope) {
-            try {
-                logger.d { "[removeMessage] message.id: ${message.id}" }
-                repos.deleteChannelMessage(message)
-                logicRegistry.channelFromMessage(message)?.deleteMessage(message)
-                logicRegistry.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
-                logicRegistry.threadFromMessage(message)?.deleteMessage(message)
-                logger.v { "[removeMessage] completed: ${message.id}" }
-                Result.Success(Unit)
-            } catch (e: Throwable) {
-                logger.e { "[removeMessage] failed(${message.id}): $e" }
-                Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
-            }
+    private suspend fun removeMessage(message: Message): Call<Unit> = CoroutineCall(syncScope) {
+        try {
+            logger.d { "[removeMessage] message.id: ${message.id}" }
+            repos.deleteChannelMessage(message)
+            logicRegistry.channelFromMessage(message)?.deleteMessage(message)
+            logicRegistry.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
+            logicRegistry.threadFromMessage(message)?.deleteMessage(message)
+            logger.v { "[removeMessage] completed: ${message.id}" }
+            Result.Success(Unit)
+        } catch (e: Throwable) {
+            logger.e { "[removeMessage] failed(${message.id}): $e" }
+            Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
         }
     }
 
@@ -738,11 +733,10 @@ internal class SyncManager(
             error.isValidationError()
     }
 
-    private fun Date?.exceedsSyncThreshold(): Boolean {
-        return this == null || diff(now()) > syncMaxThreshold
-    }
+    private fun Date?.exceedsSyncThreshold(): Boolean = this == null || diff(now()) > syncMaxThreshold
 
     private enum class State {
-        Idle, Syncing
+        Idle,
+        Syncing,
     }
 }

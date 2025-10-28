@@ -55,9 +55,7 @@ public class TimeDuration private constructor(
      */
     public val days: Long get() = duration.inWholeDays
 
-    override fun compareTo(other: TimeDuration): Int {
-        return duration.compareTo(other.duration)
-    }
+    override fun compareTo(other: TimeDuration): Int = duration.compareTo(other.duration)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -65,48 +63,34 @@ public class TimeDuration private constructor(
         return duration == other.duration
     }
 
-    override fun hashCode(): Int {
-        return duration.hashCode()
-    }
+    override fun hashCode(): Int = duration.hashCode()
 
-    override fun toString(): String {
-        return duration.toString()
-    }
+    override fun toString(): String = duration.toString()
 
     public companion object {
         /**
          * Creates a [TimeDuration] from the specified number of milliseconds.
          */
-        public fun millis(millis: Long): TimeDuration {
-            return TimeDuration(millis.milliseconds)
-        }
+        public fun millis(millis: Long): TimeDuration = TimeDuration(millis.milliseconds)
 
         /**
          * Creates a [TimeDuration] from the specified number of seconds.
          */
-        public fun seconds(seconds: Int): TimeDuration {
-            return TimeDuration(seconds.seconds)
-        }
+        public fun seconds(seconds: Int): TimeDuration = TimeDuration(seconds.seconds)
 
         /**
          * Creates a [TimeDuration] from the specified number of minutes.
          */
-        public fun minutes(minutes: Int): TimeDuration {
-            return TimeDuration(minutes.minutes)
-        }
+        public fun minutes(minutes: Int): TimeDuration = TimeDuration(minutes.minutes)
 
         /**
          * Creates a [TimeDuration] from the specified number of hours.
          */
-        public fun hours(hours: Int): TimeDuration {
-            return TimeDuration(hours.hours)
-        }
+        public fun hours(hours: Int): TimeDuration = TimeDuration(hours.hours)
 
         /**
          * Creates a [TimeDuration] from the specified number of days.
          */
-        public fun days(days: Int): TimeDuration {
-            return TimeDuration(days.days)
-        }
+        public fun days(days: Int): TimeDuration = TimeDuration(days.days)
     }
 }

@@ -72,26 +72,24 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
         /**
          * Builds the default application settings with the reasonable defaults.
          */
-        fun createDefaultAppSettings(): AppSettings {
-            return AppSettings(
-                app = App(
-                    name = "",
-                    fileUploadConfig = FileUploadConfig(
-                        allowedFileExtensions = emptyList(),
-                        allowedMimeTypes = emptyList(),
-                        blockedFileExtensions = emptyList(),
-                        blockedMimeTypes = emptyList(),
-                        sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
-                    ),
-                    imageUploadConfig = FileUploadConfig(
-                        allowedFileExtensions = emptyList(),
-                        allowedMimeTypes = emptyList(),
-                        blockedFileExtensions = emptyList(),
-                        blockedMimeTypes = emptyList(),
-                        sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
-                    ),
+        fun createDefaultAppSettings(): AppSettings = AppSettings(
+            app = App(
+                name = "",
+                fileUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
                 ),
-            )
-        }
+                imageUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+                ),
+            ),
+        )
     }
 }

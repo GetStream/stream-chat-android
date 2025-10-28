@@ -128,11 +128,9 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View {
-        return StreamUiDialogMessageOptionsBinding.inflate(inflater, container, false)
-            .apply { _binding = this }
-            .root
-    }
+    ): View = StreamUiDialogMessageOptionsBinding.inflate(inflater, container, false)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -434,20 +432,18 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     }
                 },
             showAvatarPredicate: MessageListView.ShowAvatarPredicate = DefaultShowAvatarPredicate(),
-        ): MessageOptionsDialogFragment {
-            return MessageOptionsDialogFragment().also {
-                it.message = message
-                it.optionsDialogType = optionsDialogType
-                it.style = style
-                it.messageListItemViewHolderFactory = messageListItemViewHolderFactory
-                it.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
-                    style.itemStyle,
-                    style.replyMessageStyle,
-                    messageBackgroundFactory,
-                    showAvatarPredicate,
-                )
-                it.messageOptionItems = messageOptionItems
-            }
+        ): MessageOptionsDialogFragment = MessageOptionsDialogFragment().also {
+            it.message = message
+            it.optionsDialogType = optionsDialogType
+            it.style = style
+            it.messageListItemViewHolderFactory = messageListItemViewHolderFactory
+            it.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
+                style.itemStyle,
+                style.replyMessageStyle,
+                messageBackgroundFactory,
+                showAvatarPredicate,
+            )
+            it.messageOptionItems = messageOptionItems
         }
     }
 }

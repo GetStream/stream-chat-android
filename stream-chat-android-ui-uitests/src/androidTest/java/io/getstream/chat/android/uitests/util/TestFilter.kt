@@ -26,13 +26,9 @@ import org.junit.runner.manipulation.Filter
  * ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Precord -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
  */
 class SnapshotTestFilter : Filter() {
-    override fun shouldRun(description: Description): Boolean {
-        return ScreenshotTest::class.java.isAssignableFrom(description.testClass)
-    }
+    override fun shouldRun(description: Description): Boolean = ScreenshotTest::class.java.isAssignableFrom(description.testClass)
 
-    override fun describe(): String {
-        return "All snapshot tests."
-    }
+    override fun describe(): String = "All snapshot tests."
 }
 
 /**
@@ -41,11 +37,7 @@ class SnapshotTestFilter : Filter() {
  * ./gradlew stream-chat-android-ui-uitests:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.NonSnapshotTestFilter
  */
 class NonSnapshotTestFilter : Filter() {
-    override fun shouldRun(description: Description): Boolean {
-        return !ScreenshotTest::class.java.isAssignableFrom(description.testClass)
-    }
+    override fun shouldRun(description: Description): Boolean = !ScreenshotTest::class.java.isAssignableFrom(description.testClass)
 
-    override fun describe(): String {
-        return "All tests other than snapshot."
-    }
+    override fun describe(): String = "All tests other than snapshot."
 }

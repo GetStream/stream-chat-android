@@ -37,13 +37,11 @@ import io.getstream.chat.android.models.Message
 internal fun defaultTextStyle(
     ownTheme: MessageTheme,
     otherTheme: MessageTheme,
-): (Boolean, Message) -> TextStyle {
-    return { isMine, message ->
-        val theme = if (isMine) ownTheme else otherTheme
-        when {
-            message.isErrorOrFailed() -> theme.errorTextStyle
-            else -> theme.textStyle
-        }
+): (Boolean, Message) -> TextStyle = { isMine, message ->
+    val theme = if (isMine) ownTheme else otherTheme
+    when {
+        message.isErrorOrFailed() -> theme.errorTextStyle
+        else -> theme.textStyle
     }
 }
 
@@ -69,11 +67,10 @@ internal fun defaultTextStyle(
 }
 
 @Composable
-internal fun defaultLinkStyle(colors: StreamColors): (isOwnMessage: Boolean) -> TextStyle =
-    defaultLinkStyle(
-        ownTheme = MessageTheme.defaultOwnTheme(colors = colors),
-        otherTheme = MessageTheme.defaultOtherTheme(colors = colors),
-    )
+internal fun defaultLinkStyle(colors: StreamColors): (isOwnMessage: Boolean) -> TextStyle = defaultLinkStyle(
+    ownTheme = MessageTheme.defaultOwnTheme(colors = colors),
+    otherTheme = MessageTheme.defaultOtherTheme(colors = colors),
+)
 
 internal fun defaultLinkStyle(
     ownTheme: MessageTheme,
@@ -95,10 +92,8 @@ internal fun defaultLinkStyle(
 internal fun defaultMentionColor(
     ownTheme: MessageTheme,
     otherTheme: MessageTheme,
-): (Boolean) -> Color {
-    return { isMine ->
-        if (isMine) ownTheme.mentionColor else otherTheme.mentionColor
-    }
+): (Boolean) -> Color = { isMine ->
+    if (isMine) ownTheme.mentionColor else otherTheme.mentionColor
 }
 
 /**

@@ -61,8 +61,7 @@ public class RepositoryFacade private constructor(
 
     private val logger by taggedLogger("Chat:RepositoryFacade")
 
-    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
-        selectChannels(channelCIDs, null)
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = selectChannels(channelCIDs, null)
 
     public suspend fun selectChannels(
         channelIds: List<String>,

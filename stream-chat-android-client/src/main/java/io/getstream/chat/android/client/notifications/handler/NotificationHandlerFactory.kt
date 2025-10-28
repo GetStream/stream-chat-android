@@ -99,13 +99,12 @@ public object NotificationHandlerFactory {
 
     private fun getDefaultActionsProvider(
         context: Context,
-    ): (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
-        { notificationId, channel, message ->
-            listOf(
-                NotificationMessageReceiver.createReadAction(context, notificationId, channel, message),
-                NotificationMessageReceiver.createReplyAction(context, notificationId, channel),
-            )
-        }
+    ): (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> = { notificationId, channel, message ->
+        listOf(
+            NotificationMessageReceiver.createReadAction(context, notificationId, channel, message),
+            NotificationMessageReceiver.createReplyAction(context, notificationId, channel),
+        )
+    }
 
     private fun getDefaultNotificationTextFormatter(
         notificationConfig: NotificationConfig,
@@ -120,22 +119,17 @@ public object NotificationHandlerFactory {
 
     private fun getDefaultNewMessageIntentFun(
         context: Context,
-    ): (message: Message, channel: Channel) -> Intent {
-        return { _, _ -> createDefaultNewMessageIntent(context) }
-    }
+    ): (message: Message, channel: Channel) -> Intent = { _, _ -> createDefaultNewMessageIntent(context) }
 
-    private fun createDefaultNewMessageIntent(context: Context): Intent =
-        context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
+    private fun createDefaultNewMessageIntent(context: Context): Intent = context.packageManager!!.getLaunchIntentForPackage(context.packageName)!!
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getDefaultNotificationChannel(context: Context): (() -> NotificationChannel) {
-        return {
-            NotificationChannel(
-                context.getString(R.string.stream_chat_notification_channel_id),
-                context.getString(R.string.stream_chat_notification_channel_name),
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-        }
+    private fun getDefaultNotificationChannel(context: Context): (() -> NotificationChannel) = {
+        NotificationChannel(
+            context.getString(R.string.stream_chat_notification_channel_id),
+            context.getString(R.string.stream_chat_notification_channel_name),
+            NotificationManager.IMPORTANCE_DEFAULT,
+        )
     }
 
     private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
@@ -154,9 +148,7 @@ public object NotificationHandlerFactory {
                 }.getOrDefault(DefaultUserIconBuilder(appContext))
             }
 
-            override suspend fun buildIcon(user: User): IconCompat? {
-                return builder.buildIcon(user)
-            }
+            override suspend fun buildIcon(user: User): IconCompat? = builder.buildIcon(user)
         }
     }
 

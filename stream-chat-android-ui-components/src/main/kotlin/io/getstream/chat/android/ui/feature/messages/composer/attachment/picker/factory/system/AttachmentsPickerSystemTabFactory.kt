@@ -48,9 +48,7 @@ public class AttachmentsPickerSystemTabFactory(
      * Create the tab icon.
      * @param style The style of the dialog.
      */
-    override fun createTabIcon(style: AttachmentsPickerDialogStyle): Drawable {
-        return style.submitAttachmentsButtonIconDrawable
-    }
+    override fun createTabIcon(style: AttachmentsPickerDialogStyle): Drawable = style.submitAttachmentsButtonIconDrawable
 
     /**
      * Create the tab fragment.
@@ -60,18 +58,16 @@ public class AttachmentsPickerSystemTabFactory(
     override fun createTabFragment(
         style: AttachmentsPickerDialogStyle,
         attachmentsPickerTabListener: AttachmentsPickerTabListener,
-    ): Fragment {
-        return AttachmentsPickerSystemFragment.newInstance(
-            style,
-            attachmentsPickerTabListener,
-            AttachmentsPickerSystemConfig(
-                visualMediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
-                visualMediaAllowMultiple = visualMediaAllowMultiple,
-                visualMediaType = visualMediaType,
-                fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
-                cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
-                pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
-            ),
-        )
-    }
+    ): Fragment = AttachmentsPickerSystemFragment.newInstance(
+        style,
+        attachmentsPickerTabListener,
+        AttachmentsPickerSystemConfig(
+            visualMediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
+            visualMediaAllowMultiple = visualMediaAllowMultiple,
+            visualMediaType = visualMediaType,
+            fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
+            cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
+            pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
+        ),
+    )
 }

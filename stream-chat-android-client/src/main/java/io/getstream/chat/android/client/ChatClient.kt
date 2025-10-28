@@ -512,15 +512,13 @@ internal constructor(
      * Either entirely extracts current user from the event
      * or merges the one from the event into the existing current user.
      */
-    private fun ChatEvent.extractCurrentUser(): User? {
-        return when (this) {
-            is HasOwnUser -> me
-            is UserEvent -> getCurrentUser()
-                ?.takeIf { it.id == user.id }
-                ?.mergePartially(user)
+    private fun ChatEvent.extractCurrentUser(): User? = when (this) {
+        is HasOwnUser -> me
+        is UserEvent -> getCurrentUser()
+            ?.takeIf { it.id == user.id }
+            ?.mergePartially(user)
 
-            else -> null
-        }
+        else -> null
     }
 
     //region Set user
@@ -645,14 +643,12 @@ internal constructor(
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
-    private fun createRepositoryFactory(user: User): RepositoryFactory =
-        repositoryFactoryProvider.createRepositoryFactory(user)
+    private fun createRepositoryFactory(user: User): RepositoryFactory = repositoryFactoryProvider.createRepositoryFactory(user)
 
     private fun createRepositoryFacade(
         scope: CoroutineScope,
         repositoryFactory: RepositoryFactory = NoOpRepositoryFactory,
-    ): RepositoryFacade =
-        RepositoryFacade.create(repositoryFactory, scope)
+    ): RepositoryFacade = RepositoryFacade.create(repositoryFactory, scope)
 
     /**
      * Get the current settings of the app. Check [AppSettings].
@@ -689,13 +685,11 @@ internal constructor(
         user: User,
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
-    ): Call<ConnectionData> {
-        return CoroutineCall(clientScope) {
-            userScope.userId.value = user.id
-            connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
-        }
-            .share(clientScope) { ConnectUserIdentifier(user) }
+    ): Call<ConnectionData> = CoroutineCall(clientScope) {
+        userScope.userId.value = user.id
+        connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
     }
+        .share(clientScope) { ConnectUserIdentifier(user) }
 
     private suspend fun connectUserSuspend(
         user: User,
@@ -734,16 +728,14 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long? = null,
         onDisconnectionComplete: () -> Unit = {},
-    ): Call<ConnectionData> {
-        return CoroutineCall(clientScope) {
-            logger.d { "[switchUser] user.id: '${user.id}'" }
-            userScope.userId.value = user.id
-            notifications.deleteDevice() // always delete device if switching users
-            disconnectUserSuspend(flushPersistence = true)
-            onDisconnectionComplete()
-            connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
-                logger.v { "[switchUser] completed('${user.id}')" }
-            }
+    ): Call<ConnectionData> = CoroutineCall(clientScope) {
+        logger.d { "[switchUser] user.id: '${user.id}'" }
+        userScope.userId.value = user.id
+        notifications.deleteDevice() // always delete device if switching users
+        disconnectUserSuspend(flushPersistence = true)
+        onDisconnectionComplete()
+        connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
+            logger.v { "[switchUser] completed('${user.id}')" }
         }
     }
 
@@ -769,9 +761,7 @@ internal constructor(
         token: String,
         timeoutMilliseconds: Long? = null,
         onDisconnectionComplete: () -> Unit = {},
-    ): Call<ConnectionData> {
-        return switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
-    }
+    ): Call<ConnectionData> = switchUser(user, ConstantTokenProvider(token), timeoutMilliseconds, onDisconnectionComplete)
 
     /**
      * Initializes [ChatClient] for a specific user using the given user [token].
@@ -788,9 +778,7 @@ internal constructor(
         user: User,
         token: String,
         timeoutMilliseconds: Long? = null,
-    ): Call<ConnectionData> {
-        return connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
-    }
+    ): Call<ConnectionData> = connectUser(user, ConstantTokenProvider(token), timeoutMilliseconds)
 
     /**
      * Initializes [ChatClient] with stored user data.
@@ -830,9 +818,7 @@ internal constructor(
      * Checks if there are currently stored user credentials in the local storage.
      */
     @InternalStreamChatApi
-    public fun containsStoredCredentials(): Boolean {
-        return userCredentialStorage.get() != null
-    }
+    public fun containsStoredCredentials(): Boolean = userCredentialStorage.get() != null
 
     private fun storePushNotificationsConfig(userId: String, userName: String, isAnonymous: Boolean) {
         userCredentialStorage.put(
@@ -847,30 +833,27 @@ internal constructor(
 
     @CheckResult
     @JvmOverloads
-    public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> {
-        return CoroutineCall(clientScope) {
-            logger.d { "[connectAnonymousUser] no args" }
-            userScope.userId.value = ANONYMOUS_USER_ID
-            setUser(
-                anonUser,
-                ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
-                timeoutMilliseconds,
-            ).also { result ->
-                logger.v {
-                    "[connectAnonymousUser] " +
-                        "completed: ${result.stringify { "ConnectionData(connectionId=${it.connectionId})" }}"
-                }
+    public fun connectAnonymousUser(timeoutMilliseconds: Long? = null): Call<ConnectionData> = CoroutineCall(clientScope) {
+        logger.d { "[connectAnonymousUser] no args" }
+        userScope.userId.value = ANONYMOUS_USER_ID
+        setUser(
+            anonUser,
+            ConstantTokenProvider(devToken(ANONYMOUS_USER_ID)),
+            timeoutMilliseconds,
+        ).also { result ->
+            logger.v {
+                "[connectAnonymousUser] " +
+                    "completed: ${result.stringify { "ConnectionData(connectionId=${it.connectionId})" }}"
             }
         }
     }
 
-    private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> =
-        timeoutMilliseconds?.let {
-            withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
-                ?: Result.Failure(
-                    Error.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
-                )
-        } ?: waitConnection.first()
+    private suspend fun waitFirstConnection(timeoutMilliseconds: Long?): Result<ConnectionData> = timeoutMilliseconds?.let {
+        withTimeoutOrNull(timeoutMilliseconds) { waitConnection.first() }
+            ?: Result.Failure(
+                Error.GenericError("Connection wasn't established in ${timeoutMilliseconds}ms"),
+            )
+    } ?: waitConnection.first()
 
     @CheckResult
     @JvmOverloads
@@ -878,25 +861,21 @@ internal constructor(
         userId: String,
         username: String,
         timeoutMilliseconds: Long? = null,
-    ): Call<ConnectionData> {
-        return CoroutineCall(clientScope) {
-            logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
-            userScope.userId.value = userId
+    ): Call<ConnectionData> = CoroutineCall(clientScope) {
+        logger.d { "[connectGuestUser] userId: '$userId', username: '$username'" }
+        userScope.userId.value = userId
 
-            getGuestToken(userId, username).await()
-                .flatMapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
-                .onSuccess { connectionData ->
-                    logger.v {
-                        "[connectGuestUser] completed: ConnectionData(connectionId=${connectionData.connectionId})"
-                    }
+        getGuestToken(userId, username).await()
+            .flatMapSuspend { setUser(it.user, ConstantTokenProvider(it.token), timeoutMilliseconds) }
+            .onSuccess { connectionData ->
+                logger.v {
+                    "[connectGuestUser] completed: ConnectionData(connectionId=${connectionData.connectionId})"
                 }
-        }
+            }
     }
 
     @CheckResult
-    public fun getGuestToken(userId: String, userName: String): Call<GuestUser> {
-        return api.getGuestUser(userId, userName)
-    }
+    public fun getGuestToken(userId: String, userName: String): Call<GuestUser> = api.getGuestUser(userId, userName)
 
     /**
      * Query members and apply side effects if there are any.
@@ -968,9 +947,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<UploadedFile> {
-        return api.sendFile(channelType, channelId, file, callback)
-    }
+    ): Call<UploadedFile> = api.sendFile(channelType, channelId, file, callback)
 
     /**
      * Uploads an image for the given channel. Progress can be accessed via [callback].
@@ -998,9 +975,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<UploadedFile> {
-        return api.sendImage(channelType, channelId, file, callback)
-    }
+    ): Call<UploadedFile> = api.sendImage(channelType, channelId, file, callback)
 
     /**
      * Deletes the file represented by [url] from the given channel.
@@ -1015,9 +990,7 @@ internal constructor(
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
      */
     @CheckResult
-    public fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
-        return api.deleteFile(channelType, channelId, url)
-    }
+    public fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> = api.deleteFile(channelType, channelId, url)
 
     /**
      * Deletes the image represented by [url] from the given channel.
@@ -1032,9 +1005,7 @@ internal constructor(
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
      */
     @CheckResult
-    public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
-        return api.deleteImage(channelType, channelId, url)
-    }
+    public fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> = api.deleteImage(channelType, channelId, url)
 
     /**
      * Uploads a file not related to any channel. Progress can be accessed via [progressCallback].
@@ -1114,6 +1085,7 @@ internal constructor(
     ): Call<Unit> = api.deleteImage(url)
 
     //region Reactions
+
     /**
      * Retrieves the reactions on a given message.
      *
@@ -1126,9 +1098,7 @@ internal constructor(
         messageId: String,
         offset: Int,
         limit: Int,
-    ): Call<List<Reaction>> {
-        return api.getReactions(messageId, offset, limit)
-    }
+    ): Call<List<Reaction>> = api.getReactions(messageId, offset, limit)
 
     /**
      * Deletes the reaction associated with the message with the given message id.
@@ -1242,37 +1212,34 @@ internal constructor(
     //endregion
 
     @CheckResult
-    public fun disconnectSocket(): Call<Unit> =
-        CoroutineCall(userScope) {
-            Result.Success(chatSocket.disconnect())
-        }
+    public fun disconnectSocket(): Call<Unit> = CoroutineCall(userScope) {
+        Result.Success(chatSocket.disconnect())
+    }
 
     /**
      * Fetches the current user.
      * Works only if the user was previously set and the WS connections is closed.
      */
-    public fun fetchCurrentUser(): Call<User> {
-        return CoroutineCall(userScope) {
-            logger.d { "[fetchCurrentUser] isUserSet: ${isUserSet()}, isSocketConnected: ${isSocketConnected()}" }
-            when {
-                !isUserSet() -> Result.Failure(Error.GenericError("User is not set, can't fetch current user"))
-                isSocketConnected() -> Result.Failure(
-                    Error.GenericError(
-                        "Socket is connected, can't fetch current user",
-                    ),
-                )
+    public fun fetchCurrentUser(): Call<User> = CoroutineCall(userScope) {
+        logger.d { "[fetchCurrentUser] isUserSet: ${isUserSet()}, isSocketConnected: ${isSocketConnected()}" }
+        when {
+            !isUserSet() -> Result.Failure(Error.GenericError("User is not set, can't fetch current user"))
+            isSocketConnected() -> Result.Failure(
+                Error.GenericError(
+                    "Socket is connected, can't fetch current user",
+                ),
+            )
 
-                else -> currentUserFetcher.fetch(getCurrentUser()!!)
-            }
-        }.doOnResult(userScope) { result ->
-            logger.v { "[fetchCurrentUser] completed: $result" }
-            result.getOrNull()?.also { currentUser ->
-                mutableClientState.setUser(currentUser)
-            }
-            plugins.forEach { plugin ->
-                logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onFetchCurrentUserResult(result)
-            }
+            else -> currentUserFetcher.fetch(getCurrentUser()!!)
+        }
+    }.doOnResult(userScope) { result ->
+        logger.v { "[fetchCurrentUser] completed: $result" }
+        result.getOrNull()?.also { currentUser ->
+            mutableClientState.setUser(currentUser)
+        }
+        plugins.forEach { plugin ->
+            logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+            plugin.onFetchCurrentUserResult(result)
         }
     }
 
@@ -1281,20 +1248,19 @@ internal constructor(
      * Works only if the user was previously set and the WS connections is closed.
      */
     @CheckResult
-    public fun reconnectSocket(): Call<Unit> =
-        CoroutineCall(userScope) {
-            when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> Result.Success(
-                    chatSocket.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet,
-                        true,
-                    ),
-                )
+    public fun reconnectSocket(): Call<Unit> = CoroutineCall(userScope) {
+        when (val userState = userStateService.state) {
+            is UserState.UserSet, is UserState.AnonymousUserSet -> Result.Success(
+                chatSocket.reconnectUser(
+                    userState.userOrError(),
+                    userState is UserState.AnonymousUserSet,
+                    true,
+                ),
+            )
 
-                else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
-            }
+            else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
         }
+    }
 
     public fun addSocketListener(listener: SocketListener) {
         chatSocket.addListener(listener)
@@ -1306,9 +1272,7 @@ internal constructor(
 
     public fun subscribe(
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return eventsObservable.subscribe(listener = listener)
-    }
+    ): Disposable = eventsObservable.subscribe(listener = listener)
 
     /**
      * Subscribes to the specific [eventTypes] of the client.
@@ -1438,11 +1402,10 @@ internal constructor(
      * @return Executable async [Call] which performs the cleanup.
      */
     @CheckResult
-    public fun clearPersistence(): Call<Unit> =
-        CoroutineCall(clientScope) {
-            disconnectSuspend(true)
-            Result.Success(Unit)
-        }.doOnStart(clientScope) { setUserWithoutConnectingIfNeeded() }
+    public fun clearPersistence(): Call<Unit> = CoroutineCall(clientScope) {
+        disconnectSuspend(true)
+        Result.Success(Unit)
+    }.doOnStart(clientScope) { setUserWithoutConnectingIfNeeded() }
 
     /**
      * Disconnect the current user, stop all observers and clear user data.
@@ -1460,28 +1423,27 @@ internal constructor(
     public fun disconnect(
         flushPersistence: Boolean,
         deleteDevice: Boolean = flushPersistence,
-    ): Call<Unit> =
-        CoroutineCall(clientScope) {
-            logger.d { "[disconnect] flushPersistence: $flushPersistence" }
-            when (isUserSet()) {
-                true -> {
-                    if (deleteDevice) {
-                        notifications.deleteDevice()
-                    }
-                    disconnectSuspend(flushPersistence)
-                    Result.Success(Unit)
+    ): Call<Unit> = CoroutineCall(clientScope) {
+        logger.d { "[disconnect] flushPersistence: $flushPersistence" }
+        when (isUserSet()) {
+            true -> {
+                if (deleteDevice) {
+                    notifications.deleteDevice()
                 }
+                disconnectSuspend(flushPersistence)
+                Result.Success(Unit)
+            }
 
-                false -> {
-                    logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
-                    Result.Failure(
-                        Error.GenericError(
-                            message = "ChatClient can't be disconnected because user wasn't connected previously",
-                        ),
-                    )
-                }
+            false -> {
+                logger.i { "[disconnect] cannot disconnect as the user wasn't connected" }
+                Result.Failure(
+                    Error.GenericError(
+                        message = "ChatClient can't be disconnected because user wasn't connected previously",
+                    ),
+                )
             }
         }
+    }
 
     private suspend fun disconnectSuspend(flushPersistence: Boolean) {
         disconnectUserSuspend(flushPersistence)
@@ -1531,22 +1493,16 @@ internal constructor(
     //region: api calls
 
     @CheckResult
-    public fun getDevices(): Call<List<Device>> {
-        return api.getDevices()
-            .share(userScope) { GetDevicesIdentifier() }
-    }
+    public fun getDevices(): Call<List<Device>> = api.getDevices()
+        .share(userScope) { GetDevicesIdentifier() }
 
     @CheckResult
-    public fun deleteDevice(device: Device): Call<Unit> {
-        return api.deleteDevice(device)
-            .share(userScope) { DeleteDeviceIdentifier(device) }
-    }
+    public fun deleteDevice(device: Device): Call<Unit> = api.deleteDevice(device)
+        .share(userScope) { DeleteDeviceIdentifier(device) }
 
     @CheckResult
-    public fun addDevice(device: Device): Call<Unit> {
-        return api.addDevice(device)
-            .share(userScope) { AddDeviceIdentifier(device) }
-    }
+    public fun addDevice(device: Device): Call<Unit> = api.addDevice(device)
+        .share(userScope) { AddDeviceIdentifier(device) }
 
     /**
      * Sets the push notification preference level for the current user.
@@ -1611,12 +1567,10 @@ internal constructor(
      * Returns a [PushPreference] object containing the updated preference settings on success.
      */
     @CheckResult
-    public fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> {
-        return api.setChannelPushPreference(cid, level)
-            .doOnResult(userScope) { result ->
-                plugins.forEach { it.onChannelPushPreferenceSet(cid, level, result) }
-            }
-    }
+    public fun setChannelPushPreference(cid: String, level: PushPreferenceLevel): Call<PushPreference> = api.setChannelPushPreference(cid, level)
+        .doOnResult(userScope) { result ->
+            plugins.forEach { it.onChannelPushPreferenceSet(cid, level, result) }
+        }
 
     /**
      * Temporarily disables push notifications for a specific channel until the specified date.
@@ -1630,12 +1584,10 @@ internal constructor(
      * `disabledUntil` field set to the specified date.
      */
     @CheckResult
-    public fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> {
-        return api.snoozeChannelPushNotifications(cid, until)
-            .doOnResult(userScope) { result ->
-                plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
-            }
-    }
+    public fun snoozeChannelPushNotifications(cid: String, until: Date): Call<PushPreference> = api.snoozeChannelPushNotifications(cid, until)
+        .doOnResult(userScope) { result ->
+            plugins.forEach { it.onChannelPushNotificationsSnoozed(cid, until, result) }
+        }
 
     /**
      * Dismiss notifications from a given [channelType] and [channelId].
@@ -1717,15 +1669,13 @@ internal constructor(
         limit: Int,
         sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
-    ): Call<List<Message>> {
-        return api.getPinnedMessages(
-            channelType = channelType,
-            channelId = channelId,
-            limit = limit,
-            sort = sort,
-            pagination = pagination,
-        )
-    }
+    ): Call<List<Message>> = api.getPinnedMessages(
+        channelType = channelType,
+        channelId = channelId,
+        limit = limit,
+        sort = sort,
+        pagination = pagination,
+    )
 
     /**
      * Send a message with a poll to the given channel.
@@ -1743,18 +1693,16 @@ internal constructor(
         channelType: String,
         channelId: String,
         pollConfig: PollConfig,
-    ): Call<Message> {
-        return api.createPoll(pollConfig)
-            .flatMap { poll ->
-                sendMessage(
-                    channelType = channelType,
-                    channelId = channelId,
-                    Message(
-                        extraData = mapOf("poll_id" to poll.id),
-                    ),
-                )
-            }
-    }
+    ): Call<Message> = api.createPoll(pollConfig)
+        .flatMap { poll ->
+            sendMessage(
+                channelType = channelType,
+                channelId = channelId,
+                Message(
+                    extraData = mapOf("poll_id" to poll.id),
+                ),
+            )
+        }
 
     /**
      * Sends a static location message to the given channel.
@@ -1902,9 +1850,7 @@ internal constructor(
     public fun suggestPollOption(
         pollId: String,
         option: String,
-    ): Call<Option> {
-        return api.suggestPollOption(pollId, option)
-    }
+    ): Call<Option> = api.suggestPollOption(pollId, option)
 
     /**
      * Cast a vote for a poll in a message.
@@ -1920,18 +1866,14 @@ internal constructor(
         messageId: String,
         pollId: String,
         option: Option,
-    ): Call<Vote> {
-        return api.castPollVote(messageId, pollId, option.id)
-    }
+    ): Call<Vote> = api.castPollVote(messageId, pollId, option.id)
 
     @CheckResult
     public fun castPollAnswer(
         messageId: String,
         pollId: String,
         answer: String,
-    ): Call<Vote> {
-        return api.castPollAnswer(messageId, pollId, answer)
-    }
+    ): Call<Vote> = api.castPollAnswer(messageId, pollId, answer)
 
     /**
      * Remove a vote for a poll in a message.
@@ -1947,9 +1889,7 @@ internal constructor(
         messageId: String,
         pollId: String,
         vote: Vote,
-    ): Call<Vote> {
-        return api.removePollVote(messageId, pollId, vote.id)
-    }
+    ): Call<Vote> = api.removePollVote(messageId, pollId, vote.id)
 
     /**
      * Close a poll in a message.
@@ -1959,9 +1899,7 @@ internal constructor(
      * @return Executable async [Call] responsible for closing a poll.
      */
     @CheckResult
-    public fun closePoll(pollId: String): Call<Poll> {
-        return api.closePoll(pollId)
-    }
+    public fun closePoll(pollId: String): Call<Poll> = api.closePoll(pollId)
 
     /**
      * Deletes a poll.
@@ -1970,9 +1908,7 @@ internal constructor(
      * @return Executable async [Call] responsible for deleting a poll.
      */
     @CheckResult
-    public fun deletePoll(pollId: String): Call<Unit> {
-        return api.deletePoll(pollId)
-    }
+    public fun deletePoll(pollId: String): Call<Unit> = api.deletePoll(pollId)
 
     /**
      * Retrieves the file attachments from the given channel.
@@ -1988,8 +1924,7 @@ internal constructor(
         channelId: String,
         offset: Int,
         limit: Int,
-    ): Call<List<Attachment>> =
-        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
+    ): Call<List<Attachment>> = getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
     /**
      * Retrieves the image attachments from the given channel.
@@ -2005,8 +1940,7 @@ internal constructor(
         channelId: String,
         offset: Int,
         limit: Int,
-    ): Call<List<Attachment>> =
-        getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
+    ): Call<List<Attachment>> = getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_IMAGE)
 
     @CheckResult
     private fun getAttachments(
@@ -2015,10 +1949,9 @@ internal constructor(
         offset: Int,
         limit: Int,
         type: String,
-    ): Call<List<Attachment>> =
-        getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
-            messages.flatMap { message -> message.attachments.filter { it.type == type } }
-        }
+    ): Call<List<Attachment>> = getMessagesWithAttachments(channelType, channelId, offset, limit, listOf(type)).map { messages ->
+        messages.flatMap { message -> message.attachments.filter { it.type == type } }
+    }
 
     /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
@@ -2130,9 +2063,7 @@ internal constructor(
     }
 
     @CheckResult
-    public fun sendAction(request: SendActionRequest): Call<Message> {
-        return api.sendAction(request)
-    }
+    public fun sendAction(request: SendActionRequest): Call<Message> = api.sendAction(request)
 
     /**
      * Sends selected giphy message to the channel specified by [Message.cid].
@@ -2273,10 +2204,8 @@ internal constructor(
      * @return Executable async [Call] responsible for fetching a pending message.
      */
     @CheckResult
-    public fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return api.getPendingMessage(messageId)
-            .share(userScope) { GetMessageIdentifier(messageId) }
-    }
+    public fun getPendingMessage(messageId: String): Call<PendingMessage> = api.getPendingMessage(messageId)
+        .share(userScope) { GetMessageIdentifier(messageId) }
 
     /**
      * Sends the message to the given channel. If [isRetrying] is set to true, the message may not be prepared again.
@@ -2345,18 +2274,16 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage> {
-        return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
-            api.createDraftMessage(channelType, channelId, processedDraftMessage)
-                .retry(userScope, retryPolicy)
-                .doOnResult(userScope) { result ->
-                    logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
-                    plugins.forEach { listener ->
-                        logger.v { "[createDraftMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                        listener.onCreateDraftMessageResult(result, channelType, channelId, processedDraftMessage)
-                    }
+    ): Call<DraftMessage> = message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
+        api.createDraftMessage(channelType, channelId, processedDraftMessage)
+            .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[createDraftMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onCreateDraftMessageResult(result, channelType, channelId, processedDraftMessage)
                 }
-        }
+            }
     }
 
     /**
@@ -2374,17 +2301,15 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<Unit> {
-        return api.deleteDraftMessage(channelType, channelId, message)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
-                plugins.forEach { listener ->
-                    logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
-                }
+    ): Call<Unit> = api.deleteDraftMessage(channelType, channelId, message)
+        .retry(userScope, retryPolicy)
+        .doOnResult(userScope) { result ->
+            logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
+            plugins.forEach { listener ->
+                logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
             }
-    }
+        }
 
     /**
      * Query draft messages for the current user.
@@ -2403,17 +2328,15 @@ internal constructor(
     public fun queryDraftMessages(
         offset: Int?,
         limit: Int?,
-    ): Call<List<DraftMessage>> {
-        return api.queryDraftMessages(offset, limit)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
-                plugins.forEach { listener ->
-                    logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onQueryDraftMessagesResult(result, offset, limit)
-                }
+    ): Call<List<DraftMessage>> = api.queryDraftMessages(offset, limit)
+        .retry(userScope, retryPolicy)
+        .doOnResult(userScope) { result ->
+            logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
+            plugins.forEach { listener ->
+                logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                listener.onQueryDraftMessagesResult(result, offset, limit)
             }
-    }
+        }
 
     /**
      * Query draft messages for the current user.
@@ -2430,31 +2353,27 @@ internal constructor(
         limit: Int,
         next: String? = null,
         sort: QuerySorter<DraftsSort> = QuerySortByField.descByName("created_at"),
-    ): Call<QueryDraftsResult> {
-        return api.queryDrafts(filter, limit, next, sort)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                plugins.forEach { listener ->
-                    listener.onQueryDraftMessagesResult(result, filter, limit, next, sort)
-                }
+    ): Call<QueryDraftsResult> = api.queryDrafts(filter, limit, next, sort)
+        .retry(userScope, retryPolicy)
+        .doOnResult(userScope) { result ->
+            plugins.forEach { listener ->
+                listener.onQueryDraftMessagesResult(result, filter, limit, next, sort)
             }
-    }
+        }
 
     private suspend fun doSendMessage(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Result<Message> {
-        return api.sendMessage(channelType, channelId, message)
-            .retry(userScope, retryPolicy)
-            .doOnResult(userScope) { result ->
-                logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
-                plugins.forEach { listener ->
-                    logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onMessageSendResult(result, channelType, channelId, message)
-                }
-            }.await()
-    }
+    ): Result<Message> = api.sendMessage(channelType, channelId, message)
+        .retry(userScope, retryPolicy)
+        .doOnResult(userScope) { result ->
+            logger.i { "[sendMessage] result: ${result.stringify { it.toString() }}" }
+            plugins.forEach { listener ->
+                logger.v { "[sendMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                listener.onMessageSendResult(result, channelType, channelId, message)
+            }
+        }.await()
 
     private suspend fun sendAttachments(
         channelType: String,
@@ -2487,22 +2406,20 @@ internal constructor(
      * @param message [Message] The message to be updated.
      */
     @CheckResult
-    public fun updateMessage(message: Message): Call<Message> {
-        return api.updateMessage(message)
-            .doOnStart(userScope) {
-                plugins.forEach { plugin ->
-                    logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
-                    plugin.onMessageEditRequest(message)
-                }
+    public fun updateMessage(message: Message): Call<Message> = api.updateMessage(message)
+        .doOnStart(userScope) {
+            plugins.forEach { plugin ->
+                logger.v { "[updateMessage] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onMessageEditRequest(message)
             }
-            .doOnResult(userScope) { result ->
-                plugins.forEach { plugin ->
-                    logger.v { "[updateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                    plugin.onMessageEditResult(message, result)
-                }
+        }
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[updateMessage] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onMessageEditResult(message, result)
             }
-            .share(userScope) { UpdateMessageIdentifier(message) }
-    }
+        }
+        .share(userScope) { UpdateMessageIdentifier(message) }
 
     /**
      * Partially updates specific [Message] fields retaining the fields which were set previously.
@@ -2518,13 +2435,11 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Message> {
-        return api.partialUpdateMessage(
-            messageId = messageId,
-            set = set,
-            unset = unset,
-        )
-    }
+    ): Call<Message> = api.partialUpdateMessage(
+        messageId = messageId,
+        set = set,
+        unset = unset,
+    )
 
     /**
      * Pin the channel for the current user.
@@ -2688,9 +2603,7 @@ internal constructor(
      */
     @CheckResult
     @InternalStreamChatApi
-    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
-        return api.queryChannels(request)
-    }
+    public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> = api.queryChannels(request)
 
     /**
      * Gets the channel from the server based on [cid].
@@ -2705,30 +2618,28 @@ internal constructor(
         messageLimit: Int = 0,
         memberLimit: Int = 0,
         state: Boolean = false,
-    ): Call<Channel> {
-        return CoroutineCall(userScope) {
-            val request = QueryChannelsRequest(
-                filter = Filters.eq("cid", cid),
-                limit = 1,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            ).apply {
-                this.watch = false
-                this.state = state
-            }
-            when (val result = api.queryChannels(request).await()) {
-                is Result.Success -> {
-                    val channels = result.value
-                    if (channels.isEmpty()) {
-                        val cause = StreamChannelNotFoundException(cid)
-                        Result.Failure(Error.ThrowableError(cause.message, cause))
-                    } else {
-                        Result.Success(channels.first())
-                    }
+    ): Call<Channel> = CoroutineCall(userScope) {
+        val request = QueryChannelsRequest(
+            filter = Filters.eq("cid", cid),
+            limit = 1,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        ).apply {
+            this.watch = false
+            this.state = state
+        }
+        when (val result = api.queryChannels(request).await()) {
+            is Result.Success -> {
+                val channels = result.value
+                if (channels.isEmpty()) {
+                    val cause = StreamChannelNotFoundException(cid)
+                    Result.Failure(Error.ThrowableError(cause.message, cause))
+                } else {
+                    Result.Success(channels.first())
                 }
-
-                is Result.Failure -> result
             }
+
+            is Result.Failure -> result
         }
     }
 
@@ -2747,14 +2658,12 @@ internal constructor(
         messageLimit: Int = 0,
         memberLimit: Int = 0,
         state: Boolean = false,
-    ): Call<Channel> {
-        return getChannel(
-            cid = "$channelType:$channelId",
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-            state = state,
-        )
-    }
+    ): Call<Channel> = getChannel(
+        cid = "$channelType:$channelId",
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        state = state,
+    )
 
     /**
      * Runs [queryChannel] without applying side effects.
@@ -2786,32 +2695,30 @@ internal constructor(
         channelId: String,
         request: QueryChannelRequest,
         skipOnRequest: Boolean = false,
-    ): Call<Channel> {
-        return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
-            .doOnStart(userScope) {
-                logger.d {
-                    "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
-                        ", cid: $channelType:$channelId, request: $request"
-                }
-                if (!skipOnRequest) {
-                    plugins.forEach { plugin ->
-                        plugin.onQueryChannelRequest(channelType, channelId, request)
-                    }
-                }
-            }.doOnResult(userScope) { result ->
-                logger.v {
-                    "[queryChannel] #doOnResult; " +
-                        "completed($channelType:$channelId): ${result.errorOrNull() ?: Unit}"
-                }
-                plugins.forEach { plugin ->
-                    plugin.onQueryChannelResult(result, channelType, channelId, request)
-                }
-            }.precondition(plugins) {
-                onQueryChannelPrecondition(channelType, channelId, request)
-            }.share(userScope) {
-                QueryChannelIdentifier(channelType, channelId, request)
+    ): Call<Channel> = queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
+        .doOnStart(userScope) {
+            logger.d {
+                "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
+                    ", cid: $channelType:$channelId, request: $request"
             }
-    }
+            if (!skipOnRequest) {
+                plugins.forEach { plugin ->
+                    plugin.onQueryChannelRequest(channelType, channelId, request)
+                }
+            }
+        }.doOnResult(userScope) { result ->
+            logger.v {
+                "[queryChannel] #doOnResult; " +
+                    "completed($channelType:$channelId): ${result.errorOrNull() ?: Unit}"
+            }
+            plugins.forEach { plugin ->
+                plugin.onQueryChannelResult(result, channelType, channelId, request)
+            }
+        }.precondition(plugins) {
+            onQueryChannelPrecondition(channelType, channelId, request)
+        }.share(userScope) {
+            QueryChannelIdentifier(channelType, channelId, request)
+        }
 
     /**
      * Gets the channels from the server based on parameters from [QueryChannelsRequest].
@@ -2851,24 +2758,22 @@ internal constructor(
      * @param channelId The ID of the channel.
      */
     @CheckResult
-    public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
-        return api.deleteChannel(channelType, channelId)
-            .doOnStart(userScope) {
-                logger.d { "[deleteChannel] #doOnStart; cid: $channelType:$channelId" }
-                plugins.forEach { listener ->
-                    listener.onDeleteChannelRequest(getCurrentUser(), channelType, channelId)
-                }
+    public fun deleteChannel(channelType: String, channelId: String): Call<Channel> = api.deleteChannel(channelType, channelId)
+        .doOnStart(userScope) {
+            logger.d { "[deleteChannel] #doOnStart; cid: $channelType:$channelId" }
+            plugins.forEach { listener ->
+                listener.onDeleteChannelRequest(getCurrentUser(), channelType, channelId)
             }
-            .doOnResult(userScope) { result ->
-                logger.v { "[deleteChannel] #doOnResult; completed($channelType:$channelId): $result" }
-                plugins.forEach { listener ->
-                    listener.onDeleteChannelResult(channelType, channelId, result)
-                }
+        }
+        .doOnResult(userScope) { result ->
+            logger.v { "[deleteChannel] #doOnResult; completed($channelType:$channelId): $result" }
+            plugins.forEach { listener ->
+                listener.onDeleteChannelResult(channelType, channelId, result)
             }
-            .precondition(plugins) {
-                onDeleteChannelPrecondition(getCurrentUser(), channelType, channelId)
-            }
-    }
+        }
+        .precondition(plugins) {
+            onDeleteChannelPrecondition(getCurrentUser(), channelType, channelId)
+        }
 
     /**
      * Marks the given message as read.
@@ -2882,15 +2787,13 @@ internal constructor(
         channelType: String,
         channelId: String,
         messageId: String,
-    ): Call<Unit> {
-        return api.markRead(channelType, channelId, messageId)
-            .doOnStart(userScope) {
-                logger.d { "[markMessageRead] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
-            }
-            .doOnResult(userScope) {
-                logger.v { "[markMessageRead] #doOnResult; completed($channelType:$channelId-$messageId): $it" }
-            }
-    }
+    ): Call<Unit> = api.markRead(channelType, channelId, messageId)
+        .doOnStart(userScope) {
+            logger.d { "[markMessageRead] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[markMessageRead] #doOnResult; completed($channelType:$channelId-$messageId): $it" }
+        }
 
     /**
      * Marks a given thread as read.
@@ -2904,9 +2807,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         threadId: String,
-    ): Call<Unit> {
-        return api.markThreadRead(channelType, channelId, threadId)
-    }
+    ): Call<Unit> = api.markThreadRead(channelType, channelId, threadId)
 
     /**
      * Shows the specified channel (if previously hidden).
@@ -2915,9 +2816,7 @@ internal constructor(
      * @param channelId Id of the channel.
      */
     @CheckResult
-    public fun showChannel(channelType: String, channelId: String): Call<Unit> {
-        return api.showChannel(channelType, channelId)
-    }
+    public fun showChannel(channelType: String, channelId: String): Call<Unit> = api.showChannel(channelType, channelId)
 
     /**
      * Hides the specified channel with side effects.
@@ -2969,13 +2868,11 @@ internal constructor(
         channelType: String,
         channelId: String,
         systemMessage: Message? = null,
-    ): Call<Channel> {
-        return api.truncateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            systemMessage = systemMessage,
-        )
-    }
+    ): Call<Channel> = api.truncateChannel(
+        channelType = channelType,
+        channelId = channelId,
+        systemMessage = systemMessage,
+    )
 
     /**
      * Stops watching the channel which means you won't receive more events for the channel.
@@ -2988,9 +2885,7 @@ internal constructor(
      * @return Executable async [Call] responsible for stop watching the channel.
      */
     @CheckResult
-    public fun stopWatching(channelType: String, channelId: String): Call<Unit> {
-        return api.stopWatching(channelType, channelId)
-    }
+    public fun stopWatching(channelType: String, channelId: String): Call<Unit> = api.stopWatching(channelType, channelId)
 
     /**
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
@@ -3009,13 +2904,12 @@ internal constructor(
         channelId: String,
         updateMessage: Message?,
         channelExtraData: Map<String, Any> = emptyMap(),
-    ): Call<Channel> =
-        api.updateChannel(
-            channelType,
-            channelId,
-            channelExtraData,
-            updateMessage,
-        )
+    ): Call<Channel> = api.updateChannel(
+        channelType,
+        channelId,
+        channelExtraData,
+        updateMessage,
+    )
 
     /**
      * Updates specific fields of channel data retaining the custom data fields which were set previously.
@@ -3033,14 +2927,12 @@ internal constructor(
         channelId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Channel> {
-        return api.updateChannelPartial(
-            channelType = channelType,
-            channelId = channelId,
-            set = set,
-            unset = unset,
-        )
-    }
+    ): Call<Channel> = api.updateChannelPartial(
+        channelType = channelType,
+        channelId = channelId,
+        set = set,
+        unset = unset,
+    )
 
     /**
      * Updates specific fields of member data, retaining the custom data fields which were set previously.
@@ -3060,15 +2952,13 @@ internal constructor(
         userId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Member> {
-        return api.partialUpdateMember(
-            channelType = channelType,
-            channelId = channelId,
-            userId = userId,
-            set = set,
-            unset = unset,
-        )
-    }
+    ): Call<Member> = api.partialUpdateMember(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        set = set,
+        unset = unset,
+    )
 
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
@@ -3086,17 +2976,15 @@ internal constructor(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int,
-    ): Call<Channel> {
-        return if (cooldownTimeInSeconds in 1..MAX_COOLDOWN_TIME_SECONDS) {
-            api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
-        } else {
-            ErrorCall(
-                userScope,
-                Error.GenericError(
-                    "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
-                ),
-            )
-        }
+    ): Call<Channel> = if (cooldownTimeInSeconds in 1..MAX_COOLDOWN_TIME_SECONDS) {
+        api.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+    } else {
+        ErrorCall(
+            userScope,
+            Error.GenericError(
+                "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
+            ),
+        )
     }
 
     /**
@@ -3111,9 +2999,7 @@ internal constructor(
     public fun disableSlowMode(
         channelType: String,
         channelId: String,
-    ): Call<Channel> {
-        return api.disableSlowMode(channelType, channelId)
-    }
+    ): Call<Channel> = api.disableSlowMode(channelType, channelId)
 
     /**
      * Accepts the invitation to join a channel.
@@ -3127,9 +3013,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: String?,
-    ): Call<Channel> {
-        return api.acceptInvite(channelType, channelId, message)
-    }
+    ): Call<Channel> = api.acceptInvite(channelType, channelId, message)
 
     /**
      * Rejects the invitation to join the channel.
@@ -3138,9 +3022,7 @@ internal constructor(
      * @param channelId The channel id. ie 123.
      */
     @CheckResult
-    public fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
-        return api.rejectInvite(channelType, channelId)
-    }
+    public fun rejectInvite(channelType: String, channelId: String): Call<Channel> = api.rejectInvite(channelType, channelId)
 
     /**
      * Sends an event to all users watching the channel.
@@ -3171,17 +3053,15 @@ internal constructor(
      * @return [Result] Empty unit result.
      */
     @CheckResult
-    public fun markAllRead(): Call<Unit> {
-        return api.markAllRead()
-            .doOnStart(userScope) {
-                logger.d { "[markAllRead] #doOnStart; no args" }
-                plugins.forEach { it.onMarkAllReadRequest() }
-            }
-            .doOnResult(userScope) {
-                logger.v { "[markAllRead] #doOnResult; completed" }
-            }
-            .share(userScope) { MarkAllReadIdentifier() }
-    }
+    public fun markAllRead(): Call<Unit> = api.markAllRead()
+        .doOnStart(userScope) {
+            logger.d { "[markAllRead] #doOnStart; no args" }
+            plugins.forEach { it.onMarkAllReadRequest() }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[markAllRead] #doOnResult; completed" }
+        }
+        .share(userScope) { MarkAllReadIdentifier() }
 
     /**
      * Marks the specified channel as read.
@@ -3190,17 +3070,15 @@ internal constructor(
      * @param channelId Id of the channel.
      */
     @CheckResult
-    public fun markRead(channelType: String, channelId: String): Call<Unit> {
-        return api.markRead(channelType, channelId)
-            .precondition(plugins) { onChannelMarkReadPrecondition(channelType, channelId) }
-            .doOnStart(userScope) {
-                logger.d { "[markRead] #doOnStart; cid: $channelType:$channelId" }
-            }
-            .doOnResult(userScope) {
-                logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $it" }
-            }
-            .share(userScope) { MarkReadIdentifier(channelType, channelId) }
-    }
+    public fun markRead(channelType: String, channelId: String): Call<Unit> = api.markRead(channelType, channelId)
+        .precondition(plugins) { onChannelMarkReadPrecondition(channelType, channelId) }
+        .doOnStart(userScope) {
+            logger.d { "[markRead] #doOnStart; cid: $channelType:$channelId" }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $it" }
+        }
+        .share(userScope) { MarkReadIdentifier(channelType, channelId) }
 
     /**
      * Marks the specified channel as unread.
@@ -3214,15 +3092,13 @@ internal constructor(
         channelType: String,
         channelId: String,
         messageId: String,
-    ): Call<Unit> {
-        return api.markUnread(channelType, channelId, messageId)
-            .doOnStart(userScope) {
-                logger.d { "[markUnread] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
-            }
-            .doOnResult(userScope) {
-                logger.v { "[markUnread] #doOnResult; completed($channelType:$channelId, $messageId): $it" }
-            }
-    }
+    ): Call<Unit> = api.markUnread(channelType, channelId, messageId)
+        .doOnStart(userScope) {
+            logger.d { "[markUnread] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[markUnread] #doOnResult; completed($channelType:$channelId, $messageId): $it" }
+        }
 
     /**
      * Marks a given thread starting from the given message as unread.
@@ -3238,9 +3114,7 @@ internal constructor(
         channelId: String,
         threadId: String,
         messageId: String,
-    ): Call<Unit> {
-        return api.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
-    }
+    ): Call<Unit> = api.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
 
     /**
      * Updates multiple users in a single request.
@@ -3248,9 +3122,7 @@ internal constructor(
      * @param users The list of users to be updated.
      */
     @CheckResult
-    public fun updateUsers(users: List<User>): Call<List<User>> {
-        return api.updateUsers(users)
-    }
+    public fun updateUsers(users: List<User>): Call<List<User>> = api.updateUsers(users)
 
     /**
      * Updates a single user.
@@ -3258,9 +3130,7 @@ internal constructor(
      * @param user The user to be updated.
      */
     @CheckResult
-    public fun updateUser(user: User): Call<User> {
-        return updateUsers(listOf(user)).map { it.first() }
-    }
+    public fun updateUser(user: User): Call<User> = updateUsers(listOf(user)).map { it.first() }
 
     /**
      * Block a user by ID.
@@ -3310,10 +3180,8 @@ internal constructor(
      * Return na list of blocked users.
      */
     @CheckResult
-    public fun queryBlockedUsers(): Call<List<UserBlock>> {
-        return api.queryBlockedUsers().doOnResult(userScope) { result ->
-            plugins.forEach { it.onQueryBlockedUsersResult(result) }
-        }
+    public fun queryBlockedUsers(): Call<List<UserBlock>> = api.queryBlockedUsers().doOnResult(userScope) { result ->
+        plugins.forEach { it.onQueryBlockedUsersResult(result) }
     }
 
     /**
@@ -3362,9 +3230,7 @@ internal constructor(
      * @return [Call] with a list of [User].
      */
     @CheckResult
-    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> {
-        return api.queryUsers(query)
-    }
+    public fun queryUsers(query: QueryUsersRequest): Call<List<User>> = api.queryUsers(query)
 
     /**
      * Adds members to a given channel.
@@ -3410,16 +3276,14 @@ internal constructor(
         channelType: String,
         channelId: String,
         params: AddMembersParams,
-    ): Call<Channel> {
-        return api.addMembers(
-            channelType = channelType,
-            channelId = channelId,
-            members = params.members,
-            systemMessage = params.systemMessage,
-            hideHistory = params.hideHistory,
-            skipPush = params.skipPush,
-        )
-    }
+    ): Call<Channel> = api.addMembers(
+        channelType = channelType,
+        channelId = channelId,
+        members = params.members,
+        systemMessage = params.systemMessage,
+        hideHistory = params.hideHistory,
+        skipPush = params.skipPush,
+    )
 
     /**
      * Removes members from a given channel.
@@ -3494,13 +3358,11 @@ internal constructor(
         channelType: String,
         channelId: String,
         expiration: Int? = null,
-    ): Call<Unit> {
-        return api.muteChannel(
-            channelType = channelType,
-            channelId = channelId,
-            expiration = expiration,
-        )
-    }
+    ): Call<Unit> = api.muteChannel(
+        channelType = channelType,
+        channelId = channelId,
+        expiration = expiration,
+    )
 
     /**
      * Unmutes a channel for the current user. Triggers `notification.channel_mutes_updated`
@@ -3517,9 +3379,7 @@ internal constructor(
     public fun unmuteChannel(
         channelType: String,
         channelId: String,
-    ): Call<Unit> {
-        return api.unmuteChannel(channelType, channelId)
-    }
+    ): Call<Unit> = api.unmuteChannel(channelType, channelId)
 
     /**
      * Mutes a user. Messages from muted users will not trigger push notifications. By default,
@@ -3538,9 +3398,7 @@ internal constructor(
     public fun muteUser(
         userId: String,
         timeout: Int? = null,
-    ): Call<Mute> {
-        return api.muteUser(userId, timeout)
-    }
+    ): Call<Mute> = api.muteUser(userId, timeout)
 
     /**
      * Unmutes a previously muted user. Triggers `notification.mutes_updated` event.
@@ -3552,9 +3410,7 @@ internal constructor(
      * @see [NotificationMutesUpdatedEvent]
      */
     @CheckResult
-    public fun unmuteUser(userId: String): Call<Unit> {
-        return api.unmuteUser(userId)
-    }
+    public fun unmuteUser(userId: String): Call<Unit> = api.unmuteUser(userId)
 
     @CheckResult
     public fun unmuteCurrentUser(): Call<Unit> = api.unmuteCurrentUser()
@@ -3621,8 +3477,7 @@ internal constructor(
      * @param language The language to translate the message to.
      */
     @CheckResult
-    public fun translate(messageId: String, language: String): Call<Message> =
-        api.translate(messageId, language)
+    public fun translate(messageId: String, language: String): Call<Message> = api.translate(messageId, language)
 
     /**
      * Enriches the given URL with Open Graph data.
@@ -3747,18 +3602,16 @@ internal constructor(
         createdAtAfterOrEqual: Date? = null,
         createdAtBefore: Date? = null,
         createdAtBeforeOrEqual: Date? = null,
-    ): Call<List<BannedUser>> {
-        return api.queryBannedUsers(
-            filter = filter,
-            sort = sort,
-            offset = offset,
-            limit = limit,
-            createdAtAfter = createdAtAfter,
-            createdAtAfterOrEqual = createdAtAfterOrEqual,
-            createdAtBefore = createdAtBefore,
-            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
-        )
-    }
+    ): Call<List<BannedUser>> = api.queryBannedUsers(
+        filter = filter,
+        sort = sort,
+        offset = offset,
+        limit = limit,
+        createdAtAfter = createdAtAfter,
+        createdAtAfterOrEqual = createdAtAfterOrEqual,
+        createdAtBefore = createdAtBefore,
+        createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+    )
 
     //endregion
 
@@ -3776,39 +3629,29 @@ internal constructor(
         this.pushNotificationReceivedListener = pushNotificationReceivedListener
     }
 
-    public fun getConnectionId(): String? {
-        return runCatching { chatSocket.connectionIdOrError() }.getOrNull()
-    }
+    public fun getConnectionId(): String? = runCatching { chatSocket.connectionIdOrError() }.getOrNull()
 
-    public fun getCurrentUser(): User? {
-        return runCatching { userStateService.state.userOrError() }.getOrNull()
-    }
+    public fun getCurrentUser(): User? = runCatching { userStateService.state.userOrError() }.getOrNull()
 
     @InternalStreamChatApi
-    public fun getCurrentOrStoredUserId(): String? {
-        return getCurrentUser()?.id ?: getStoredUser()?.id
-    }
+    public fun getCurrentOrStoredUserId(): String? = getCurrentUser()?.id ?: getStoredUser()?.id
 
     /**
      * Retrieves the current user token (or null if it doesn't exist).
      */
-    public fun getCurrentToken(): String? {
-        return runCatching {
-            when (userStateService.state) {
-                is UserState.UserSet -> if (tokenManager.hasToken()) tokenManager.getToken() else null
-                else -> null
-            }
-        }.getOrNull()
-    }
+    public fun getCurrentToken(): String? = runCatching {
+        when (userStateService.state) {
+            is UserState.UserSet -> if (tokenManager.hasToken()) tokenManager.getToken() else null
+            else -> null
+        }
+    }.getOrNull()
 
     /**
      * Returns application settings from the server or the default ones as a fallback.
      *
      * @return The application settings.
      */
-    public fun getAppSettings(): AppSettings {
-        return appSettingsManager.getAppSettings()
-    }
+    public fun getAppSettings(): AppSettings = appSettingsManager.getAppSettings()
 
     /**
      * Checks if the chat socket is connected.
@@ -3821,9 +3664,7 @@ internal constructor(
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      */
-    public fun channel(channelType: String, channelId: String): ChannelClient {
-        return ChannelClient(channelType, channelId, this)
-    }
+    public fun channel(channelType: String, channelId: String): ChannelClient = ChannelClient(channelType, channelId, this)
 
     /**
      * Returns a [ChannelClient] for given cid.
@@ -3998,19 +3839,17 @@ internal constructor(
      * 1. If [channelsIds] is not empty.
      * 2. If [lastSyncAt] is no later than 30 days
      */
-    private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> {
-        return when {
-            channelsIds.isEmpty() -> {
-                Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
-            }
+    private fun checkSyncHistoryPreconditions(channelsIds: List<String>, lastSyncAt: Date): Result<Unit> = when {
+        channelsIds.isEmpty() -> {
+            Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
+        }
 
-            lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
-                Result.Failure(Error.GenericError("lastSyncAt cannot by later than 30 days."))
-            }
+        lastSyncAt.isLaterThanDays(THIRTY_DAYS_IN_MILLISECONDS) -> {
+            Result.Failure(Error.GenericError("lastSyncAt cannot by later than 30 days."))
+        }
 
-            else -> {
-                Result.Success(Unit)
-            }
+        else -> {
+            Result.Success(Unit)
         }
     }
 
@@ -4134,14 +3973,12 @@ internal constructor(
         channelId: String,
         callType: String,
         callId: String,
-    ): Call<VideoCallInfo> {
-        return api.createVideoCall(
-            channelType = channelType,
-            channelId = channelId,
-            callType = callType,
-            callId = callId,
-        )
-    }
+    ): Call<VideoCallInfo> = api.createVideoCall(
+        channelType = channelType,
+        channelId = channelId,
+        callType = callType,
+        callId = callId,
+    )
 
     /**
      * Returns the currently available video call token.
@@ -4153,9 +3990,7 @@ internal constructor(
         level = DeprecationLevel.WARNING,
     )
     @CheckResult
-    public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return api.getVideoCallToken(callId = callId)
-    }
+    public fun getVideoCallToken(callId: String): Call<VideoCallToken> = api.getVideoCallToken(callId = callId)
 
     /**
      * Downloads the given file which can be fetched through the response body.
@@ -4166,9 +4001,7 @@ internal constructor(
      */
     @InternalStreamChatApi
     @CheckResult
-    public fun downloadFile(fileUrl: String): Call<ResponseBody> {
-        return api.downloadFile(fileUrl)
-    }
+    public fun downloadFile(fileUrl: String): Call<ResponseBody> = api.downloadFile(fileUrl)
 
     /**
      * Query threads matching [query] request.
@@ -4179,9 +4012,7 @@ internal constructor(
     @CheckResult
     public fun queryThreads(
         query: QueryThreadsRequest,
-    ): Call<List<Thread>> {
-        return queryThreadsResult(query).map { it.threads }
-    }
+    ): Call<List<Thread>> = queryThreadsResult(query).map { it.threads }
 
     /**
      * Query threads matching [query] request.
@@ -4189,22 +4020,20 @@ internal constructor(
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
-        return api.queryThreads(query)
-            .doOnStart(userScope) {
-                plugins.forEach { plugin ->
-                    plugin.onQueryThreadsRequest(query)
-                }
+    public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> = api.queryThreads(query)
+        .doOnStart(userScope) {
+            plugins.forEach { plugin ->
+                plugin.onQueryThreadsRequest(query)
             }
-            .doOnResult(userScope) { result ->
-                plugins.forEach { plugin ->
-                    plugin.onQueryThreadsResult(result, query)
-                }
+        }
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                plugin.onQueryThreadsResult(result, query)
             }
-            .precondition(plugins) {
-                onQueryThreadsPrecondition(query)
-            }
-    }
+        }
+        .precondition(plugins) {
+            onQueryThreadsPrecondition(query)
+        }
 
     /**
      * Get a thread by message id.
@@ -4216,9 +4045,7 @@ internal constructor(
     public fun getThread(
         messageId: String,
         options: GetThreadOptions = GetThreadOptions(),
-    ): Call<Thread> {
-        return api.getThread(messageId, options)
-    }
+    ): Call<Thread> = api.getThread(messageId, options)
 
     /**
      * Partially updates specific [Thread] fields retaining the fields which were set previously.
@@ -4234,13 +4061,11 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Thread> {
-        return api.partialUpdateThread(
-            messageId = messageId,
-            set = set,
-            unset = unset,
-        )
-    }
+    ): Call<Thread> = api.partialUpdateThread(
+        messageId = messageId,
+        set = set,
+        unset = unset,
+    )
 
     /**
      * Creates a reminder for a message.
@@ -4252,9 +4077,7 @@ internal constructor(
      * @return Executable async [Call] responsible for creating the reminder.
      */
     @CheckResult
-    public fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return api.createReminder(messageId, remindAt)
-    }
+    public fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> = api.createReminder(messageId, remindAt)
 
     /**
      * Updates an existing reminder for a message.
@@ -4266,9 +4089,7 @@ internal constructor(
      * @return Executable async [Call] responsible for updating the reminder.
      */
     @CheckResult
-    public fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return api.updateReminder(messageId, remindAt)
-    }
+    public fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> = api.updateReminder(messageId, remindAt)
 
     /**
      * Deletes a reminder for a message.
@@ -4278,9 +4099,7 @@ internal constructor(
      * @return Executable async [Call] responsible for deleting the reminder.
      */
     @CheckResult
-    public fun deleteReminder(messageId: String): Call<Unit> {
-        return api.deleteReminder(messageId)
-    }
+    public fun deleteReminder(messageId: String): Call<Unit> = api.deleteReminder(messageId)
 
     /**
      * Queries the message reminders for the current user matching the provided filters.
@@ -4298,9 +4117,7 @@ internal constructor(
         limit: Int,
         next: String? = null,
         sort: QuerySorter<MessageReminder> = QuerySortByField(),
-    ): Call<QueryRemindersResult> {
-        return api.queryReminders(filter, limit, next, sort)
-    }
+    ): Call<QueryRemindersResult> = api.queryReminders(filter, limit, next, sort)
 
     private fun warmUp() {
         if (config.warmUp) {
@@ -4650,9 +4467,7 @@ internal constructor(
             this.appVersion = appVersion
         }
 
-        public override fun build(): ChatClient {
-            return super.build()
-        }
+        public override fun build(): ChatClient = super.build()
 
         @InternalStreamChatApi
         @SuppressWarnings("LongMethod")
@@ -4853,12 +4668,10 @@ internal constructor(
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic
-        public fun instance(): ChatClient {
-            return instance
-                ?: throw IllegalStateException(
-                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance",
-                )
-        }
+        public fun instance(): ChatClient = instance
+            ?: throw IllegalStateException(
+                "ChatClient.Builder::build() must be called before obtaining ChatClient instance",
+            )
 
         @JvmStatic
         public val isInitialized: Boolean

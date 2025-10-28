@@ -141,14 +141,12 @@ open class MessageListPage {
                     private val wow = By.res("Stream_MessageReaction_${ReactionType.WOW.reaction}")
                     private val sad = By.res("Stream_MessageReaction_${ReactionType.SAD.reaction}")
 
-                    fun reaction(type: ReactionType): BySelector {
-                        return when (type) {
-                            ReactionType.LIKE -> like
-                            ReactionType.LOVE -> love
-                            ReactionType.LOL -> lol
-                            ReactionType.SAD -> sad
-                            ReactionType.WOW -> wow
-                        }
+                    fun reaction(type: ReactionType): BySelector = when (type) {
+                        ReactionType.LIKE -> like
+                        ReactionType.LOVE -> love
+                        ReactionType.LOL -> lol
+                        ReactionType.SAD -> sad
+                        ReactionType.WOW -> wow
                     }
                 }
             }
@@ -188,14 +186,12 @@ open class MessageListPage {
                         private val wow = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
                         private val sad = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
 
-                        fun reaction(type: ReactionType): BySelector {
-                            return when (type) {
-                                ReactionType.LIKE -> like
-                                ReactionType.LOVE -> love
-                                ReactionType.LOL -> lol
-                                ReactionType.SAD -> sad
-                                ReactionType.WOW -> wow
-                            }
+                        fun reaction(type: ReactionType): BySelector = when (type) {
+                            ReactionType.LIKE -> like
+                            ReactionType.LOVE -> love
+                            ReactionType.LOL -> lol
+                            ReactionType.SAD -> sad
+                            ReactionType.WOW -> wow
                         }
                     }
                 }

@@ -68,15 +68,13 @@ private fun isFooterVisibleWithTimeDifference(
     nextMessage: Message?,
     isLastMessageInGroup: Boolean,
     timeDifferenceMillis: Long,
-): Boolean {
-    return when {
-        isLastMessageInGroup -> true
-        message.isDeleted() -> false
-        message.user != nextMessage?.user ||
-            nextMessage.isDeleted() ||
-            (nextMessage.getCreatedAtOrDefault(NEVER).time) -
-            (message.getCreatedAtOrDefault(NEVER).time) >
-            timeDifferenceMillis -> true
-        else -> false
-    }
+): Boolean = when {
+    isLastMessageInGroup -> true
+    message.isDeleted() -> false
+    message.user != nextMessage?.user ||
+        nextMessage.isDeleted() ||
+        (nextMessage.getCreatedAtOrDefault(NEVER).time) -
+        (message.getCreatedAtOrDefault(NEVER).time) >
+        timeDifferenceMillis -> true
+    else -> false
 }

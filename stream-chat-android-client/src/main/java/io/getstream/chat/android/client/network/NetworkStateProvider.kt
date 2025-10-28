@@ -88,19 +88,17 @@ internal class NetworkStateProvider(
         }
     }
 
-    fun isConnected(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            runCatching {
-                connectivityManager.run {
-                    getNetworkCapabilities(activeNetwork)?.run {
-                        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                            hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-                    }
+    fun isConnected(): Boolean = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        runCatching {
+            connectivityManager.run {
+                getNetworkCapabilities(activeNetwork)?.run {
+                    hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                        hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                 }
-            }.getOrNull() ?: false
-        } else {
-            connectivityManager.activeNetworkInfo?.isConnected ?: false
-        }
+            }
+        }.getOrNull() ?: false
+    } else {
+        connectivityManager.activeNetworkInfo?.isConnected ?: false
     }
 
     fun subscribe(listener: NetworkStateListener) {

@@ -29,19 +29,15 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.att
  */
 class DateAttachmentFactory : AttachmentFactory {
 
-    override fun canHandle(message: Message): Boolean {
-        return message.attachments.any { it.type == "date" }
-    }
+    override fun canHandle(message: Message): Boolean = message.attachments.any { it.type == "date" }
 
     override fun createViewHolder(
         message: Message,
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
-    ): InnerAttachmentViewHolder {
-        return ItemDateAttachmentBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
-            .let { DateAttachmentViewHolder(it, listeners) }
-    }
+    ): InnerAttachmentViewHolder = ItemDateAttachmentBinding
+        .inflate(LayoutInflater.from(parent.context), parent, false)
+        .let { DateAttachmentViewHolder(it, listeners) }
 
     class DateAttachmentViewHolder(
         private val binding: ItemDateAttachmentBinding,

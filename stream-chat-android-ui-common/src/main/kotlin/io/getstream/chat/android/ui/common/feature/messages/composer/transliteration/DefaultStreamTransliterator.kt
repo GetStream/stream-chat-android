@@ -52,14 +52,12 @@ public class DefaultStreamTransliterator(transliterationId: String? = null) : St
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    override fun transliterate(text: String): String {
-        return try {
-            transliterator?.transliterate(text)?.also {
-                logger.v { "[transliterate] input: $text, output: $it" }
-            } ?: text
-        } catch (e: Exception) {
-            logger.e(e) { "[transliterate] failed($text): $e" }
-            text
-        }
+    override fun transliterate(text: String): String = try {
+        transliterator?.transliterate(text)?.also {
+            logger.v { "[transliterate] input: $text, output: $it" }
+        } ?: text
+    } catch (e: Exception) {
+        logger.e(e) { "[transliterate] failed($text): $e" }
+        text
     }
 }

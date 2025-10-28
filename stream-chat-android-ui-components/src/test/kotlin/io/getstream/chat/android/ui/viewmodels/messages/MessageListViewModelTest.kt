@@ -237,33 +237,32 @@ internal class MessageListViewModelTest {
     }
 
     @Test
-    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() =
-        runTest {
-            val messageWithOwnReaction = message1.copy(ownReactions = mutableListOf(reaction1))
-            val messages = listOf(messageWithOwnReaction, message2)
-            val messageState = MessagesState.Result(messages)
-            val chatClient = MockChatClientBuilder().build()
+    fun `Given identical previous own reaction on a message When choosing the same one again Should delete reaction`() = runTest {
+        val messageWithOwnReaction = message1.copy(ownReactions = mutableListOf(reaction1))
+        val messages = listOf(messageWithOwnReaction, message2)
+        val messageState = MessagesState.Result(messages)
+        val chatClient = MockChatClientBuilder().build()
 
-            val viewModel = Fixture(chatClient = chatClient)
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(messageState = messageState, messages = messages)
-                .givenDeleteReaction()
-                .get()
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messageState = messageState, messages = messages)
+            .givenDeleteReaction()
+            .get()
 
-            viewModel.onEvent(
-                MessageListViewModel.Event.MessageReaction(
-                    message = messageWithOwnReaction,
-                    reactionType = reaction1.type,
-                ),
-            )
-
-            verify(chatClient).deleteReaction(
-                messageId = messageWithOwnReaction.id,
+        viewModel.onEvent(
+            MessageListViewModel.Event.MessageReaction(
+                message = messageWithOwnReaction,
                 reactionType = reaction1.type,
-                cid = CID,
-            )
-        }
+            ),
+        )
+
+        verify(chatClient).deleteReaction(
+            messageId = messageWithOwnReaction.id,
+            reactionType = reaction1.type,
+            cid = CID,
+        )
+    }
 
     @Test
     fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
@@ -341,7 +340,7 @@ internal class MessageListViewModelTest {
             messages: List<Message> = listOf(),
             pinnedMessages: List<Message> = listOf(),
         ) = apply {
-            channelState = mock() {
+            channelState = mock {
                 whenever(it.cid) doReturn CID
                 whenever(it.channelId) doReturn CHANNEL_ID
                 whenever(it.channelType) doReturn CHANNEL_TYPE
@@ -372,18 +371,16 @@ internal class MessageListViewModelTest {
             whenever(chatClient.audioPlayer) doReturn audioPlayer
         }
 
-        fun get(): MessageListViewModel {
-            return MessageListViewModel(
-                MessageListController(
-                    chatClient = chatClient,
-                    cid = channelId,
-                    clipboardHandler = mock(),
-                    threadLoadOrderOlderToNewer = false,
-                    channelState = MutableStateFlow(channelState),
-                ),
+        fun get(): MessageListViewModel = MessageListViewModel(
+            MessageListController(
+                chatClient = chatClient,
+                cid = channelId,
+                clipboardHandler = mock(),
+                threadLoadOrderOlderToNewer = false,
+                channelState = MutableStateFlow(channelState),
+            ),
 
-            )
-        }
+        )
     }
 
     companion object {
@@ -431,21 +428,19 @@ internal class MessageListViewModelTest {
          * same user but should not be used without modification in situations
          * where more complex scenarios are present.
          */
-        private fun List<Message>.toMessageItemList(): List<MessageListItem.MessageItem> {
-            return this.mapIndexed { index, message ->
-                val position = when {
-                    index == 0 -> MessagePosition.TOP
-                    this.size > 2 && index != this.size -> MessagePosition.MIDDLE
-                    else -> MessagePosition.BOTTOM
-                }
-
-                MessageListItem.MessageItem(
-                    message = message,
-                    showMessageFooter = index == this.size - 1,
-                    positions = listOf(position),
-                    isMessageRead = false,
-                )
+        private fun List<Message>.toMessageItemList(): List<MessageListItem.MessageItem> = this.mapIndexed { index, message ->
+            val position = when {
+                index == 0 -> MessagePosition.TOP
+                this.size > 2 && index != this.size -> MessagePosition.MIDDLE
+                else -> MessagePosition.BOTTOM
             }
+
+            MessageListItem.MessageItem(
+                message = message,
+                showMessageFooter = index == this.size - 1,
+                positions = listOf(position),
+                isMessageRead = false,
+            )
         }
     }
 }

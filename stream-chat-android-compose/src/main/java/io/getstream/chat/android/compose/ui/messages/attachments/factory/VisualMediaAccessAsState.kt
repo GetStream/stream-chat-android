@@ -41,21 +41,19 @@ internal fun visualMediaAccessAsState(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     onResume: (VisualMediaAccess) -> Unit,
-): State<VisualMediaAccess> {
-    return produceState(
-        initialValue = VisualMediaAccess.DENIED,
-        context,
-        lifecycleOwner,
-    ) {
-        val eventObserver = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                value = resolveVisualMediaAccessState(context)
-                onResume(value)
-            }
+): State<VisualMediaAccess> = produceState(
+    initialValue = VisualMediaAccess.DENIED,
+    context,
+    lifecycleOwner,
+) {
+    val eventObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            value = resolveVisualMediaAccessState(context)
+            onResume(value)
         }
-        lifecycleOwner.lifecycle.addObserver(eventObserver)
-        awaitDispose {
-            lifecycleOwner.lifecycle.removeObserver(eventObserver)
-        }
+    }
+    lifecycleOwner.lifecycle.addObserver(eventObserver)
+    awaitDispose {
+        lifecycleOwner.lifecycle.removeObserver(eventObserver)
     }
 }

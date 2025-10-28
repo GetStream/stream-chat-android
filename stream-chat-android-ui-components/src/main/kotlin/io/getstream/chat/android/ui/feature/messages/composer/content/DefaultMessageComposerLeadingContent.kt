@@ -54,7 +54,9 @@ public interface MessageComposerLeadingContent : MessageComposerContent {
 /**
  * Represents the default content shown at the start of [MessageComposerView].
  */
-public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerLeadingContent {
+public open class DefaultMessageComposerLeadingContent :
+    FrameLayout,
+    MessageComposerLeadingContent {
     /**
      * Generated binding class for the XML layout.
      */

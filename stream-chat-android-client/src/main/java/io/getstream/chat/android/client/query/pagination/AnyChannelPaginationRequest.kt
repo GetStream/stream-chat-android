@@ -41,12 +41,8 @@ public class AnyChannelPaginationRequest(public var messageLimit: Int = MESSAGE_
     public var watcherOffset: Int = 0
 }
 
-internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean {
-    return channelOffset == 0
-}
+internal fun AnyChannelPaginationRequest.isFirstPage(): Boolean = channelOffset == 0
 
-public fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Boolean {
-    return (isFirstPage() && messageLimit > 1) || (isNotFirstPage() && messageLimit > 0)
-}
+public fun AnyChannelPaginationRequest.isRequestingMoreThanLastMessage(): Boolean = (isFirstPage() && messageLimit > 1) || (isNotFirstPage() && messageLimit > 0)
 
 internal fun AnyChannelPaginationRequest.isNotFirstPage(): Boolean = isFirstPage().not()

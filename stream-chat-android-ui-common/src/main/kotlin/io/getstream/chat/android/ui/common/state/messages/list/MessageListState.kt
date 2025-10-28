@@ -48,21 +48,17 @@ public data class MessageListState(
     public val selectedMessageState: SelectedMessageState? = null,
 )
 
-internal fun MessageListState.stringify(): String {
-    return "MessageListState(" +
-        "messageItems.size: ${messageItems.size}, " +
-        "newMessageState: $newMessageState, " +
-        "endOfNewMessagesReached: $endOfNewMessagesReached, " +
-        "endOfOldMessagesReached: $endOfOldMessagesReached, " +
-        "isLoading: $isLoading, " +
-        "isLoadingNewerMessages: $isLoadingNewerMessages, " +
-        "isLoadingOlderMessages: $isLoadingOlderMessages, " +
-        "currentUser.id: ${currentUser?.id}, " +
-        "parentMessageId: $parentMessageId, " +
-        "unreadCount: $unreadCount, " +
-        "selectedMessageState: $selectedMessageState)"
-}
+internal fun MessageListState.stringify(): String = "MessageListState(" +
+    "messageItems.size: ${messageItems.size}, " +
+    "newMessageState: $newMessageState, " +
+    "endOfNewMessagesReached: $endOfNewMessagesReached, " +
+    "endOfOldMessagesReached: $endOfOldMessagesReached, " +
+    "isLoading: $isLoading, " +
+    "isLoadingNewerMessages: $isLoadingNewerMessages, " +
+    "isLoadingOlderMessages: $isLoadingOlderMessages, " +
+    "currentUser.id: ${currentUser?.id}, " +
+    "parentMessageId: $parentMessageId, " +
+    "unreadCount: $unreadCount, " +
+    "selectedMessageState: $selectedMessageState)"
 
-internal inline fun <reified T : MessageListItemState> MessageListState.lastItemOrNull(): T? {
-    return messageItems.lastOrNull { it is T } as T?
-}
+internal inline fun <reified T : MessageListItemState> MessageListState.lastItemOrNull(): T? = messageItems.lastOrNull { it is T } as T?

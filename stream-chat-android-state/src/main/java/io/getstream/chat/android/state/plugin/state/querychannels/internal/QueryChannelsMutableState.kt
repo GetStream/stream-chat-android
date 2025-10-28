@@ -102,9 +102,7 @@ internal class QueryChannelsMutableState(
         (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(mapChannels)
     }
 
-    fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
-        return eventHandler.handleChatEvent(event, filter, cachedChannel)
-    }
+    fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult = eventHandler.handleChatEvent(event, filter, cachedChannel)
 
     override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest!!
     override val loading: StateFlow<Boolean> = _loading!!

@@ -18,6 +18,4 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import androidx.fragment.app.Fragment
 
-internal inline fun <reified T> Fragment.findListener(): T? {
-    return (parentFragment as? T) ?: (activity as? T)
-}
+internal inline fun <reified T> Fragment.findListener(): T? = (parentFragment as? T) ?: (activity as? T)

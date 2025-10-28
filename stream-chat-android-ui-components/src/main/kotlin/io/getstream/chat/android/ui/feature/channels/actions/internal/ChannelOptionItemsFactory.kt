@@ -52,9 +52,7 @@ internal interface ChannelOptionItemsFactory {
          *
          * @return The default implementation of [ChannelOptionItemsFactory].
          */
-        fun defaultFactory(context: Context): ChannelOptionItemsFactory {
-            return DefaultChannelOptionItemsFactory(context)
-        }
+        fun defaultFactory(context: Context): ChannelOptionItemsFactory = DefaultChannelOptionItemsFactory(context)
     }
 }
 

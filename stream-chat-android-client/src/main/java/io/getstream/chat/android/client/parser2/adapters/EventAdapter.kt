@@ -91,11 +91,9 @@ import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
 internal class EventAdapterFactory : JsonAdapter.Factory {
-    override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? {
-        return when (type.rawType) {
-            ChatEventDto::class.java -> EventDtoAdapter(moshi)
-            else -> null
-        }
+    override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? = when (type.rawType) {
+        ChatEventDto::class.java -> EventDtoAdapter(moshi)
+        else -> null
     }
 }
 
@@ -273,8 +271,7 @@ internal class EventDtoAdapter(
         return adapter.fromJsonValue(map)
     }
 
-    private fun Map<String, Any?>.containsAnswer(): Boolean =
-        (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
+    private fun Map<String, Any?>.containsAnswer(): Boolean = (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
         error("Can't convert this event to Json $value")

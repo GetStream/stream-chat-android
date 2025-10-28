@@ -29,7 +29,10 @@ public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout): UiObje
     return findObject()
 }
 
-public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = defaultTimeout): UiObject2 {
+public fun BySelector.waitToAppear(
+    withIndex: Int,
+    timeOutMillis: Long = defaultTimeout,
+): UiObject2 {
     wait(timeOutMillis)
     return findObjects()[withIndex]
 }
@@ -57,7 +60,10 @@ public fun UiObject2.waitForText(
     return this
 }
 
-public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTimeout): List<UiObject2> {
+public fun BySelector.waitForCount(
+    count: Int,
+    timeOutMillis: Long = defaultTimeout,
+): List<UiObject2> {
     val endTime = System.currentTimeMillis() + timeOutMillis
     var elements: List<UiObject2> = emptyList()
     var success = false
@@ -68,7 +74,10 @@ public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTime
     return elements
 }
 
-public fun UiObject2.waitForTextToChange(text: String, timeOutMillis: Long = defaultTimeout): UiObject2 {
+public fun UiObject2.waitForTextToChange(
+    text: String,
+    timeOutMillis: Long = defaultTimeout,
+): UiObject2 {
     val endTime = System.currentTimeMillis() + timeOutMillis
     var textChanged = false
     while (!textChanged && System.currentTimeMillis() < endTime) {

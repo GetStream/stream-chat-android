@@ -120,20 +120,18 @@ public data class CustomAction(
     public val extraProperties: Map<String, Any> = emptyMap(),
 ) : MessageAction()
 
-public fun MessageAction.updateMessage(message: Message): MessageAction {
-    return when (this) {
-        is React -> copy(message = message)
-        is Resend -> copy(message = message)
-        is Reply -> copy(message = message)
-        is ThreadReply -> copy(message = message)
-        is Copy -> copy(message = message)
-        is MarkAsUnread -> copy(message = message)
-        is Edit -> copy(message = message)
-        is Pin -> copy(message = message)
-        is Delete -> copy(message = message)
-        is Flag -> copy(message = message)
-        is CustomAction -> copy(message = message)
-        is BlockUser -> copy(message = message)
-        is UnblockUser -> copy(message = message)
-    }
+public fun MessageAction.updateMessage(message: Message): MessageAction = when (this) {
+    is React -> copy(message = message)
+    is Resend -> copy(message = message)
+    is Reply -> copy(message = message)
+    is ThreadReply -> copy(message = message)
+    is Copy -> copy(message = message)
+    is MarkAsUnread -> copy(message = message)
+    is Edit -> copy(message = message)
+    is Pin -> copy(message = message)
+    is Delete -> copy(message = message)
+    is Flag -> copy(message = message)
+    is CustomAction -> copy(message = message)
+    is BlockUser -> copy(message = message)
+    is UnblockUser -> copy(message = message)
 }

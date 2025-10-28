@@ -184,11 +184,9 @@ public class MediaPreviewActivity : AppCompatActivity() {
          * @param url The URL of the media file.
          * @param title The name of the media file.
          */
-        public fun getIntent(context: Context, url: String, title: String? = null): Intent {
-            return Intent(context, MediaPreviewActivity::class.java).apply {
-                putExtra(KEY_URL, url)
-                putExtra(KEY_TITLE, title)
-            }
+        public fun getIntent(context: Context, url: String, title: String? = null): Intent = Intent(context, MediaPreviewActivity::class.java).apply {
+            putExtra(KEY_URL, url)
+            putExtra(KEY_TITLE, title)
         }
     }
 }

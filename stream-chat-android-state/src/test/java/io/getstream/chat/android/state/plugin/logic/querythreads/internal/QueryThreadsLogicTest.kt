@@ -145,40 +145,38 @@ internal class QueryThreadsLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsLogic When requesting new data Should update loading state and fetch offline data`() =
-        runTest {
-            // given
-            val stateLogic = mock<QueryThreadsStateLogic>()
-            val databaseLogic = mock<QueryThreadsDatabaseLogic>()
-            whenever(databaseLogic.getLocalThreadsOrder(anyOrNull(), any())) doReturn listOf("mId1")
-            whenever(databaseLogic.getLocalThreads(any())) doReturn threadList
-            val logic = QueryThreadsLogic(stateLogic, databaseLogic)
-            // when
-            logic.onQueryThreadsRequest(QueryThreadsRequest())
-            // then
-            verify(stateLogic, times(1)).setLoading(true)
-            verify(stateLogic, never()).setLoadingMore(any())
-            verify(databaseLogic, times(1)).getLocalThreadsOrder(anyOrNull(), any())
-            verify(databaseLogic, times(1)).getLocalThreads(listOf("mId1"))
-            verify(stateLogic, times(1)).insertThreadsIfAbsent(threadList)
-        }
+    fun `Given QueryThreadsLogic When requesting new data Should update loading state and fetch offline data`() = runTest {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        whenever(databaseLogic.getLocalThreadsOrder(anyOrNull(), any())) doReturn listOf("mId1")
+        whenever(databaseLogic.getLocalThreads(any())) doReturn threadList
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        logic.onQueryThreadsRequest(QueryThreadsRequest())
+        // then
+        verify(stateLogic, times(1)).setLoading(true)
+        verify(stateLogic, never()).setLoadingMore(any())
+        verify(databaseLogic, times(1)).getLocalThreadsOrder(anyOrNull(), any())
+        verify(databaseLogic, times(1)).getLocalThreads(listOf("mId1"))
+        verify(stateLogic, times(1)).insertThreadsIfAbsent(threadList)
+    }
 
     @Test
-    fun `Given QueryThreadsLogic When requesting new data by force reload Should update loading state and clear current data`() =
-        runTest {
-            // given
-            val stateLogic = mock<QueryThreadsStateLogic>()
-            whenever(stateLogic.getUnseenThreadIds()) doReturn setOf("mId3")
-            val databaseLogic = mock<QueryThreadsDatabaseLogic>()
-            val logic = QueryThreadsLogic(stateLogic, databaseLogic)
-            // when
-            logic.onQueryThreadsRequest(QueryThreadsRequest())
-            // then
-            verify(stateLogic, times(1)).setLoading(true)
-            verify(stateLogic, never()).setLoadingMore(any())
-            verify(stateLogic, times(1)).clearThreads()
-            verify(stateLogic, times(1)).clearUnseenThreadIds()
-        }
+    fun `Given QueryThreadsLogic When requesting new data by force reload Should update loading state and clear current data`() = runTest {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        whenever(stateLogic.getUnseenThreadIds()) doReturn setOf("mId3")
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        logic.onQueryThreadsRequest(QueryThreadsRequest())
+        // then
+        verify(stateLogic, times(1)).setLoading(true)
+        verify(stateLogic, never()).setLoadingMore(any())
+        verify(stateLogic, times(1)).clearThreads()
+        verify(stateLogic, times(1)).clearUnseenThreadIds()
+    }
 
     @Test
     fun `Given QueryThreadsLogic When requesting new data Should update loadingMore state`() = runTest {
@@ -195,30 +193,29 @@ internal class QueryThreadsLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsLogic When handling new data result Should set threads and clear unseenThreadIds`() =
-        runTest {
-            // given
-            val stateLogic = mock<QueryThreadsStateLogic>()
-            val databaseLogic = mock<QueryThreadsDatabaseLogic>()
-            val logic = QueryThreadsLogic(stateLogic, databaseLogic)
-            // when
-            val request = QueryThreadsRequest()
-            val result = Result.Success(
-                value = QueryThreadsResult(
-                    threads = emptyList(),
-                    prev = null,
-                    next = "nextCursor",
-                ),
-            )
-            logic.onQueryThreadsResult(result, request)
-            // then
-            verify(stateLogic, times(1)).setLoading(false)
-            verify(stateLogic, times(1)).setLoadingMore(false)
-            verify(stateLogic, times(1)).setThreads(emptyList())
-            verify(stateLogic, times(1)).clearUnseenThreadIds()
-            verify(stateLogic, times(1)).setNext("nextCursor")
-            verify(stateLogic, never()).upsertThreads(any())
-        }
+    fun `Given QueryThreadsLogic When handling new data result Should set threads and clear unseenThreadIds`() = runTest {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        val request = QueryThreadsRequest()
+        val result = Result.Success(
+            value = QueryThreadsResult(
+                threads = emptyList(),
+                prev = null,
+                next = "nextCursor",
+            ),
+        )
+        logic.onQueryThreadsResult(result, request)
+        // then
+        verify(stateLogic, times(1)).setLoading(false)
+        verify(stateLogic, times(1)).setLoadingMore(false)
+        verify(stateLogic, times(1)).setThreads(emptyList())
+        verify(stateLogic, times(1)).clearUnseenThreadIds()
+        verify(stateLogic, times(1)).setNext("nextCursor")
+        verify(stateLogic, never()).upsertThreads(any())
+    }
 
     @Test
     fun `Given QueryThreadsLogic When handling more data result Should append threads`() = runTest {

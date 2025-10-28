@@ -54,9 +54,7 @@ public interface AttachmentFactory {
         message: Message,
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
-    ): InnerAttachmentViewHolder {
-        return InnerAttachmentViewHolder.stub(parent)
-    }
+    ): InnerAttachmentViewHolder = InnerAttachmentViewHolder.stub(parent)
 
     /**
      * Create a ViewHolder for the custom attachments View which is aware of the parent's

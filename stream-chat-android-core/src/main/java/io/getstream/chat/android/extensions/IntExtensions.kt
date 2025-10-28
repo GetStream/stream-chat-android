@@ -27,10 +27,8 @@ package io.getstream.chat.android.extensions
         "Use `kotlin.ranges.coerceIn` instead.",
     replaceWith = ReplaceWith("this.coerceIn(min, max)"),
 )
-public fun Int.limitTo(min: Int, max: Int): Int {
-    return when {
-        this < min -> min
-        this > max -> max
-        else -> this
-    }
+public fun Int.limitTo(min: Int, max: Int): Int = when {
+    this < min -> min
+    this > max -> max
+    else -> this
 }

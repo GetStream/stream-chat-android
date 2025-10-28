@@ -44,11 +44,10 @@ internal class SocketFactory(
     }
 
     @Throws(UnsupportedEncodingException::class)
-    private fun buildRequest(connectionConf: ConnectionConf): Request =
-        Request.Builder()
-            .url(buildUrl(connectionConf))
-            .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
-            .build()
+    private fun buildRequest(connectionConf: ConnectionConf): Request = Request.Builder()
+        .url(buildUrl(connectionConf))
+        .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
+        .build()
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(UnsupportedEncodingException::class)

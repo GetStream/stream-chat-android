@@ -136,9 +136,7 @@ public open class MessageListFragment : Fragment() {
      * Provides a custom theme for the screen.
      */
     @StyleRes
-    protected open fun getTheme(): Int {
-        return themeResId
-    }
+    protected open fun getTheme(): Int = themeResId
 
     /**
      * Configures [MessageListHeaderView]. Override the method for a custom setup.
@@ -304,16 +302,14 @@ public open class MessageListFragment : Fragment() {
          *
          * @return A customized [MessageListFragment].
          */
-        public fun build(): MessageListFragment {
-            return (fragment ?: MessageListFragment()).apply {
-                arguments = bundleOf(
-                    ARG_THEME_RES_ID to this@Builder.themeResId,
-                    ARG_CHANNEL_ID to this@Builder.cid,
-                    ARG_MESSAGE_ID to this@Builder.messageId,
-                    ARG_SHOW_HEADER to this@Builder.showHeader,
-                    ARG_THREAD_LOAD_OLDER_TO_NEWER to this@Builder.threadLoadOlderToNewer,
-                )
-            }
+        public fun build(): MessageListFragment = (fragment ?: MessageListFragment()).apply {
+            arguments = bundleOf(
+                ARG_THEME_RES_ID to this@Builder.themeResId,
+                ARG_CHANNEL_ID to this@Builder.cid,
+                ARG_MESSAGE_ID to this@Builder.messageId,
+                ARG_SHOW_HEADER to this@Builder.showHeader,
+                ARG_THREAD_LOAD_OLDER_TO_NEWER to this@Builder.threadLoadOlderToNewer,
+            )
         }
     }
 

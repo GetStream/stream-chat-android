@@ -50,9 +50,7 @@ internal class MessageListItemAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return viewHolderFactory.createViewHolder(parent, viewType)
-    }
+    ): BaseMessageItemViewHolder<out MessageListItem> = viewHolderFactory.createViewHolder(parent, viewType)
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
         val item = getItem(position)

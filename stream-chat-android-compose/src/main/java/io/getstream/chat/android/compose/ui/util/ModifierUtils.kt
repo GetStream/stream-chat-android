@@ -36,14 +36,12 @@ import androidx.compose.foundation.layout.size as composeSize
 /**
  * Adds padding to the modifier.
  */
-internal fun Modifier.padding(padding: ComponentPadding): Modifier {
-    return this.padding(
-        start = padding.start,
-        top = padding.top,
-        end = padding.end,
-        bottom = padding.bottom,
-    )
-}
+internal fun Modifier.padding(padding: ComponentPadding): Modifier = this.padding(
+    start = padding.start,
+    top = padding.top,
+    end = padding.end,
+    bottom = padding.bottom,
+)
 
 /**
  * Adds size to the modifier.
@@ -101,10 +99,9 @@ internal fun Modifier.clickable(
     bounded: Boolean = true,
     enabled: Boolean = true,
     onClick: () -> Unit,
-): Modifier =
-    clickable(
-        interactionSource = null,
-        indication = ripple(bounded),
-        enabled = enabled,
-        onClick = onClick,
-    )
+): Modifier = clickable(
+    interactionSource = null,
+    indication = ripple(bounded),
+    enabled = enabled,
+    onClick = onClick,
+)

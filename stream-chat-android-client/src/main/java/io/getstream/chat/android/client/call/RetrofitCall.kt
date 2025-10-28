@@ -59,10 +59,9 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
-    private suspend fun notifyResult(result: Result<T>, callback: Call.Callback<T>) =
-        withContext(DispatcherProvider.Main) {
-            callback.onResult(result)
-        }
+    private suspend fun notifyResult(result: Result<T>, callback: Call.Callback<T>) = withContext(DispatcherProvider.Main) {
+        callback.onResult(result)
+    }
 
     private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
 

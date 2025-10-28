@@ -19,21 +19,13 @@ package io.getstream.chat.android.compose.uiautomator
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiObject2
 
-public fun UiObject2.isDisplayed(): Boolean {
-    return this.visibleCenter.y > 0
-}
+public fun UiObject2.isDisplayed(): Boolean = this.visibleCenter.y > 0
 
-public fun BySelector.isDisplayed(): Boolean {
-    return this.findObjects().isNotEmpty()
-}
+public fun BySelector.isDisplayed(): Boolean = this.findObjects().isNotEmpty()
 
-public fun BySelector.isEnabled(): Boolean {
-    return this.findObject().isEnabled
-}
+public fun BySelector.isEnabled(): Boolean = this.findObject().isEnabled
 
-public fun BySelector.isChecked(): Boolean {
-    return this.findObject().isChecked
-}
+public fun BySelector.isChecked(): Boolean = this.findObject().isChecked
 
 public fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5): UiObject2 {
     var counter = scrolls

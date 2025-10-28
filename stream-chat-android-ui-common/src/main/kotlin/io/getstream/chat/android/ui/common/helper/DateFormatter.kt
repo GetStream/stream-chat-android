@@ -210,9 +210,7 @@ internal class DefaultDateFormatter(
      * @param date The [Date] to format as a relative date string.
      * @return The formatted relative date string.
      */
-    override fun formatRelativeDate(date: Date): String {
-        return dateContext.relativeDate(date)
-    }
+    override fun formatRelativeDate(date: Date): String = dateContext.relativeDate(date)
 
     /**
      * Checks if the supplied day is today.
@@ -232,18 +230,14 @@ internal class DefaultDateFormatter(
      *
      * @return True if the date is yesterday.
      */
-    private fun Date.isYesterday(): Boolean {
-        return Date(time + DateUtils.DAY_IN_MILLIS).isToday()
-    }
+    private fun Date.isYesterday(): Boolean = Date(time + DateUtils.DAY_IN_MILLIS).isToday()
 
     /**
      * Checks if the supplied date is within last week.
      *
      * @return True is the date is within last week.
      */
-    private fun Date.isWithinLastWeek(): Boolean {
-        return isWithinDays(DAYS_IN_WEEK - 1)
-    }
+    private fun Date.isWithinLastWeek(): Boolean = isWithinDays(DAYS_IN_WEEK - 1)
 
     /**
      * Checks if the supplied date is before today and within a number of days in the past.
@@ -269,12 +263,10 @@ internal class DefaultDateFormatter(
      *
      * @return True if the calendar date is before another calendar date ignoring time.
      */
-    private fun Calendar.isBeforeDay(calendar: Calendar): Boolean {
-        return when {
-            this[Calendar.YEAR] < calendar[Calendar.YEAR] -> true
-            this[Calendar.YEAR] > calendar[Calendar.YEAR] -> false
-            else -> this[Calendar.DAY_OF_YEAR] < calendar[Calendar.DAY_OF_YEAR]
-        }
+    private fun Calendar.isBeforeDay(calendar: Calendar): Boolean = when {
+        this[Calendar.YEAR] < calendar[Calendar.YEAR] -> true
+        this[Calendar.YEAR] > calendar[Calendar.YEAR] -> false
+        else -> this[Calendar.DAY_OF_YEAR] < calendar[Calendar.DAY_OF_YEAR]
     }
 
     interface DateContext {
@@ -332,21 +324,13 @@ internal class DefaultDateFormatter(
 
         override fun now(): Date = Date()
 
-        override fun yesterdayString(): String {
-            return context.getString(R.string.stream_ui_yesterday)
-        }
+        override fun yesterdayString(): String = context.getString(R.string.stream_ui_yesterday)
 
-        override fun justNowString(): String {
-            return context.getString(R.string.stream_ui_message_list_footnote_edited_now)
-        }
+        override fun justNowString(): String = context.getString(R.string.stream_ui_message_list_footnote_edited_now)
 
-        override fun is24Hour(): Boolean {
-            return DateFormat.is24HourFormat(context)
-        }
+        override fun is24Hour(): Boolean = DateFormat.is24HourFormat(context)
 
-        override fun isWithinLastMinute(date: Date?): Boolean {
-            return date.isWithinDurationFromNow(oneMinuteDuration)
-        }
+        override fun isWithinLastMinute(date: Date?): Boolean = date.isWithinDurationFromNow(oneMinuteDuration)
 
         override fun dateTimePattern(): String {
             // Gets a localized pattern that contains 2 digit representations of
@@ -354,24 +338,20 @@ internal class DefaultDateFormatter(
             return dateTimePatternLazy
         }
 
-        override fun relativeTime(date: Date): String {
-            return DateUtils.getRelativeDateTimeString(
-                context,
-                date.time,
-                DateUtils.MINUTE_IN_MILLIS,
-                DateUtils.WEEK_IN_MILLIS,
-                0,
-            ).toString()
-        }
+        override fun relativeTime(date: Date): String = DateUtils.getRelativeDateTimeString(
+            context,
+            date.time,
+            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.WEEK_IN_MILLIS,
+            0,
+        ).toString()
 
-        override fun relativeDate(date: Date): String {
-            return DateUtils.getRelativeTimeSpanString(
-                date.time,
-                now().time,
-                DateUtils.DAY_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE,
-            ).toString()
-        }
+        override fun relativeDate(date: Date): String = DateUtils.getRelativeTimeSpanString(
+            date.time,
+            now().time,
+            DateUtils.DAY_IN_MILLIS,
+            DateUtils.FORMAT_ABBREV_RELATIVE,
+        ).toString()
     }
 }
 

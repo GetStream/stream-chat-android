@@ -455,18 +455,17 @@ public typealias MessagesViewModelFactoryProvider =
 private fun ThreePaneNavigator.initialSelection(
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
     context: Context,
-): ChatMessageSelection? =
-    if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
-        messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
-            ChatMessageSelection(
-                channelId = viewModelFactory.channelId,
-                messageId = viewModelFactory.messageId,
-                parentMessageId = viewModelFactory.parentMessageId,
-            )
-        }
-    } else {
-        null
+): ChatMessageSelection? = if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
+    messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
+        ChatMessageSelection(
+            channelId = viewModelFactory.channelId,
+            messageId = viewModelFactory.messageId,
+            parentMessageId = viewModelFactory.parentMessageId,
+        )
     }
+} else {
+    null
+}
 
 /**
  * A compound [ChatComponentFactory] that emphasizes the currently selected channel, mention, or thread
@@ -803,15 +802,14 @@ private inline fun ViewModelStore(
 }
 
 private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
-    override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? =
-        if (selection.channelId == null) {
-            null
-        } else {
-            MessagesViewModelFactory(
-                context = context,
-                channelId = selection.channelId,
-                messageId = selection.messageId,
-                parentMessageId = selection.parentMessageId,
-            )
-        }
+    override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? = if (selection.channelId == null) {
+        null
+    } else {
+        MessagesViewModelFactory(
+            context = context,
+            channelId = selection.channelId,
+            messageId = selection.messageId,
+            parentMessageId = selection.parentMessageId,
+        )
+    }
 }

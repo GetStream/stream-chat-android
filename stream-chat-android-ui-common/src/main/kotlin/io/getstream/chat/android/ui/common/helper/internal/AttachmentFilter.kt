@@ -135,10 +135,8 @@ public class AttachmentFilter(
         attachment: AttachmentMetaData,
         fileExtensions: List<String>,
         mimeTypes: Array<String>,
-    ): Boolean {
-        return matchesFileExtension(attachment, fileExtensions) ||
-            matchesMimeType(attachment, mimeTypes)
-    }
+    ): Boolean = matchesFileExtension(attachment, fileExtensions) ||
+        matchesMimeType(attachment, mimeTypes)
 
     /**
      * Checks if the attachment has a MIME type that matches any MIME type from
@@ -148,12 +146,10 @@ public class AttachmentFilter(
      * @param mimeTypes The list of allowed MIME types.
      * @return True if the attachment's mime type matches against any MIME type from the provided list.
      */
-    private fun matchesMimeType(attachment: AttachmentMetaData, mimeTypes: Array<String>): Boolean {
-        return try {
-            MimeTypeFilter.matches(attachment.mimeType, mimeTypes) != null
-        } catch (_: IllegalArgumentException) {
-            false
-        }
+    private fun matchesMimeType(attachment: AttachmentMetaData, mimeTypes: Array<String>): Boolean = try {
+        MimeTypeFilter.matches(attachment.mimeType, mimeTypes) != null
+    } catch (_: IllegalArgumentException) {
+        false
     }
 
     /**
@@ -164,9 +160,7 @@ public class AttachmentFilter(
      * @param fileExtensions The list of allowed file extensions.
      * @return True if the attachment's extension matches against any extension from the provided list.
      */
-    private fun matchesFileExtension(attachment: AttachmentMetaData, fileExtensions: List<String>): Boolean {
-        return fileExtensions.any { extension ->
-            attachment.title?.endsWith(extension, ignoreCase = true) ?: false
-        }
+    private fun matchesFileExtension(attachment: AttachmentMetaData, fileExtensions: List<String>): Boolean = fileExtensions.any { extension ->
+        attachment.title?.endsWith(extension, ignoreCase = true) ?: false
     }
 }

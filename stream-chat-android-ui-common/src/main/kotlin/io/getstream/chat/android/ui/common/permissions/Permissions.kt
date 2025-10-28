@@ -37,46 +37,43 @@ public object Permissions {
      * Builds an [Array] of the required permissions for accessing visual media, based on the Android version.
      */
     @InternalStreamChatApi
-    public fun visualMediaPermissions(): Array<String> =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            // Android 14+
-            arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_VISUAL_USER_SELECTED)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13
-            arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO)
-        } else {
-            // Android 12 and below
-            arrayOf(READ_EXTERNAL_STORAGE)
-        }
+    public fun visualMediaPermissions(): Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        // Android 14+
+        arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_VISUAL_USER_SELECTED)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Android 13
+        arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO)
+    } else {
+        // Android 12 and below
+        arrayOf(READ_EXTERNAL_STORAGE)
+    }
 
     /**
      * Builds an [Array] of the required permissions for accessing audio media, based on the Android version.
      */
     @InternalStreamChatApi
-    public fun audioPermissions(): Array<String> =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+
-            arrayOf(READ_MEDIA_AUDIO)
-        } else {
-            // Android 12 and below
-            arrayOf(READ_EXTERNAL_STORAGE)
-        }
+    public fun audioPermissions(): Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Android 13+
+        arrayOf(READ_MEDIA_AUDIO)
+    } else {
+        // Android 12 and below
+        arrayOf(READ_EXTERNAL_STORAGE)
+    }
 
     /**
      * Builds an [Array] of the required permissions for accessing visual + audio media, based on the Android version.
      */
     @InternalStreamChatApi
-    public fun filesPermissions(): Array<String> =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            // Android 14+
-            arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_VISUAL_USER_SELECTED, READ_MEDIA_AUDIO)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13
-            arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO)
-        } else {
-            // Android 12 and below
-            arrayOf(READ_EXTERNAL_STORAGE)
-        }
+    public fun filesPermissions(): Array<String> = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        // Android 14+
+        arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_VISUAL_USER_SELECTED, READ_MEDIA_AUDIO)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // Android 13
+        arrayOf(READ_MEDIA_IMAGES, READ_MEDIA_VIDEO, READ_MEDIA_AUDIO)
+    } else {
+        // Android 12 and below
+        arrayOf(READ_EXTERNAL_STORAGE)
+    }
 
     /**
      * Checks if the [grantResults] indicate that the permissions were permanently denied.

@@ -45,7 +45,5 @@ internal class SetConverter {
      *     // ... binding stringifiedObject to table's column
      */
     @TypeConverter
-    fun sortedSetToString(someObjects: Set<String>?): String? {
-        return adapter.toJson(someObjects)
-    }
+    fun sortedSetToString(someObjects: Set<String>?): String? = adapter.toJson(someObjects)
 }

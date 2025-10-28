@@ -23,33 +23,31 @@ import java.util.Date
 
 class DeletedMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
-    override fun getItems(): List<MessageListItem.MessageItem> {
-        return listOf(
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP),
-                isMine = true,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.MIDDLE),
-                isMine = true,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.BOTTOM),
-                isMine = true,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
-                isMine = false,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(deletedAt = Date()),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
-                isMine = true,
-            ),
-        )
-    }
+    override fun getItems(): List<MessageListItem.MessageItem> = listOf(
+        MessageListItem.MessageItem(
+            message = Message(deletedAt = Date()),
+            positions = listOf(MessagePosition.TOP),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(deletedAt = Date()),
+            positions = listOf(MessagePosition.MIDDLE),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(deletedAt = Date()),
+            positions = listOf(MessagePosition.BOTTOM),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(deletedAt = Date()),
+            positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+            isMine = false,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(deletedAt = Date()),
+            positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+            isMine = true,
+        ),
+    )
 }

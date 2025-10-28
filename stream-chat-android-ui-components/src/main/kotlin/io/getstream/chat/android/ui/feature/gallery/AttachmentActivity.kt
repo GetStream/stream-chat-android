@@ -172,11 +172,9 @@ public class AttachmentActivity : AppCompatActivity() {
          * @param url The URL of the attachment to display.
          * @return An Intent to start the AttachmentActivity.
          */
-        public fun createIntent(context: Context, type: String?, url: String): Intent {
-            return Intent(context, AttachmentActivity::class.java).apply {
-                putExtra(EXTRA_TYPE, type)
-                putExtra(EXTRA_URL, url)
-            }
+        public fun createIntent(context: Context, type: String?, url: String): Intent = Intent(context, AttachmentActivity::class.java).apply {
+            putExtra(EXTRA_TYPE, type)
+            putExtra(EXTRA_URL, url)
         }
     }
 }

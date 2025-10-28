@@ -38,7 +38,5 @@ internal class EventsConsumer(val expected: List<Class<out ChatEvent>>) {
         return false
     }
 
-    fun isReceivedExactly(check: List<Class<out ChatEvent>>): Boolean {
-        return check == expected
-    }
+    fun isReceivedExactly(check: List<Class<out ChatEvent>>): Boolean = check == expected
 }

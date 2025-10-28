@@ -34,10 +34,8 @@ public open class FullScreenDialogFragment : DialogFragment() {
         if (savedInstanceState != null) dismiss()
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            window?.requestFeature(Window.FEATURE_NO_TITLE)
-        }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = super.onCreateDialog(savedInstanceState).apply {
+        window?.requestFeature(Window.FEATURE_NO_TITLE)
     }
 
     override fun onStart() {

@@ -27,9 +27,7 @@ import org.junit.rules.TestRule
  */
 internal fun ComposeTestRule.composeLoginRobot(
     block: ComposeLoginRobot.() -> Unit,
-): ComposeLoginRobot {
-    return ComposeLoginRobot(this).apply { block() }
-}
+): ComposeLoginRobot = ComposeLoginRobot(this).apply { block() }
 
 /**
  * A robot that simulates user behavior on the login screen.

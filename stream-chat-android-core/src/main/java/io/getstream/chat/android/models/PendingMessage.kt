@@ -76,11 +76,9 @@ public data class PendingMessage(
          *
          * @return A new PendingMessage instance.
          */
-        public fun build(): PendingMessage {
-            return PendingMessage(
-                message = message,
-                metadata = metadata,
-            )
-        }
+        public fun build(): PendingMessage = PendingMessage(
+            message = message,
+            metadata = metadata,
+        )
     }
 }

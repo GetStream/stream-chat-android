@@ -29,9 +29,7 @@ import org.junit.rules.TestRule
  */
 internal fun ComposeTestRule.composeMessagesRobot(
     block: ComposeMessagesRobot.() -> Unit,
-): ComposeMessagesRobot {
-    return ComposeMessagesRobot(this).apply { block() }
-}
+): ComposeMessagesRobot = ComposeMessagesRobot(this).apply { block() }
 
 /**
  * A robot that simulates user behavior on the messages screen.

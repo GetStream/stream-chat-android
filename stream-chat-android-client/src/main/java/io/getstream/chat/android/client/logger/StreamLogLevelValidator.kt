@@ -31,13 +31,11 @@ internal class StreamLogLevelValidator(
     /**
      * Validates [priority] and [tag] of a message you would like logged.
      */
-    override fun isLoggable(priority: Priority, tag: String): Boolean {
-        return when (logLevel) {
-            ChatLogLevel.NOTHING -> false
-            ChatLogLevel.ALL -> true
-            ChatLogLevel.DEBUG -> priority.level >= Priority.DEBUG.level
-            ChatLogLevel.WARN -> priority.level >= Priority.WARN.level
-            ChatLogLevel.ERROR -> priority.level >= Priority.ERROR.level
-        }
+    override fun isLoggable(priority: Priority, tag: String): Boolean = when (logLevel) {
+        ChatLogLevel.NOTHING -> false
+        ChatLogLevel.ALL -> true
+        ChatLogLevel.DEBUG -> priority.level >= Priority.DEBUG.level
+        ChatLogLevel.WARN -> priority.level >= Priority.WARN.level
+        ChatLogLevel.ERROR -> priority.level >= Priority.ERROR.level
     }
 }

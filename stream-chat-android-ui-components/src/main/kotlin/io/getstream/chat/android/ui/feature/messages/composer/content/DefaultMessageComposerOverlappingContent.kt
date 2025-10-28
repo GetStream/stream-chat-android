@@ -127,7 +127,9 @@ public interface MessageComposerOverlappingContent : MessageComposerContent {
  * Represents the content which overlaps [MessageComposerCenterContent] in [MessageComposerView].
  */
 @Suppress("TooManyFunctions")
-public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerOverlappingContent {
+public open class DefaultMessageComposerOverlappingContent :
+    ConstraintLayout,
+    MessageComposerOverlappingContent {
 
     public constructor(context: Context) : super(context)
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -312,9 +314,7 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
         }
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return _state is RecordingState.Idle || _state is RecordingState.Hold
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean = _state is RecordingState.Idle || _state is RecordingState.Hold
 
     private fun resetUI() {
         logger.d { "[resetUI] no args" }
@@ -785,12 +785,10 @@ private fun ImageView.setImageColorRes(@ColorRes colorResId: Int) {
     ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
 }
 
-private fun actionToString(action: Int): String {
-    return when (action) {
-        MotionEvent.ACTION_DOWN -> "ACTION_DOWN"
-        MotionEvent.ACTION_MOVE -> "ACTION_MOVE"
-        MotionEvent.ACTION_CANCEL -> "ACTION_CANCEL"
-        MotionEvent.ACTION_UP -> "ACTION_UP"
-        else -> "ACTION_UNKNOWN"
-    }
+private fun actionToString(action: Int): String = when (action) {
+    MotionEvent.ACTION_DOWN -> "ACTION_DOWN"
+    MotionEvent.ACTION_MOVE -> "ACTION_MOVE"
+    MotionEvent.ACTION_CANCEL -> "ACTION_CANCEL"
+    MotionEvent.ACTION_UP -> "ACTION_UP"
+    else -> "ACTION_UNKNOWN"
 }

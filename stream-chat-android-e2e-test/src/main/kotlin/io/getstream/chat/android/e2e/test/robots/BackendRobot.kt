@@ -24,7 +24,6 @@ import java.net.URL
 public class BackendRobot(
     private val mockServer: MockServer,
 ) {
-
     public fun generateChannels(
         channelsCount: Int,
         messagesCount: Int = 0,

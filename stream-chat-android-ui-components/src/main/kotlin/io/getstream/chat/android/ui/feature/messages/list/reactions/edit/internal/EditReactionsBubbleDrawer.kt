@@ -143,18 +143,16 @@ internal class EditReactionsBubbleDrawer(
      * @param isMyMessage Whether this is the message of the current user or not.
      * @param offset The offset of the bubble.
      */
-    private fun parseOffset(isRtl: Boolean, isMyMessage: Boolean, offset: Float): Float {
-        return when {
-            isMyMessage && !isRtl -> offset
+    private fun parseOffset(isRtl: Boolean, isMyMessage: Boolean, offset: Float): Float = when {
+        isMyMessage && !isRtl -> offset
 
-            isMyMessage && isRtl -> -offset
+        isMyMessage && isRtl -> -offset
 
-            !isMyMessage && !isRtl -> -offset
+        !isMyMessage && !isRtl -> -offset
 
-            !isMyMessage && isRtl -> offset
+        !isMyMessage && isRtl -> offset
 
-            else -> offset
-        }
+        else -> offset
     }
 
     /**
@@ -183,7 +181,5 @@ internal class EditReactionsBubbleDrawer(
     /**
      * The large tail bubble initial position.
      */
-    private fun largeTailBubbleInitialPosition(): Float {
-        return bubbleHeight.toFloat() - LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP.dpToPx()
-    }
+    private fun largeTailBubbleInitialPosition(): Float = bubbleHeight.toFloat() - LARGE_TAIL_BUBBLE_OFFSET_CORRECTION_DP.dpToPx()
 }

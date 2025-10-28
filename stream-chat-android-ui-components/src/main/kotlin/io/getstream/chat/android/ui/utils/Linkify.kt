@@ -82,27 +82,26 @@ public object Linkify {
     private fun addLinks(
         spannable: Spannable,
         mentionableUsers: List<User>,
-    ): Boolean =
-        (
+    ): Boolean = (
+        gatherSpanSpecs(
+            spannable,
+            PatternsCompat.AUTOLINK_WEB_URL,
+            Linkify.sUrlMatchFilter,
+        ) { it.makeUrlSpan(listOf("http://", "https://", "rtsp://")) } + gatherSpanSpecs(
+            spannable,
+            PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+
+            null,
+        ) { it.makeUrlSpan(listOf("mailto:")) } + mentionableUsers.flatMap { user ->
             gatherSpanSpecs(
                 spannable,
-                PatternsCompat.AUTOLINK_WEB_URL,
-                Linkify.sUrlMatchFilter,
-            ) { it.makeUrlSpan(listOf("http://", "https://", "rtsp://")) } + gatherSpanSpecs(
-                spannable,
-                PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-
+                Pattern.compile("((?:\\B|^)(@${user.name})(?:\\b|\$))"),
                 null,
-            ) { it.makeUrlSpan(listOf("mailto:")) } + mentionableUsers.flatMap { user ->
-                gatherSpanSpecs(
-                    spannable,
-                    Pattern.compile("((?:\\B|^)(@${user.name})(?:\\b|\$))"),
-                    null,
-                ) { UserSpan(user) }
-            }
-            ).pruneOverlaps(spannable)
-            .map { spannable.setSpan(it.span, it.start, it.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
-            .isNotEmpty()
+            ) { UserSpan(user) }
+        }
+        ).pruneOverlaps(spannable)
+        .map { spannable.setSpan(it.span, it.start, it.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        .isNotEmpty()
 
     private fun addLinkMovementMethod(t: TextView) {
         val m = t.movementMethod
@@ -165,17 +164,16 @@ public object Linkify {
         return specs
     }
 
-    private fun List<SpanSpec>.pruneOverlaps(text: Spannable): List<SpanSpec> =
-        this - text.getSpans(0, text.length, URLSpan::class.java).map {
-            SpanSpec(
-                span = it,
-                start = text.getSpanStart(it),
-                end = text.getSpanEnd(it),
-            )
-        }.flatMap { link ->
-            this.filter { it.start <= link.start && it.end >= link.end } +
-                this.filter { link.start <= it.start && link.end >= it.end }
-        }.toSet()
+    private fun List<SpanSpec>.pruneOverlaps(text: Spannable): List<SpanSpec> = this - text.getSpans(0, text.length, URLSpan::class.java).map {
+        SpanSpec(
+            span = it,
+            start = text.getSpanStart(it),
+            end = text.getSpanEnd(it),
+        )
+    }.flatMap { link ->
+        this.filter { it.start <= link.start && it.end >= link.end } +
+            this.filter { link.start <= it.start && link.end >= it.end }
+    }.toSet()
 
     private data class SpanSpec(
         val span: ClickableSpan,

@@ -81,11 +81,9 @@ internal class DeleteChannelListenerState(
         currentUser: User?,
         channelType: String,
         channelId: String,
-    ): Result<Unit> {
-        return if (currentUser != null) {
-            Result.Success(Unit)
-        } else {
-            Result.Failure(Error.GenericError(message = "Current user is null!"))
-        }
+    ): Result<Unit> = if (currentUser != null) {
+        Result.Success(Unit)
+    } else {
+        Result.Failure(Error.GenericError(message = "Current user is null!"))
     }
 }

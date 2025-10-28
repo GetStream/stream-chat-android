@@ -38,9 +38,7 @@ public fun interface MessageAlignmentProvider {
          *
          * @see [DefaultMessageAlignmentProvider]
          */
-        public fun defaultMessageAlignmentProvider(): MessageAlignmentProvider {
-            return DefaultMessageAlignmentProvider()
-        }
+        public fun defaultMessageAlignmentProvider(): MessageAlignmentProvider = DefaultMessageAlignmentProvider()
     }
 }
 
@@ -57,7 +55,5 @@ private class DefaultMessageAlignmentProvider : MessageAlignmentProvider {
      * @param messageItem The message whose data is used to decide which alignment to use.
      * @return The [MessageAlignment] for the provided message.
      */
-    override fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment {
-        return if (messageItem.isMine) MessageAlignment.End else MessageAlignment.Start
-    }
+    override fun provideMessageAlignment(messageItem: MessageItemState): MessageAlignment = if (messageItem.isMine) MessageAlignment.End else MessageAlignment.Start
 }

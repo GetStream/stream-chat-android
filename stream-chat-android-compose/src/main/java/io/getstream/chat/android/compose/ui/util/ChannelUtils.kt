@@ -41,10 +41,8 @@ public fun Channel.getLastMessage(currentUser: User?): Message? = getPreviewMess
  *
  * @return List of [Date] values that represent a read status for each other user in the channel.
  */
-public fun Channel.getReadStatuses(userToIgnore: User?): List<Date> {
-    return read.filter { it.user.id != userToIgnore?.id }
-        .mapNotNull { it.lastRead }
-}
+public fun Channel.getReadStatuses(userToIgnore: User?): List<Date> = read.filter { it.user.id != userToIgnore?.id }
+    .mapNotNull { it.lastRead }
 
 /**
  * Checks if the channel is distinct.
@@ -66,11 +64,9 @@ public fun Channel.isDistinct(): Boolean = cid.contains("!members")
  * @param currentUser The currently logged in user.
  * @return True if the channel is a one-to-one conversation.
  */
-public fun Channel.isOneToOne(currentUser: User?): Boolean {
-    return isDistinct() &&
-        members.size == 2 &&
-        members.any { it.user.id == currentUser?.id }
-}
+public fun Channel.isOneToOne(currentUser: User?): Boolean = isDistinct() &&
+    members.size == 2 &&
+    members.any { it.user.id == currentUser?.id }
 
 /**
  * Returns a string describing the member status of the channel: either a member count for a group channel
@@ -84,19 +80,17 @@ public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User?,
     userPresence: UserPresence = UserPresence(),
-): String {
-    return getMembersStatusText(
-        context = context,
-        currentUser = currentUser,
-        countCurrentUserAsOnlineMember = userPresence.currentUser.countAsOnlineMember,
-        countOtherUsersAsOnlineMembers = userPresence.otherUsers.countAsOnlineMember,
-        userOnlineResId = R.string.stream_compose_user_status_online,
-        userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
-        userLastSeenResId = R.string.stream_compose_user_status_last_seen,
-        memberCountResId = R.plurals.stream_compose_member_count,
-        memberCountWithOnlineResId = R.string.stream_compose_member_count_online,
-    )
-}
+): String = getMembersStatusText(
+    context = context,
+    currentUser = currentUser,
+    countCurrentUserAsOnlineMember = userPresence.currentUser.countAsOnlineMember,
+    countOtherUsersAsOnlineMembers = userPresence.otherUsers.countAsOnlineMember,
+    userOnlineResId = R.string.stream_compose_user_status_online,
+    userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
+    userLastSeenResId = R.string.stream_compose_user_status_last_seen,
+    memberCountResId = R.plurals.stream_compose_member_count,
+    memberCountWithOnlineResId = R.string.stream_compose_member_count_online,
+)
 
 /**
  * Returns a list of users that are members of the channel excluding the currently

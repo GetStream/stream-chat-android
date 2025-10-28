@@ -42,17 +42,15 @@ internal fun Channel.isCurrentUserBanned(): Boolean {
 public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User? = ChatUI.currentUserProvider.getCurrentUser(),
-): String {
-    return getMembersStatusText(
-        context = context,
-        currentUser = currentUser,
-        userOnlineResId = R.string.stream_ui_user_status_online,
-        userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
-        userLastSeenResId = R.string.stream_ui_user_status_last_seen,
-        memberCountResId = R.plurals.stream_ui_message_list_header_member_count,
-        memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
-    )
-}
+): String = getMembersStatusText(
+    context = context,
+    currentUser = currentUser,
+    userOnlineResId = R.string.stream_ui_user_status_online,
+    userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
+    userLastSeenResId = R.string.stream_ui_user_status_last_seen,
+    memberCountResId = R.plurals.stream_ui_message_list_header_member_count,
+    memberCountWithOnlineResId = R.string.stream_ui_message_list_header_member_count_online,
+)
 
 /**
  * Returns channel's last regular or system message if exists.

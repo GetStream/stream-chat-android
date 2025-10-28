@@ -45,9 +45,7 @@ class ChatApp : Application() {
         }
     }
 
-    private fun getApiKey(): String {
-        return credentialsRepository.loadApiKey() ?: PredefinedUserCredentials.API_KEY
-    }
+    private fun getApiKey(): String = credentialsRepository.loadApiKey() ?: PredefinedUserCredentials.API_KEY
 
     companion object {
         lateinit var credentialsRepository: UserCredentialsRepository

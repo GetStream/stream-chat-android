@@ -25,12 +25,10 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param max The maximum value.
  */
 @InternalStreamChatApi
-public fun Float.limitTo(min: Float, max: Float): Float {
-    return when {
-        this < min -> min
-        this > max -> max
-        else -> this
-    }
+public fun Float.limitTo(min: Float, max: Float): Float = when {
+    this < min -> min
+    this > max -> max
+    else -> this
 }
 
 /**

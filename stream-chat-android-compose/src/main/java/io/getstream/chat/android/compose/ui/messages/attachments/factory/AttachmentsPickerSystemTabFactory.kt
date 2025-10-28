@@ -303,27 +303,25 @@ public class AttachmentsPickerSystemTabFactory(
     }
 
     @Composable
-    private fun rememberFilePickerLauncher(onResult: (Uri) -> Unit) =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data
-                uri?.let(onResult)
-            }
+    private fun rememberFilePickerLauncher(onResult: (Uri) -> Unit) = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val uri = result.data?.data
+            uri?.let(onResult)
         }
+    }
 
     @Composable
-    private fun rememberVisualMediaPickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) =
-        if (allowMultiple) {
-            rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
-                onResult(uris)
-            }
-        } else {
-            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-                if (uri != null) {
-                    onResult(listOf(uri))
-                }
+    private fun rememberVisualMediaPickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) = if (allowMultiple) {
+        rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            onResult(uris)
+        }
+    } else {
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                onResult(listOf(uri))
             }
         }
+    }
 
     private fun filePickerIntent(): Intent {
         val attachmentFilter = AttachmentFilter()
@@ -417,40 +415,36 @@ private fun PollDialog(
 }
 
 @Composable
-private fun FilesButton(onClick: () -> Unit) =
-    RoundedIconButton(
-        onClick = onClick,
-        iconPainter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
-        contentDescription = stringResource(id = R.string.stream_compose_files_option),
-        text = stringResource(id = R.string.stream_compose_files_option),
-    )
+private fun FilesButton(onClick: () -> Unit) = RoundedIconButton(
+    onClick = onClick,
+    iconPainter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
+    contentDescription = stringResource(id = R.string.stream_compose_files_option),
+    text = stringResource(id = R.string.stream_compose_files_option),
+)
 
 @Composable
-private fun MediaButton(onClick: () -> Unit) =
-    RoundedIconButton(
-        onClick = onClick,
-        iconPainter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
-        contentDescription = stringResource(id = R.string.stream_compose_images_option),
-        text = stringResource(id = R.string.stream_compose_images_option),
-    )
+private fun MediaButton(onClick: () -> Unit) = RoundedIconButton(
+    onClick = onClick,
+    iconPainter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
+    contentDescription = stringResource(id = R.string.stream_compose_images_option),
+    text = stringResource(id = R.string.stream_compose_images_option),
+)
 
 @Composable
-private fun CaptureButton(onClick: () -> Unit) =
-    RoundedIconButton(
-        onClick = onClick,
-        iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
-        contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
-        text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
-    )
+private fun CaptureButton(onClick: () -> Unit) = RoundedIconButton(
+    onClick = onClick,
+    iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
+    contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
+    text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
+)
 
 @Composable
-private fun PollButton(onClick: () -> Unit) =
-    RoundedIconButton(
-        onClick = onClick,
-        iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
-        contentDescription = stringResource(id = R.string.stream_compose_poll_option),
-        text = stringResource(id = R.string.stream_compose_poll_option),
-    )
+private fun PollButton(onClick: () -> Unit) = RoundedIconButton(
+    onClick = onClick,
+    iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
+    contentDescription = stringResource(id = R.string.stream_compose_poll_option),
+    text = stringResource(id = R.string.stream_compose_poll_option),
+)
 
 @Composable
 private fun RoundedIconButton(

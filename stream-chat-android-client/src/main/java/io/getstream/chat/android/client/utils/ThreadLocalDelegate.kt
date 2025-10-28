@@ -30,6 +30,4 @@ internal class ThreadLocalDelegate<T : Any>(
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = threadLocal.get()!!
 }
 
-internal fun <T : Any> threadLocal(value: () -> T): ReadOnlyProperty<Any?, T> {
-    return ThreadLocalDelegate(value)
-}
+internal fun <T : Any> threadLocal(value: () -> T): ReadOnlyProperty<Any?, T> = ThreadLocalDelegate(value)

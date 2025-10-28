@@ -99,11 +99,9 @@ internal class DeleteReactionListenerDatabase(
      *
      * @param currentUser The currently logged in user.
      */
-    override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> {
-        return if (currentUser != null) {
-            Result.Success(Unit)
-        } else {
-            Result.Failure(Error.GenericError(message = "Current user is null!"))
-        }
+    override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = if (currentUser != null) {
+        Result.Success(Unit)
+    } else {
+        Result.Failure(Error.GenericError(message = "Current user is null!"))
     }
 }

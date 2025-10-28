@@ -159,17 +159,15 @@ internal class SocketFactoryTest {
             ),
         )
 
-        private fun defaultMap(userId: String, userDetails: Map<String, Any>): Map<String, Any> =
-            mapOf(
-                "user_details" to userDetails,
-                "user_id" to userId,
-                "server_determines_connection_id" to true,
-            )
+        private fun defaultMap(userId: String, userDetails: Map<String, Any>): Map<String, Any> = mapOf(
+            "user_details" to userDetails,
+            "user_id" to userId,
+            "server_determines_connection_id" to true,
+        )
 
-        private fun encode(map: Map<String, Any>): String =
-            URLEncoder.encode(
-                chatParser.toJson(map),
-                StandardCharsets.UTF_8.name(),
-            )
+        private fun encode(map: Map<String, Any>): String = URLEncoder.encode(
+            chatParser.toJson(map),
+            StandardCharsets.UTF_8.name(),
+        )
     }
 }

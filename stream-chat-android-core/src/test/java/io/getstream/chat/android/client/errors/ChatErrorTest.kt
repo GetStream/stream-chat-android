@@ -148,8 +148,6 @@ internal class ChatErrorTest {
             code: ChatErrorCode,
             statusCode: Int = 400,
             cause: Throwable? = null,
-        ): Error.NetworkError {
-            return Error.NetworkError("Error", code.code, statusCode, cause)
-        }
+        ): Error.NetworkError = Error.NetworkError("Error", code.code, statusCode, cause)
     }
 }

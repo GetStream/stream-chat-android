@@ -39,21 +39,22 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 internal class AiMessageContentFactory : MessageContentFactory() {
-
     @Composable
     override fun MessageFooterContent(messageItem: MessageItemState) {
         val message = messageItem.message
         val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
         if (message.belongsToThread() && !messageItem.isInThread) {
-            val threadFooterText = when (message.replyCount) {
-                0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
-                else -> LocalContext.current.resources.getQuantityString(
-                    R.plurals.stream_compose_message_list_thread_footnote,
-                    message.replyCount,
-                    message.replyCount,
-                )
-            }
+            val threadFooterText =
+                when (message.replyCount) {
+                    0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
+                    else ->
+                        LocalContext.current.resources.getQuantityString(
+                            R.plurals.stream_compose_message_list_thread_footnote,
+                            message.replyCount,
+                            message.replyCount,
+                        )
+                }
             MessageThreadFooter(
                 participants = message.threadParticipants,
                 messageAlignment = alignment,
@@ -65,13 +66,15 @@ internal class AiMessageContentFactory : MessageContentFactory() {
             MessageTranslatedLabel(messageItem)
             if (messageItem.showMessageFooter) {
                 Row(
-                    modifier = Modifier
+                    modifier =
+                    Modifier
                         .padding(top = 4.dp, bottom = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (!messageItem.isMine) {
                         Text(
-                            modifier = Modifier
+                            modifier =
+                            Modifier
                                 .padding(end = 8.dp)
                                 .weight(1f, fill = false)
                                 .testTag("Stream_MessageAuthorName"),
@@ -92,14 +95,16 @@ internal class AiMessageContentFactory : MessageContentFactory() {
 
                     val updatedAt = message.updatedAt
                     val createdAt = message.createdAt ?: message.createdLocallyAt
-                    val date = when {
-                        createdAt == null -> updatedAt
-                        updatedAt == null -> createdAt
-                        else -> when (updatedAt.after(createdAt)) {
-                            true -> updatedAt
-                            else -> createdAt
+                    val date =
+                        when {
+                            createdAt == null -> updatedAt
+                            updatedAt == null -> createdAt
+                            else ->
+                                when (updatedAt.after(createdAt)) {
+                                    true -> updatedAt
+                                    else -> createdAt
+                                }
                         }
-                    }
                     if (date != null) {
                         Timestamp(date = date, formatType = DateFormatType.TIME)
                     }

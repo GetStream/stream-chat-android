@@ -57,49 +57,47 @@ import org.mockito.kotlin.whenever
 internal class ChannelListViewModelTest {
 
     @Test
-    fun `Given channel list in loading state When showing the channel list Should show loading state`() =
-        runTest {
-            val channelsStateData = ChannelsStateData.Loading
-            val isLoading = true
+    fun `Given channel list in loading state When showing the channel list Should show loading state`() = runTest {
+        val channelsStateData = ChannelsStateData.Loading
+        val isLoading = true
 
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(channelsStateData = channelsStateData, loading = isLoading)
-                .givenChannelMutes()
-                .get()
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(channelsStateData = channelsStateData, loading = isLoading)
+            .givenChannelMutes()
+            .get()
 
-            val state = viewModel.state.observeAll()
+        val state = viewModel.state.observeAll()
 
-            state.last() shouldBeEqualTo ChannelListViewModel.State(
-                channels = listOf(),
-                isLoading = isLoading,
-            )
-        }
+        state.last() shouldBeEqualTo ChannelListViewModel.State(
+            channels = listOf(),
+            isLoading = isLoading,
+        )
+    }
 
     @Test
-    fun `Given channel list in content state When showing the channel list Should show the list of channels`() =
-        runTest {
-            val channels = listOf(channel1, channel2)
-            val isLoading = false
+    fun `Given channel list in content state When showing the channel list Should show the list of channels`() = runTest {
+        val channels = listOf(channel1, channel2)
+        val isLoading = false
 
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(channels),
-                    loading = isLoading,
-                )
-                .givenChannelMutes()
-                .get()
-
-            val state = viewModel.state.observeAll()
-
-            state.last() shouldBeEqualTo ChannelListViewModel.State(
-                channels = listOf(channel1, channel2),
-                isLoading = isLoading,
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(channels),
+                loading = isLoading,
             )
-        }
+            .givenChannelMutes()
+            .get()
+
+        val state = viewModel.state.observeAll()
+
+        state.last() shouldBeEqualTo ChannelListViewModel.State(
+            channels = listOf(channel1, channel2),
+            isLoading = isLoading,
+        )
+    }
 
     @Test
     fun `Given channel list in content state When leaving a channel Should leave the channel`() = runTest {
@@ -170,68 +168,66 @@ internal class ChannelListViewModelTest {
     }
 
     @Test
-    fun `Given channel list in content state and the current user is online When loading more channels Should load more channels`() =
-        runTest {
-            val nextPageRequest = QueryChannelsRequest(
-                filter = queryFilter,
-                querySort = querySort,
-                offset = 30,
-                limit = 30,
+    fun `Given channel list in content state and the current user is online When loading more channels Should load more channels`() = runTest {
+        val nextPageRequest = QueryChannelsRequest(
+            filter = queryFilter,
+            querySort = querySort,
+            offset = 30,
+            limit = 30,
+        )
+
+        val chatClient: ChatClient = mock()
+
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                nextPageRequest = nextPageRequest,
+                loading = false,
             )
+            .givenChannelMutes()
+            .get()
 
-            val chatClient: ChatClient = mock()
+        val mockObserver: Observer<ChannelListViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
 
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                    nextPageRequest = nextPageRequest,
-                    loading = false,
-                )
-                .givenChannelMutes()
-                .get()
+        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
 
-            val mockObserver: Observer<ChannelListViewModel.State> = mock()
-            viewModel.state.observeForever(mockObserver)
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, times(2)).queryChannels(captor.capture())
 
-            viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+        captor.firstValue.offset `should be equal to` 0
+        captor.secondValue.offset `should be equal to` 30
 
-            val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(2)).queryChannels(captor.capture())
-
-            captor.firstValue.offset `should be equal to` 0
-            captor.secondValue.offset `should be equal to` 30
-
-            viewModel.state.removeObserver(mockObserver)
-        }
+        viewModel.state.removeObserver(mockObserver)
+    }
 
     @Test
-    fun `Given channel list in content state and the current user is offline When loading more channels Should do nothing`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenChannelsQuery()
-                .givenChannelsState(
-                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                    loading = false,
-                )
-                .givenChannelMutes()
-                .get()
+    fun `Given channel list in content state and the current user is offline When loading more channels Should do nothing`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelsQuery()
+            .givenChannelsState(
+                channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                loading = false,
+            )
+            .givenChannelMutes()
+            .get()
 
-            val mockObserver: Observer<ChannelListViewModel.State> = mock()
-            viewModel.state.observeForever(mockObserver)
+        val mockObserver: Observer<ChannelListViewModel.State> = mock()
+        viewModel.state.observeForever(mockObserver)
 
-            viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
+        viewModel.onAction(ChannelListViewModel.Action.ReachedEndOfList)
 
-            val captor = argumentCaptor<QueryChannelsRequest>()
-            verify(chatClient, times(1)).queryChannels(captor.capture())
+        val captor = argumentCaptor<QueryChannelsRequest>()
+        verify(chatClient, times(1)).queryChannels(captor.capture())
 
-            captor.firstValue.offset `should be equal to` 0
+        captor.firstValue.offset `should be equal to` 0
 
-            viewModel.state.removeObserver(mockObserver)
-        }
+        viewModel.state.removeObserver(mockObserver)
+    }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
@@ -300,18 +296,16 @@ internal class ChannelListViewModelTest {
             whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
         }
 
-        fun get(): ChannelListViewModel {
-            return ChannelListViewModel(
-                chatClient = chatClient,
-                sort = initialSort,
-                filter = initialFilters,
-                isDraftMessagesEnabled = false,
-                chatEventHandlerFactory = ChatEventHandlerFactory(
-                    clientState = clientState,
-                ),
-                globalState = MutableStateFlow(globalState),
-            )
-        }
+        fun get(): ChannelListViewModel = ChannelListViewModel(
+            chatClient = chatClient,
+            sort = initialSort,
+            filter = initialFilters,
+            isDraftMessagesEnabled = false,
+            chatEventHandlerFactory = ChatEventHandlerFactory(
+                clientState = clientState,
+            ),
+            globalState = MutableStateFlow(globalState),
+        )
     }
 
     companion object {

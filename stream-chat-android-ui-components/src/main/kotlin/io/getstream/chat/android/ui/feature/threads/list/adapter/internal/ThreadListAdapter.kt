@@ -42,20 +42,14 @@ internal class ThreadListAdapter(
         setHasStableIds(true)
     }
 
-    override fun getItemId(position: Int): Long {
-        return getItem(position).stableId
-    }
+    override fun getItemId(position: Int): Long = getItem(position).stableId
 
-    override fun getItemViewType(position: Int): Int {
-        return viewHolderFactory.getItemViewType(getItem(position))
-    }
+    override fun getItemViewType(position: Int): Int = viewHolderFactory.getItemViewType(getItem(position))
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): BaseThreadListItemViewHolder<out ThreadListItem> {
-        return viewHolderFactory.createViewHolder(parent, viewType)
-    }
+    ): BaseThreadListItemViewHolder<out ThreadListItem> = viewHolderFactory.createViewHolder(parent, viewType)
 
     override fun onBindViewHolder(holder: BaseThreadListItemViewHolder<out ThreadListItem>, position: Int) {
         val item = getItem(position)
@@ -73,16 +67,12 @@ internal class ThreadListAdapter(
      * [DiffUtil.ItemCallback] for calculating differences between [ThreadListItem]s.
      */
     private object ThreadListItemDiffCallback : DiffUtil.ItemCallback<ThreadListItem>() {
-        override fun areItemsTheSame(oldItem: ThreadListItem, newItem: ThreadListItem): Boolean {
-            return oldItem.stableId == newItem.stableId
-        }
+        override fun areItemsTheSame(oldItem: ThreadListItem, newItem: ThreadListItem): Boolean = oldItem.stableId == newItem.stableId
 
-        override fun areContentsTheSame(oldItem: ThreadListItem, newItem: ThreadListItem): Boolean {
-            return if (oldItem is ThreadListItem.ThreadItem && newItem is ThreadListItem.ThreadItem) {
-                oldItem.thread == newItem.thread // [Thread] is a data class, equality check is enough
-            } else {
-                false
-            }
+        override fun areContentsTheSame(oldItem: ThreadListItem, newItem: ThreadListItem): Boolean = if (oldItem is ThreadListItem.ThreadItem && newItem is ThreadListItem.ThreadItem) {
+            oldItem.thread == newItem.thread // [Thread] is a data class, equality check is enough
+        } else {
+            false
         }
     }
 }

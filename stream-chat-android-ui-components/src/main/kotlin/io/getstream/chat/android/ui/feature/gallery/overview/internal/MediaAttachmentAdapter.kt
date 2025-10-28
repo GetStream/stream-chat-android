@@ -42,17 +42,15 @@ internal class MediaAttachmentAdapter(
     AttachmentGalleryItemDiffCallback,
 ) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
-        return StreamUiItemMediaAttachmentBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let {
-                MediaAttachmentViewHolder(
-                    binding = it,
-                    mediaAttachmentClickListener = mediaAttachmentClickListener,
-                    style = style,
-                )
-            }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder = StreamUiItemMediaAttachmentBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let {
+            MediaAttachmentViewHolder(
+                binding = it,
+                mediaAttachmentClickListener = mediaAttachmentClickListener,
+                style = style,
+            )
+        }
 
     override fun onBindViewHolder(holder: MediaAttachmentViewHolder, position: Int) {
         holder.bind(getItem(position))
@@ -185,13 +183,9 @@ internal class MediaAttachmentAdapter(
     }
 
     private object AttachmentGalleryItemDiffCallback : DiffUtil.ItemCallback<AttachmentGalleryItem>() {
-        override fun areItemsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
-            return oldItem.attachment.imagePreviewUrl == newItem.attachment.imagePreviewUrl &&
-                oldItem.createdAt == newItem.createdAt
-        }
+        override fun areItemsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean = oldItem.attachment.imagePreviewUrl == newItem.attachment.imagePreviewUrl &&
+            oldItem.createdAt == newItem.createdAt
 
-        override fun areContentsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: AttachmentGalleryItem, newItem: AttachmentGalleryItem): Boolean = oldItem == newItem
     }
 }

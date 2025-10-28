@@ -234,8 +234,7 @@ constructor(
         this._connectionId.value = ""
     }
 
-    override fun appSettings(): Call<AppSettings> =
-        configApi.getAppSettings().mapDomain { it.toDomain() }
+    override fun appSettings(): Call<AppSettings> = configApi.getAppSettings().mapDomain { it.toDomain() }
 
     override fun sendMessage(
         channelType: String,
@@ -280,49 +279,45 @@ constructor(
     override fun queryDraftMessages(
         offset: Int?,
         limit: Int?,
-    ): Call<List<DraftMessage>> =
-        messageApi.queryDraftMessages(
-            QueryDraftMessagesRequest(
-                offset = offset,
-                limit = limit,
-            ),
-        ).mapDomain { response ->
-            response.drafts.map { it.toDomain() }
-        }
+    ): Call<List<DraftMessage>> = messageApi.queryDraftMessages(
+        QueryDraftMessagesRequest(
+            offset = offset,
+            limit = limit,
+        ),
+    ).mapDomain { response ->
+        response.drafts.map { it.toDomain() }
+    }
 
     override fun queryDrafts(
         filter: FilterObject,
         limit: Int?,
         next: String?,
         sort: QuerySorter<DraftsSort>,
-    ): Call<QueryDraftsResult> =
-        messageApi.queryDrafts(
-            body = QueryDraftsRequest(
-                filter = filter.toMap(),
-                limit = limit,
-                next = next,
-                sort = sort.toDto(),
-            ),
-        ).mapDomain { response ->
-            QueryDraftsResult(
-                drafts = response.drafts.map { it.toDomain() },
-                next = response.next,
-            )
-        }
+    ): Call<QueryDraftsResult> = messageApi.queryDrafts(
+        body = QueryDraftsRequest(
+            filter = filter.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort.toDto(),
+        ),
+    ).mapDomain { response ->
+        QueryDraftsResult(
+            drafts = response.drafts.map { it.toDomain() },
+            next = response.next,
+        )
+    }
 
     override fun updateMessage(
         message: Message,
-    ): Call<Message> {
-        return messageApi.updateMessage(
-            messageId = message.id,
-            message = UpdateMessageRequest(
-                message = with(dtoMapping) { message.toDto() },
-                skip_enrich_url = message.skipEnrichUrl,
-                skip_push = message.skipPushNotification,
-            ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    ): Call<Message> = messageApi.updateMessage(
+        messageId = message.id,
+        message = UpdateMessageRequest(
+            message = with(dtoMapping) { message.toDto() },
+            skip_enrich_url = message.skipEnrichUrl,
+            skip_push = message.skipPushNotification,
+        ),
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
     override fun partialUpdateMessage(
@@ -330,17 +325,15 @@ constructor(
         set: Map<String, Any>,
         unset: List<String>,
         skipEnrichUrl: Boolean,
-    ): Call<Message> {
-        return messageApi.partialUpdateMessage(
-            messageId = messageId,
-            body = PartialUpdateMessageRequest(
-                set = set.toDto(),
-                unset = unset,
-                skip_enrich_url = skipEnrichUrl,
-            ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    ): Call<Message> = messageApi.partialUpdateMessage(
+        messageId = messageId,
+        body = PartialUpdateMessageRequest(
+            set = set.toDto(),
+            unset = unset,
+            skip_enrich_url = skipEnrichUrl,
+        ),
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
     private fun Map<String, Any>.toDto(): Map<String, Any> = with(dtoMapping) {
@@ -358,91 +351,73 @@ constructor(
         }
     }
 
-    override fun getMessage(messageId: String): Call<Message> {
-        return messageApi.getMessage(
-            messageId = messageId,
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    override fun getMessage(messageId: String): Call<Message> = messageApi.getMessage(
+        messageId = messageId,
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
-    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
-    }
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> = messageApi.getMessage(messageId).mapDomain { it.toDomain() }
 
     override fun deleteMessage(
         messageId: String,
         hard: Boolean,
         deleteForMe: Boolean,
-    ): Call<Message> {
-        return messageApi.deleteMessage(
-            messageId = messageId,
-            hard = if (hard) true else null,
-            deleteForMe = if (deleteForMe) true else null,
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    ): Call<Message> = messageApi.deleteMessage(
+        messageId = messageId,
+        hard = if (hard) true else null,
+        deleteForMe = if (deleteForMe) true else null,
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
     override fun getReactions(
         messageId: String,
         offset: Int,
         limit: Int,
-    ): Call<List<Reaction>> {
-        return messageApi.getReactions(
-            messageId = messageId,
-            offset = offset,
-            limit = limit,
-        ).mapDomain { response ->
-            response.reactions.map {
-                it.toDomain()
-            }
+    ): Call<List<Reaction>> = messageApi.getReactions(
+        messageId = messageId,
+        offset = offset,
+        limit = limit,
+    ).mapDomain { response ->
+        response.reactions.map {
+            it.toDomain()
         }
     }
 
-    override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> {
-        return messageApi.sendReaction(
-            messageId = reaction.messageId,
-            request = ReactionRequest(
-                reaction = with(dtoMapping) { reaction.toDto() },
-                enforce_unique = enforceUnique,
-                skip_push = skipPush,
-            ),
-        ).mapDomain { response ->
-            response.reaction.toDomain()
-        }
+    override fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction> = messageApi.sendReaction(
+        messageId = reaction.messageId,
+        request = ReactionRequest(
+            reaction = with(dtoMapping) { reaction.toDto() },
+            enforce_unique = enforceUnique,
+            skip_push = skipPush,
+        ),
+    ).mapDomain { response ->
+        response.reaction.toDomain()
     }
 
     override fun deleteReaction(
         messageId: String,
         reactionType: String,
-    ): Call<Message> {
-        return messageApi.deleteReaction(
-            messageId = messageId,
-            reactionType = reactionType,
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    ): Call<Message> = messageApi.deleteReaction(
+        messageId = messageId,
+        reactionType = reactionType,
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
-    override fun addDevice(device: Device): Call<Unit> {
-        return deviceApi.addDevices(
-            request = AddDeviceRequest(
-                device.token,
-                device.pushProvider.key,
-                device.providerName,
-            ),
-        ).toUnitCall()
-    }
+    override fun addDevice(device: Device): Call<Unit> = deviceApi.addDevices(
+        request = AddDeviceRequest(
+            device.token,
+            device.pushProvider.key,
+            device.providerName,
+        ),
+    ).toUnitCall()
 
-    override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
-    }
+    override fun deleteDevice(device: Device): Call<Unit> = deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
 
-    override fun getDevices(): Call<List<Device>> {
-        return deviceApi.getDevices().mapDomain { response ->
-            response.devices.map { it.toDomain() }
-        }
+    override fun getDevices(): Call<List<Device>> = deviceApi.getDevices().mapDomain { response ->
+        response.devices.map { it.toDomain() }
     }
 
     override fun setUserPushPreference(level: PushPreferenceLevel): Call<PushPreference> {
@@ -497,66 +472,54 @@ constructor(
             .parseChannelPushPreferencesResponse(cid)
     }
 
-    override fun muteCurrentUser(): Call<Mute> {
-        return muteUser(
-            userId = userId,
-            timeout = null,
-        )
-    }
+    override fun muteCurrentUser(): Call<Mute> = muteUser(
+        userId = userId,
+        timeout = null,
+    )
 
-    override fun unmuteCurrentUser(): Call<Unit> {
-        return unmuteUser(userId)
-    }
+    override fun unmuteCurrentUser(): Call<Unit> = unmuteUser(userId)
 
     override fun muteUser(
         userId: String,
         timeout: Int?,
-    ): Call<Mute> {
-        return moderationApi.muteUser(
-            body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
-                timeout = timeout,
-            ),
-        ).mapDomain { response ->
-            response.mute.toDomain()
-        }
+    ): Call<Mute> = moderationApi.muteUser(
+        body = MuteUserRequest(
+            target_id = userId,
+            user_id = this.userId,
+            timeout = timeout,
+        ),
+    ).mapDomain { response ->
+        response.mute.toDomain()
     }
 
-    override fun unmuteUser(userId: String): Call<Unit> {
-        return moderationApi.unmuteUser(
-            body = MuteUserRequest(
-                target_id = userId,
-                user_id = this.userId,
-                timeout = null,
-            ),
-        ).toUnitCall()
-    }
+    override fun unmuteUser(userId: String): Call<Unit> = moderationApi.unmuteUser(
+        body = MuteUserRequest(
+            target_id = userId,
+            user_id = this.userId,
+            timeout = null,
+        ),
+    ).toUnitCall()
 
     override fun muteChannel(
         channelType: String,
         channelId: String,
         expiration: Int?,
-    ): Call<Unit> {
-        return moderationApi.muteChannel(
-            body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
-                expiration = expiration,
-            ),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = moderationApi.muteChannel(
+        body = MuteChannelRequest(
+            channel_cid = "$channelType:$channelId",
+            expiration = expiration,
+        ),
+    ).toUnitCall()
 
     override fun unmuteChannel(
         channelType: String,
         channelId: String,
-    ): Call<Unit> {
-        return moderationApi.unmuteChannel(
-            body = MuteChannelRequest(
-                channel_cid = "$channelType:$channelId",
-                expiration = null,
-            ),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = moderationApi.unmuteChannel(
+        body = MuteChannelRequest(
+            channel_cid = "$channelType:$channelId",
+            expiration = null,
+        ),
+    ).toUnitCall()
 
     override fun sendFile(
         channelType: String,
@@ -616,26 +579,22 @@ constructor(
             }
     }
 
-    override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {
-        return CoroutineCall(coroutineScope) {
-            fileUploader.deleteFile(
-                channelType = channelType,
-                channelId = channelId,
-                userId = userId,
-                url = url,
-            )
-        }
+    override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> = CoroutineCall(coroutineScope) {
+        fileUploader.deleteFile(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            url = url,
+        )
     }
 
-    override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> {
-        return CoroutineCall(coroutineScope) {
-            fileUploader.deleteImage(
-                channelType = channelType,
-                channelId = channelId,
-                userId = userId,
-                url = url,
-            )
-        }
+    override fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit> = CoroutineCall(coroutineScope) {
+        fileUploader.deleteImage(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            url = url,
+        )
     }
 
     override fun uploadFile(
@@ -658,10 +617,9 @@ constructor(
 
     override fun deleteFile(
         url: String,
-    ): Call<Unit> =
-        CoroutineCall(coroutineScope) {
-            fileUploader.deleteFile(url = url)
-        }
+    ): Call<Unit> = CoroutineCall(coroutineScope) {
+        fileUploader.deleteFile(url = url)
+    }
 
     override fun uploadImage(
         file: File,
@@ -683,53 +641,44 @@ constructor(
 
     override fun deleteImage(
         url: String,
-    ): Call<Unit> =
-        CoroutineCall(coroutineScope) {
-            fileUploader.deleteImage(url = url)
-        }
+    ): Call<Unit> = CoroutineCall(coroutineScope) {
+        fileUploader.deleteImage(url = url)
+    }
 
     override fun flagUser(
         userId: String,
         reason: String?,
         customData: Map<String, String>,
-    ): Call<Flag> =
-        flag(
-            FlagUserRequest(
-                targetUserId = userId,
-                reason = reason,
-                custom = customData,
-            ),
-        )
+    ): Call<Flag> = flag(
+        FlagUserRequest(
+            targetUserId = userId,
+            reason = reason,
+            custom = customData,
+        ),
+    )
 
-    override fun unflagUser(userId: String): Call<Flag> =
-        unflag(mutableMapOf("target_user_id" to userId))
+    override fun unflagUser(userId: String): Call<Flag> = unflag(mutableMapOf("target_user_id" to userId))
 
     override fun flagMessage(
         messageId: String,
         reason: String?,
         customData: Map<String, String>,
-    ): Call<Flag> =
-        flag(
-            FlagMessageRequest(
-                targetMessageId = messageId,
-                reason = reason,
-                custom = customData,
-            ),
-        )
+    ): Call<Flag> = flag(
+        FlagMessageRequest(
+            targetMessageId = messageId,
+            reason = reason,
+            custom = customData,
+        ),
+    )
 
-    override fun unflagMessage(messageId: String): Call<Flag> =
-        unflag(mutableMapOf("target_message_id" to messageId))
+    override fun unflagMessage(messageId: String): Call<Flag> = unflag(mutableMapOf("target_message_id" to messageId))
 
-    private fun flag(body: FlagRequest): Call<Flag> {
-        return moderationApi.flag(body = body).mapDomain { response ->
-            response.flag.toDomain()
-        }
+    private fun flag(body: FlagRequest): Call<Flag> = moderationApi.flag(body = body).mapDomain { response ->
+        response.flag.toDomain()
     }
 
-    private fun unflag(body: Map<String, String>): Call<Flag> {
-        return moderationApi.unflag(body = body).mapDomain { response ->
-            response.flag.toDomain()
-        }
+    private fun unflag(body: Map<String, String>): Call<Flag> = moderationApi.unflag(body = body).mapDomain { response ->
+        response.flag.toDomain()
     }
 
     override fun banUser(
@@ -739,32 +688,28 @@ constructor(
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<Unit> {
-        return moderationApi.banUser(
-            body = BanUserRequest(
-                target_user_id = targetId,
-                timeout = timeout,
-                reason = reason,
-                type = channelType,
-                id = channelId,
-                shadow = shadow,
-            ),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = moderationApi.banUser(
+        body = BanUserRequest(
+            target_user_id = targetId,
+            timeout = timeout,
+            reason = reason,
+            type = channelType,
+            id = channelId,
+            shadow = shadow,
+        ),
+    ).toUnitCall()
 
     override fun unbanUser(
         targetId: String,
         channelType: String,
         channelId: String,
         shadow: Boolean,
-    ): Call<Unit> {
-        return moderationApi.unbanUser(
-            targetUserId = targetId,
-            channelId = channelId,
-            channelType = channelType,
-            shadow = shadow,
-        ).toUnitCall()
-    }
+    ): Call<Unit> = moderationApi.unbanUser(
+        targetUserId = targetId,
+        channelId = channelId,
+        channelType = channelType,
+        shadow = shadow,
+    ).toUnitCall()
 
     override fun queryBannedUsers(
         filter: FilterObject,
@@ -775,22 +720,20 @@ constructor(
         createdAtAfterOrEqual: Date?,
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
-    ): Call<List<BannedUser>> {
-        return moderationApi.queryBannedUsers(
-            payload = QueryBannedUsersRequest(
-                filter_conditions = filter.toMap(),
-                sort = sort.toDto(),
-                offset = offset,
-                limit = limit,
-                created_at_after = createdAtAfter,
-                created_at_after_or_equal = createdAtAfterOrEqual,
-                created_at_before = createdAtBefore,
-                created_at_before_or_equal = createdAtBeforeOrEqual,
-            ),
-        ).mapDomain { response ->
-            response.bans.map {
-                it.toDomain()
-            }
+    ): Call<List<BannedUser>> = moderationApi.queryBannedUsers(
+        payload = QueryBannedUsersRequest(
+            filter_conditions = filter.toMap(),
+            sort = sort.toDto(),
+            offset = offset,
+            limit = limit,
+            created_at_after = createdAtAfter,
+            created_at_after_or_equal = createdAtAfterOrEqual,
+            created_at_before = createdAtBefore,
+            created_at_before_or_equal = createdAtBeforeOrEqual,
+        ),
+    ).mapDomain { response ->
+        response.bans.map {
+            it.toDomain()
         }
     }
 
@@ -817,13 +760,11 @@ constructor(
         channelType: String,
         channelId: String,
         cooldownTimeInSeconds: Int,
-    ): Call<Channel> {
-        return channelApi.updateCooldown(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.updateCooldown(
+        channelType = channelType,
+        channelId = channelId,
+        body = UpdateCooldownRequest.create(cooldownTimeInSeconds),
+    ).map(this::flattenChannel)
 
     override fun stopWatching(channelType: String, channelId: String): Call<Unit> = postponeCall {
         channelApi.stopWatching(
@@ -840,19 +781,17 @@ constructor(
         limit: Int,
         sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
-    ): Call<List<Message>> {
-        return channelApi.getPinnedMessages(
-            channelType = channelType,
-            channelId = channelId,
-            payload = PinnedMessagesRequest.create(
-                limit = limit,
-                sort = sort,
-                pagination = pagination,
-            ),
-        ).mapDomain { response ->
-            response.messages.map {
-                it.toDomain()
-            }
+    ): Call<List<Message>> = channelApi.getPinnedMessages(
+        channelType = channelType,
+        channelId = channelId,
+        payload = PinnedMessagesRequest.create(
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
+        ),
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
         }
     }
 
@@ -861,140 +800,114 @@ constructor(
         channelId: String,
         extraData: Map<String, Any>,
         updateMessage: Message?,
-    ): Call<Channel> {
-        return channelApi.updateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                UpdateChannelRequest(
-                    extraData,
-                    updateMessage?.toDto(),
-                )
-            },
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.updateChannel(
+        channelType = channelType,
+        channelId = channelId,
+        body = with(dtoMapping) {
+            UpdateChannelRequest(
+                extraData,
+                updateMessage?.toDto(),
+            )
+        },
+    ).map(this::flattenChannel)
 
     override fun updateChannelPartial(
         channelType: String,
         channelId: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<Channel> {
-        return channelApi.updateChannelPartial(
-            channelType = channelType,
-            channelId = channelId,
-            body = UpdateChannelPartialRequest(set, unset),
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.updateChannelPartial(
+        channelType = channelType,
+        channelId = channelId,
+        body = UpdateChannelPartialRequest(set, unset),
+    ).map(this::flattenChannel)
 
     override fun showChannel(
         channelType: String,
         channelId: String,
-    ): Call<Unit> {
-        return channelApi.showChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = emptyMap(),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = channelApi.showChannel(
+        channelType = channelType,
+        channelId = channelId,
+        body = emptyMap(),
+    ).toUnitCall()
 
     override fun hideChannel(
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ): Call<Unit> {
-        return channelApi.hideChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = HideChannelRequest(clearHistory),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = channelApi.hideChannel(
+        channelType = channelType,
+        channelId = channelId,
+        body = HideChannelRequest(clearHistory),
+    ).toUnitCall()
 
     override fun truncateChannel(
         channelType: String,
         channelId: String,
         systemMessage: Message?,
-    ): Call<Channel> {
-        return channelApi.truncateChannel(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toDto()) },
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.truncateChannel(
+        channelType = channelType,
+        channelId = channelId,
+        body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toDto()) },
+    ).map(this::flattenChannel)
 
-    override fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
-        return channelApi.rejectInvite(
-            channelType = channelType,
-            channelId = channelId,
-            body = RejectInviteRequest(),
-        ).map(this::flattenChannel)
-    }
+    override fun rejectInvite(channelType: String, channelId: String): Call<Channel> = channelApi.rejectInvite(
+        channelType = channelType,
+        channelId = channelId,
+        body = RejectInviteRequest(),
+    ).map(this::flattenChannel)
 
     override fun acceptInvite(
         channelType: String,
         channelId: String,
         message: String?,
-    ): Call<Channel> {
-        return channelApi.acceptInvite(
-            channelType = channelType,
-            channelId = channelId,
-            body = AcceptInviteRequest.create(userId = userId, message = message),
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.acceptInvite(
+        channelType = channelType,
+        channelId = channelId,
+        body = AcceptInviteRequest.create(userId = userId, message = message),
+    ).map(this::flattenChannel)
 
-    override fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
-        return channelApi.deleteChannel(
-            channelType = channelType,
-            channelId = channelId,
-        ).map(this::flattenChannel)
-    }
+    override fun deleteChannel(channelType: String, channelId: String): Call<Channel> = channelApi.deleteChannel(
+        channelType = channelType,
+        channelId = channelId,
+    ).map(this::flattenChannel)
 
     override fun getUnreadCounts(): Call<UnreadCounts> = generalApi.getUnreadCounts()
         .mapDomain { it.toDomain() }
 
-    override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
-        return channelApi.markRead(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkReadRequest(message_id = messageId),
-        ).toUnitCall()
-    }
+    override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> = channelApi.markRead(
+        channelType = channelType,
+        channelId = channelId,
+        request = MarkReadRequest(message_id = messageId),
+    ).toUnitCall()
 
-    override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
-        return channelApi.markRead(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkReadRequest(thread_id = threadId),
-        ).toUnitCall()
-    }
+    override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> = channelApi.markRead(
+        channelType = channelType,
+        channelId = channelId,
+        request = MarkReadRequest(thread_id = threadId),
+    ).toUnitCall()
 
-    override fun markUnread(channelType: String, channelId: String, messageId: String): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(messageId),
-        ).toUnitCall()
-    }
+    override fun markUnread(channelType: String, channelId: String, messageId: String): Call<Unit> = channelApi.markUnread(
+        channelType = channelType,
+        channelId = channelId,
+        request = MarkUnreadRequest(messageId),
+    ).toUnitCall()
 
     override fun markThreadUnread(
         channelType: String,
         channelId: String,
         threadId: String,
         messageId: String,
-    ): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(
-                thread_id = threadId,
-                message_id = messageId,
-            ),
-        ).toUnitCall()
-    }
+    ): Call<Unit> = channelApi.markUnread(
+        channelType = channelType,
+        channelId = channelId,
+        request = MarkUnreadRequest(
+            thread_id = threadId,
+            message_id = messageId,
+        ),
+    ).toUnitCall()
 
-    override fun markAllRead(): Call<Unit> {
-        return channelApi.markAllRead().toUnitCall()
-    }
+    override fun markAllRead(): Call<Unit> = channelApi.markAllRead().toUnitCall()
 
     override fun addMembers(
         channelType: String,
@@ -1003,20 +916,18 @@ constructor(
         systemMessage: Message?,
         hideHistory: Boolean?,
         skipPush: Boolean?,
-    ): Call<Channel> {
-        return channelApi.addMembers(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                AddMembersRequest(
-                    add_members = members.map { it.toDto() },
-                    message = systemMessage?.toDto(),
-                    hide_history = hideHistory,
-                    skip_push = skipPush,
-                )
-            },
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.addMembers(
+        channelType = channelType,
+        channelId = channelId,
+        body = with(dtoMapping) {
+            AddMembersRequest(
+                add_members = members.map { it.toDto() },
+                message = systemMessage?.toDto(),
+                hide_history = hideHistory,
+                skip_push = skipPush,
+            )
+        },
+    ).map(this::flattenChannel)
 
     override fun removeMembers(
         channelType: String,
@@ -1024,19 +935,17 @@ constructor(
         members: List<String>,
         systemMessage: Message?,
         skipPush: Boolean?,
-    ): Call<Channel> {
-        return channelApi.removeMembers(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                RemoveMembersRequest(
-                    members,
-                    systemMessage?.toDto(),
-                    skipPush,
-                )
-            },
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.removeMembers(
+        channelType = channelType,
+        channelId = channelId,
+        body = with(dtoMapping) {
+            RemoveMembersRequest(
+                members,
+                systemMessage?.toDto(),
+                skipPush,
+            )
+        },
+    ).map(this::flattenChannel)
 
     override fun inviteMembers(
         channelType: String,
@@ -1044,19 +953,17 @@ constructor(
         members: List<String>,
         systemMessage: Message?,
         skipPush: Boolean?,
-    ): Call<Channel> {
-        return channelApi.inviteMembers(
-            channelType = channelType,
-            channelId = channelId,
-            body = with(dtoMapping) {
-                InviteMembersRequest(
-                    members,
-                    systemMessage?.toDto(),
-                    skipPush,
-                )
-            },
-        ).map(this::flattenChannel)
-    }
+    ): Call<Channel> = channelApi.inviteMembers(
+        channelType = channelType,
+        channelId = channelId,
+        body = with(dtoMapping) {
+            InviteMembersRequest(
+                members,
+                systemMessage?.toDto(),
+                skipPush,
+            )
+        },
+    ).map(this::flattenChannel)
 
     override fun partialUpdateMember(
         channelType: String,
@@ -1064,15 +971,13 @@ constructor(
         userId: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<Member> {
-        return channelApi.partialUpdateMember(
-            channelType = channelType,
-            channelId = channelId,
-            userId = userId,
-            body = UpdateMemberPartialRequest(set, unset),
-        ).mapDomain { response ->
-            response.channel_member.toDomain()
-        }
+    ): Call<Member> = channelApi.partialUpdateMember(
+        channelType = channelType,
+        channelId = channelId,
+        userId = userId,
+        body = UpdateMemberPartialRequest(set, unset),
+    ).mapDomain { response ->
+        response.channel_member.toDomain()
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
@@ -1123,106 +1028,86 @@ constructor(
         }
     }
 
-    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        return messageApi.getReplies(
-            messageId = messageId,
-            limit = limit,
-        ).mapDomain { response ->
-            response.messages.map {
-                it.toDomain()
-            }
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> = messageApi.getReplies(
+        messageId = messageId,
+        limit = limit,
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
         }
     }
 
-    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
-        return messageApi.getRepliesMore(
-            messageId = messageId,
-            limit = limit,
-            firstId = firstId,
-        ).mapDomain { response ->
-            response.messages.map {
-                it.toDomain()
-            }
+    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> = messageApi.getRepliesMore(
+        messageId = messageId,
+        limit = limit,
+        firstId = firstId,
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
         }
     }
 
-    override fun sendAction(request: DomainSendActionRequest): Call<Message> {
-        return messageApi.sendAction(
-            messageId = request.messageId,
-            request = SendActionRequest(
-                channel_id = request.channelId,
-                message_id = request.messageId,
-                type = request.type,
-                form_data = request.formData,
-            ),
-        ).mapDomain { response ->
-            response.message.toDomain()
+    override fun sendAction(request: DomainSendActionRequest): Call<Message> = messageApi.sendAction(
+        messageId = request.messageId,
+        request = SendActionRequest(
+            channel_id = request.channelId,
+            message_id = request.messageId,
+            type = request.type,
+            form_data = request.formData,
+        ),
+    ).mapDomain { response ->
+        response.message.toDomain()
+    }
+
+    override fun updateUsers(users: List<User>): Call<List<User>> = userApi.updateUsers(
+        connectionId = connectionId,
+        body = with(dtoMapping) {
+            UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
+        },
+    ).mapDomain { response ->
+        response.users.values.map {
+            it.toDomain()
         }
     }
 
-    override fun updateUsers(users: List<User>): Call<List<User>> {
-        return userApi.updateUsers(
-            connectionId = connectionId,
-            body = with(dtoMapping) {
-                UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
-            },
-        ).mapDomain { response ->
-            response.users.values.map {
-                it.toDomain()
-            }
-        }
+    override fun blockUser(userId: String): Call<UserBlock> = userApi.blockUser(
+        body = BlockUserRequest(userId),
+    ).mapDomain { response ->
+        response.toDomain()
     }
 
-    override fun blockUser(userId: String): Call<UserBlock> {
-        return userApi.blockUser(
-            body = BlockUserRequest(userId),
-        ).mapDomain { response ->
-            response.toDomain()
-        }
+    override fun queryBlockedUsers(): Call<List<UserBlock>> = userApi.queryBlockedUsers().mapDomain {
+        it.blocks.toDomain()
     }
 
-    override fun queryBlockedUsers(): Call<List<UserBlock>> =
-        userApi.queryBlockedUsers().mapDomain {
-            it.blocks.toDomain()
-        }
+    override fun unblockUser(userId: String): Call<Unit> = userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
 
-    override fun unblockUser(userId: String): Call<Unit> {
-        return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> = userApi.partialUpdateUsers(
+        connectionId = connectionId,
+        body = PartialUpdateUsersRequest(
+            listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
+        ),
+    ).mapDomain { response ->
+        response.users.values.map { it.toDomain() }
     }
 
-    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
-        return userApi.partialUpdateUsers(
-            connectionId = connectionId,
-            body = PartialUpdateUsersRequest(
-                listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
-            ),
-        ).mapDomain { response ->
-            response.users.values.map { it.toDomain() }
-        }
+    override fun getGuestUser(userId: String, userName: String): Call<GuestUser> = guestApi.getGuestUser(
+        body = GuestUserRequest.create(userId, userName),
+    ).mapDomain { response ->
+        GuestUser(
+            response.user.toDomain(),
+            response.access_token,
+        )
     }
 
-    override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
-        return guestApi.getGuestUser(
-            body = GuestUserRequest.create(userId, userName),
-        ).mapDomain { response ->
-            GuestUser(
-                response.user.toDomain(),
-                response.access_token,
-            )
-        }
+    override fun translate(messageId: String, language: String): Call<Message> = messageApi.translate(
+        messageId = messageId,
+        request = TranslateMessageRequest(language),
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
-    override fun translate(messageId: String, language: String): Call<Message> {
-        return messageApi.translate(
-            messageId = messageId,
-            request = TranslateMessageRequest(language),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
-    }
-
-    override fun og(url: String): Call<Attachment> =
-        ogApi.get(url).mapDomain { it.toDomain() }
+    override fun og(url: String): Call<Attachment> = ogApi.get(url).mapDomain { it.toDomain() }
 
     override fun searchMessages(
         channelFilter: FilterObject,
@@ -1391,22 +1276,18 @@ constructor(
         channelType: String,
         callId: String,
         callType: String,
-    ): Call<VideoCallInfo> {
-        return callApi.createCall(
-            channelId = channelId,
-            channelType = channelType,
-            request = VideoCallCreateRequest(id = callId, type = callType),
-        ).map(CreateVideoCallResponse::toDomain)
-    }
+    ): Call<VideoCallInfo> = callApi.createCall(
+        channelId = channelId,
+        channelType = channelType,
+        request = VideoCallCreateRequest(id = callId, type = callType),
+    ).map(CreateVideoCallResponse::toDomain)
 
     @Deprecated(
         "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @Suppress("DEPRECATION")
-    override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
-        return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
-    }
+    override fun getVideoCallToken(callId: String): Call<VideoCallToken> = callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
 
     override fun sendEvent(
         eventType: String,
@@ -1426,21 +1307,18 @@ constructor(
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
-        with(eventMapping) {
-            return generalApi.getSyncHistory(
-                body = SyncHistoryRequest(channelIds, lastSyncAt),
-                connectionId = connectionId,
-            ).map { response ->
-                response.events.map {
-                    it.toDomain()
-                }
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> = with(eventMapping) {
+        return generalApi.getSyncHistory(
+            body = SyncHistoryRequest(channelIds, lastSyncAt),
+            connectionId = connectionId,
+        ).map { response ->
+            response.events.map {
+                it.toDomain()
             }
         }
-
-    override fun downloadFile(fileUrl: String): Call<ResponseBody> {
-        return fileDownloadApi.downloadFile(fileUrl)
     }
+
+    override fun downloadFile(fileUrl: String): Call<ResponseBody> = fileDownloadApi.downloadFile(fileUrl)
 
     /**
      * Queries a list of threads for the current user.
@@ -1513,16 +1391,14 @@ constructor(
      * @param set The fields to set.
      * @param unset The fields to unset.
      */
-    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Thread> {
-        return threadsApi.partialUpdateThread(
-            messageId = messageId,
-            body = PartialUpdateThreadRequest(
-                set = set,
-                unset = unset,
-            ),
-        ).mapDomain { response ->
-            response.thread.toDomain()
-        }
+    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Thread> = threadsApi.partialUpdateThread(
+        messageId = messageId,
+        body = PartialUpdateThreadRequest(
+            set = set,
+            unset = unset,
+        ),
+    ).mapDomain { response ->
+        response.thread.toDomain()
     }
 
     override fun castPollVote(
@@ -1549,73 +1425,59 @@ constructor(
         messageId: String,
         pollId: String,
         vote: UpstreamVoteDto,
-    ): Call<Vote> =
-        pollsApi.castPollVote(
-            messageId,
-            pollId,
-            PollVoteRequest(vote),
-        ).mapDomain { it.vote.toDomain() }
+    ): Call<Vote> = pollsApi.castPollVote(
+        messageId,
+        pollId,
+        PollVoteRequest(vote),
+    ).mapDomain { it.vote.toDomain() }
 
-    override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
-        pollsApi.removePollVote(
-            messageId,
-            pollId,
-            voteId,
-        ).mapDomain { it.vote.toDomain() }
+    override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> = pollsApi.removePollVote(
+        messageId,
+        pollId,
+        voteId,
+    ).mapDomain { it.vote.toDomain() }
 
-    override fun closePoll(pollId: String): Call<Poll> =
-        pollsApi.updatePoll(
-            pollId,
-            PollUpdateRequest(
-                set = mapOf("is_closed" to true),
-            ),
-        ).mapDomain { it.poll.toDomain() }
+    override fun closePoll(pollId: String): Call<Poll> = pollsApi.updatePoll(
+        pollId,
+        PollUpdateRequest(
+            set = mapOf("is_closed" to true),
+        ),
+    ).mapDomain { it.poll.toDomain() }
 
-    override fun suggestPollOption(pollId: String, option: String): Call<Option> =
-        pollsApi.suggestPollOption(
-            pollId,
-            SuggestPollOptionRequest(option),
-        ).mapDomain { it.poll_option.toDomain() }
+    override fun suggestPollOption(pollId: String, option: String): Call<Option> = pollsApi.suggestPollOption(
+        pollId,
+        SuggestPollOptionRequest(option),
+    ).mapDomain { it.poll_option.toDomain() }
 
-    override fun createPoll(pollConfig: PollConfig): Call<Poll> {
-        return pollsApi.createPoll(
-            PollRequest(
-                name = pollConfig.name,
-                description = pollConfig.description,
-                options = pollConfig.options.map(::UpstreamOptionDto),
-                voting_visibility = when (pollConfig.votingVisibility) {
-                    VotingVisibility.PUBLIC -> PollRequest.VOTING_VISIBILITY_PUBLIC
-                    VotingVisibility.ANONYMOUS -> PollRequest.VOTING_VISIBILITY_ANONYMOUS
-                },
-                enforce_unique_vote = pollConfig.enforceUniqueVote,
-                max_votes_allowed = pollConfig.maxVotesAllowed,
-                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-                allow_answers = pollConfig.allowAnswers,
-            ),
-        ).mapDomain { it.poll.toDomain() }
-    }
+    override fun createPoll(pollConfig: PollConfig): Call<Poll> = pollsApi.createPoll(
+        PollRequest(
+            name = pollConfig.name,
+            description = pollConfig.description,
+            options = pollConfig.options.map(::UpstreamOptionDto),
+            voting_visibility = when (pollConfig.votingVisibility) {
+                VotingVisibility.PUBLIC -> PollRequest.VOTING_VISIBILITY_PUBLIC
+                VotingVisibility.ANONYMOUS -> PollRequest.VOTING_VISIBILITY_ANONYMOUS
+            },
+            enforce_unique_vote = pollConfig.enforceUniqueVote,
+            max_votes_allowed = pollConfig.maxVotesAllowed,
+            allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
+            allow_answers = pollConfig.allowAnswers,
+        ),
+    ).mapDomain { it.poll.toDomain() }
 
-    override fun deletePoll(pollId: String): Call<Unit> {
-        return pollsApi.deletePoll(pollId).toUnitCall()
-    }
+    override fun deletePoll(pollId: String): Call<Unit> = pollsApi.deletePoll(pollId).toUnitCall()
 
-    override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return remindersApi.createReminder(
-            messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
-        ).mapDomain { it.reminder.toDomain() }
-    }
+    override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> = remindersApi.createReminder(
+        messageId = messageId,
+        body = ReminderRequest(remind_at = remindAt),
+    ).mapDomain { it.reminder.toDomain() }
 
-    override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
-        return remindersApi.updateReminder(
-            messageId = messageId,
-            body = ReminderRequest(remind_at = remindAt),
-        ).mapDomain { it.reminder.toDomain() }
-    }
+    override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> = remindersApi.updateReminder(
+        messageId = messageId,
+        body = ReminderRequest(remind_at = remindAt),
+    ).mapDomain { it.reminder.toDomain() }
 
-    override fun deleteReminder(messageId: String): Call<Unit> {
-        return remindersApi.deleteReminder(messageId).toUnitCall()
-    }
+    override fun deleteReminder(messageId: String): Call<Unit> = remindersApi.deleteReminder(messageId).toUnitCall()
 
     override fun queryReminders(
         filter: FilterObject,
@@ -1632,46 +1494,40 @@ constructor(
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
 
-    override fun queryActiveLocations(): Call<List<Location>> =
-        userApi.liveLocations().mapDomain {
-            it.active_live_locations.map {
-                it.toDomain()
-            }
+    override fun queryActiveLocations(): Call<List<Location>> = userApi.liveLocations().mapDomain {
+        it.active_live_locations.map {
+            it.toDomain()
         }
+    }
 
-    override fun updateLiveLocation(location: Location): Call<Location> =
-        userApi.updateLiveLocation(
-            UpdateLiveLocationRequest(
-                message_id = location.messageId,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                created_by_device_id = location.deviceId,
-            ),
-        ).mapDomain { response ->
-            response.toDomain()
-        }
+    override fun updateLiveLocation(location: Location): Call<Location> = userApi.updateLiveLocation(
+        UpdateLiveLocationRequest(
+            message_id = location.messageId,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            created_by_device_id = location.deviceId,
+        ),
+    ).mapDomain { response ->
+        response.toDomain()
+    }
 
-    override fun stopLiveLocation(location: Location): Call<Location> =
-        userApi.updateLiveLocation(
-            UpdateLiveLocationRequest(
-                message_id = location.messageId,
-                created_by_device_id = location.deviceId,
-                end_at = location.endAt,
-            ),
-        ).mapDomain { response ->
-            response.toDomain()
-        }
+    override fun stopLiveLocation(location: Location): Call<Location> = userApi.updateLiveLocation(
+        UpdateLiveLocationRequest(
+            message_id = location.messageId,
+            created_by_device_id = location.deviceId,
+            end_at = location.endAt,
+        ),
+    ).mapDomain { response ->
+        response.toDomain()
+    }
 
     override fun warmUp() {
         generalApi.warmUp().enqueue()
     }
 
-    private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
-        return callPostponeHelper.postponeCall(call)
-    }
+    private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> = callPostponeHelper.postponeCall(call)
 
-    private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
-        map { domainMapping.transform(it) }
+    private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> = map { domainMapping.transform(it) }
 
     private fun RetrofitCall<PushPreferencesResponse>.parseUserPushPreferencesResponse() = flatMapDomain {
         val currentUserId = currentUserIdProvider().orEmpty()
@@ -1703,6 +1559,5 @@ constructor(
         }
     }
 
-    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> =
-        flatMap { domainMapping.transform(it) }
+    private fun <T : Any, R : Any> RetrofitCall<T>.flatMapDomain(transform: DomainMapping.(T) -> Call<R>): Call<R> = flatMap { domainMapping.transform(it) }
 }

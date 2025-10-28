@@ -27,23 +27,21 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     @OptIn(InternalStreamChatApi::class)
-    override fun getItems(): List<MessageListItem.MessageItem> {
-        return listOf(
-            MessageListItem.MessageItem(
-                message = Message(
-                    text = "/giphy Victory",
-                    type = MessageType.EPHEMERAL,
-                    command = AttachmentType.GIPHY,
-                    attachments = mutableListOf(
-                        Attachment(
-                            thumbUrl = "https://media4.giphy.com/media/o75ajIFH0QnQC3nCeD/giphy.gif",
-                            type = AttachmentType.GIPHY,
-                        ),
+    override fun getItems(): List<MessageListItem.MessageItem> = listOf(
+        MessageListItem.MessageItem(
+            message = Message(
+                text = "/giphy Victory",
+                type = MessageType.EPHEMERAL,
+                command = AttachmentType.GIPHY,
+                attachments = mutableListOf(
+                    Attachment(
+                        thumbUrl = "https://media4.giphy.com/media/o75ajIFH0QnQC3nCeD/giphy.gif",
+                        type = AttachmentType.GIPHY,
                     ),
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
-                isMine = true,
             ),
-        )
-    }
+            positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+            isMine = true,
+        ),
+    )
 }

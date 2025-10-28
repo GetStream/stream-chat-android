@@ -49,11 +49,9 @@ public open class ThreadListItemViewHolderFactory {
      *
      * @param item The [ThreadListItem] to check the type of.
      */
-    public open fun getItemViewType(item: ThreadListItem): Int {
-        return when (item) {
-            is ThreadListItem.ThreadItem -> ThreadListItemViewType.ITEM_THREAD
-            is ThreadListItem.LoadingMoreItem -> ThreadListItemViewType.ITEM_LOADING_MORE
-        }
+    public open fun getItemViewType(item: ThreadListItem): Int = when (item) {
+        is ThreadListItem.ThreadItem -> ThreadListItemViewType.ITEM_THREAD
+        is ThreadListItem.LoadingMoreItem -> ThreadListItemViewType.ITEM_LOADING_MORE
     }
 
     /**
@@ -63,12 +61,10 @@ public open class ThreadListItemViewHolderFactory {
      *
      * @param viewHolder The [BaseThreadListItemViewHolder] to check the type of.
      */
-    public open fun getItemViewType(viewHolder: BaseThreadListItemViewHolder<out ThreadListItem>): Int {
-        return when (viewHolder) {
-            is ThreadItemViewHolder -> ThreadListItemViewType.ITEM_THREAD
-            is ThreadListLoadingMoreViewHolder -> ThreadListItemViewType.ITEM_LOADING_MORE
-            else -> throw IllegalArgumentException("Unhandled ThreadList view holder: $viewHolder")
-        }
+    public open fun getItemViewType(viewHolder: BaseThreadListItemViewHolder<out ThreadListItem>): Int = when (viewHolder) {
+        is ThreadItemViewHolder -> ThreadListItemViewType.ITEM_THREAD
+        is ThreadListLoadingMoreViewHolder -> ThreadListItemViewType.ITEM_LOADING_MORE
+        else -> throw IllegalArgumentException("Unhandled ThreadList view holder: $viewHolder")
     }
 
     /**
@@ -81,12 +77,10 @@ public open class ThreadListItemViewHolderFactory {
     public open fun createViewHolder(
         parentView: ViewGroup,
         viewType: Int,
-    ): BaseThreadListItemViewHolder<out ThreadListItem> {
-        return when (viewType) {
-            ThreadListItemViewType.ITEM_THREAD -> createThreadItemViewHolder(parentView)
-            ThreadListItemViewType.ITEM_LOADING_MORE -> createLoadingMoreViewHolder(parentView)
-            else -> throw IllegalArgumentException("Unhandled ThreadList view type: $viewType")
-        }
+    ): BaseThreadListItemViewHolder<out ThreadListItem> = when (viewType) {
+        ThreadListItemViewType.ITEM_THREAD -> createThreadItemViewHolder(parentView)
+        ThreadListItemViewType.ITEM_LOADING_MORE -> createLoadingMoreViewHolder(parentView)
+        else -> throw IllegalArgumentException("Unhandled ThreadList view type: $viewType")
     }
 
     /**
@@ -96,9 +90,7 @@ public open class ThreadListItemViewHolderFactory {
      */
     protected open fun createThreadItemViewHolder(
         parentView: ViewGroup,
-    ): BaseThreadListItemViewHolder<ThreadListItem.ThreadItem> {
-        return ThreadItemViewHolder(parentView, style, clickListener)
-    }
+    ): BaseThreadListItemViewHolder<ThreadListItem.ThreadItem> = ThreadItemViewHolder(parentView, style, clickListener)
 
     /**
      * Creates the ViewHolder for the [ThreadListItemViewType.ITEM_LOADING_MORE] ([ThreadListItem.LoadingMoreItem])
@@ -108,9 +100,7 @@ public open class ThreadListItemViewHolderFactory {
      */
     protected open fun createLoadingMoreViewHolder(
         parentView: ViewGroup,
-    ): BaseThreadListItemViewHolder<ThreadListItem.LoadingMoreItem> {
-        return ThreadListLoadingMoreViewHolder(parentView)
-    }
+    ): BaseThreadListItemViewHolder<ThreadListItem.LoadingMoreItem> = ThreadListLoadingMoreViewHolder(parentView)
 
     /**
      * Sets the [ThreadListViewStyle] to be used by the created ViewHolders.

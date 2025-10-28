@@ -119,10 +119,9 @@ internal object Mother {
      */
     fun randomGetRequest(
         url: String = "http://${randomString()}",
-    ): Request =
-        Request.Builder()
-            .url(url)
-            .build()
+    ): Request = Request.Builder()
+        .url(url)
+        .build()
 
     /**
      * Provides a POST request with a configurable [url] and [body].
@@ -130,11 +129,10 @@ internal object Mother {
     fun randomPostRequest(
         url: String = "http://${randomString()}",
         body: String = randomString(),
-    ): Request =
-        Request.Builder()
-            .url(url)
-            .post(body.toRequestBody())
-            .build()
+    ): Request = Request.Builder()
+        .url(url)
+        .post(body.toRequestBody())
+        .build()
 
     /**
      * Provides a POST request with a configurable [url], [body], [tagType], and [tag].
@@ -144,29 +142,27 @@ internal object Mother {
         body: String = randomString(),
         tagType: Class<in T>? = null,
         tag: T? = null,
-    ): Request =
-        Request.Builder()
-            .url(url)
-            .post(body.toRequestBody())
-            .apply {
-                if (tagType != null) {
-                    tag(tagType, tag)
-                }
+    ): Request = Request.Builder()
+        .url(url)
+        .post(body.toRequestBody())
+        .apply {
+            if (tagType != null) {
+                tag(tagType, tag)
             }
-            .build()
+        }
+        .build()
 
     fun randomUserPresenceChangedEvent(
         type: String = randomString(),
         createdAt: Date = randomDate(),
         rawCreatedAt: String = randomString(),
         user: User = randomUser(),
-    ): UserPresenceChangedEvent =
-        UserPresenceChangedEvent(
-            type = type,
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt,
-            user = user,
-        )
+    ): UserPresenceChangedEvent = UserPresenceChangedEvent(
+        type = type,
+        createdAt = createdAt,
+        rawCreatedAt = rawCreatedAt,
+        user = user,
+    )
 
     fun randomUserConnectionConf(
         endpoint: String = randomString(),
@@ -198,8 +194,7 @@ internal object Mother {
         }
     }
 
-    fun randomConnectionType(): ChatSocketStateService.ConnectionType =
-        ChatSocketStateService.ConnectionType.entries.random()
+    fun randomConnectionType(): ChatSocketStateService.ConnectionType = ChatSocketStateService.ConnectionType.entries.random()
 
     fun chatLoggerConfig(): ChatLoggerConfig = object : ChatLoggerConfig {
         override val level: ChatLogLevel = ChatLogLevel.NOTHING
@@ -211,9 +206,7 @@ internal object Mother {
         createdAt: Date = randomDate(),
         me: User = randomUser(),
         connectionId: String = randomString(),
-    ): ConnectedEvent {
-        return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
-    }
+    ): ConnectedEvent = ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
 
     fun randomDraftMessageResponse(
         draft: DownstreamDraftDto = randomDownstreamDraftDto(),
@@ -303,49 +296,47 @@ internal object Mother {
         member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
         deleted_for_me: Boolean? = null,
         extraData: Map<String, Any> = emptyMap(),
-    ): DownstreamMessageDto {
-        return DownstreamMessageDto(
-            attachments = attachments,
-            channel = channel,
-            cid = cid,
-            command = command,
-            created_at = created_at,
-            deleted_at = deleted_at,
-            html = html,
-            i18n = i18n,
-            id = id,
-            latest_reactions = latest_reactions,
-            mentioned_users = mentioned_users,
-            own_reactions = own_reactions,
-            parent_id = parent_id,
-            pin_expires = pin_expires,
-            pinned = pinned,
-            pinned_at = pinned_at,
-            message_text_updated_at = message_text_updated_at,
-            pinned_by = pinned_by,
-            quoted_message = quoted_message,
-            quoted_message_id = quoted_message_id,
-            reaction_counts = reaction_counts,
-            reaction_scores = reaction_scores,
-            reaction_groups = reaction_groups,
-            reply_count = reply_count,
-            deleted_reply_count = deleted_reply_count,
-            shadowed = shadowed,
-            show_in_channel = show_in_channel,
-            silent = silent,
-            text = text,
-            thread_participants = thread_participants,
-            type = type,
-            updated_at = updated_at,
-            user = user,
-            moderation_details = moderation_details,
-            moderation = moderation,
-            poll = poll,
-            member = member,
-            deleted_for_me = deleted_for_me,
-            extraData = extraData,
-        )
-    }
+    ): DownstreamMessageDto = DownstreamMessageDto(
+        attachments = attachments,
+        channel = channel,
+        cid = cid,
+        command = command,
+        created_at = created_at,
+        deleted_at = deleted_at,
+        html = html,
+        i18n = i18n,
+        id = id,
+        latest_reactions = latest_reactions,
+        mentioned_users = mentioned_users,
+        own_reactions = own_reactions,
+        parent_id = parent_id,
+        pin_expires = pin_expires,
+        pinned = pinned,
+        pinned_at = pinned_at,
+        message_text_updated_at = message_text_updated_at,
+        pinned_by = pinned_by,
+        quoted_message = quoted_message,
+        quoted_message_id = quoted_message_id,
+        reaction_counts = reaction_counts,
+        reaction_scores = reaction_scores,
+        reaction_groups = reaction_groups,
+        reply_count = reply_count,
+        deleted_reply_count = deleted_reply_count,
+        shadowed = shadowed,
+        show_in_channel = show_in_channel,
+        silent = silent,
+        text = text,
+        thread_participants = thread_participants,
+        type = type,
+        updated_at = updated_at,
+        user = user,
+        moderation_details = moderation_details,
+        moderation = moderation,
+        poll = poll,
+        member = member,
+        deleted_for_me = deleted_for_me,
+        extraData = extraData,
+    )
 
     fun randomDownstreamUserDto(
         id: String = randomString(),
@@ -537,17 +528,15 @@ internal object Mother {
         watchersLimit: Int = randomInt(),
         watchersOffset: Int = randomInt(),
         messagesLimit: Int = randomInt(),
-    ): QueryChannelRequest {
-        return QueryChannelRequest()
-            .withMembers(memberLimit, memberOffset)
-            .withMembers(watchersLimit, watchersOffset)
-            .withMessages(messagesLimit)
-            .apply {
-                this.state = state
-                this.watch = watch
-                this.presence = presence
-            }
-    }
+    ): QueryChannelRequest = QueryChannelRequest()
+        .withMembers(memberLimit, memberOffset)
+        .withMembers(watchersLimit, watchersOffset)
+        .withMessages(messagesLimit)
+        .apply {
+            this.state = state
+            this.watch = watch
+            this.presence = presence
+        }
 
     /**
      * Provides a [SendActionRequest] with random parameters (that can also be customized).
@@ -574,16 +563,14 @@ internal object Mother {
         querySort: QuerySorter<Channel> = QuerySortByField(),
         messageLimit: Int = randomInt(),
         memberLimit: Int = randomInt(),
-    ): QueryChannelsRequest {
-        return QueryChannelsRequest(
-            filter = filter,
-            offset = offset,
-            limit = limit,
-            querySort = querySort,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-        )
-    }
+    ): QueryChannelsRequest = QueryChannelsRequest(
+        filter = filter,
+        offset = offset,
+        limit = limit,
+        querySort = querySort,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+    )
 
     fun randomAppSettingsResponse(app: AppDto = randomAppDto()): AppSettingsResponse = AppSettingsResponse(app)
 
@@ -707,8 +694,7 @@ internal object Mother {
         extraData = extraData,
     )
 
-    fun randomDownstreamMemberInfoDto(channelRole: String? = randomString()): DownstreamMemberInfoDto =
-        DownstreamMemberInfoDto(channel_role = channelRole)
+    fun randomDownstreamMemberInfoDto(channelRole: String? = randomString()): DownstreamMemberInfoDto = DownstreamMemberInfoDto(channel_role = channelRole)
 
     fun randomDownstreamChannelUserRead(
         user: DownstreamUserDto = randomDownstreamUserDto(),
@@ -864,11 +850,9 @@ internal object Mother {
         read_receipts = readReceipts,
     )
 
-    fun randomTypingIndicatorsDto(enabled: Boolean = randomBoolean()): TypingIndicatorsDto =
-        TypingIndicatorsDto(enabled)
+    fun randomTypingIndicatorsDto(enabled: Boolean = randomBoolean()): TypingIndicatorsDto = TypingIndicatorsDto(enabled)
 
-    fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto =
-        ReadReceiptsDto(enabled)
+    fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto = ReadReceiptsDto(enabled)
 
     fun randomQueryUsersRequest(
         filter: FilterObject = Filters.neutral(),
@@ -1020,8 +1004,7 @@ internal object Mother {
         created_at = createdAt,
     )
 
-    fun randomUnblockUserResponse(duration: String = randomString()): UnblockUserResponse =
-        UnblockUserResponse(duration)
+    fun randomUnblockUserResponse(duration: String = randomString()): UnblockUserResponse = UnblockUserResponse(duration)
 
     fun randomTokenResponse(
         user: DownstreamUserDto = randomDownstreamUserDto(),
@@ -1204,11 +1187,10 @@ internal object Mother {
     fun randomErrorDetail(
         code: Int = randomInt(),
         messages: List<String> = listOf(randomString()),
-    ): SocketErrorResponse.ErrorResponse.ErrorDetail =
-        SocketErrorResponse.ErrorResponse.ErrorDetail(
-            code = code,
-            messages = messages,
-        )
+    ): SocketErrorResponse.ErrorResponse.ErrorDetail = SocketErrorResponse.ErrorResponse.ErrorDetail(
+        code = code,
+        messages = messages,
+    )
 
     fun randomUnreadDto(
         totalUnreadCount: Int = randomInt(),

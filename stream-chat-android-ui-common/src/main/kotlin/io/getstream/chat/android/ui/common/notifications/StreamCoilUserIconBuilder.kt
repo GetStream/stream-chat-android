@@ -31,9 +31,8 @@ import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
         "we are using it by reflection",
 )
 public class StreamCoilUserIconBuilder(private val context: Context) : UserIconBuilder {
-    override suspend fun buildIcon(user: User): IconCompat? =
-        StreamImageLoader
-            .instance()
-            .loadAsBitmap(context, user.image, StreamImageLoader.ImageTransformation.Circle)
-            ?.let(IconCompat::createWithBitmap)
+    override suspend fun buildIcon(user: User): IconCompat? = StreamImageLoader
+        .instance()
+        .loadAsBitmap(context, user.image, StreamImageLoader.ImageTransformation.Circle)
+        ?.let(IconCompat::createWithBitmap)
 }

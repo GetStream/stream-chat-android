@@ -44,9 +44,7 @@ internal class QueryChannelsListenerState(
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : QueryChannelsListener {
 
-    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
-        return Result.Success(Unit)
-    }
+    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         queryingChannelsFree.value = false
@@ -62,13 +60,12 @@ internal class QueryChannelsListenerState(
     }
 
     private companion object {
-        private fun QueryChannelsRequest.toPagination(): AnyChannelPaginationRequest =
-            QueryChannelsPaginationRequest(
-                sort = querySort,
-                channelLimit = limit,
-                channelOffset = offset,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-            ).toAnyChannelPaginationRequest()
+        private fun QueryChannelsRequest.toPagination(): AnyChannelPaginationRequest = QueryChannelsPaginationRequest(
+            sort = querySort,
+            channelLimit = limit,
+            channelOffset = offset,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        ).toAnyChannelPaginationRequest()
     }
 }

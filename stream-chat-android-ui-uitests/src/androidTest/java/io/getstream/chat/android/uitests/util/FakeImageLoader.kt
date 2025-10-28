@@ -71,24 +71,20 @@ class FakeImageLoader(
         }
     }
 
-    override suspend fun execute(request: ImageRequest): ImageResult {
-        return newResult(request, createDrawableImage(context, request))
-    }
+    override suspend fun execute(request: ImageRequest): ImageResult = newResult(request, createDrawableImage(context, request))
 
-    private fun newResult(request: ImageRequest, image: Image?): ImageResult {
-        return if (image != null) {
-            SuccessResult(
-                image = image,
-                request = request,
-                dataSource = DataSource.MEMORY_CACHE,
-            )
-        } else {
-            ErrorResult(
-                image = null,
-                request = request,
-                throwable = Exception(),
-            )
-        }
+    private fun newResult(request: ImageRequest, image: Image?): ImageResult = if (image != null) {
+        SuccessResult(
+            image = image,
+            request = request,
+            dataSource = DataSource.MEMORY_CACHE,
+        )
+    } else {
+        ErrorResult(
+            image = null,
+            request = request,
+            throwable = Exception(),
+        )
     }
 
     override fun newBuilder() = throw UnsupportedOperationException()

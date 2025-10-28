@@ -203,8 +203,7 @@ public class MessageReplyView : FrameLayout {
     }
 
     @SuppressLint("RestrictedApi")
-    private fun hasLinkInText(message: Message) =
-        PatternsCompat.AUTOLINK_WEB_URL.matcher(message.text).matches()
+    private fun hasLinkInText(message: Message) = PatternsCompat.AUTOLINK_WEB_URL.matcher(message.text).matches()
 
     private fun setAttachmentImage(message: Message) {
         if (ChatUI.quotedAttachmentFactoryManager.canHandle(message)) {
@@ -277,9 +276,7 @@ public class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun ellipsize(text: String): String {
-        return ellipsizeText(text, MAX_ELLIPSIZE_CHAR_COUNT)
-    }
+    private fun ellipsize(text: String): String = ellipsizeText(text, MAX_ELLIPSIZE_CHAR_COUNT)
 
     private companion object {
         private val DEFAULT_STROKE_WIDTH = 1.dpToPxPrecise()

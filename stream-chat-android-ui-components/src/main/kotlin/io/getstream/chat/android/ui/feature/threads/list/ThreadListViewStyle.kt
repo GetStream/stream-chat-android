@@ -161,13 +161,11 @@ public data class ThreadListViewStyle(
             context.getColorCompat(R.color.stream_ui_white_snow),
         )
 
-        private fun emptyStateDrawable(context: Context, typedArray: TypedArray) =
-            typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListEmptyStateDrawable)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_threads_empty)!!
+        private fun emptyStateDrawable(context: Context, typedArray: TypedArray) = typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListEmptyStateDrawable)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_ic_threads_empty)!!
 
-        private fun emptyStateText(context: Context, typedArray: TypedArray) =
-            typedArray.getString(R.styleable.ThreadListView_streamUiThreadListEmptyStateText)
-                ?: context.getString(R.string.stream_ui_thread_list_empty_title)
+        private fun emptyStateText(context: Context, typedArray: TypedArray) = typedArray.getString(R.styleable.ThreadListView_streamUiThreadListEmptyStateText)
+            ?: context.getString(R.string.stream_ui_thread_list_empty_title)
 
         private fun emptyStateTextStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
             .size(
@@ -185,9 +183,8 @@ public data class ThreadListViewStyle(
             .style(R.styleable.ThreadListView_streamUiThreadListEmptyStateTextStyle, Typeface.NORMAL)
             .build()
 
-        private fun threadIconDrawable(context: Context, typedArray: TypedArray) =
-            typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListThreadIconDrawable)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_thread)!!
+        private fun threadIconDrawable(context: Context, typedArray: TypedArray) = typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListThreadIconDrawable)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_ic_thread)!!
 
         private fun threadTitleStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
             .size(
@@ -221,45 +218,43 @@ public data class ThreadListViewStyle(
             .style(R.styleable.ThreadListView_streamUiThreadListThreadReplyToTextStyle, Typeface.NORMAL)
             .build()
 
-        private fun threadLatestReplySenderStyle(context: Context, typedArray: TypedArray) =
-            TextStyle.Builder(typedArray)
-                .size(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium),
-                )
-                .color(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary),
-                )
-                .font(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextFontAssets,
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextFont,
-                )
-                .style(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextStyle,
-                    Typeface.BOLD,
-                )
-                .build()
+        private fun threadLatestReplySenderStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextSize,
+                context.getDimension(R.dimen.stream_ui_text_medium),
+            )
+            .color(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextColor,
+                context.getColorCompat(R.color.stream_ui_text_color_primary),
+            )
+            .font(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextFontAssets,
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextFont,
+            )
+            .style(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplySenderTextStyle,
+                Typeface.BOLD,
+            )
+            .build()
 
-        private fun threadLatestReplyMessageStyle(context: Context, typedArray: TypedArray) =
-            TextStyle.Builder(typedArray)
-                .size(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium),
-                )
-                .color(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_secondary),
-                )
-                .font(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextFontAssets,
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextFont,
-                )
-                .style(
-                    R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextStyle,
-                    Typeface.NORMAL,
-                )
-                .build()
+        private fun threadLatestReplyMessageStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextSize,
+                context.getDimension(R.dimen.stream_ui_text_medium),
+            )
+            .color(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextColor,
+                context.getColorCompat(R.color.stream_ui_text_color_secondary),
+            )
+            .font(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextFontAssets,
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextFont,
+            )
+            .style(
+                R.styleable.ThreadListView_streamUiThreadListThreadLatestReplyMessageTextStyle,
+                Typeface.NORMAL,
+            )
+            .build()
 
         private fun threadLatestReplyTimeStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
             .size(
@@ -299,37 +294,33 @@ public data class ThreadListViewStyle(
             )
             .build()
 
-        private fun unreadCountBadgeBackground(context: Context, typedArray: TypedArray) =
-            typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListThreadUnreadCountBadgeBackground)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_shape_badge_background)!!
+        private fun unreadCountBadgeBackground(context: Context, typedArray: TypedArray) = typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListThreadUnreadCountBadgeBackground)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_shape_badge_background)!!
 
-        private fun bannerTextStyle(context: Context, typedArray: TypedArray) =
-            TextStyle.Builder(typedArray)
-                .size(
-                    R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_large),
-                )
-                .color(
-                    R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextColor,
-                    context.getColorCompat(R.color.stream_ui_white),
-                )
-                .font(
-                    R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextFontAssets,
-                    R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextFont,
-                )
-                .style(
-                    R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextStyle,
-                    Typeface.NORMAL,
-                )
-                .build()
+        private fun bannerTextStyle(context: Context, typedArray: TypedArray) = TextStyle.Builder(typedArray)
+            .size(
+                R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextSize,
+                context.getDimension(R.dimen.stream_ui_text_large),
+            )
+            .color(
+                R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextColor,
+                context.getColorCompat(R.color.stream_ui_white),
+            )
+            .font(
+                R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextFontAssets,
+                R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextFont,
+            )
+            .style(
+                R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerTextStyle,
+                Typeface.NORMAL,
+            )
+            .build()
 
-        private fun bannerIcon(context: Context, typedArray: TypedArray) =
-            typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerIcon)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_ic_union)!!
+        private fun bannerIcon(context: Context, typedArray: TypedArray) = typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerIcon)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_ic_union)!!
 
-        private fun bannerBackground(context: Context, typedArray: TypedArray) =
-            typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerBackground)
-                ?: context.getDrawableCompat(R.drawable.stream_ui_shape_unread_threads_banner)!!
+        private fun bannerBackground(context: Context, typedArray: TypedArray) = typedArray.getDrawable(R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerBackground)
+            ?: context.getDrawableCompat(R.drawable.stream_ui_shape_unread_threads_banner)!!
 
         private fun bannerPaddingLeft(context: Context, typedArray: TypedArray) = typedArray.getDimensionPixelSize(
             R.styleable.ThreadListView_streamUiThreadListUnreadThreadsBannerPaddingLeft,

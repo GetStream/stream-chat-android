@@ -162,9 +162,7 @@ internal class AvatarDecorator(
         }
     }
 
-    private fun getAvatarView(myAvatar: UserAvatarView, theirAvatar: UserAvatarView, isMine: Boolean): UserAvatarView {
-        return if (isMine) myAvatar else theirAvatar
-    }
+    private fun getAvatarView(myAvatar: UserAvatarView, theirAvatar: UserAvatarView, isMine: Boolean): UserAvatarView = if (isMine) myAvatar else theirAvatar
 
     private fun controlVisibility(myAvatar: UserAvatarView, theirAvatar: UserAvatarView, isMine: Boolean) {
         theirAvatar.isVisible = !isMine

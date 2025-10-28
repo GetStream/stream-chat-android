@@ -225,10 +225,8 @@ class MessagesActivity : AppCompatActivity() {
          * @param channelId The id of the channel.
          * @return The [Intent] to start [MessagesActivity].
          */
-        fun createIntent(context: Context, channelId: String): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-            }
+        fun createIntent(context: Context, channelId: String): Intent = Intent(context, MessagesActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
         }
     }
 }

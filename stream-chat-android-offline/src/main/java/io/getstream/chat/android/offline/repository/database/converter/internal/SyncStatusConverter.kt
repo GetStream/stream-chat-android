@@ -21,12 +21,8 @@ import io.getstream.chat.android.models.SyncStatus
 
 internal class SyncStatusConverter {
     @TypeConverter
-    fun stringToSyncStatus(data: Int): SyncStatus {
-        return SyncStatus.fromInt(data)!!
-    }
+    fun stringToSyncStatus(data: Int): SyncStatus = SyncStatus.fromInt(data)!!
 
     @TypeConverter
-    fun syncStatusToString(syncStatus: SyncStatus): Int {
-        return syncStatus.status
-    }
+    fun syncStatusToString(syncStatus: SyncStatus): Int = syncStatus.status
 }

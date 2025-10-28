@@ -111,11 +111,9 @@ internal abstract class BaseUiTest {
         }
     }
 
-    private fun okResponse(body: String): MockResponse {
-        return MockResponse()
-            .setResponseCode(200)
-            .setBody(body)
-    }
+    private fun okResponse(body: String): MockResponse = MockResponse()
+        .setResponseCode(200)
+        .setBody(body)
 
     companion object {
         private const val WS_HEALTH_CHECK: String = "ws_health_check.json"

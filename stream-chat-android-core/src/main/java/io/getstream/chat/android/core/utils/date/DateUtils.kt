@@ -27,12 +27,10 @@ import kotlin.math.abs
  * Tests if [this] date is after [that] date.
  */
 @InternalStreamChatApi
-public infix fun Date?.after(that: Date?): Boolean {
-    return when {
-        this == null -> false
-        that == null -> true
-        else -> this.after(that)
-    }
+public infix fun Date?.after(that: Date?): Boolean = when {
+    this == null -> false
+    that == null -> true
+    else -> this.after(that)
 }
 
 /**
@@ -90,9 +88,7 @@ public fun Date.diff(that: Date): TimeDuration {
 public inline fun Date?.isWithinDurationFromNow(
     duration: TimeDuration,
     now: () -> Long = { System.currentTimeMillis() },
-): Boolean {
-    return this != null && (now() - this.time) < duration.millis
-}
+): Boolean = this != null && (now() - this.time) < duration.millis
 
 /**
  * Truncates the date to the current time if it's in the future.

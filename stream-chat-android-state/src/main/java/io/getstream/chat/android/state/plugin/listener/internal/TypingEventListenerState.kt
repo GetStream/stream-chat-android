@@ -76,19 +76,17 @@ internal class TypingEventListenerState(
      *
      * @param channelState State of the channel.
      */
-    private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
-        return if (!channelState.channelConfig.value.typingEventsEnabled) {
-            Result.Failure(Error.GenericError("Typing events are not enabled"))
-        } else if (channelState.lastStartTypingEvent == null) {
-            Result.Failure(
-                Error.GenericError(
-                    "lastStartTypingEvent is null. " +
-                        "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP",
-                ),
-            )
-        } else {
-            Result.Success(Unit)
-        }
+    private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> = if (!channelState.channelConfig.value.typingEventsEnabled) {
+        Result.Failure(Error.GenericError("Typing events are not enabled"))
+    } else if (channelState.lastStartTypingEvent == null) {
+        Result.Failure(
+            Error.GenericError(
+                "lastStartTypingEvent is null. " +
+                    "Make sure to send Event.TYPING_START before sending Event.TYPING_STOP",
+            ),
+        )
+    } else {
+        Result.Success(Unit)
     }
 
     /**
@@ -100,21 +98,19 @@ internal class TypingEventListenerState(
      * @param channelState State of the channel.
      * @param eventTime Time of this event.
      */
-    private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
-        return if (!channelState.channelConfig.value.typingEventsEnabled) {
-            Result.Failure(Error.GenericError("Typing events are not enabled"))
-        } else if (channelState.lastStartTypingEvent != null &&
-            eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
-        ) {
-            Result.Failure(
-                Error.GenericError(
-                    "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
-                        "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event",
-                ),
-            )
-        } else {
-            Result.Success(Unit)
-        }
+    private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> = if (!channelState.channelConfig.value.typingEventsEnabled) {
+        Result.Failure(Error.GenericError("Typing events are not enabled"))
+    } else if (channelState.lastStartTypingEvent != null &&
+        eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
+    ) {
+        Result.Failure(
+            Error.GenericError(
+                "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
+                    "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event",
+            ),
+        )
+    } else {
+        Result.Success(Unit)
     }
 
     /**

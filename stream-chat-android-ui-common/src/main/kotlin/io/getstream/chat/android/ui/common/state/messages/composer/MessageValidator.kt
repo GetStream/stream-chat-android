@@ -28,41 +28,35 @@ internal class MessageValidator(
     var maxMessageLength: Int = DEFAULT_MESSAGE_LENGTH,
 ) {
 
-    fun validateMessage(message: String, attachments: List<Attachment>): List<ValidationError> =
-        listOfNotNull(
-            validateMessageLength(message),
-            validateAttachmentCount(attachments),
-            validateImageAttachmentSize(attachments),
-            validateFileAttachmentSize(attachments),
-            validateCanSendLinks(message),
-        )
+    fun validateMessage(message: String, attachments: List<Attachment>): List<ValidationError> = listOfNotNull(
+        validateMessageLength(message),
+        validateAttachmentCount(attachments),
+        validateImageAttachmentSize(attachments),
+        validateFileAttachmentSize(attachments),
+        validateCanSendLinks(message),
+    )
 
-    private fun validateMessageLength(message: String): ValidationError? =
-        message.length
-            .takeIf { it > maxMessageLength }
-            ?.let { ValidationError.MessageLengthExceeded(it, maxMessageLength) }
+    private fun validateMessageLength(message: String): ValidationError? = message.length
+        .takeIf { it > maxMessageLength }
+        ?.let { ValidationError.MessageLengthExceeded(it, maxMessageLength) }
 
-    private fun validateAttachmentCount(attachments: List<Attachment>): ValidationError? =
-        attachments.count()
-            .takeIf { it > maxAttachmentCount }
-            ?.let { ValidationError.AttachmentCountExceeded(it, maxAttachmentCount) }
+    private fun validateAttachmentCount(attachments: List<Attachment>): ValidationError? = attachments.count()
+        .takeIf { it > maxAttachmentCount }
+        ?.let { ValidationError.AttachmentCountExceeded(it, maxAttachmentCount) }
 
-    private fun validateImageAttachmentSize(attachments: List<Attachment>): ValidationError? =
-        attachments
-            .filter { it.isImage() }
-            .filter { it.fileSize > appSettings.app.imageUploadConfig.sizeLimitInBytes }
-            .takeUnless { it.isEmpty() }
-            ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.imageUploadConfig.sizeLimitInBytes) }
+    private fun validateImageAttachmentSize(attachments: List<Attachment>): ValidationError? = attachments
+        .filter { it.isImage() }
+        .filter { it.fileSize > appSettings.app.imageUploadConfig.sizeLimitInBytes }
+        .takeUnless { it.isEmpty() }
+        ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.imageUploadConfig.sizeLimitInBytes) }
 
-    private fun validateFileAttachmentSize(attachments: List<Attachment>): ValidationError? =
-        attachments
-            .filter { !it.isImage() }
-            .filter { it.fileSize > appSettings.app.fileUploadConfig.sizeLimitInBytes }
-            .takeUnless { it.isEmpty() }
-            ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.fileUploadConfig.sizeLimitInBytes) }
+    private fun validateFileAttachmentSize(attachments: List<Attachment>): ValidationError? = attachments
+        .filter { !it.isImage() }
+        .filter { it.fileSize > appSettings.app.fileUploadConfig.sizeLimitInBytes }
+        .takeUnless { it.isEmpty() }
+        ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.fileUploadConfig.sizeLimitInBytes) }
 
-    private fun validateCanSendLinks(message: String): ValidationError? =
-        ValidationError.ContainsLinksWhenNotAllowed.takeIf { !canSendLinks && message.containsLinks() }
+    private fun validateCanSendLinks(message: String): ValidationError? = ValidationError.ContainsLinksWhenNotAllowed.takeIf { !canSendLinks && message.containsLinks() }
 
     internal companion object {
         /**

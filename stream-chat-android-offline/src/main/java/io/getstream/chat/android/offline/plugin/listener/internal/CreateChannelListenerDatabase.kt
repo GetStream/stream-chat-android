@@ -190,17 +190,15 @@ internal class CreateChannelListenerDatabase(
         currentUser: User?,
         channelId: String,
         memberIds: List<String>,
-    ): Result<Unit> {
-        return when {
-            channelId.isBlank() && memberIds.isEmpty() -> {
-                Result.Failure(Error.GenericError(message = "Either channelId or memberIds cannot be empty!"))
-            }
-            currentUser == null -> {
-                Result.Failure(Error.GenericError(message = "Current user is null!"))
-            }
-            else -> {
-                Result.Success(Unit)
-            }
+    ): Result<Unit> = when {
+        channelId.isBlank() && memberIds.isEmpty() -> {
+            Result.Failure(Error.GenericError(message = "Either channelId or memberIds cannot be empty!"))
+        }
+        currentUser == null -> {
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
+        }
+        else -> {
+            Result.Success(Unit)
         }
     }
 }

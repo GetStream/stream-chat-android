@@ -56,6 +56,4 @@ public fun MessageComposerState.canSendMessage(): Boolean {
  *
  * @return `true` if the user has the [ChannelCapabilities.UPLOAD_FILE] capability; `false` otherwise.
  */
-public fun MessageComposerState.canUploadFile(): Boolean {
-    return ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
-}
+public fun MessageComposerState.canUploadFile(): Boolean = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)

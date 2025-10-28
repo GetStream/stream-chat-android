@@ -29,46 +29,38 @@ import io.getstream.chat.android.models.VideoCallToken
     "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
-internal fun AgoraDto.toDomain(): AgoraChannel {
-    return AgoraChannel(channel = channel)
-}
+internal fun AgoraDto.toDomain(): AgoraChannel = AgoraChannel(channel = channel)
 
 @Deprecated(
     "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
-internal fun HMSDto.toDomain(): HMSRoom {
-    return HMSRoom(roomId = roomId, roomName = roomName)
-}
+internal fun HMSDto.toDomain(): HMSRoom = HMSRoom(roomId = roomId, roomName = roomName)
 
 @Deprecated(
     "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 @Suppress("DEPRECATION")
-internal fun CreateVideoCallResponse.toDomain(): VideoCallInfo {
-    return VideoCallInfo(
-        callId = call.id,
-        provider = call.provider,
-        type = call.type,
-        agoraChannel = call.agora.toDomain(),
-        hmsRoom = call.hms.toDomain(),
-        videoCallToken = VideoCallToken(
-            token = token,
-            agoraUid = agoraUid,
-            agoraAppId = agoraAppId,
-        ),
-    )
-}
+internal fun CreateVideoCallResponse.toDomain(): VideoCallInfo = VideoCallInfo(
+    callId = call.id,
+    provider = call.provider,
+    type = call.type,
+    agoraChannel = call.agora.toDomain(),
+    hmsRoom = call.hms.toDomain(),
+    videoCallToken = VideoCallToken(
+        token = token,
+        agoraUid = agoraUid,
+        agoraAppId = agoraAppId,
+    ),
+)
 
 @Deprecated(
     "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
-internal fun VideoCallTokenResponse.toDomain(): VideoCallToken {
-    return VideoCallToken(
-        token = token,
-        agoraUid = agoraUid,
-        agoraAppId = agoraAppId,
-    )
-}
+internal fun VideoCallTokenResponse.toDomain(): VideoCallToken = VideoCallToken(
+    token = token,
+    agoraUid = agoraUid,
+    agoraAppId = agoraAppId,
+)

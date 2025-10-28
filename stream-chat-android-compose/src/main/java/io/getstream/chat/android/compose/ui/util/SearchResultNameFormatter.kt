@@ -53,9 +53,7 @@ public fun interface SearchResultNameFormatter {
          *
          * @see [SearchResultNameFormatter]
          */
-        public fun defaultFormatter(): SearchResultNameFormatter {
-            return DefaultSearchResultNameFormatter
-        }
+        public fun defaultFormatter(): SearchResultNameFormatter = DefaultSearchResultNameFormatter
     }
 }
 
@@ -64,27 +62,26 @@ private object DefaultSearchResultNameFormatter : SearchResultNameFormatter {
     override fun formatMessageTitle(
         searchResultItem: ItemState.SearchResultItemState,
         currentUser: User?,
-    ): AnnotatedString =
-        buildAnnotatedString {
-            if (searchResultItem.channel?.isOneToOne(currentUser) == true) {
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(searchResultItem.channel.getOtherUsers(currentUser).firstOrNull()?.name)
-                }
-            } else {
-                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                    append(searchResultItem.message.user.name)
-                }
-                (
-                    searchResultItem.channel
-                        ?.let { ChatTheme.channelNameFormatter.formatChannelName(it, currentUser) }
-                        ?: searchResultItem.message.channelInfo?.name
-                    )
-                    ?.let { channelName ->
-                        append(stringResource(R.string.stream_compose_in))
-                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(channelName)
-                        }
-                    }
+    ): AnnotatedString = buildAnnotatedString {
+        if (searchResultItem.channel?.isOneToOne(currentUser) == true) {
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                append(searchResultItem.channel.getOtherUsers(currentUser).firstOrNull()?.name)
             }
+        } else {
+            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                append(searchResultItem.message.user.name)
+            }
+            (
+                searchResultItem.channel
+                    ?.let { ChatTheme.channelNameFormatter.formatChannelName(it, currentUser) }
+                    ?: searchResultItem.message.channelInfo?.name
+                )
+                ?.let { channelName ->
+                    append(stringResource(R.string.stream_compose_in))
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(channelName)
+                    }
+                }
         }
+    }
 }

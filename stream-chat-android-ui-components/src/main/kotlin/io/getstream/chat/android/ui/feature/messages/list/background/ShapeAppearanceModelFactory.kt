@@ -49,26 +49,24 @@ internal object ShapeAppearanceModelFactory {
         differentCornerRadius: Float,
         isMine: Boolean,
         isBottomPosition: Boolean,
-    ): ShapeAppearanceModel {
-        return ShapeAppearanceModel.builder()
-            .setAllCornerSizes(defaultCornerRadius)
-            .apply {
-                if (isBottomPosition) {
-                    val isRtl = context.isRtlLayout
+    ): ShapeAppearanceModel = ShapeAppearanceModel.builder()
+        .setAllCornerSizes(defaultCornerRadius)
+        .apply {
+            if (isBottomPosition) {
+                val isRtl = context.isRtlLayout
 
-                    when {
-                        !isRtl && isMine -> setBottomRightCornerSize(differentCornerRadius)
+                when {
+                    !isRtl && isMine -> setBottomRightCornerSize(differentCornerRadius)
 
-                        !isRtl && !isMine -> setBottomLeftCornerSize(differentCornerRadius)
+                    !isRtl && !isMine -> setBottomLeftCornerSize(differentCornerRadius)
 
-                        isRtl && isMine -> setBottomLeftCornerSize(differentCornerRadius)
+                    isRtl && isMine -> setBottomLeftCornerSize(differentCornerRadius)
 
-                        isRtl && !isMine -> setBottomRightCornerSize(differentCornerRadius)
-                    }
+                    isRtl && !isMine -> setBottomRightCornerSize(differentCornerRadius)
                 }
             }
-            .build()
-    }
+        }
+        .build()
 
     fun fileBackground(context: Context): MaterialShapeDrawable = ShapeAppearanceModel.builder()
         .setAllCornerSizes(CORNER_SIZE_FILE_PX)

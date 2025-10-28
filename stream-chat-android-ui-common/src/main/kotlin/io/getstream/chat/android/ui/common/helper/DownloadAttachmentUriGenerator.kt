@@ -39,6 +39,5 @@ public fun interface DownloadAttachmentUriGenerator {
  * or image URL of the attachment.
  */
 public object DefaultDownloadAttachmentUriGenerator : DownloadAttachmentUriGenerator {
-    override fun generateDownloadUri(attachment: Attachment): Uri =
-        Uri.parse(attachment.assetUrl ?: attachment.imageUrl)
+    override fun generateDownloadUri(attachment: Attachment): Uri = Uri.parse(attachment.assetUrl ?: attachment.imageUrl)
 }

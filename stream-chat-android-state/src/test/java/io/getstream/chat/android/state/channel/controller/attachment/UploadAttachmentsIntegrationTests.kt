@@ -114,51 +114,49 @@ internal class UploadAttachmentsIntegrationTests {
     }
 
     @Test
-    fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit =
-        runTest {
-            whenever(uploader!!.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+    fun `Given a message with attachments When upload fails Should store the correct upload state`(): Unit = runTest {
+        whenever(uploader!!.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
 
-            val attachments = randomAttachmentsWithFile().map {
-                it.copy(uploadState = Attachment.UploadState.Idle)
-            }.toMutableList()
-            val files: List<File> = attachments.map { it.upload!! }
-            val message = randomMessage(attachments = attachments)
-            mockFileUploadsFailure(files)
+        val attachments = randomAttachmentsWithFile().map {
+            it.copy(uploadState = Attachment.UploadState.Idle)
+        }.toMutableList()
+        val files: List<File> = attachments.map { it.upload!! }
+        val message = randomMessage(attachments = attachments)
+        mockFileUploadsFailure(files)
 
-            messageRepository.insertMessage(message)
+        messageRepository.insertMessage(message)
 
-            uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
+        uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
 
-            val persistedMessage = messageRepository.selectMessage(message.id)!!
-            persistedMessage.attachments.size shouldBeEqualTo attachments.size
-            persistedMessage.attachments.all { it.uploadState is Attachment.UploadState.Failed }.shouldBeTrue()
-        }
+        val persistedMessage = messageRepository.selectMessage(message.id)!!
+        persistedMessage.attachments.size shouldBeEqualTo attachments.size
+        persistedMessage.attachments.all { it.uploadState is Attachment.UploadState.Failed }.shouldBeTrue()
+    }
 
     @Test
-    fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit =
-        runTest {
-            whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
-                .doAnswer { invocation ->
-                    val attachment = invocation.arguments[2] as Attachment
-                    Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
-                }
+    fun `Given a message with attachments When upload succeeds Should store the correct upload state`(): Unit = runTest {
+        whenever(uploader!!.uploadAttachment(any(), any(), any(), any()))
+            .doAnswer { invocation ->
+                val attachment = invocation.arguments[2] as Attachment
+                Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
+            }
 
-            val attachments = randomAttachmentsWithFile().map {
-                it.copy(uploadState = Attachment.UploadState.Idle)
-            }.toMutableList()
-            val files: List<File> = attachments.map { it.upload!! }
-            val message = randomMessage(attachments = attachments)
-            mockFileUploadsSuccess(files)
+        val attachments = randomAttachmentsWithFile().map {
+            it.copy(uploadState = Attachment.UploadState.Idle)
+        }.toMutableList()
+        val files: List<File> = attachments.map { it.upload!! }
+        val message = randomMessage(attachments = attachments)
+        mockFileUploadsSuccess(files)
 
-            messageRepository.insertMessage(message)
+        messageRepository.insertMessage(message)
 
-            uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
+        uploadAttachmentsWorker.uploadAttachmentsForMessage(message.id)
 
-            val persistedMessage = messageRepository.selectMessage(message.id)!!
-            persistedMessage.attachments.size shouldBeEqualTo attachments.size
+        val persistedMessage = messageRepository.selectMessage(message.id)!!
+        persistedMessage.attachments.size shouldBeEqualTo attachments.size
 
-            persistedMessage.attachments.all { it.uploadState == Attachment.UploadState.Success }.shouldBeTrue()
-        }
+        persistedMessage.attachments.all { it.uploadState == Attachment.UploadState.Success }.shouldBeTrue()
+    }
 
     private fun mockFileUploadsFailure(files: List<File>) {
         for (file in files) {
@@ -231,15 +229,11 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
-        return messages.filter { (messageId, _) ->
-            messageIds.contains(messageId)
-        }.values.toList()
-    }
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> = messages.filter { (messageId, _) ->
+        messageIds.contains(messageId)
+    }.values.toList()
 
-    override suspend fun selectMessage(messageId: String): Message? {
-        return messages[messageId]
-    }
+    override suspend fun selectMessage(messageId: String): Message? = messages[messageId]
 
     override suspend fun insertMessages(messages: List<Message>) {
         messages.forEach { this.messages[it.id] = it }

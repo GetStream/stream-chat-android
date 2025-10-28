@@ -416,8 +416,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun List<Member>.filterNotCurrentUser() =
-        filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
+    private fun List<Member>.filterNotCurrentUser() = filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
 }
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5

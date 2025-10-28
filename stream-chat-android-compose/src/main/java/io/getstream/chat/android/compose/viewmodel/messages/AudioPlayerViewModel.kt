@@ -91,7 +91,5 @@ public class AudioPlayerViewModelFactory(
     private val getRecordingUri: (Attachment) -> String?,
 ) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AudioPlayerViewModel(AudioPlayerController(getAudioPlayer(), getRecordingUri)) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = AudioPlayerViewModel(AudioPlayerController(getAudioPlayer(), getRecordingUri)) as T
 }

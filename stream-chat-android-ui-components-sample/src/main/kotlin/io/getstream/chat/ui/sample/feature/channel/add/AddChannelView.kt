@@ -168,8 +168,7 @@ class AddChannelView : FrameLayout {
 
     private fun defaultLoadingView(): View = ProgressBar(context)
 
-    private fun defaultChildLayoutParams() =
-        LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
+    private fun defaultChildLayoutParams() = LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER)
 
     private inner class EndReachedScrollListener : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {

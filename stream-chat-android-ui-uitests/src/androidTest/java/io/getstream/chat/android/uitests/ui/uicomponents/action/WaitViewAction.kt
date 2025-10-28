@@ -39,13 +39,9 @@ class WaitViewAction private constructor(
     private val timeoutMillis: Long,
 ) : ViewAction {
 
-    override fun getConstraints(): Matcher<View> {
-        return isRoot()
-    }
+    override fun getConstraints(): Matcher<View> = isRoot()
 
-    override fun getDescription(): String {
-        return "Waiting for $resId"
-    }
+    override fun getDescription(): String = "Waiting for $resId"
 
     override fun perform(uiController: UiController, view: View?) {
         uiController.loopMainThreadUntilIdle()
@@ -85,8 +81,6 @@ class WaitViewAction private constructor(
             resId: Int,
             intervalMillis: Long = DEFAULT_WAIT_VIEW_INTERVAL,
             timeoutMillis: Long = DEFAULT_WAIT_VIEW_TIMEOUT,
-        ): ViewInteraction {
-            return onView(isRoot()).perform(WaitViewAction(resId, intervalMillis, timeoutMillis))
-        }
+        ): ViewInteraction = onView(isRoot()).perform(WaitViewAction(resId, intervalMillis, timeoutMillis))
     }
 }

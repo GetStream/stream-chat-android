@@ -400,10 +400,8 @@ internal class AudioRecordingController(
         recordingState.value = state
     }
 
-    private fun List<Int>.normalize(): List<Float> {
-        return map { amplitude ->
-            normalize(amplitude)
-        }
+    private fun List<Int>.normalize(): List<Float> = map { amplitude ->
+        normalize(amplitude)
     }
 
     private fun normalize(maxAmplitude: Int): Float {
@@ -465,13 +463,9 @@ internal class AudioRecordingController(
         return sqrt(sumOfSquaredSamples / size)
     }
 
-    private fun FloatArray.downsampleAverage(): Float {
-        return sum() / size
-    }
+    private fun FloatArray.downsampleAverage(): Float = sum() / size
 
-    private fun FloatArray.downsample(): Float {
-        return last()
-    }
+    private fun FloatArray.downsample(): Float = last()
 
     private fun IntArray.downsampleRms(): Int {
         var sumOfSquaredSamples = 0
@@ -484,9 +478,7 @@ internal class AudioRecordingController(
         return sqrt(sumOfSquaredSamples / size.toDouble()).roundToInt()
     }
 
-    private fun IntArray.downsampleMax(): Int {
-        return max()
-    }
+    private fun IntArray.downsampleMax(): Int = max()
 
     private fun List<Int>.downsampleToSingleMax(): Int {
         1 to 1

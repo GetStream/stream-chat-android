@@ -47,23 +47,21 @@ internal class CallPostponeHelper(
      * @return Executable async [Call] responsible for querying channels
      */
     @Suppress("TooGenericExceptionCaught")
-    internal fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
-        return CoroutineCall(userScope) {
-            try {
-                logger.d { "[postponeCall] no args" }
-                withTimeout(timeoutInMillis) {
-                    awaitConnection()
-                }
-                logger.v { "[postponeCall] wait completed" }
-                call().await()
-            } catch (e: Throwable) {
-                logger.e { "[postponeCall] failed: $e" }
-                Result.Failure(
-                    Error.GenericError(
-                        message = "Failed to perform call. Waiting for WS connection was too long.",
-                    ),
-                )
+    internal fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> = CoroutineCall(userScope) {
+        try {
+            logger.d { "[postponeCall] no args" }
+            withTimeout(timeoutInMillis) {
+                awaitConnection()
             }
+            logger.v { "[postponeCall] wait completed" }
+            call().await()
+        } catch (e: Throwable) {
+            logger.e { "[postponeCall] failed: $e" }
+            Result.Failure(
+                Error.GenericError(
+                    message = "Failed to perform call. Waiting for WS connection was too long.",
+                ),
+            )
         }
     }
 

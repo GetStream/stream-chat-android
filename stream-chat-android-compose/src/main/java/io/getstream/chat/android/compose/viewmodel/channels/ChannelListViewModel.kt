@@ -208,9 +208,7 @@ public class ChannelListViewModel(
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
+    private fun buildDefaultFilter(): Flow<FilterObject> = chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
 
     /**
      * Checks if the channel is muted for the current user.
@@ -218,9 +216,7 @@ public class ChannelListViewModel(
      * @param cid The CID of the channel that needs to be checked.
      * @return True if the channel is muted for the current user.
      */
-    public fun isChannelMuted(cid: String): Boolean {
-        return channelMutes.value.any { cid == it.channel?.cid }
-    }
+    public fun isChannelMuted(cid: String): Boolean = channelMutes.value.any { cid == it.channel?.cid }
 
     /**
      * Current query channels state that contains filter, sort and other states related to channels query.
@@ -474,28 +470,24 @@ public class ChannelListViewModel(
      * @return The filter that will be used to query channels.
      */
     @Suppress("SpreadOperator")
-    private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
-        return if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
-            if (filter is AndFilterObject) {
-                // If the base filter is `AND`, extend it with the search query filter.
-                val filters = filter.filterObjects
-                val extendedFilters = filters + searchChannelFilter(searchQuery)
-                Filters.and(*extendedFilters.toTypedArray())
-            } else {
-                // If the base filter is not `AND`, wrap it in an `AND` with the search query filter.
-                Filters.and(filter, searchChannelFilter(searchQuery))
-            }
+    private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject = if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+        if (filter is AndFilterObject) {
+            // If the base filter is `AND`, extend it with the search query filter.
+            val filters = filter.filterObjects
+            val extendedFilters = filters + searchChannelFilter(searchQuery)
+            Filters.and(*extendedFilters.toTypedArray())
         } else {
-            filter
+            // If the base filter is not `AND`, wrap it in an `AND` with the search query filter.
+            Filters.and(filter, searchChannelFilter(searchQuery))
         }
+    } else {
+        filter
     }
 
-    private fun searchChannelFilter(searchQuery: String): FilterObject {
-        return Filters.or(
-            Filters.autocomplete("member.user.name", searchQuery),
-            Filters.autocomplete("name", searchQuery),
-        )
-    }
+    private fun searchChannelFilter(searchQuery: String): FilterObject = Filters.or(
+        Filters.autocomplete("member.user.name", searchQuery),
+        Filters.autocomplete("name", searchQuery),
+    )
 
     /**
      * Refreshes either channels or search results.
@@ -786,13 +778,11 @@ public class ChannelListViewModel(
         val isLoadingMore: Boolean = false,
     ) {
 
-        fun stringify(): String {
-            return "SearchMessageState(" +
-                "query='$query', " +
-                "messages.size=${messages.size}, " +
-                "isLoading=$isLoading, " +
-                "isLoadingMore=$isLoadingMore, " +
-                "canLoadMore=$canLoadMore)"
-        }
+        fun stringify(): String = "SearchMessageState(" +
+            "query='$query', " +
+            "messages.size=${messages.size}, " +
+            "isLoading=$isLoading, " +
+            "isLoadingMore=$isLoadingMore, " +
+            "canLoadMore=$canLoadMore)"
     }
 }

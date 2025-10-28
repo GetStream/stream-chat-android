@@ -335,7 +335,9 @@ private fun LocationButton(
  *
  * @throws ResolvableApiException
  */
-private suspend fun Context.isLocationEnabled(priority: Int): Boolean {
+private suspend fun Context.isLocationEnabled(
+    priority: Int,
+): Boolean {
     val client = LocationServices.getSettingsClient(this)
     val locationRequest = LocationRequest.Builder(priority, 0).build()
     val builder = LocationSettingsRequest.Builder()

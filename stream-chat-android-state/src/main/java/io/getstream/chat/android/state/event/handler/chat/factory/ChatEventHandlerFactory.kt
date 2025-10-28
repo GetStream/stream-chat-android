@@ -38,7 +38,5 @@ public open class ChatEventHandlerFactory(
      *
      * @param channels The visible channels map.
      */
-    public open fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
-        return DefaultChatEventHandler(channels = channels, clientState = clientState)
-    }
+    public open fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler = DefaultChatEventHandler(channels = channels, clientState = clientState)
 }

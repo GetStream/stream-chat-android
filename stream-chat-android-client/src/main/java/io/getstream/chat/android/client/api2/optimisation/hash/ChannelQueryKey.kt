@@ -32,20 +32,18 @@ internal data class ChannelQueryKey(
             channelType: String,
             channelId: String,
             query: io.getstream.chat.android.client.api.models.QueryChannelRequest,
-        ): ChannelQueryKey {
-            return ChannelQueryKey(
-                channelType = channelType,
-                channelId = channelId,
-                queryKey = QueryChannelRequest(
-                    state = query.state,
-                    watch = query.watch,
-                    presence = query.presence,
-                    messages = query.messages,
-                    watchers = query.watchers,
-                    members = query.members,
-                    data = query.data,
-                ),
-            )
-        }
+        ): ChannelQueryKey = ChannelQueryKey(
+            channelType = channelType,
+            channelId = channelId,
+            queryKey = QueryChannelRequest(
+                state = query.state,
+                watch = query.watch,
+                presence = query.presence,
+                messages = query.messages,
+                watchers = query.watchers,
+                members = query.members,
+                data = query.data,
+            ),
+        )
     }
 }

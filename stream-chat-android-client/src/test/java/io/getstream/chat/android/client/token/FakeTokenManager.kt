@@ -40,13 +40,9 @@ internal class FakeTokenManager(
         // empty
     }
 
-    override fun hasTokenProvider(): Boolean {
-        return true
-    }
+    override fun hasTokenProvider(): Boolean = true
 
-    override fun hasToken(): Boolean {
-        return true
-    }
+    override fun hasToken(): Boolean = true
 
     override fun expireToken() {
         expired = true

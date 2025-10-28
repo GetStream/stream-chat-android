@@ -50,10 +50,8 @@ public enum class MessageOptionsUserReactionOrientation(public val value: Int) {
 /**
  * @return The corresponding [MessageOptionsUserReactionOrientation] for the passed attribute in xml.
  */
-public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionOrientation {
-    return MessageOptionsUserReactionOrientation.values().firstOrNull { it.value == this }
-        ?: error("No such alignment")
-}
+public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionOrientation = MessageOptionsUserReactionOrientation.values().firstOrNull { it.value == this }
+    ?: error("No such alignment")
 
 /**
  * Determines if the user reaction should be oriented to start or end.
@@ -63,8 +61,6 @@ public fun Int.getUserReactionOrientation(): MessageOptionsUserReactionOrientati
  * @return If the reaction is oriented towards start or not.
  */
 @InternalStreamChatApi
-public fun MessageOptionsUserReactionOrientation.isOrientedTowardsStart(isMine: Boolean): Boolean {
-    return this == MessageOptionsUserReactionOrientation.START ||
-        (isMine && this == MessageOptionsUserReactionOrientation.BY_USER) ||
-        (!isMine && this == MessageOptionsUserReactionOrientation.BY_USER_INVERTED)
-}
+public fun MessageOptionsUserReactionOrientation.isOrientedTowardsStart(isMine: Boolean): Boolean = this == MessageOptionsUserReactionOrientation.START ||
+    (isMine && this == MessageOptionsUserReactionOrientation.BY_USER) ||
+    (!isMine && this == MessageOptionsUserReactionOrientation.BY_USER_INVERTED)

@@ -26,16 +26,12 @@ internal class ModerationDetailsConverter {
     private val entityAdapter = moshi.adapter<ModerationDetailsEntity>()
 
     @TypeConverter
-    fun stringToModerationDetails(data: String?): ModerationDetailsEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
+    fun stringToModerationDetails(data: String?): ModerationDetailsEntity? = data?.let {
+        entityAdapter.fromJson(it)
     }
 
     @TypeConverter
-    fun moderationDetailsToString(entity: ModerationDetailsEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
+    fun moderationDetailsToString(entity: ModerationDetailsEntity?): String? = entity?.let {
+        entityAdapter.toJson(it)
     }
 }

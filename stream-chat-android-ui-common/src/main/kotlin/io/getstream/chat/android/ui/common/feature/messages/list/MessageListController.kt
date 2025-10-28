@@ -2041,13 +2041,11 @@ public class MessageListController(
      *
      * @return The [Message] with the given id or null if the message is not in the list.
      */
-    public fun getMessageFromListStateById(messageId: String): Message? {
-        return (
-            listState.value.messageItems.firstOrNull {
-                it is MessageItemState && it.message.id == messageId
-            } as? MessageItemState
-            )?.message
-    }
+    public fun getMessageFromListStateById(messageId: String): Message? = (
+        listState.value.messageItems.firstOrNull {
+            it is MessageItemState && it.message.id == messageId
+        } as? MessageItemState
+        )?.message
 
     /**
      * Clears the new messages state and drops the unread count to 0 after the user scrolls to the newest message.

@@ -909,13 +909,11 @@ internal class DomainMappingTest {
             userTransformer = transformer
         }
 
-        fun get(): DomainMapping {
-            return DomainMapping(
-                currentUserIdProvider = currentUserIdProvider,
-                channelTransformer = channelTransformer,
-                messageTransformer = messageTransformer,
-                userTransformer = userTransformer,
-            )
-        }
+        fun get(): DomainMapping = DomainMapping(
+            currentUserIdProvider = currentUserIdProvider,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+            userTransformer = userTransformer,
+        )
     }
 }

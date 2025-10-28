@@ -284,10 +284,8 @@ internal class FileAttachmentFragment : Fragment() {
          * @param style The style for the attachment picker dialog.
          * @return A new instance of the Fragment.
          */
-        fun newInstance(style: AttachmentsPickerDialogStyle): FileAttachmentFragment {
-            return FileAttachmentFragment().apply {
-                setStyle(style)
-            }
+        fun newInstance(style: AttachmentsPickerDialogStyle): FileAttachmentFragment = FileAttachmentFragment().apply {
+            setStyle(style)
         }
     }
 }

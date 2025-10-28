@@ -64,12 +64,10 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
         )
     }
 
-    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
-        return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
-            (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
-        } else {
-            (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
-        }
+    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean = if (newMessage.syncStatus == SyncStatus.COMPLETED) {
+        (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
+    } else {
+        (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
     }
 
     private fun Message.lastUpdateTime(): Long = listOfNotNull(

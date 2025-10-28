@@ -77,27 +77,21 @@ internal class ChatEventsObservable(
     fun subscribe(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return addSubscription(SubscriptionImpl(filter, listener))
-    }
+    ): Disposable = addSubscription(SubscriptionImpl(filter, listener))
 
     fun subscribeSuspend(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventSuspendListener<ChatEvent>,
-    ): Disposable {
-        return addSubscription(SuspendSubscription(scope, filter, listener))
-    }
+    ): Disposable = addSubscription(SuspendSubscription(scope, filter, listener))
 
     fun subscribeSingle(
         filter: (ChatEvent) -> Boolean = { true },
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return addSubscription(
-            SubscriptionImpl(filter, listener).apply {
-                afterEventDelivered = this::dispose
-            },
-        )
-    }
+    ): Disposable = addSubscription(
+        SubscriptionImpl(filter, listener).apply {
+            afterEventDelivered = this::dispose
+        },
+    )
 
     private fun notifySubscriptions(event: ChatEvent) {
         scope.launch {

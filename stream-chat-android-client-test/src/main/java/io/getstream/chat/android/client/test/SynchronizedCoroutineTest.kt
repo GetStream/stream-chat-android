@@ -28,7 +28,6 @@ import kotlinx.coroutines.test.runTest
  */
 @ExperimentalCoroutinesApi
 public interface SynchronizedCoroutineTest {
-
     /** Returns test scope. */
     public fun getTestScope(): TestScope
 

@@ -29,7 +29,5 @@ public sealed interface UserEntity {
     /**
      * Returns the user ID.
      */
-    public fun getUserId(): String {
-        return user.id
-    }
+    public fun getUserId(): String = user.id
 }

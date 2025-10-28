@@ -30,17 +30,26 @@ import java.io.File
 /** Annotation to retry a specific failed test. **/
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-public annotation class Retry(val count: Int)
+public annotation class Retry(
+    val count: Int,
+)
 
 /** Rule to retry all failed tests. **/
-public class RetryRule(private val count: Int) : TestRule {
-
-    override fun apply(base: Statement, description: Description): Statement = statement(
+public class RetryRule(
+    private val count: Int,
+) : TestRule {
+    override fun apply(
+        base: Statement,
+        description: Description,
+    ): Statement = statement(
         base,
         description,
     )
 
-    private fun statement(base: Statement, description: Description): Statement {
+    private fun statement(
+        base: Statement,
+        description: Description,
+    ): Statement {
         return object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
@@ -72,14 +81,14 @@ public class RetryRule(private val count: Int) : TestRule {
 }
 
 public open class DatabaseOperations {
-
     public open fun clearDatabases() {
         val databaseOperations = DatabaseOperations()
-        val dbFiles = databaseOperations.getAllDatabaseFiles().filterNot {
-            shouldIgnoreFile(
-                it.path,
-            )
-        }
+        val dbFiles =
+            databaseOperations.getAllDatabaseFiles().filterNot {
+                shouldIgnoreFile(
+                    it.path,
+                )
+            }
         dbFiles.forEach { clearDatabase(it, databaseOperations) }
     }
 
@@ -88,31 +97,32 @@ public open class DatabaseOperations {
         return ignoredSuffixes.any { path.endsWith(it) }
     }
 
-    private fun clearDatabase(dbFile: File, dbOperations: DatabaseOperations) {
+    private fun clearDatabase(
+        dbFile: File,
+        dbOperations: DatabaseOperations,
+    ) {
         dbOperations.openDatabase(dbFile).use { database ->
-            val tablesToClear = dbOperations.getTableNames(
-                database,
-            ).filterNot { it == "room_master_table" }
+            val tablesToClear =
+                dbOperations
+                    .getTableNames(
+                        database,
+                    ).filterNot { it == "room_master_table" }
             tablesToClear.forEach { dbOperations.deleteTableContent(database, it) }
         }
     }
 
-    private fun getAllDatabaseFiles(): List<File> {
-        return InstrumentationRegistry.getInstrumentation().targetContext.let { context ->
-            context.databaseList().map { context.getDatabasePath(it) }
-        }
+    private fun getAllDatabaseFiles(): List<File> = InstrumentationRegistry.getInstrumentation().targetContext.let { context ->
+        context.databaseList().map { context.getDatabasePath(it) }
     }
 
-    private fun openDatabase(databaseFile: File): SQLiteDatabase {
-        return SQLiteDatabase.openDatabase(databaseFile.absolutePath, null, 0)
-    }
+    private fun openDatabase(databaseFile: File): SQLiteDatabase = SQLiteDatabase.openDatabase(databaseFile.absolutePath, null, 0)
 
     private fun getTableNames(sqLiteDatabase: SQLiteDatabase): List<String> {
-        sqLiteDatabase.rawQuery(
-            "SELECT name FROM sqlite_master WHERE type IN (?, ?)",
-            arrayOf("table", "view"),
-        )
-            .use { cursor ->
+        sqLiteDatabase
+            .rawQuery(
+                "SELECT name FROM sqlite_master WHERE type IN (?, ?)",
+                arrayOf("table", "view"),
+            ).use { cursor ->
                 val tableNames = ArrayList<String>()
                 while (cursor.moveToNext()) {
                     tableNames.add(cursor.getString(0))
@@ -121,7 +131,10 @@ public open class DatabaseOperations {
             }
     }
 
-    private fun deleteTableContent(sqLiteDatabase: SQLiteDatabase, tableName: String) {
+    private fun deleteTableContent(
+        sqLiteDatabase: SQLiteDatabase,
+        tableName: String,
+    ) {
         sqLiteDatabase.delete(tableName, null, null)
     }
 }

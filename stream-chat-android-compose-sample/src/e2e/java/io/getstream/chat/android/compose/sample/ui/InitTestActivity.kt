@@ -26,12 +26,10 @@ sealed class InitTestActivity : Serializable {
 
     data object UserLogin : InitTestActivity() {
         private fun readResolve(): Any = UserLogin
-        override fun createIntent(context: Context): Intent =
-            UserLoginActivity.createIntent(context)
+        override fun createIntent(context: Context): Intent = UserLoginActivity.createIntent(context)
     }
 
     data class Jwt(val baseUrl: String) : InitTestActivity() {
-        override fun createIntent(context: Context): Intent =
-            JwtTestActivity.createIntent(context, baseUrl)
+        override fun createIntent(context: Context): Intent = JwtTestActivity.createIntent(context, baseUrl)
     }
 }

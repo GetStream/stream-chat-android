@@ -38,8 +38,7 @@ abstract class BaseViewHolder<T : UserListItem>(
     protected abstract fun bind(item: T)
 }
 
-class SeparatorViewHolder(private val binding: AddChannelSeparatorItemBinding) :
-    BaseViewHolder<UserListItem.Separator>(binding.root) {
+class SeparatorViewHolder(private val binding: AddChannelSeparatorItemBinding) : BaseViewHolder<UserListItem.Separator>(binding.root) {
 
     override fun bind(item: UserListItem.Separator) {
         binding.titleTextView.text = if (item.letter == AddChannelViewController.EMPTY_NAME_SYMBOL) {

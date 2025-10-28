@@ -136,8 +136,7 @@ internal class HealthMonitor(
      *
      * @return True if time elapsed is bigger and we need to start reconnection process.
      */
-    private fun needToReconnect(): Boolean =
-        (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
+    private fun needToReconnect(): Boolean = (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
 
     private fun CoroutineScope.launchDelayed(
         delayMilliseconds: Long,

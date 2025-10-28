@@ -33,5 +33,4 @@ internal val ChatClient.logic: LogicRegistry
  *
  * @return [ChatClientStateCalls]
  */
-internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateCalls =
-    ChatClientStateCalls(this, scope)
+internal fun ChatClient.requestsAsState(scope: CoroutineScope): ChatClientStateCalls = ChatClientStateCalls(this, scope)

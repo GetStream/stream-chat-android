@@ -208,31 +208,29 @@ public class DefaultStreamMediaRecorder(
         recordingName: String,
         amplitudePollingInterval: Long,
         override: Boolean,
-    ): Result<File> {
-        return try {
-            StreamFileUtil.createFileInCacheDir(context, recordingName)
-                .onSuccess {
-                    recordingFile = it
-                    initializeMediaRecorderForAudio(recordingFile = it)
-                    requireNotNull(mediaRecorder)
-                    mediaRecorder?.start()
-                    onStartRecordingListener?.onStarted()
+    ): Result<File> = try {
+        StreamFileUtil.createFileInCacheDir(context, recordingName)
+            .onSuccess {
+                recordingFile = it
+                initializeMediaRecorderForAudio(recordingFile = it)
+                requireNotNull(mediaRecorder)
+                mediaRecorder?.start()
+                onStartRecordingListener?.onStarted()
 
-                    mediaRecorderState = MediaRecorderState.RECORDING
-                    pollMaxAmplitude(amplitudePollingInterval)
+                mediaRecorderState = MediaRecorderState.RECORDING
+                pollMaxAmplitude(amplitudePollingInterval)
 
-                    Result.Success(it)
-                }
-        } catch (exception: Exception) {
-            release()
-            logger.e(exception) { "Could not start recording audio" }
-            Result.Failure(
-                Error.ThrowableError(
-                    message = "Could not start audio recording.",
-                    cause = exception,
-                ),
-            )
-        }
+                Result.Success(it)
+            }
+    } catch (exception: Exception) {
+        release()
+        logger.e(exception) { "Could not start recording audio" }
+        Result.Failure(
+            Error.ThrowableError(
+                message = "Could not start audio recording.",
+                cause = exception,
+            ),
+        )
     }
 
     /**
@@ -249,29 +247,27 @@ public class DefaultStreamMediaRecorder(
     override fun startAudioRecording(
         recordingFile: File,
         amplitudePollingInterval: Long,
-    ): Result<Unit> {
-        return try {
-            this.recordingFile = recordingFile
+    ): Result<Unit> = try {
+        this.recordingFile = recordingFile
 
-            initializeMediaRecorderForAudio(recordingFile = recordingFile)
+        initializeMediaRecorderForAudio(recordingFile = recordingFile)
 
-            requireNotNull(mediaRecorder)
+        requireNotNull(mediaRecorder)
 
-            mediaRecorder?.start()
-            onStartRecordingListener?.onStarted()
-            mediaRecorderState = MediaRecorderState.RECORDING
-            pollMaxAmplitude(amplitudePollingInterval)
-            Result.Success(Unit)
-        } catch (exception: Exception) {
-            release()
-            logger.e(exception) { "Could not start recording audio" }
-            Result.Failure(
-                Error.ThrowableError(
-                    message = "Could not start audio recording.",
-                    cause = exception,
-                ),
-            )
-        }
+        mediaRecorder?.start()
+        onStartRecordingListener?.onStarted()
+        mediaRecorderState = MediaRecorderState.RECORDING
+        pollMaxAmplitude(amplitudePollingInterval)
+        Result.Success(Unit)
+    } catch (exception: Exception) {
+        release()
+        logger.e(exception) { "Could not start recording audio" }
+        Result.Failure(
+            Error.ThrowableError(
+                message = "Could not start audio recording.",
+                cause = exception,
+            ),
+        )
     }
 
     /**
@@ -280,51 +276,49 @@ public class DefaultStreamMediaRecorder(
      * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    override fun stopRecording(): Result<RecordedMedia> {
-        return try {
-            requireNotNull(mediaRecorder)
-            mediaRecorder?.stop()
+    override fun stopRecording(): Result<RecordedMedia> = try {
+        requireNotNull(mediaRecorder)
+        mediaRecorder?.stop()
 
-            val calculatedDurationInMs = activeRecordingStartedAt?.let {
-                System.currentTimeMillis() - it
-            } ?: 0
-            val parsedDurationInMs = getAudioDurationInMs(recordingFile)
-            logger.d {
-                "[stopRecording] startedAt: $activeRecordingStartedAt, " +
-                    "calculatedDuration: $calculatedDurationInMs, parsedDuration: $parsedDurationInMs"
-            }
-
-            val durationInMs = when (parsedDurationInMs > 0) {
-                true -> parsedDurationInMs
-                else -> calculatedDurationInMs.toInt()
-            }
-            onCurrentRecordingDurationChangedListener?.onDurationChanged(durationInMs.toLong())
-            release()
-            onStopRecordingListener?.onStopped()
-
-            val attachment = Attachment(
-                title = recordingFile?.name ?: "Recording",
-                upload = recordingFile,
-                type = AttachmentType.AUDIO_RECORDING,
-                mimeType = "audio/aac",
-                extraData = mapOf(
-                    EXTRA_DURATION to durationInMs / 1000f,
-                    EXTRA_WAVEFORM_DATA to sampleData,
-                ),
-            )
-            val recordedMedia = RecordedMedia(attachment = attachment, durationInMs = durationInMs)
-            logger.v { "[stopRecording] succeed: $recordedMedia" }
-            Result.Success(recordedMedia)
-        } catch (exception: Exception) {
-            logger.e(exception) { "[stopRecording] failed: $exception" }
-            release()
-            Result.Failure(
-                Error.ThrowableError(
-                    message = "Could not Stop audio recording.",
-                    cause = exception,
-                ),
-            )
+        val calculatedDurationInMs = activeRecordingStartedAt?.let {
+            System.currentTimeMillis() - it
+        } ?: 0
+        val parsedDurationInMs = getAudioDurationInMs(recordingFile)
+        logger.d {
+            "[stopRecording] startedAt: $activeRecordingStartedAt, " +
+                "calculatedDuration: $calculatedDurationInMs, parsedDuration: $parsedDurationInMs"
         }
+
+        val durationInMs = when (parsedDurationInMs > 0) {
+            true -> parsedDurationInMs
+            else -> calculatedDurationInMs.toInt()
+        }
+        onCurrentRecordingDurationChangedListener?.onDurationChanged(durationInMs.toLong())
+        release()
+        onStopRecordingListener?.onStopped()
+
+        val attachment = Attachment(
+            title = recordingFile?.name ?: "Recording",
+            upload = recordingFile,
+            type = AttachmentType.AUDIO_RECORDING,
+            mimeType = "audio/aac",
+            extraData = mapOf(
+                EXTRA_DURATION to durationInMs / 1000f,
+                EXTRA_WAVEFORM_DATA to sampleData,
+            ),
+        )
+        val recordedMedia = RecordedMedia(attachment = attachment, durationInMs = durationInMs)
+        logger.v { "[stopRecording] succeed: $recordedMedia" }
+        Result.Success(recordedMedia)
+    } catch (exception: Exception) {
+        logger.e(exception) { "[stopRecording] failed: $exception" }
+        release()
+        Result.Failure(
+            Error.ThrowableError(
+                message = "Could not Stop audio recording.",
+                cause = exception,
+            ),
+        )
     }
 
     private fun getAudioDurationInMs(file: File?): Int {
@@ -354,20 +348,18 @@ public class DefaultStreamMediaRecorder(
      * @return A Unit wrapped inside a [Result] if recording has been deleted successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    override fun deleteRecording(recordingFile: File): Result<Unit> {
-        return try {
-            recordingFile.delete()
+    override fun deleteRecording(recordingFile: File): Result<Unit> = try {
+        recordingFile.delete()
 
-            Result.Success(Unit)
-        } catch (exception: Exception) {
-            logger.e(exception) { "Could not delete audio recording" }
-            Result.Failure(
-                Error.ThrowableError(
-                    message = "Could not delete audio recording.",
-                    cause = exception,
-                ),
-            )
-        }
+        Result.Success(Unit)
+    } catch (exception: Exception) {
+        logger.e(exception) { "Could not delete audio recording" }
+        Result.Failure(
+            Error.ThrowableError(
+                message = "Could not delete audio recording.",
+                cause = exception,
+            ),
+        )
     }
 
     /**

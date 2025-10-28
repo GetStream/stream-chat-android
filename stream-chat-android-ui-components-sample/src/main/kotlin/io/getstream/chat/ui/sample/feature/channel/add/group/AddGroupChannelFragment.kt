@@ -87,13 +87,11 @@ class AddGroupChannelFragment : Fragment() {
         inflater.inflate(R.menu.menu_add_group_channel, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.addGroupChannelNextButton) {
-            findNavController().navigate(R.id.action_addGroupChannelFragment_to_addGroupChannelSelectNameFragment)
-            true
-        } else {
-            super.onOptionsItemSelected(item)
-        }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = if (item.itemId == R.id.addGroupChannelNextButton) {
+        findNavController().navigate(R.id.action_addGroupChannelFragment_to_addGroupChannelSelectNameFragment)
+        true
+    } else {
+        super.onOptionsItemSelected(item)
     }
 
     private fun bindAddChannelView() {

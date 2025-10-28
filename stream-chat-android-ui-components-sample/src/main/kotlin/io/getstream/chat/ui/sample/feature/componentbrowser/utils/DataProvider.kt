@@ -35,65 +35,49 @@ internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int)
         '/' + res.getResourceEntryName(drawableResId)
 }
 
-internal fun randomUser(withImage: Boolean = true, isOnline: Boolean = true): User {
-    return User(
-        id = "${('A'..'Z').random()}${('A'..'Z').random()}",
-        name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
-        online = isOnline,
-    ).let {
-        it.copy(
-            image = it.image.takeUnless { withImage } ?: randomImageUrl(),
-        )
-    }
-}
-
-internal fun randomUsers(size: Int = 30): List<User> {
-    return 0.until(size).map { randomUser() }
-}
-
-internal fun randomChannel(members: List<Member> = emptyList()): Channel {
-    return Channel(
-        type = ('A'..'Z').random().toString(),
-        id = ('A'..'Z').random().toString(),
-        name = "Sample Channel",
-        members = members,
+internal fun randomUser(withImage: Boolean = true, isOnline: Boolean = true): User = User(
+    id = "${('A'..'Z').random()}${('A'..'Z').random()}",
+    name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
+    online = isOnline,
+).let {
+    it.copy(
+        image = it.image.takeUnless { withImage } ?: randomImageUrl(),
     )
 }
 
-internal fun randomMember(withImage: Boolean = true): Member {
-    return Member(user = randomUser(withImage))
+internal fun randomUsers(size: Int = 30): List<User> = 0.until(size).map { randomUser() }
+
+internal fun randomChannel(members: List<Member> = emptyList()): Channel = Channel(
+    type = ('A'..'Z').random().toString(),
+    id = ('A'..'Z').random().toString(),
+    name = "Sample Channel",
+    members = members,
+)
+
+internal fun randomMember(withImage: Boolean = true): Member = Member(user = randomUser(withImage))
+
+internal fun randomMessage(): Message = Message(text = "Random message")
+
+internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> = List(count) {
+    AttachmentMetaData(
+        uri = Uri.parse(randomImageUrl()),
+        type = "image",
+        mimeType = "image/png",
+    )
 }
 
-internal fun randomMessage(): Message {
-    return Message(text = "Random message")
-}
-
-internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
-    return List(count) {
-        AttachmentMetaData(
-            uri = Uri.parse(randomImageUrl()),
-            type = "image",
-            mimeType = "image/png",
-        )
+internal fun randomFileAttachments(count: Int): List<AttachmentMetaData> = List(count) {
+    AttachmentMetaData(
+        uri = Uri.parse(randomImageUrl()),
+        type = "file",
+        mimeType = "application/pdf",
+    ).apply {
+        size = 100000L
+        title = "Sample PDF"
     }
 }
 
-internal fun randomFileAttachments(count: Int): List<AttachmentMetaData> {
-    return List(count) {
-        AttachmentMetaData(
-            uri = Uri.parse(randomImageUrl()),
-            type = "file",
-            mimeType = "application/pdf",
-        ).apply {
-            size = 100000L
-            title = "Sample PDF"
-        }
-    }
-}
-
-internal fun randomCommand(): Command {
-    return Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
-}
+internal fun randomCommand(): Command = Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
 
 internal fun randomImageUrl(): String {
     val category = listOf("men", "women").random()

@@ -76,12 +76,10 @@ public class TypingIndicatorViewModelFactory(
         /**
          * Builds [TypingIndicatorViewModelFactory] instance.
          */
-        public fun build(): ViewModelProvider.Factory {
-            return TypingIndicatorViewModelFactory(
-                cid = cid ?: error("Channel cid should not be null"),
-                chatClient = chatClient ?: ChatClient.instance(),
-                messageId = messageId,
-            )
-        }
+        public fun build(): ViewModelProvider.Factory = TypingIndicatorViewModelFactory(
+            cid = cid ?: error("Channel cid should not be null"),
+            chatClient = chatClient ?: ChatClient.instance(),
+            messageId = messageId,
+        )
     }
 }

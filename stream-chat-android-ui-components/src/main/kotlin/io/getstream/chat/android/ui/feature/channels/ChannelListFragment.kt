@@ -125,9 +125,7 @@ public open class ChannelListFragment : Fragment() {
      * Provides a custom theme for the screen.
      */
     @StyleRes
-    protected open fun getTheme(): Int {
-        return themeResId
-    }
+    protected open fun getTheme(): Int = themeResId
 
     /**
      * Configures [ChannelListHeaderView]. Override the method for a custom setup.
@@ -229,23 +227,17 @@ public open class ChannelListFragment : Fragment() {
         searchResultClickListener = null
     }
 
-    protected open fun createChannelListViewModelFactory(): ChannelListViewModelFactory {
-        return ChannelListViewModelFactory(filter = getFilter(), sort = getSort())
-    }
+    protected open fun createChannelListViewModelFactory(): ChannelListViewModelFactory = ChannelListViewModelFactory(filter = getFilter(), sort = getSort())
 
     /**
      * Default filter for channels. Override the method to provide custom filter.
      */
-    protected open fun getFilter(): FilterObject? {
-        return null
-    }
+    protected open fun getFilter(): FilterObject? = null
 
     /**
      * Default query sort for channels. Override the method to provide custom sort.
      */
-    protected open fun getSort(): QuerySorter<Channel> {
-        return ChannelListViewModel.DEFAULT_SORT
-    }
+    protected open fun getSort(): QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT
 
     /**
      * Click listener for the right button in the header. Not implemented by default.
@@ -330,15 +322,13 @@ public open class ChannelListFragment : Fragment() {
             this.fragment = fragment
         }
 
-        public fun build(): ChannelListFragment {
-            return (fragment ?: ChannelListFragment()).apply {
-                arguments = bundleOf(
-                    ARG_THEME_RES_ID to this@Builder.themeResId,
-                    ARG_SHOW_HEADER to this@Builder.showHeader,
-                    ARG_SHOW_SEARCH to this@Builder.showSearch,
-                    ARG_HEADER_TITLE to this@Builder.headerTitle,
-                )
-            }
+        public fun build(): ChannelListFragment = (fragment ?: ChannelListFragment()).apply {
+            arguments = bundleOf(
+                ARG_THEME_RES_ID to this@Builder.themeResId,
+                ARG_SHOW_HEADER to this@Builder.showHeader,
+                ARG_SHOW_SEARCH to this@Builder.showSearch,
+                ARG_HEADER_TITLE to this@Builder.headerTitle,
+            )
         }
     }
 

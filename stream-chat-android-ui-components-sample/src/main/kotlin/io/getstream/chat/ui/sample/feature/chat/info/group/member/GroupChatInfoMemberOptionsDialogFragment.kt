@@ -168,23 +168,21 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         private const val ARG_MEMBER_ID = "memberId"
         private const val RESULT = "event"
 
-        fun newInstance(cid: String, memberId: String): GroupChatInfoMemberOptionsDialogFragment =
-            GroupChatInfoMemberOptionsDialogFragment().apply {
-                arguments = bundleOf(
-                    ARG_CID to cid,
-                    ARG_MEMBER_ID to memberId,
-                )
-            }
+        fun newInstance(cid: String, memberId: String): GroupChatInfoMemberOptionsDialogFragment = GroupChatInfoMemberOptionsDialogFragment().apply {
+            arguments = bundleOf(
+                ARG_CID to cid,
+                ARG_MEMBER_ID to memberId,
+            )
+        }
 
-        fun getEventFromResult(result: Bundle): ChannelInfoMemberViewEvent =
-            when (val option = result.get(RESULT) as FragmentResult) {
-                is FragmentResult.MessageMember ->
-                    ChannelInfoMemberViewEvent.MessageMember(option.memberId, option.distinctCid)
+        fun getEventFromResult(result: Bundle): ChannelInfoMemberViewEvent = when (val option = result.get(RESULT) as FragmentResult) {
+            is FragmentResult.MessageMember ->
+                ChannelInfoMemberViewEvent.MessageMember(option.memberId, option.distinctCid)
 
-                is FragmentResult.BanMember -> ChannelInfoMemberViewEvent.BanMember(option.member)
-                is FragmentResult.UnbanMember -> ChannelInfoMemberViewEvent.UnbanMember(option.member)
-                is FragmentResult.RemoveMember -> ChannelInfoMemberViewEvent.RemoveMember(option.member)
-            }
+            is FragmentResult.BanMember -> ChannelInfoMemberViewEvent.BanMember(option.member)
+            is FragmentResult.UnbanMember -> ChannelInfoMemberViewEvent.UnbanMember(option.member)
+            is FragmentResult.RemoveMember -> ChannelInfoMemberViewEvent.RemoveMember(option.member)
+        }
 
         private fun ChannelInfoMemberViewEvent.asResult() = bundleOf(
             RESULT to when (this) {

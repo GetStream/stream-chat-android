@@ -47,8 +47,7 @@ import java.io.File
  *
  * @property pickerMediaMode define which media type will be allowed.
  */
-public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode: PickerMediaMode) :
-    AttachmentsPickerTabFactory {
+public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode: PickerMediaMode) : AttachmentsPickerTabFactory {
 
     /**
      * The attachment picker mode that this factory handles.

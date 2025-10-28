@@ -27,11 +27,7 @@ internal class ScrollPauseLinearLayoutManager(context: Context) : LinearLayoutMa
     var verticalScrollEnabled: Boolean = orientation == VERTICAL
     var horizontalScrollEnabled: Boolean = orientation == HORIZONTAL
 
-    override fun canScrollVertically(): Boolean {
-        return verticalScrollEnabled && super.canScrollVertically()
-    }
+    override fun canScrollVertically(): Boolean = verticalScrollEnabled && super.canScrollVertically()
 
-    override fun canScrollHorizontally(): Boolean {
-        return horizontalScrollEnabled && super.canScrollHorizontally()
-    }
+    override fun canScrollHorizontally(): Boolean = horizontalScrollEnabled && super.canScrollHorizontally()
 }

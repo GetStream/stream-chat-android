@@ -60,9 +60,7 @@ public fun interface MessagePreviewFormatter {
          *
          * @see [DefaultMessagePreviewFormatter]
          */
-        public fun defaultFormatter(context: Context): MessagePreviewFormatter {
-            return DefaultMessagePreviewFormatter(context = context)
-        }
+        public fun defaultFormatter(context: Context): MessagePreviewFormatter = DefaultMessagePreviewFormatter(context = context)
     }
 }
 

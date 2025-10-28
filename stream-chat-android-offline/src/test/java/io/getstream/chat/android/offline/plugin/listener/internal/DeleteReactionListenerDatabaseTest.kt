@@ -116,70 +116,68 @@ internal class DeleteReactionListenerDatabaseTest {
     }
 
     @Test
-    fun `when deleting message, the correct sync status should be insert in the database when request is successful`() =
-        runTest {
-            val testUser = randomUser()
-            val testReaction = randomReaction(
-                user = testUser,
-                userId = testUser.id,
-                syncStatus = SyncStatus.SYNC_NEEDED,
-            )
-            val testMessage = randomMessage(
-                latestReactions = mutableListOf(testReaction),
-                ownReactions = mutableListOf(testReaction),
-                user = testUser,
-            )
+    fun `when deleting message, the correct sync status should be insert in the database when request is successful`() = runTest {
+        val testUser = randomUser()
+        val testReaction = randomReaction(
+            user = testUser,
+            userId = testUser.id,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+        )
+        val testMessage = randomMessage(
+            latestReactions = mutableListOf(testReaction),
+            ownReactions = mutableListOf(testReaction),
+            user = testUser,
+        )
 
-            whenever(reactionRepository.selectUserReactionToMessage(any(), any(), any())) doReturn testReaction
+        whenever(reactionRepository.selectUserReactionToMessage(any(), any(), any())) doReturn testReaction
 
-            deleteReactionListenerDatabase.onDeleteReactionResult(
-                cid = randomCID(),
-                messageId = testMessage.id,
-                reactionType = testReaction.type,
-                currentUser = testUser,
-                Result.Success(testMessage),
-            )
+        deleteReactionListenerDatabase.onDeleteReactionResult(
+            cid = randomCID(),
+            messageId = testMessage.id,
+            reactionType = testReaction.type,
+            currentUser = testUser,
+            Result.Success(testMessage),
+        )
 
-            verify(reactionRepository).insertReaction(
-                argThat { reaction ->
-                    reaction.messageId == testReaction.messageId &&
-                        reaction.userId == testReaction.userId &&
-                        reaction.syncStatus == SyncStatus.COMPLETED
-                },
-            )
-        }
+        verify(reactionRepository).insertReaction(
+            argThat { reaction ->
+                reaction.messageId == testReaction.messageId &&
+                    reaction.userId == testReaction.userId &&
+                    reaction.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+    }
 
     @Test
-    fun `when deleting message, the correct sync status should be insert in the database when request fails`() =
-        runTest {
-            val testUser = randomUser()
-            val testReaction = randomReaction(
-                user = testUser,
-                userId = testUser.id,
-                syncStatus = SyncStatus.IN_PROGRESS,
-            )
-            val testMessage = randomMessage(
-                latestReactions = mutableListOf(testReaction),
-                ownReactions = mutableListOf(testReaction),
-                user = testUser,
-            )
+    fun `when deleting message, the correct sync status should be insert in the database when request fails`() = runTest {
+        val testUser = randomUser()
+        val testReaction = randomReaction(
+            user = testUser,
+            userId = testUser.id,
+            syncStatus = SyncStatus.IN_PROGRESS,
+        )
+        val testMessage = randomMessage(
+            latestReactions = mutableListOf(testReaction),
+            ownReactions = mutableListOf(testReaction),
+            user = testUser,
+        )
 
-            whenever(reactionRepository.selectUserReactionToMessage(any(), any(), any())) doReturn testReaction
+        whenever(reactionRepository.selectUserReactionToMessage(any(), any(), any())) doReturn testReaction
 
-            deleteReactionListenerDatabase.onDeleteReactionResult(
-                cid = randomCID(),
-                messageId = testMessage.id,
-                reactionType = testReaction.type,
-                currentUser = testUser,
-                Result.Failure(Error.GenericError("")),
-            )
+        deleteReactionListenerDatabase.onDeleteReactionResult(
+            cid = randomCID(),
+            messageId = testMessage.id,
+            reactionType = testReaction.type,
+            currentUser = testUser,
+            Result.Failure(Error.GenericError("")),
+        )
 
-            verify(reactionRepository).insertReaction(
-                argThat { reaction ->
-                    reaction.messageId == testReaction.messageId &&
-                        reaction.userId == testReaction.userId &&
-                        reaction.syncStatus == SyncStatus.SYNC_NEEDED
-                },
-            )
-        }
+        verify(reactionRepository).insertReaction(
+            argThat { reaction ->
+                reaction.messageId == testReaction.messageId &&
+                    reaction.userId == testReaction.userId &&
+                    reaction.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
+    }
 }

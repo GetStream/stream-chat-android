@@ -77,7 +77,8 @@ public data class User(
     val pushPreference: PushPreference? = null,
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
-) : CustomObject, ComparableFieldProvider {
+) : CustomObject,
+    ComparableFieldProvider {
 
     /**
      * Determines if the user is banned or not.
@@ -99,26 +100,24 @@ public data class User(
      */
     val isReadReceiptsEnabled: Boolean get() = privacySettings?.readReceipts?.enabled ?: true
 
-    override fun getComparableField(fieldName: String): Comparable<*>? {
-        return when (fieldName) {
-            "id" -> id
-            "role" -> role
-            "name" -> name
-            "image" -> image
-            "invisible" -> invisible
-            "language" -> language
-            "banned" -> banned
-            "online" -> online
-            "total_unread_count", "totalUnreadCount" -> totalUnreadCount
-            "unread_channels", "unreadChannels" -> unreadChannels
-            "unread_threads", "unreadThreads" -> unreadThreads
-            "created_at", "createdAt" -> createdAt
-            "deactivated_at", "deactivatedAt" -> deactivatedAt
-            "updated_at", "updatedAt" -> updatedAt
-            "last_active", "lastActive" -> lastActive
-            "avg_response_time", "avgResponseTime" -> avgResponseTime
-            else -> extraData[fieldName] as? Comparable<*>
-        }
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "id" -> id
+        "role" -> role
+        "name" -> name
+        "image" -> image
+        "invisible" -> invisible
+        "language" -> language
+        "banned" -> banned
+        "online" -> online
+        "total_unread_count", "totalUnreadCount" -> totalUnreadCount
+        "unread_channels", "unreadChannels" -> unreadChannels
+        "unread_threads", "unreadThreads" -> unreadThreads
+        "created_at", "createdAt" -> createdAt
+        "deactivated_at", "deactivatedAt" -> deactivatedAt
+        "updated_at", "updatedAt" -> updatedAt
+        "last_active", "lastActive" -> lastActive
+        "avg_response_time", "avgResponseTime" -> avgResponseTime
+        else -> extraData[fieldName] as? Comparable<*>
     }
 
     @SinceKotlin("99999.9")
@@ -184,8 +183,7 @@ public data class User(
         public fun withName(name: String): Builder = apply { this.name = name }
         public fun withImage(image: String): Builder = apply { this.image = image }
         public fun withInvisible(invisible: Boolean?): Builder = apply { this.invisible = invisible }
-        public fun withPrivacySettings(privacySettings: PrivacySettings?): Builder =
-            apply { this.privacySettings = privacySettings }
+        public fun withPrivacySettings(privacySettings: PrivacySettings?): Builder = apply { this.privacySettings = privacySettings }
         public fun withLanguage(language: String): Builder = apply { this.language = language }
         public fun withBanned(banned: Boolean?): Builder = apply { this.banned = banned }
         public fun withDevices(devices: List<Device>): Builder = apply { this.devices = devices }
@@ -216,34 +214,32 @@ public data class User(
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withDeactivatedAt(deactivatedAt: Date?): Builder = apply { this.deactivatedAt = deactivatedAt }
 
-        public fun build(): User {
-            return User(
-                id = id,
-                role = role,
-                name = name,
-                image = image,
-                invisible = invisible,
-                privacySettings = privacySettings,
-                language = language,
-                banned = banned,
-                devices = devices,
-                online = online,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-                lastActive = lastActive,
-                totalUnreadCount = totalUnreadCount,
-                unreadChannels = unreadChannels,
-                unreadThreads = unreadThreads,
-                mutes = mutes,
-                teams = teams,
-                teamsRole = teamsRole,
-                channelMutes = channelMutes,
-                blockedUserIds = blockedUserIds,
-                avgResponseTime = avgResponseTime,
-                pushPreference = pushPreference,
-                extraData = extraData.toMutableMap(),
-                deactivatedAt = deactivatedAt,
-            )
-        }
+        public fun build(): User = User(
+            id = id,
+            role = role,
+            name = name,
+            image = image,
+            invisible = invisible,
+            privacySettings = privacySettings,
+            language = language,
+            banned = banned,
+            devices = devices,
+            online = online,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            totalUnreadCount = totalUnreadCount,
+            unreadChannels = unreadChannels,
+            unreadThreads = unreadThreads,
+            mutes = mutes,
+            teams = teams,
+            teamsRole = teamsRole,
+            channelMutes = channelMutes,
+            blockedUserIds = blockedUserIds,
+            avgResponseTime = avgResponseTime,
+            pushPreference = pushPreference,
+            extraData = extraData.toMutableMap(),
+            deactivatedAt = deactivatedAt,
+        )
     }
 }

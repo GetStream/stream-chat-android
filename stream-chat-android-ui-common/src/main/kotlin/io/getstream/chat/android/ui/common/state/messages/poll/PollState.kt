@@ -45,7 +45,5 @@ public sealed class PollSelectionType {
     public data object ViewAnswers : PollSelectionType()
 }
 
-internal fun PollState.stringify(): String {
-    return "PollState(" +
-        "selectedPoll: $selectedPoll)"
-}
+internal fun PollState.stringify(): String = "PollState(" +
+    "selectedPoll: $selectedPoll)"

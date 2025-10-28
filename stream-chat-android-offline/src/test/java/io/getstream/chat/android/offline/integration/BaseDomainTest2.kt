@@ -159,20 +159,18 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         return client
     }
 
-    internal fun createRoomDb(): ChatDatabase {
-        return Room
-            .inMemoryDatabaseBuilder(
-                InstrumentationRegistry.getInstrumentation().targetContext,
-                ChatDatabase::class.java,
-            )
-            .allowMainThreadQueries()
-            // Use a separate thread for Room transactions to avoid deadlocks
-            // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
-            // and have to simply use runBlocking instead
-            .setTransactionExecutor(Executors.newSingleThreadExecutor())
-            .setQueryExecutor(Dispatchers.IO.asExecutor())
-            .build()
-    }
+    internal fun createRoomDb(): ChatDatabase = Room
+        .inMemoryDatabaseBuilder(
+            InstrumentationRegistry.getInstrumentation().targetContext,
+            ChatDatabase::class.java,
+        )
+        .allowMainThreadQueries()
+        // Use a separate thread for Room transactions to avoid deadlocks
+        // This means that tests that run Room transactions can't use testCoroutines.scope.runBlockingTest,
+        // and have to simply use runBlocking instead
+        .setTransactionExecutor(Executors.newSingleThreadExecutor())
+        .setQueryExecutor(Dispatchers.IO.asExecutor())
+        .build()
 
     private fun createChatDomain(client: ChatClient, db: ChatDatabase): Unit = runTest {
         val context = ApplicationProvider.getApplicationContext() as Context

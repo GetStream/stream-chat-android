@@ -183,22 +183,20 @@ internal class UnreadLabelCalculator {
         channelUserRead: ChannelUserRead,
         unreadMessages: List<Message>,
         shouldShowButton: Boolean,
-    ): MessageListController.UnreadLabel? {
-        return channelUserRead.lastReadMessageId
-            // Don't show label if there are no unread messages
-            ?.takeUnless { unreadMessages.isEmpty() }
-            // Don't show label if the last message in the list is the last read message
-            // (meaning all messages are read)
-            ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-            ?.let { lastReadMessageId ->
-                MessageListController.UnreadLabel(
-                    unreadCount = channelUserRead.unreadMessages,
-                    lastReadMessageId = lastReadMessageId,
-                    // Only show button if requested AND there are non-deleted unread messages
-                    buttonVisibility = shouldShowButton && unreadMessages.any { !it.isDeleted() },
-                )
-            }
-    }
+    ): MessageListController.UnreadLabel? = channelUserRead.lastReadMessageId
+        // Don't show label if there are no unread messages
+        ?.takeUnless { unreadMessages.isEmpty() }
+        // Don't show label if the last message in the list is the last read message
+        // (meaning all messages are read)
+        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+        ?.let { lastReadMessageId ->
+            MessageListController.UnreadLabel(
+                unreadCount = channelUserRead.unreadMessages,
+                lastReadMessageId = lastReadMessageId,
+                // Only show button if requested AND there are non-deleted unread messages
+                buttonVisibility = shouldShowButton && unreadMessages.any { !it.isDeleted() },
+            )
+        }
 
     /**
      * Calculates the unread label when the first unread message(s) are from the current user.

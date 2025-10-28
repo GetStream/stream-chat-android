@@ -146,39 +146,37 @@ private class PollAdapter(
         private const val VIEW_TYPE_SHOW_ALL_OPTIONS = 5
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> {
-        return when (viewType) {
-            VIEW_TYPE_HEADER -> HeaderViewHolder(
-                StreamUiItemPollHeaderBinding.inflate(parent.streamThemeInflater, parent, false)
-                    .applyStyle(pollViewStyle),
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> = when (viewType) {
+        VIEW_TYPE_HEADER -> HeaderViewHolder(
+            StreamUiItemPollHeaderBinding.inflate(parent.streamThemeInflater, parent, false)
+                .applyStyle(pollViewStyle),
+        )
 
-            VIEW_TYPE_ANSWER -> AnswerViewHolder(
-                StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false)
-                    .applyStyle(pollViewStyle),
-                onOptionClick,
-            )
+        VIEW_TYPE_ANSWER -> AnswerViewHolder(
+            StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false)
+                .applyStyle(pollViewStyle),
+            onOptionClick,
+        )
 
-            VIEW_TYPE_CLOSE -> CloseViewHolder(
-                StreamUiItemPollCloseBinding.inflate(parent.streamThemeInflater, parent, false)
-                    .applyStyle(pollViewStyle),
-                onClosePollClick,
-            )
+        VIEW_TYPE_CLOSE -> CloseViewHolder(
+            StreamUiItemPollCloseBinding.inflate(parent.streamThemeInflater, parent, false)
+                .applyStyle(pollViewStyle),
+            onClosePollClick,
+        )
 
-            VIEW_TYPE_RESULTS -> ViewResultsViewHolder(
-                StreamUiItemPollResultsBinding.inflate(parent.streamThemeInflater, parent, false)
-                    .applyStyle(pollViewStyle),
-                onViewPollResultsClick,
-            )
+        VIEW_TYPE_RESULTS -> ViewResultsViewHolder(
+            StreamUiItemPollResultsBinding.inflate(parent.streamThemeInflater, parent, false)
+                .applyStyle(pollViewStyle),
+            onViewPollResultsClick,
+        )
 
-            VIEW_TYPE_SHOW_ALL_OPTIONS -> ShowAllOptionsViewHolder(
-                StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false)
-                    .applyStyle(pollViewStyle),
-                onShowAllOptionsClick,
-            )
+        VIEW_TYPE_SHOW_ALL_OPTIONS -> ShowAllOptionsViewHolder(
+            StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false)
+                .applyStyle(pollViewStyle),
+            onShowAllOptionsClick,
+        )
 
-            else -> throw IllegalArgumentException("Unknown view type: $viewType")
-        }
+        else -> throw IllegalArgumentException("Unknown view type: $viewType")
     }
 
     override fun getItemViewType(position: Int): Int = when (getItem(position)) {
@@ -195,13 +193,9 @@ private class PollAdapter(
 }
 
 private object PollItemDiffCallback : DiffUtil.ItemCallback<PollItem>() {
-    override fun areItemsTheSame(oldItem: PollItem, newItem: PollItem): Boolean {
-        return oldItem == newItem
-    }
+    override fun areItemsTheSame(oldItem: PollItem, newItem: PollItem): Boolean = oldItem == newItem
 
-    override fun areContentsTheSame(oldItem: PollItem, newItem: PollItem): Boolean {
-        return oldItem == newItem
-    }
+    override fun areContentsTheSame(oldItem: PollItem, newItem: PollItem): Boolean = oldItem == newItem
 }
 
 private sealed class PollItem {

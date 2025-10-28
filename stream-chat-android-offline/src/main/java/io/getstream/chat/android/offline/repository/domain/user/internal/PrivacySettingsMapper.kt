@@ -20,32 +20,28 @@ import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 
-internal fun PrivacySettings.toEntity(): PrivacySettingsEntity {
-    return PrivacySettingsEntity(
-        typingIndicators = typingIndicators?.let {
-            TypingIndicatorsEntity(
-                enabled = it.enabled,
-            )
-        },
-        readReceipts = readReceipts?.let {
-            ReadReceiptsEntity(
-                enabled = it.enabled,
-            )
-        },
-    )
-}
+internal fun PrivacySettings.toEntity(): PrivacySettingsEntity = PrivacySettingsEntity(
+    typingIndicators = typingIndicators?.let {
+        TypingIndicatorsEntity(
+            enabled = it.enabled,
+        )
+    },
+    readReceipts = readReceipts?.let {
+        ReadReceiptsEntity(
+            enabled = it.enabled,
+        )
+    },
+)
 
-internal fun PrivacySettingsEntity.toModel(): PrivacySettings {
-    return PrivacySettings(
-        typingIndicators = typingIndicators?.let {
-            TypingIndicators(
-                enabled = it.enabled,
-            )
-        },
-        readReceipts = readReceipts?.let {
-            ReadReceipts(
-                enabled = it.enabled,
-            )
-        },
-    )
-}
+internal fun PrivacySettingsEntity.toModel(): PrivacySettings = PrivacySettings(
+    typingIndicators = typingIndicators?.let {
+        TypingIndicators(
+            enabled = it.enabled,
+        )
+    },
+    readReceipts = readReceipts?.let {
+        ReadReceipts(
+            enabled = it.enabled,
+        )
+    },
+)

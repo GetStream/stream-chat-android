@@ -30,14 +30,10 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.att
  * A custom [QuotedAttachmentFactory] that adds support for quoted date attachments.
  */
 class QuotedDateAttachmentFactory : QuotedAttachmentFactory {
-    override fun canHandle(message: Message): Boolean {
-        return message.attachments.any { it.type == "date" }
-    }
+    override fun canHandle(message: Message): Boolean = message.attachments.any { it.type == "date" }
 
-    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View {
-        return QuotedDateAttachmentView(parent.context).apply {
-            showDate(message.attachments.first())
-        }
+    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View = QuotedDateAttachmentView(parent.context).apply {
+        showDate(message.attachments.first())
     }
 
     class QuotedDateAttachmentView(context: Context) : FrameLayout(context) {

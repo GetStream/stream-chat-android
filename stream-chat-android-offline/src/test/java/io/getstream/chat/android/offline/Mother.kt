@@ -205,15 +205,13 @@ internal fun randomReactionGroupEntity(
     sumScore: Int = randomInt(),
     firstReactionAt: Date = randomDate(),
     lastReactionAt: Date = randomDate(),
-): ReactionGroupEntity {
-    return ReactionGroupEntity(
-        type = type,
-        count = count,
-        sumScore = sumScore,
-        firstReactionAt = firstReactionAt,
-        lastReactionAt = lastReactionAt,
-    )
-}
+): ReactionGroupEntity = ReactionGroupEntity(
+    type = type,
+    count = count,
+    sumScore = sumScore,
+    firstReactionAt = firstReactionAt,
+    lastReactionAt = lastReactionAt,
+)
 
 internal fun randomQueryChannelsEntity(
     id: String = randomString(),
@@ -222,25 +220,23 @@ internal fun randomQueryChannelsEntity(
     cids: List<String> = emptyList(),
 ): QueryChannelsEntity = QueryChannelsEntity(id, filter, querySort, cids)
 
-internal fun createRoomDB(): ChatDatabase =
-    Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)
-        .allowMainThreadQueries()
-        // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
-        // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
-        .setTransactionExecutor(Executors.newSingleThreadExecutor())
-        .setQueryExecutor(Dispatchers.IO.asExecutor())
-        .build()
+internal fun createRoomDB(): ChatDatabase = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ChatDatabase::class.java)
+    .allowMainThreadQueries()
+    // Use a separate thread for Room transactions to avoid deadlocks. This means that tests that run Room
+    // transactions can't use testCoroutines.scope.runBlockingTest, and have to simply use runBlocking instead.
+    .setTransactionExecutor(Executors.newSingleThreadExecutor())
+    .setQueryExecutor(Dispatchers.IO.asExecutor())
+    .build()
 
-internal fun randomLocationEntity(): LocationEntity =
-    LocationEntity(
-        cid = randomCID(),
-        messageId = randomString(),
-        userId = randomString(),
-        endAt = randomDate(),
-        latitude = randomDouble(),
-        longitude = randomDouble(),
-        deviceId = randomString(),
-    )
+internal fun randomLocationEntity(): LocationEntity = LocationEntity(
+    cid = randomCID(),
+    messageId = randomString(),
+    userId = randomString(),
+    endAt = randomDate(),
+    latitude = randomDouble(),
+    longitude = randomDouble(),
+    deviceId = randomString(),
+)
 
 internal fun randomThreadEntity(
     parentMessageId: String = randomString(),

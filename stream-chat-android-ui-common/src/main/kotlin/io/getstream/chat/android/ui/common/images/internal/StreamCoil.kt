@@ -46,10 +46,8 @@ public object StreamCoil {
         }
     }
 
-    private fun newImageLoaderFactory(): SingletonImageLoader.Factory {
-        return StreamImageLoaderFactory().apply {
-            imageLoaderFactory = this
-        }
+    private fun newImageLoaderFactory(): SingletonImageLoader.Factory = StreamImageLoaderFactory().apply {
+        imageLoaderFactory = this
     }
 
     internal inline val Context.streamImageLoader: ImageLoader

@@ -32,9 +32,7 @@ internal class ErrorCall<T : Any>(
         // Not supported
     }
 
-    override fun execute(): Result<T> {
-        return Result.Failure(e)
-    }
+    override fun execute(): Result<T> = Result.Failure(e)
 
     override fun enqueue(callback: Call.Callback<T>) {
         scope.launch(DispatcherProvider.Main) {

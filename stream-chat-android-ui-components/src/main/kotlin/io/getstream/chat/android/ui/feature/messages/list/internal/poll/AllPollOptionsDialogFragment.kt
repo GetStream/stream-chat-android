@@ -59,14 +59,12 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
     private val viewModel by viewModels<AllPollOptionsViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return AllPollOptionsViewModel(
-                        messageId = requireArguments().getString(ARG_MESSAGE_ID)!!,
-                        channelId = requireArguments().getString(ARG_CHANNEL_ID)!!,
-                        channelType = requireArguments().getString(ARG_CHANNEL_TYPE)!!,
-                        coroutineScope = viewLifecycleOwner.lifecycleScope,
-                    ) as T
-                }
+                override fun <T : ViewModel> create(modelClass: Class<T>): T = AllPollOptionsViewModel(
+                    messageId = requireArguments().getString(ARG_MESSAGE_ID)!!,
+                    channelId = requireArguments().getString(ARG_CHANNEL_ID)!!,
+                    channelType = requireArguments().getString(ARG_CHANNEL_TYPE)!!,
+                    coroutineScope = viewLifecycleOwner.lifecycleScope,
+                ) as T
             }
         },
     )
@@ -159,11 +157,10 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
             )
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder =
-            OptionViewHolder(
-                StreamUiItemOptionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-                onOptionClick,
-            )
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder = OptionViewHolder(
+            StreamUiItemOptionBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            onOptionClick,
+        )
 
         override fun onBindViewHolder(holder: OptionViewHolder, position: Int) {
             holder.bind(getItem(position))
@@ -192,8 +189,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
         private object OptionsDiffCallback : DiffUtil.ItemCallback<OptionItem>() {
             override fun areContentsTheSame(oldItem: OptionItem, newItem: OptionItem): Boolean = oldItem == newItem
-            override fun areItemsTheSame(oldItem: OptionItem, newItem: OptionItem): Boolean =
-                oldItem.option.id == newItem.option.id
+            override fun areItemsTheSame(oldItem: OptionItem, newItem: OptionItem): Boolean = oldItem.option.id == newItem.option.id
         }
     }
 

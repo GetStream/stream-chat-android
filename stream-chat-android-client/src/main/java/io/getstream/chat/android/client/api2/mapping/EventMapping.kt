@@ -165,74 +165,72 @@ internal class EventMapping(
      * The specific transformation methods are defined below.
      */
     @Suppress("LongMethod")
-    internal fun ChatEventDto.toDomain(): ChatEvent {
-        return when (this) {
-            is NewMessageEventDto -> toDomain()
-            is ChannelDeletedEventDto -> toDomain()
-            is ChannelHiddenEventDto -> toDomain()
-            is ChannelTruncatedEventDto -> toDomain()
-            is ChannelUpdatedByUserEventDto -> toDomain()
-            is ChannelUpdatedEventDto -> toDomain()
-            is ChannelUserBannedEventDto -> toDomain()
-            is ChannelUserUnbannedEventDto -> toDomain()
-            is ChannelVisibleEventDto -> toDomain()
-            is ConnectedEventDto -> toDomain()
-            is ConnectionErrorEventDto -> toDomain()
-            is ConnectingEventDto -> toDomain()
-            is DisconnectedEventDto -> toDomain()
-            is ErrorEventDto -> toDomain()
-            is GlobalUserBannedEventDto -> toDomain()
-            is GlobalUserUnbannedEventDto -> toDomain()
-            is HealthEventDto -> toDomain()
-            is MarkAllReadEventDto -> toDomain()
-            is MemberAddedEventDto -> toDomain()
-            is MemberRemovedEventDto -> toDomain()
-            is MemberUpdatedEventDto -> toDomain()
-            is MessageDeletedEventDto -> toDomain()
-            is MessageReadEventDto -> toDomain()
-            is MessageUpdatedEventDto -> toDomain()
-            is NotificationAddedToChannelEventDto -> toDomain()
-            is NotificationChannelDeletedEventDto -> toDomain()
-            is NotificationChannelMutesUpdatedEventDto -> toDomain()
-            is NotificationChannelTruncatedEventDto -> toDomain()
-            is NotificationInviteAcceptedEventDto -> toDomain()
-            is NotificationInviteRejectedEventDto -> toDomain()
-            is NotificationInvitedEventDto -> toDomain()
-            is NotificationMarkReadEventDto -> toDomain()
-            is NotificationMarkUnreadEventDto -> toDomain()
-            is NotificationMessageNewEventDto -> toDomain()
-            is NotificationThreadMessageNewEventDto -> toDomain()
-            is NotificationMutesUpdatedEventDto -> toDomain()
-            is NotificationRemovedFromChannelEventDto -> toDomain()
-            is ReactionDeletedEventDto -> toDomain()
-            is ReactionNewEventDto -> toDomain()
-            is ReactionUpdateEventDto -> toDomain()
-            is TypingStartEventDto -> toDomain()
-            is TypingStopEventDto -> toDomain()
-            is UnknownEventDto -> toDomain()
-            is UserDeletedEventDto -> toDomain()
-            is UserPresenceChangedEventDto -> toDomain()
-            is UserStartWatchingEventDto -> toDomain()
-            is UserStopWatchingEventDto -> toDomain()
-            is UserUpdatedEventDto -> toDomain()
-            is PollClosedEventDto -> toDomain()
-            is PollDeletedEventDto -> toDomain()
-            is PollUpdatedEventDto -> toDomain()
-            is VoteCastedEventDto -> toDomain()
-            is VoteChangedEventDto -> toDomain()
-            is AnswerCastedEventDto -> toDomain()
-            is VoteRemovedEventDto -> toDomain()
-            is DraftMessageDeletedEventDto -> toDomain()
-            is DraftMessageUpdatedEventDto -> toDomain()
-            is ReminderCreatedEventDto -> toDomain()
-            is ReminderUpdatedEventDto -> toDomain()
-            is ReminderDeletedEventDto -> toDomain()
-            is NotificationReminderDueEventDto -> toDomain()
-            is UserMessagesDeletedEventDto -> toDomain()
-            is AIIndicatorUpdatedEventDto -> toDomain()
-            is AIIndicatorClearEventDto -> toDomain()
-            is AIIndicatorStopEventDto -> toDomain()
-        }
+    internal fun ChatEventDto.toDomain(): ChatEvent = when (this) {
+        is NewMessageEventDto -> toDomain()
+        is ChannelDeletedEventDto -> toDomain()
+        is ChannelHiddenEventDto -> toDomain()
+        is ChannelTruncatedEventDto -> toDomain()
+        is ChannelUpdatedByUserEventDto -> toDomain()
+        is ChannelUpdatedEventDto -> toDomain()
+        is ChannelUserBannedEventDto -> toDomain()
+        is ChannelUserUnbannedEventDto -> toDomain()
+        is ChannelVisibleEventDto -> toDomain()
+        is ConnectedEventDto -> toDomain()
+        is ConnectionErrorEventDto -> toDomain()
+        is ConnectingEventDto -> toDomain()
+        is DisconnectedEventDto -> toDomain()
+        is ErrorEventDto -> toDomain()
+        is GlobalUserBannedEventDto -> toDomain()
+        is GlobalUserUnbannedEventDto -> toDomain()
+        is HealthEventDto -> toDomain()
+        is MarkAllReadEventDto -> toDomain()
+        is MemberAddedEventDto -> toDomain()
+        is MemberRemovedEventDto -> toDomain()
+        is MemberUpdatedEventDto -> toDomain()
+        is MessageDeletedEventDto -> toDomain()
+        is MessageReadEventDto -> toDomain()
+        is MessageUpdatedEventDto -> toDomain()
+        is NotificationAddedToChannelEventDto -> toDomain()
+        is NotificationChannelDeletedEventDto -> toDomain()
+        is NotificationChannelMutesUpdatedEventDto -> toDomain()
+        is NotificationChannelTruncatedEventDto -> toDomain()
+        is NotificationInviteAcceptedEventDto -> toDomain()
+        is NotificationInviteRejectedEventDto -> toDomain()
+        is NotificationInvitedEventDto -> toDomain()
+        is NotificationMarkReadEventDto -> toDomain()
+        is NotificationMarkUnreadEventDto -> toDomain()
+        is NotificationMessageNewEventDto -> toDomain()
+        is NotificationThreadMessageNewEventDto -> toDomain()
+        is NotificationMutesUpdatedEventDto -> toDomain()
+        is NotificationRemovedFromChannelEventDto -> toDomain()
+        is ReactionDeletedEventDto -> toDomain()
+        is ReactionNewEventDto -> toDomain()
+        is ReactionUpdateEventDto -> toDomain()
+        is TypingStartEventDto -> toDomain()
+        is TypingStopEventDto -> toDomain()
+        is UnknownEventDto -> toDomain()
+        is UserDeletedEventDto -> toDomain()
+        is UserPresenceChangedEventDto -> toDomain()
+        is UserStartWatchingEventDto -> toDomain()
+        is UserStopWatchingEventDto -> toDomain()
+        is UserUpdatedEventDto -> toDomain()
+        is PollClosedEventDto -> toDomain()
+        is PollDeletedEventDto -> toDomain()
+        is PollUpdatedEventDto -> toDomain()
+        is VoteCastedEventDto -> toDomain()
+        is VoteChangedEventDto -> toDomain()
+        is AnswerCastedEventDto -> toDomain()
+        is VoteRemovedEventDto -> toDomain()
+        is DraftMessageDeletedEventDto -> toDomain()
+        is DraftMessageUpdatedEventDto -> toDomain()
+        is ReminderCreatedEventDto -> toDomain()
+        is ReminderUpdatedEventDto -> toDomain()
+        is ReminderDeletedEventDto -> toDomain()
+        is NotificationReminderDueEventDto -> toDomain()
+        is UserMessagesDeletedEventDto -> toDomain()
+        is AIIndicatorUpdatedEventDto -> toDomain()
+        is AIIndicatorClearEventDto -> toDomain()
+        is AIIndicatorStopEventDto -> toDomain()
     }
 
     /**
@@ -334,14 +332,12 @@ internal class EventMapping(
         )
     }
 
-    private fun HealthEventDto.toDomain(): HealthEvent {
-        return HealthEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
-        )
-    }
+    private fun HealthEventDto.toDomain(): HealthEvent = HealthEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        connectionId = connection_id,
+    )
 
     /**
      * Transforms [MemberAddedEventDto] to [MemberAddedEvent].
@@ -507,33 +503,31 @@ internal class EventMapping(
     /**
      * Transforms [NotificationChannelMutesUpdatedEventDto] to [NotificationChannelMutesUpdatedEvent].
      */
-    private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent =
-        with(domainMapping) {
-            NotificationChannelMutesUpdatedEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                me = me.toDomain(),
-            )
-        }
+    private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent = with(domainMapping) {
+        NotificationChannelMutesUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            me = me.toDomain(),
+        )
+    }
 
     /**
      * Transforms [NotificationChannelTruncatedEventDto] to [NotificationChannelTruncatedEvent].
      */
-    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent =
-        with(domainMapping) {
-            NotificationChannelTruncatedEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                cid = cid,
-                channelType = channel_type,
-                channelId = channel_id,
-                channel = channel.toDomain(),
-                totalUnreadCount = total_unread_count,
-                unreadChannels = unread_channels,
-            )
-        }
+    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent = with(domainMapping) {
+        NotificationChannelTruncatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(),
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+        )
+    }
 
     /**
      * Transforms [NotificationInviteAcceptedEventDto] to [NotificationInviteAcceptedEvent].
@@ -665,21 +659,20 @@ internal class EventMapping(
     /**
      * Transforms [NotificationThreadMessageNewEventDto] to [NotificationThreadMessageNewEvent].
      */
-    private fun NotificationThreadMessageNewEventDto.toDomain(): NotificationThreadMessageNewEvent =
-        with(domainMapping) {
-            NotificationThreadMessageNewEvent(
-                type = type,
-                cid = cid,
-                channelId = channel_id,
-                channelType = channel_type,
-                message = message.toDomain(channel.toChannelInfo()),
-                channel = channel.toDomain(),
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                unreadThreads = unread_threads,
-                unreadThreadMessages = unread_thread_messages,
-            )
-        }
+    private fun NotificationThreadMessageNewEventDto.toDomain(): NotificationThreadMessageNewEvent = with(domainMapping) {
+        NotificationThreadMessageNewEvent(
+            type = type,
+            cid = cid,
+            channelId = channel_id,
+            channelType = channel_type,
+            message = message.toDomain(channel.toChannelInfo()),
+            channel = channel.toDomain(),
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            unreadThreads = unread_threads,
+            unreadThreadMessages = unread_thread_messages,
+        )
+    }
 
     /**
      * Transforms [NotificationMutesUpdatedEventDto] to [NotificationMutesUpdatedEvent].
@@ -696,20 +689,19 @@ internal class EventMapping(
     /**
      * Transforms [NotificationRemovedFromChannelEventDto] to [NotificationRemovedFromChannelEvent].
      */
-    private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemovedFromChannelEvent =
-        with(domainMapping) {
-            NotificationRemovedFromChannelEvent(
-                type = type,
-                createdAt = created_at.date,
-                rawCreatedAt = created_at.rawDate,
-                user = user?.toDomain(),
-                cid = cid,
-                channelType = channel_type,
-                channelId = channel_id,
-                channel = channel.toDomain(),
-                member = member.toDomain(),
-            )
-        }
+    private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemovedFromChannelEvent = with(domainMapping) {
+        NotificationRemovedFromChannelEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user?.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(),
+            member = member.toDomain(),
+        )
+    }
 
     /**
      * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
@@ -1241,40 +1233,32 @@ internal class EventMapping(
         )
     }
 
-    private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
-        return ConnectionErrorEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            connectionId = connection_id,
-            error = error.toDomain(),
-        )
-    }
+    private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent = ConnectionErrorEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        connectionId = connection_id,
+        error = error.toDomain(),
+    )
 
-    private fun ConnectingEventDto.toDomain(): ConnectingEvent {
-        return ConnectingEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
+    private fun ConnectingEventDto.toDomain(): ConnectingEvent = ConnectingEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+    )
 
-    private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
-        return DisconnectedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-        )
-    }
+    private fun DisconnectedEventDto.toDomain(): DisconnectedEvent = DisconnectedEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+    )
 
-    private fun ErrorEventDto.toDomain(): ErrorEvent {
-        return ErrorEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            error = error,
-        )
-    }
+    private fun ErrorEventDto.toDomain(): ErrorEvent = ErrorEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        error = error,
+    )
 
     /**
      * Transforms [UnknownEventDto] to [UnknownEvent].

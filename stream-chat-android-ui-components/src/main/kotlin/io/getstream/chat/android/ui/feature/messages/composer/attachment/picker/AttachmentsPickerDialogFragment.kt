@@ -307,11 +307,9 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                         pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
                     )
                 },
-        ): AttachmentsPickerDialogFragment {
-            return AttachmentsPickerDialogFragment().apply {
-                setStyle(style)
-                setAttachmentsPickerTabFactories(attachmentsPickerTabFactories)
-            }
+        ): AttachmentsPickerDialogFragment = AttachmentsPickerDialogFragment().apply {
+            setStyle(style)
+            setAttachmentsPickerTabFactories(attachmentsPickerTabFactories)
         }
     }
 

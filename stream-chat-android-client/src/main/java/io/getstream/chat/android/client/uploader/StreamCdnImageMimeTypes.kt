@@ -31,7 +31,5 @@ public object StreamCdnImageMimeTypes {
         "image/svg+xml",
     )
 
-    public fun isImageMimeTypeSupported(mimeType: String?): Boolean {
-        return SUPPORTED_IMAGE_MIME_TYPES.contains(mimeType)
-    }
+    public fun isImageMimeTypeSupported(mimeType: String?): Boolean = SUPPORTED_IMAGE_MIME_TYPES.contains(mimeType)
 }

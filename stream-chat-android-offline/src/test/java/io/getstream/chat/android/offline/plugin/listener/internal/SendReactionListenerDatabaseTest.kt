@@ -148,33 +148,32 @@ internal class SendReactionListenerDatabaseTest {
     }
 
     @Test
-    fun `when checking precondition for livestream channel, should return success without calling selectMessage`() =
-        runTest {
-            val testReaction = randomReaction(user = randomUser())
-            val livestreamCid = "livestream:123"
-            val messageRepository = mock<MessageRepository>()
+    fun `when checking precondition for livestream channel, should return success without calling selectMessage`() = runTest {
+        val testReaction = randomReaction(user = randomUser())
+        val livestreamCid = "livestream:123"
+        val messageRepository = mock<MessageRepository>()
 
-            // Create a SendReactionListenerDatabase instance with livestream as ignored channel type
-            val sendReactionListenerWithIgnoredTypes = SendReactionListenerDatabase(
-                clientState = clientState,
-                reactionsRepository = reactionsRepository,
-                messageRepository = messageRepository,
-                userRepository = userRepository,
-                ignoredChannelTypes = setOf("livestream"),
-            )
+        // Create a SendReactionListenerDatabase instance with livestream as ignored channel type
+        val sendReactionListenerWithIgnoredTypes = SendReactionListenerDatabase(
+            clientState = clientState,
+            reactionsRepository = reactionsRepository,
+            messageRepository = messageRepository,
+            userRepository = userRepository,
+            ignoredChannelTypes = setOf("livestream"),
+        )
 
-            val result = sendReactionListenerWithIgnoredTypes.onSendReactionPrecondition(
-                cid = livestreamCid,
-                currentUser = currentUser,
-                reaction = testReaction,
-            )
+        val result = sendReactionListenerWithIgnoredTypes.onSendReactionPrecondition(
+            cid = livestreamCid,
+            currentUser = currentUser,
+            reaction = testReaction,
+        )
 
-            // Assert that the result is Success
-            assert(result is Result.Success)
+        // Assert that the result is Success
+        assert(result is Result.Success)
 
-            // Verify that messageRepository.selectMessage() is never called
-            verify(messageRepository, never()).selectMessage(any())
-        }
+        // Verify that messageRepository.selectMessage() is never called
+        verify(messageRepository, never()).selectMessage(any())
+    }
 
     @Test
     fun `when sending reactions with enforceUnique true and skipPush true, should remove existing reactions and save new one`() = runTest {

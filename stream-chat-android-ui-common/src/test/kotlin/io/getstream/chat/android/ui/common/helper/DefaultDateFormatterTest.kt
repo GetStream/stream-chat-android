@@ -48,10 +48,8 @@ internal class DefaultDateFormatterTest {
         private val oneMinuteDuration = TimeDuration.minutes(1)
 
         override fun now(): Date = now
-        override fun isWithinLastMinute(date: Date?): Boolean {
-            return date.isWithinDurationFromNow(oneMinuteDuration) {
-                now.time
-            }
+        override fun isWithinLastMinute(date: Date?): Boolean = date.isWithinDurationFromNow(oneMinuteDuration) {
+            now.time
         }
 
         override fun yesterdayString() = YESTERDAY_STRING

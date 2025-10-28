@@ -59,22 +59,21 @@ internal class MediaGalleryPreviewViewModelTest {
     }
 
     @Test
-    fun `Given a message with media attachments When showing media gallery and removing the media Should update or delete the message`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient)
-                .givenCurrentUser()
-                .givenAttachments(mutableListOf(attachment1, attachment2))
-                .givenUpdateMessage()
-                .givenDeleteMessage()
-                .get()
+    fun `Given a message with media attachments When showing media gallery and removing the media Should update or delete the message`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenAttachments(mutableListOf(attachment1, attachment2))
+            .givenUpdateMessage()
+            .givenDeleteMessage()
+            .get()
 
-            viewModel.deleteCurrentMediaAttachment(attachment1)
-            viewModel.deleteCurrentMediaAttachment(attachment2)
+        viewModel.deleteCurrentMediaAttachment(attachment1)
+        viewModel.deleteCurrentMediaAttachment(attachment2)
 
-            verify(chatClient).updateMessage(any())
-            verify(chatClient).deleteMessage(MESSAGE_ID, false)
-        }
+        verify(chatClient).updateMessage(any())
+        verify(chatClient).deleteMessage(MESSAGE_ID, false)
+    }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
@@ -109,13 +108,11 @@ internal class MediaGalleryPreviewViewModelTest {
             whenever(chatClient.deleteMessage(any(), any())) doReturn Message().asCall()
         }
 
-        fun get(): MediaGalleryPreviewViewModel {
-            return MediaGalleryPreviewViewModel(
-                chatClient = chatClient,
-                messageId = messageId,
-                clientState = clientState,
-            )
-        }
+        fun get(): MediaGalleryPreviewViewModel = MediaGalleryPreviewViewModel(
+            chatClient = chatClient,
+            messageId = messageId,
+            clientState = clientState,
+        )
     }
 
     companion object {

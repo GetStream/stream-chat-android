@@ -18,8 +18,6 @@ package io.getstream.chat.android.offline.repository.domain.syncState.internal
 
 import io.getstream.chat.android.client.sync.SyncState
 
-internal fun SyncStateEntity.toModel() =
-    SyncState(userId, activeChannelIds, lastSyncedAt, rawLastSyncedAt, markedAllReadAt)
+internal fun SyncStateEntity.toModel() = SyncState(userId, activeChannelIds, lastSyncedAt, rawLastSyncedAt, markedAllReadAt)
 
-internal fun SyncState.toEntity() =
-    SyncStateEntity(userId, activeChannelIds, lastSyncedAt, rawLastSyncedAt, markedAllReadAt)
+internal fun SyncState.toEntity() = SyncStateEntity(userId, activeChannelIds, lastSyncedAt, rawLastSyncedAt, markedAllReadAt)

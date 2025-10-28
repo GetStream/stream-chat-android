@@ -35,8 +35,7 @@ import java.util.Locale
 private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
 
 @InternalStreamChatApi
-public class CaptureMediaContract(private val mode: Mode) :
-    ActivityResultContract<Unit, File?>() {
+public class CaptureMediaContract(private val mode: Mode) : ActivityResultContract<Unit, File?>() {
 
     private var pictureFile: File? = null
     private var videoFile: File? = null
@@ -53,26 +52,23 @@ public class CaptureMediaContract(private val mode: Mode) :
             }
     }
 
-    private fun getRecordVideoIntents(context: Context): List<Intent> =
-        File(
-            context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
-            createFileName("STREAM_VID", "mp4"),
-        ).let {
-            videoFile = it
-            createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
-        }
+    private fun getRecordVideoIntents(context: Context): List<Intent> = File(
+        context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
+        createFileName("STREAM_VID", "mp4"),
+    ).let {
+        videoFile = it
+        createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
+    }
 
-    private fun getTakePictureIntents(context: Context): List<Intent> =
-        File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-            createFileName("STREAM_IMG", "jpg"),
-        ).let {
-            pictureFile = it
-            createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
-        }
+    private fun getTakePictureIntents(context: Context): List<Intent> = File(
+        context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
+        createFileName("STREAM_IMG", "jpg"),
+    ).let {
+        pictureFile = it
+        createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
+    }
 
-    private fun createFileName(prefix: String, extension: String) =
-        "${prefix}_${dateFormat.format(Date().time)}.$extension"
+    private fun createFileName(prefix: String, extension: String) = "${prefix}_${dateFormat.format(Date().time)}.$extension"
 
     private fun createIntentList(
         context: Context,
@@ -97,9 +93,8 @@ public class CaptureMediaContract(private val mode: Mode) :
         }
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): File? =
-        (pictureFile.takeIfCaptured() ?: videoFile.takeIfCaptured())
-            .takeIf { resultCode == Activity.RESULT_OK }
+    override fun parseResult(resultCode: Int, intent: Intent?): File? = (pictureFile.takeIfCaptured() ?: videoFile.takeIfCaptured())
+        .takeIf { resultCode == Activity.RESULT_OK }
 
     @InternalStreamChatApi
     public enum class Mode {

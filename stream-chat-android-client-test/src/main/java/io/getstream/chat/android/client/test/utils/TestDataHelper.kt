@@ -65,7 +65,6 @@ import io.getstream.chat.android.client.events.MessageDeletedEvent as MessageDel
 
 @Suppress("LargeClass")
 public class TestDataHelper {
-
     private val streamFormatter = StreamDateFormatter()
 
     public val connection1: String = "test-connection"
@@ -110,104 +109,115 @@ public class TestDataHelper {
     public val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
     public val config1: Config = Config(typingEventsEnabled = true, readEventsEnabled = true)
-    public val channel1: Channel = Channel(
-        type = "messaging",
-        id = "123-testing",
-        watcherCount = 100,
-        createdBy = user1,
-        watchers = listOf(watcher1),
-        members = listOf(member1),
-        memberCount = 100,
-        config = config1,
-    )
+    public val channel1: Channel =
+        Channel(
+            type = "messaging",
+            id = "123-testing",
+            watcherCount = 100,
+            createdBy = user1,
+            watchers = listOf(watcher1),
+            members = listOf(member1),
+            memberCount = 100,
+            config = config1,
+        )
 
-    public val channel1WithNewMember: Channel = Channel(
-        type = "messaging",
-        id = "123-testing",
-        watcherCount = 100,
-        createdBy = user1,
-        watchers = listOf(watcher1),
-        members = listOf(member1, member2),
-        config = config1,
-    )
+    public val channel1WithNewMember: Channel =
+        Channel(
+            type = "messaging",
+            id = "123-testing",
+            watcherCount = 100,
+            createdBy = user1,
+            watchers = listOf(watcher1),
+            members = listOf(member1, member2),
+            config = config1,
+        )
 
-    public val channel1Updated: Channel = Channel(
-        type = "messaging",
-        id = "123-testing",
-        watcherCount = 100,
-        createdBy = user1,
-        watchers = listOf(watcher1),
-        members = listOf(member1),
-        extraData = mutableMapOf("color" to "green"),
-        config = config1,
-    )
+    public val channel1Updated: Channel =
+        Channel(
+            type = "messaging",
+            id = "123-testing",
+            watcherCount = 100,
+            createdBy = user1,
+            watchers = listOf(watcher1),
+            members = listOf(member1),
+            extraData = mutableMapOf("color" to "green"),
+            config = config1,
+        )
 
-    public val channel2: Channel = Channel(
-        type = "messaging",
-        id = "222-testing",
-        watcherCount = 22,
-        createdBy = user1,
-        watchers = listOf(watcher1),
-        members = listOf(member1),
-        config = config1,
-    )
+    public val channel2: Channel =
+        Channel(
+            type = "messaging",
+            id = "222-testing",
+            watcherCount = 22,
+            createdBy = user1,
+            watchers = listOf(watcher1),
+            members = listOf(member1),
+            config = config1,
+        )
 
-    public val channel3: Channel = Channel(
-        type = "messaging",
-        id = "333-testing",
-        watcherCount = 232,
-        watchers = listOf(watcher1),
-        members = listOf(member1),
-        config = config1,
-        hidden = false,
-    )
+    public val channel3: Channel =
+        Channel(
+            type = "messaging",
+            id = "333-testing",
+            watcherCount = 232,
+            watchers = listOf(watcher1),
+            members = listOf(member1),
+            config = config1,
+            hidden = false,
+        )
 
-    public val channel4: Channel = Channel(
-        type = "messaging",
-        id = "444-testing",
-        watcherCount = 444,
-        watchers = listOf(watcher1),
-        members = listOf(member1, member2),
-        config = config1,
-    )
+    public val channel4: Channel =
+        Channel(
+            type = "messaging",
+            id = "444-testing",
+            watcherCount = 444,
+            watchers = listOf(watcher1),
+            members = listOf(member1, member2),
+            config = config1,
+        )
 
-    public val channel5: Channel = Channel(
-        type = "messaging",
-        id = "555-testing",
-        watcherCount = 444,
-        watchers = listOf(watcher1),
-        members = listOf(member1, member2),
-        config = config1,
-    )
+    public val channel5: Channel =
+        Channel(
+            type = "messaging",
+            id = "555-testing",
+            watcherCount = 444,
+            watchers = listOf(watcher1),
+            members = listOf(member1, member2),
+            config = config1,
+        )
 
-    public val reaction1: Reaction = Reaction(
-        messageId = "message-1",
-        type = "like",
-        user = user1,
-        userId = user1.id,
-        score = 10,
-    )
-    public val reaction2: Reaction = Reaction(
-        messageId = "message-1",
-        type = "like",
-        score = 1,
-        user = user2,
-    )
+    public val reaction1: Reaction =
+        Reaction(
+            messageId = "message-1",
+            type = "like",
+            user = user1,
+            userId = user1.id,
+            score = 10,
+        )
+    public val reaction2: Reaction =
+        Reaction(
+            messageId = "message-1",
+            type = "like",
+            score = 1,
+            user = user2,
+        )
 
-    public val message1: Message = Message(
-        cid = channel1.cid,
-        text = "hi there",
-        id = "message-1",
-        user = user1,
-        createdAt = calendar(2020, 1, 1),
-    )
+    public val message1: Message =
+        Message(
+            cid = channel1.cid,
+            text = "hi there",
+            id = "message-1",
+            user = user1,
+            createdAt = calendar(2020, 1, 1),
+        )
 
-    public val message1WithoutChannelAndCid: Message = Message(
-        text = "hi there",
-        id = "message -1",
-        user = user1,
-        createdAt = calendar(2020, 1, 1),
-    )
+    public val message1WithoutChannelAndCid: Message =
+        Message(
+            text = "hi there",
+            id = "message -1",
+            user = user1,
+            createdAt = calendar(2020, 1, 1),
+        )
 
     public fun createMessage(): Message {
         val messageId = UUID.randomUUID().toString()
@@ -221,49 +231,54 @@ public class TestDataHelper {
         )
     }
 
-    public val message1Updated: Message = Message(
-        cid = channel1.cid,
-        text = "im update now",
-        id = "message-1",
-        user = user1,
-        createdAt = calendar(2020, 1, 1),
-    )
+    public val message1Updated: Message =
+        Message(
+            cid = channel1.cid,
+            text = "im update now",
+            id = "message-1",
+            user = user1,
+            createdAt = calendar(2020, 1, 1),
+        )
 
     public val message1Deleted: Message = message1.copy(deletedAt = Date())
 
-    public val reactionMessage1: Message = Message(
-        text = "im update now",
-        id = "message-1",
-        user = user1,
-        cid = channel1.cid,
-        reactionScores = mutableMapOf("like" to 10),
-        reactionCounts = mutableMapOf("like" to 1),
-        ownReactions = mutableListOf(reaction1),
-        latestReactions = mutableListOf(reaction1),
-    )
+    public val reactionMessage1: Message =
+        Message(
+            text = "im update now",
+            id = "message-1",
+            user = user1,
+            cid = channel1.cid,
+            reactionScores = mutableMapOf("like" to 10),
+            reactionCounts = mutableMapOf("like" to 1),
+            ownReactions = mutableListOf(reaction1),
+            latestReactions = mutableListOf(reaction1),
+        )
 
-    public val reactionMessage2: Message = Message(
-        text = "im update now",
-        id = "message-1",
-        user = user1,
-        cid = channel1.cid,
-        reactionScores = mutableMapOf("like" to 11),
-        reactionCounts = mutableMapOf("like" to 2),
-        ownReactions = mutableListOf(reaction2),
-        latestReactions = mutableListOf(reaction2, reaction1),
-    )
-    public val message2Older: Message = Message(
-        text = "message2",
-        id = "message-2",
-        user = user1,
-        createdAt = calendar(2019, 1, 1),
-    )
-    public val messageFromUser2: Message = Message(
-        text = "messageFromUser2",
-        id = "message-2",
-        user = user2,
-        createdAt = calendar(2020, 2, 1),
-    )
+    public val reactionMessage2: Message =
+        Message(
+            text = "im update now",
+            id = "message-1",
+            user = user1,
+            cid = channel1.cid,
+            reactionScores = mutableMapOf("like" to 11),
+            reactionCounts = mutableMapOf("like" to 2),
+            ownReactions = mutableListOf(reaction2),
+            latestReactions = mutableListOf(reaction2, reaction1),
+        )
+    public val message2Older: Message =
+        Message(
+            text = "message2",
+            id = "message-2",
+            user = user1,
+            createdAt = calendar(2019, 1, 1),
+        )
+    public val messageFromUser2: Message =
+        Message(
+            text = "messageFromUser2",
+            id = "message-2",
+            user = user2,
+            createdAt = calendar(2020, 2, 1),
+        )
 
     public val connectedEvent: ConnectedEvent by lazy {
         val createdAt = Date()
@@ -276,11 +291,12 @@ public class TestDataHelper {
         ConnectedEvent(EventType.HEALTH_CHECK, Date(), streamFormatter.format(createdAt), user1, connection1)
     }
 
-    public val disconnectedEvent: DisconnectedEvent = DisconnectedEvent(
-        EventType.CONNECTION_DISCONNECTED,
-        Date(),
-        null,
-    )
+    public val disconnectedEvent: DisconnectedEvent =
+        DisconnectedEvent(
+            EventType.CONNECTION_DISCONNECTED,
+            Date(),
+            null,
+        )
     public val newMessageEvent: NewMessageEvent by lazy {
         val createdAt = Date()
 

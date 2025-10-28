@@ -26,9 +26,7 @@ import kotlin.reflect.KProperty
  * @param initializer The initializer for the default value.
  * @return [LazyVarDelegate] instance that holds a value or a value override.
  */
-internal fun <T : Any> lazyVar(initializer: () -> T): ReadWriteProperty<Any?, T> {
-    return LazyVarDelegate(initializer)
-}
+internal fun <T : Any> lazyVar(initializer: () -> T): ReadWriteProperty<Any?, T> = LazyVarDelegate(initializer)
 
 /**
  * A property delegate that represents a value with lazy initialization. It is also
@@ -47,7 +45,5 @@ internal class LazyVarDelegate<T : Any>(
         overrideValue = value
     }
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return overrideValue ?: defaultValue
-    }
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T = overrideValue ?: defaultValue
 }

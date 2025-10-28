@@ -42,11 +42,9 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
      *
      * @return The version name (e.g., "1.2.3") or `"nameNotFound"` if retrieval fails.
      */
-    private fun getAppVersionName(): String {
-        return runCatching {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        }.getOrNull() ?: "nameNotFound"
-    }
+    private fun getAppVersionName(): String = runCatching {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName
+    }.getOrNull() ?: "nameNotFound"
 
     /**
      * Retrieves the version code of the application.
@@ -56,16 +54,14 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
      *
      * @return The version code as a string or `"versionCodeNotFound"` if retrieval fails.
      */
-    private fun getAppVersionCode(): String {
-        return runCatching {
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.longVersionCode.toString()
-            } else {
-                packageInfo.versionCode.toString()
-            }
-        }.getOrNull() ?: "versionCodeNotFound"
-    }
+    private fun getAppVersionCode(): String = runCatching {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode.toString()
+        } else {
+            packageInfo.versionCode.toString()
+        }
+    }.getOrNull() ?: "versionCodeNotFound"
 
     /**
      * Retrieves the application's name as displayed in the launcher.
@@ -98,15 +94,13 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
      *
      * @return The installer package name or `"StandAloneInstall"` if unknown.
      */
-    private fun getInstallerName(): String {
-        return runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
-            } else {
-                context.packageManager.getInstallerPackageName(context.packageName)
-            }
-        }.getOrNull() ?: "StandAloneInstall"
-    }
+    private fun getInstallerName(): String = runCatching {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.packageManager.getInstallSourceInfo(context.packageName).installingPackageName
+        } else {
+            context.packageManager.getInstallerPackageName(context.packageName)
+        }
+    }.getOrNull() ?: "StandAloneInstall"
 
     /**
      * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
@@ -171,8 +165,6 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
         }
     }
 
-    private fun String.sanitize(): String {
-        return Normalizer.normalize(this, Normalizer.Form.NFD)
-            .replace("[^\\p{ASCII}]".toRegex(), "")
-    }
+    private fun String.sanitize(): String = Normalizer.normalize(this, Normalizer.Form.NFD)
+        .replace("[^\\p{ASCII}]".toRegex(), "")
 }

@@ -35,11 +35,9 @@ internal class SearchResultListAdapter(
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamUiItemMentionListBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { MessagePreviewViewHolder(it, style) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder = StreamUiItemMentionListBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { MessagePreviewViewHolder(it, style) }
 
     override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {
         holder.bind(getItem(position))

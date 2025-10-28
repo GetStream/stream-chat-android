@@ -57,8 +57,6 @@ public abstract class InnerAttachmentViewHolder(public val itemView: View) {
          *
          * @param itemView The view that this ViewHolder controls.
          */
-        public fun stub(itemView: View): InnerAttachmentViewHolder {
-            return object : InnerAttachmentViewHolder(itemView) {}
-        }
+        public fun stub(itemView: View): InnerAttachmentViewHolder = object : InnerAttachmentViewHolder(itemView) {}
     }
 }

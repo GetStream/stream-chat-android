@@ -24,8 +24,7 @@ public sealed class SortAttribute<T> {
     public abstract val name: String
 
     /** KProperty referenced attribute. */
-    public data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) :
-        SortAttribute<T>()
+    public data class FieldSortAttribute<T>(val field: KProperty1<T, Comparable<*>?>, override val name: String) : SortAttribute<T>()
 
     /** Referenced by name attribute. */
     public data class FieldNameSortAttribute<T>(override val name: String) : SortAttribute<T>()

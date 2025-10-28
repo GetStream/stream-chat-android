@@ -252,8 +252,7 @@ public fun AiMessagesScreen(
                 threadsVerticalArrangement = threadsVerticalArrangement,
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
-                    {
-                            message ->
+                    { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     }
@@ -288,8 +287,7 @@ public fun AiMessagesScreen(
                     )
                 },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
-                    {
-                            result ->
+                    { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
                                 val message = listViewModel.getMessageById(result.messageId)
@@ -457,8 +455,7 @@ internal fun DefaultBottomBarContent(
         },
         onLinkPreviewClick = onComposerLinkPreviewClick,
         onSendMessage = remember(composerViewModel) {
-            {
-                    message ->
+            { message ->
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,

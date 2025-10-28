@@ -36,17 +36,11 @@ internal class FakeChain(
         chainIndex++
     }
 
-    override fun call(): Call {
-        return null!!
-    }
+    override fun call(): Call = null!!
 
-    override fun connectTimeoutMillis(): Int {
-        return 0
-    }
+    override fun connectTimeoutMillis(): Int = 0
 
-    override fun connection(): Connection? {
-        return null
-    }
+    override fun connection(): Connection? = null
 
     override fun proceed(request: Request): Response {
         val response = response[chainIndex]
@@ -60,27 +54,15 @@ internal class FakeChain(
             .build()
     }
 
-    override fun readTimeoutMillis(): Int {
-        return 0
-    }
+    override fun readTimeoutMillis(): Int = 0
 
-    override fun request(): Request {
-        return request
-    }
+    override fun request(): Request = request
 
-    override fun withConnectTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain {
-        return this
-    }
+    override fun withConnectTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain = this
 
-    override fun withReadTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain {
-        return this
-    }
+    override fun withReadTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain = this
 
-    override fun withWriteTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain {
-        return this
-    }
+    override fun withWriteTimeout(timeout: Int, unit: TimeUnit): Interceptor.Chain = this
 
-    override fun writeTimeoutMillis(): Int {
-        return 0
-    }
+    override fun writeTimeoutMillis(): Int = 0
 }

@@ -33,8 +33,11 @@ import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 
-public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
-
+public class TestCoroutineExtension :
+    BeforeEachCallback,
+    BeforeAllCallback,
+    AfterEachCallback,
+    AfterAllCallback {
     @OptIn(ExperimentalCoroutinesApi::class)
     public val dispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     private var _scope: TestScope? = null

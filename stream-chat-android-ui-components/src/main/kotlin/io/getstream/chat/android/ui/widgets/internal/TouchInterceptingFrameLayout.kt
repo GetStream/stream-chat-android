@@ -37,7 +37,5 @@ internal class TouchInterceptingFrameLayout : FrameLayout {
         defStyleAttr,
     )
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return true
-    }
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean = true
 }

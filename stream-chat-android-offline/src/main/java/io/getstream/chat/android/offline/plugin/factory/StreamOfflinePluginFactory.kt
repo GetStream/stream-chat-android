@@ -69,15 +69,14 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
     private val ignoredChannelTypes: Set<String> = emptySet(),
     private val now: () -> Long = { System.currentTimeMillis() },
-) : PluginFactory, RepositoryFactory.Provider {
+) : PluginFactory,
+    RepositoryFactory.Provider {
 
     private val logger by taggedLogger("Chat:OfflinePluginFactory")
 
     @InternalStreamChatApi
-    override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
-        return when (klass) {
-            else -> null
-        }
+    override fun <T : Any> resolveDependency(klass: KClass<T>): T? = when (klass) {
+        else -> null
     }
 
     override fun createRepositoryFactory(user: User): RepositoryFactory {
@@ -230,7 +229,5 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private fun createDatabase(
         context: Context,
         user: User,
-    ): ChatDatabase {
-        return ChatDatabase.getDatabase(context, user.id)
-    }
+    ): ChatDatabase = ChatDatabase.getDatabase(context, user.id)
 }

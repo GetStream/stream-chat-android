@@ -30,8 +30,6 @@ internal data class GuestUserRequest(
     )
 
     companion object {
-        fun create(id: String, name: String): GuestUserRequest {
-            return GuestUserRequest(GuestUser(id = id, name = name))
-        }
+        fun create(id: String, name: String): GuestUserRequest = GuestUserRequest(GuestUser(id = id, name = name))
     }
 }

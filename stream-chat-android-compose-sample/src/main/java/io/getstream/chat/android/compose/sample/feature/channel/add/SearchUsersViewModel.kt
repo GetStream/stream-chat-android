@@ -161,11 +161,9 @@ open class SearchUsersViewModel(
         )
     }
 
-    private fun groupUsers(users: List<User>): Map<Char, List<User>> {
-        return users
-            .groupBy { it.name.firstOrNull()?.uppercaseChar() ?: EMPTY_NAME_SYMBOL }
-            .toSortedMap()
-    }
+    private fun groupUsers(users: List<User>): Map<Char, List<User>> = users
+        .groupBy { it.name.firstOrNull()?.uppercaseChar() ?: EMPTY_NAME_SYMBOL }
+        .toSortedMap()
 
     private fun initialState() = SearchUsersState(
         query = "",

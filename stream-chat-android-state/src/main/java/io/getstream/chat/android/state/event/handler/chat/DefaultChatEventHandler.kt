@@ -59,14 +59,12 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
-        return when (event) {
-            is NewMessageEvent -> handleNewMessageEvent(event, cachedChannel)
-            is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
-            is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
-            is MemberUpdatedEvent -> addIfMembershipUpdated(cachedChannel, event.member)
-            else -> super.handleCidEvent(event, filter, cachedChannel)
-        }
+    override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult = when (event) {
+        is NewMessageEvent -> handleNewMessageEvent(event, cachedChannel)
+        is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
+        is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
+        is MemberUpdatedEvent -> addIfMembershipUpdated(cachedChannel, event.member)
+        else -> super.handleCidEvent(event, filter, cachedChannel)
     }
 
     /**
@@ -80,13 +78,11 @@ public open class DefaultChatEventHandler(
 
      * @return [EventHandlingResult] Result of handling.
      */
-    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
-        return when (event) {
-            is NotificationMessageNewEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            is NotificationAddedToChannelEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
-            else -> super.handleChannelEvent(event, filter)
-        }
+    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult = when (event) {
+        is NotificationMessageNewEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+        is NotificationAddedToChannelEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+        is NotificationRemovedFromChannelEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
+        else -> super.handleChannelEvent(event, filter)
     }
 
     /**
@@ -98,23 +94,19 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    private fun handleNewMessageEvent(event: NewMessageEvent, cachedChannel: Channel?): EventHandlingResult {
-        return if (event.message.type == SYSTEM_MESSAGE) {
-            EventHandlingResult.Skip
-        } else {
-            addIfChannelIsAbsent(cachedChannel)
-        }
+    private fun handleNewMessageEvent(event: NewMessageEvent, cachedChannel: Channel?): EventHandlingResult = if (event.message.type == SYSTEM_MESSAGE) {
+        EventHandlingResult.Skip
+    } else {
+        addIfChannelIsAbsent(cachedChannel)
     }
 
-    private fun addIfMembershipUpdated(channel: Channel?, member: Member): EventHandlingResult {
-        return if (channel?.membership?.getUserId() == member.getUserId()) {
-            EventHandlingResult.Add(
-                channel.updateMembership(member)
-                    .updateMember(member),
-            )
-        } else {
-            EventHandlingResult.Skip
-        }
+    private fun addIfMembershipUpdated(channel: Channel?, member: Member): EventHandlingResult = if (channel?.membership?.getUserId() == member.getUserId()) {
+        EventHandlingResult.Add(
+            channel.updateMembership(member)
+                .updateMember(member),
+        )
+    } else {
+        EventHandlingResult.Skip
     }
 
     /**
@@ -126,12 +118,10 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    private fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult {
-        return if (member.getUserId() != clientState.user.value?.id) {
-            EventHandlingResult.Skip
-        } else {
-            removeIfChannelExists(cid)
-        }
+    private fun removeIfCurrentUserLeftChannel(cid: String, member: Member): EventHandlingResult = if (member.getUserId() != clientState.user.value?.id) {
+        EventHandlingResult.Skip
+    } else {
+        removeIfChannelExists(cid)
     }
 
     /**
@@ -161,12 +151,10 @@ public open class DefaultChatEventHandler(
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    protected fun addIfCurrentUserJoinedChannel(channel: Channel?, member: Member): EventHandlingResult {
-        return if (clientState.user.value?.id == member.getUserId()) {
-            addIfChannelIsAbsent(channel)
-        } else {
-            EventHandlingResult.Skip
-        }
+    protected fun addIfCurrentUserJoinedChannel(channel: Channel?, member: Member): EventHandlingResult = if (clientState.user.value?.id == member.getUserId()) {
+        addIfChannelIsAbsent(channel)
+    } else {
+        EventHandlingResult.Skip
     }
 
     /**

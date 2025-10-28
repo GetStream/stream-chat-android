@@ -32,10 +32,8 @@ internal class AboveAnchorPopupPositionProvider : PopupPositionProvider {
         windowSize: IntSize,
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize,
-    ): IntOffset {
-        return IntOffset(
-            x = 0,
-            y = anchorBounds.top - popupContentSize.height,
-        )
-    }
+    ): IntOffset = IntOffset(
+        x = 0,
+        y = anchorBounds.top - popupContentSize.height,
+    )
 }

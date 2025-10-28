@@ -84,111 +84,107 @@ internal class MessageComposerViewModelTest {
     }
 
     @Test
-    fun `Given message composer When typing and sending a message Should send the message and clear the input`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient)
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState()
-                .givenSendMessage()
-                .get()
+    fun `Given message composer When typing and sending a message Should send the message and clear the input`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .givenSendMessage()
+            .get()
 
-            viewModel.setMessageInput("Message text")
-            val state = viewModel.messageComposerState.value
-            viewModel.sendMessage(
-                viewModel.buildNewMessage(
-                    message = state.inputValue,
-                    attachments = state.attachments,
-                ),
-            )
+        viewModel.setMessageInput("Message text")
+        val state = viewModel.messageComposerState.value
+        viewModel.sendMessage(
+            viewModel.buildNewMessage(
+                message = state.inputValue,
+                attachments = state.attachments,
+            ),
+        )
 
-            val captor = argumentCaptor<Message>()
-            verify(chatClient).sendMessage(
-                channelType = eq("messaging"),
-                channelId = eq("123"),
-                message = captor.capture(),
-                isRetrying = eq(false),
-            )
-            captor.firstValue.text `should be equal to` "Message text"
-            viewModel.input.value `should be equal to` ""
-        }
-
-    @Test
-    fun `Given message composer When selecting attachments and sending the message Should send the message with attachments and clear the input`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient)
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState()
-                .givenSendMessage()
-                .get()
-
-            viewModel.addSelectedAttachments(
-                listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
-                ),
-            )
-            val state = viewModel.messageComposerState.value
-            viewModel.sendMessage(
-                viewModel.buildNewMessage(
-                    message = state.inputValue,
-                    attachments = state.attachments,
-                ),
-            )
-
-            val captor = argumentCaptor<Message>()
-            verify(chatClient).sendMessage(
-                channelType = eq("messaging"),
-                channelId = eq("123"),
-                message = captor.capture(),
-                isRetrying = eq(false),
-            )
-            captor.firstValue.attachments.size `should be equal to` 2
-            viewModel.selectedAttachments.value.size `should be equal to` 0
-        }
+        val captor = argumentCaptor<Message>()
+        verify(chatClient).sendMessage(
+            channelType = eq("messaging"),
+            channelId = eq("123"),
+            message = captor.capture(),
+            isRetrying = eq(false),
+        )
+        captor.firstValue.text `should be equal to` "Message text"
+        viewModel.input.value `should be equal to` ""
+    }
 
     @Test
-    fun `Given message composer When selecting attachments and deselecting them Should display the correct number of selected attachments`() =
-        runTest {
-            val chatClient: ChatClient = mock()
-            val viewModel = Fixture(chatClient = chatClient)
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState()
-                .get()
+    fun `Given message composer When selecting attachments and sending the message Should send the message with attachments and clear the input`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .givenSendMessage()
+            .get()
 
-            viewModel.addSelectedAttachments(
-                listOf(
-                    Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2"),
-                ),
-            )
-            viewModel.removeSelectedAttachment(
+        viewModel.addSelectedAttachments(
+            listOf(
                 Attachment(imageUrl = "url1"),
-            )
+                Attachment(imageUrl = "url2"),
+            ),
+        )
+        val state = viewModel.messageComposerState.value
+        viewModel.sendMessage(
+            viewModel.buildNewMessage(
+                message = state.inputValue,
+                attachments = state.attachments,
+            ),
+        )
 
-            viewModel.selectedAttachments.value.size `should be equal to` 1
-        }
+        val captor = argumentCaptor<Message>()
+        verify(chatClient).sendMessage(
+            channelType = eq("messaging"),
+            channelId = eq("123"),
+            message = captor.capture(),
+            isRetrying = eq(false),
+        )
+        captor.firstValue.attachments.size `should be equal to` 2
+        viewModel.selectedAttachments.value.size `should be equal to` 0
+    }
 
     @Test
-    fun `Given message composer When checking the also send to channel checkbox Should update the checkbox state`() =
-        runTest {
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState()
-                .get()
+    fun `Given message composer When selecting attachments and deselecting them Should display the correct number of selected attachments`() = runTest {
+        val chatClient: ChatClient = mock()
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .get()
 
-            viewModel.setMessageMode(MessageMode.MessageThread(Message()))
-            viewModel.setAlsoSendToChannel(true)
+        viewModel.addSelectedAttachments(
+            listOf(
+                Attachment(imageUrl = "url1"),
+                Attachment(imageUrl = "url2"),
+            ),
+        )
+        viewModel.removeSelectedAttachment(
+            Attachment(imageUrl = "url1"),
+        )
 
-            val messageComposerState = viewModel.messageComposerState.value
-            messageComposerState.alsoSendToChannel `should be equal to` true
-            viewModel.alsoSendToChannel.value `should be equal to` true
-        }
+        viewModel.selectedAttachments.value.size `should be equal to` 1
+    }
+
+    @Test
+    fun `Given message composer When checking the also send to channel checkbox Should update the checkbox state`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .get()
+
+        viewModel.setMessageMode(MessageMode.MessageThread(Message()))
+        viewModel.setAlsoSendToChannel(true)
+
+        val messageComposerState = viewModel.messageComposerState.value
+        messageComposerState.alsoSendToChannel `should be equal to` true
+        viewModel.alsoSendToChannel.value `should be equal to` true
+    }
 
     @Test
     fun `Given message composer When starting a thread Should enter thread mode`() {
@@ -300,62 +296,59 @@ internal class MessageComposerViewModelTest {
     }
 
     @Test
-    fun `Given message composer When toggling commands and selecting giphy command Should populate the input with the command`() =
-        runTest {
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(config = Config(commands = listOf(giphyCommand)))
-                .get()
+    fun `Given message composer When toggling commands and selecting giphy command Should populate the input with the command`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(config = Config(commands = listOf(giphyCommand)))
+            .get()
 
-            viewModel.toggleCommandsVisibility()
-            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+        viewModel.toggleCommandsVisibility()
+        viewModel.selectCommand(viewModel.commandSuggestions.value.first())
 
-            viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-            viewModel.commandSuggestions.value.size `should be equal to` 0
-            viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-            viewModel.input.value `should be equal to` "/giphy "
-        }
-
-    @Test
-    fun `Given message composer When typing member autocomplete suggestion symbol Should show a list of available members`() =
-        runTest {
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
-                .get()
-
-            // Handling mentions on input changes is debounced so we advance time until idle to make sure
-            // all operations have finished before checking state.
-            viewModel.setMessageInput("@")
-            advanceUntilIdle()
-
-            viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
-            viewModel.mentionSuggestions.value.size `should be equal to` 2
-        }
+        viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
+        viewModel.commandSuggestions.value.size `should be equal to` 0
+        viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
+        viewModel.input.value `should be equal to` "/giphy "
+    }
 
     @Test
-    fun `Given message composer When selecting a mention suggestion Should populate the input with the user`() =
-        runTest {
-            val viewModel = Fixture()
-                .givenCurrentUser()
-                .givenChannelQuery()
-                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
-                .get()
+    fun `Given message composer When typing member autocomplete suggestion symbol Should show a list of available members`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+            .get()
 
-            // Handling mentions on input changes is debounced so we advance time until idle to make sure
-            // all operations have finished before checking state.
-            viewModel.setMessageInput("@")
-            advanceUntilIdle()
+        // Handling mentions on input changes is debounced so we advance time until idle to make sure
+        // all operations have finished before checking state.
+        viewModel.setMessageInput("@")
+        advanceUntilIdle()
 
-            viewModel.selectMention(viewModel.mentionSuggestions.value.first())
-            advanceUntilIdle()
+        viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 2
+        viewModel.mentionSuggestions.value.size `should be equal to` 2
+    }
 
-            viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
-            viewModel.mentionSuggestions.value.size `should be equal to` 0
-            viewModel.input.value `should be equal to` "@Jc Miñarro "
-        }
+    @Test
+    fun `Given message composer When selecting a mention suggestion Should populate the input with the user`() = runTest {
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+            .get()
+
+        // Handling mentions on input changes is debounced so we advance time until idle to make sure
+        // all operations have finished before checking state.
+        viewModel.setMessageInput("@")
+        advanceUntilIdle()
+
+        viewModel.selectMention(viewModel.mentionSuggestions.value.first())
+        advanceUntilIdle()
+
+        viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
+        viewModel.mentionSuggestions.value.size `should be equal to` 0
+        viewModel.input.value `should be equal to` "@Jc Miñarro "
+    }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
@@ -432,22 +425,20 @@ internal class MessageComposerViewModelTest {
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
-        fun get(): MessageComposerViewModel {
-            return MessageComposerViewModel(
-                MessageComposerController(
-                    chatClient = chatClient,
-                    channelCid = channelId,
-                    mediaRecorder = mock(),
-                    userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
-                    fileToUri = { it.path },
-                    config = MessageComposerController.Config(
-                        maxAttachmentCount = maxAttachmentCount,
-                    ),
-                    channelState = MutableStateFlow(channelState),
-                    globalState = MutableStateFlow(globalState),
+        fun get(): MessageComposerViewModel = MessageComposerViewModel(
+            MessageComposerController(
+                chatClient = chatClient,
+                channelCid = channelId,
+                mediaRecorder = mock(),
+                userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
+                fileToUri = { it.path },
+                config = MessageComposerController.Config(
+                    maxAttachmentCount = maxAttachmentCount,
                 ),
-            )
-        }
+                channelState = MutableStateFlow(channelState),
+                globalState = MutableStateFlow(globalState),
+            ),
+        )
     }
 
     companion object {

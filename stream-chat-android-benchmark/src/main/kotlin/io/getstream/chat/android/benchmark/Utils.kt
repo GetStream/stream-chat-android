@@ -50,7 +50,10 @@ internal fun UiDevice.flingElementUpDown(element: UiObject2) {
  * Waits until an object with [selector] if visible on screen and returns the object.
  * If the element is not available in [timeout], throws [AssertionError]
  */
-internal fun UiDevice.waitAndFindObject(selector: BySelector, timeout: Long = STANDARD_TIMEOUT): UiObject2 {
+internal fun UiDevice.waitAndFindObject(
+    selector: BySelector,
+    timeout: Long = STANDARD_TIMEOUT,
+): UiObject2 {
     if (!wait(Until.hasObject(selector), timeout)) {
         throw AssertionError("Element not found on screen in ${timeout}ms (selector=$selector)")
     }
@@ -58,7 +61,10 @@ internal fun UiDevice.waitAndFindObject(selector: BySelector, timeout: Long = ST
     return findObject(selector)
 }
 
-internal fun UiDevice.waitForObject(selector: BySelector, timeout: Long = 5_000): UiObject2? {
+internal fun UiDevice.waitForObject(
+    selector: BySelector,
+    timeout: Long = 5_000,
+): UiObject2? {
     if (wait(Until.hasObject(selector), timeout)) {
         return findObject(selector)
     }

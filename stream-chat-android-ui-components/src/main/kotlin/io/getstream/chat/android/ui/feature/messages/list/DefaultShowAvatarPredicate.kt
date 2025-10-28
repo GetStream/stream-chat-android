@@ -20,7 +20,5 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 
 internal class DefaultShowAvatarPredicate : MessageListView.ShowAvatarPredicate {
-    override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean {
-        return messageItem.isTheirs && (messageItem.showMessageFooter || messageItem.isBottomPosition())
-    }
+    override fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean = messageItem.isTheirs && (messageItem.showMessageFooter || messageItem.isBottomPosition())
 }

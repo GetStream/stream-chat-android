@@ -37,11 +37,9 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
 
     private var imageClickListener: () -> Unit = {}
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiItemAttachmentGalleryImageBinding.inflate(inflater)
-            .apply { _binding = this }
-            .root
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = StreamUiItemAttachmentGalleryImageBinding.inflate(inflater)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -72,13 +70,11 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
     companion object {
         private const val ARG_IMAGE_URL = "image_url"
 
-        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
-            return AttachmentGalleryImagePageFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_IMAGE_URL, attachment.imagePreviewUrl)
-                }
-                this.imageClickListener = imageClickListener
+        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment = AttachmentGalleryImagePageFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_IMAGE_URL, attachment.imagePreviewUrl)
             }
+            this.imageClickListener = imageClickListener
         }
     }
 }

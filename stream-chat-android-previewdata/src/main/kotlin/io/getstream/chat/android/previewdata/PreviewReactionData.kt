@@ -22,26 +22,29 @@ import io.getstream.chat.android.models.Reaction
  * Provides sample reactions that will be used to render component previews.
  */
 public object PreviewReactionData {
+    private val reaction1: Reaction =
+        Reaction(
+            type = "like",
+            user = PreviewUserData.user1,
+        )
 
-    private val reaction1: Reaction = Reaction(
-        type = "like",
-        user = PreviewUserData.user1,
-    )
+    private val reaction2: Reaction =
+        Reaction(
+            type = "love",
+            user = PreviewUserData.user2,
+        )
 
-    private val reaction2: Reaction = Reaction(
-        type = "love",
-        user = PreviewUserData.user2,
-    )
+    private val reaction3: Reaction =
+        Reaction(
+            type = "wow",
+            user = PreviewUserData.user3,
+        )
 
-    private val reaction3: Reaction = Reaction(
-        type = "wow",
-        user = PreviewUserData.user3,
-    )
-
-    private val reaction4: Reaction = Reaction(
-        type = "sad",
-        user = PreviewUserData.user4,
-    )
+    private val reaction4: Reaction =
+        Reaction(
+            type = "sad",
+            user = PreviewUserData.user4,
+        )
 
     public val oneReaction: List<Reaction> = listOf(reaction1)
 

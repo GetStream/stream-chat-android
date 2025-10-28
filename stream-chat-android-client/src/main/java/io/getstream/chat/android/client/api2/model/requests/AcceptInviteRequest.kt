@@ -31,11 +31,9 @@ internal data class AcceptInviteRequest(
     data class AcceptInviteMessage(val text: String?)
 
     companion object {
-        fun create(userId: String, message: String?): AcceptInviteRequest {
-            return AcceptInviteRequest(
-                user = AcceptInviteUser(userId),
-                message = AcceptInviteMessage(message),
-            )
-        }
+        fun create(userId: String, message: String?): AcceptInviteRequest = AcceptInviteRequest(
+            user = AcceptInviteUser(userId),
+            message = AcceptInviteMessage(message),
+        )
     }
 }

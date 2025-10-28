@@ -94,25 +94,25 @@ public data class Member(
      * A map of custom fields for the member.
      */
     override val extraData: Map<String, Any> = emptyMap(),
-) : UserEntity, CustomObject, ComparableFieldProvider {
+) : UserEntity,
+    CustomObject,
+    ComparableFieldProvider {
 
-    override fun getComparableField(fieldName: String): Comparable<*>? {
-        return when (fieldName) {
-            "user_id", "userId" -> getUserId()
-            "created_at", "createdAt" -> createdAt
-            "updated_at", "updatedAt" -> updatedAt
-            "is_invited", "isInvited" -> isInvited
-            "invite_accepted_at", "inviteAcceptedAt" -> inviteAcceptedAt
-            "invite_rejected_at", "inviteRejectedAt" -> inviteRejectedAt
-            "shadow_banned", "shadowBanned" -> shadowBanned
-            "banned" -> banned
-            "ban_expires", "banExpires" -> banExpires
-            "channel_role", "channelRole" -> channelRole
-            "notifications_muted", "notificationsMuted" -> notificationsMuted
-            "status" -> status
-            "pinned_at", "pinnedAt" -> pinnedAt
-            "archived_at", "archivedAt" -> archivedAt
-            else -> extraData[fieldName] as? Comparable<*>
-        }
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "user_id", "userId" -> getUserId()
+        "created_at", "createdAt" -> createdAt
+        "updated_at", "updatedAt" -> updatedAt
+        "is_invited", "isInvited" -> isInvited
+        "invite_accepted_at", "inviteAcceptedAt" -> inviteAcceptedAt
+        "invite_rejected_at", "inviteRejectedAt" -> inviteRejectedAt
+        "shadow_banned", "shadowBanned" -> shadowBanned
+        "banned" -> banned
+        "ban_expires", "banExpires" -> banExpires
+        "channel_role", "channelRole" -> channelRole
+        "notifications_muted", "notificationsMuted" -> notificationsMuted
+        "status" -> status
+        "pinned_at", "pinnedAt" -> pinnedAt
+        "archived_at", "archivedAt" -> archivedAt
+        else -> extraData[fieldName] as? Comparable<*>
     }
 }

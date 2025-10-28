@@ -30,11 +30,9 @@ public sealed interface CustomObject {
      * Returns the value associated with the given [key], or [default] if the key is not present in the [extraData].
      */
     @Suppress("UNCHECKED_CAST")
-    public fun <T> getExtraValue(key: String, default: T): T {
-        return if (extraData.containsKey(key)) {
-            extraData[key] as T
-        } else {
-            default
-        }
+    public fun <T> getExtraValue(key: String, default: T): T = if (extraData.containsKey(key)) {
+        extraData[key] as T
+    } else {
+        default
     }
 }

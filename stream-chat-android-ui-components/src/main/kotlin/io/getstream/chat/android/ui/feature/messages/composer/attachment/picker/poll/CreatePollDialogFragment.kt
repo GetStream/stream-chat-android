@@ -161,10 +161,8 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
          *
          * @return A new instance of [CreatePollDialogFragment].
          */
-        public fun newInstance(createPollDialogListener: CreatePollDialogListener): CreatePollDialogFragment {
-            return CreatePollDialogFragment()
-                .setCreatePollDialogListener(createPollDialogListener)
-        }
+        public fun newInstance(createPollDialogListener: CreatePollDialogListener): CreatePollDialogFragment = CreatePollDialogFragment()
+            .setCreatePollDialogListener(createPollDialogListener)
     }
 
     /**

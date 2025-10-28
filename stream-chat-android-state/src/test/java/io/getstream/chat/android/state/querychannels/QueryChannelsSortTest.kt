@@ -429,19 +429,15 @@ internal class QueryChannelsSortTest {
             testName: String,
             querySort: QuerySortByField<Channel>,
             channelFactory: (Int) -> Channel,
-        ): Arguments {
-            return List(10, channelFactory).let { expectedList ->
-                Arguments.of(
-                    testName,
-                    expectedList.shuffled(),
-                    querySort,
-                    expectedList,
-                )
-            }
+        ): Arguments = List(10, channelFactory).let { expectedList ->
+            Arguments.of(
+                testName,
+                expectedList.shuffled(),
+                querySort,
+                expectedList,
+            )
         }
 
-        private fun dateWithOffset(offsetSeconds: Int): Date {
-            return Date(System.currentTimeMillis() + offsetSeconds * 1000)
-        }
+        private fun dateWithOffset(offsetSeconds: Int): Date = Date(System.currentTimeMillis() + offsetSeconds * 1000)
     }
 }

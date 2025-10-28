@@ -79,6 +79,8 @@ internal class UserStateService {
         data class ConnectUser(val user: User) : UserStateEvent()
         data class UserUpdated(val user: User) : UserStateEvent()
         data class ConnectAnonymous(val user: User) : UserStateEvent()
-        object UnsetUser : UserStateEvent() { override fun toString(): String = "UnsetUser" }
+        object UnsetUser : UserStateEvent() {
+            override fun toString(): String = "UnsetUser"
+        }
     }
 }

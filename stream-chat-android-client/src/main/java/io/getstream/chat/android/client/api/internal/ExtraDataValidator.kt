@@ -42,51 +42,39 @@ internal class ExtraDataValidator(
         channelId: String,
         extraData: Map<String, Any>,
         updateMessage: Message?,
-    ): Call<Channel> {
-        return delegate.updateChannel(channelType, channelId, extraData, updateMessage)
-            .withExtraDataValidation(extraData)
-            .withExtraDataValidation(updateMessage)
-    }
+    ): Call<Channel> = delegate.updateChannel(channelType, channelId, extraData, updateMessage)
+        .withExtraDataValidation(extraData)
+        .withExtraDataValidation(updateMessage)
 
     override fun updateChannelPartial(
         channelType: String,
         channelId: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<Channel> {
-        return delegate.updateChannelPartial(channelType, channelId, set, unset)
-            .withExtraDataValidation(set)
-    }
+    ): Call<Channel> = delegate.updateChannelPartial(channelType, channelId, set, unset)
+        .withExtraDataValidation(set)
 
-    override fun updateMessage(message: Message): Call<Message> {
-        return delegate.updateMessage(
-            message = message,
-        ).withExtraDataValidation(message.extraData)
-    }
+    override fun updateMessage(message: Message): Call<Message> = delegate.updateMessage(
+        message = message,
+    ).withExtraDataValidation(message.extraData)
 
     override fun partialUpdateMessage(
         messageId: String,
         set: Map<String, Any>,
         unset: List<String>,
         skipEnrichUrl: Boolean,
-    ): Call<Message> {
-        return delegate.partialUpdateMessage(
-            messageId = messageId,
-            set = set,
-            unset = unset,
-            skipEnrichUrl = skipEnrichUrl,
-        ).withExtraDataValidation(set)
-    }
+    ): Call<Message> = delegate.partialUpdateMessage(
+        messageId = messageId,
+        set = set,
+        unset = unset,
+        skipEnrichUrl = skipEnrichUrl,
+    ).withExtraDataValidation(set)
 
-    override fun updateUsers(users: List<User>): Call<List<User>> {
-        return delegate.updateUsers(users)
-            .withExtraDataValidation(users)
-    }
+    override fun updateUsers(users: List<User>): Call<List<User>> = delegate.updateUsers(users)
+        .withExtraDataValidation(users)
 
-    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
-        return delegate.partialUpdateUser(id, set, unset)
-            .withExtraDataValidationOnList(set)
-    }
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> = delegate.partialUpdateUser(id, set, unset)
+        .withExtraDataValidationOnList(set)
 
     override fun addMembers(
         channelType: String,
@@ -95,12 +83,10 @@ internal class ExtraDataValidator(
         systemMessage: Message?,
         hideHistory: Boolean?,
         skipPush: Boolean?,
-    ): Call<Channel> {
-        return delegate
-            .addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush)
-            .withExtraDataValidation(systemMessage)
-            .validateMembersExtraData(members)
-    }
+    ): Call<Channel> = delegate
+        .addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush)
+        .withExtraDataValidation(systemMessage)
+        .validateMembersExtraData(members)
 
     override fun partialUpdateMember(
         channelType: String,
@@ -108,11 +94,9 @@ internal class ExtraDataValidator(
         userId: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<Member> {
-        return delegate
-            .partialUpdateMember(channelType, channelId, userId, set, unset)
-            .withExtraDataValidation(set)
-    }
+    ): Call<Member> = delegate
+        .partialUpdateMember(channelType, channelId, userId, set, unset)
+        .withExtraDataValidation(set)
 
     private fun <T : CustomObject> Call<List<T>>.withExtraDataValidation(
         objects: List<T>,
@@ -190,52 +174,42 @@ internal class ExtraDataValidator(
         return Pair(null, null)
     }
 
-    private fun CustomObject.findReserved(): List<String> {
-        return when (this) {
-            is Channel -> extraData.keys.filter(reservedInChannelPredicate)
-            is Message -> extraData.keys.filter(reservedInChannelPredicate)
-            is User -> extraData.keys.filter(reservedInChannelPredicate)
-            is Member -> extraData.keys.filter(reservedInMemberPredicate)
-            is MemberData -> extraData.keys.filter(reservedInMemberPredicate)
-            else -> emptyList()
-        }
+    private fun CustomObject.findReserved(): List<String> = when (this) {
+        is Channel -> extraData.keys.filter(reservedInChannelPredicate)
+        is Message -> extraData.keys.filter(reservedInChannelPredicate)
+        is User -> extraData.keys.filter(reservedInChannelPredicate)
+        is Member -> extraData.keys.filter(reservedInMemberPredicate)
+        is MemberData -> extraData.keys.filter(reservedInMemberPredicate)
+        else -> emptyList()
     }
 
-    private inline fun <reified T : CustomObject> Map<String, Any>.findReserved(): List<String> {
-        return when (T::class) {
-            Channel::class -> keys.filter(reservedInChannelPredicate)
-            Message::class -> keys.filter(reservedInMessagePredicate)
-            User::class -> keys.filter(reservedInUserPredicate)
-            Member::class -> keys.filter(reservedInMemberPredicate)
-            MemberData::class -> keys.filter(reservedInMemberPredicate)
-            else -> emptyList()
-        }
+    private inline fun <reified T : CustomObject> Map<String, Any>.findReserved(): List<String> = when (T::class) {
+        Channel::class -> keys.filter(reservedInChannelPredicate)
+        Message::class -> keys.filter(reservedInMessagePredicate)
+        User::class -> keys.filter(reservedInUserPredicate)
+        Member::class -> keys.filter(reservedInMemberPredicate)
+        MemberData::class -> keys.filter(reservedInMemberPredicate)
+        else -> emptyList()
     }
 
-    private fun <T : CustomObject> T?.composeErrorMessage(reserved: List<String>): String {
-        return "'${resolveName()}(id=${resolveId()}" + ").extraData' contains reserved keys: ${reserved.joinToString()}"
+    private fun <T : CustomObject> T?.composeErrorMessage(reserved: List<String>): String = "'${resolveName()}(id=${resolveId()}" + ").extraData' contains reserved keys: ${reserved.joinToString()}"
+
+    private fun <T : CustomObject> T?.resolveName(): String = when (this) {
+        is Channel -> "channel"
+        is Message -> "message"
+        is User -> "user"
+        is Member -> "member"
+        is MemberData -> "member"
+        else -> ""
     }
 
-    private fun <T : CustomObject> T?.resolveName(): String {
-        return when (this) {
-            is Channel -> "channel"
-            is Message -> "message"
-            is User -> "user"
-            is Member -> "member"
-            is MemberData -> "member"
-            else -> ""
-        }
-    }
-
-    private fun <T : CustomObject> T?.resolveId(): String {
-        return when (this) {
-            is Channel -> id
-            is Message -> id
-            is User -> id
-            is Member -> getUserId()
-            is MemberData -> userId
-            else -> ""
-        }
+    private fun <T : CustomObject> T?.resolveId(): String = when (this) {
+        is Channel -> id
+        is Message -> id
+        is User -> id
+        is Member -> getUserId()
+        is MemberData -> userId
+        else -> ""
     }
 
     private companion object {

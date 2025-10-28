@@ -54,9 +54,7 @@ public class DefaultQuotedAttachmentMessageFactory : QuotedAttachmentFactory {
      *
      * @return [DefaultQuotedAttachmentView] that will be rendered inside the quoted message.
      */
-    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View {
-        return DefaultQuotedAttachmentView(parent.context).apply {
-            showAttachment(message.attachments.first())
-        }
+    override fun generateQuotedAttachmentView(message: Message, parent: ViewGroup): View = DefaultQuotedAttachmentView(parent.context).apply {
+        showAttachment(message.attachments.first())
     }
 }

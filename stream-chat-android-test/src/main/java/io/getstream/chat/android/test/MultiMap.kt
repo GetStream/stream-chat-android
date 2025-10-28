@@ -25,7 +25,6 @@ package io.getstream.chat.android.test
 public class MultiMap<K, V>(
     input: List<Pair<K, V>>,
 ) : Map<K, V> {
-
     private val _entries: List<Map.Entry<K, V>> = input.map { Entry(it.first, it.second) }
     private val _keys: List<K> = _entries.map { it.key }
     private val _values: List<V> = _entries.map { it.value }
@@ -36,8 +35,11 @@ public class MultiMap<K, V>(
     override val size: Int = _entries.size
 
     override fun containsKey(key: K): Boolean = keys.contains(key)
+
     override fun containsValue(value: V): Boolean = values.contains(value)
+
     override fun get(key: K): V? = entries.find { it.key == key }?.value
+
     override fun isEmpty(): Boolean = entries.isEmpty()
 
     override fun toString(): String = "{${entries.joinToString { "${it.key}=${it.value}" }}}"

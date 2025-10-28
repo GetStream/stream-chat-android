@@ -20,7 +20,9 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 
-public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
+public class TestCall<T : Any>(
+    public val result: Result<T>,
+) : Call<T> {
     public var cancelled: Boolean = false
 
     override fun cancel() {
@@ -32,6 +34,7 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
     }
 
     override fun execute(): Result<T> = result
+
     override suspend fun await(): Result<T> = result
 }
 

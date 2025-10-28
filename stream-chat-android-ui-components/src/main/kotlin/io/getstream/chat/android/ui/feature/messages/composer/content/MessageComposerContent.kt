@@ -44,9 +44,7 @@ public interface MessageComposerContent {
      *
      * @param key the key to search for.
      */
-    public fun findViewByKey(key: String): View? {
-        return null
-    }
+    public fun findViewByKey(key: String): View? = null
 
     public companion object PredefinedKeys {
         public const val RECORD_AUDIO_BUTTON: String = "record_audio_button"

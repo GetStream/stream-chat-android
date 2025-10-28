@@ -140,10 +140,8 @@ internal class ModeratedMessageDialogFragment : FullScreenDialogFragment() {
          *
          * @param message The moderated message.
          */
-        fun newInstance(message: Message): ModeratedMessageDialogFragment {
-            return ModeratedMessageDialogFragment().apply {
-                setMessage(message)
-            }
+        fun newInstance(message: Message): ModeratedMessageDialogFragment = ModeratedMessageDialogFragment().apply {
+            setMessage(message)
         }
     }
 }

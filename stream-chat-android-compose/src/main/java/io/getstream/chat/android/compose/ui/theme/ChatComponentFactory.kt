@@ -906,8 +906,7 @@ public interface ChatComponentFactory {
      * The default message list item modifier for styling.
      */
     @Composable
-    public fun LazyItemScope.messageListItemModifier(): Modifier =
-        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+    public fun LazyItemScope.messageListItemModifier(): Modifier = // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
         // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
         if (LocalInspectionMode.current) {
             Modifier
@@ -2027,6 +2026,7 @@ public interface ChatComponentFactory {
     }
 
     // REGION: Channel menu
+
     /**
      * Factory method for creating the full content of the SelectedChannelMenu.
      *
@@ -2156,6 +2156,7 @@ public interface ChatComponentFactory {
     }
 
     // REGION: Message menu
+
     /**
      * Factory method for creating the full content of the SelectedMessageMenu.
      * This is the menu that appears when a message is long-pressed.
@@ -2313,6 +2314,7 @@ public interface ChatComponentFactory {
     }
 
     // REGION: Reaction menu and items
+
     /**
      * Factory method for creating the full content of the SelectedReactionsMenu.
      *
@@ -2589,6 +2591,7 @@ public interface ChatComponentFactory {
     }
 
     // REGION: Generic menu items
+
     /**
      * Factory method for creating a generic menu option item.
      *

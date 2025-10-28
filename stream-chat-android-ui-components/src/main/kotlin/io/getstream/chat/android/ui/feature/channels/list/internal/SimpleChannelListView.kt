@@ -82,10 +82,8 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
     private fun setEdgeEffectColor(@ColorInt edgeEffectColor: Int) {
         edgeEffectFactory = object : EdgeEffectFactory() {
-            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                return super.createEdgeEffect(view, direction).apply {
-                    color = edgeEffectColor
-                }
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect = super.createEdgeEffect(view, direction).apply {
+                color = edgeEffectColor
             }
         }
     }
@@ -115,8 +113,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         adapter.registerAdapterDataObserver(SnapToTopDataObserver(this))
     }
 
-    internal fun currentChannelItemList(): List<ChannelListItem>? =
-        if (::adapter.isInitialized) adapter.currentList else null
+    internal fun currentChannelItemList(): List<ChannelListItem>? = if (::adapter.isInitialized) adapter.currentList else null
 
     fun setViewHolderFactory(viewHolderFactory: ChannelListItemViewHolderFactory) {
         check(::adapter.isInitialized.not()) { "Adapter was already initialized, please set ChannelListItemViewHolderFactory first" }
@@ -195,16 +192,12 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         }
     }
 
-    fun hasChannels(): Boolean {
-        return requireAdapter().itemCount > 0
-    }
+    fun hasChannels(): Boolean = requireAdapter().itemCount > 0
 
     /**
      * @return if the adapter is initialized.
      */
-    fun isAdapterInitialized(): Boolean {
-        return ::adapter.isInitialized
-    }
+    fun isAdapterInitialized(): Boolean = ::adapter.isInitialized
 
     internal fun getChannel(cid: String): Channel = adapter.getChannel(cid)
 

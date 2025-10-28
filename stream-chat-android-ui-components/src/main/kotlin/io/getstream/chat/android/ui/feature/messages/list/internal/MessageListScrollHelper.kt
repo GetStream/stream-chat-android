@@ -243,10 +243,8 @@ internal class MessageListScrollHelper(
     private fun shouldKeepScrollPosition(
         areNewestMessagesLoaded: Boolean,
         hasNewMessages: Boolean,
-    ): Boolean {
-        return !areNewestMessagesLoaded || !scrollToBottomButtonEnabled ||
-            (!hasNewMessages || adapter.currentList.isEmpty())
-    }
+    ): Boolean = !areNewestMessagesLoaded || !scrollToBottomButtonEnabled ||
+        (!hasNewMessages || adapter.currentList.isEmpty())
 
     private fun shouldScrollToBottom(
         isInitialList: Boolean,
@@ -265,18 +263,14 @@ internal class MessageListScrollHelper(
             (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
     }
 
-    private fun isLastMessageMine(): Boolean {
-        return currentList
-            .lastOrNull()
-            ?.safeCast<MessageListItem.MessageItem>()
-            ?.isMine
-            ?: false
-    }
+    private fun isLastMessageMine(): Boolean = currentList
+        .lastOrNull()
+        ?.safeCast<MessageListItem.MessageItem>()
+        ?.isMine
+        ?: false
 
-    private fun MessageListItem.isValid(): Boolean {
-        return (this is MessageListItem.MessageItem && !(this.isTheirs && this.message.isDeleted())) ||
-            (this is MessageListItem.ThreadSeparatorItem)
-    }
+    private fun MessageListItem.isValid(): Boolean = (this is MessageListItem.MessageItem && !(this.isTheirs && this.message.isDeleted())) ||
+        (this is MessageListItem.ThreadSeparatorItem)
 
     internal fun setScrollToBottomHandler(onScrollToBottomHandler: MessageListView.OnScrollToBottomHandler) {
         this.onScrollToBottomHandler = onScrollToBottomHandler

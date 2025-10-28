@@ -28,46 +28,39 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class ChatInfoSharedFilesAdapter : ListAdapter<SharedAttachment, BaseViewHolder<*>>(
-    object : DiffUtil.ItemCallback<SharedAttachment>() {
-        override fun areItemsTheSame(oldItem: SharedAttachment, newItem: SharedAttachment): Boolean {
-            return oldItem.id == newItem.id
-        }
+class ChatInfoSharedFilesAdapter :
+    ListAdapter<SharedAttachment, BaseViewHolder<*>>(
+        object : DiffUtil.ItemCallback<SharedAttachment>() {
+            override fun areItemsTheSame(oldItem: SharedAttachment, newItem: SharedAttachment): Boolean = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: SharedAttachment, newItem: SharedAttachment): Boolean {
-            return oldItem == newItem
-        }
-    },
-) {
+            override fun areContentsTheSame(oldItem: SharedAttachment, newItem: SharedAttachment): Boolean = oldItem == newItem
+        },
+    ) {
 
     private val dateFormat: DateFormat = SimpleDateFormat("MMM yyyy", Locale.getDefault())
     private var attachmentClickListener: AttachmentClickListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return when (viewType) {
-            TYPE_FILE ->
-                ChatInfoSharedFileItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoSharedFileViewHolder(it, attachmentClickListener) }
-            TYPE_FILE_DATE_DIVIDER ->
-                ChatInfoSharedFileDateDividerBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoSharedFileDateDividerViewHolder(it, dateFormat) }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> = when (viewType) {
+        TYPE_FILE ->
+            ChatInfoSharedFileItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoSharedFileViewHolder(it, attachmentClickListener) }
+        TYPE_FILE_DATE_DIVIDER ->
+            ChatInfoSharedFileDateDividerBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoSharedFileDateDividerViewHolder(it, dateFormat) }
 
-            else -> throw IllegalArgumentException("Unhandled view type ($viewType)")
-        }
+        else -> throw IllegalArgumentException("Unhandled view type ($viewType)")
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
         holder.bindListItem(getItem(position))
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (val item = getItem(position)) {
-            is SharedAttachment.AttachmentItem -> TYPE_FILE
-            is SharedAttachment.DateDivider -> TYPE_FILE_DATE_DIVIDER
-            else -> throw IllegalStateException("ChatInfoSharedAttachmentsAdapter doesn't support view type: $item")
-        }
+    override fun getItemViewType(position: Int): Int = when (val item = getItem(position)) {
+        is SharedAttachment.AttachmentItem -> TYPE_FILE
+        is SharedAttachment.DateDivider -> TYPE_FILE_DATE_DIVIDER
+        else -> throw IllegalStateException("ChatInfoSharedAttachmentsAdapter doesn't support view type: $item")
     }
 
     fun setAttachmentClickListener(listener: AttachmentClickListener?) {

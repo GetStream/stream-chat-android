@@ -113,11 +113,9 @@ internal class CreatePollViewModel(private val configSwitches: List<PollSwitchIt
      * @param state The current poll view state.
      * @return True if the poll can be created, false otherwise.
      */
-    private fun isCreationEnabled(state: CreatePollViewState): Boolean {
-        return state.question.isNotBlank() &&
-            state.optionItemList.any { it.title.isNotBlank() } &&
-            !hasError(state.optionItemList, state.switchItemList)
-    }
+    private fun isCreationEnabled(state: CreatePollViewState): Boolean = state.question.isNotBlank() &&
+        state.optionItemList.any { it.title.isNotBlank() } &&
+        !hasError(state.optionItemList, state.switchItemList)
 
     /**
      * Determines if there are unsaved changes in the poll.
@@ -125,9 +123,7 @@ internal class CreatePollViewModel(private val configSwitches: List<PollSwitchIt
      * @param state The current poll view state.
      * @return True if there are unsaved changes, false otherwise.
      */
-    private fun hasChanges(state: CreatePollViewState): Boolean {
-        return state.question.isNotBlank() || state.optionItemList.any { it.title.isNotBlank() }
-    }
+    private fun hasChanges(state: CreatePollViewState): Boolean = state.question.isNotBlank() || state.optionItemList.any { it.title.isNotBlank() }
 
     /**
      * Checks if there are validation errors in the poll options or switches.

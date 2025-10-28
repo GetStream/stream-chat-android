@@ -52,8 +52,7 @@ public fun canThreadReplyToMessage(
     isInThread: Boolean,
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean =
-    threadsEnabled && !isInThread && message.isSynced() && ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
+): Boolean = threadsEnabled && !isInThread && message.isSynced() && ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
 
 public fun canCopyMessage(
     copyTextEnabled: Boolean,

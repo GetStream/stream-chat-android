@@ -25,7 +25,5 @@ public class Combine(
 
     public constructor(vararg transformers: QueryFormatter) : this(transformers.toList())
 
-    override fun format(query: String): String {
-        return transformers.fold(query) { acc, transformer -> transformer.format(acc) }
-    }
+    override fun format(query: String): String = transformers.fold(query) { acc, transformer -> transformer.format(acc) }
 }

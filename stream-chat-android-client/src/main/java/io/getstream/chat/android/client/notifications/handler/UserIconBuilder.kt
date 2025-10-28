@@ -45,22 +45,21 @@ public interface UserIconBuilder {
  * Default implementation of [UserIconBuilder].
  */
 internal class DefaultUserIconBuilder(val context: Context) : UserIconBuilder {
-    override suspend fun buildIcon(user: User): IconCompat? =
-        user.image
-            .takeUnless { it.isEmpty() }
-            ?.let {
-                withContext(DispatcherProvider.IO) {
-                    runCatching {
-                        URL(it).openStream().use {
-                            RoundedBitmapDrawableFactory.create(
-                                context.resources,
-                                BitmapFactory.decodeStream(it),
-                            )
-                                .apply { isCircular = true }
-                                .toBitmapOrNull()
-                        }
-                            ?.let(IconCompat::createWithBitmap)
-                    }.getOrNull()
-                }
+    override suspend fun buildIcon(user: User): IconCompat? = user.image
+        .takeUnless { it.isEmpty() }
+        ?.let {
+            withContext(DispatcherProvider.IO) {
+                runCatching {
+                    URL(it).openStream().use {
+                        RoundedBitmapDrawableFactory.create(
+                            context.resources,
+                            BitmapFactory.decodeStream(it),
+                        )
+                            .apply { isCircular = true }
+                            .toBitmapOrNull()
+                    }
+                        ?.let(IconCompat::createWithBitmap)
+                }.getOrNull()
             }
+        }
 }

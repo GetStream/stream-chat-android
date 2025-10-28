@@ -18,23 +18,21 @@ package io.getstream.chat.android.client
 
 import org.intellij.lang.annotations.Language
 
-internal fun createChannelDeletedEventStringJson() =
-    createChatEventStringJson(
-        "channel.deleted",
-        """
+internal fun createChannelDeletedEventStringJson() = createChatEventStringJson(
+    "channel.deleted",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelHiddenEventStringJson() =
-    createChatEventStringJson(
-        "channel.hidden",
-        """
+internal fun createChannelHiddenEventStringJson() = createChatEventStringJson(
+    "channel.hidden",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -42,51 +40,47 @@ internal fun createChannelHiddenEventStringJson() =
             "clear_history": true,
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelTruncatedEventStringJson() =
-    createChatEventStringJson(
-        "channel.truncated",
-        """
+internal fun createChannelTruncatedEventStringJson() = createChatEventStringJson(
+    "channel.truncated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelTruncatedServerSideEventStringJson() =
-    createChatEventStringJson(
-        "channel.truncated",
-        """
+internal fun createChannelTruncatedServerSideEventStringJson() = createChatEventStringJson(
+    "channel.truncated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "channel.updated",
-        """
+internal fun createChannelUpdatedEventStringJson() = createChatEventStringJson(
+    "channel.updated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "message": ${createMessageJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelUpdatedByUserEventStringJson() =
-    createChatEventStringJson(
-        "channel.updated",
-        """
+internal fun createChannelUpdatedByUserEventStringJson() = createChatEventStringJson(
+    "channel.updated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -94,65 +88,60 @@ internal fun createChannelUpdatedByUserEventStringJson() =
             "message": ${createMessageJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelVisibleEventStringJson() =
-    createChatEventStringJson(
-        "channel.visible",
-        """
+internal fun createChannelVisibleEventStringJson() = createChatEventStringJson(
+    "channel.visible",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMemberAddedEventStringJson() =
-    createChatEventStringJson(
-        "member.added",
-        """
+internal fun createMemberAddedEventStringJson() = createChatEventStringJson(
+    "member.added",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMemberRemovedEventStringJson() =
-    createChatEventStringJson(
-        "member.removed",
-        """
+internal fun createMemberRemovedEventStringJson() = createChatEventStringJson(
+    "member.removed",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMemberUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "member.updated",
-        """
+internal fun createMemberUpdatedEventStringJson() = createChatEventStringJson(
+    "member.updated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMessageDeletedEventStringJson() =
-    createChatEventStringJson(
-        "message.deleted",
-        """
+internal fun createMessageDeletedEventStringJson() = createChatEventStringJson(
+    "message.deleted",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -161,13 +150,12 @@ internal fun createMessageDeletedEventStringJson() =
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMessageDeletedServerSideEventStringJson() =
-    createChatEventStringJson(
-        "message.deleted",
-        """
+internal fun createMessageDeletedServerSideEventStringJson() = createChatEventStringJson(
+    "message.deleted",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -176,13 +164,12 @@ internal fun createMessageDeletedServerSideEventStringJson() =
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1,
             "deleted_for_me": true
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMessageReadEventStringJson() =
-    createChatEventStringJson(
-        "message.read",
-        """
+internal fun createMessageReadEventStringJson() = createChatEventStringJson(
+    "message.read",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -190,13 +177,12 @@ internal fun createMessageReadEventStringJson() =
             "watcher_count": 3,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "last_read_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createMessageUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "message.updated",
-        """
+internal fun createMessageUpdatedEventStringJson() = createChatEventStringJson(
+    "message.updated",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -204,13 +190,12 @@ internal fun createMessageUpdatedEventStringJson() =
             "watcher_count": 3,
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationAddedToChannelEventStringJson() =
-    createChatEventStringJson(
-        "notification.added_to_channel",
-        """
+internal fun createNotificationAddedToChannelEventStringJson() = createChatEventStringJson(
+    "notification.added_to_channel",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -219,39 +204,36 @@ internal fun createNotificationAddedToChannelEventStringJson() =
             "total_unread_count": 4,
             "unread_channels": 5,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationChannelDeletedEventStringJson() =
-    createChatEventStringJson(
-        "notification.channel_deleted",
-        """
+internal fun createNotificationChannelDeletedEventStringJson() = createChatEventStringJson(
+    "notification.channel_deleted",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationChannelTruncatedEventStringJson() =
-    createChatEventStringJson(
-        "notification.channel_truncated",
-        """
+internal fun createNotificationChannelTruncatedEventStringJson() = createChatEventStringJson(
+    "notification.channel_truncated",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationInviteAcceptedEventStringJson() =
-    createChatEventStringJson(
-        "notification.invite_accepted",
-        """
+internal fun createNotificationInviteAcceptedEventStringJson() = createChatEventStringJson(
+    "notification.invite_accepted",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -259,13 +241,12 @@ internal fun createNotificationInviteAcceptedEventStringJson() =
             "member": ${createMemberJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationInviteRejectedEventStringJson() =
-    createChatEventStringJson(
-        "notification.invite_rejected",
-        """
+internal fun createNotificationInviteRejectedEventStringJson() = createChatEventStringJson(
+    "notification.invite_rejected",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -273,26 +254,24 @@ internal fun createNotificationInviteRejectedEventStringJson() =
             "member": ${createMemberJsonString()},
             "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationInvitedEventStringJson() =
-    createChatEventStringJson(
-        "notification.invited",
-        """
+internal fun createNotificationInvitedEventStringJson() = createChatEventStringJson(
+    "notification.invited",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationMarkReadEventStringJson() =
-    createChatEventStringJson(
-        "notification.mark_read",
-        """
+internal fun createNotificationMarkReadEventStringJson() = createChatEventStringJson(
+    "notification.mark_read",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -302,13 +281,12 @@ internal fun createNotificationMarkReadEventStringJson() =
             "unread_channels": 5,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "last_read_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationMarkUnreadEventStringJson() =
-    createChatEventStringJson(
-        "notification.mark_unread",
-        """
+internal fun createNotificationMarkUnreadEventStringJson() = createChatEventStringJson(
+    "notification.mark_unread",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -321,13 +299,12 @@ internal fun createNotificationMarkUnreadEventStringJson() =
             "last_read_at": "2020-06-29T06:14:28.000Z",
             "last_read_message_id": "parentMessageId",
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationMessageNewEventStringJson() =
-    createChatEventStringJson(
-        "notification.message_new",
-        """
+internal fun createNotificationMessageNewEventStringJson() = createChatEventStringJson(
+    "notification.message_new",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -338,13 +315,12 @@ internal fun createNotificationMessageNewEventStringJson() =
             "unread_channels": 5,
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationRemovedFromChannelEventStringJson() =
-    createChatEventStringJson(
-        "notification.removed_from_channel",
-        """
+internal fun createNotificationRemovedFromChannelEventStringJson() = createChatEventStringJson(
+    "notification.removed_from_channel",
+    """
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
@@ -352,13 +328,12 @@ internal fun createNotificationRemovedFromChannelEventStringJson() =
             "user": ${createUserJsonString()},
             "member": ${createMemberJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createReactionDeletedEventStringJson() =
-    createChatEventStringJson(
-        "reaction.deleted",
-        """
+internal fun createReactionDeletedEventStringJson() = createChatEventStringJson(
+    "reaction.deleted",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -366,13 +341,12 @@ internal fun createReactionDeletedEventStringJson() =
             "message": ${createMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createReactionNewEventStringJson() =
-    createChatEventStringJson(
-        "reaction.new",
-        """
+internal fun createReactionNewEventStringJson() = createChatEventStringJson(
+    "reaction.new",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -380,13 +354,12 @@ internal fun createReactionNewEventStringJson() =
             "message": ${createMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createReactionUpdateEventStringJson() =
-    createChatEventStringJson(
-        "reaction.updated",
-        """
+internal fun createReactionUpdateEventStringJson() = createChatEventStringJson(
+    "reaction.updated",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -394,163 +367,147 @@ internal fun createReactionUpdateEventStringJson() =
             "message": ${createMessageJsonString()},
             "reaction": ${createReactionJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createTypingStartEventStringJson() =
-    createChatEventStringJson(
-        "typing.start",
-        """
+internal fun createTypingStartEventStringJson() = createChatEventStringJson(
+    "typing.start",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "parent_id": "parentMessageId",
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createTypingStopEventStringJson() =
-    createChatEventStringJson(
-        "typing.stop",
-        """
+internal fun createTypingStopEventStringJson() = createChatEventStringJson(
+    "typing.stop",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "parent_id": "parentMessageId",
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelUserBannedEventStringJson() =
-    createChatEventStringJson(
-        "user.banned",
-        """
+internal fun createChannelUserBannedEventStringJson() = createChatEventStringJson(
+    "user.banned",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "expiration": "2020-06-29T06:14:28.000Z",
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createGlobalUserBannedEventStringJson() =
-    createChatEventStringJson(
-        "user.banned",
-        """
+internal fun createGlobalUserBannedEventStringJson() = createChatEventStringJson(
+    "user.banned",
+    """
             "user": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUserDeletedEventStringJson() =
-    createChatEventStringJson(
-        "user.deleted",
-        """
+internal fun createUserDeletedEventStringJson() = createChatEventStringJson(
+    "user.deleted",
+    """
             "user": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUserPresenceChangedEventStringJson() =
-    createChatEventStringJson(
-        "user.presence.changed",
-        """
+internal fun createUserPresenceChangedEventStringJson() = createChatEventStringJson(
+    "user.presence.changed",
+    """
             "user": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUserStartWatchingEventStringJson() =
-    createChatEventStringJson(
-        "user.watching.start",
-        """
+internal fun createUserStartWatchingEventStringJson() = createChatEventStringJson(
+    "user.watching.start",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUserStopWatchingEventStringJson() =
-    createChatEventStringJson(
-        "user.watching.stop",
-        """
+internal fun createUserStopWatchingEventStringJson() = createChatEventStringJson(
+    "user.watching.stop",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createChannelUserUnbannedEventStringJson() =
-    createChatEventStringJson(
-        "user.unbanned",
-        """
+internal fun createChannelUserUnbannedEventStringJson() = createChatEventStringJson(
+    "user.unbanned",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createGlobalUserUnbannedEventStringJson() =
-    createChatEventStringJson(
-        "user.unbanned",
-        """
+internal fun createGlobalUserUnbannedEventStringJson() = createChatEventStringJson(
+    "user.unbanned",
+    """
             "user": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUserUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "user.updated",
-        """
+internal fun createUserUpdatedEventStringJson() = createChatEventStringJson(
+    "user.updated",
+    """
             "user": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createHealthEventStringJson() =
-    createChatEventStringJson(
-        "health.check",
-        """
+internal fun createHealthEventStringJson() = createChatEventStringJson(
+    "health.check",
+    """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83"
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) =
-    createChatEventStringJson(
-        "health.check",
-        """
+internal fun createConnectedEventStringJson(userJsonString: String? = createUserJsonString()) = createChatEventStringJson(
+    "health.check",
+    """
             "connection_id":"6cfffec7-40df-40ac-901a-6ea6c5b7fb83",
             "me": $userJsonString
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationChannelMutesUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "notification.channel_mutes_updated",
-        """
+internal fun createNotificationChannelMutesUpdatedEventStringJson() = createChatEventStringJson(
+    "notification.channel_mutes_updated",
+    """
             "me": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNotificationMutesUpdatedEventStringJson() =
-    createChatEventStringJson(
-        "notification.mutes_updated",
-        """
+internal fun createNotificationMutesUpdatedEventStringJson() = createChatEventStringJson(
+    "notification.mutes_updated",
+    """
             "me": ${createUserJsonString()}
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNewMessageEventStringJson() =
-    createChatEventStringJson(
-        "message.new",
-        """
+internal fun createNewMessageEventStringJson() = createChatEventStringJson(
+    "message.new",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -561,13 +518,12 @@ internal fun createNewMessageEventStringJson() =
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
-    createChatEventStringJson(
-        "message.new",
-        """
+internal fun createNewMessageWithoutUnreadCountsEventStringJson() = createChatEventStringJson(
+    "message.new",
+    """
             "user": ${createUserJsonString()},
             "channel_type": "channelType",
             "channel_id": "channelId",
@@ -576,11 +532,10 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
             "message": ${createMessageJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z",
             "channel_message_count": 1
-        """.trimIndent(),
-    )
+    """.trimIndent(),
+)
 
-internal fun createUnknownEventStringJson(type: String = "unknown_event") =
-    createChatEventStringJson(type, null)
+internal fun createUnknownEventStringJson(type: String = "unknown_event") = createChatEventStringJson(type, null)
 
 @Language("JSON")
 private fun createChatEventStringJson(type: String, payload: String?) =

@@ -38,7 +38,5 @@ public class DefaultUserQueryFilter(
 
     private val delegate = DefaultQueryFilter<User>(transliterator) { it.name.ifBlank { it.id } }
 
-    override fun filter(items: List<User>, query: String): List<User> {
-        return delegate.filter(items, query)
-    }
+    override fun filter(items: List<User>, query: String): List<User> = delegate.filter(items, query)
 }

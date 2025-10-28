@@ -121,77 +121,75 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `when a health check event happens, a request to retry failed entities should happen`() =
-        runTest(testDispatcher) {
-            /* Given */
-            val createdAt = Date()
-            val rawCreatedAt = streamDateFormatter.format(createdAt)
+    fun `when a health check event happens, a request to retry failed entities should happen`() = runTest(testDispatcher) {
+        /* Given */
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
 
-            val syncManager = buildSyncManager()
+        val syncManager = buildSyncManager()
 
-            /* When */
+        /* When */
 
-            syncManager.onEvent(
-                HealthEvent(
-                    type = "type",
-                    createdAt = createdAt,
-                    rawCreatedAt = rawCreatedAt,
-                    connectionId = randomString(),
-                ),
-            )
-
-            /* Then */
-            verify(repositoryFacade).selectChannelCidsBySyncNeeded()
-            verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
-            verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
-            verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
-        }
-
-    @Test
-    fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() =
-        runTest(testDispatcher) {
-            /*
-             *  This checks if the SDK is avoiding loops in the sync. We don't want to handle the same event on every sync,
-             *  because this can waste resource and/or some events may not be idempotent.
-             */
-            val createdAt = localDate()
-            val rawCreatedAt = streamDateFormatter.format(createdAt)
-            val testSyncState = SyncState(
-                userId = randomString(),
-                activeChannelIds = emptyList(),
-                lastSyncedAt = createdAt,
-                rawLastSyncedAt = rawCreatedAt,
-                markedAllReadAt = createdAt,
-            )
-
-            val syncManager = buildSyncManager()
-
-            val mockedChatEvent: ChatEvent = mock {
-                on(it.createdAt) doReturn createdAt
-                on(it.rawCreatedAt) doReturn rawCreatedAt
-            }
-
-            whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
-            whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
-            whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
-
-            whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-                Result.Success(listOf(mockedChatEvent)),
-            )
-            val connectingEvent = ConnectedEvent(
+        syncManager.onEvent(
+            HealthEvent(
                 type = "type",
                 createdAt = createdAt,
                 rawCreatedAt = rawCreatedAt,
                 connectionId = randomString(),
-                me = randomUser(),
-            )
+            ),
+        )
 
-            _syncEvents.test {
-                syncManager.onEvent(connectingEvent)
+        /* Then */
+        verify(repositoryFacade).selectChannelCidsBySyncNeeded()
+        verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
+        verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
+        verify(repositoryFacade).selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)
+    }
 
-                assertEquals(listOf(mockedChatEvent), awaitItem())
-            }
+    @Test
+    fun `when one event of exact same raw time of last sync arrive, it should not be propagated`() = runTest(testDispatcher) {
+            /*
+             *  This checks if the SDK is avoiding loops in the sync. We don't want to handle the same event on every sync,
+             *  because this can waste resource and/or some events may not be idempotent.
+             */
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val syncManager = buildSyncManager()
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
         }
+
+        whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.Success(listOf(mockedChatEvent)),
+        )
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser(),
+        )
+
+        _syncEvents.test {
+            syncManager.onEvent(connectingEvent)
+
+            assertEquals(listOf(mockedChatEvent), awaitItem())
+        }
+    }
 
     @Test
     fun `test initial syncing when rawLastSyncedAt is null`() = runTest(testDispatcher) {
@@ -230,7 +228,9 @@ internal class SyncManagerTest {
         val message3 = randomMessage(deletedAt = null, deletedForMe = false)
         val message4 = localRandomMessage()
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)) doReturn listOf(
-            message1.id, message2.id, message3.id,
+            message1.id,
+            message2.id,
+            message3.id,
         )
         whenever(repositoryFacade.selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)) doReturn
             listOf(message4.id)
@@ -272,7 +272,8 @@ internal class SyncManagerTest {
         val reaction1 = randomReaction(deletedAt = null)
         val reaction2 = randomReaction()
         whenever(repositoryFacade.selectReactionIdsBySyncStatus(SyncStatus.SYNC_NEEDED)) doReturn listOf(
-            reactionId1, reactionId2,
+            reactionId1,
+            reactionId2,
         )
         whenever(repositoryFacade.selectReactionById(reactionId1)) doReturn reaction1
         whenever(repositoryFacade.selectReactionById(reactionId2)) doReturn reaction2
@@ -448,21 +449,19 @@ internal class SyncManagerTest {
 
     private fun TestScope.localDate() = Date(currentTime)
 
-    private fun TestScope.buildSyncManager(syncMaxThreshold: TimeDuration = TimeDuration.seconds(5)): SyncManager {
-        return SyncManager(
-            currentUserId = user.id,
-            scope = backgroundScope,
-            logicRegistry = logicRegistry,
-            stateRegistry = stateRegistry,
-            repos = repositoryFacade,
-            chatClient = chatClient,
-            clientState = clientState,
-            mutableGlobalState = mutableGlobalState,
-            userPresence = true,
-            events = _syncEvents,
-            syncState = _syncState,
-            syncMaxThreshold = syncMaxThreshold,
-            now = { currentTime },
-        )
-    }
+    private fun TestScope.buildSyncManager(syncMaxThreshold: TimeDuration = TimeDuration.seconds(5)): SyncManager = SyncManager(
+        currentUserId = user.id,
+        scope = backgroundScope,
+        logicRegistry = logicRegistry,
+        stateRegistry = stateRegistry,
+        repos = repositoryFacade,
+        chatClient = chatClient,
+        clientState = clientState,
+        mutableGlobalState = mutableGlobalState,
+        userPresence = true,
+        events = _syncEvents,
+        syncState = _syncState,
+        syncMaxThreshold = syncMaxThreshold,
+        now = { currentTime },
+    )
 }

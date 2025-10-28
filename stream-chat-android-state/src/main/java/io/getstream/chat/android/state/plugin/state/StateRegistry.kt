@@ -80,10 +80,8 @@ public class StateRegistry constructor(
      *
      * @return [QueryChannelsState] object.
      */
-    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState {
-        return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, scope, latestUsers, activeLiveLocations)
-        }
+    public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState = queryChannels.getOrPut(filter to sort) {
+        QueryChannelsMutableState(filter, sort, scope, latestUsers, activeLiveLocations)
     }
 
     /**
@@ -104,25 +102,22 @@ public class StateRegistry constructor(
      *
      * @return [ChannelState] object.
      */
-    internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
-        return channels.getOrPut(channelType to channelId) {
-            val baseMessageLimit = messageLimitConfig.channelMessageLimits
-                .find { it.channelType == channelType }
-                ?.baseLimit
-            ChannelMutableState(
-                channelType = channelType,
-                channelId = channelId,
-                userFlow = userStateFlow,
-                latestUsers = latestUsers,
-                activeLiveLocations = activeLiveLocations,
-                baseMessageLimit = baseMessageLimit,
-                now = now,
-            )
-        }
+    internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState = channels.getOrPut(channelType to channelId) {
+        val baseMessageLimit = messageLimitConfig.channelMessageLimits
+            .find { it.channelType == channelType }
+            ?.baseLimit
+        ChannelMutableState(
+            channelType = channelType,
+            channelId = channelId,
+            userFlow = userStateFlow,
+            latestUsers = latestUsers,
+            activeLiveLocations = activeLiveLocations,
+            baseMessageLimit = baseMessageLimit,
+            now = now,
+        )
     }
 
-    internal fun markChannelAsRead(channelType: String, channelId: String): Boolean =
-        mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
+    internal fun markChannelAsRead(channelType: String, channelId: String): Boolean = mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
 
     /**
      * Checks if the channel is already present in the state.
@@ -133,9 +128,7 @@ public class StateRegistry constructor(
      *
      * @return true if the channel is active.
      */
-    internal fun isActiveChannel(channelType: String, channelId: String): Boolean {
-        return channels.containsKey(channelType to channelId)
-    }
+    internal fun isActiveChannel(channelType: String, channelId: String): Boolean = channels.containsKey(channelType to channelId)
 
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.
@@ -149,16 +142,13 @@ public class StateRegistry constructor(
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.
      */
-    internal fun queryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsState =
-        mutableQueryThreads(filter, sort)
+    internal fun queryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsState = mutableQueryThreads(filter, sort)
 
     /**
      * Returns a [QueryThreadsState] holding the current state of the threads data.
      */
-    internal fun mutableQueryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsMutableState {
-        return queryThreads.getOrPut(filter to sort) {
-            QueryThreadsMutableState(filter, sort)
-        }
+    internal fun mutableQueryThreads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsMutableState = queryThreads.getOrPut(filter to sort) {
+        QueryThreadsMutableState(filter, sort)
     }
 
     /**

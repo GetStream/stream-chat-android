@@ -58,17 +58,16 @@ internal class MediaGalleryPreviewActivityAttachmentState(
 /**
  * Maps [Attachment] to [MediaGalleryPreviewActivityAttachmentState].
  */
-internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGalleryPreviewActivityAttachmentState =
-    MediaGalleryPreviewActivityAttachmentState(
-        name = this.name,
-        thumbUrl = this.thumbUrl,
-        imageUrl = this.imageUrl,
-        assetUrl = this.assetUrl,
-        originalWidth = this.originalWidth,
-        originalHeight = this.originalHeight,
-        type = this.type,
-        fileSize = this.fileSize,
-    )
+internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGalleryPreviewActivityAttachmentState = MediaGalleryPreviewActivityAttachmentState(
+    name = this.name,
+    thumbUrl = this.thumbUrl,
+    imageUrl = this.imageUrl,
+    assetUrl = this.assetUrl,
+    originalWidth = this.originalWidth,
+    originalHeight = this.originalHeight,
+    type = this.type,
+    fileSize = this.fileSize,
+)
 
 /**
  * Maps [MediaGalleryPreviewActivityAttachmentState] to [Attachment].

@@ -32,7 +32,5 @@ internal class ChannelActionsViewModelFactory(
      * Creates an instance of [ChannelActionsViewModel].
      */
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ChannelActionsViewModel(cid) as T
-    }
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = ChannelActionsViewModel(cid) as T
 }

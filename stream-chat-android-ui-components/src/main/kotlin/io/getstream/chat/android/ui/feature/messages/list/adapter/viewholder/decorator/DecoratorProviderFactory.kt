@@ -60,18 +60,16 @@ public interface DecoratorProviderFactory {
                 messageBackgroundFactory: MessageBackgroundFactory,
                 deletedMessageVisibility: () -> DeletedMessageVisibility,
                 getLanguageDisplayName: (code: String) -> String,
-            ): DecoratorProvider {
-                return MessageListItemDecoratorProvider(
-                    channel,
-                    dateFormatter,
-                    messageListViewStyle,
-                    showAvatarPredicate,
-                    messageBackgroundFactory,
-                    deletedMessageVisibility,
-                    getLanguageDisplayName,
-                    predicate,
-                )
-            }
+            ): DecoratorProvider = MessageListItemDecoratorProvider(
+                channel,
+                dateFormatter,
+                messageListViewStyle,
+                showAvatarPredicate,
+                messageBackgroundFactory,
+                deletedMessageVisibility,
+                getLanguageDisplayName,
+                predicate,
+            )
         }
     }
 }
@@ -90,23 +88,21 @@ public operator fun DecoratorProviderFactory.plus(
         messageBackgroundFactory: MessageBackgroundFactory,
         deletedMessageVisibility: () -> DeletedMessageVisibility,
         getLanguageDisplayName: (code: String) -> String,
-    ): DecoratorProvider {
-        return this@plus.createDecoratorProvider(
-            channel,
-            dateFormatter,
-            messageListViewStyle,
-            showAvatarPredicate,
-            messageBackgroundFactory,
-            deletedMessageVisibility,
-            getLanguageDisplayName,
-        ) + other.createDecoratorProvider(
-            channel,
-            dateFormatter,
-            messageListViewStyle,
-            showAvatarPredicate,
-            messageBackgroundFactory,
-            deletedMessageVisibility,
-            getLanguageDisplayName,
-        )
-    }
+    ): DecoratorProvider = this@plus.createDecoratorProvider(
+        channel,
+        dateFormatter,
+        messageListViewStyle,
+        showAvatarPredicate,
+        messageBackgroundFactory,
+        deletedMessageVisibility,
+        getLanguageDisplayName,
+    ) + other.createDecoratorProvider(
+        channel,
+        dateFormatter,
+        messageListViewStyle,
+        showAvatarPredicate,
+        messageBackgroundFactory,
+        deletedMessageVisibility,
+        getLanguageDisplayName,
+    )
 }

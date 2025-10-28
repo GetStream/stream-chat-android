@@ -38,9 +38,7 @@ internal class DatabaseSyncStateRepository(private val syncStateDao: SyncStateDa
      *
      * @param userId String
      */
-    override suspend fun selectSyncState(userId: String): SyncState? {
-        return syncStateDao.select(userId)?.toModel()
-    }
+    override suspend fun selectSyncState(userId: String): SyncState? = syncStateDao.select(userId)?.toModel()
 
     override suspend fun clear() {
         syncStateDao.deleteAll()

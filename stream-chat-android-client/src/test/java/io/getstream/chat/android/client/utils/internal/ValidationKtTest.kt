@@ -54,21 +54,20 @@ internal class ValidationKtTest {
     companion object {
 
         @JvmStatic
-        fun argumentsValidCidResult() =
-            validCids().map {
-                Arguments.of(it, Result.Success(it))
-            } +
-                invalidCids().map {
-                    Arguments.of(
-                        it.first,
-                        Result.Failure(
-                            Error.ThrowableError(
-                                message = "Cid is invalid: ${it.first}",
-                                cause = it.second,
-                            ),
+        fun argumentsValidCidResult() = validCids().map {
+            Arguments.of(it, Result.Success(it))
+        } +
+            invalidCids().map {
+                Arguments.of(
+                    it.first,
+                    Result.Failure(
+                        Error.ThrowableError(
+                            message = "Cid is invalid: ${it.first}",
+                            cause = it.second,
                         ),
-                    )
-                }
+                    ),
+                )
+            }
 
         @JvmStatic
         fun argumentsValidateCid() = validCids().map {

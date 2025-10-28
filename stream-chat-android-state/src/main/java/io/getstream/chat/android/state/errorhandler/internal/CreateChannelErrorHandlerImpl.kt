@@ -61,19 +61,17 @@ internal class CreateChannelErrorHandlerImpl(
         channelId: String,
         memberIds: List<String>,
         extraData: Map<String, Any>,
-    ): ReturnOnErrorCall<Channel> {
-        return originalCall.onErrorReturn(scope) { originalError ->
-            if (clientState.isOnline) {
-                Result.Failure(originalError)
+    ): ReturnOnErrorCall<Channel> = originalCall.onErrorReturn(scope) { originalError ->
+        if (clientState.isOnline) {
+            Result.Failure(originalError)
+        } else {
+            val generatedCid =
+                "$channelType:${generateChannelIdIfNeeded(channelId = channelId, memberIds = memberIds)}"
+            val cachedChannel = channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()
+            if (cachedChannel == null) {
+                Result.Failure(Error.GenericError(message = "Channel wasn't cached properly."))
             } else {
-                val generatedCid =
-                    "$channelType:${generateChannelIdIfNeeded(channelId = channelId, memberIds = memberIds)}"
-                val cachedChannel = channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()
-                if (cachedChannel == null) {
-                    Result.Failure(Error.GenericError(message = "Channel wasn't cached properly."))
-                } else {
-                    Result.Success(cachedChannel)
-                }
+                Result.Success(cachedChannel)
             }
         }
     }

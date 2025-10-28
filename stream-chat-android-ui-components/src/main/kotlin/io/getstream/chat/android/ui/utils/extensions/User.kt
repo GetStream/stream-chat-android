@@ -33,20 +33,15 @@ import io.getstream.chat.android.uiutils.extension.getLastSeenText
  * @param context The context to load string resources.
  * @return A string that represents the elapsed time since the user was online.
  */
-public fun User.getLastSeenText(context: Context): String {
-    return getLastSeenText(
-        context = context,
-        userOnlineResId = R.string.stream_ui_user_status_online,
-        userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
-        userLastSeenResId = R.string.stream_ui_user_status_last_seen,
-    )
-}
+public fun User.getLastSeenText(context: Context): String = getLastSeenText(
+    context = context,
+    userOnlineResId = R.string.stream_ui_user_status_online,
+    userLastSeenJustNowResId = R.string.stream_ui_user_status_last_seen_just_now,
+    userLastSeenResId = R.string.stream_ui_user_status_last_seen,
+)
 
-internal fun User.isCurrentUser(): Boolean {
-    return id == ChatUI.currentUserProvider.getCurrentUser()?.id
-}
+internal fun User.isCurrentUser(): Boolean = id == ChatUI.currentUserProvider.getCurrentUser()?.id
 
-internal fun User.asMention(context: Context): String? =
-    name.takeIf(String::isNotEmpty)?.let {
-        context.getString(R.string.stream_ui_mention, it)
-    }
+internal fun User.asMention(context: Context): String? = name.takeIf(String::isNotEmpty)?.let {
+    context.getString(R.string.stream_ui_mention, it)
+}

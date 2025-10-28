@@ -44,18 +44,14 @@ public class StorageHelperWrapper(
      *
      * @return List of [AttachmentMetaData] that describe the files.
      */
-    public fun getFiles(): List<AttachmentMetaData> {
-        return attachmentFilter.filterAttachments(storageHelper.getFileAttachments(context))
-    }
+    public fun getFiles(): List<AttachmentMetaData> = attachmentFilter.filterAttachments(storageHelper.getFileAttachments(context))
 
     /**
      * Loads a list of media metadata from the system.
      *
      * @return List of [AttachmentMetaData] that describe the files.
      */
-    public fun getMedia(): List<AttachmentMetaData> {
-        return attachmentFilter.filterAttachments(storageHelper.getMediaAttachments(context))
-    }
+    public fun getMedia(): List<AttachmentMetaData> = attachmentFilter.filterAttachments(storageHelper.getMediaAttachments(context))
 
     /**
      * Transforms a list of [AttachmentMetaData] into a list of [Attachment]s. This is required
@@ -64,9 +60,7 @@ public class StorageHelperWrapper(
      * @param attachments The list of attachment meta data that we transform.
      * @return List of [Attachment]s that we will upload.
      */
-    public fun getAttachmentsForUpload(attachments: List<AttachmentMetaData>): List<Attachment> {
-        return getAttachmentsFromMetaData(attachments)
-    }
+    public fun getAttachmentsForUpload(attachments: List<AttachmentMetaData>): List<Attachment> = getAttachmentsFromMetaData(attachments)
 
     /**
      * Loads attachment files from the provided metadata, so that we can upload them.
@@ -74,19 +68,17 @@ public class StorageHelperWrapper(
      * @param metaData The list of attachment meta data that we transform.
      * @return List of [Attachment]s with files prepared for uploading.
      */
-    private fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
-        return metaData.map {
-            val fileFromUri = storageHelper.getCachedFileFromUri(context, it)
+    private fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> = metaData.map {
+        val fileFromUri = storageHelper.getCachedFileFromUri(context, it)
 
-            Attachment(
-                upload = fileFromUri,
-                type = it.type,
-                name = it.title ?: fileFromUri?.name ?: "",
-                fileSize = it.size.toInt(),
-                mimeType = it.mimeType,
-                extraData = it.extraData,
-            )
-        }
+        Attachment(
+            upload = fileFromUri,
+            type = it.type,
+            name = it.title ?: fileFromUri?.name ?: "",
+            fileSize = it.size.toInt(),
+            mimeType = it.mimeType,
+            extraData = it.extraData,
+        )
     }
 
     /**
@@ -96,9 +88,7 @@ public class StorageHelperWrapper(
      * @param uris Selected file Uris, to be transformed.
      * @return List of [Attachment]s with files prepared for uploading.
      */
-    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return getAttachmentsMetadataFromUris(uris).let(::getAttachmentsFromMetaData)
-    }
+    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> = getAttachmentsMetadataFromUris(uris).let(::getAttachmentsFromMetaData)
 
     /**
      * Takes a list of file Uris and transforms them into a list of [AttachmentMetaData].
@@ -106,8 +96,6 @@ public class StorageHelperWrapper(
      * @param uris Selected file Uris, to be transformed.
      * @return List of [AttachmentMetaData] that describe the files.
      */
-    public fun getAttachmentsMetadataFromUris(uris: List<Uri>): List<AttachmentMetaData> {
-        return storageHelper.getAttachmentsFromUriList(context, uris)
-            .let(attachmentFilter::filterAttachments)
-    }
+    public fun getAttachmentsMetadataFromUris(uris: List<Uri>): List<AttachmentMetaData> = storageHelper.getAttachmentsFromUriList(context, uris)
+        .let(attachmentFilter::filterAttachments)
 }

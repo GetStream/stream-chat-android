@@ -24,6 +24,4 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
  *
  * @param cid CID of the channel currently being checked.
  */
-internal fun GlobalState.isChannelMutedForCurrentUser(cid: String): Boolean {
-    return channelMutes.value.any { mutedChannel -> mutedChannel.channel?.cid == cid }
-}
+internal fun GlobalState.isChannelMutedForCurrentUser(cid: String): Boolean = channelMutes.value.any { mutedChannel -> mutedChannel.channel?.cid == cid }

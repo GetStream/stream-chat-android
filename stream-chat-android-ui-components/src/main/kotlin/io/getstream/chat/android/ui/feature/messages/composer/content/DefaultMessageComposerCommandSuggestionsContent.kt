@@ -100,9 +100,7 @@ public open class DefaultMessageComposerCommandSuggestionsContent :
     @Suppress("UNCHECKED_CAST")
     protected open fun <T, VH> buildAdapter(
         style: MessageComposerViewStyle,
-    ): T where T : RecyclerView.Adapter<VH>, T : CommandSuggestionsAdapter, VH : RecyclerView.ViewHolder {
-        return CommandsAdapter(style) { commandSelectionListener?.invoke(it) } as T
-    }
+    ): T where T : RecyclerView.Adapter<VH>, T : CommandSuggestionsAdapter, VH : RecyclerView.ViewHolder = CommandsAdapter(style) { commandSelectionListener?.invoke(it) } as T
 
     /**
      * Initializes the content view with [MessageComposerContext].
@@ -159,7 +157,8 @@ public interface CommandSuggestionsAdapter {
 private class CommandsAdapter(
     private val style: MessageComposerViewStyle,
     private val commandSelectionListener: (Command) -> Unit,
-) : SimpleListAdapter<Command, CommandViewHolder>(), CommandSuggestionsAdapter {
+) : SimpleListAdapter<Command, CommandViewHolder>(),
+    CommandSuggestionsAdapter {
 
     /**
      * Creates and instantiates a new instance of [CommandViewHolder].
@@ -168,11 +167,9 @@ private class CommandsAdapter(
      * @param viewType The view type of the new View.
      * @return A new [CommandViewHolder] instance.
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
-        return StreamUiItemCommandBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { CommandViewHolder(it, style, commandSelectionListener) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder = StreamUiItemCommandBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { CommandViewHolder(it, style, commandSelectionListener) }
 }
 
 /**

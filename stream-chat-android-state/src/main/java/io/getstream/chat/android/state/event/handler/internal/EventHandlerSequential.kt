@@ -855,9 +855,7 @@ internal class EventHandlerSequential(
         (event as? HasMessage)?.message?.id
     }
 
-    private fun StateFlow<List<Member>>.containsWithUserId(userId: String): Boolean {
-        return value.find { it.user.id == userId } != null
-    }
+    private fun StateFlow<List<Member>>.containsWithUserId(userId: String): Boolean = value.find { it.user.id == userId } != null
 
     /**
      * Checks if unread counts should be updated for particular channel.
@@ -939,14 +937,10 @@ internal class EventHandlerSequential(
         }
     }
 
-    private suspend fun threadFromMessage(pendingUpdate: EventBatchUpdate, message: Message): Thread? {
-        return threadFromPendingUpdateOrRepo(pendingUpdate, message.id)
-            ?: message.parentId?.let { threadFromPendingUpdateOrRepo(pendingUpdate, it) }
-    }
+    private suspend fun threadFromMessage(pendingUpdate: EventBatchUpdate, message: Message): Thread? = threadFromPendingUpdateOrRepo(pendingUpdate, message.id)
+        ?: message.parentId?.let { threadFromPendingUpdateOrRepo(pendingUpdate, it) }
 
-    private suspend fun threadFromPendingUpdateOrRepo(pendingUpdate: EventBatchUpdate, threadId: String): Thread? {
-        return pendingUpdate.getCurrentThread(threadId) ?: repos.selectThread(threadId)
-    }
+    private suspend fun threadFromPendingUpdateOrRepo(pendingUpdate: EventBatchUpdate, threadId: String): Thread? = pendingUpdate.getCurrentThread(threadId) ?: repos.selectThread(threadId)
 
     private suspend fun EventBatchUpdate.upsertReminder(messageId: String, reminder: MessageReminder) {
         val message = reminder.message

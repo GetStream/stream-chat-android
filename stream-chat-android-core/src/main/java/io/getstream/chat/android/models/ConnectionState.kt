@@ -27,19 +27,25 @@ public sealed class ConnectionState {
      * The client is connected to the WebSocket.
      */
     @Immutable
-    public data object Connected : ConnectionState() { override fun toString(): String = "Connected" }
+    public data object Connected : ConnectionState() {
+        override fun toString(): String = "Connected"
+    }
 
     /**
      * The client is trying to connect to the WebSocket.
      */
     @Immutable
-    public data object Connecting : ConnectionState() { override fun toString(): String = "Connecting" }
+    public data object Connecting : ConnectionState() {
+        override fun toString(): String = "Connecting"
+    }
 
     /**
      * The client is permanently disconnected from the WebSocket.
      */
     @Immutable
-    public data object Offline : ConnectionState() { override fun toString(): String = "Offline" }
+    public data object Offline : ConnectionState() {
+        override fun toString(): String = "Offline"
+    }
 
     public companion object {
         /**

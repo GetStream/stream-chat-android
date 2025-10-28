@@ -54,14 +54,12 @@ internal fun Call<Channel>.onCreateChannelError(
     channelId: String,
     memberIds: List<String>,
     extraData: Map<String, Any>,
-): Call<Channel> {
-    return errorHandlers.fold(this) { createChannelCall, errorHandler ->
-        errorHandler.onCreateChannelError(
-            originalCall = createChannelCall,
-            channelId = channelId,
-            channelType = channelType,
-            memberIds = memberIds,
-            extraData = extraData,
-        )
-    }
+): Call<Channel> = errorHandlers.fold(this) { createChannelCall, errorHandler ->
+    errorHandler.onCreateChannelError(
+        originalCall = createChannelCall,
+        channelId = channelId,
+        channelType = channelType,
+        memberIds = memberIds,
+        extraData = extraData,
+    )
 }

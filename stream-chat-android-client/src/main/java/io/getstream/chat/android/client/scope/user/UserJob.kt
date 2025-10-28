@@ -53,7 +53,8 @@ internal fun UserJob(parent: Job? = null, getUserId: () -> UserId?): UserJob = U
 private class UserJobImpl(
     private val delegate: CompletableJob,
     private val getUserId: () -> UserId?,
-) : CompletableJob by delegate, UserJob {
+) : CompletableJob by delegate,
+    UserJob {
 
     private val logger by taggedLogger("Chat:UserJob")
 
@@ -87,9 +88,7 @@ private class UserJobImpl(
      *
      * Intentionally overridden to use [super] and not a [delegate] one.
      */
-    override fun <R> fold(initial: R, operation: (R, CoroutineContext.Element) -> R): R {
-        return super<UserJob>.fold(initial, operation)
-    }
+    override fun <R> fold(initial: R, operation: (R, CoroutineContext.Element) -> R): R = super<UserJob>.fold(initial, operation)
 
     /**
      * Returns the element with the given [key] from this context or `null`.
@@ -97,9 +96,7 @@ private class UserJobImpl(
      * Intentionally overridden to use [super] and not a [delegate] one.
      */
     @Suppress("UNCHECKED_CAST")
-    override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? {
-        return super<UserJob>.get(key)
-    }
+    override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? = super<UserJob>.get(key)
 
     /**
      * Returns a context containing elements from this context, but without an element with
@@ -107,9 +104,7 @@ private class UserJobImpl(
      *
      * Intentionally overridden to use [super] and not a [delegate] one.
      */
-    override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext {
-        return super<UserJob>.minusKey(key)
-    }
+    override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext = super<UserJob>.minusKey(key)
 
     /**
      * Returns a string representation of the object.

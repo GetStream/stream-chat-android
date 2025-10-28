@@ -27,27 +27,25 @@ public data class ChannelListPayloadDiff(
     val typingUsersChanged: Boolean,
     val draftMessageChanged: Boolean,
 ) {
-    public fun hasDifference(): Boolean =
-        nameChanged
-            .or(avatarViewChanged)
-            .or(usersChanged)
-            .or(lastMessageChanged)
-            .or(readStateChanged)
-            .or(unreadCountChanged)
-            .or(extraDataChanged)
-            .or(typingUsersChanged)
-            .or(draftMessageChanged)
+    public fun hasDifference(): Boolean = nameChanged
+        .or(avatarViewChanged)
+        .or(usersChanged)
+        .or(lastMessageChanged)
+        .or(readStateChanged)
+        .or(unreadCountChanged)
+        .or(extraDataChanged)
+        .or(typingUsersChanged)
+        .or(draftMessageChanged)
 
-    public operator fun plus(other: ChannelListPayloadDiff): ChannelListPayloadDiff =
-        copy(
-            nameChanged = nameChanged || other.nameChanged,
-            avatarViewChanged = avatarViewChanged || other.avatarViewChanged,
-            usersChanged = usersChanged || other.usersChanged,
-            lastMessageChanged = lastMessageChanged || other.lastMessageChanged,
-            readStateChanged = readStateChanged || other.readStateChanged,
-            unreadCountChanged = unreadCountChanged || other.unreadCountChanged,
-            extraDataChanged = extraDataChanged || other.extraDataChanged,
-            typingUsersChanged = typingUsersChanged || other.typingUsersChanged,
-            draftMessageChanged = draftMessageChanged || other.draftMessageChanged,
-        )
+    public operator fun plus(other: ChannelListPayloadDiff): ChannelListPayloadDiff = copy(
+        nameChanged = nameChanged || other.nameChanged,
+        avatarViewChanged = avatarViewChanged || other.avatarViewChanged,
+        usersChanged = usersChanged || other.usersChanged,
+        lastMessageChanged = lastMessageChanged || other.lastMessageChanged,
+        readStateChanged = readStateChanged || other.readStateChanged,
+        unreadCountChanged = unreadCountChanged || other.unreadCountChanged,
+        extraDataChanged = extraDataChanged || other.extraDataChanged,
+        typingUsersChanged = typingUsersChanged || other.typingUsersChanged,
+        draftMessageChanged = draftMessageChanged || other.draftMessageChanged,
+    )
 }

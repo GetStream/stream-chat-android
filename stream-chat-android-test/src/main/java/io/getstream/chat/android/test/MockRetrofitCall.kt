@@ -35,7 +35,6 @@ public class MockRetrofitCall<T : Any>(
     public val result: Result<T>,
     public val doWork: suspend () -> Unit,
 ) : Call<T> {
-
     private val logger by taggedLogger("Chat:MockRetrofitCall")
 
     private val executed = AtomicBoolean(false)
@@ -46,7 +45,8 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[cancel] no args" }
         job.get()?.cancel()
         job.set(null)
-        pendingCallback.get()
+        pendingCallback
+            .get()
             ?.onResult(
                 Result.Failure(
                     Error.ThrowableError(message = "", cause = AsyncTestCallCanceledException()),

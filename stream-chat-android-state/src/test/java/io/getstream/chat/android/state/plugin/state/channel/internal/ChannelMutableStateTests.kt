@@ -155,70 +155,68 @@ internal class ChannelMutableStateTests {
     }
 
     @Test
-    fun `setLoadingOlderMessages when message count is below limit plus buffer should use neutral multiplier`() =
-        runTest {
-            // given
-            val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
-                channelType = CHANNEL_TYPE,
-                channelId = CHANNEL_ID,
-                userFlow = userFlow,
-                latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
-                activeLiveLocations = MutableStateFlow(emptyList()),
-                baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
-            )
-            // Set messages count below limit + TRIM_BUFFER (100 + 30 = 130)
-            val initialMessages = createMessages(50)
-            channelStateWithLimit.setMessages(initialMessages)
+    fun `setLoadingOlderMessages when message count is below limit plus buffer should use neutral multiplier`() = runTest {
+        // given
+        val baseLimit = 100
+        val channelStateWithLimit = ChannelMutableState(
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            userFlow = userFlow,
+            latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+            baseMessageLimit = baseLimit,
+            now = ChannelMutableStateTests::currentTime,
+        )
+        // Set messages count below limit + TRIM_BUFFER (100 + 30 = 130)
+        val initialMessages = createMessages(50)
+        channelStateWithLimit.setMessages(initialMessages)
 
-            // when
-            channelStateWithLimit.setLoadingOlderMessages(true)
-            // stop loading older messages to ensure next upsert checks the limit
-            channelStateWithLimit.setLoadingOlderMessages(false)
+        // when
+        channelStateWithLimit.setLoadingOlderMessages(true)
+        // stop loading older messages to ensure next upsert checks the limit
+        channelStateWithLimit.setLoadingOlderMessages(false)
 
-            // then
-            channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
-            // messageLimit should remain unchanged (neutral multiplier = 1.0)
-            // We can verify this by checking that the limit is still effectively 100
-            val messagesAtLimit = createMessages(150) // 150 messages
-            channelStateWithLimit.upsertMessages(messagesAtLimit)
-            // Should trim to baseLimit (100) + TRIM_BUFFER (30) = 130, then take last 100
-            channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
-        }
+        // then
+        channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
+        // messageLimit should remain unchanged (neutral multiplier = 1.0)
+        // We can verify this by checking that the limit is still effectively 100
+        val messagesAtLimit = createMessages(150) // 150 messages
+        channelStateWithLimit.upsertMessages(messagesAtLimit)
+        // Should trim to baseLimit (100) + TRIM_BUFFER (30) = 130, then take last 100
+        channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
+    }
 
     @Test
-    fun `setLoadingOlderMessages when message count is at or above limit plus buffer should increase limit`() =
-        runTest {
-            // given
-            val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
-                channelType = CHANNEL_TYPE,
-                channelId = CHANNEL_ID,
-                userFlow = userFlow,
-                latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
-                activeLiveLocations = MutableStateFlow(emptyList()),
-                baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
-            )
-            // Set messages count at limit + TRIM_BUFFER (100 + 30 = 130)
-            val initialMessages = createMessages(130)
-            channelStateWithLimit.setMessages(initialMessages)
+    fun `setLoadingOlderMessages when message count is at or above limit plus buffer should increase limit`() = runTest {
+        // given
+        val baseLimit = 100
+        val channelStateWithLimit = ChannelMutableState(
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            userFlow = userFlow,
+            latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+            baseMessageLimit = baseLimit,
+            now = ChannelMutableStateTests::currentTime,
+        )
+        // Set messages count at limit + TRIM_BUFFER (100 + 30 = 130)
+        val initialMessages = createMessages(130)
+        channelStateWithLimit.setMessages(initialMessages)
 
-            // when
-            channelStateWithLimit.setLoadingOlderMessages(true)
-            // stop loading older messages to ensure next upsert checks the limit
-            channelStateWithLimit.setLoadingOlderMessages(false)
+        // when
+        channelStateWithLimit.setLoadingOlderMessages(true)
+        // stop loading older messages to ensure next upsert checks the limit
+        channelStateWithLimit.setLoadingOlderMessages(false)
 
-            // then
-            channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
-            // messageLimit should be increased by LIMIT_MULTIPLIER (1.5)
-            // We can verify this by checking that more messages are retained
-            val manyMessages = createMessages(200) // More than original limit but within new limit
-            channelStateWithLimit.upsertMessages(manyMessages)
-            // New limit should be 100 * 1.5 = 150
-            channelStateWithLimit.messages.value.size shouldBeEqualTo 150
-        }
+        // then
+        channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
+        // messageLimit should be increased by LIMIT_MULTIPLIER (1.5)
+        // We can verify this by checking that more messages are retained
+        val manyMessages = createMessages(200) // More than original limit but within new limit
+        channelStateWithLimit.upsertMessages(manyMessages)
+        // New limit should be 100 * 1.5 = 150
+        channelStateWithLimit.messages.value.size shouldBeEqualTo 150
+    }
 
     @Test
     fun `setLoadingOlderMessages when isLoading is false should not affect message limit`() = runTest {
@@ -294,28 +292,27 @@ internal class ChannelMutableStateTests {
     }
 
     @Test
-    fun `applyMessageLimitIfNeeded when message count is below limit plus buffer should return all messages`() =
-        runTest {
-            // given
-            val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
-                channelType = CHANNEL_TYPE,
-                channelId = CHANNEL_ID,
-                userFlow = userFlow,
-                latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
-                activeLiveLocations = MutableStateFlow(emptyList()),
-                baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
-            )
-            // Create messages below limit + TRIM_BUFFER (100 + 30 = 130)
-            val messages = createMessages(120)
+    fun `applyMessageLimitIfNeeded when message count is below limit plus buffer should return all messages`() = runTest {
+        // given
+        val baseLimit = 100
+        val channelStateWithLimit = ChannelMutableState(
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            userFlow = userFlow,
+            latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
+            activeLiveLocations = MutableStateFlow(emptyList()),
+            baseMessageLimit = baseLimit,
+            now = ChannelMutableStateTests::currentTime,
+        )
+        // Create messages below limit + TRIM_BUFFER (100 + 30 = 130)
+        val messages = createMessages(120)
 
-            // when
-            channelStateWithLimit.setMessages(messages)
+        // when
+        channelStateWithLimit.setMessages(messages)
 
-            // then
-            channelStateWithLimit.messages.value.size shouldBeEqualTo 120
-        }
+        // then
+        channelStateWithLimit.messages.value.size shouldBeEqualTo 120
+    }
 
     @Test
     fun `applyMessageLimitIfNeeded when message count exceeds limit plus buffer should trim messages`() = runTest {

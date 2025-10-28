@@ -27,10 +27,8 @@ internal class TokenManagerImpl : TokenManager {
         }
     }
 
-    override fun loadSync(): String {
-        return provider.loadToken().also {
-            this.token = it
-        }
+    override fun loadSync(): String = provider.loadToken().also {
+        this.token = it
     }
 
     override fun setTokenProvider(provider: CacheableTokenProvider) {
@@ -38,15 +36,11 @@ internal class TokenManagerImpl : TokenManager {
         this.token = provider.getCachedToken()
     }
 
-    override fun hasTokenProvider(): Boolean {
-        return this::provider.isInitialized
-    }
+    override fun hasTokenProvider(): Boolean = this::provider.isInitialized
 
     override fun getToken(): String = token
 
-    override fun hasToken(): Boolean {
-        return token != EMPTY_TOKEN
-    }
+    override fun hasToken(): Boolean = token != EMPTY_TOKEN
 
     override fun expireToken() {
         token = EMPTY_TOKEN

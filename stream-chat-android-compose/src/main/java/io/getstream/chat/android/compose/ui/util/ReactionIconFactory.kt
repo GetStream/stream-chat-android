@@ -99,9 +99,7 @@ private class DefaultReactionIconFactory(
      *
      * @return If the given reaction type is supported by this factory.
      */
-    override fun isReactionSupported(type: String): Boolean {
-        return supportedReactions.containsKey(type)
-    }
+    override fun isReactionSupported(type: String): Boolean = supportedReactions.containsKey(type)
 
     /**
      * Creates an instance of [ReactionIcon] for the given reaction type.
@@ -124,10 +122,8 @@ private class DefaultReactionIconFactory(
      * @return A map with [ReactionIcon]s for all the supported reaction types.
      */
     @Composable
-    override fun createReactionIcons(): Map<String, ReactionIcon> {
-        return supportedReactions.mapValues {
-            createReactionIcon(it.key)
-        }
+    override fun createReactionIcons(): Map<String, ReactionIcon> = supportedReactions.mapValues {
+        createReactionIcon(it.key)
     }
 }
 
@@ -158,7 +154,5 @@ public data class ReactionIcon(
      * @param isSelected If the reaction is selected.
      * @return Either normal or selected [Painter] depending on the reaction state.
      */
-    public fun getPainter(isSelected: Boolean): Painter {
-        return if (isSelected) selectedPainter else painter
-    }
+    public fun getPainter(isSelected: Boolean): Painter = if (isSelected) selectedPainter else painter
 }

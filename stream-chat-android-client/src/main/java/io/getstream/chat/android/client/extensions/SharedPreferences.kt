@@ -25,6 +25,4 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 @InternalStreamChatApi
 @Suppress("NOTHING_TO_INLINE")
-public inline fun SharedPreferences.getNonNullString(key: String, defaultValue: String): String {
-    return getString(key, defaultValue)!!
-}
+public inline fun SharedPreferences.getNonNullString(key: String, defaultValue: String): String = getString(key, defaultValue)!!

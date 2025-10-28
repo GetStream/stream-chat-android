@@ -38,9 +38,7 @@ public fun interface CurrentUserProvider {
         /**
          * Builds the default current user provider.
          */
-        public fun defaultCurrentUserProvider(): CurrentUserProvider {
-            return DefaultCurrentUserProvider()
-        }
+        public fun defaultCurrentUserProvider(): CurrentUserProvider = DefaultCurrentUserProvider()
     }
 }
 
@@ -55,7 +53,5 @@ private class DefaultCurrentUserProvider : CurrentUserProvider {
      *
      *  @return The currently logged in user.
      */
-    override fun getCurrentUser(): User? {
-        return ChatClient.instance().getCurrentUser()
-    }
+    override fun getCurrentUser(): User? = ChatClient.instance().getCurrentUser()
 }

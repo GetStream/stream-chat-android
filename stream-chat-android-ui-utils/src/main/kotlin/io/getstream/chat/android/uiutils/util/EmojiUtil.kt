@@ -28,18 +28,14 @@ public object EmojiUtil {
      *
      * @param message The message that was sent/received by user.
      */
-    public fun isEmojiOnly(message: Message): Boolean {
-        return message.text.isNotBlank() && message.text.replace(EMOJI_REGEX, "").isEmpty() && message.deletedAt == null
-    }
+    public fun isEmojiOnly(message: Message): Boolean = message.text.isNotBlank() && message.text.replace(EMOJI_REGEX, "").isEmpty() && message.deletedAt == null
 
     /**
      * Checks whether the message consists of single emoji.
      *
      * @param message The message that was sent/received by user.
      */
-    public fun isSingleEmoji(message: Message): Boolean {
-        return isEmojiOnly(message) && message.text.replaceFirst(EMOJI_REGEX, "").isEmpty()
-    }
+    public fun isSingleEmoji(message: Message): Boolean = isEmojiOnly(message) && message.text.replaceFirst(EMOJI_REGEX, "").isEmpty()
 
     /**
      * Counts the number of emoji inside a message.

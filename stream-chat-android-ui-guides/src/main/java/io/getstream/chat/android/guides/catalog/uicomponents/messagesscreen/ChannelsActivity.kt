@@ -25,7 +25,9 @@ import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
 /**
  * An Activity representing a self-contained channel list screen.
  */
-class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListItemClickListener {
+class ChannelsActivity :
+    ChannelListActivity(),
+    ChannelListFragment.ChannelListItemClickListener {
 
     /**
      * A callback that handles channel item clicks.
@@ -43,8 +45,6 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
          * @param context The context used to create the intent.
          * @return The [Intent] to start [ChannelsActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, ChannelsActivity::class.java)
     }
 }

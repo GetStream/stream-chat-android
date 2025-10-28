@@ -33,9 +33,8 @@ internal class StringKtTest {
     companion object {
 
         @JvmStatic
-        fun containsLinksData() =
-            stringsWithoutLink().map { Arguments.of(it, false) } +
-                stringsWithLink().map { Arguments.of(it, true) }
+        fun containsLinksData() = stringsWithoutLink().map { Arguments.of(it, false) } +
+            stringsWithLink().map { Arguments.of(it, true) }
 
         private fun stringsWithoutLink() = listOf(
             randomString(),

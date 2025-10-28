@@ -116,33 +116,32 @@ internal class DtoMapping(
     /**
      * Transforms [Message] to [UpstreamMessageDto].
      */
-    internal fun Message.toDto(): UpstreamMessageDto =
-        messageTransformer.transform(this)
-            .run {
-                UpstreamMessageDto(
-                    attachments = attachments.map { it.toDto() },
-                    cid = cid,
-                    command = command,
-                    html = html,
-                    id = id,
-                    type = type,
-                    mentioned_users = mentionedUsersIds,
-                    parent_id = parentId,
-                    pin_expires = pinExpires,
-                    pinned = pinned,
-                    pinned_at = pinnedAt,
-                    pinned_by = pinnedBy?.toDto(),
-                    quoted_message_id = replyMessageId,
-                    shadowed = shadowed,
-                    show_in_channel = showInChannel,
-                    silent = silent,
-                    text = text,
-                    thread_participants = threadParticipants.map { it.toDto() },
-                    restricted_visibility = restrictedVisibility,
-                    shared_location = sharedLocation?.toDto(),
-                    extraData = extraData,
-                )
-            }
+    internal fun Message.toDto(): UpstreamMessageDto = messageTransformer.transform(this)
+        .run {
+            UpstreamMessageDto(
+                attachments = attachments.map { it.toDto() },
+                cid = cid,
+                command = command,
+                html = html,
+                id = id,
+                type = type,
+                mentioned_users = mentionedUsersIds,
+                parent_id = parentId,
+                pin_expires = pinExpires,
+                pinned = pinned,
+                pinned_at = pinnedAt,
+                pinned_by = pinnedBy?.toDto(),
+                quoted_message_id = replyMessageId,
+                shadowed = shadowed,
+                show_in_channel = showInChannel,
+                silent = silent,
+                text = text,
+                thread_participants = threadParticipants.map { it.toDto() },
+                restricted_visibility = restrictedVisibility,
+                shared_location = sharedLocation?.toDto(),
+                extraData = extraData,
+            )
+        }
 
     internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
         latitude = latitude,
@@ -228,24 +227,23 @@ internal class DtoMapping(
      *
      * Additionally, applies transformation using the provided [UserTransformer] before mapping.
      */
-    internal fun User.toDto(): UpstreamUserDto =
-        userTransformer.transform(this)
-            .run {
-                UpstreamUserDto(
-                    banned = isBanned,
-                    id = id,
-                    name = name,
-                    image = image,
-                    invisible = isInvisible,
-                    privacy_settings = privacySettings?.toDto(),
-                    language = language,
-                    role = role,
-                    devices = devices.map { it.toDto() },
-                    teams = teams,
-                    teams_role = teamsRole,
-                    extraData = extraData,
-                )
-            }
+    internal fun User.toDto(): UpstreamUserDto = userTransformer.transform(this)
+        .run {
+            UpstreamUserDto(
+                banned = isBanned,
+                id = id,
+                name = name,
+                image = image,
+                invisible = isInvisible,
+                privacy_settings = privacySettings?.toDto(),
+                language = language,
+                role = role,
+                devices = devices.map { it.toDto() },
+                teams = teams,
+                teams_role = teamsRole,
+                extraData = extraData,
+            )
+        }
 
     /**
      * Maps the domain [ConnectedEvent] model to a network [UpstreamConnectedEventDto] model.

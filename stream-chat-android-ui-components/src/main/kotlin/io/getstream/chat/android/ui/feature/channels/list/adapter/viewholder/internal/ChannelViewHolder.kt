@@ -144,9 +144,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         listener?.onRestoreSwipePosition(this, absoluteAdapterPosition)
     }
 
-    override fun getSwipeView(): View {
-        return binding.itemForegroundView.root
-    }
+    override fun getSwipeView(): View = binding.itemForegroundView.root
 
     /**
      * The position whe the swipe view is swiped
@@ -160,9 +158,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     /**
      * The default position of swipe view
      */
-    override fun getClosedX(): Float {
-        return 0f
-    }
+    override fun getClosedX(): Float = 0f
 
     /**
      * Whether the swipe view is swiped or not.
@@ -187,9 +183,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    override fun isSwipeEnabled(): Boolean {
-        return optionsCount > 0 && style.swipeEnabled
-    }
+    override fun isSwipeEnabled(): Boolean = optionsCount > 0 && style.swipeEnabled
 
     private fun configureBackground() {
         configureBackgroundButtons()
@@ -257,12 +251,11 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    private fun ChannelListPayloadDiff.channelNameLabelChanged(isAnonymousChannel: Boolean): Boolean =
-        nameChanged
-            .or(typingUsersChanged)
-            .or(lastMessageChanged)
-            .or(usersChanged.and(isAnonymousChannel))
-            .or(draftMessageChanged)
+    private fun ChannelListPayloadDiff.channelNameLabelChanged(isAnonymousChannel: Boolean): Boolean = nameChanged
+        .or(typingUsersChanged)
+        .or(lastMessageChanged)
+        .or(usersChanged.and(isAnonymousChannel))
+        .or(draftMessageChanged)
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(
         lastMessage: Message?,

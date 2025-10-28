@@ -113,43 +113,42 @@ internal class SendReactionListenerStateTest {
     }
 
     @Test
-    fun `when sending reactions, messages with reactions should be upserted with correct sync status after request`() =
-        runTest {
-            val testReaction = myReactions[0]
+    fun `when sending reactions, messages with reactions should be upserted with correct sync status after request`() = runTest {
+        val testReaction = myReactions[0]
 
-            val testMessage = randomMessage(
-                ownReactions = mutableListOf(testReaction),
-                latestReactions = mutableListOf(testReaction),
-            )
+        val testMessage = randomMessage(
+            ownReactions = mutableListOf(testReaction),
+            latestReactions = mutableListOf(testReaction),
+        )
 
-            whenever(channelLogic.getMessage(any())) doReturn testMessage
-            whenever(threadsLogic.getMessage(any())) doReturn testMessage
+        whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
-            sendReactionListenerState.onSendReactionResult(
-                randomCID(),
-                testReaction,
-                false,
-                currentUser,
-                Result.Success(testReaction),
-            )
+        sendReactionListenerState.onSendReactionResult(
+            randomCID(),
+            testReaction,
+            false,
+            currentUser,
+            Result.Success(testReaction),
+        )
 
-            verify(channelLogic).upsertMessage(
-                argThat { message ->
-                    message.latestReactions.any { reaction ->
-                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
-                    } && message.ownReactions.any { reaction ->
-                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
-                    }
-                },
-            )
-            verify(threadsLogic).upsertMessage(
-                argThat { message ->
-                    message.latestReactions.any { reaction ->
-                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
-                    } && message.ownReactions.any { reaction ->
-                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
-                    }
-                },
-            )
-        }
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.latestReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                } && message.ownReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                }
+            },
+        )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.latestReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                } && message.ownReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                }
+            },
+        )
+    }
 }

@@ -45,15 +45,11 @@ internal class UserReactionAdapter(
             notifyDataSetChanged()
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
-        return StreamUiItemUserReactionBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { UserReactionViewHolder(it, userReactionClickListener, messageOptionsUserReactionAlignment) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder = StreamUiItemUserReactionBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { UserReactionViewHolder(it, userReactionClickListener, messageOptionsUserReactionAlignment) }
 
-    override fun onBindViewHolder(holder: UserReactionViewHolder, position: Int) {
-        return holder.bind(getItem(position))
-    }
+    override fun onBindViewHolder(holder: UserReactionViewHolder, position: Int) = holder.bind(getItem(position))
 
     class UserReactionViewHolder(
         private val binding: StreamUiItemUserReactionBinding,
@@ -106,14 +102,10 @@ internal class UserReactionAdapter(
     }
 
     private object UserReactionItemDiffCallback : DiffUtil.ItemCallback<UserReactionItem>() {
-        override fun areItemsTheSame(oldItem: UserReactionItem, newItem: UserReactionItem): Boolean {
-            return oldItem.user.id == newItem.user.id &&
-                oldItem.reaction.type == newItem.reaction.type
-        }
+        override fun areItemsTheSame(oldItem: UserReactionItem, newItem: UserReactionItem): Boolean = oldItem.user.id == newItem.user.id &&
+            oldItem.reaction.type == newItem.reaction.type
 
-        override fun areContentsTheSame(oldItem: UserReactionItem, newItem: UserReactionItem): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: UserReactionItem, newItem: UserReactionItem): Boolean = oldItem == newItem
     }
 
     internal fun interface UserReactionClickListener {

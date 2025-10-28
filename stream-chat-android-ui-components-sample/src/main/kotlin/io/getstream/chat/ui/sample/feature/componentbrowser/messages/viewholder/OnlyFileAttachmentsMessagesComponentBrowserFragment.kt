@@ -30,63 +30,61 @@ import io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.
 class OnlyFileAttachmentsMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFragment() {
 
     @OptIn(InternalStreamChatApi::class)
-    override fun getItems(): List<MessageListItem.MessageItem> {
-        return listOf(
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentPdf)),
-                positions = listOf(MessagePosition.TOP),
-                isMine = true,
+    override fun getItems(): List<MessageListItem.MessageItem> = listOf(
+        MessageListItem.MessageItem(
+            message = Message(attachments = mutableListOf(attachmentPdf)),
+            positions = listOf(MessagePosition.TOP),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(
+                attachments = mutableListOf(attachment7z, attachmentPdf),
             ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(attachment7z, attachmentPdf),
+            positions = listOf(MessagePosition.MIDDLE),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(
+                attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
+            ),
+            positions = listOf(MessagePosition.BOTTOM),
+            isMine = true,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls)),
+            positions = listOf(MessagePosition.TOP),
+            isMine = false,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z)),
+            positions = listOf(MessagePosition.MIDDLE),
+            isMine = false,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(
+                attachments = mutableListOf(
+                    attachmentPpt,
+                    attachment7z,
+                    attachmentTxt,
+                    attachmentDoc,
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
-                isMine = true,
             ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(attachmentTxt, attachmentPdf, attachmentPpt),
+            positions = listOf(MessagePosition.BOTTOM),
+            isMine = false,
+        ),
+        MessageListItem.MessageItem(
+            message = Message(
+                attachments = mutableListOf(
+                    attachmentPdf,
+                    attachmentPpt,
+                    attachment7z,
+                    attachmentTxt,
+                    attachmentDoc,
+                    attachmentXls,
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
-                isMine = true,
             ),
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentDoc, attachmentXls)),
-                positions = listOf(MessagePosition.TOP),
-                isMine = false,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(attachments = mutableListOf(attachmentXls, attachmentPdf, attachment7z)),
-                positions = listOf(MessagePosition.MIDDLE),
-                isMine = false,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(
-                        attachmentPpt,
-                        attachment7z,
-                        attachmentTxt,
-                        attachmentDoc,
-                    ),
-                ),
-                positions = listOf(MessagePosition.BOTTOM),
-                isMine = false,
-            ),
-            MessageListItem.MessageItem(
-                message = Message(
-                    attachments = mutableListOf(
-                        attachmentPdf,
-                        attachmentPpt,
-                        attachment7z,
-                        attachmentTxt,
-                        attachmentDoc,
-                        attachmentXls,
-                    ),
-                ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
-                isMine = true,
-            ),
-        )
-    }
+            positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+            isMine = true,
+        ),
+    )
 }

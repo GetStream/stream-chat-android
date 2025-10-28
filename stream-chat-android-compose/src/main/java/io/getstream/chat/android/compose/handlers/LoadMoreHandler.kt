@@ -157,9 +157,8 @@ internal fun shouldLoadMore(
     totalItemsCount: Int,
     lastVisibleItemIndex: Int,
     loadMoreThreshold: Int,
-): Boolean =
-    totalItemsCount > 0 && // List isn’t empty
-        totalItemsCount > loadMoreThreshold && // Ensure list is large enough
-        lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
+): Boolean = totalItemsCount > 0 && // List isn’t empty
+    totalItemsCount > loadMoreThreshold && // Ensure list is large enough
+    lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
 
 private const val DefaultLoadMoreThreshold = 3

@@ -28,7 +28,5 @@ internal class ChatRequestError(
     val statusCode: Int,
     cause: Throwable? = null,
 ) : IOException(message, cause) {
-    override fun toString(): String {
-        return "streamCode: $streamCode, statusCode: $statusCode, message: $message"
-    }
+    override fun toString(): String = "streamCode: $streamCode, statusCode: $statusCode, message: $message"
 }

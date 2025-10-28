@@ -73,9 +73,7 @@ public interface MessageOptionItemsFactory {
          *
          * @return The default implementation of [MessageOptionItemsFactory].
          */
-        public fun defaultFactory(context: Context): MessageOptionItemsFactory {
-            return DefaultMessageOptionItemsFactory(context)
-        }
+        public fun defaultFactory(context: Context): MessageOptionItemsFactory = DefaultMessageOptionItemsFactory(context)
     }
 }
 

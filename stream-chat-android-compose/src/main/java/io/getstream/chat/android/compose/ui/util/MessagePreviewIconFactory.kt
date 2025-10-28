@@ -58,21 +58,19 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
         internal const val VOICE_MESSAGE = "voice_message"
     }
 
-    override fun createPreviewIcons(): Map<String, InlineTextContent> {
-        return mapOf(
-            VOICE_MESSAGE to InlineTextContent(
-                placeholder = Placeholder(
-                    width = 16.sp,
-                    height = 16.sp,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
-                ),
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                    contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
-                )
-            },
-        )
-    }
+    override fun createPreviewIcons(): Map<String, InlineTextContent> = mapOf(
+        VOICE_MESSAGE to InlineTextContent(
+            placeholder = Placeholder(
+                width = 16.sp,
+                height = 16.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
+            ),
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                contentDescription = null,
+                tint = ChatTheme.colors.textLowEmphasis,
+            )
+        },
+    )
 }

@@ -149,5 +149,4 @@ public enum class ThreePaneRole {
  * the different destinations in the three-pane layout.
  */
 @Composable
-public fun rememberThreePaneNavigator(): ThreePaneNavigator =
-    rememberSaveable(saver = ThreePaneNavigator.Saver) { ThreePaneNavigator() }
+public fun rememberThreePaneNavigator(): ThreePaneNavigator = rememberSaveable(saver = ThreePaneNavigator.Saver) { ThreePaneNavigator() }

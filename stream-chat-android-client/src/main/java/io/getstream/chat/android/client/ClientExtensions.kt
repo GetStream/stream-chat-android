@@ -26,12 +26,10 @@ import kotlin.reflect.KClass
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     listener: ChatEventListener<T>,
-): Disposable {
-    return this.subscribeFor(
-        T::class.java,
-        listener = { event -> listener.onEvent(event as T) },
-    )
-}
+): Disposable = this.subscribeFor(
+    T::class.java,
+    listener = { event -> listener.onEvent(event as T) },
+)
 
 /**
  * Subscribes to client events of type [T], in the lifecycle of [lifecycleOwner].
@@ -41,13 +39,11 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
 public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     listener: ChatEventListener<T>,
-): Disposable {
-    return this.subscribeFor(
-        lifecycleOwner,
-        T::class.java,
-        listener = { event -> listener.onEvent(event as T) },
-    )
-}
+): Disposable = this.subscribeFor(
+    lifecycleOwner,
+    T::class.java,
+    listener = { event -> listener.onEvent(event as T) },
+)
 
 /**
  * Subscribes to the specific [eventTypes] of the client.
@@ -55,9 +51,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
 public fun ChatClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
     listener: ChatEventListener<ChatEvent>,
-): Disposable {
-    return subscribeFor(eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
-}
+): Disposable = subscribeFor(eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 
 /**
  * Subscribes to the specific [eventTypes] of the client, in the lifecycle of [lifecycleOwner].
@@ -68,15 +62,11 @@ public fun ChatClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
     listener: ChatEventListener<ChatEvent>,
-): Disposable {
-    return subscribeFor(lifecycleOwner, eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
-}
+): Disposable = subscribeFor(lifecycleOwner, eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 
 /**
  * Subscribes for the next client event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChatClient.subscribeForSingle(
     listener: ChatEventListener<T>,
-): Disposable {
-    return this.subscribeForSingle(T::class.java, listener)
-}
+): Disposable = this.subscribeForSingle(T::class.java, listener)

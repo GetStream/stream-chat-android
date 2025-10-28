@@ -274,8 +274,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> =
-        Result.Success(Unit)
+    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
         /* No-Op */
@@ -496,8 +495,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
-        Result.Success(Unit)
+    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onQueryActiveLocationsResult(result: Result<List<Location>>) {
         /* No-Op */

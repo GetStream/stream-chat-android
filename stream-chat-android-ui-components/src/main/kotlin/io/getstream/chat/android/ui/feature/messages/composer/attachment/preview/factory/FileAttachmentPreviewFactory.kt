@@ -59,11 +59,9 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder {
-        return StreamUiFileAttachmentPreviewBinding
-            .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { FileAttachmentPreviewHandler(it, attachmentRemovalListener) }
-    }
+    ): AttachmentPreviewViewHolder = StreamUiFileAttachmentPreviewBinding
+        .inflate(parentView.context.streamThemeInflater, parentView, false)
+        .let { FileAttachmentPreviewHandler(it, attachmentRemovalListener) }
 
     /**
      * A ViewHolder for file attachment preview.

@@ -58,20 +58,18 @@ internal class SendReactionErrorHandlerImpl(
         enforceUnique: Boolean,
         skipPush: Boolean,
         currentUser: User,
-    ): ReturnOnErrorCall<Reaction> {
-        return originalCall.onErrorReturn(scope) { originalError ->
-            if (clientState.isOnline) {
-                Result.Failure(originalError)
-            } else {
-                Result.Success(
-                    reaction.enrichWithDataBeforeSending(
-                        currentUser = currentUser,
-                        isOnline = clientState.isOnline,
-                        enforceUnique = enforceUnique,
-                        skipPush = skipPush,
-                    ),
-                )
-            }
+    ): ReturnOnErrorCall<Reaction> = originalCall.onErrorReturn(scope) { originalError ->
+        if (clientState.isOnline) {
+            Result.Failure(originalError)
+        } else {
+            Result.Success(
+                reaction.enrichWithDataBeforeSending(
+                    currentUser = currentUser,
+                    isOnline = clientState.isOnline,
+                    enforceUnique = enforceUnique,
+                    skipPush = skipPush,
+                ),
+            )
         }
     }
 }

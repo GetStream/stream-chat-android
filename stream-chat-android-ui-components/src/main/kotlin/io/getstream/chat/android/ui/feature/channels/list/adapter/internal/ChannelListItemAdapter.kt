@@ -28,13 +28,9 @@ internal class ChannelListItemAdapter(
     private val viewHolderFactory: ChannelListItemViewHolderFactory,
 ) : ListAdapter<ChannelListItem, BaseChannelListItemViewHolder>(ChannelListItemDiffCallback) {
 
-    override fun getItemViewType(position: Int): Int {
-        return viewHolderFactory.getItemViewType(getItem(position))
-    }
+    override fun getItemViewType(position: Int): Int = viewHolderFactory.getItemViewType(getItem(position))
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder {
-        return viewHolderFactory.createViewHolder(parent, viewType)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseChannelListItemViewHolder = viewHolderFactory.createViewHolder(parent, viewType)
 
     override fun onBindViewHolder(holder: BaseChannelListItemViewHolder, position: Int) {
         bind(position, holder, FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF)
@@ -58,13 +54,11 @@ internal class ChannelListItemAdapter(
         }
     }
 
-    internal fun getChannel(cid: String): Channel {
-        return currentList
-            .asSequence()
-            .filterIsInstance<ChannelListItem.ChannelItem>()
-            .first { it.channel.cid == cid }
-            .channel
-    }
+    internal fun getChannel(cid: String): Channel = currentList
+        .asSequence()
+        .filterIsInstance<ChannelListItem.ChannelItem>()
+        .first { it.channel.cid == cid }
+        .channel
 
     companion object {
         private val FULL_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(

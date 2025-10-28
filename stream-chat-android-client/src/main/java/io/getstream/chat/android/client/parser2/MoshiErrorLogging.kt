@@ -42,16 +42,12 @@ internal fun MoshiConverterFactory.withErrorLogging(): Converter.Factory {
             parameterAnnotations: Array<out Annotation>,
             methodAnnotations: Array<out Annotation>,
             retrofit: Retrofit,
-        ): Converter<*, RequestBody>? {
-            return originalFactory.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
-        }
+        ): Converter<*, RequestBody>? = originalFactory.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
 
         override fun stringConverter(
             type: Type,
             annotations: Array<out Annotation>,
             retrofit: Retrofit,
-        ): Converter<*, String>? {
-            return originalFactory.stringConverter(type, annotations, retrofit)
-        }
+        ): Converter<*, String>? = originalFactory.stringConverter(type, annotations, retrofit)
     }
 }

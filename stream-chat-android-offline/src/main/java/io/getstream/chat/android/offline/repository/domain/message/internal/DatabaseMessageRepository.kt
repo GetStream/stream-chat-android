@@ -60,9 +60,8 @@ internal class DatabaseMessageRepository(
     override suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
-    ): List<Message> =
-        selectMessagesEntitiesForChannel(cid, pagination)
-            .map { it.toMessage() }
+    ): List<Message> = selectMessagesEntitiesForChannel(cid, pagination)
+        .map { it.toMessage() }
 
     /**
      * Select messages for a thread in a desired page.
@@ -70,20 +69,16 @@ internal class DatabaseMessageRepository(
      * @param messageId String.
      * @param limit limit of messages
      */
-    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> =
-        messageDao.messagesForThread(messageId, limit)
-            .map { it.toMessage() }
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> = messageDao.messagesForThread(messageId, limit)
+        .map { it.toMessage() }
 
-    override suspend fun selectAllUserMessages(userId: String): List<Message> =
-        messageDao.selectByUserId(userId)
-            .map { it.toMessage() }
+    override suspend fun selectAllUserMessages(userId: String): List<Message> = messageDao.selectByUserId(userId)
+        .map { it.toMessage() }
 
-    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> =
-        messageDao.selectByCidAndUserId(cid, userId)
-            .map { it.toMessage() }
+    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> = messageDao.selectByCidAndUserId(cid, userId)
+        .map { it.toMessage() }
 
-    private suspend fun selectRepliedMessage(messageId: String): Message? =
-        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
+    private suspend fun selectRepliedMessage(messageId: String): Message? = replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
 
     /**
      * Selects messages by IDs.
@@ -92,27 +87,24 @@ internal class DatabaseMessageRepository(
      *
      * @return A list of messages found in repository.
      */
-    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
-        return messageIds.map { it to messageCache[it] }
-            .partition { it.second != null }
-            .let { (cachedMessages, missingMessages) ->
-                cachedMessages.mapNotNull { it.second } +
-                    (
-                        missingMessages.map { it.first }
-                            .takeUnless { it.isEmpty() }
-                            ?.let { fetchMessagesFromDB(it) }
-                            ?: emptyList()
-                        )
-            }
-    }
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> = messageIds.map { it to messageCache[it] }
+        .partition { it.second != null }
+        .let { (cachedMessages, missingMessages) ->
+            cachedMessages.mapNotNull { it.second } +
+                (
+                    missingMessages.map { it.first }
+                        .takeUnless { it.isEmpty() }
+                        ?.let { fetchMessagesFromDB(it) }
+                        ?: emptyList()
+                    )
+        }
 
     /**
      * Reads the message with passed ID.
      *
      * @param messageId String.
      */
-    override suspend fun selectMessage(messageId: String): Message? =
-        messageCache[messageId] ?: fetchMessageFromDB(messageId)
+    override suspend fun selectMessage(messageId: String): Message? = messageCache[messageId] ?: fetchMessageFromDB(messageId)
 
     /**
      * Inserts many messages.
@@ -176,8 +168,7 @@ internal class DatabaseMessageRepository(
     override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = messageDao.selectDraftMessageByCid(cid)
         ?.toModel(::selectMessage)
 
-    override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? =
-        messageDao.selectDraftMessageByParentId(parentId)?.toModel(::selectMessage)
+    override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? = messageDao.selectDraftMessageByParentId(parentId)?.toModel(::selectMessage)
 
     /**
      * Deletes all messages before a message with passed ID.
@@ -223,21 +214,16 @@ internal class DatabaseMessageRepository(
      *
      * @param syncStatus [SyncStatus]
      */
-    override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> {
-        return messageDao.selectIdsBySyncStatus(syncStatus)
-    }
+    override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = messageDao.selectIdsBySyncStatus(syncStatus)
 
     /**
      * Selects all message of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]
      */
-    override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
-    }
+    override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
 
-    override suspend fun selectMessagesWithPoll(pollId: String): List<Message> =
-        messageDao.selectMessagesWithPoll(pollId).map { it.toMessage() }
+    override suspend fun selectMessagesWithPoll(pollId: String): List<Message> = messageDao.selectMessagesWithPoll(pollId).map { it.toMessage() }
 
     override suspend fun evictMessage(messageId: String) {
         messageCache.remove(messageId)
@@ -295,30 +281,24 @@ internal class DatabaseMessageRepository(
     }
 
     /** Fetches messages from [MessageDao] and cache values in [LruCache]. */
-    private suspend fun fetchMessagesFromDB(messageIds: List<String>): List<Message> {
-        return messageDao.select(messageIds)
-            .map { entity ->
-                entity.toMessage()
-                    .also(::updateCache)
-            }
-    }
+    private suspend fun fetchMessagesFromDB(messageIds: List<String>): List<Message> = messageDao.select(messageIds)
+        .map { entity ->
+            entity.toMessage()
+                .also(::updateCache)
+        }
 
-    private suspend fun fetchMessageFromDB(messageId: String): Message? {
-        return messageDao.select(messageId)
-            ?.toMessage()
-            ?.also(::updateCache)
-    }
+    private suspend fun fetchMessageFromDB(messageId: String): Message? = messageDao.select(messageId)
+        ?.toMessage()
+        ?.also(::updateCache)
 
     private fun updateCache(message: Message) {
         messageCache.put(message.id, message)
         message.takeIf { message.isDeleted() }?.let { deletedMessageIds.add(it.id) }
     }
 
-    private suspend fun MessageEntity.toMessage(): Message =
-        this.toModel(getUser, ::selectRepliedMessage, ::getPoll).filterReactions()
+    private suspend fun MessageEntity.toMessage(): Message = this.toModel(getUser, ::selectRepliedMessage, ::getPoll).filterReactions()
 
-    private suspend fun getPoll(pollId: String): Poll? =
-        pollDao.getPoll(pollId)?.toModel(getUser)
+    private suspend fun getPoll(pollId: String): Poll? = pollDao.getPoll(pollId)?.toModel(getUser)
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering

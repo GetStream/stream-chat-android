@@ -57,13 +57,11 @@ public class FallbackAttachmentPreviewFactory : AttachmentPreviewFactory {
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder {
-        return StreamUiUnsupportedAttachmentPreviewBinding
-            .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { binding ->
-                FallbackAttachmentPreviewViewHolder(binding, attachmentRemovalListener)
-            }
-    }
+    ): AttachmentPreviewViewHolder = StreamUiUnsupportedAttachmentPreviewBinding
+        .inflate(parentView.context.streamThemeInflater, parentView, false)
+        .let { binding ->
+            FallbackAttachmentPreviewViewHolder(binding, attachmentRemovalListener)
+        }
 
     /**
      * An empty ViewHolder as we don't display unsupported attachment types.

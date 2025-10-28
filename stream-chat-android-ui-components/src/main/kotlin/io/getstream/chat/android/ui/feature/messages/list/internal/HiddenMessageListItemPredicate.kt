@@ -26,7 +26,5 @@ internal object HiddenMessageListItemPredicate : MessageListView.MessageListItem
         item is MessageListItem.MessageItem && item.message.isGiphyEphemeral() && item.isTheirs
     }
 
-    override fun predicate(item: MessageListItem): Boolean {
-        return theirGiphyEphemeralMessagePredicate(item).not()
-    }
+    override fun predicate(item: MessageListItem): Boolean = theirGiphyEphemeralMessagePredicate(item).not()
 }

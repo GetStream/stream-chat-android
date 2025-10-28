@@ -40,15 +40,13 @@ public fun interface CompatUserLookupHandler {
 /**
  * Converts [CompatUserLookupHandler] to [UserLookupHandler].
  */
-public fun CompatUserLookupHandler.toUserLookupHandler(): UserLookupHandler {
-    return UserLookupHandler { query ->
-        suspendCancellableCoroutine { cont ->
-            val cancelable = handleCompatUserLookup(query) { users ->
-                cont.resume(users)
-            }
-            cont.invokeOnCancellation {
-                cancelable.invoke()
-            }
+public fun CompatUserLookupHandler.toUserLookupHandler(): UserLookupHandler = UserLookupHandler { query ->
+    suspendCancellableCoroutine { cont ->
+        val cancelable = handleCompatUserLookup(query) { users ->
+            cont.resume(users)
+        }
+        cont.invokeOnCancellation {
+            cancelable.invoke()
         }
     }
 }

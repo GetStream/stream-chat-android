@@ -61,15 +61,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * messages in the channel.
  * @property now Function providing the current time in milliseconds. Used to determine if a message is pinned or not.
  */
-internal class ChannelMutableState(
-    override val channelType: String,
-    override val channelId: String,
-    private val userFlow: StateFlow<User?>,
-    latestUsers: StateFlow<Map<String, User>>,
-    activeLiveLocations: StateFlow<List<Location>>,
-    val baseMessageLimit: Int?,
-    private val now: () -> Long,
-) : ChannelState {
+internal class ChannelMutableState(override val channelType: String, override val channelId: String, private val userFlow: StateFlow<User?>, latestUsers: StateFlow<Map<String, User>>, activeLiveLocations: StateFlow<List<Location>>, val baseMessageLimit: Int?, private val now: () -> Long) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
@@ -164,16 +156,14 @@ internal class ChannelMutableState(
     private fun messagesTransformation(
         messages: StateFlow<Collection<Message>>,
         extraPredicate: (Message) -> Boolean = { true },
-    ): StateFlow<List<Message>> {
-        return combineStates(messages, userFlow) { messageCollection, user ->
-            messageCollection.asSequence()
-                .filter { it.parentId == null || it.showInChannel }
-                .filter { it.user.id == user?.id || !it.shadowed }
-                .filter(this::isMessageVisible)
-                .filter(extraPredicate)
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
-                .toList()
-        }
+    ): StateFlow<List<Message>> = combineStates(messages, userFlow) { messageCollection, user ->
+        messageCollection.asSequence()
+            .filter { it.parentId == null || it.showInChannel }
+            .filter { it.user.id == user?.id || !it.shadowed }
+            .filter(this::isMessageVisible)
+            .filter(extraPredicate)
+            .sortedBy { it.createdAt ?: it.createdLocallyAt }
+            .toList()
     }
 
     /** The date of the last typing event. */
@@ -640,9 +630,7 @@ internal class ChannelMutableState(
      * @param message The message to check for visibility.
      * @return `true` if the message is visible, `false` otherwise.
      */
-    private fun isMessageVisible(message: Message): Boolean {
-        return hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore)
-    }
+    private fun isMessageVisible(message: Message): Boolean = hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore)
 
     private fun cacheLatestMessages() {
         cachedLatestMessages.value = sortedMessages.value.associateBy(Message::id)
@@ -668,9 +656,7 @@ internal class ChannelMutableState(
      * @param userId The ID of the user whose messages are to be retrieved.
      * @return A list of messages sent by the specified user.
      */
-    fun getMessagesFromUser(userId: String): List<Message> {
-        return _messages?.value?.values?.filter { it.user.id == userId } ?: emptyList()
-    }
+    fun getMessagesFromUser(userId: String): List<Message> = _messages?.value?.values?.filter { it.user.id == userId } ?: emptyList()
 
     override fun getMessageById(id: String): Message? = _messages?.value?.get(id) ?: _pinnedMessages?.value?.get(id)
 

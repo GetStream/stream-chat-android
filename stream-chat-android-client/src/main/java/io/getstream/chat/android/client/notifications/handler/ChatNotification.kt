@@ -114,14 +114,12 @@ public sealed class ChatNotification {
             payload: Map<String, Any?>,
             channel: Channel,
             message: Message,
-        ): ChatNotification? {
-            return when (type) {
-                TYPE_MESSAGE_NEW -> MessageNew(channel, message)
-                TYPE_MESSAGE_UPDATED -> MessageUpdated(channel, message)
-                TYPE_NOTIFICATION_REMINDER_DUE -> NotificationReminderDue(channel, message)
-                TYPE_REACTION_NEW -> createReactionNewNotification(payload, channel, message)
-                else -> null // Unknown notification type
-            }
+        ): ChatNotification? = when (type) {
+            TYPE_MESSAGE_NEW -> MessageNew(channel, message)
+            TYPE_MESSAGE_UPDATED -> MessageUpdated(channel, message)
+            TYPE_NOTIFICATION_REMINDER_DUE -> NotificationReminderDue(channel, message)
+            TYPE_REACTION_NEW -> createReactionNewNotification(payload, channel, message)
+            else -> null // Unknown notification type
         }
 
         @Suppress("ReturnCount")

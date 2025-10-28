@@ -44,26 +44,24 @@ internal class DeleteMessageListenerDatabase(
      *
      * @param messageId The message id to be deleted.
      */
-    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        return messageRepository.selectMessage(messageId)?.let { message ->
-            val currentUserId = clientState.user.value?.id
-            val isModerationFailed = message.isModerationError(currentUserId)
+    override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = messageRepository.selectMessage(messageId)?.let { message ->
+        val currentUserId = clientState.user.value?.id
+        val isModerationFailed = message.isModerationError(currentUserId)
 
-            if (isModerationFailed) {
-                messageRepository.deleteChannelMessage(message)
-                Result.Failure(
-                    Error.ThrowableError(
-                        message = "Message with failed moderation has been deleted locally: $messageId",
-                        cause = MessageModerationDeletedException(
-                            "Message with failed moderation has been deleted locally: $messageId",
-                        ),
+        if (isModerationFailed) {
+            messageRepository.deleteChannelMessage(message)
+            Result.Failure(
+                Error.ThrowableError(
+                    message = "Message with failed moderation has been deleted locally: $messageId",
+                    cause = MessageModerationDeletedException(
+                        "Message with failed moderation has been deleted locally: $messageId",
                     ),
-                )
-            } else {
-                Result.Success(Unit)
-            }
-        } ?: Result.Success(Unit)
-    }
+                ),
+            )
+        } else {
+            Result.Success(Unit)
+        }
+    } ?: Result.Success(Unit)
 
     /**
      * Method called when a request to delete a message in the API happens

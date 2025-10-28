@@ -289,12 +289,10 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
 }
 
 @Composable
-private fun getLinkBackgroundColor(isMine: Boolean): Color {
-    return if (isMine) {
-        ChatTheme.ownMessageTheme.linkBackgroundColor
-    } else {
-        ChatTheme.otherMessageTheme.linkBackgroundColor
-    }
+private fun getLinkBackgroundColor(isMine: Boolean): Color = if (isMine) {
+    ChatTheme.ownMessageTheme.linkBackgroundColor
+} else {
+    ChatTheme.otherMessageTheme.linkBackgroundColor
 }
 
 /**

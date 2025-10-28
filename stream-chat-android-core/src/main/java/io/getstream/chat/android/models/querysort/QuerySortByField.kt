@@ -32,9 +32,7 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
     override fun comparatorFromFieldSort(
         firstSort: SortAttribute.FieldSortAttribute<T>,
         sortDirection: SortDirection,
-    ): Comparator<T> {
-        throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
-    }
+    ): Comparator<T> = throw IllegalArgumentException("FieldSortAttribute can't be used with QuerySortByField")
 
     /**
      * Comparator from [SortAttribute.FieldNameSortAttribute]
@@ -42,17 +40,15 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
     override fun comparatorFromNameAttribute(
         name: SortAttribute.FieldNameSortAttribute<T>,
         sortDirection: SortDirection,
-    ): Comparator<T> =
-        name.name.comparator(sortDirection)
+    ): Comparator<T> = name.name.comparator(sortDirection)
 
-    private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
-        Comparator { o1, o2 ->
-            val fieldName = this
-            val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
-            val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
+    private fun String.comparator(sortDirection: SortDirection): Comparator<T> = Comparator { o1, o2 ->
+        val fieldName = this
+        val fieldOne = o1.getComparableField(fieldName) as? Comparable<Any>
+        val fieldTwo = o2.getComparableField(fieldName) as? Comparable<Any>
 
-            compare(fieldOne, fieldTwo, sortDirection)
-        }
+        compare(fieldOne, fieldTwo, sortDirection)
+    }
 
     private fun add(sortSpecification: SortSpecification<T>): QuerySortByField<T> {
         sortSpecifications = sortSpecifications + sortSpecification
@@ -64,18 +60,14 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
      *
      * @param fieldName The name of the field.
      */
-    public fun asc(fieldName: String): QuerySortByField<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
-    }
+    public fun asc(fieldName: String): QuerySortByField<T> = add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
 
     /**
      * Adds a field to [QuerySortByField] using the name of field in the direction DESC.
      *
      * @param fieldName The name of the field.
      */
-    public fun desc(fieldName: String): QuerySortByField<T> {
-        return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
-    }
+    public fun desc(fieldName: String): QuerySortByField<T> = add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
 
     public companion object {
         /**

@@ -59,7 +59,5 @@ internal class RetrofitCallAdapter<T : Any>(
     private val coroutineScope: CoroutineScope,
 ) : CallAdapter<T, Call<T>> {
     override fun responseType(): Type = responseType
-    override fun adapt(call: retrofit2.Call<T>): Call<T> {
-        return RetrofitCall(call, parser, coroutineScope)
-    }
+    override fun adapt(call: retrofit2.Call<T>): Call<T> = RetrofitCall(call, parser, coroutineScope)
 }

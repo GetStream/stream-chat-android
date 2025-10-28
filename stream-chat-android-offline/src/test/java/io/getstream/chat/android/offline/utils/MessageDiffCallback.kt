@@ -22,28 +22,19 @@ import io.getstream.chat.android.models.Message
 internal data class MessageDiffCallback(
     var old: List<Message>,
     var new: List<Message>,
-) :
-    DiffUtil.Callback() {
+) : DiffUtil.Callback() {
 
-    override fun getOldListSize(): Int {
-        return old.size
-    }
+    override fun getOldListSize(): Int = old.size
 
-    override fun getNewListSize(): Int {
-        return new.size
-    }
+    override fun getNewListSize(): Int = new.size
 
     override fun areItemsTheSame(
         oldItemPosition: Int,
         newItemPosition: Int,
-    ): Boolean {
-        return old[oldItemPosition].id == new[newItemPosition].id
-    }
+    ): Boolean = old[oldItemPosition].id == new[newItemPosition].id
 
     override fun areContentsTheSame(
         oldItemPosition: Int,
         newItemPosition: Int,
-    ): Boolean {
-        return old[oldItemPosition] == new[newItemPosition]
-    }
+    ): Boolean = old[oldItemPosition] == new[newItemPosition]
 }

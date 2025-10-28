@@ -27,90 +27,96 @@ import java.util.UUID
  * Provides sample poll that will be used to render previews.
  */
 public object PreviewPollData {
+    public val option1: Option =
+        Option(
+            id = UUID.randomUUID().toString(),
+            text = "option1",
+        )
 
-    public val option1: Option = Option(
-        id = UUID.randomUUID().toString(),
-        text = "option1",
-    )
+    public val option2: Option =
+        Option(
+            id = UUID.randomUUID().toString(),
+            text = "option2",
+        )
 
-    public val option2: Option = Option(
-        id = UUID.randomUUID().toString(),
-        text = "option2",
-    )
+    public val option3: Option =
+        Option(
+            id = UUID.randomUUID().toString(),
+            text = "option3",
+        )
 
-    public val option3: Option = Option(
-        id = UUID.randomUUID().toString(),
-        text = "option3",
-    )
-
-    public val poll1: Poll = Poll(
-        id = UUID.randomUUID().toString(),
-        name = "Vote an option!",
-        description = "This is a poll",
-        options = listOf(option1, option2, option3),
-        votingVisibility = VotingVisibility.PUBLIC,
-        enforceUniqueVote = true,
-        maxVotesAllowed = 1,
-        allowUserSuggestedOptions = false,
-        allowAnswers = true,
-        voteCountsByOption = mapOf(
-            option1.id to 3,
-            option2.id to 1,
-            option3.id to 1,
-        ),
-        votes = listOf(
-            Vote(
-                id = UUID.randomUUID().toString(),
-                pollId = UUID.randomUUID().toString(),
-                optionId = option1.id,
-                createdAt = Now,
-                updatedAt = Now,
-                user = PreviewUserData.user1,
+    public val poll1: Poll =
+        Poll(
+            id = UUID.randomUUID().toString(),
+            name = "Vote an option!",
+            description = "This is a poll",
+            options = listOf(option1, option2, option3),
+            votingVisibility = VotingVisibility.PUBLIC,
+            enforceUniqueVote = true,
+            maxVotesAllowed = 1,
+            allowUserSuggestedOptions = false,
+            allowAnswers = true,
+            voteCountsByOption =
+            mapOf(
+                option1.id to 3,
+                option2.id to 1,
+                option3.id to 1,
             ),
-            Vote(
-                id = UUID.randomUUID().toString(),
-                pollId = UUID.randomUUID().toString(),
-                optionId = option1.id,
-                createdAt = Now,
-                updatedAt = Now,
-                user = PreviewUserData.user2,
+            votes =
+            listOf(
+                Vote(
+                    id = UUID.randomUUID().toString(),
+                    pollId = UUID.randomUUID().toString(),
+                    optionId = option1.id,
+                    createdAt = Now,
+                    updatedAt = Now,
+                    user = PreviewUserData.user1,
+                ),
+                Vote(
+                    id = UUID.randomUUID().toString(),
+                    pollId = UUID.randomUUID().toString(),
+                    optionId = option1.id,
+                    createdAt = Now,
+                    updatedAt = Now,
+                    user = PreviewUserData.user2,
+                ),
+                Vote(
+                    id = UUID.randomUUID().toString(),
+                    pollId = UUID.randomUUID().toString(),
+                    optionId = option1.id,
+                    createdAt = Now,
+                    updatedAt = Now,
+                    user = PreviewUserData.user3,
+                ),
+                Vote(
+                    id = UUID.randomUUID().toString(),
+                    pollId = UUID.randomUUID().toString(),
+                    optionId = option2.id,
+                    createdAt = Now,
+                    updatedAt = Now,
+                    user = PreviewUserData.user4,
+                ),
+                Vote(
+                    id = UUID.randomUUID().toString(),
+                    pollId = UUID.randomUUID().toString(),
+                    optionId = option3.id,
+                    createdAt = Now,
+                    updatedAt = Now,
+                    user = PreviewUserData.user5,
+                ),
             ),
-            Vote(
-                id = UUID.randomUUID().toString(),
-                pollId = UUID.randomUUID().toString(),
-                optionId = option1.id,
-                createdAt = Now,
-                updatedAt = Now,
-                user = PreviewUserData.user3,
-            ),
-            Vote(
-                id = UUID.randomUUID().toString(),
-                pollId = UUID.randomUUID().toString(),
-                optionId = option2.id,
-                createdAt = Now,
-                updatedAt = Now,
-                user = PreviewUserData.user4,
-            ),
-            Vote(
-                id = UUID.randomUUID().toString(),
-                pollId = UUID.randomUUID().toString(),
-                optionId = option3.id,
-                createdAt = Now,
-                updatedAt = Now,
-                user = PreviewUserData.user5,
-            ),
-        ),
-        ownVotes = listOf(),
-        createdAt = Now,
-        updatedAt = Now,
-        closed = false,
-    )
+            ownVotes = listOf(),
+            createdAt = Now,
+            updatedAt = Now,
+            closed = false,
+        )
 }
 
 @Suppress("MagicNumber")
-private val Now = Calendar.getInstance().run {
-    set(Calendar.HOUR_OF_DAY, 8)
-    set(Calendar.MINUTE, 32)
-    set(Calendar.SECOND, 0)
-    time
-}
+private val Now =
+    Calendar.getInstance().run {
+        set(Calendar.HOUR_OF_DAY, 8)
+        set(Calendar.MINUTE, 32)
+        set(Calendar.SECOND, 0)
+        time
+    }

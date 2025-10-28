@@ -49,10 +49,8 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
     private var _binding: ChatInfoGroupAddUsersDialogFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState).apply {
-            window?.requestFeature(Window.FEATURE_NO_TITLE)
-        }
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = super.onCreateDialog(savedInstanceState).apply {
+        window?.requestFeature(Window.FEATURE_NO_TITLE)
     }
 
     override fun onCreateView(
@@ -148,11 +146,9 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
         private const val ARG_CID = "cid"
         private const val LOAD_MORE_THRESHOLD = 5
 
-        fun newInstance(cid: String): GroupChatInfoAddUsersDialogFragment {
-            return GroupChatInfoAddUsersDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_CID, cid)
-                }
+        fun newInstance(cid: String): GroupChatInfoAddUsersDialogFragment = GroupChatInfoAddUsersDialogFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_CID, cid)
             }
         }
     }

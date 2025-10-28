@@ -49,8 +49,7 @@ internal class QueryThreadsStateLogic(
      *
      * @param loading The new loading state.
      */
-    internal fun setLoading(loading: Boolean) =
-        mutableState.setLoading(loading)
+    internal fun setLoading(loading: Boolean) = mutableState.setLoading(loading)
 
     /**
      * Retrieves the current state of the 'loading more' indicator from the [mutableState].
@@ -62,8 +61,7 @@ internal class QueryThreadsStateLogic(
      *
      * @param loading The new loading more state.
      */
-    internal fun setLoadingMore(loading: Boolean) =
-        mutableState.setLoadingMore(loading)
+    internal fun setLoadingMore(loading: Boolean) = mutableState.setLoadingMore(loading)
 
     /**
      * Retrieves the current state of the thread list from the [mutableState].
@@ -111,16 +109,14 @@ internal class QueryThreadsStateLogic(
     /**
      * Clears all [Thread]s in the [mutableState].
      */
-    internal fun clearThreads() =
-        mutableState.clearThreads()
+    internal fun clearThreads() = mutableState.clearThreads()
 
     /**
      * Updates the identifier for the next page of threads in the [mutableState].
      *
      * @param next The next page identifier.
      */
-    internal fun setNext(next: String?) =
-        mutableState.setNext(next)
+    internal fun setNext(next: String?) = mutableState.setNext(next)
 
     /**
      * Retrieves the current unseen thread IDs from the [mutableState].
@@ -132,14 +128,12 @@ internal class QueryThreadsStateLogic(
      *
      * @param id The ID of the new [Thread].
      */
-    internal fun addUnseenThreadId(id: String) =
-        mutableState.addUnseenThreadId(id)
+    internal fun addUnseenThreadId(id: String) = mutableState.addUnseenThreadId(id)
 
     /**
      * Clears the set of unseen thread IDs in the [mutableState].
      */
-    internal fun clearUnseenThreadIds() =
-        mutableState.clearUnseenThreadIds()
+    internal fun clearUnseenThreadIds() = mutableState.clearUnseenThreadIds()
 
     /**
      * Retrieves a message from the [mutableState] if it exists.

@@ -26,18 +26,17 @@ import io.getstream.result.Result
 
 /** Updates collection of reactions with more recent data of [users]. */
 @InternalStreamChatApi
-public fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Collection<Reaction> =
-    if (mapNotNull { it.user?.id }.any(userMap::containsKey)) {
-        map { reaction ->
-            if (userMap.containsKey(reaction.user?.id ?: reaction.userId)) {
-                reaction.copy(user = userMap[reaction.userId] ?: reaction.user)
-            } else {
-                reaction
-            }
+public fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Collection<Reaction> = if (mapNotNull { it.user?.id }.any(userMap::containsKey)) {
+    map { reaction ->
+        if (userMap.containsKey(reaction.user?.id ?: reaction.userId)) {
+            reaction.copy(user = userMap[reaction.userId] ?: reaction.user)
+        } else {
+            reaction
         }
-    } else {
-        this
     }
+} else {
+    this
+}
 
 /**
  * Merges two collections of reactions by their [Reaction.type].
@@ -51,12 +50,10 @@ public fun Collection<Reaction>.updateByUsers(userMap: Map<String, User>): Colle
 public fun mergeReactions(
     recentReactions: Collection<Reaction>,
     cachedReactions: Collection<Reaction>,
-): Collection<Reaction> {
-    return (
-        cachedReactions.associateBy(Reaction::type) +
-            recentReactions.associateBy(Reaction::type)
-        ).values
-}
+): Collection<Reaction> = (
+    cachedReactions.associateBy(Reaction::type) +
+        recentReactions.associateBy(Reaction::type)
+    ).values
 
 /**
  * Updates the reaction's sync status based on [result].
@@ -66,11 +63,9 @@ public fun mergeReactions(
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
 @InternalStreamChatApi
-public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
-    return when (result) {
-        is Result.Success -> copy(syncStatus = SyncStatus.COMPLETED)
-        is Result.Failure -> updateFailedReactionSyncStatus(result.value)
-    }
+public fun Reaction.updateSyncStatus(result: Result<*>): Reaction = when (result) {
+    is Result.Success -> copy(syncStatus = SyncStatus.COMPLETED)
+    is Result.Failure -> updateFailedReactionSyncStatus(result.value)
 }
 
 /**
@@ -81,15 +76,13 @@ public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
  *
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
-private fun Reaction.updateFailedReactionSyncStatus(error: Error): Reaction {
-    return copy(
-        syncStatus = if (error.isPermanent()) {
-            SyncStatus.FAILED_PERMANENTLY
-        } else {
-            SyncStatus.SYNC_NEEDED
-        },
-    )
-}
+private fun Reaction.updateFailedReactionSyncStatus(error: Error): Reaction = copy(
+    syncStatus = if (error.isPermanent()) {
+        SyncStatus.FAILED_PERMANENTLY
+    } else {
+        SyncStatus.SYNC_NEEDED
+    },
+)
 
 /**
  *

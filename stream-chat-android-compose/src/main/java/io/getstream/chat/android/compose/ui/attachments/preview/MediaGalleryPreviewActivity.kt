@@ -415,13 +415,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         )
     }
 
-    private inline fun <reified T> Intent.getParcelable(key: String): T? {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getParcelableExtra(key, T::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            getParcelableExtra(key)
-        }
+    private inline fun <reified T> Intent.getParcelable(key: String): T? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getParcelableExtra(key, T::class.java)
+    } else {
+        @Suppress("DEPRECATION")
+        getParcelableExtra(key)
     }
 
     public companion object {

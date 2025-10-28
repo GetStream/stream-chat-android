@@ -39,23 +39,22 @@ public fun Map<String, Message>.updateUsers(users: Map<String, User>): Map<Strin
  * mentionedUsers, threadParticipants and pinnedBy user of this instance.
  */
 @InternalStreamChatApi
-public fun Message.updateUsers(users: Map<String, User>): Message =
-    if (users().map(User::id).any(users::containsKey)) {
-        copy(
-            user = if (users.containsKey(user.id)) {
-                users[user.id] ?: user
-            } else {
-                user
-            },
-            latestReactions = latestReactions.updateByUsers(users).toMutableList(),
-            replyTo = replyTo?.updateUsers(users),
-            mentionedUsers = mentionedUsers.updateUsers(users).toMutableList(),
-            threadParticipants = threadParticipants.updateUsers(users).toMutableList(),
-            pinnedBy = users[pinnedBy?.id ?: ""] ?: pinnedBy,
-        )
-    } else {
-        this
-    }
+public fun Message.updateUsers(users: Map<String, User>): Message = if (users().map(User::id).any(users::containsKey)) {
+    copy(
+        user = if (users.containsKey(user.id)) {
+            users[user.id] ?: user
+        } else {
+            user
+        },
+        latestReactions = latestReactions.updateByUsers(users).toMutableList(),
+        replyTo = replyTo?.updateUsers(users),
+        mentionedUsers = mentionedUsers.updateUsers(users).toMutableList(),
+        threadParticipants = threadParticipants.updateUsers(users).toMutableList(),
+        pinnedBy = users[pinnedBy?.id ?: ""] ?: pinnedBy,
+    )
+} else {
+    this
+}
 
 /**
  * Fills [Message.mentionedUsersIds] based on [Message.text] and [Channel.members].
@@ -91,33 +90,25 @@ public val NEVER: Date = Date(0)
  * Checks if the message was created after or at the given [date].
  */
 @InternalStreamChatApi
-public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) >= date
-}
+public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean = (createdAt ?: createdLocallyAt ?: NEVER) >= date
 
 /**
  * Checks if the message was created after the given [date].
  */
 @InternalStreamChatApi
-public fun Message.wasCreatedAfter(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) > date
-}
+public fun Message.wasCreatedAfter(date: Date?): Boolean = (createdAt ?: createdLocallyAt ?: NEVER) > date
 
 /**
  * Checks if the message was created before the given [date].
  */
 @InternalStreamChatApi
-public fun Message.wasCreatedBefore(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) < date
-}
+public fun Message.wasCreatedBefore(date: Date?): Boolean = (createdAt ?: createdLocallyAt ?: NEVER) < date
 
 /**
  * Checks if the message was created before or at the given [date].
  */
 @InternalStreamChatApi
-public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) <= date
-}
+public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean = (createdAt ?: createdLocallyAt ?: NEVER) <= date
 
 /**
  * Retrieves all [User]s involved in the message.
@@ -125,16 +116,14 @@ public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
  * thread participants, pinned by user, and poll voters.
  */
 @InternalStreamChatApi
-public fun Message.users(): List<User> {
-    return latestReactions.mapNotNull(Reaction::user) +
-        user +
-        (replyTo?.users().orEmpty()) +
-        mentionedUsers +
-        ownReactions.mapNotNull(Reaction::user) +
-        threadParticipants +
-        (pinnedBy?.let { listOf(it) } ?: emptyList()) +
-        (poll?.votes?.mapNotNull { it.user } ?: emptyList())
-}
+public fun Message.users(): List<User> = latestReactions.mapNotNull(Reaction::user) +
+    user +
+    (replyTo?.users().orEmpty()) +
+    mentionedUsers +
+    ownReactions.mapNotNull(Reaction::user) +
+    threadParticipants +
+    (pinnedBy?.let { listOf(it) } ?: emptyList()) +
+    (poll?.votes?.mapNotNull { it.user } ?: emptyList())
 
 /**
  * Function that parses if the unread count should be increased or not.
@@ -166,15 +155,12 @@ public fun Message.shouldIncrementUnreadCount(
  * [Attachment.UploadState.Idle].
  */
 @InternalStreamChatApi
-public fun Message.hasPendingAttachments(): Boolean =
-    attachments.any {
-        it.uploadState is Attachment.UploadState.InProgress ||
-            it.uploadState is Attachment.UploadState.Idle
-    }
+public fun Message.hasPendingAttachments(): Boolean = attachments.any {
+    it.uploadState is Attachment.UploadState.InProgress ||
+        it.uploadState is Attachment.UploadState.Idle
+}
 
 /**
  * Checks if the message mentions the [user].
  */
-internal fun Message.containsUserMention(user: User): Boolean {
-    return mentionedUsersIds.contains(user.id) || mentionedUsers.any { mentionedUser -> mentionedUser.id == user.id }
-}
+internal fun Message.containsUserMention(user: User): Boolean = mentionedUsersIds.contains(user.id) || mentionedUsers.any { mentionedUser -> mentionedUser.id == user.id }

@@ -217,18 +217,16 @@ internal class MessageListViewModelTest {
             whenever(chatClient.audioPlayer) doReturn audioPlayer
         }
 
-        fun get(): MessageListViewModel {
-            return MessageListViewModel(
-                MessageListController(
-                    chatClient = chatClient,
-                    cid = channelId,
-                    clipboardHandler = mock(),
-                    threadLoadOrderOlderToNewer = false,
-                    channelState = MutableStateFlow(channelState),
-                ),
+        fun get(): MessageListViewModel = MessageListViewModel(
+            MessageListController(
+                chatClient = chatClient,
+                cid = channelId,
+                clipboardHandler = mock(),
+                threadLoadOrderOlderToNewer = false,
+                channelState = MutableStateFlow(channelState),
+            ),
 
-            )
-        }
+        )
     }
 
     companion object {

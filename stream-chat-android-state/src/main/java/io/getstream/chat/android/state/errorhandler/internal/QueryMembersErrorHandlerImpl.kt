@@ -54,32 +54,30 @@ internal class QueryMembersErrorHandlerImpl(
         filter: FilterObject,
         sort: QuerySorter<Member>,
         members: List<Member>,
-    ): ReturnOnErrorCall<List<Member>> {
-        return originalCall.onErrorReturn(scope) { originalError ->
-            logger.d {
-                "An error happened while wuery members. " +
-                    "Error message: ${originalError.message}. Full error: $originalCall"
-            }
+    ): ReturnOnErrorCall<List<Member>> = originalCall.onErrorReturn(scope) { originalError ->
+        logger.d {
+            "An error happened while wuery members. " +
+                "Error message: ${originalError.message}. Full error: $originalCall"
+        }
 
-            if (clientState.isOnline) {
-                Result.Failure(originalError)
-            } else {
-                // retrieve from database
-                val clampedOffset = offset.coerceAtLeast(0)
-                val clampedLimit = limit.coerceAtLeast(0)
-                val membersFromDatabase = channelRepository
-                    .selectMembersForChannel(Pair(channelType, channelId).toCid())
-                    .sortedWith(sort.comparator)
-                    .drop(clampedOffset)
-                    .let { members ->
-                        if (clampedLimit > 0) {
-                            members.take(clampedLimit)
-                        } else {
-                            members
-                        }
+        if (clientState.isOnline) {
+            Result.Failure(originalError)
+        } else {
+            // retrieve from database
+            val clampedOffset = offset.coerceAtLeast(0)
+            val clampedLimit = limit.coerceAtLeast(0)
+            val membersFromDatabase = channelRepository
+                .selectMembersForChannel(Pair(channelType, channelId).toCid())
+                .sortedWith(sort.comparator)
+                .drop(clampedOffset)
+                .let { members ->
+                    if (clampedLimit > 0) {
+                        members.take(clampedLimit)
+                    } else {
+                        members
                     }
-                Result.Success(membersFromDatabase)
-            }
+                }
+            Result.Success(membersFromDatabase)
         }
     }
 }

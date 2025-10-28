@@ -35,9 +35,7 @@ internal class MapConverter {
     private val memberEntityMapAdapter = moshi.adapter<Map<String, MemberEntity>>()
 
     @TypeConverter
-    fun readMapToString(someObjects: Map<String, ChannelUserReadEntity>?): String? {
-        return channelUserReadMapAdapter.toJson(someObjects)
-    }
+    fun readMapToString(someObjects: Map<String, ChannelUserReadEntity>?): String? = channelUserReadMapAdapter.toJson(someObjects)
 
     @TypeConverter
     fun stringToReadMap(data: String?): Map<String, ChannelUserReadEntity>? {
@@ -48,9 +46,7 @@ internal class MapConverter {
     }
 
     @TypeConverter
-    fun memberMapToString(someObjects: Map<String, MemberEntity>?): String? {
-        return memberEntityMapAdapter.toJson(someObjects)
-    }
+    fun memberMapToString(someObjects: Map<String, MemberEntity>?): String? = memberEntityMapAdapter.toJson(someObjects)
 
     @TypeConverter
     fun stringToMemberMap(data: String?): Map<String, MemberEntity>? {
@@ -69,9 +65,7 @@ internal class MapConverter {
     }
 
     @TypeConverter
-    fun mapToString(someObjects: Map<String, Int>?): String? {
-        return intMapAdapter.toJson(someObjects)
-    }
+    fun mapToString(someObjects: Map<String, Int>?): String? = intMapAdapter.toJson(someObjects)
 
     @TypeConverter
     fun stringToStringMap(data: String?): Map<String, String>? {
@@ -82,7 +76,5 @@ internal class MapConverter {
     }
 
     @TypeConverter
-    fun stringMapToString(someObjects: Map<String, String>?): String? {
-        return stringMapAdapter.toJson(someObjects)
-    }
+    fun stringMapToString(someObjects: Map<String, String>?): String? = stringMapAdapter.toJson(someObjects)
 }

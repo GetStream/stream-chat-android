@@ -77,11 +77,9 @@ import kotlin.random.Random
 
 private val charPool: CharArray = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toCharArray()
 
-public fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
-    Random.nextInt(1, maxInt + 1)
+public fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int = Random.nextInt(1, maxInt + 1)
 
-public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
-    Random.nextLong(1, maxLong + 1)
+public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long = Random.nextLong(1, maxLong + 1)
 
 public fun randomFloat(): Float = Random.nextFloat()
 public fun randomDouble(): Double = Random.nextDouble()
@@ -97,9 +95,7 @@ public fun randomString(size: Int = 20): String = buildString(capacity = size) {
 }
 
 public fun randomCID(): String = "${randomString()}:${randomString()}"
-public fun randomFile(extension: String = randomString(3)): File {
-    return File("${randomString()}.$extension")
-}
+public fun randomFile(extension: String = randomString(3)): File = File("${randomString()}.$extension")
 
 public fun randomUploadedFile(
     file: String = randomString(),
@@ -561,11 +557,9 @@ public fun randomConfig(
     pollsEnabled = pollsEnabled,
 )
 
-public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
-    ChannelConfig(type = type, config = config)
+public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig = ChannelConfig(type = type, config = config)
 
-public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
-    (SyncStatus.entries - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
+public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus = (SyncStatus.entries - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
 public fun randomAttachment(
     authorName: String? = randomString(),
@@ -591,30 +585,28 @@ public fun randomAttachment(
     upload: File? = randomFile(),
     uploadState: Attachment.UploadState? = Attachment.UploadState.Success,
     extraData: Map<String, Any> = randomExtraData(),
-): Attachment {
-    return Attachment(
-        authorName = authorName,
-        authorLink = authorLink,
-        titleLink = titleLink,
-        thumbUrl = thumbUrl,
-        imageUrl = imageUrl,
-        assetUrl = assetUrl,
-        ogUrl = ogUrl,
-        mimeType = mimeType,
-        fileSize = fileSize,
-        title = title,
-        text = text,
-        type = type,
-        image = image,
-        name = name,
-        fallback = fallback,
-        originalHeight = originalHeight,
-        originalWidth = originalWidth,
-        upload = upload,
-        uploadState = uploadState,
-        extraData = extraData,
-    )
-}
+): Attachment = Attachment(
+    authorName = authorName,
+    authorLink = authorLink,
+    titleLink = titleLink,
+    thumbUrl = thumbUrl,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    ogUrl = ogUrl,
+    mimeType = mimeType,
+    fileSize = fileSize,
+    title = title,
+    text = text,
+    type = type,
+    image = image,
+    name = name,
+    fallback = fallback,
+    originalHeight = originalHeight,
+    originalWidth = originalWidth,
+    upload = upload,
+    uploadState = uploadState,
+    extraData = extraData,
+)
 
 public fun randomMediaAttachment(): Attachment = randomAttachment(
     type = listOf(
@@ -711,15 +703,13 @@ public fun randomAttachmentsWithFile(
     },
 ): List<Attachment> = (1..size).map(createAttachment)
 
-public fun randomValue(): Any {
-    return when (Random.nextInt(0, 5)) {
-        0 -> randomString()
-        1 -> randomInt()
-        2 -> randomLong()
-        3 -> randomBoolean()
-        4 -> randomDate()
-        else -> randomString()
-    }
+public fun randomValue(): Any = when (Random.nextInt(0, 5)) {
+    0 -> randomString()
+    1 -> randomInt()
+    2 -> randomLong()
+    3 -> randomBoolean()
+    4 -> randomDate()
+    else -> randomString()
 }
 
 public fun randomExtraData(maxPossibleEntries: Int = 10): Map<String, Any> {
@@ -738,12 +728,11 @@ public fun randomDevice(
     token: String = randomString(),
     pushProvider: PushProvider = PushProvider.entries.random(),
     providerName: String? = randomString().takeIf { randomBoolean() },
-): Device =
-    Device(
-        token = token,
-        pushProvider = pushProvider,
-        providerName = providerName,
-    )
+): Device = Device(
+    token = token,
+    pushProvider = pushProvider,
+    providerName = providerName,
+)
 
 public fun randomChatNetworkError(
     serverErrorCode: Int = randomInt(),
@@ -815,12 +804,11 @@ public fun allChannelCapabilities(): Set<String> = setOf(
 public fun randomChannelCapabilities(
     exclude: Set<String> = emptySet(),
     include: Set<String> = emptySet(),
-): Set<String> =
-    allChannelCapabilities()
-        .minus(exclude)
-        .shuffled()
-        .let { it.take(positiveRandomInt(it.size)) }
-        .toSet() + include
+): Set<String> = allChannelCapabilities()
+    .minus(exclude)
+    .shuffled()
+    .let { it.take(positiveRandomInt(it.size)) }
+    .toSet() + include
 
 public fun randomPollConfig(
     name: String = randomString(),
@@ -1131,11 +1119,9 @@ public fun randomUnreadChannelByType(
     messagesCount = messagesCount,
 )
 
-public fun randomConnectionState(): ConnectionState =
-    ConnectionState.values.random()
+public fun randomConnectionState(): ConnectionState = ConnectionState.values.random()
 
-public fun randomAttachmentType(): String =
-    attachmentTypes().random()
+public fun randomAttachmentType(): String = attachmentTypes().random()
 
 public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.IMAGE,

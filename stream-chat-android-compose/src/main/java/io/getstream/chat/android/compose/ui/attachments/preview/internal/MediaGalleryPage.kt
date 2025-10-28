@@ -351,6 +351,4 @@ private fun calculateMaxOffset(imageSize: Size, scale: Float, parentSize: Size):
  * @param scale The current scale of of the image.
  * @param parentAxisSize The size of the parent view on a given axis.
  */
-private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float {
-    return (axisSize * scale - parentAxisSize).coerceAtLeast(0f) / 2
-}
+private fun calculateMaxOffsetPerAxis(axisSize: Float, scale: Float, parentAxisSize: Float): Float = (axisSize * scale - parentAxisSize).coerceAtLeast(0f) / 2

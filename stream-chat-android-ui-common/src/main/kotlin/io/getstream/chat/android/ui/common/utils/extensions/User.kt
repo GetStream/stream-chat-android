@@ -23,9 +23,7 @@ import io.getstream.chat.android.ui.common.model.UserPresence
 public val User.initials: String
     get() = name.initials()
 
-public fun List<User>.getUserByNameOrId(nameOrId: String): User? {
-    return firstOrNull { it.name == nameOrId } ?: firstOrNull { it.id == nameOrId }
-}
+public fun List<User>.getUserByNameOrId(nameOrId: String): User? = firstOrNull { it.name == nameOrId } ?: firstOrNull { it.id == nameOrId }
 
 /**
  * Determines if the online indicator should be shown for the user based on the user presence configuration.
@@ -37,8 +35,7 @@ public fun List<User>.getUserByNameOrId(nameOrId: String): User? {
 public fun User.shouldShowOnlineIndicator(
     userPresence: UserPresence,
     currentUser: User?,
-): Boolean =
-    when {
-        id == currentUser?.id -> userPresence.currentUser.showOnlineIndicator
-        else -> userPresence.otherUsers.showOnlineIndicator
-    }
+): Boolean = when {
+    id == currentUser?.id -> userPresence.currentUser.showOnlineIndicator
+    else -> userPresence.otherUsers.showOnlineIndicator
+}

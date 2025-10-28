@@ -62,9 +62,7 @@ internal class ProxyChatApiTest {
         val message = randomMessage()
         val originalApi = mock<ChatApi>()
         val sendMessageInterceptor = spy(object : SendMessageInterceptor {
-            override fun sendMessage(channelType: String, channelId: String, message: Message): Result<Message> {
-                return Result.Success(message)
-            }
+            override fun sendMessage(channelType: String, channelId: String, message: Message): Result<Message> = Result.Success(message)
         })
         val proxyApi = ProxyChatApi(originalApi, UserScope(ClientScope()), sendMessageInterceptor)
         // When

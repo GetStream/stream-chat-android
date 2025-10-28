@@ -22,9 +22,7 @@ import io.getstream.chat.android.models.Channel
 public val Channel.initials: String
     get() = name.initials()
 
-public fun Channel.isDirectMessaging(): Boolean {
-    return members.size == 2 && includesCurrentUser()
-}
+public fun Channel.isDirectMessaging(): Boolean = members.size == 2 && includesCurrentUser()
 
 private fun Channel.includesCurrentUser(): Boolean {
     val currentUserId = ChatClient.instance().clientState.user.value?.id ?: return false

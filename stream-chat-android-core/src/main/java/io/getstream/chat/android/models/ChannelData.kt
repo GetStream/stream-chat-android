@@ -157,36 +157,34 @@ public data class ChannelData(
         watchers: List<User>,
         watcherCount: Int,
         insideSearch: Boolean,
-    ): Channel {
-        return Channel(
-            type = type,
-            id = id,
-            name = name,
-            image = image,
-            frozen = frozen,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            deletedAt = deletedAt,
-            extraData = extraData,
-            cooldown = cooldown,
-            createdBy = createdBy,
-            messages = messages,
-            members = members,
-            watchers = watchers,
-            watcherCount = watcherCount,
-            read = reads,
-            team = team,
-            memberCount = memberCount,
-            ownCapabilities = ownCapabilities,
-            membership = membership,
-            cachedLatestMessages = cachedLatestMessages,
-            isInsideSearch = insideSearch,
-            draftMessage = draft,
-            activeLiveLocations = emptyList(),
-            messageCount = messageCount,
-            pushPreference = pushPreference,
-        )
-    }
+    ): Channel = Channel(
+        type = type,
+        id = id,
+        name = name,
+        image = image,
+        frozen = frozen,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+        extraData = extraData,
+        cooldown = cooldown,
+        createdBy = createdBy,
+        messages = messages,
+        members = members,
+        watchers = watchers,
+        watcherCount = watcherCount,
+        read = reads,
+        team = team,
+        memberCount = memberCount,
+        ownCapabilities = ownCapabilities,
+        membership = membership,
+        cachedLatestMessages = cachedLatestMessages,
+        isInsideSearch = insideSearch,
+        draftMessage = draft,
+        activeLiveLocations = emptyList(),
+        messageCount = messageCount,
+        pushPreference = pushPreference,
+    )
 
     /**
      * Checks if the user has specific capabilities.
@@ -195,9 +193,7 @@ public data class ChannelData(
      *
      * @param channelCapability The specific ability we are checking against.
      */
-    public fun isUserAbleTo(channelCapability: String): Boolean {
-        return ownCapabilities.contains(channelCapability)
-    }
+    public fun isUserAbleTo(channelCapability: String): Boolean = ownCapabilities.contains(channelCapability)
 }
 
 /**
@@ -206,24 +202,22 @@ public data class ChannelData(
  * @param that The [ChannelData] to take the new data from.
  */
 @InternalStreamChatApi
-public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
-    return copy(
-        name = that.name,
-        image = that.image,
-        frozen = that.frozen,
-        cooldown = that.cooldown,
-        team = that.team,
-        extraData = that.extraData,
-        memberCount = that.memberCount,
-        createdAt = that.createdAt,
-        updatedAt = that.updatedAt,
-        deletedAt = that.deletedAt,
-        createdBy = that.createdBy,
-        messageCount = messageCount ?: this.messageCount,
+public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData = copy(
+    name = that.name,
+    image = that.image,
+    frozen = that.frozen,
+    cooldown = that.cooldown,
+    team = that.team,
+    extraData = that.extraData,
+    memberCount = that.memberCount,
+    createdAt = that.createdAt,
+    updatedAt = that.updatedAt,
+    deletedAt = that.deletedAt,
+    createdBy = that.createdBy,
+    messageCount = messageCount ?: this.messageCount,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,
         pushPreference = pushPreference ?: this.pushPreference
          */
-    )
-}
+)

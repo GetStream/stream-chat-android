@@ -49,11 +49,9 @@ internal class FileAttachmentAdapter(
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
-        return StreamUiItemAttachmentFileBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { FileAttachmentViewHolder(it, onAttachmentSelected, style) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder = StreamUiItemAttachmentFileBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { FileAttachmentViewHolder(it, onAttachmentSelected, style) }
 
     private fun toggleSelection(attachment: AttachmentMetaData, isSelected: Boolean) {
         val index = attachments.indexOf(attachment)
@@ -105,12 +103,10 @@ internal class FileAttachmentAdapter(
             binding.selectionIndicator.text = attachment.selectedPosition.takeIf { it > 0 }?.toString() ?: ""
         }
 
-        private fun getSelectionIndicatorBackground(selected: Boolean, style: AttachmentsPickerDialogStyle): Drawable {
-            return if (selected) {
-                style.fileAttachmentItemCheckboxSelectedDrawable
-            } else {
-                style.fileAttachmentItemCheckboxDeselectedDrawable
-            }
+        private fun getSelectionIndicatorBackground(selected: Boolean, style: AttachmentsPickerDialogStyle): Drawable = if (selected) {
+            style.fileAttachmentItemCheckboxSelectedDrawable
+        } else {
+            style.fileAttachmentItemCheckboxDeselectedDrawable
         }
     }
 }

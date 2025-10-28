@@ -41,9 +41,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun plainTextMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the background of messages containing polls.
@@ -51,9 +49,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun pollMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun pollMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the background of messages containing image attachments.
@@ -61,9 +57,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the background of deleted messages.
@@ -71,18 +65,16 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setTint(
-                    when (data.isTheirs) {
-                        true -> style.messageDeletedBackgroundTheirs
-                        else -> style.messageDeletedBackgroundMine
-                    } ?: style.messageDeletedBackground,
-                )
-            }
-    }
+    override fun deletedMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
+        .let(::MaterialShapeDrawable)
+        .apply {
+            setTint(
+                when (data.isTheirs) {
+                    true -> style.messageDeletedBackgroundTheirs
+                    else -> style.messageDeletedBackgroundMine
+                } ?: style.messageDeletedBackground,
+            )
+        }
 
     /**
      * Draws the background of text and attachment messages.
@@ -90,9 +82,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun textAndAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the background of messages containing file attachments.
@@ -100,9 +90,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun fileAttachmentsMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun fileAttachmentsMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the background of messages containing links and no other types of attachments.
@@ -110,9 +98,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
      * @param context [Context].
      * @param data [MessageListItem.MessageItem].
      */
-    override fun linkAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
-        return defaultBackground(context, data)
-    }
+    override fun linkAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable = defaultBackground(context, data)
 
     /**
      * Draws the default background of messages.
@@ -164,19 +150,17 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     /**
      * Draws the drawable to the used as background for Giphys.
      */
-    override fun giphyAppearanceModel(context: Context): Drawable {
-        return shapeAppearanceModel(
-            context,
-            DEFAULT_CORNER_RADIUS,
-            SMALL_CARD_VIEW_CORNER_RADIUS,
-            isMine = true,
-            isBottomPosition = true,
-        )
-            .let(::MaterialShapeDrawable)
-            .apply {
-                setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
-            }
-    }
+    override fun giphyAppearanceModel(context: Context): Drawable = shapeAppearanceModel(
+        context,
+        DEFAULT_CORNER_RADIUS,
+        SMALL_CARD_VIEW_CORNER_RADIUS,
+        isMine = true,
+        isBottomPosition = true,
+    )
+        .let(::MaterialShapeDrawable)
+        .apply {
+            setTint(ContextCompat.getColor(context, MESSAGE_OTHER_USER_BACKGROUND))
+        }
 
     public companion object {
         private val MESSAGE_OTHER_USER_BACKGROUND = R.color.stream_ui_white
@@ -192,7 +176,5 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         bottomEndCorner: Float,
         isMine: Boolean,
         isBottomPosition: Boolean,
-    ): ShapeAppearanceModel {
-        return ShapeAppearanceModelFactory.create(context, radius, bottomEndCorner, isMine, isBottomPosition)
-    }
+    ): ShapeAppearanceModel = ShapeAppearanceModelFactory.create(context, radius, bottomEndCorner, isMine, isBottomPosition)
 }

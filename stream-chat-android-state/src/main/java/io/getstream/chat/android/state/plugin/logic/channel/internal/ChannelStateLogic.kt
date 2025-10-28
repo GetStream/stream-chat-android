@@ -61,15 +61,7 @@ import java.util.Date
  * @property globalMutableState [MutableGlobalState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
-internal class ChannelStateLogic(
-    private val clientState: ClientState,
-    private val mutableState: ChannelMutableState,
-    private val globalMutableState: MutableGlobalState,
-    private val searchLogic: SearchLogic,
-    private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    private val now: () -> Long = { System.currentTimeMillis() },
-    coroutineScope: CoroutineScope,
-) : ChannelMessagesUpdateLogic {
+internal class ChannelStateLogic(private val clientState: ClientState, private val mutableState: ChannelMutableState, private val globalMutableState: MutableGlobalState, private val searchLogic: SearchLogic, private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(), private val now: () -> Long = { System.currentTimeMillis() }, coroutineScope: CoroutineScope) : ChannelMessagesUpdateLogic {
 
     private val polls = mutableMapOf<String, Poll>()
     private val messageIdsWithPoll = mutableMapOf<String, Set<String>>()
@@ -97,9 +89,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    override fun listenForChannelState(): ChannelState {
-        return mutableState
-    }
+    override fun listenForChannelState(): ChannelState = mutableState
 
     /**
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
@@ -342,23 +332,19 @@ internal class ChannelStateLogic(
     /**
      * Updates the messages quoting a messages with the new content of the quoted message.
      */
-    private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {
-        return getAllReplies(quotedMessage)?.map { replyMessage ->
-            replyMessage.copy(
-                replyTo = quotedMessage,
-                replyMessageId = quotedMessage.id,
-            )
-        }
+    private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? = getAllReplies(quotedMessage)?.map { replyMessage ->
+        replyMessage.copy(
+            replyTo = quotedMessage,
+            replyMessageId = quotedMessage.id,
+        )
     }
 
     /**
      * Returns all the replies of a quoted message.
      */
-    fun getAllReplies(message: Message): List<Message>? {
-        return mutableState.quotedMessagesMap
-            .value[message.id]
-            ?.mapNotNull(mutableState::getMessageById)
-    }
+    fun getAllReplies(message: Message): List<Message>? = mutableState.quotedMessagesMap
+        .value[message.id]
+        ?.mapNotNull(mutableState::getMessageById)
 
     /**
      * Deletes a message for the channel
@@ -729,12 +715,10 @@ internal class ChannelStateLogic(
         updateMute(isMuted)
     }
 
-    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
-        return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
-            (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
-        } else {
-            (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
-        }
+    private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean = if (newMessage.syncStatus == SyncStatus.COMPLETED) {
+        (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
+    } else {
+        (currentMessage?.lastLocalUpdateTime() ?: NEVER.time) <= newMessage.lastLocalUpdateTime()
     }
 
     private fun Message.lastUpdateTime(): Long = listOfNotNull(

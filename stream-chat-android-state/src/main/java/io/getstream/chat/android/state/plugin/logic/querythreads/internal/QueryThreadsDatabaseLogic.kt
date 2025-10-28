@@ -59,11 +59,7 @@ internal class QueryThreadsDatabaseLogic(
     /**
      * Retrieves the local threads in the order specified by [ids].
      */
-    internal suspend fun getLocalThreads(ids: List<String>): List<Thread> {
-        return repository.selectThreads(ids)
-    }
+    internal suspend fun getLocalThreads(ids: List<String>): List<Thread> = repository.selectThreads(ids)
 
-    private fun queryId(filter: FilterObject?, sort: QuerySorter<Thread>): String {
-        return "${filter.hashCode()}-${sort.toDto().hashCode()}"
-    }
+    private fun queryId(filter: FilterObject?, sort: QuerySorter<Thread>): String = "${filter.hashCode()}-${sort.toDto().hashCode()}"
 }

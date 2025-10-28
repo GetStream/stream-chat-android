@@ -127,8 +127,7 @@ public class MessageComposerViewModel(
      *
      * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
      */
-    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean): Unit =
-        messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
+    public fun setAlsoSendToChannel(alsoSendToChannel: Boolean): Unit = messageComposerController.setAlsoSendToChannel(alsoSendToChannel)
 
     /**
      * Called when the message mode changes and the internal state needs to be updated.
@@ -144,8 +143,7 @@ public class MessageComposerViewModel(
      *
      * @param messageAction The newly selected action.
      */
-    public fun performMessageAction(messageAction: MessageAction): Unit =
-        messageComposerController.performMessageAction(messageAction)
+    public fun performMessageAction(messageAction: MessageAction): Unit = messageComposerController.performMessageAction(messageAction)
 
     /**
      * Dismisses all message actions from the UI and clears the input based on the internal state.
@@ -159,8 +157,7 @@ public class MessageComposerViewModel(
      *
      * @param attachments The attachments to store and show in the composer.
      */
-    public fun addSelectedAttachments(attachments: List<Attachment>): Unit =
-        messageComposerController.addSelectedAttachments(attachments)
+    public fun addSelectedAttachments(attachments: List<Attachment>): Unit = messageComposerController.addSelectedAttachments(attachments)
 
     /**
      * Removes a selected attachment from the list, when the user taps on the cancel/delete button.
@@ -169,8 +166,7 @@ public class MessageComposerViewModel(
      *
      * @param attachment The attachment to remove.
      */
-    public fun removeSelectedAttachment(attachment: Attachment): Unit =
-        messageComposerController.removeSelectedAttachment(attachment)
+    public fun removeSelectedAttachment(attachment: Attachment): Unit = messageComposerController.removeSelectedAttachment(attachment)
 
     /**
      * Creates a poll with the given [pollConfig].

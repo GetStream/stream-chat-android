@@ -47,21 +47,19 @@ public data class AttachmentGalleryResultItem(
 /**
  * Extension to convert instance of [AttachmentGalleryResultItem] to [Attachment] type.
  */
-public fun AttachmentGalleryResultItem.toAttachment(): Attachment {
-    return Attachment(
-        authorName = authorName,
-        authorLink = authorLink,
-        imageUrl = imageUrl,
-        assetUrl = assetUrl,
-        name = name,
-        image = image,
-        type = type,
-        text = text,
-        title = title,
-        fileSize = fileSize,
-        mimeType = mimeType,
-    )
-}
+public fun AttachmentGalleryResultItem.toAttachment(): Attachment = Attachment(
+    authorName = authorName,
+    authorLink = authorLink,
+    imageUrl = imageUrl,
+    assetUrl = assetUrl,
+    name = name,
+    image = image,
+    type = type,
+    text = text,
+    title = title,
+    fileSize = fileSize,
+    mimeType = mimeType,
+)
 
 /**
  * Extension to convert instance of [Attachment] to [AttachmentGalleryResultItem] type.
@@ -72,16 +70,14 @@ public fun Attachment.toAttachmentGalleryResultItem(
     cid: String,
     userName: String,
     isMine: Boolean,
-): AttachmentGalleryResultItem {
-    return AttachmentGalleryResultItem(
-        messageId = messageId,
-        parentId = parentId,
-        cid = cid,
-        userName = userName,
-        isMine = isMine,
-        imageUrl = this.imageUrl,
-        assetUrl = this.assetUrl,
-        name = this.name,
-        authorLink = authorLink,
-    )
-}
+): AttachmentGalleryResultItem = AttachmentGalleryResultItem(
+    messageId = messageId,
+    parentId = parentId,
+    cid = cid,
+    userName = userName,
+    isMine = isMine,
+    imageUrl = this.imageUrl,
+    assetUrl = this.assetUrl,
+    name = this.name,
+    authorLink = authorLink,
+)

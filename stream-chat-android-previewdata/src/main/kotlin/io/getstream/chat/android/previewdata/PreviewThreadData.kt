@@ -28,7 +28,6 @@ import java.util.Date
  * Provides sample thread data that will be used to render component previews.
  */
 public object PreviewThreadData {
-
     /**
      * A participant in the thread.
      */
@@ -42,80 +41,90 @@ public object PreviewThreadData {
     /**
      * Single thread with 2 participants.
      */
-    public val thread: Thread = Thread(
-        activeParticipantCount = 2,
-        cid = "cid",
-        channel = Channel(),
-        parentMessageId = "pmid1",
-        parentMessage = Message(
-            id = "pmid1",
-            text = "Hey everyone, who's up for a group ride this Saturday morning?",
-        ),
-        createdByUserId = "uid2",
-        createdBy = participant2,
-        participantCount = 2,
-        threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
-        ),
-        lastMessageAt = Date(),
-        createdAt = Date(),
-        updatedAt = Date(),
-        deletedAt = null,
-        title = "Group ride preparation and discussion",
-        latestReplies = listOf(
-            Message(id = "mid1", text = "See you all there, stay safe on the roads!", user = participant1),
-        ),
-        read = listOf(
-            ChannelUserRead(
-                user = participant2,
-                lastReceivedEventDate = Date(),
-                unreadMessages = 3,
-                lastRead = Date(),
-                lastReadMessageId = null,
+    public val thread: Thread =
+        Thread(
+            activeParticipantCount = 2,
+            cid = "cid",
+            channel = Channel(),
+            parentMessageId = "pmid1",
+            parentMessage =
+            Message(
+                id = "pmid1",
+                text = "Hey everyone, who's up for a group ride this Saturday morning?",
             ),
-        ),
-        draft = null,
-    )
+            createdByUserId = "uid2",
+            createdBy = participant2,
+            participantCount = 2,
+            threadParticipants =
+            listOf(
+                ThreadParticipant(participant1),
+                ThreadParticipant(participant2),
+            ),
+            lastMessageAt = Date(),
+            createdAt = Date(),
+            updatedAt = Date(),
+            deletedAt = null,
+            title = "Group ride preparation and discussion",
+            latestReplies =
+            listOf(
+                Message(id = "mid1", text = "See you all there, stay safe on the roads!", user = participant1),
+            ),
+            read =
+            listOf(
+                ChannelUserRead(
+                    user = participant2,
+                    lastReceivedEventDate = Date(),
+                    unreadMessages = 3,
+                    lastRead = Date(),
+                    lastReadMessageId = null,
+                ),
+            ),
+            draft = null,
+        )
 
     /**
      * Single thread with 2 participants.
      */
-    public val thread2: Thread = Thread(
-        activeParticipantCount = 2,
-        cid = "cid",
-        channel = Channel(),
-        parentMessageId = "pmid2",
-        parentMessage = Message(
-            id = "pmid2",
-            text = "Hello hello!",
-        ),
-        createdByUserId = "uid2",
-        createdBy = participant1,
-        participantCount = 2,
-        threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
-        ),
-        lastMessageAt = Date(),
-        createdAt = Date(),
-        updatedAt = Date(),
-        deletedAt = null,
-        title = "Group ride preparation and discussion",
-        latestReplies = listOf(
-            Message(id = "mid1", text = "Welcome to the group!", user = participant2),
-        ),
-        read = listOf(
-            ChannelUserRead(
-                user = participant1,
-                lastReceivedEventDate = Date(),
-                unreadMessages = 3,
-                lastRead = Date(),
-                lastReadMessageId = null,
+    public val thread2: Thread =
+        Thread(
+            activeParticipantCount = 2,
+            cid = "cid",
+            channel = Channel(),
+            parentMessageId = "pmid2",
+            parentMessage =
+            Message(
+                id = "pmid2",
+                text = "Hello hello!",
             ),
-        ),
-        draft = null,
-    )
+            createdByUserId = "uid2",
+            createdBy = participant1,
+            participantCount = 2,
+            threadParticipants =
+            listOf(
+                ThreadParticipant(participant1),
+                ThreadParticipant(participant2),
+            ),
+            lastMessageAt = Date(),
+            createdAt = Date(),
+            updatedAt = Date(),
+            deletedAt = null,
+            title = "Group ride preparation and discussion",
+            latestReplies =
+            listOf(
+                Message(id = "mid1", text = "Welcome to the group!", user = participant2),
+            ),
+            read =
+            listOf(
+                ChannelUserRead(
+                    user = participant1,
+                    lastReceivedEventDate = Date(),
+                    unreadMessages = 3,
+                    lastRead = Date(),
+                    lastReadMessageId = null,
+                ),
+            ),
+            draft = null,
+        )
 
     /**
      * List of threads.

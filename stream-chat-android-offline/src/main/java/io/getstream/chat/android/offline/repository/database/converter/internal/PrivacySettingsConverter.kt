@@ -26,16 +26,12 @@ internal class PrivacySettingsConverter {
     private val entityAdapter = moshi.adapter<PrivacySettingsEntity>()
 
     @TypeConverter
-    fun stringToPrivacySettings(data: String?): PrivacySettingsEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
+    fun stringToPrivacySettings(data: String?): PrivacySettingsEntity? = data?.let {
+        entityAdapter.fromJson(it)
     }
 
     @TypeConverter
-    fun privacySettingsToString(entity: PrivacySettingsEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
+    fun privacySettingsToString(entity: PrivacySettingsEntity?): String? = entity?.let {
+        entityAdapter.toJson(it)
     }
 }

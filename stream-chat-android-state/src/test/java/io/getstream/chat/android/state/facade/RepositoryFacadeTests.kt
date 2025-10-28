@@ -48,49 +48,47 @@ import org.mockito.kotlin.whenever
 internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
     @Test
-    fun `Given request less than last message When select channels Should return channels from DB with empty messages`() =
-        runTest {
-            val paginationRequest = AnyChannelPaginationRequest(0)
-            val user = randomUser(id = "userId")
-            whenever(users.selectUser("userId")) doReturn user
-            val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
-            val channel2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(channel1, channel2)
+    fun `Given request less than last message When select channels Should return channels from DB with empty messages`() = runTest {
+        val paginationRequest = AnyChannelPaginationRequest(0)
+        val user = randomUser(id = "userId")
+        whenever(users.selectUser("userId")) doReturn user
+        val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
+        val channel2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
+        whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(channel1, channel2)
 
-            val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
+        val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
 
-            result.size shouldBeEqualTo 2
-            result.any { it.cid == "type:id1" && it.messages.isEmpty() } shouldBeEqualTo true
-            result.any { it.cid == "type:id2" && it.messages.isEmpty() } shouldBeEqualTo true
-        }
+        result.size shouldBeEqualTo 2
+        result.any { it.cid == "type:id1" && it.messages.isEmpty() } shouldBeEqualTo true
+        result.any { it.cid == "type:id2" && it.messages.isEmpty() } shouldBeEqualTo true
+    }
 
     @Test
-    fun `Given request more than last message When select channels Should return channels from DB with messages`(): Unit =
-        runTest {
-            val paginationRequest = AnyChannelPaginationRequest(100)
-            val user = randomUser(id = "userId")
-            whenever(users.selectUser("userId")) doReturn user
-            val message1 = randomMessage(id = "messageId1", cid = "type:id1", user = user)
-            val message2 = randomMessage(id = "messageId2", cid = "type:id2", user = user)
-            whenever(messages.selectMessagesForChannel(eq("type:id1"), eq(paginationRequest))) doReturn listOf(
-                message1,
-            )
-            whenever(messages.selectMessagesForChannel(eq("type:id2"), eq(paginationRequest))) doReturn listOf(
-                message2,
-            )
-            val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
-            val channelEntity2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
-            whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(
-                channel1,
-                channelEntity2,
-            )
+    fun `Given request more than last message When select channels Should return channels from DB with messages`(): Unit = runTest {
+        val paginationRequest = AnyChannelPaginationRequest(100)
+        val user = randomUser(id = "userId")
+        whenever(users.selectUser("userId")) doReturn user
+        val message1 = randomMessage(id = "messageId1", cid = "type:id1", user = user)
+        val message2 = randomMessage(id = "messageId2", cid = "type:id2", user = user)
+        whenever(messages.selectMessagesForChannel(eq("type:id1"), eq(paginationRequest))) doReturn listOf(
+            message1,
+        )
+        whenever(messages.selectMessagesForChannel(eq("type:id2"), eq(paginationRequest))) doReturn listOf(
+            message2,
+        )
+        val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
+        val channelEntity2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
+        whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(
+            channel1,
+            channelEntity2,
+        )
 
-            val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
+        val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
 
-            result.size shouldBeEqualTo 2
-            result.any { it.cid == "type:id1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
-            result.any { it.cid == "type:id2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
-        }
+        result.size shouldBeEqualTo 2
+        result.any { it.cid == "type:id1" && it.messages.size == 1 && it.messages.first().id == "messageId1" } shouldBeEqualTo true
+        result.any { it.cid == "type:id2" && it.messages.size == 1 && it.messages.first().id == "messageId2" } shouldBeEqualTo true
+    }
 
     @Test
     fun `Given Db contains all required data When select messages Should return message list`() = runTest {
@@ -164,75 +162,73 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     }
 
     @Test
-    fun `When insert a list of channels, all participant users of these channels need to be stored`() =
-        runTest {
-            val (listOfUser: List<User>, listOfChannels: List<Channel>) =
-                (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
-                    val memberUser = randomUser()
-                    val channelUser = randomUser()
-                    val userRead = randomUser()
-                    val messageUser = randomUser()
-                    val pinnedByUser = randomUser()
-                    val channel = randomChannel(
-                        createdBy = channelUser,
-                        members = listOf(Member(memberUser)),
-                        read = listOf(randomChannelUserRead(user = userRead)),
-                        messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
-                    )
-                    acc.first + listOf(
-                        memberUser,
-                        channelUser,
-                        userRead,
-                        messageUser,
-                        pinnedByUser,
-                    ) to acc.second + channel
-                }
+    fun `When insert a list of channels, all participant users of these channels need to be stored`() = runTest {
+        val (listOfUser: List<User>, listOfChannels: List<Channel>) =
+            (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Channel>())) { acc, _ ->
+                val memberUser = randomUser()
+                val channelUser = randomUser()
+                val userRead = randomUser()
+                val messageUser = randomUser()
+                val pinnedByUser = randomUser()
+                val channel = randomChannel(
+                    createdBy = channelUser,
+                    members = listOf(Member(memberUser)),
+                    read = listOf(randomChannelUserRead(user = userRead)),
+                    messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
+                )
+                acc.first + listOf(
+                    memberUser,
+                    channelUser,
+                    userRead,
+                    messageUser,
+                    pinnedByUser,
+                ) to acc.second + channel
+            }
 
-            sut.insertChannels(listOfChannels)
+        sut.insertChannels(listOfChannels)
 
-            verify(channels).insertChannels(eq(listOfChannels))
-            verify(users).insertUsers(
-                check { listUser ->
-                    listUser `should contain same` listOfUser
-                },
-            )
-        }
+        verify(channels).insertChannels(eq(listOfChannels))
+        verify(users).insertUsers(
+            check { listUser ->
+                listUser `should contain same` listOfUser
+            },
+        )
+    }
 
     @Test
-    fun `When insert a list of messages, all participant users of these messages need to be stored`() =
-        runTest {
-            val (listOfUser: List<User>, listOfMessages: List<Message>) =
-                (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
-                    val messageUser = randomUser()
-                    val replyToUser = randomUser()
-                    val latestReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
-                    val ownReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
-                    val latestReactionUsers = latestReactions.mapNotNull(Reaction::user)
-                    val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
-                    val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
-                    val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
-                    val pinnedByUser = randomUser()
-                    val message = randomMessage(
-                        user = messageUser,
-                        replyTo = randomMessage(user = replyToUser, pinnedBy = null),
-                        latestReactions = latestReactions,
-                        ownReactions = ownReactions,
-                        mentionedUsers = mentionedUsers,
-                        threadParticipants = threadParticipantsUsers,
-                        pinnedBy = pinnedByUser,
-                    )
-                    (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message
-                }
+    fun `When insert a list of messages, all participant users of these messages need to be stored`() = runTest {
+        val (listOfUser: List<User>, listOfMessages: List<Message>) =
+            (0..positiveRandomInt(20)).fold((listOf<User>() to listOf<Message>())) { acc, _ ->
+                val messageUser = randomUser()
+                val replyToUser = randomUser()
+                val latestReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+                val ownReactions = List(positiveRandomInt(10)) { randomReaction() }.toMutableList()
+                val latestReactionUsers = latestReactions.mapNotNull(Reaction::user)
+                val ownReactionUsers = ownReactions.mapNotNull(Reaction::user)
+                val mentionedUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+                val threadParticipantsUsers = List(positiveRandomInt(10)) { randomUser() }.toMutableList()
+                val pinnedByUser = randomUser()
+                val message = randomMessage(
+                    user = messageUser,
+                    replyTo = randomMessage(user = replyToUser, pinnedBy = null),
+                    latestReactions = latestReactions,
+                    ownReactions = ownReactions,
+                    mentionedUsers = mentionedUsers,
+                    threadParticipants = threadParticipantsUsers,
+                    pinnedBy = pinnedByUser,
+                )
+                (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message
+            }
 
-            sut.insertMessages(listOfMessages)
+        sut.insertMessages(listOfMessages)
 
-            verify(messages).insertMessages(eq(listOfMessages))
-            verify(users).insertUsers(
-                check { listUser ->
-                    listUser `should contain same` listOfUser
-                },
-            )
-        }
+        verify(messages).insertMessages(eq(listOfMessages))
+        verify(users).insertUsers(
+            check { listUser ->
+                listUser `should contain same` listOfUser
+            },
+        )
+    }
 
     @Test
     fun `When insert a reaction, it should have a valid users and it need to be stored`() = runTest {

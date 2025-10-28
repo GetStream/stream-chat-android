@@ -57,13 +57,9 @@ internal class ThreadLogic(
      *
      * @return [Message] if exists, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? {
-        return mutableState.rawMessage.value[messageId]?.copy()
-    }
+    internal fun getMessage(messageId: String): Message? = mutableState.rawMessage.value[messageId]?.copy()
 
-    internal fun stateLogic(): ThreadStateLogic {
-        return threadStateLogic
-    }
+    internal fun stateLogic(): ThreadStateLogic = threadStateLogic
 
     internal fun deleteMessage(message: Message) {
         threadStateLogic.deleteMessage(message)

@@ -41,21 +41,19 @@ internal fun filesAccessAsState(
     context: Context,
     lifecycleOwner: LifecycleOwner,
     onResume: (FilesAccess) -> Unit,
-): State<FilesAccess> {
-    return produceState(
-        initialValue = FilesAccess.DENIED,
-        context,
-        lifecycleOwner,
-    ) {
-        val eventObserver = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                value = resolveFilesAccessState(context)
-                onResume(value)
-            }
+): State<FilesAccess> = produceState(
+    initialValue = FilesAccess.DENIED,
+    context,
+    lifecycleOwner,
+) {
+    val eventObserver = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            value = resolveFilesAccessState(context)
+            onResume(value)
         }
-        lifecycleOwner.lifecycle.addObserver(eventObserver)
-        awaitDispose {
-            lifecycleOwner.lifecycle.removeObserver(eventObserver)
-        }
+    }
+    lifecycleOwner.lifecycle.addObserver(eventObserver)
+    awaitDispose {
+        lifecycleOwner.lifecycle.removeObserver(eventObserver)
     }
 }

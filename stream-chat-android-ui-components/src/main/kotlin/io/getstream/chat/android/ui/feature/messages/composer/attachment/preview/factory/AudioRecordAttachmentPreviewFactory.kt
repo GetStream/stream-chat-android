@@ -69,10 +69,9 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder =
-        StreamUiAudioRecordPlayerPreviewBinding
-            .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { AudioRecordAttachmentPreviewViewHolder(it, attachmentRemovalListener, style) }
+    ): AttachmentPreviewViewHolder = StreamUiAudioRecordPlayerPreviewBinding
+        .inflate(parentView.context.streamThemeInflater, parentView, false)
+        .let { AudioRecordAttachmentPreviewViewHolder(it, attachmentRemovalListener, style) }
 
     /**
      * A ViewHolder for file attachment preview.
@@ -175,5 +174,4 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 }
 
 @Suppress("MagicNumber")
-private fun progressToDecimal(progress: Int, totalDuration: Float?): Int =
-    (progress * (totalDuration ?: NULL_DURATION) / 100).toInt()
+private fun progressToDecimal(progress: Int, totalDuration: Float?): Int = (progress * (totalDuration ?: NULL_DURATION) / 100).toInt()

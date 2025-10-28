@@ -56,13 +56,9 @@ public class SupportedReactions(
 ) {
     public val types: List<String> = reactions.keys.toList()
 
-    internal fun isReactionTypeSupported(type: String): Boolean {
-        return reactions.keys.contains(type)
-    }
+    internal fun isReactionTypeSupported(type: String): Boolean = reactions.keys.contains(type)
 
-    public fun getReactionDrawable(type: String): ReactionDrawable? {
-        return reactions[type]
-    }
+    public fun getReactionDrawable(type: String): ReactionDrawable? = reactions[type]
 
     /**
      * Contains drawables for normal and selected reaction states.
@@ -96,25 +92,15 @@ public class SupportedReactions(
      * Default reaction drawables.
      */
     private object DefaultReactionDrawables {
-        fun loveDrawable(context: Context): ReactionDrawable {
-            return createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_love)
-        }
+        fun loveDrawable(context: Context): ReactionDrawable = createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_love)
 
-        fun thumbsUpDrawable(context: Context): ReactionDrawable {
-            return createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)
-        }
+        fun thumbsUpDrawable(context: Context): ReactionDrawable = createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_up)
 
-        fun thumbsDownDrawable(context: Context): ReactionDrawable {
-            return createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)
-        }
+        fun thumbsDownDrawable(context: Context): ReactionDrawable = createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_thumbs_down)
 
-        fun lolDrawable(context: Context): ReactionDrawable {
-            return createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_lol)
-        }
+        fun lolDrawable(context: Context): ReactionDrawable = createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_lol)
 
-        fun wutDrawable(context: Context): ReactionDrawable {
-            return createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_wut)
-        }
+        fun wutDrawable(context: Context): ReactionDrawable = createTintedReactionDrawable(context, R.drawable.stream_ui_ic_reaction_wut)
 
         /**
          * Creates [ReactionDrawable] from the desired reaction drawable resource id.
@@ -125,13 +111,11 @@ public class SupportedReactions(
         private fun createTintedReactionDrawable(
             context: Context,
             @DrawableRes drawableResId: Int,
-        ): ReactionDrawable {
-            return ReactionDrawable(
-                inactiveDrawable = context.getDrawableCompat(drawableResId)!!
-                    .applyTint(context.getColorCompat(R.color.stream_ui_grey)),
-                activeDrawable = context.getDrawableCompat(drawableResId)!!
-                    .applyTint(context.getColorCompat(R.color.stream_ui_accent_blue)),
-            )
-        }
+        ): ReactionDrawable = ReactionDrawable(
+            inactiveDrawable = context.getDrawableCompat(drawableResId)!!
+                .applyTint(context.getColorCompat(R.color.stream_ui_grey)),
+            activeDrawable = context.getDrawableCompat(drawableResId)!!
+                .applyTint(context.getColorCompat(R.color.stream_ui_accent_blue)),
+        )
     }
 }

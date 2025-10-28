@@ -21,7 +21,7 @@ java {
     withSourcesJar()
 }
 
-tasks.withType<Test>() {
+tasks.withType<Test> {
     useJUnitPlatform()
 }
 

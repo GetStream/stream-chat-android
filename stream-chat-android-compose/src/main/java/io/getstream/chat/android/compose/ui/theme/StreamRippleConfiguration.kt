@@ -69,11 +69,10 @@ public class StreamRippleConfiguration(
          * @param lightTheme Indicator if the system is in light theme.
          */
         @Composable
-        public fun defaultRippleConfiguration(contentColor: Color, lightTheme: Boolean): StreamRippleConfiguration =
-            StreamRippleConfiguration(
-                color = rippleColor(contentColor, lightTheme),
-                rippleAlpha = rippleAlpha(contentColor, lightTheme),
-            )
+        public fun defaultRippleConfiguration(contentColor: Color, lightTheme: Boolean): StreamRippleConfiguration = StreamRippleConfiguration(
+            color = rippleColor(contentColor, lightTheme),
+            rippleAlpha = rippleAlpha(contentColor, lightTheme),
+        )
 
         private fun rippleColor(contentColor: Color, lightTheme: Boolean): Color {
             val contentLuminance = contentColor.luminance()
@@ -84,18 +83,16 @@ public class StreamRippleConfiguration(
             }
         }
 
-        private fun rippleAlpha(contentColor: Color, lightTheme: Boolean): RippleAlpha {
-            return when {
-                lightTheme -> {
-                    if (contentColor.luminance() > LUMINANCE_THRESHOLD) {
-                        LightThemeHighContrastRippleAlpha
-                    } else {
-                        LightThemeLowContrastRippleAlpha
-                    }
+        private fun rippleAlpha(contentColor: Color, lightTheme: Boolean): RippleAlpha = when {
+            lightTheme -> {
+                if (contentColor.luminance() > LUMINANCE_THRESHOLD) {
+                    LightThemeHighContrastRippleAlpha
+                } else {
+                    LightThemeLowContrastRippleAlpha
                 }
-                else -> {
-                    DarkThemeRippleAlpha
-                }
+            }
+            else -> {
+                DarkThemeRippleAlpha
             }
         }
     }
@@ -106,5 +103,4 @@ public class StreamRippleConfiguration(
  * Used to hide the internal implementation of the ripple configuration, and not expose it outside of [ChatTheme].
  */
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun StreamRippleConfiguration.toRippleConfiguration(): RippleConfiguration =
-    RippleConfiguration(color = color, rippleAlpha = rippleAlpha)
+internal fun StreamRippleConfiguration.toRippleConfiguration(): RippleConfiguration = RippleConfiguration(color = color, rippleAlpha = rippleAlpha)

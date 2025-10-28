@@ -35,10 +35,8 @@ private val baseUrlRegex = "^(?:https?://)?(.*?)/*$".toRegex()
  * For example string "created_at_some_time" is converted to "createdAtSomeTime".
  */
 @InternalStreamChatApi
-public fun String.snakeToLowerCamelCase(): String {
-    return snakeRegex.replace(this) { matchResult ->
-        matchResult.value.replace("_", "").uppercase()
-    }
+public fun String.snakeToLowerCamelCase(): String = snakeRegex.replace(this) { matchResult ->
+    matchResult.value.replace("_", "").uppercase()
 }
 
 /**
@@ -52,9 +50,7 @@ public fun String.lowerCamelCaseToGetter(): String = "get${this[0].uppercase()}$
  * Converts String written in camel case to String in snake case.
  * For example string "createdAtSomeTime" is converted to "created_at_some_time".
  */
-internal fun String.camelCaseToSnakeCase(): String {
-    return camelRegex.replace(this) { "_${it.value}" }.lowercase()
-}
+internal fun String.camelCaseToSnakeCase(): String = camelRegex.replace(this) { "_${it.value}" }.lowercase()
 
 /**
  * Checks if the string is a channel id of an anonymous channel.
@@ -81,30 +77,28 @@ public fun String.cidToTypeAndId(): Pair<String, String> {
  *
  * @return Class containing the original width and height dimensions of the image or null.
  */
-public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDimensions? {
-    return try {
-        val imageUri = this.toUri()
+public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDimensions? = try {
+    val imageUri = this.toUri()
 
-        val width = imageUri.getQueryParameter("ow")
-            ?.toInt()
+    val width = imageUri.getQueryParameter("ow")
+        ?.toInt()
 
-        val height = imageUri.getQueryParameter("oh")
-            ?.toInt()
+    val height = imageUri.getQueryParameter("oh")
+        ?.toInt()
 
-        if (height != null && width != null) {
-            StreamCdnOriginalImageDimensions(
-                originalWidth = width,
-                originalHeight = height,
-            )
-        } else {
-            null
-        }
-    } catch (e: java.lang.Exception) {
-        val logger = StreamLog.getLogger("Chat: getStreamCDNHostedImageDimensions")
-        logger.e { "Failed to parse Stream CDN image dimensions from the URL:\n ${e.stackTraceToString()}" }
-
+    if (height != null && width != null) {
+        StreamCdnOriginalImageDimensions(
+            originalWidth = width,
+            originalHeight = height,
+        )
+    } else {
         null
     }
+} catch (e: java.lang.Exception) {
+    val logger = StreamLog.getLogger("Chat: getStreamCDNHostedImageDimensions")
+    logger.e { "Failed to parse Stream CDN image dimensions from the URL:\n ${e.stackTraceToString()}" }
+
+    null
 }
 
 /**
@@ -181,15 +175,14 @@ public fun String.createResizedStreamCdnImageUrl(
  *
  * @return true if the URL contains resizing parameters, false otherwise.
  */
-private fun Uri.wasImagePreviouslyResized(): Boolean =
-    queryParameterNames.intersect(
-        listOf(
-            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH,
-            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
-            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
-            StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
-        ),
-    ).isNotEmpty()
+private fun Uri.wasImagePreviouslyResized(): Boolean = queryParameterNames.intersect(
+    listOf(
+        StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH,
+        StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
+        StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
+        StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
+    ),
+).isNotEmpty()
 
 /**
  * A convenience method which evaluates if [value] is null or not and appends
@@ -198,12 +191,10 @@ private fun Uri.wasImagePreviouslyResized(): Boolean =
  * @param key Query parameter key.
  * @param value Query parameter value.
  */
-private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: String?): Uri.Builder {
-    return if (value != null) {
-        this.appendQueryParameter(key, value)
-    } else {
-        this
-    }
+private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: String?): Uri.Builder = if (value != null) {
+    this.appendQueryParameter(key, value)
+} else {
+    this
 }
 
 /**
@@ -213,12 +204,10 @@ private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value:
  * @param key Query parameter key.
  * @param value Query parameter value.
  */
-private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: Int?): Uri.Builder {
-    return if (value != null) {
-        this.appendQueryParameter(key, value.toString())
-    } else {
-        this
-    }
+private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value: Int?): Uri.Builder = if (value != null) {
+    this.appendQueryParameter(key, value.toString())
+} else {
+    this
 }
 
 /**
@@ -227,5 +216,4 @@ private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value:
  *
  * @return The base URL.
  */
-internal fun String.extractBaseUrl(): String =
-    baseUrlRegex.matchEntire(this)?.groupValues?.get(1) ?: this
+internal fun String.extractBaseUrl(): String = baseUrlRegex.matchEntire(this)?.groupValues?.get(1) ?: this

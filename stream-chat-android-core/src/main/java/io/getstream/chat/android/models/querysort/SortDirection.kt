@@ -31,11 +31,10 @@ public enum class SortDirection(public val value: Int) {
          *
          * @param value Int the number of the direction.
          */
-        public fun fromNumber(value: Int): SortDirection =
-            when (value) {
-                1 -> ASC
-                -1 -> DESC
-                else -> throw IllegalArgumentException("Unsupported sort direction")
-            }
+        public fun fromNumber(value: Int): SortDirection = when (value) {
+            1 -> ASC
+            -1 -> DESC
+            else -> throw IllegalArgumentException("Unsupported sort direction")
+        }
     }
 }

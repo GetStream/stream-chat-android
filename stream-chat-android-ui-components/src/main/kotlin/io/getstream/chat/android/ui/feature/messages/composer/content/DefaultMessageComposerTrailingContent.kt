@@ -60,7 +60,9 @@ public interface MessageComposerTrailingContent : MessageComposerContent {
 /**
  * Represents the default content shown at the end of [MessageComposerView].
  */
-public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerTrailingContent {
+public open class DefaultMessageComposerTrailingContent :
+    FrameLayout,
+    MessageComposerTrailingContent {
     /**
      * Generated binding class for the XML layout.
      */
@@ -211,11 +213,9 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         }
     }
 
-    override fun findViewByKey(key: String): View? {
-        return when (key) {
-            MessageComposerContent.RECORD_AUDIO_BUTTON -> binding.recordAudioButton
-            else -> null
-        }
+    override fun findViewByKey(key: String): View? = when (key) {
+        MessageComposerContent.RECORD_AUDIO_BUTTON -> binding.recordAudioButton
+        else -> null
     }
 
     internal companion object {

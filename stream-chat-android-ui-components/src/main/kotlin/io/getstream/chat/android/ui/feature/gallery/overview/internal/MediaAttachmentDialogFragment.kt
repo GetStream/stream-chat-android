@@ -35,11 +35,9 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
 
     override fun getTheme(): Int = R.style.StreamUiBottomSheetDialogTheme
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiDialogMediaAttachmentBinding.inflate(inflater, container, false)
-            .apply { _binding = this }
-            .root
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = StreamUiDialogMediaAttachmentBinding.inflate(inflater, container, false)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,8 +62,6 @@ internal class MediaAttachmentDialogFragment : BottomSheetDialogFragment() {
     }
 
     internal companion object {
-        fun newInstance(): MediaAttachmentDialogFragment {
-            return MediaAttachmentDialogFragment()
-        }
+        fun newInstance(): MediaAttachmentDialogFragment = MediaAttachmentDialogFragment()
     }
 }

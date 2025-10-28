@@ -36,31 +36,27 @@ class GroupChatInfoAdapter : ChatInfoAdapter() {
     private var membersSeparatorClickListener: MembersSeparatorClickListener? = null
     private var nameChangedListener: NameChangedListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
-        return when (viewType) {
-            TYPE_GROUP_MEMBER_ITEM ->
-                ChatInfoGroupMemberItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoGroupMemberViewHolder(it, memberClickListener) }
-            TYPE_MEMBERS_SEPARATOR ->
-                ChatInfoMembersSeparatorItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoMembersSeparatorViewHolder(it, membersSeparatorClickListener) }
-            TYPE_EDIT_GROUP_NAME ->
-                ChatInfoGroupNameItemBinding
-                    .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-                    .let { ChatInfoGroupNameViewHolder(it, nameChangedListener) }
-            else -> super.onCreateViewHolder(parent, viewType)
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> = when (viewType) {
+        TYPE_GROUP_MEMBER_ITEM ->
+            ChatInfoGroupMemberItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoGroupMemberViewHolder(it, memberClickListener) }
+        TYPE_MEMBERS_SEPARATOR ->
+            ChatInfoMembersSeparatorItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoMembersSeparatorViewHolder(it, membersSeparatorClickListener) }
+        TYPE_EDIT_GROUP_NAME ->
+            ChatInfoGroupNameItemBinding
+                .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+                .let { ChatInfoGroupNameViewHolder(it, nameChangedListener) }
+        else -> super.onCreateViewHolder(parent, viewType)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (getItem(position)) {
-            is ChatInfoItem.MemberItem -> TYPE_GROUP_MEMBER_ITEM
-            is ChatInfoItem.MembersSeparator -> TYPE_MEMBERS_SEPARATOR
-            is ChatInfoItem.ChannelName -> TYPE_EDIT_GROUP_NAME
-            else -> super.getItemViewType(position)
-        }
+    override fun getItemViewType(position: Int): Int = when (getItem(position)) {
+        is ChatInfoItem.MemberItem -> TYPE_GROUP_MEMBER_ITEM
+        is ChatInfoItem.MembersSeparator -> TYPE_MEMBERS_SEPARATOR
+        is ChatInfoItem.ChannelName -> TYPE_EDIT_GROUP_NAME
+        else -> super.getItemViewType(position)
     }
 
     fun setMemberClickListener(listener: MemberClickListener) {

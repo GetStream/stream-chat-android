@@ -241,17 +241,13 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
         }
     }
 
-    private fun ShapeAppearanceModel.getCornerSize(selector: (ShapeAppearanceModel) -> CornerSize): Float {
-        return (((selector(this) as? AbsoluteCornerSize)?.cornerSize ?: 0f) - STROKE_WIDTH).takeIf { it >= 0f }
-            .getOrDefault(0f)
-    }
+    private fun ShapeAppearanceModel.getCornerSize(selector: (ShapeAppearanceModel) -> CornerSize): Float = (((selector(this) as? AbsoluteCornerSize)?.cornerSize ?: 0f) - STROKE_WIDTH).takeIf { it >= 0f }
+        .getOrDefault(0f)
 
-    private fun createMediaAttachmentView(): MediaAttachmentView {
-        return MediaAttachmentView(context).also {
-            it.id = generateViewId()
-            it.attachmentClickListener = attachmentClickListener
-            it.attachmentLongClickListener = attachmentLongClickListener
-        }
+    private fun createMediaAttachmentView(): MediaAttachmentView = MediaAttachmentView(context).also {
+        it.id = generateViewId()
+        it.attachmentClickListener = attachmentClickListener
+        it.attachmentLongClickListener = attachmentLongClickListener
     }
 
     /**

@@ -48,13 +48,11 @@ public data class MessageDateSeparatorTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): MessageDateSeparatorTheme {
-            return MessageDateSeparatorTheme(
-                textStyle = typography.body.copy(
-                    color = colors.textHighEmphasisInverse,
-                ),
-                backgroundColor = colors.overlayDark,
-            )
-        }
+        ): MessageDateSeparatorTheme = MessageDateSeparatorTheme(
+            textStyle = typography.body.copy(
+                color = colors.textHighEmphasisInverse,
+            ),
+            backgroundColor = colors.overlayDark,
+        )
     }
 }

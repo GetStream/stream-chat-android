@@ -104,9 +104,7 @@ public class ChannelAvatarView : ViewGroup {
     /**
      * If the current channel avatar boils down to [UserAvatarView].
      */
-    private fun isUserAvatar(): Boolean {
-        return childCount == 1 && getChildAt(0) is UserAvatarView
-    }
+    private fun isUserAvatar(): Boolean = childCount == 1 && getChildAt(0) is UserAvatarView
 
     /**
      * Sets the [Channel] for which we want to show the avatar.

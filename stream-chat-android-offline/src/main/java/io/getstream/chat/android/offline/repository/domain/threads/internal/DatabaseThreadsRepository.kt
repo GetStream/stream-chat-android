@@ -52,9 +52,7 @@ internal class DatabaseThreadsRepository(
         threadOrderDao.insertThreadOrder(ThreadOrderEntity(id, order))
     }
 
-    override suspend fun selectThreadOrder(id: String): List<String> {
-        return threadOrderDao.selectThreadOrder(id)?.order.orEmpty()
-    }
+    override suspend fun selectThreadOrder(id: String): List<String> = threadOrderDao.selectThreadOrder(id)?.order.orEmpty()
 
     override suspend fun insertThreads(threads: List<Thread>) {
         // Update cache

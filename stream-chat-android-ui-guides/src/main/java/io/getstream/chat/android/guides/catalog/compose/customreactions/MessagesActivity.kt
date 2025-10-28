@@ -58,47 +58,39 @@ class MessagesActivity : AppCompatActivity() {
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
-        fun createIntent(context: Context, channelId: String): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-            }
+        fun createIntent(context: Context, channelId: String): Intent = Intent(context, MessagesActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
         }
     }
 }
 
 class CustomReactionIconFactory : ReactionIconFactory {
 
-    override fun isReactionSupported(type: String): Boolean {
-        return supportedReactions.contains(type)
+    override fun isReactionSupported(type: String): Boolean = supportedReactions.contains(type)
+
+    @Composable
+    override fun createReactionIcon(type: String): ReactionIcon = when (type) {
+        THUMBS_UP -> ReactionIcon(
+            painter = painterResource(R.drawable.ic_thumb_up),
+            selectedPainter = painterResource(R.drawable.ic_thumb_up_selected),
+        )
+        THUMBS_DOWN -> ReactionIcon(
+            painter = painterResource(R.drawable.ic_thumb_down),
+            selectedPainter = painterResource(R.drawable.ic_thumb_down_selected),
+        )
+        MOOD_GOOD -> ReactionIcon(
+            painter = painterResource(R.drawable.ic_mood_good),
+            selectedPainter = painterResource(R.drawable.ic_mood_good_selected),
+        )
+        MOOD_BAD -> ReactionIcon(
+            painter = painterResource(R.drawable.ic_mood_bad),
+            selectedPainter = painterResource(R.drawable.ic_mood_bad_selected),
+        )
+        else -> throw IllegalArgumentException("Unsupported reaction type")
     }
 
     @Composable
-    override fun createReactionIcon(type: String): ReactionIcon {
-        return when (type) {
-            THUMBS_UP -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_thumb_up),
-                selectedPainter = painterResource(R.drawable.ic_thumb_up_selected),
-            )
-            THUMBS_DOWN -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_thumb_down),
-                selectedPainter = painterResource(R.drawable.ic_thumb_down_selected),
-            )
-            MOOD_GOOD -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_mood_good),
-                selectedPainter = painterResource(R.drawable.ic_mood_good_selected),
-            )
-            MOOD_BAD -> ReactionIcon(
-                painter = painterResource(R.drawable.ic_mood_bad),
-                selectedPainter = painterResource(R.drawable.ic_mood_bad_selected),
-            )
-            else -> throw IllegalArgumentException("Unsupported reaction type")
-        }
-    }
-
-    @Composable
-    override fun createReactionIcons(): Map<String, ReactionIcon> {
-        return supportedReactions.associateWith { createReactionIcon(it) }
-    }
+    override fun createReactionIcons(): Map<String, ReactionIcon> = supportedReactions.associateWith { createReactionIcon(it) }
 
     companion object {
         private const val THUMBS_UP: String = "thumbs_up"

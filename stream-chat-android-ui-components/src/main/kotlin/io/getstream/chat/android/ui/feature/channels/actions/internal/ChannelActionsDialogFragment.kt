@@ -92,11 +92,9 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View {
-        return StreamUiFragmentChannelActionsBinding.inflate(requireContext().streamThemeInflater, container, false)
-            .apply { _binding = this }
-            .root
-    }
+    ): View = StreamUiFragmentChannelActionsBinding.inflate(requireContext().streamThemeInflater, container, false)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -246,11 +244,9 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
         fun newInstance(
             channel: Channel,
             style: ChannelActionsDialogViewStyle,
-        ): ChannelActionsDialogFragment {
-            return ChannelActionsDialogFragment().apply {
-                setChannel(channel)
-                setStyle(style)
-            }
+        ): ChannelActionsDialogFragment = ChannelActionsDialogFragment().apply {
+            setChannel(channel)
+            setStyle(style)
         }
     }
 }

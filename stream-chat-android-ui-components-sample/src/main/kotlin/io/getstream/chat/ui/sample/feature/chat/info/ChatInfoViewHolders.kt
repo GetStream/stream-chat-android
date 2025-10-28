@@ -46,8 +46,7 @@ abstract class BaseViewHolder<T : ChatInfoItem>(
     protected abstract fun bind(item: T)
 }
 
-class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
-    BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
+class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) : BaseViewHolder<ChatInfoItem.MemberItem>(binding.root) {
 
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
@@ -65,8 +64,7 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
     }
 }
 
-class ChatInfoSeparatorViewHolder(binding: ChatInfoSeparatorItemBinding) :
-    BaseViewHolder<ChatInfoItem.Separator>(binding.root) {
+class ChatInfoSeparatorViewHolder(binding: ChatInfoSeparatorItemBinding) : BaseViewHolder<ChatInfoItem.Separator>(binding.root) {
 
     override fun bind(item: ChatInfoItem.Separator) = Unit
 }

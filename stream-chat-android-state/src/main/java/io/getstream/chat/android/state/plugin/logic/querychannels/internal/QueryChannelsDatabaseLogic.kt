@@ -60,34 +60,26 @@ internal class QueryChannelsDatabaseLogic(
      *
      * @param cid String
      */
-    internal suspend fun selectChannel(cid: String): Channel? {
-        return channelRepository.selectChannel(cid)
-    }
+    internal suspend fun selectChannel(cid: String): Channel? = channelRepository.selectChannel(cid)
 
     /**
      * Select channels from database without fetching messages
      *
      * @param cids List<String>
      */
-    internal suspend fun selectChannels(cids: List<String>): List<Channel> {
-        return channelRepository.selectChannels(cids)
-    }
+    internal suspend fun selectChannels(cids: List<String>): List<Channel> = channelRepository.selectChannels(cids)
 
     /**
      * Insert a query spec that was made in the database.
      *
      * @param queryChannelsSpec QueryChannelsSpec
      */
-    internal suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
-        return queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
-    }
+    internal suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) = queryChannelsRepository.insertQueryChannels(queryChannelsSpec)
 
     /**
      * Insert the configs of the channels
      *
      * @param configs Collection<ChannelConfig>
      */
-    internal suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) {
-        return channelConfigRepository.insertChannelConfigs(configs)
-    }
+    internal suspend fun insertChannelConfigs(configs: Collection<ChannelConfig>) = channelConfigRepository.insertChannelConfigs(configs)
 }

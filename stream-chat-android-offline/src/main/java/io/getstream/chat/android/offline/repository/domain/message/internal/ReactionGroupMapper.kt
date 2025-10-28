@@ -18,22 +18,18 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.ReactionGroup
 
-internal fun ReactionGroupEntity.toModel(): ReactionGroup {
-    return ReactionGroup(
-        type = type,
-        count = count,
-        sumScore = sumScore,
-        firstReactionAt = firstReactionAt,
-        lastReactionAt = lastReactionAt,
-    )
-}
+internal fun ReactionGroupEntity.toModel(): ReactionGroup = ReactionGroup(
+    type = type,
+    count = count,
+    sumScore = sumScore,
+    firstReactionAt = firstReactionAt,
+    lastReactionAt = lastReactionAt,
+)
 
-internal fun ReactionGroup.toEntity(): ReactionGroupEntity {
-    return ReactionGroupEntity(
-        type = type,
-        count = count,
-        sumScore = sumScore,
-        firstReactionAt = firstReactionAt,
-        lastReactionAt = lastReactionAt,
-    )
-}
+internal fun ReactionGroup.toEntity(): ReactionGroupEntity = ReactionGroupEntity(
+    type = type,
+    count = count,
+    sumScore = sumScore,
+    firstReactionAt = firstReactionAt,
+    lastReactionAt = lastReactionAt,
+)

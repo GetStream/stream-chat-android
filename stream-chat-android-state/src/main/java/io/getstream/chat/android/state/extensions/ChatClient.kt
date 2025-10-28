@@ -176,10 +176,8 @@ public fun ChatClient.watchChannelAsState(
 public fun ChatClient.queryThreadsAsState(
     request: QueryThreadsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
-): StateFlow<QueryThreadsState?> {
-    return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).queryThreads(request)
-    }
+): StateFlow<QueryThreadsState?> = getStateOrNull(coroutineScope) {
+    requestsAsState(coroutineScope).queryThreads(request)
 }
 
 /**
@@ -238,19 +236,17 @@ public suspend fun ChatClient.awaitRepliesAsState(
 private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: suspend () -> T,
-): StateFlow<T?> {
-    return clientState.initializationState.combine(clientState.user.map { it?.id }) { initializationState, userId ->
-        userId to (initializationState == InitializationState.COMPLETE)
-    }.distinctUntilChanged()
-        .mapLatest {
-            val (userId, initializationReady) = it
-            when {
-                userId == null || !initializationReady -> null
-                else -> producer()
-            }
+): StateFlow<T?> = clientState.initializationState.combine(clientState.user.map { it?.id }) { initializationState, userId ->
+    userId to (initializationState == InitializationState.COMPLETE)
+}.distinctUntilChanged()
+    .mapLatest {
+        val (userId, initializationReady) = it
+        when {
+            userId == null || !initializationReady -> null
+            else -> producer()
         }
-        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
-}
+    }
+    .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 
 /**
  * Set the reply state for the channel.
@@ -261,18 +257,16 @@ private fun <T> ChatClient.getStateOrNull(
  * @return Executable async [Call].
  */
 @CheckResult
-public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
-    return CoroutineCall(inheritScope { Job(it) }) {
-        when (val cidValidationResult = validateCidWithResult(cid)) {
-            is Result.Success -> {
-                val (channelType, channelId) = cid.cidToTypeAndId()
-                state.mutableChannel(channelType = channelType, channelId = channelId).run {
-                    setRepliedMessage(message)
-                }
-                Result.Success(Unit)
+public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> = CoroutineCall(inheritScope { Job(it) }) {
+    when (val cidValidationResult = validateCidWithResult(cid)) {
+        is Result.Success -> {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            state.mutableChannel(channelType = channelType, channelId = channelId).run {
+                setRepliedMessage(message)
             }
-            is Result.Failure -> cidValidationResult
+            Result.Success(Unit)
         }
+        is Result.Failure -> cidValidationResult
     }
 }
 
@@ -292,30 +286,28 @@ public fun ChatClient.downloadAttachment(
     attachment: Attachment,
     generateDownloadUri: (Attachment) -> Uri,
     interceptRequest: DownloadManager.Request.() -> Unit,
-): Call<Unit> {
-    return CoroutineCall(inheritScope { Job(it) }) {
-        val logger by taggedLogger("Chat:DownloadAttachment")
+): Call<Unit> = CoroutineCall(inheritScope { Job(it) }) {
+    val logger by taggedLogger("Chat:DownloadAttachment")
 
-        try {
-            val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val uri = generateDownloadUri(attachment)
-            val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
-                ?: createAttachmentFallbackName()
+    try {
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val uri = generateDownloadUri(attachment)
+        val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
+            ?: createAttachmentFallbackName()
 
-            logger.d { "Downloading attachment. Name: $subPath, Uri: $uri" }
+        logger.d { "Downloading attachment. Name: $subPath, Uri: $uri" }
 
-            downloadManager.enqueue(
-                DownloadManager.Request(uri)
-                    .setTitle(subPath)
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                    .apply(interceptRequest),
-            )
-            Result.Success(Unit)
-        } catch (exception: Exception) {
-            logger.d { "Downloading attachment failed. Error: ${exception.message}" }
-            Result.Failure(Error.ThrowableError(message = "Could not download the attachment", cause = exception))
-        }
+        downloadManager.enqueue(
+            DownloadManager.Request(uri)
+                .setTitle(subPath)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                .apply(interceptRequest),
+        )
+        Result.Success(Unit)
+    } catch (exception: Exception) {
+        logger.d { "Downloading attachment failed. Error: ${exception.message}" }
+        Result.Failure(Error.ThrowableError(message = "Could not download the attachment", cause = exception))
     }
 }
 
@@ -395,29 +387,27 @@ public fun ChatClient.loadMessagesAroundId(
  *
  * @return Executable async [Call] responsible for canceling ephemeral message.
  */
-public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
-    return CoroutineCall(inheritScope { Job(it) }) {
-        when (val cidValidationResult = validateCidWithResult(message.cid)) {
-            is Result.Success -> {
-                try {
-                    require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
-                    logic.channelFromMessage(message)?.deleteMessage(message)
-                    logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
-                    logic.threadFromMessage(message)?.removeLocalMessage(message)
-                    repositoryFacade.deleteChannelMessage(message)
+public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> = CoroutineCall(inheritScope { Job(it) }) {
+    when (val cidValidationResult = validateCidWithResult(message.cid)) {
+        is Result.Success -> {
+            try {
+                require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
+                logic.channelFromMessage(message)?.deleteMessage(message)
+                logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
+                logic.threadFromMessage(message)?.removeLocalMessage(message)
+                repositoryFacade.deleteChannelMessage(message)
 
-                    Result.Success(true)
-                } catch (exception: Exception) {
-                    Result.Failure(
-                        Error.ThrowableError(
-                            message = "Could not cancel ephemeral message",
-                            cause = exception,
-                        ),
-                    )
-                }
+                Result.Success(true)
+            } catch (exception: Exception) {
+                Result.Failure(
+                    Error.ThrowableError(
+                        message = "Could not cancel ephemeral message",
+                        cause = exception,
+                    ),
+                )
             }
-            is Result.Failure -> cidValidationResult
         }
+        is Result.Failure -> cidValidationResult
     }
 }
 
@@ -431,15 +421,13 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
 @CheckResult
 public fun ChatClient.getMessageUsingCache(
     messageId: String,
-): Call<Message> {
-    return CoroutineCall(inheritScope { Job(it) }) {
-        val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
+): Call<Message> = CoroutineCall(inheritScope { Job(it) }) {
+    val message = logic.getMessageById(messageId) ?: logic.getMessageByIdFromDb(messageId)
 
-        if (message != null) {
-            Result.Success(message)
-        } else {
-            getMessage(messageId).await()
-        }
+    if (message != null) {
+        Result.Success(message)
+    } else {
+        getMessage(messageId).await()
     }
 }
 

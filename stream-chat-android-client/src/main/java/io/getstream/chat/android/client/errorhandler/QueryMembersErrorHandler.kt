@@ -62,8 +62,6 @@ internal fun Call<List<Member>>.onQueryMembersError(
     filter: FilterObject,
     sort: QuerySorter<Member>,
     members: List<Member>,
-): Call<List<Member>> {
-    return errorHandlers.fold(this) { messageCall, errorHandler ->
-        errorHandler.onQueryMembersError(messageCall, channelType, channelId, offset, limit, filter, sort, members)
-    }
+): Call<List<Member>> = errorHandlers.fold(this) { messageCall, errorHandler ->
+    errorHandler.onQueryMembersError(messageCall, channelType, channelId, offset, limit, filter, sort, members)
 }

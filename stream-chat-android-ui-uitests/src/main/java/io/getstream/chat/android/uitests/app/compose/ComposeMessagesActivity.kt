@@ -58,10 +58,8 @@ class ComposeMessagesActivity : AppCompatActivity() {
          * @param channelId The channel id. ie 123.
          * @return The [Intent] to start [ComposeMessagesActivity].
          */
-        fun createIntent(context: Context, channelId: String): Intent {
-            return Intent(context, ComposeMessagesActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-            }
+        fun createIntent(context: Context, channelId: String): Intent = Intent(context, ComposeMessagesActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
         }
     }
 }

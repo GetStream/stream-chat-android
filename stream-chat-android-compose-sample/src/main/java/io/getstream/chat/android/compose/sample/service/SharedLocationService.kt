@@ -166,5 +166,4 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
 private const val LocationUpdatesIntervalMillis = 5000L
 private const val UnknownDeviceId = "unknown"
 
-private fun Location.isExpired(): Boolean =
-    endAt?.before(Date()) ?: false
+private fun Location.isExpired(): Boolean = endAt?.before(Date()) ?: false

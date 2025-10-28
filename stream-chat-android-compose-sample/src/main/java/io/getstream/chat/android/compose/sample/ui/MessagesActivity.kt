@@ -443,12 +443,10 @@ class MessagesActivity : ComponentActivity() {
             channelId: String,
             messageId: String? = null,
             parentMessageId: String? = null,
-        ): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-                putExtra(KEY_MESSAGE_ID, messageId)
-                putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
-            }
+        ): Intent = Intent(context, MessagesActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
+            putExtra(KEY_MESSAGE_ID, messageId)
+            putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
         }
     }
 }

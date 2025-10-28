@@ -28,19 +28,16 @@ internal class AttachmentFileController(
     private val context: Context,
 ) {
 
-    suspend fun getFileFromCache(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.getFileFromCache(context, attachment)
+    suspend fun getFileFromCache(attachment: Attachment): Result<Uri> = StreamFileUtil.getFileFromCache(context, attachment)
 
-    suspend fun downloadImage(attachment: Attachment): Result<Uri> =
-        attachment.imageUrl?.let { imageUrl ->
-            StreamImageLoader.instance().loadAsBitmap(
-                context = context,
-                url = imageUrl,
-            )?.let { bitmap ->
-                StreamFileUtil.writeImageToSharableFile(context, bitmap)
-            } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
-        } ?: Result.Failure(Error.GenericError("Unable to share image"))
+    suspend fun downloadImage(attachment: Attachment): Result<Uri> = attachment.imageUrl?.let { imageUrl ->
+        StreamImageLoader.instance().loadAsBitmap(
+            context = context,
+            url = imageUrl,
+        )?.let { bitmap ->
+            StreamFileUtil.writeImageToSharableFile(context, bitmap)
+        } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
+    } ?: Result.Failure(Error.GenericError("Unable to share image"))
 
-    suspend fun downloadFile(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.writeFileToShareableFile(context, attachment)
+    suspend fun downloadFile(attachment: Attachment): Result<Uri> = StreamFileUtil.writeFileToShareableFile(context, attachment)
 }

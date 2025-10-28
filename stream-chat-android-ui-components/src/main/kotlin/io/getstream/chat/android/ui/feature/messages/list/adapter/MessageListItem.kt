@@ -38,17 +38,15 @@ import java.util.Date
  */
 public sealed class MessageListItem {
 
-    public fun getStableId(): Long {
-        return when (this) {
-            is TypingItem -> TYPING_ITEM_STABLE_ID
-            is ThreadSeparatorItem -> THREAD_SEPARATOR_ITEM_STABLE_ID
-            is MessageItem -> uniqueIdentifier()
-            is DateSeparatorItem -> date.time
-            is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
-            is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
-            is UnreadSeparatorItem -> UNREAD_SEPARATOR_STABLE_ID
-            is StartOfTheChannelItem -> START_OF_THE_CHANNEL_STABLE_ID
-        }
+    public fun getStableId(): Long = when (this) {
+        is TypingItem -> TYPING_ITEM_STABLE_ID
+        is ThreadSeparatorItem -> THREAD_SEPARATOR_ITEM_STABLE_ID
+        is MessageItem -> uniqueIdentifier()
+        is DateSeparatorItem -> date.time
+        is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
+        is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
+        is UnreadSeparatorItem -> UNREAD_SEPARATOR_STABLE_ID
+        is StartOfTheChannelItem -> START_OF_THE_CHANNEL_STABLE_ID
     }
 
     public abstract fun stringify(): String
@@ -61,9 +59,7 @@ public sealed class MessageListItem {
     public data class DateSeparatorItem(
         val date: Date,
     ) : MessageListItem() {
-        override fun stringify(): String {
-            return "DateItem(date=$date)"
-        }
+        override fun stringify(): String = "DateItem(date=$date)"
     }
 
     /**
@@ -100,9 +96,7 @@ public sealed class MessageListItem {
          */
         internal fun uniqueIdentifier(): Long = message.identifierHash()
 
-        override fun stringify(): String {
-            return "MessageItem(message=${message.text})"
-        }
+        override fun stringify(): String = "MessageItem(message=${message.text})"
     }
 
     /**
@@ -113,9 +107,7 @@ public sealed class MessageListItem {
     public data class TypingItem(
         val users: List<User>,
     ) : MessageListItem() {
-        override fun stringify(): String {
-            return "TypingItem(users.size=${users.size})"
-        }
+        override fun stringify(): String = "TypingItem(users.size=${users.size})"
     }
 
     /**
@@ -128,9 +120,7 @@ public sealed class MessageListItem {
         val date: Date,
         val messageCount: Int,
     ) : MessageListItem() {
-        override fun stringify(): String {
-            return "ThreadSeparatorItem(messageCount=$messageCount, date=$date)"
-        }
+        override fun stringify(): String = "ThreadSeparatorItem(messageCount=$messageCount, date=$date)"
     }
 
     /**
@@ -154,9 +144,7 @@ public sealed class MessageListItem {
         val unreadCount: Int,
     ) : MessageListItem() {
 
-        override fun stringify(): String {
-            return "UnreadItem(unreadCount=$unreadCount)"
-        }
+        override fun stringify(): String = "UnreadItem(unreadCount=$unreadCount)"
     }
 
     /**
@@ -168,9 +156,7 @@ public sealed class MessageListItem {
         val channel: Channel,
     ) : MessageListItem() {
 
-        override fun stringify(): String {
-            return "StartOfTheChannelItem(channel.name=${channel.name})"
-        }
+        override fun stringify(): String = "StartOfTheChannelItem(channel.name=${channel.name})"
     }
 
     private companion object {

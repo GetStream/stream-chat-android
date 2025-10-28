@@ -36,9 +36,7 @@ public interface ErrorHandler :
      */
     public val priority: Int
 
-    override fun compareTo(other: ErrorHandler): Int {
-        return this.priority.compareTo(other.priority)
-    }
+    override fun compareTo(other: ErrorHandler): Int = this.priority.compareTo(other.priority)
 
     public companion object {
 

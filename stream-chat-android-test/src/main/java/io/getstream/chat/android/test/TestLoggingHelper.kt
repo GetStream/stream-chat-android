@@ -25,7 +25,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 public object TestLoggingHelper {
-
     public fun initialize() {
         StreamLog.setValidator { _, _ -> true }
         StreamLog.install(StreamTestLogger())
@@ -33,15 +32,22 @@ public object TestLoggingHelper {
 }
 
 internal class StreamTestLogger : KotlinStreamLogger() {
-
-    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
+    override fun log(
+        priority: Priority,
+        tag: String,
+        message: String,
+        throwable: Throwable?,
+    ) {
         // No-Op
     }
 
     override val now: () -> LocalDateTime
         get() = { Clock.System.now().toLocalDateTime(TimeZone.UTC) }
 
-    override fun install(minPriority: Priority, maxTagLength: Int) {
+    override fun install(
+        minPriority: Priority,
+        maxTagLength: Int,
+    ) {
         // No-Op
     }
 }

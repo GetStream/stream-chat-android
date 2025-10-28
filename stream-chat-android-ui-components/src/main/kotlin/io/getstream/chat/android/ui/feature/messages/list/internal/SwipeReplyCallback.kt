@@ -39,16 +39,14 @@ internal class SwipeReplyCallback(
     private val BaseMessageItemViewHolder<*>.messageItem: MessageListItem.MessageItem?
         get() = data as? MessageListItem.MessageItem
 
-    private fun RecyclerView.ViewHolder.asBaseMessageItemViewHolder(): BaseMessageItemViewHolder<*>? =
-        this as? BaseMessageItemViewHolder<*>
+    private fun RecyclerView.ViewHolder.asBaseMessageItemViewHolder(): BaseMessageItemViewHolder<*>? = this as? BaseMessageItemViewHolder<*>
 
     var onReply: (message: Message) -> Unit = {}
 
-    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int =
-        when (canReply(viewHolder.message)) {
-            true -> makeMovementFlags(ACTION_STATE_IDLE, RIGHT)
-            false -> 0
-        }
+    override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int = when (canReply(viewHolder.message)) {
+        true -> makeMovementFlags(ACTION_STATE_IDLE, RIGHT)
+        false -> 0
+    }
 
     override fun onMove(
         recyclerView: RecyclerView,

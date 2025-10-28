@@ -335,6 +335,4 @@ internal fun WaveformTrackPreview() {
     }
 }
 
-private fun Offset.toHorizontalProgress(base: Float): Float {
-    return if (base > 0) (x / base).coerceIn(0f, 1f) else 0f
-}
+private fun Offset.toHorizontalProgress(base: Float): Float = if (base > 0) (x / base).coerceIn(0f, 1f) else 0f

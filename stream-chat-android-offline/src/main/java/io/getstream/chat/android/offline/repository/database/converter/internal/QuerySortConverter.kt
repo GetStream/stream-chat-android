@@ -37,17 +37,15 @@ internal class QuerySortConverter {
         return listOfSortSpec?.let(::parseQuerySort) ?: QuerySortByField()
     }
 
-    private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySorter<Channel> {
-        return listOfSortSpec.fold(QuerySortByField()) { sort, sortSpecMap ->
-            val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String
-                ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt()
-                ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            when (direction) {
-                SortDirection.ASC.value -> sort.asc(fieldName)
-                SortDirection.DESC.value -> sort.desc(fieldName)
-                else -> error("Cannot parse sortSpec to query sort\n$sortSpecMap")
-            }
+    private fun parseQuerySort(listOfSortSpec: List<Map<String, Any>>): QuerySorter<Channel> = listOfSortSpec.fold(QuerySortByField()) { sort, sortSpecMap ->
+        val fieldName = sortSpecMap[QuerySorter.KEY_FIELD_NAME] as? String
+            ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+        val direction = (sortSpecMap[QuerySorter.KEY_DIRECTION] as? Number)?.toInt()
+            ?: error("Cannot parse sortSpec to query sort\n$sortSpecMap")
+        when (direction) {
+            SortDirection.ASC.value -> sort.asc(fieldName)
+            SortDirection.DESC.value -> sort.desc(fieldName)
+            else -> error("Cannot parse sortSpec to query sort\n$sortSpecMap")
         }
     }
 
@@ -65,7 +63,5 @@ internal class QuerySortConverter {
      *     // ... binding stringifiedObject to table's column
      */
     @TypeConverter
-    fun objectToString(querySort: QuerySorter<Channel>): String? {
-        return adapter.toJson(querySort.toDto())
-    }
+    fun objectToString(querySort: QuerySorter<Channel>): String? = adapter.toJson(querySort.toDto())
 }

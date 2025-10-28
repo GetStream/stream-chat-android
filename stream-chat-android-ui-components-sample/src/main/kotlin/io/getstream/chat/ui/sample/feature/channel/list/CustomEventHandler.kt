@@ -36,47 +36,36 @@ class CustomChatEventHandlerFactory : ChatEventHandlerFactory() {
     override fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>) = CustomChatEventHandler(channels)
 }
 
-class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) :
-    DefaultChatEventHandler(channels, ChatClient.instance().clientState) {
+class CustomChatEventHandler(channels: StateFlow<Map<String, Channel>?>) : DefaultChatEventHandler(channels, ChatClient.instance().clientState) {
 
-    override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
-        return when (event) {
-            is MemberAddedEvent -> addIfCurrentUserJoinedAndChannelIsNotDraft(cachedChannel, event.member)
-            else -> super.handleCidEvent(event, filter, cachedChannel)
-        }
+    override fun handleCidEvent(event: CidEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult = when (event) {
+        is MemberAddedEvent -> addIfCurrentUserJoinedAndChannelIsNotDraft(cachedChannel, event.member)
+        else -> super.handleCidEvent(event, filter, cachedChannel)
     }
 
-    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
-        return when (event) {
-            is NotificationAddedToChannelEvent -> watchIfChannelIsNotDraft(event.channel)
-            is ChannelUpdatedEvent -> handleChannelUpdate(event.channel)
-            is ChannelUpdatedByUserEvent -> handleChannelUpdate(event.channel)
-            else -> super.handleChannelEvent(event, filter)
-        }
+    override fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult = when (event) {
+        is NotificationAddedToChannelEvent -> watchIfChannelIsNotDraft(event.channel)
+        is ChannelUpdatedEvent -> handleChannelUpdate(event.channel)
+        is ChannelUpdatedByUserEvent -> handleChannelUpdate(event.channel)
+        else -> super.handleChannelEvent(event, filter)
     }
 
-    private fun addIfCurrentUserJoinedAndChannelIsNotDraft(channel: Channel?, member: Member): EventHandlingResult {
-        return if (isChannelNullOrDraft(channel)) {
-            EventHandlingResult.Skip
-        } else {
-            addIfCurrentUserJoinedChannel(channel, member)
-        }
+    private fun addIfCurrentUserJoinedAndChannelIsNotDraft(channel: Channel?, member: Member): EventHandlingResult = if (isChannelNullOrDraft(channel)) {
+        EventHandlingResult.Skip
+    } else {
+        addIfCurrentUserJoinedChannel(channel, member)
     }
 
-    private fun watchIfChannelIsNotDraft(channel: Channel): EventHandlingResult {
-        return if (isChannelNullOrDraft(channel)) {
-            EventHandlingResult.Skip
-        } else {
-            EventHandlingResult.WatchAndAdd(channel.cid)
-        }
+    private fun watchIfChannelIsNotDraft(channel: Channel): EventHandlingResult = if (isChannelNullOrDraft(channel)) {
+        EventHandlingResult.Skip
+    } else {
+        EventHandlingResult.WatchAndAdd(channel.cid)
     }
 
-    private fun addIfChannelIsNotDraft(channel: Channel?): EventHandlingResult {
-        return if (isChannelNullOrDraft(channel)) {
-            EventHandlingResult.Skip
-        } else {
-            addIfChannelIsAbsent(channel)
-        }
+    private fun addIfChannelIsNotDraft(channel: Channel?): EventHandlingResult = if (isChannelNullOrDraft(channel)) {
+        EventHandlingResult.Skip
+    } else {
+        addIfChannelIsAbsent(channel)
     }
 
     private fun isChannelNullOrDraft(channel: Channel?) = channel == null || channel.isDraft

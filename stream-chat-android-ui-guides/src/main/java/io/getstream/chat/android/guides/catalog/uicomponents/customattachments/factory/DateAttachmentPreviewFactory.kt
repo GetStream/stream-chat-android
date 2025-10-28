@@ -30,19 +30,15 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
  */
 class DateAttachmentPreviewFactory : AttachmentPreviewFactory {
 
-    override fun canHandle(attachment: Attachment): Boolean {
-        return attachment.type == "date"
-    }
+    override fun canHandle(attachment: Attachment): Boolean = attachment.type == "date"
 
     override fun onCreateViewHolder(
         parentView: ViewGroup,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle?,
-    ): AttachmentPreviewViewHolder {
-        return ItemDateAttachmentPreviewBinding
-            .inflate(LayoutInflater.from(parentView.context), parentView, false)
-            .let { DateAttachmentPreviewViewHolder(it, attachmentRemovalListener) }
-    }
+    ): AttachmentPreviewViewHolder = ItemDateAttachmentPreviewBinding
+        .inflate(LayoutInflater.from(parentView.context), parentView, false)
+        .let { DateAttachmentPreviewViewHolder(it, attachmentRemovalListener) }
 
     class DateAttachmentPreviewViewHolder(
         private val binding: ItemDateAttachmentPreviewBinding,

@@ -68,14 +68,12 @@ public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
         viewType: Int,
         attachmentRemovalListener: (Attachment) -> Unit,
         style: MessageComposerViewStyle? = null,
-    ): AttachmentPreviewViewHolder {
-        return viewTypeToFactoryMapping.get(viewType, fallbackAttachmentPreviewFactory)
-            .onCreateViewHolder(
-                parentView = parentView,
-                attachmentRemovalListener = attachmentRemovalListener,
-                style = style,
-            )
-    }
+    ): AttachmentPreviewViewHolder = viewTypeToFactoryMapping.get(viewType, fallbackAttachmentPreviewFactory)
+        .onCreateViewHolder(
+            parentView = parentView,
+            attachmentRemovalListener = attachmentRemovalListener,
+            style = style,
+        )
 
     /**
      * Finds the first factory that is capable of displaying the given attachment

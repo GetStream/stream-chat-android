@@ -63,7 +63,8 @@ public data class Thread(
     val read: List<ChannelUserRead>,
     val draft: DraftMessage?,
     override val extraData: Map<String, Any> = emptyMap(),
-) : CustomObject, ComparableFieldProvider {
+) : CustomObject,
+    ComparableFieldProvider {
 
     /**
      * The number of replies in the thread (replies to the parent message).

@@ -708,10 +708,9 @@ public class MessageComposerView : ConstraintLayout {
      * 2. Polls are enabled in the channel.
      * 3. The user has the [ChannelCapabilities.SEND_POLL] capability.
      */
-    private fun arePollsEnabled(state: MessageComposerState): Boolean =
-        state.messageMode is MessageMode.Normal &&
-            state.pollsEnabled &&
-            state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+    private fun arePollsEnabled(state: MessageComposerState): Boolean = state.messageMode is MessageMode.Normal &&
+        state.pollsEnabled &&
+        state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
 
     /**
      * A listener that helps to hide the currently visible command suggestions popup when the
@@ -788,11 +787,9 @@ private fun StreamUiMessageComposerBinding.asContentContainer() = object : Messa
         else -> null
     }
 
-    override fun iterator(): Iterator<MessageComposerContent?> {
-        return object : Iterator<MessageComposerContent?> {
-            private var index = 0
-            override fun hasNext() = index < childCount
-            override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
-        }
+    override fun iterator(): Iterator<MessageComposerContent?> = object : Iterator<MessageComposerContent?> {
+        private var index = 0
+        override fun hasNext() = index < childCount
+        override fun next() = getChildAt(index++) ?: throw IndexOutOfBoundsException()
     }
 }

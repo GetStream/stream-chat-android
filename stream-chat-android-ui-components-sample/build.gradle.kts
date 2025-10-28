@@ -27,17 +27,18 @@ android {
     }
 
     packaging {
-        resources.excludes += setOf(
-            "META-INF/*",
-            "META-INF/DEPENDENCIES",
-            "META-INF/LICENSE",
-            "META-INF/LICENSE.txt",
-            "META-INF/license.txt",
-            "META-INF/NOTICE",
-            "META-INF/NOTICE.txt",
-            "META-INF/notice.txt",
-            "META-INF/ASL2.0",
-        )
+        resources.excludes +=
+            setOf(
+                "META-INF/*",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0",
+            )
     }
 
     val signFile = rootProject.file(".sign/keystore.properties")

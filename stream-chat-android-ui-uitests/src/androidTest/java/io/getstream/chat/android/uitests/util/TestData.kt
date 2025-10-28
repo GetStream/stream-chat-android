@@ -194,11 +194,9 @@ object TestData {
         user = user4(),
     )
 
-    private fun LocalDateTime.toDate(): Date {
-        return Date(
-            atZone(ZoneId.systemDefault())
-                .toInstant()
-                .toEpochMilli(),
-        )
-    }
+    private fun LocalDateTime.toDate(): Date = Date(
+        atZone(ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli(),
+    )
 }

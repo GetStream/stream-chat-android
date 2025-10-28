@@ -38,11 +38,9 @@ public class ParameterizedLazy<T, R>(
     /**
      * Provides either an existing [R] object or creates a new one using [initializer] function.
      */
-    override suspend fun invoke(param: T): R {
-        return values[param] ?: mutex.withLock {
-            values[param] ?: initializer(param).also {
-                values[param] = it
-            }
+    override suspend fun invoke(param: T): R = values[param] ?: mutex.withLock {
+        values[param] ?: initializer(param).also {
+            values[param] = it
         }
     }
 }

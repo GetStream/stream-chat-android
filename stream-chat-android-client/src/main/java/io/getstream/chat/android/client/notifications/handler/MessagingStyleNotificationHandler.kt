@@ -137,15 +137,12 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
-    private fun getShownNotifications(): Set<Int> =
-        sharedPreferences.getStringSet(KEY_NOTIFICATIONS_SHOWN, null).orEmpty().map(String::toInt).toSet()
+    private fun getShownNotifications(): Set<Int> = sharedPreferences.getStringSet(KEY_NOTIFICATIONS_SHOWN, null).orEmpty().map(String::toInt).toSet()
 
-    private fun getNotificationChannelId(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel().id
-        } else {
-            ""
-        }
+    private fun getNotificationChannelId(): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        notificationChannel().id
+    } else {
+        ""
     }
 
     private companion object {

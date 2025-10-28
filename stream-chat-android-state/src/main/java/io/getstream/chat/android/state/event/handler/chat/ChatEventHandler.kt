@@ -99,14 +99,12 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
 
      * @return [EventHandlingResult] Result of handling.
      */
-    public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
-        return when (event) {
-            is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
-            is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            else -> EventHandlingResult.Skip
-        }
+    public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult = when (event) {
+        is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+        is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+        is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
+        is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
+        else -> EventHandlingResult.Skip
     }
 
     /**
@@ -133,11 +131,9 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
      *
      * @return [EventHandlingResult] Result of handling.
      */
-    override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult {
-        return when (event) {
-            is HasChannel -> handleChannelEvent(event, filter)
-            is CidEvent -> handleCidEvent(event, filter, cachedChannel)
-            else -> EventHandlingResult.Skip
-        }
+    override fun handleChatEvent(event: ChatEvent, filter: FilterObject, cachedChannel: Channel?): EventHandlingResult = when (event) {
+        is HasChannel -> handleChannelEvent(event, filter)
+        is CidEvent -> handleCidEvent(event, filter, cachedChannel)
+        else -> EventHandlingResult.Skip
     }
 }

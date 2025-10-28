@@ -392,6 +392,5 @@ private class Fixture {
         whenever(repositoryFacade.selectChannels(channelCIDs = any())) doReturn channels
     }
 
-    fun get(scope: CoroutineScope): MentionListController =
-        MentionListController(scope = scope, sort = sort, chatClient = chatClient)
+    fun get(scope: CoroutineScope): MentionListController = MentionListController(scope = scope, sort = sort, chatClient = chatClient)
 }

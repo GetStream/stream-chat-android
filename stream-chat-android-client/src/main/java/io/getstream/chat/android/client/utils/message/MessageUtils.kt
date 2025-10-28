@@ -182,8 +182,7 @@ public fun Message.isMine(currentUserId: String?): Boolean = currentUserId == us
  * @return If the message has moderation bounce action.
  */
 @InternalStreamChatApi
-public fun Message.isModerationBounce(): Boolean =
-    moderationDetails?.action == MessageModerationAction.bounce || moderation?.action == ModerationAction.bounce
+public fun Message.isModerationBounce(): Boolean = moderationDetails?.action == MessageModerationAction.bounce || moderation?.action == ModerationAction.bounce
 
 /**
  * @return If the message has moderation block action.
@@ -195,8 +194,7 @@ public fun Message.isModerationBlock(): Boolean = moderationDetails?.action == M
  * @return If the message has moderation flag action.
  */
 @InternalStreamChatApi
-public fun Message.isModerationFlag(): Boolean =
-    moderationDetails?.action == MessageModerationAction.flag || moderation?.action == ModerationAction.flag
+public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == MessageModerationAction.flag || moderation?.action == ModerationAction.flag
 
 /**
  * @return if the message failed at moderation or not.
@@ -209,20 +207,16 @@ public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(c
  * If the message doesn't have an id, a unique message id is generated.
  * @return the message with an id.
  */
-internal fun Message.ensureId(currentUser: User?): Message =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun Message.ensureId(currentUser: User?): Message = copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
 
 /**
  * Ensures the draft message has an id.
  * If the draft message doesn't have an id, a unique message id is generated.
  * @return the draft message with an id.
  */
-internal fun DraftMessage.ensureId(currentUser: User?): DraftMessage =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun DraftMessage.ensureId(currentUser: User?): DraftMessage = copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
 
 /**
  * Returns a unique message id prefixed with user id.
  */
-private fun generateMessageId(user: User?): String {
-    return "${user?.id}-${UUID.randomUUID()}"
-}
+private fun generateMessageId(user: User?): String = "${user?.id}-${UUID.randomUUID()}"

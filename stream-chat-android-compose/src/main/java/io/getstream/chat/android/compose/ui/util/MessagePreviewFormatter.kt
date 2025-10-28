@@ -87,17 +87,15 @@ public interface MessagePreviewFormatter {
             typography: StreamTypography,
             attachmentFactories: List<AttachmentFactory>,
             colors: StreamColors,
-        ): MessagePreviewFormatter {
-            return DefaultMessagePreviewFormatter(
-                context = context,
-                autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
-                messageTextStyle = typography.bodyBold,
-                senderNameTextStyle = typography.bodyBold,
-                attachmentTextFontStyle = typography.bodyItalic,
-                attachmentFactories = attachmentFactories,
-            )
-        }
+        ): MessagePreviewFormatter = DefaultMessagePreviewFormatter(
+            context = context,
+            autoTranslationEnabled = autoTranslationEnabled,
+            draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
+            messageTextStyle = typography.bodyBold,
+            senderNameTextStyle = typography.bodyBold,
+            attachmentTextFontStyle = typography.bodyItalic,
+            attachmentFactories = attachmentFactories,
+        )
     }
 }
 
@@ -155,62 +153,60 @@ private class DefaultMessagePreviewFormatter(
     override fun formatMessagePreview(
         message: Message,
         currentUser: User?,
-    ): AnnotatedString {
-        return buildAnnotatedString {
-            message.let { message ->
-                val displayedText = when (autoTranslationEnabled) {
-                    true -> currentUser?.language?.let { userLanguage ->
-                        message.getTranslation(userLanguage).ifEmpty { message.text }
-                    } ?: message.text
+    ): AnnotatedString = buildAnnotatedString {
+        message.let { message ->
+            val displayedText = when (autoTranslationEnabled) {
+                true -> currentUser?.language?.let { userLanguage ->
+                    message.getTranslation(userLanguage).ifEmpty { message.text }
+                } ?: message.text
 
-                    else -> message.text
-                }.trim()
+                else -> message.text
+            }.trim()
 
-                if (message.isSystem()) {
-                    append(displayedText)
-                } else if (message.isPoll()) {
-                    if (message.isPollClosed()) {
-                        append(
-                            context.getString(
-                                R.string.stream_compose_poll_closed_preview,
-                                message.poll?.name.orEmpty(),
-                            ),
-                        )
-                    } else {
-                        append(
-                            context.getString(
-                                R.string.stream_compose_poll_created_preview,
-                                message.poll?.name.orEmpty(),
-                            ),
-                        )
-                    }
-                } else if (message.hasAudioRecording()) {
-                    appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
-                    append(SPACE)
-                    append(context.getString(R.string.stream_compose_audio_recording_preview))
-                } else {
-                    appendSenderName(
-                        message = message,
-                        currentUser = currentUser,
-                        senderNameTextStyle = senderNameTextStyle,
+            if (message.isSystem()) {
+                append(displayedText)
+            } else if (message.isPoll()) {
+                if (message.isPollClosed()) {
+                    append(
+                        context.getString(
+                            R.string.stream_compose_poll_closed_preview,
+                            message.poll?.name.orEmpty(),
+                        ),
                     )
-                    if (message.hasSharedLocation()) {
-                        appendSharedLocationMessageText(
-                            message = message,
-                            textStyle = messageTextStyle,
-                        )
-                    } else {
-                        appendMessageText(
-                            messageText = displayedText,
-                            messageTextStyle = messageTextStyle,
-                        )
-                    }
-                    appendAttachmentText(
-                        attachments = message.attachments,
-                        attachmentFactories = attachmentFactories,
-                        attachmentTextStyle = attachmentTextFontStyle,
+                } else {
+                    append(
+                        context.getString(
+                            R.string.stream_compose_poll_created_preview,
+                            message.poll?.name.orEmpty(),
+                        ),
                     )
                 }
+            } else if (message.hasAudioRecording()) {
+                appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
+                append(SPACE)
+                append(context.getString(R.string.stream_compose_audio_recording_preview))
+            } else {
+                appendSenderName(
+                    message = message,
+                    currentUser = currentUser,
+                    senderNameTextStyle = senderNameTextStyle,
+                )
+                if (message.hasSharedLocation()) {
+                    appendSharedLocationMessageText(
+                        message = message,
+                        textStyle = messageTextStyle,
+                    )
+                } else {
+                    appendMessageText(
+                        messageText = displayedText,
+                        messageTextStyle = messageTextStyle,
+                    )
+                }
+                appendAttachmentText(
+                    attachments = message.attachments,
+                    attachmentFactories = attachmentFactories,
+                    attachmentTextStyle = attachmentTextFontStyle,
+                )
             }
         }
     }

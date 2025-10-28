@@ -33,10 +33,8 @@ public data class ChannelOptionsTheme(
     public companion object {
         public fun defaultTheme(
             optionVisibility: ChannelOptionItemVisibility = ChannelOptionItemVisibility(),
-        ): ChannelOptionsTheme {
-            return ChannelOptionsTheme(
-                optionVisibility = optionVisibility,
-            )
-        }
+        ): ChannelOptionsTheme = ChannelOptionsTheme(
+            optionVisibility = optionVisibility,
+        )
     }
 }

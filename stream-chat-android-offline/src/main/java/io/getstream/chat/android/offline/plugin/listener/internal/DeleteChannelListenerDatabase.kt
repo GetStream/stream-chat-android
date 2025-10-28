@@ -84,7 +84,5 @@ internal class DeleteChannelListenerDatabase(
         currentUser: User?,
         channelType: String,
         channelId: String,
-    ): Result<Unit> {
-        return Result.Success(Unit)
-    }
+    ): Result<Unit> = Result.Success(Unit)
 }

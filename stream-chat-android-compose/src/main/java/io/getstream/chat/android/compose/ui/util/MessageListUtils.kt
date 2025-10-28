@@ -39,16 +39,14 @@ public fun rememberMessagesLazyListState(
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
     messageOffsetHandler: MessagesLazyListState.MessageOffsetHandler = MessagesLazyListState.defaultOffsetHandler,
-): MessagesLazyListState {
-    return rememberSaveable(saver = MessagesLazyListState.Saver) {
-        MessagesLazyListState(
-            lazyListState = LazyListState(
-                firstVisibleItemIndex = initialFirstVisibleItemIndex,
-                firstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
-            ),
-            messageOffsetHandler = messageOffsetHandler,
-        )
-    }
+): MessagesLazyListState = rememberSaveable(saver = MessagesLazyListState.Saver) {
+    MessagesLazyListState(
+        lazyListState = LazyListState(
+            firstVisibleItemIndex = initialFirstVisibleItemIndex,
+            firstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
+        ),
+        messageOffsetHandler = messageOffsetHandler,
+    )
 }
 
 /**

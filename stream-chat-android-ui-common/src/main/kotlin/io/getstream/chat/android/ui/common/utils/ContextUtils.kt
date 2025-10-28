@@ -29,12 +29,10 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @return If the given permission is declared in the manifest or not.
  */
 @InternalStreamChatApi
-public fun Context.isPermissionDeclared(permission: String): Boolean {
-    return packageManager
-        .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
-        ?.requestedPermissions
-        ?.contains(permission) == true
-}
+public fun Context.isPermissionDeclared(permission: String): Boolean = packageManager
+    .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
+    ?.requestedPermissions
+    ?.contains(permission) == true
 
 /**
  * Share a local file.

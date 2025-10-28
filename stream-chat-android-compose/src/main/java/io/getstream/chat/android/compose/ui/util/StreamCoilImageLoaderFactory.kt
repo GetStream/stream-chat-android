@@ -37,9 +37,7 @@ public fun interface StreamCoilImageLoaderFactory {
          *
          * @return The default implementation of [StreamCoilImageLoaderFactory].
          */
-        public fun defaultFactory(): StreamCoilImageLoaderFactory {
-            return DefaultStreamCoilImageLoaderFactory
-        }
+        public fun defaultFactory(): StreamCoilImageLoaderFactory = DefaultStreamCoilImageLoaderFactory
     }
 }
 
@@ -89,9 +87,7 @@ internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFacto
      *
      * @return [ImageLoaderFactory] that loads all the images in the app.
      */
-    private fun newImageLoaderFactory(): SingletonImageLoader.Factory {
-        return StreamImageLoaderFactory().apply {
-            imageLoaderFactory = this
-        }
+    private fun newImageLoaderFactory(): SingletonImageLoader.Factory = StreamImageLoaderFactory().apply {
+        imageLoaderFactory = this
     }
 }

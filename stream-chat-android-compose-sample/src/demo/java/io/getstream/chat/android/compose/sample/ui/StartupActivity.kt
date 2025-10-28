@@ -109,12 +109,10 @@ class StartupActivity : AppCompatActivity() {
             channelId: String,
             messageId: String?,
             parentMessageId: String?,
-        ): Intent {
-            return Intent(context, StartupActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-                putExtra(KEY_MESSAGE_ID, messageId)
-                putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
-            }
+        ): Intent = Intent(context, StartupActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
+            putExtra(KEY_MESSAGE_ID, messageId)
+            putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
         }
     }
 }

@@ -271,9 +271,7 @@ internal fun GetMessageIdentifier(
  * Identifier for a [ChatClient.markAllRead] call.
  */
 @Suppress("FunctionName", "FunctionOnlyReturningConstant")
-internal fun MarkAllReadIdentifier(): Int {
-    return "MarkAllRead".hashCode()
-}
+internal fun MarkAllReadIdentifier(): Int = "MarkAllRead".hashCode()
 
 /**
  * Identifier for a [ChatClient.hideChannel] call.
@@ -309,9 +307,7 @@ internal fun SendMessageIdentifier(
  * Identifier for a [ChatClient.getDevices] call.
  */
 @Suppress("FunctionName", "FunctionOnlyReturningConstant")
-internal fun GetDevicesIdentifier(): Int {
-    return "GetDevices".hashCode()
-}
+internal fun GetDevicesIdentifier(): Int = "GetDevices".hashCode()
 
 /**
  * Identifier for a [ChatClient.addDevice] call.

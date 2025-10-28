@@ -72,57 +72,52 @@ internal class LogicRegistry internal constructor(
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
-    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
-        return queryChannels.getOrPut(filter to sort) {
-            val queryChannelsStateLogic = QueryChannelsStateLogic(
-                mutableState = stateRegistry.queryChannels(filter, sort).toMutableState(),
-                stateRegistry = stateRegistry,
-                logicRegistry = this,
-                coroutineScope = coroutineScope,
-            )
+    internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic = queryChannels.getOrPut(filter to sort) {
+        val queryChannelsStateLogic = QueryChannelsStateLogic(
+            mutableState = stateRegistry.queryChannels(filter, sort).toMutableState(),
+            stateRegistry = stateRegistry,
+            logicRegistry = this,
+            coroutineScope = coroutineScope,
+        )
 
-            val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
-                queryChannelsRepository = repos,
-                channelConfigRepository = repos,
-                channelRepository = repos,
-                repositoryFacade = repos,
-            )
+        val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
+            queryChannelsRepository = repos,
+            channelConfigRepository = repos,
+            channelRepository = repos,
+            repositoryFacade = repos,
+        )
 
-            QueryChannelsLogic(
-                filter,
-                sort,
-                client,
-                queryChannelsStateLogic,
-                queryChannelsDatabaseLogic,
-            )
-        }
+        QueryChannelsLogic(
+            filter,
+            sort,
+            client,
+            queryChannelsStateLogic,
+            queryChannelsDatabaseLogic,
+        )
     }
 
     /** Returns [QueryChannelsLogic] accordingly to [QueryChannelsRequest]. */
-    internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic =
-        queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
+    internal fun queryChannels(queryChannelsRequest: QueryChannelsRequest): QueryChannelsLogic = queryChannels(queryChannelsRequest.filter, queryChannelsRequest.querySort)
 
     /** Returns [ChannelLogic] by channelType and channelId combination. */
-    fun channel(channelType: String, channelId: String): ChannelLogic {
-        return channels.getOrPut(channelType to channelId) {
-            val mutableState = stateRegistry.mutableChannel(channelType, channelId)
-            val stateLogic = ChannelStateLogic(
-                clientState = clientState,
-                mutableState = mutableState,
-                globalMutableState = mutableGlobalState,
-                searchLogic = SearchLogic(mutableState),
-                now = now,
-                coroutineScope = coroutineScope,
-            )
+    fun channel(channelType: String, channelId: String): ChannelLogic = channels.getOrPut(channelType to channelId) {
+        val mutableState = stateRegistry.mutableChannel(channelType, channelId)
+        val stateLogic = ChannelStateLogic(
+            clientState = clientState,
+            mutableState = mutableState,
+            globalMutableState = mutableGlobalState,
+            searchLogic = SearchLogic(mutableState),
+            now = now,
+            coroutineScope = coroutineScope,
+        )
 
-            ChannelLogic(
-                repos = repos,
-                userPresence = userPresence,
-                channelStateLogic = stateLogic,
-                coroutineScope = coroutineScope,
-            ) {
-                clientState.user.value?.id
-            }
+        ChannelLogic(
+            repos = repos,
+            userPresence = userPresence,
+            channelStateLogic = stateLogic,
+            coroutineScope = coroutineScope,
+        ) {
+            clientState.user.value?.id
         }
     }
 
@@ -130,14 +125,10 @@ internal class LogicRegistry internal constructor(
         channels.remove(channelType to channelId)
     }
 
-    fun channelState(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
-    }
+    fun channelState(channelType: String, channelId: String): ChannelStateLogic = channel(channelType, channelId).stateLogic()
 
-    fun channelFromMessageId(messageId: String): ChannelLogic? {
-        return channels.values.find { channelLogic ->
-            channelLogic.getMessage(messageId) != null
-        }
+    fun channelFromMessageId(messageId: String): ChannelLogic? = channels.values.find { channelLogic ->
+        channelLogic.getMessage(messageId) != null
     }
 
     /**
@@ -149,10 +140,8 @@ internal class LogicRegistry internal constructor(
      *
      * @return The message with the given id, if such exists, null otherwise.
      */
-    fun getMessageById(messageId: String): Message? {
-        return channelFromMessageId(messageId)?.getMessage(messageId)
-            ?: threadFromMessageId(messageId)?.getMessage(messageId)
-    }
+    fun getMessageById(messageId: String): Message? = channelFromMessageId(messageId)?.getMessage(messageId)
+        ?: threadFromMessageId(messageId)?.getMessage(messageId)
 
     /**
      * Attempts to fetch the message with the given ID from the mutable database.
@@ -170,13 +159,11 @@ internal class LogicRegistry internal constructor(
      *
      * @param message [Message]
      */
-    fun channelFromMessage(message: Message): ChannelLogic? {
-        return if (message.parentId == null || message.showInChannel) {
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            channel(channelType, channelId)
-        } else {
-            null
-        }
+    fun channelFromMessage(message: Message): ChannelLogic? = if (message.parentId == null || message.showInChannel) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        channel(channelType, channelId)
+    } else {
+        null
     }
 
     /**
@@ -186,15 +173,11 @@ internal class LogicRegistry internal constructor(
      *
      * @param messageId String
      */
-    fun threadFromMessageId(messageId: String): ThreadLogic? {
-        return threads.values.find { threadLogic ->
-            threadLogic.getMessage(messageId) != null
-        }
+    fun threadFromMessageId(messageId: String): ThreadLogic? = threads.values.find { threadLogic ->
+        threadLogic.getMessage(messageId) != null
     }
 
-    fun threadFromMessage(message: Message): ThreadLogic? {
-        return message.parentId?.let { thread(it) }
-    }
+    fun threadFromMessage(message: Message): ThreadLogic? = message.parentId?.let { thread(it) }
 
     /**
      * Provides [ChannelStateLogic] for the channelType and channelId
@@ -202,9 +185,7 @@ internal class LogicRegistry internal constructor(
      * @param channelType String
      * @param channelId String
      */
-    override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
-    }
+    override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic = channel(channelType, channelId).stateLogic()
 
     /** Returns [QueryThreadsLogic] for the given [QueryThreadsRequest]. */
     fun threads(query: QueryThreadsRequest) = threads(query.filter, query.sort)
@@ -216,18 +197,16 @@ internal class LogicRegistry internal constructor(
      * @param filter Optional [FilterObject] to filter the threads.
      * @param sort Optional [QuerySorter] to sort the threads.
      */
-    fun threads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsLogic {
-        return queryThreads.getOrPut(filter to sort) {
-            QueryThreadsLogic(
-                stateLogic = QueryThreadsStateLogic(
-                    mutableState = stateRegistry.mutableQueryThreads(filter, sort),
-                    mutableGlobalState = mutableGlobalState,
-                ),
-                databaseLogic = QueryThreadsDatabaseLogic(
-                    repository = repos,
-                ),
-            )
-        }
+    fun threads(filter: FilterObject?, sort: QuerySorter<Thread>): QueryThreadsLogic = queryThreads.getOrPut(filter to sort) {
+        QueryThreadsLogic(
+            stateLogic = QueryThreadsStateLogic(
+                mutableState = stateRegistry.mutableQueryThreads(filter, sort),
+                mutableGlobalState = mutableGlobalState,
+            ),
+            databaseLogic = QueryThreadsDatabaseLogic(
+                repository = repos,
+            ),
+        )
     }
 
     /**
@@ -236,16 +215,14 @@ internal class LogicRegistry internal constructor(
     fun getActiveQueryThreadsLogic(): List<QueryThreadsLogic> = queryThreads.values.toList()
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
-    fun thread(messageId: String): ThreadLogic {
-        return threads.getOrPut(messageId) {
-            val mutableState = stateRegistry.mutableThread(messageId)
-            val stateLogic = ThreadStateLogic(mutableState)
-            ThreadLogic(stateLogic).also { threadLogic ->
-                coroutineScope.launch {
-                    val parentMessage = getMessageById(messageId) ?: repos.selectMessage(messageId)
-                    parentMessage?.let { threadLogic.upsertMessage(it) }
-                    repos.selectMessagesForThread(messageId, MESSAGE_LIMIT).let { threadLogic.upsertMessages(it) }
-                }
+    fun thread(messageId: String): ThreadLogic = threads.getOrPut(messageId) {
+        val mutableState = stateRegistry.mutableThread(messageId)
+        val stateLogic = ThreadStateLogic(mutableState)
+        ThreadLogic(stateLogic).also { threadLogic ->
+            coroutineScope.launch {
+                val parentMessage = getMessageById(messageId) ?: repos.selectMessage(messageId)
+                parentMessage?.let { threadLogic.upsertMessage(it) }
+                repos.selectMessagesForThread(messageId, MESSAGE_LIMIT).let { threadLogic.upsertMessages(it) }
             }
         }
     }
@@ -265,8 +242,7 @@ internal class LogicRegistry internal constructor(
      *
      * @return True if the channel is active.
      */
-    fun isActiveChannel(channelType: String, channelId: String): Boolean =
-        channels.containsKey(channelType to channelId)
+    fun isActiveChannel(channelType: String, channelId: String): Boolean = channels.containsKey(channelType to channelId)
 
     /**
      * Returns a list of [ChannelLogic] for all, active channel requests.
@@ -275,8 +251,7 @@ internal class LogicRegistry internal constructor(
      */
     fun getActiveChannelsLogic(): List<ChannelLogic> = channels.values.toList()
 
-    fun isActiveThread(messageId: String): Boolean =
-        threads.containsKey(messageId)
+    fun isActiveThread(messageId: String): Boolean = threads.containsKey(messageId)
 
     /**
      * Clears all stored logic objects.

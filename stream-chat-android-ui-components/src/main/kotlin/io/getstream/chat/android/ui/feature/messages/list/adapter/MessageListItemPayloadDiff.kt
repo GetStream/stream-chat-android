@@ -34,26 +34,24 @@ public data class MessageListItemPayloadDiff(
     val showOriginalText: Boolean,
     val isMessageRead: Boolean,
 ) {
-    public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
-        return MessageListItemPayloadDiff(
-            text = text || other.text,
-            replyText = replyText || other.replyText,
-            reactions = reactions || other.reactions,
-            attachments = attachments || other.attachments,
-            replies = replies || other.replies,
-            syncStatus = syncStatus || other.syncStatus,
-            deleted = deleted || other.deleted,
-            positions = positions || other.positions,
-            pinned = pinned || other.pinned,
-            user = user || other.user,
-            mentions = mentions || other.mentions,
-            footer = footer || other.footer,
-            poll = poll || other.poll,
-            threadMode = threadMode || other.threadMode,
-            showOriginalText = showOriginalText || other.showOriginalText,
-            isMessageRead = isMessageRead || other.isMessageRead,
-        )
-    }
+    public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff = MessageListItemPayloadDiff(
+        text = text || other.text,
+        replyText = replyText || other.replyText,
+        reactions = reactions || other.reactions,
+        attachments = attachments || other.attachments,
+        replies = replies || other.replies,
+        syncStatus = syncStatus || other.syncStatus,
+        deleted = deleted || other.deleted,
+        positions = positions || other.positions,
+        pinned = pinned || other.pinned,
+        user = user || other.user,
+        mentions = mentions || other.mentions,
+        footer = footer || other.footer,
+        poll = poll || other.poll,
+        threadMode = threadMode || other.threadMode,
+        showOriginalText = showOriginalText || other.showOriginalText,
+        isMessageRead = isMessageRead || other.isMessageRead,
+    )
 
     public fun anyChanged(): Boolean = this != EMPTY
 

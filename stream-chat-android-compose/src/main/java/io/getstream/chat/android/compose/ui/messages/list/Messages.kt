@@ -257,16 +257,15 @@ private fun MessageListState.getVerticalArrangement(
     messagesVerticalArrangement: Arrangement.Vertical,
     threadsVerticalArrangement: Arrangement.Vertical,
     threadMessagesStart: ThreadMessagesStart?,
-): Arrangement.Vertical =
-    when (parentMessageId != null) {
-        true -> when (threadMessagesStart) {
-            ThreadMessagesStart.BOTTOM -> Arrangement.Bottom
-            ThreadMessagesStart.TOP -> Arrangement.Top
-            null -> threadsVerticalArrangement
-        }
-
-        false -> messagesVerticalArrangement
+): Arrangement.Vertical = when (parentMessageId != null) {
+    true -> when (threadMessagesStart) {
+        ThreadMessagesStart.BOTTOM -> Arrangement.Bottom
+        ThreadMessagesStart.TOP -> Arrangement.Top
+        null -> threadsVerticalArrangement
     }
+
+    false -> messagesVerticalArrangement
+}
 
 /**
  * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
@@ -426,12 +425,10 @@ private fun isScrollToBottomButtonVisible(
     isInThread: Boolean,
     firstVisibleItemIndex: Int,
     areNewestMessagesLoaded: Boolean,
-): Boolean {
-    return if (isInThread) {
-        isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex)
-    } else {
-        isScrollToBottomButtonVisibleInMessageList(firstVisibleItemIndex, areNewestMessagesLoaded)
-    }
+): Boolean = if (isInThread) {
+    isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex)
+} else {
+    isScrollToBottomButtonVisibleInMessageList(firstVisibleItemIndex, areNewestMessagesLoaded)
 }
 
 /**
@@ -441,9 +438,7 @@ private fun isScrollToBottomButtonVisible(
  *
  * @return Whether the scroll to bottom button should be visible inside a thread.
  */
-private fun isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex: Int): Boolean {
-    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex)
-}
+private fun isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex: Int): Boolean = shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex)
 
 /**
  * Determines whether the scroll to bottom button should be visible if messages list is currently showing.
@@ -456,9 +451,7 @@ private fun isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex: Int): B
 private fun isScrollToBottomButtonVisibleInMessageList(
     firstVisibleItemIndex: Int,
     areNewestMessagesLoaded: Boolean,
-): Boolean {
-    return shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || !areNewestMessagesLoaded
-}
+): Boolean = shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex) || !areNewestMessagesLoaded
 
 /**
  * Determines whether the scroll to bottom button should be visible given the first visible index.
@@ -467,9 +460,7 @@ private fun isScrollToBottomButtonVisibleInMessageList(
  *
  * @return Whether the scroll to bottom button should be visible given the first visible item index.
  */
-private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean {
-    return abs(firstVisibleItemIndex) >= 3
-}
+private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean = abs(firstVisibleItemIndex) >= 3
 
 /**
  * The default loading more indicator.

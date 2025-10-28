@@ -57,20 +57,18 @@ internal class DeleteReactionErrorHandlerImpl(
         originalCall: Call<Message>,
         cid: String?,
         messageId: String,
-    ): ReturnOnErrorCall<Message> {
-        return originalCall.onErrorReturn(scope) { originalError ->
-            if (cid == null || clientState.isOnline) {
-                Result.Failure(originalError)
-            } else {
-                val (channelType, channelId) = cid.cidToTypeAndId()
-                val cachedMessage =
-                    logic.channel(channelType = channelType, channelId = channelId).getMessage(messageId)
+    ): ReturnOnErrorCall<Message> = originalCall.onErrorReturn(scope) { originalError ->
+        if (cid == null || clientState.isOnline) {
+            Result.Failure(originalError)
+        } else {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            val cachedMessage =
+                logic.channel(channelType = channelType, channelId = channelId).getMessage(messageId)
 
-                if (cachedMessage != null) {
-                    Result.Success(cachedMessage)
-                } else {
-                    Result.Failure(Error.GenericError(message = "Local message was not found."))
-                }
+            if (cachedMessage != null) {
+                Result.Success(cachedMessage)
+            } else {
+                Result.Failure(Error.GenericError(message = "Local message was not found."))
             }
         }
     }

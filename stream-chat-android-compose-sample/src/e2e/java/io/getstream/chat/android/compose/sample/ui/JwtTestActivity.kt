@@ -73,9 +73,7 @@ class JwtTestActivity : AppCompatActivity() {
                             val userId = PredefinedUserCredentials.availableUsers.first().user.id
                             val baseUrl = intent.getStringExtra("BASE_URL")!!
                             val tokenProvider = object : TokenProvider {
-                                override fun loadToken(): String {
-                                    return runBlocking { fetchJwtToken(baseUrl, userId) }
-                                }
+                                override fun loadToken(): String = runBlocking { fetchJwtToken(baseUrl, userId) }
                             }
 
                             ChatClient.instance().connectUser(
@@ -131,7 +129,7 @@ class JwtTestActivity : AppCompatActivity() {
 
             Spacer(modifier = Modifier.height(100.dp))
 
-            Row() {
+            Row {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     text = "Connection status:",
@@ -152,7 +150,7 @@ class JwtTestActivity : AppCompatActivity() {
 
             Spacer(modifier = Modifier.height(100.dp))
 
-            Row() {
+            Row {
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     text = "Disconnections:",
@@ -174,25 +172,21 @@ class JwtTestActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context, baseUrl: String): Intent {
-            return Intent(context, JwtTestActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra("BASE_URL", baseUrl)
-            }
+        fun createIntent(context: Context, baseUrl: String): Intent = Intent(context, JwtTestActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("BASE_URL", baseUrl)
         }
     }
 
-    private suspend fun fetchJwtToken(baseUrl: String, userId: String): String {
-        return withContext(Dispatchers.IO) {
-            val endpoint = "$baseUrl/jwt/get?api_key=$API_KEY&user_id=$userId"
-            val request = Request.Builder().url(endpoint).build()
+    private suspend fun fetchJwtToken(baseUrl: String, userId: String): String = withContext(Dispatchers.IO) {
+        val endpoint = "$baseUrl/jwt/get?api_key=$API_KEY&user_id=$userId"
+        val request = Request.Builder().url(endpoint).build()
 
-            OkHttpClient().newCall(request).execute().use { response ->
-                if (!response.isSuccessful) {
-                    throw Exception("Failed to fetch token: ${response.code}")
-                }
-                response.body?.string() ?: throw Exception("Empty response body")
+        OkHttpClient().newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                throw Exception("Failed to fetch token: ${response.code}")
             }
+            response.body?.string() ?: throw Exception("Empty response body")
         }
     }
 }

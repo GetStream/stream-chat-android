@@ -48,12 +48,10 @@ internal fun Uri.toCacheFile(context: Context): File {
     return cacheFile
 }
 
-internal fun Context.generateCameraImageFile(): File =
-    cacheDir.resolve(relative = "camera_${UUID.randomUUID()}.jpg")
+internal fun Context.generateCameraImageFile(): File = cacheDir.resolve(relative = "camera_${UUID.randomUUID()}.jpg")
 
-internal fun File.getUri(context: Context): Uri =
-    FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.streamfileprovider",
-        this,
-    )
+internal fun File.getUri(context: Context): Uri = FileProvider.getUriForFile(
+    context,
+    "${context.packageName}.streamfileprovider",
+    this,
+)

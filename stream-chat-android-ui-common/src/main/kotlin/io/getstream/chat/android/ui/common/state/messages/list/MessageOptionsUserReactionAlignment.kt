@@ -51,9 +51,7 @@ public enum class MessageOptionsUserReactionAlignment(public val value: Int) {
 /**
  * @return The corresponding [MessageOptionsUserReactionAlignment] for the passed attribute in xml.
  */
-public fun Int.getUserReactionAlignment(): MessageOptionsUserReactionAlignment {
-    return MessageOptionsUserReactionAlignment.values().firstOrNull { it.value == this } ?: error("No such alignment")
-}
+public fun Int.getUserReactionAlignment(): MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.values().firstOrNull { it.value == this } ?: error("No such alignment")
 
 /**
  * Determines if the user reaction should be aligned to start or end.
@@ -63,8 +61,6 @@ public fun Int.getUserReactionAlignment(): MessageOptionsUserReactionAlignment {
  * @return If the reaction is aligned to the start or not.
  */
 @InternalStreamChatApi
-public fun MessageOptionsUserReactionAlignment.isStartAlignment(isMine: Boolean): Boolean {
-    return this == MessageOptionsUserReactionAlignment.START ||
-        (!isMine && this == MessageOptionsUserReactionAlignment.BY_USER) ||
-        (isMine && this == MessageOptionsUserReactionAlignment.BY_USER_INVERTED)
-}
+public fun MessageOptionsUserReactionAlignment.isStartAlignment(isMine: Boolean): Boolean = this == MessageOptionsUserReactionAlignment.START ||
+    (!isMine && this == MessageOptionsUserReactionAlignment.BY_USER) ||
+    (isMine && this == MessageOptionsUserReactionAlignment.BY_USER_INVERTED)

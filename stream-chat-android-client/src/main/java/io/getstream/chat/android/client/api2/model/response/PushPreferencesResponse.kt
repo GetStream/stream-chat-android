@@ -36,8 +36,7 @@ internal data class PushPreferencesResponse(
  *
  * @param userId The ID of the user whose preference is to be retrieved.
  */
-internal fun PushPreferencesResponse.getUserPreference(userId: String): DownstreamPushPreferenceDto? =
-    user_preferences[userId]
+internal fun PushPreferencesResponse.getUserPreference(userId: String): DownstreamPushPreferenceDto? = user_preferences[userId]
 
 /**
  * Extension function to get a user's channel-specific push preference from the [PushPreferencesResponse].

@@ -82,68 +82,66 @@ internal class TypingEventPrunerTest {
     }
 
     @Test
-    fun `Given multiple typing event from the same user Should output a collection with a single latest typing event`() =
-        runTest {
-            val onTypingUpdateListenerMock: (
-                rawTypingEvents: Map<String, TypingStartEvent>,
-                typingEvent: TypingEvent,
-            ) -> Unit = mock()
+    fun `Given multiple typing event from the same user Should output a collection with a single latest typing event`() = runTest {
+        val onTypingUpdateListenerMock: (
+            rawTypingEvents: Map<String, TypingStartEvent>,
+            typingEvent: TypingEvent,
+        ) -> Unit = mock()
 
-            val typingEventPruner =
-                TypingEventPruner(channelId = channelId, coroutineScope = this, onUpdated = onTypingUpdateListenerMock)
+        val typingEventPruner =
+            TypingEventPruner(channelId = channelId, coroutineScope = this, onUpdated = onTypingUpdateListenerMock)
 
-            val firstTypingStartEvent = randomTypingStartEvent()
+        val firstTypingStartEvent = randomTypingStartEvent()
 
-            // Create a copy of the first event by simulating an event from the same user at a later date
-            val advancedStartEventCreationDate = Date(firstTypingStartEvent.createdAt.time + 100)
-            val secondTypingStartEvent = firstTypingStartEvent.copy(createdAt = advancedStartEventCreationDate)
+        // Create a copy of the first event by simulating an event from the same user at a later date
+        val advancedStartEventCreationDate = Date(firstTypingStartEvent.createdAt.time + 100)
+        val secondTypingStartEvent = firstTypingStartEvent.copy(createdAt = advancedStartEventCreationDate)
 
-            // Set both events
-            typingEventPruner.processEvent(firstTypingStartEvent.user.id, firstTypingStartEvent)
-            typingEventPruner.processEvent(secondTypingStartEvent.user.id, secondTypingStartEvent)
+        // Set both events
+        typingEventPruner.processEvent(firstTypingStartEvent.user.id, firstTypingStartEvent)
+        typingEventPruner.processEvent(secondTypingStartEvent.user.id, secondTypingStartEvent)
 
-            verify(onTypingUpdateListenerMock).invoke(
-                mapOf(
-                    Pair(
-                        secondTypingStartEvent.user.id,
-                        secondTypingStartEvent,
-                    ),
+        verify(onTypingUpdateListenerMock).invoke(
+            mapOf(
+                Pair(
+                    secondTypingStartEvent.user.id,
+                    secondTypingStartEvent,
                 ),
-                TypingEvent(
-                    channelId,
-                    listOf(secondTypingStartEvent.user),
-                ),
-            )
-        }
+            ),
+            TypingEvent(
+                channelId,
+                listOf(secondTypingStartEvent.user),
+            ),
+        )
+    }
 
     @Test
-    fun `Given typing events that are not manually cancelled Should be automatically cleaned by TypingEventPruner`() =
-        runTest {
-            val onTypingUpdateListenerMock: (
-                rawTypingEvents: Map<String, TypingStartEvent>,
-                typingEvent: TypingEvent,
-            ) -> Unit = mock()
+    fun `Given typing events that are not manually cancelled Should be automatically cleaned by TypingEventPruner`() = runTest {
+        val onTypingUpdateListenerMock: (
+            rawTypingEvents: Map<String, TypingStartEvent>,
+            typingEvent: TypingEvent,
+        ) -> Unit = mock()
 
-            val prunerDelay = TypingEventPruner.DEFAULT_DELAY_TIME_MS
-            val typingEventPruner =
-                TypingEventPruner(
-                    channelId = channelId,
-                    delayTimeMs = prunerDelay,
-                    coroutineScope = this,
-                    onUpdated = onTypingUpdateListenerMock,
-                )
+        val prunerDelay = TypingEventPruner.DEFAULT_DELAY_TIME_MS
+        val typingEventPruner =
+            TypingEventPruner(
+                channelId = channelId,
+                delayTimeMs = prunerDelay,
+                coroutineScope = this,
+                onUpdated = onTypingUpdateListenerMock,
+            )
 
-            val firstTypingStartEvent = randomTypingStartEvent(user = randomUser(id = "User1"))
-            val secondTypingStartEvent = randomTypingStartEvent(user = randomUser(id = "User2"))
+        val firstTypingStartEvent = randomTypingStartEvent(user = randomUser(id = "User1"))
+        val secondTypingStartEvent = randomTypingStartEvent(user = randomUser(id = "User2"))
 
-            typingEventPruner.processEvent(firstTypingStartEvent.user.id, firstTypingStartEvent)
-            typingEventPruner.processEvent(secondTypingStartEvent.user.id, secondTypingStartEvent)
+        typingEventPruner.processEvent(firstTypingStartEvent.user.id, firstTypingStartEvent)
+        typingEventPruner.processEvent(secondTypingStartEvent.user.id, secondTypingStartEvent)
 
-            // Time is advanced by slightly more than it takes for the pruner to remove stale events
-            advanceTimeBy(prunerDelay + 1)
+        // Time is advanced by slightly more than it takes for the pruner to remove stale events
+        advanceTimeBy(prunerDelay + 1)
 
-            verify(onTypingUpdateListenerMock, times(1)).invoke(mapOf(), TypingEvent(channelId, listOf()))
-        }
+        verify(onTypingUpdateListenerMock, times(1)).invoke(mapOf(), TypingEvent(channelId, listOf()))
+    }
 
     @Test
     fun `Given multiple typing start events from the same user Should restart the delay timer`() {

@@ -79,9 +79,7 @@ internal class MultiMapJsonAdapter<K, V>(
         return result
     }
 
-    override fun toString(): String {
-        return "CustomMapJsonAdapter($keyAdapter=$valueAdapter)"
-    }
+    override fun toString(): String = "CustomMapJsonAdapter($keyAdapter=$valueAdapter)"
 
     companion object {
         private const val TAG = "CustomMapJsonAdapter"

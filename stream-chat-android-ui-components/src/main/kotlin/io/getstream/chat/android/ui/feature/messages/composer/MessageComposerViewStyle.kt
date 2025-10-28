@@ -982,7 +982,8 @@ public data class MessageComposerViewStyle(
                 if (playerViewStyleResId != R.style.StreamUi_AudioRecordPlayerView) {
                     context.obtainStyledAttributes(playerViewStyleResId, R.styleable.AudioRecordPlayerView).use {
                         playerViewStyle = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it,
+                            context = context,
+                            attributes = it,
                         )
                     }
                 }

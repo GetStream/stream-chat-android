@@ -57,9 +57,8 @@ class GroupChannelInfoActivity : ComponentActivity() {
          * @param context The calling [Context], used for building the [Intent].
          * @param channelId The ID of the channel for which the pinned messages are shown.
          */
-        fun createIntent(context: Context, channelId: String) =
-            Intent(context, GroupChannelInfoActivity::class.java)
-                .putExtra(KEY_CHANNEL_ID, channelId)
+        fun createIntent(context: Context, channelId: String) = Intent(context, GroupChannelInfoActivity::class.java)
+            .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
     private val channelId by lazy { requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) }

@@ -52,9 +52,7 @@ public fun interface ChannelNameFormatter {
             context: Context,
             @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
             maxMembers: Int = 2,
-        ): ChannelNameFormatter {
-            return DefaultChannelNameFormatter(context, fallback, maxMembers)
-        }
+        ): ChannelNameFormatter = DefaultChannelNameFormatter(context, fallback, maxMembers)
     }
 }
 
@@ -83,7 +81,5 @@ private class DefaultChannelNameFormatter(
      * @param currentUser The currently logged in user.
      * @return The display name for the given channel.
      */
-    override fun formatChannelName(channel: Channel, currentUser: User?): String {
-        return channel.getDisplayName(context, currentUser, fallback, maxMembers)
-    }
+    override fun formatChannelName(channel: Channel, currentUser: User?): String = channel.getDisplayName(context, currentUser, fallback, maxMembers)
 }

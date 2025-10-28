@@ -114,8 +114,7 @@ public fun AnswerCastedEvent.processPoll(
 @InternalStreamChatApi
 public fun PollClosedEvent.processPoll(
     getOldPoll: (String) -> Poll?,
-): Poll =
-    getOldPoll(poll.id)?.copy(closed = true) ?: poll
+): Poll = getOldPoll(poll.id)?.copy(closed = true) ?: poll
 
 /**
  * Processes the [PollUpdatedEvent] and updates the poll with the new data.
@@ -137,19 +136,17 @@ public fun PollUpdatedEvent.processPoll(
  * Returns the votes for a specific option in the poll. If the poll is anonymous, it returns an empty list.
  */
 @InternalStreamChatApi
-public fun Poll.getVotesUnlessAnonymous(option: Option): List<Vote> =
-    getVotes(option).takeUnless { votingVisibility == VotingVisibility.ANONYMOUS }
-        ?: emptyList()
+public fun Poll.getVotesUnlessAnonymous(option: Option): List<Vote> = getVotes(option).takeUnless { votingVisibility == VotingVisibility.ANONYMOUS }
+    ?: emptyList()
 
 /**
  * Returns the unique winner of the poll.
  */
 @InternalStreamChatApi
-public fun Poll.getWinner(): Option? =
-    options
-        .maxByOrNull { voteCountsByOption[it.id] ?: 0 }
-        ?.takeIf { option ->
-            val maxVotes = voteCountsByOption[option.id] ?: 0
-            maxVotes > 0 && // Ensure there are votes
-                options.count { (voteCountsByOption[it.id] ?: 0) == maxVotes } == 1 // Ensure the winner is unique
-        }
+public fun Poll.getWinner(): Option? = options
+    .maxByOrNull { voteCountsByOption[it.id] ?: 0 }
+    ?.takeIf { option ->
+        val maxVotes = voteCountsByOption[option.id] ?: 0
+        maxVotes > 0 && // Ensure there are votes
+            options.count { (voteCountsByOption[it.id] ?: 0) == maxVotes } == 1 // Ensure the winner is unique
+    }

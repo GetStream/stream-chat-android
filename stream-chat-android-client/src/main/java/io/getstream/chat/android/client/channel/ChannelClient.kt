@@ -146,14 +146,12 @@ public class ChannelClient internal constructor(
         messageLimit: Int = 0,
         memberLimit: Int = 0,
         state: Boolean = false,
-    ): Call<Channel> {
-        return client.getChannel(
-            cid = cid,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-            state = state,
-        )
-    }
+    ): Call<Channel> = client.getChannel(
+        cid = cid,
+        messageLimit = messageLimit,
+        memberLimit = memberLimit,
+        state = state,
+    )
 
     /**
      * Creates the id-based channel.
@@ -165,14 +163,12 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for creating the channel.
      */
     @CheckResult
-    public fun create(memberIds: List<String>, extraData: Map<String, Any>): Call<Channel> {
-        return client.createChannel(
-            channelType = channelType,
-            channelId = channelId,
-            memberIds = memberIds,
-            extraData = extraData,
-        )
-    }
+    public fun create(memberIds: List<String>, extraData: Map<String, Any>): Call<Channel> = client.createChannel(
+        channelType = channelType,
+        channelId = channelId,
+        memberIds = memberIds,
+        extraData = extraData,
+    )
 
     /**
      * Creates the id-based channel.
@@ -183,161 +179,137 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for creating the channel.
      */
     @CheckResult
-    public fun create(params: CreateChannelParams): Call<Channel> {
-        return client.createChannel(
-            channelType = channelType,
-            channelId = channelId,
-            params = params,
-        )
-    }
+    public fun create(params: CreateChannelParams): Call<Channel> = client.createChannel(
+        channelType = channelType,
+        channelId = channelId,
+        params = params,
+    )
 
-    public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable {
-        return client.subscribe(filterRelevantEvents(listener))
-    }
+    public fun subscribe(listener: ChatEventListener<ChatEvent>): Disposable = client.subscribe(filterRelevantEvents(listener))
 
     public fun subscribeFor(
         vararg eventTypes: String,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
+    ): Disposable = client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
 
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: String,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeFor(
-            lifecycleOwner,
-            *eventTypes,
-            listener = filterRelevantEvents(listener),
-        )
-    }
+    ): Disposable = client.subscribeFor(
+        lifecycleOwner,
+        *eventTypes,
+        listener = filterRelevantEvents(listener),
+    )
 
     public fun subscribeFor(
         vararg eventTypes: Class<out ChatEvent>,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
-    }
+    ): Disposable = client.subscribeFor(*eventTypes, listener = filterRelevantEvents(listener))
 
     public fun subscribeFor(
         lifecycleOwner: LifecycleOwner,
         vararg eventTypes: Class<out ChatEvent>,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeFor(
-            lifecycleOwner,
-            *eventTypes,
-            listener = filterRelevantEvents(listener),
-        )
-    }
+    ): Disposable = client.subscribeFor(
+        lifecycleOwner,
+        *eventTypes,
+        listener = filterRelevantEvents(listener),
+    )
 
     public fun subscribeForSingle(
         eventType: String,
         listener: ChatEventListener<ChatEvent>,
-    ): Disposable {
-        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
-    }
+    ): Disposable = client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
 
     public fun <T : ChatEvent> subscribeForSingle(
         eventType: Class<T>,
         listener: ChatEventListener<T>,
-    ): Disposable {
-        return client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
-    }
+    ): Disposable = client.subscribeForSingle(eventType, listener = filterRelevantEvents(listener))
 
     private fun <T : ChatEvent> filterRelevantEvents(
         listener: ChatEventListener<T>,
-    ): ChatEventListener<T> {
-        return ChatEventListener { event: T ->
-            if (isRelevantForChannel(event)) {
-                listener.onEvent(event)
-            }
+    ): ChatEventListener<T> = ChatEventListener { event: T ->
+        if (isRelevantForChannel(event)) {
+            listener.onEvent(event)
         }
     }
 
     @Suppress("ComplexMethod", "LongMethod")
-    private fun isRelevantForChannel(event: ChatEvent): Boolean {
-        return when (event) {
-            is ChannelDeletedEvent -> event.cid == cid
-            is ChannelHiddenEvent -> event.cid == cid
-            is ChannelTruncatedEvent -> event.cid == cid
-            is ChannelUpdatedEvent -> event.cid == cid
-            is ChannelUpdatedByUserEvent -> event.cid == cid
-            is ChannelVisibleEvent -> event.cid == cid
-            is MemberAddedEvent -> event.cid == cid
-            is MemberRemovedEvent -> event.cid == cid
-            is MemberUpdatedEvent -> event.cid == cid
-            is MessageDeletedEvent -> event.cid == cid
-            is MessageReadEvent -> event.cid == cid
-            is MessageUpdatedEvent -> event.cid == cid
-            is NewMessageEvent -> event.cid == cid
-            is NotificationAddedToChannelEvent -> event.cid == cid
-            is NotificationChannelDeletedEvent -> event.cid == cid
-            is NotificationChannelTruncatedEvent -> event.cid == cid
-            is NotificationInviteAcceptedEvent -> event.cid == cid
-            is NotificationInviteRejectedEvent -> event.cid == cid
-            is NotificationInvitedEvent -> event.cid == cid
-            is NotificationMarkReadEvent -> event.cid == cid
-            is NotificationMarkUnreadEvent -> event.cid == cid
-            is NotificationMessageNewEvent -> event.cid == cid
-            is NotificationThreadMessageNewEvent -> event.cid == cid
-            is NotificationRemovedFromChannelEvent -> event.cid == cid
-            is ReactionDeletedEvent -> event.cid == cid
-            is ReactionNewEvent -> event.cid == cid
-            is ReactionUpdateEvent -> event.cid == cid
-            is TypingStartEvent -> event.cid == cid
-            is TypingStopEvent -> event.cid == cid
-            is ChannelUserBannedEvent -> event.cid == cid
-            is UserStartWatchingEvent -> event.cid == cid
-            is UserStopWatchingEvent -> event.cid == cid
-            is ChannelUserUnbannedEvent -> event.cid == cid
-            is PollClosedEvent -> event.cid == cid
-            is PollDeletedEvent -> event.cid == cid
-            is PollUpdatedEvent -> event.cid == cid
-            is VoteCastedEvent -> event.cid == cid
-            is VoteChangedEvent -> event.cid == cid
-            is VoteRemovedEvent -> event.cid == cid
-            is AnswerCastedEvent -> event.cid == cid
-            is UnknownEvent -> event.rawData["cid"] == cid
-            is AIIndicatorUpdatedEvent -> event.cid == cid
-            is AIIndicatorClearEvent -> event.cid == cid
-            is AIIndicatorStopEvent -> event.cid == cid
-            is DraftMessageUpdatedEvent -> event.draftMessage.cid == cid
-            is DraftMessageDeletedEvent -> event.draftMessage.cid == cid
-            is ReminderCreatedEvent -> event.cid == cid
-            is ReminderUpdatedEvent -> event.cid == cid
-            is ReminderDeletedEvent -> event.cid == cid
-            is NotificationReminderDueEvent -> event.cid == cid
-            is UserMessagesDeletedEvent -> event.cid == cid
-            is HealthEvent,
-            is NotificationChannelMutesUpdatedEvent,
-            is NotificationMutesUpdatedEvent,
-            is GlobalUserBannedEvent,
-            is UserDeletedEvent,
-            is UserPresenceChangedEvent,
-            is GlobalUserUnbannedEvent,
-            is UserUpdatedEvent,
-            is ConnectedEvent,
-            is ConnectionErrorEvent,
-            is ConnectingEvent,
-            is DisconnectedEvent,
-            is ErrorEvent,
-            is MarkAllReadEvent,
-            -> false
-        }
+    private fun isRelevantForChannel(event: ChatEvent): Boolean = when (event) {
+        is ChannelDeletedEvent -> event.cid == cid
+        is ChannelHiddenEvent -> event.cid == cid
+        is ChannelTruncatedEvent -> event.cid == cid
+        is ChannelUpdatedEvent -> event.cid == cid
+        is ChannelUpdatedByUserEvent -> event.cid == cid
+        is ChannelVisibleEvent -> event.cid == cid
+        is MemberAddedEvent -> event.cid == cid
+        is MemberRemovedEvent -> event.cid == cid
+        is MemberUpdatedEvent -> event.cid == cid
+        is MessageDeletedEvent -> event.cid == cid
+        is MessageReadEvent -> event.cid == cid
+        is MessageUpdatedEvent -> event.cid == cid
+        is NewMessageEvent -> event.cid == cid
+        is NotificationAddedToChannelEvent -> event.cid == cid
+        is NotificationChannelDeletedEvent -> event.cid == cid
+        is NotificationChannelTruncatedEvent -> event.cid == cid
+        is NotificationInviteAcceptedEvent -> event.cid == cid
+        is NotificationInviteRejectedEvent -> event.cid == cid
+        is NotificationInvitedEvent -> event.cid == cid
+        is NotificationMarkReadEvent -> event.cid == cid
+        is NotificationMarkUnreadEvent -> event.cid == cid
+        is NotificationMessageNewEvent -> event.cid == cid
+        is NotificationThreadMessageNewEvent -> event.cid == cid
+        is NotificationRemovedFromChannelEvent -> event.cid == cid
+        is ReactionDeletedEvent -> event.cid == cid
+        is ReactionNewEvent -> event.cid == cid
+        is ReactionUpdateEvent -> event.cid == cid
+        is TypingStartEvent -> event.cid == cid
+        is TypingStopEvent -> event.cid == cid
+        is ChannelUserBannedEvent -> event.cid == cid
+        is UserStartWatchingEvent -> event.cid == cid
+        is UserStopWatchingEvent -> event.cid == cid
+        is ChannelUserUnbannedEvent -> event.cid == cid
+        is PollClosedEvent -> event.cid == cid
+        is PollDeletedEvent -> event.cid == cid
+        is PollUpdatedEvent -> event.cid == cid
+        is VoteCastedEvent -> event.cid == cid
+        is VoteChangedEvent -> event.cid == cid
+        is VoteRemovedEvent -> event.cid == cid
+        is AnswerCastedEvent -> event.cid == cid
+        is UnknownEvent -> event.rawData["cid"] == cid
+        is AIIndicatorUpdatedEvent -> event.cid == cid
+        is AIIndicatorClearEvent -> event.cid == cid
+        is AIIndicatorStopEvent -> event.cid == cid
+        is DraftMessageUpdatedEvent -> event.draftMessage.cid == cid
+        is DraftMessageDeletedEvent -> event.draftMessage.cid == cid
+        is ReminderCreatedEvent -> event.cid == cid
+        is ReminderUpdatedEvent -> event.cid == cid
+        is ReminderDeletedEvent -> event.cid == cid
+        is NotificationReminderDueEvent -> event.cid == cid
+        is UserMessagesDeletedEvent -> event.cid == cid
+        is HealthEvent,
+        is NotificationChannelMutesUpdatedEvent,
+        is NotificationMutesUpdatedEvent,
+        is GlobalUserBannedEvent,
+        is UserDeletedEvent,
+        is UserPresenceChangedEvent,
+        is GlobalUserUnbannedEvent,
+        is UserUpdatedEvent,
+        is ConnectedEvent,
+        is ConnectionErrorEvent,
+        is ConnectingEvent,
+        is DisconnectedEvent,
+        is ErrorEvent,
+        is MarkAllReadEvent,
+        -> false
     }
 
     @CheckResult
-    public fun query(request: QueryChannelRequest): Call<Channel> {
-        return client.queryChannel(channelType, channelId, request)
-    }
+    public fun query(request: QueryChannelRequest): Call<Channel> = client.queryChannel(channelType, channelId, request)
 
     @CheckResult
-    public fun watch(request: WatchChannelRequest): Call<Channel> {
-        return client.queryChannel(channelType, channelId, request)
-    }
+    public fun watch(request: WatchChannelRequest): Call<Channel> = client.queryChannel(channelType, channelId, request)
 
     @CheckResult
     public fun watch(data: Map<String, Any>): Call<Channel> {
@@ -347,30 +319,20 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun watch(): Call<Channel> {
-        return client.queryChannel(channelType, channelId, WatchChannelRequest())
-    }
+    public fun watch(): Call<Channel> = client.queryChannel(channelType, channelId, WatchChannelRequest())
 
     @CheckResult
-    public fun stopWatching(): Call<Unit> {
-        return client.stopWatching(channelType, channelId)
-    }
+    public fun stopWatching(): Call<Unit> = client.stopWatching(channelType, channelId)
 
     @CheckResult
-    public fun getMessage(messageId: String): Call<Message> {
-        return client.getMessage(messageId)
-    }
+    public fun getMessage(messageId: String): Call<Message> = client.getMessage(messageId)
 
     @CheckResult
-    public fun updateMessage(message: Message): Call<Message> {
-        return client.updateMessage(message)
-    }
+    public fun updateMessage(message: Message): Call<Message> = client.updateMessage(message)
 
     @CheckResult
     @JvmOverloads
-    public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
-        return client.deleteMessage(messageId, hard)
-    }
+    public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> = client.deleteMessage(messageId, hard)
 
     /**
      * Sends the message to the given channel with side effects if there is any plugin added in the client.
@@ -382,49 +344,39 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> {
-        return client.sendMessage(channelType, channelId, message, isRetrying)
-    }
+    public fun sendMessage(message: Message, isRetrying: Boolean = false): Call<Message> = client.sendMessage(channelType, channelId, message, isRetrying)
 
     @CheckResult
-    public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
-        return client.banUser(
-            targetId = targetId,
-            channelType = channelType,
-            channelId = channelId,
-            reason = reason,
-            timeout = timeout,
-        )
-    }
+    public fun banUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> = client.banUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+    )
 
     @CheckResult
-    public fun unbanUser(targetId: String): Call<Unit> {
-        return client.unbanUser(
-            targetId = targetId,
-            channelType = channelType,
-            channelId = channelId,
-        )
-    }
+    public fun unbanUser(targetId: String): Call<Unit> = client.unbanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+    )
 
     @CheckResult
-    public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> {
-        return client.shadowBanUser(
-            targetId = targetId,
-            channelType = channelType,
-            channelId = channelId,
-            reason = reason,
-            timeout = timeout,
-        )
-    }
+    public fun shadowBanUser(targetId: String, reason: String?, timeout: Int?): Call<Unit> = client.shadowBanUser(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+        reason = reason,
+        timeout = timeout,
+    )
 
     @CheckResult
-    public fun removeShadowBan(targetId: String): Call<Unit> {
-        return client.removeShadowBan(
-            targetId = targetId,
-            channelType = channelType,
-            channelId = channelId,
-        )
-    }
+    public fun removeShadowBan(targetId: String): Call<Unit> = client.removeShadowBan(
+        targetId = targetId,
+        channelType = channelType,
+        channelId = channelId,
+    )
 
     @CheckResult
     @JvmOverloads
@@ -452,9 +404,7 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
-    public fun markMessageRead(messageId: String): Call<Unit> {
-        return client.markMessageRead(channelType, channelId, messageId)
-    }
+    public fun markMessageRead(messageId: String): Call<Unit> = client.markMessageRead(channelType, channelId, messageId)
 
     /**
      * Marks a given thread in the channel as read.
@@ -462,14 +412,10 @@ public class ChannelClient internal constructor(
      * @param threadId The ID of the thread to mark as read.
      */
     @CheckResult
-    public fun markThreadRead(threadId: String): Call<Unit> {
-        return client.markThreadRead(channelType, channelId, threadId)
-    }
+    public fun markThreadRead(threadId: String): Call<Unit> = client.markThreadRead(channelType, channelId, threadId)
 
     @CheckResult
-    public fun markUnread(messageId: String): Call<Unit> {
-        return client.markUnread(channelType, channelId, messageId)
-    }
+    public fun markUnread(messageId: String): Call<Unit> = client.markUnread(channelType, channelId, messageId)
 
     /**
      * Marks a given thread in the channel starting from the given message as unread.
@@ -478,24 +424,16 @@ public class ChannelClient internal constructor(
      * @param threadId Id of the thread to mark as unread.
      */
     @CheckResult
-    public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> {
-        return client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
-    }
+    public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> = client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
 
     @CheckResult
-    public fun markRead(): Call<Unit> {
-        return client.markRead(channelType, channelId)
-    }
+    public fun markRead(): Call<Unit> = client.markRead(channelType, channelId)
 
     @CheckResult
-    public fun delete(): Call<Channel> {
-        return client.deleteChannel(channelType, channelId)
-    }
+    public fun delete(): Call<Channel> = client.deleteChannel(channelType, channelId)
 
     @CheckResult
-    public fun show(): Call<Unit> {
-        return client.showChannel(channelType, channelId)
-    }
+    public fun show(): Call<Unit> = client.showChannel(channelType, channelId)
 
     /**
      * Hides the channel.
@@ -506,9 +444,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for hiding a channel.
      */
     @CheckResult
-    public fun hide(clearHistory: Boolean = false): Call<Unit> {
-        return client.hideChannel(channelType, channelId, clearHistory)
-    }
+    public fun hide(clearHistory: Boolean = false): Call<Unit> = client.hideChannel(channelType, channelId, clearHistory)
 
     /**
      * Removes all of the messages of the channel but doesn't affect the channel data or members.
@@ -520,9 +456,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun truncate(systemMessage: Message? = null): Call<Channel> {
-        return client.truncateChannel(channelType, channelId, systemMessage)
-    }
+    public fun truncate(systemMessage: Message? = null): Call<Channel> = client.truncateChannel(channelType, channelId, systemMessage)
 
     /**
      * Uploads a file for the given channel. Progress can be accessed via [callback].
@@ -541,9 +475,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
-        return client.sendFile(channelType, channelId, file, callback)
-    }
+    public fun sendFile(file: File, callback: ProgressCallback? = null): Call<UploadedFile> = client.sendFile(channelType, channelId, file, callback)
 
     /**
      * Uploads an image for the given channel. Progress can be accessed via [callback].
@@ -564,9 +496,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
-        return client.sendImage(channelType, channelId, file, callback)
-    }
+    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedFile> = client.sendImage(channelType, channelId, file, callback)
 
     /**
      * Deletes the file represented by [url] from the given channel.
@@ -579,9 +509,7 @@ public class ChannelClient internal constructor(
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
      */
     @CheckResult
-    public fun deleteFile(url: String): Call<Unit> {
-        return client.deleteFile(channelType, channelId, url)
-    }
+    public fun deleteFile(url: String): Call<Unit> = client.deleteFile(channelType, channelId, url)
 
     /**
      * Deletes the image represented by [url] from the given channel.
@@ -594,9 +522,7 @@ public class ChannelClient internal constructor(
      * @see <a href="https://getstream.io/chat/docs/android/file_uploads/?language=kotlin">File Uploads</a>
      */
     @CheckResult
-    public fun deleteImage(url: String): Call<Unit> {
-        return client.deleteImage(channelType, channelId, url)
-    }
+    public fun deleteImage(url: String): Call<Unit> = client.deleteImage(channelType, channelId, url)
 
     /**
      * Sends the reaction.
@@ -617,14 +543,10 @@ public class ChannelClient internal constructor(
         reaction: Reaction,
         enforceUnique: Boolean = false,
         skipPush: Boolean = false,
-    ): Call<Reaction> {
-        return client.sendReaction(reaction, enforceUnique, cid, skipPush)
-    }
+    ): Call<Reaction> = client.sendReaction(reaction, enforceUnique, cid, skipPush)
 
     @CheckResult
-    public fun sendAction(request: SendActionRequest): Call<Message> {
-        return client.sendAction(request)
-    }
+    public fun sendAction(request: SendActionRequest): Call<Message> = client.sendAction(request)
 
     /**
      * Deletes the reaction associated with the message with the given message id.
@@ -637,23 +559,17 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for deleting the reaction.
      */
     @CheckResult
-    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> {
-        return client.deleteReaction(messageId = messageId, reactionType = reactionType, cid = cid)
-    }
+    public fun deleteReaction(messageId: String, reactionType: String): Call<Message> = client.deleteReaction(messageId = messageId, reactionType = reactionType, cid = cid)
 
     @CheckResult
-    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
-        return client.getReactions(messageId, offset, limit)
-    }
+    public fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> = client.getReactions(messageId, offset, limit)
 
     @CheckResult
     public fun getReactions(
         messageId: String,
         firstReactionId: String,
         limit: Int,
-    ): Call<List<Message>> {
-        return client.getRepliesMore(messageId, firstReactionId, limit)
-    }
+    ): Call<List<Message>> = client.getRepliesMore(messageId, firstReactionId, limit)
 
     /**
      * Updates all of the channel data. Any data that is present on the channel and not included in a full update
@@ -665,9 +581,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for updating channel data.
      */
     @CheckResult
-    public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel> {
-        return client.updateChannel(channelType, channelId, message, extraData)
-    }
+    public fun update(message: Message? = null, extraData: Map<String, Any> = emptyMap()): Call<Channel> = client.updateChannel(channelType, channelId, message, extraData)
 
     /**
      * Updates specific fields of channel data retaining the custom data fields which were set previously.
@@ -676,9 +590,7 @@ public class ChannelClient internal constructor(
      * @param unset The list of fields which will be removed from the existing channel data object.
      */
     @CheckResult
-    public fun updatePartial(set: Map<String, Any> = emptyMap(), unset: List<String> = emptyList()): Call<Channel> {
-        return client.updateChannelPartial(channelType, channelId, set, unset)
-    }
+    public fun updatePartial(set: Map<String, Any> = emptyMap(), unset: List<String> = emptyList()): Call<Channel> = client.updateChannelPartial(channelType, channelId, set, unset)
 
     /**
      * Updates specific fields of custom data for a given member.
@@ -692,9 +604,7 @@ public class ChannelClient internal constructor(
         userId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Member> {
-        return client.partialUpdateMember(channelType, channelId, userId, set, unset)
-    }
+    ): Call<Member> = client.partialUpdateMember(channelType, channelId, userId, set, unset)
 
     /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
@@ -706,8 +616,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for enabling slow mode.
      */
     @CheckResult
-    public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> =
-        client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
+    public fun enableSlowMode(cooldownTimeInSeconds: Int): Call<Channel> = client.enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
 
     /**
      * Disables slow mode for the channel.
@@ -715,8 +624,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for disabling slow mode.
      */
     @CheckResult
-    public fun disableSlowMode(): Call<Channel> =
-        client.disableSlowMode(channelType, channelId)
+    public fun disableSlowMode(): Call<Channel> = client.disableSlowMode(channelType, channelId)
 
     /**
      * Adds members to a given channel.
@@ -736,16 +644,14 @@ public class ChannelClient internal constructor(
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
         skipPush: Boolean? = null,
-    ): Call<Channel> {
-        return client.addMembers(
-            channelType = channelType,
-            channelId = channelId,
-            memberIds = memberIds,
-            systemMessage = systemMessage,
-            hideHistory = hideHistory,
-            skipPush = skipPush,
-        )
-    }
+    ): Call<Channel> = client.addMembers(
+        channelType = channelType,
+        channelId = channelId,
+        memberIds = memberIds,
+        systemMessage = systemMessage,
+        hideHistory = hideHistory,
+        skipPush = skipPush,
+    )
 
     /**
      * Adds members with extra data to a given channel.
@@ -756,13 +662,11 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for adding the members.
      */
     @CheckResult
-    public fun addMembers(params: AddMembersParams): Call<Channel> {
-        return client.addMembers(
-            channelType = channelType,
-            channelId = channelId,
-            params = params,
-        )
-    }
+    public fun addMembers(params: AddMembersParams): Call<Channel> = client.addMembers(
+        channelType = channelType,
+        channelId = channelId,
+        params = params,
+    )
 
     /**
      * Removes members from a given channel.
@@ -780,15 +684,13 @@ public class ChannelClient internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         skipPush: Boolean? = null,
-    ): Call<Channel> {
-        return client.removeMembers(
-            channelType = channelType,
-            channelId = channelId,
-            memberIds = memberIds,
-            systemMessage = systemMessage,
-            skipPush = skipPush,
-        )
-    }
+    ): Call<Channel> = client.removeMembers(
+        channelType = channelType,
+        channelId = channelId,
+        memberIds = memberIds,
+        systemMessage = systemMessage,
+        skipPush = skipPush,
+    )
 
     /**
      * Invites members to a given channel.
@@ -806,25 +708,19 @@ public class ChannelClient internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         skipPush: Boolean? = null,
-    ): Call<Channel> {
-        return client.inviteMembers(
-            channelType = channelType,
-            channelId = channelId,
-            memberIds = memberIds,
-            systemMessage = systemMessage,
-            skipPush = skipPush,
-        )
-    }
+    ): Call<Channel> = client.inviteMembers(
+        channelType = channelType,
+        channelId = channelId,
+        memberIds = memberIds,
+        systemMessage = systemMessage,
+        skipPush = skipPush,
+    )
 
     @CheckResult
-    public fun acceptInvite(message: String?): Call<Channel> {
-        return client.acceptInvite(channelType, channelId, message)
-    }
+    public fun acceptInvite(message: String?): Call<Channel> = client.acceptInvite(channelType, channelId, message)
 
     @CheckResult
-    public fun rejectInvite(): Call<Channel> {
-        return client.rejectInvite(channelType, channelId)
-    }
+    public fun rejectInvite(): Call<Channel> = client.rejectInvite(channelType, channelId)
 
     /**
      * Mutes a channel for the current user. Messages added to the channel will not trigger
@@ -841,9 +737,7 @@ public class ChannelClient internal constructor(
      */
     @JvmOverloads
     @CheckResult
-    public fun mute(expiration: Int? = null): Call<Unit> {
-        return client.muteChannel(channelType, channelId, expiration)
-    }
+    public fun mute(expiration: Int? = null): Call<Unit> = client.muteChannel(channelType, channelId, expiration)
 
     /**
      * Unmutes a channel for the current user. Triggers `notification.channel_mutes_updated`
@@ -854,9 +748,7 @@ public class ChannelClient internal constructor(
      * @see [NotificationChannelMutesUpdatedEvent]
      */
     @CheckResult
-    public fun unmute(): Call<Unit> {
-        return client.unmuteChannel(channelType, channelId)
-    }
+    public fun unmute(): Call<Unit> = client.unmuteChannel(channelType, channelId)
 
     /**
      * Mutes a user. Messages from muted users will not trigger push notifications. By default,
@@ -872,9 +764,7 @@ public class ChannelClient internal constructor(
      */
     @JvmOverloads
     @CheckResult
-    public fun muteUser(userId: String, timeout: Int? = null): Call<Mute> {
-        return client.muteUser(userId, timeout)
-    }
+    public fun muteUser(userId: String, timeout: Int? = null): Call<Mute> = client.muteUser(userId, timeout)
 
     /**
      * Unmutes a previously muted user. Triggers `notification.mutes_updated` event.
@@ -886,19 +776,13 @@ public class ChannelClient internal constructor(
      * @see [NotificationMutesUpdatedEvent]
      */
     @CheckResult
-    public fun unmuteUser(userId: String): Call<Unit> {
-        return client.unmuteUser(userId)
-    }
+    public fun unmuteUser(userId: String): Call<Unit> = client.unmuteUser(userId)
 
     @CheckResult
-    public fun muteCurrentUser(): Call<Mute> {
-        return client.muteCurrentUser()
-    }
+    public fun muteCurrentUser(): Call<Mute> = client.muteCurrentUser()
 
     @CheckResult
-    public fun unmuteCurrentUser(): Call<Unit> {
-        return client.unmuteCurrentUser()
-    }
+    public fun unmuteCurrentUser(): Call<Unit> = client.unmuteCurrentUser()
 
     /**
      * Sends a start typing event [EventType.TYPING_START] in this channel to the server.
@@ -910,9 +794,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun keystroke(parentId: String? = null): Call<ChatEvent> {
-        return client.keystroke(channelType, channelId, parentId)
-    }
+    public fun keystroke(parentId: String? = null): Call<ChatEvent> = client.keystroke(channelType, channelId, parentId)
 
     /**
      * Sends a stop typing event [EventType.TYPING_STOP] in this channel to the server.
@@ -924,9 +806,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun stopTyping(parentId: String? = null): Call<ChatEvent> {
-        return client.stopTyping(channelType, channelId, parentId)
-    }
+    public fun stopTyping(parentId: String? = null): Call<ChatEvent> = client.stopTyping(channelType, channelId, parentId)
 
     /**
      * Sends an event to all users watching the channel.
@@ -940,9 +820,7 @@ public class ChannelClient internal constructor(
     public fun sendEvent(
         eventType: String,
         extraData: Map<Any, Any> = emptyMap(),
-    ): Call<ChatEvent> {
-        return client.sendEvent(eventType, channelType, channelId, extraData)
-    }
+    ): Call<ChatEvent> = client.sendEvent(eventType, channelType, channelId, extraData)
 
     /**
      * Queries members for this channel.
@@ -962,17 +840,13 @@ public class ChannelClient internal constructor(
         filter: FilterObject,
         sort: QuerySorter<Member>,
         members: List<Member> = emptyList(),
-    ): Call<List<Member>> {
-        return client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-    }
+    ): Call<List<Member>> = client.queryMembers(channelType, channelId, offset, limit, filter, sort, members)
 
     @CheckResult
-    public fun getFileAttachments(offset: Int, limit: Int): Call<List<Attachment>> =
-        client.getFileAttachments(channelType, channelId, offset, limit)
+    public fun getFileAttachments(offset: Int, limit: Int): Call<List<Attachment>> = client.getFileAttachments(channelType, channelId, offset, limit)
 
     @CheckResult
-    public fun getImageAttachments(offset: Int, limit: Int): Call<List<Attachment>> =
-        client.getImageAttachments(channelType, channelId, offset, limit)
+    public fun getImageAttachments(offset: Int, limit: Int): Call<List<Attachment>> = client.getImageAttachments(channelType, channelId, offset, limit)
 
     /**
      * Returns a [Call] with messages that contain at least one desired type attachment but
@@ -983,15 +857,13 @@ public class ChannelClient internal constructor(
      * @param types Desired attachment's types list.
      */
     @CheckResult
-    public fun getMessagesWithAttachments(offset: Int, limit: Int, types: List<String>): Call<List<Message>> {
-        return client.getMessagesWithAttachments(
-            channelType = channelType,
-            channelId = channelId,
-            offset = offset,
-            limit = limit,
-            types = types,
-        )
-    }
+    public fun getMessagesWithAttachments(offset: Int, limit: Int, types: List<String>): Call<List<Message>> = client.getMessagesWithAttachments(
+        channelType = channelType,
+        channelId = channelId,
+        offset = offset,
+        limit = limit,
+        types = types,
+    )
 
     /**
      * Returns a list of messages pinned in the channel.
@@ -1011,25 +883,19 @@ public class ChannelClient internal constructor(
         limit: Int,
         sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
-    ): Call<List<Message>> {
-        return client.getPinnedMessages(
-            channelType = channelType,
-            channelId = channelId,
-            limit = limit,
-            sort = sort,
-            pagination = pagination,
-        )
-    }
+    ): Call<List<Message>> = client.getPinnedMessages(
+        channelType = channelType,
+        channelId = channelId,
+        limit = limit,
+        sort = sort,
+        pagination = pagination,
+    )
 
     @CheckResult
-    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> {
-        return client.pinMessage(message, expirationDate)
-    }
+    public fun pinMessage(message: Message, expirationDate: Date?): Call<Message> = client.pinMessage(message, expirationDate)
 
     @CheckResult
-    public fun pinMessage(message: Message, timeout: Int): Call<Message> {
-        return client.pinMessage(message, timeout)
-    }
+    public fun pinMessage(message: Message, timeout: Int): Call<Message> = client.pinMessage(message, timeout)
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)

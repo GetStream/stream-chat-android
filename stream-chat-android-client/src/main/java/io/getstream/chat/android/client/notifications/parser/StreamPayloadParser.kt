@@ -39,12 +39,10 @@ public object StreamPayloadParser {
     /**
      * Parses the [json] string into a [Map] of [String] to [Any].
      */
-    public fun parse(json: String?): Map<String, Any?> {
-        return try {
-            json?.takeIf { it.isNotBlank() }?.let { mapAdapter.fromJson(it) } ?: emptyMap()
-        } catch (e: Throwable) {
-            StreamLog.e(TAG, e) { "[parse] failed: $json" }
-            emptyMap()
-        }
+    public fun parse(json: String?): Map<String, Any?> = try {
+        json?.takeIf { it.isNotBlank() }?.let { mapAdapter.fromJson(it) } ?: emptyMap()
+    } catch (e: Throwable) {
+        StreamLog.e(TAG, e) { "[parse] failed: $json" }
+        emptyMap()
     }
 }

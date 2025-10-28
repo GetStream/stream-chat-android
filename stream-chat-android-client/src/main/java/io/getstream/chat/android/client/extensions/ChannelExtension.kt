@@ -72,8 +72,7 @@ public fun Channel.getUsersExcludingCurrent(
 @InternalStreamChatApi
 public fun Channel.getMembersExcludingCurrent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-): List<Member> =
-    members.filter { it.user.id != currentUser?.id }
+): List<Member> = members.filter { it.user.id != currentUser?.id }
 
 /**
  * Counts messages in which [user] is mentioned.
@@ -115,5 +114,4 @@ public fun Channel.currentUserUnreadCount(
  */
 public fun Channel.syncUnreadCountWithReads(
     currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
-): Channel =
-    copy(unreadCount = currentUserUnreadCount(currentUserId))
+): Channel = copy(unreadCount = currentUserUnreadCount(currentUserId))

@@ -35,17 +35,16 @@ import io.getstream.chat.android.ui.utils.R
  *
  * @return Last message from the channel or null if it doesn't exist.
  */
-public fun Channel.getPreviewMessage(currentUser: User?): Message? =
-    if (isInsideSearch) {
-        cachedLatestMessages
-    } else {
-        messages
-    }.asSequence()
-        .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filterNot { it.isDeleted() }
-        .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { it.isRegular() || it.isSystem() }
-        .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
+public fun Channel.getPreviewMessage(currentUser: User?): Message? = if (isInsideSearch) {
+    cachedLatestMessages
+} else {
+    messages
+}.asSequence()
+    .filter { it.createdAt != null || it.createdLocallyAt != null }
+    .filterNot { it.isDeleted() }
+    .filter { it.user.id == currentUser?.id || !it.shadowed }
+    .filter { it.isRegular() || it.isSystem() }
+    .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
 
 /**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.
@@ -63,11 +62,9 @@ public fun Channel.getDisplayName(
     currentUser: User? = ChatClient.instance().clientState.user.value,
     @StringRes fallback: Int,
     maxMembers: Int = 2,
-): String {
-    return name.takeIf { it.isNotEmpty() }
-        ?: nameFromMembers(context, currentUser, maxMembers)
-        ?: context.getString(fallback)
-}
+): String = name.takeIf { it.isNotEmpty() }
+    ?: nameFromMembers(context, currentUser, maxMembers)
+    ?: context.getString(fallback)
 
 private fun Channel.nameFromMembers(
     context: Context,
@@ -179,8 +176,6 @@ public fun Channel.getMembersStatusText(
  * @param currentUser The currently logged in user.
  * @return True if the channel is a one-to-one conversation.
  */
-private fun Channel.isOneToOne(currentUser: User?): Boolean {
-    return cid.contains("!members") &&
-        members.size == 2 &&
-        members.any { it.user.id == currentUser?.id }
-}
+private fun Channel.isOneToOne(currentUser: User?): Boolean = cid.contains("!members") &&
+    members.size == 2 &&
+    members.any { it.user.id == currentUser?.id }

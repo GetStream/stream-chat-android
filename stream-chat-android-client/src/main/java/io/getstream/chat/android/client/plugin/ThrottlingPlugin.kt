@@ -27,15 +27,14 @@ internal class ThrottlingPlugin(
     private val logger by taggedLogger("Chat:ThrottlingPlugin")
     private val liveLocationMap: MutableMap<String, Long> = mutableMapOf()
 
-    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
-        checkThrottling(
-            lastUpdateProvider = liveLocationMap,
-            key = location.messageId,
-            throttleMs = LIVE_LOCATION_THROTTLE_MS,
-        ) {
-            logger.w { "[onUpdateLiveLocationPrecondition] live location update is ignored (${location.messageId})" }
-            Error.GenericError("Live location update throttled")
-        }
+    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> = checkThrottling(
+        lastUpdateProvider = liveLocationMap,
+        key = location.messageId,
+        throttleMs = LIVE_LOCATION_THROTTLE_MS,
+    ) {
+        logger.w { "[onUpdateLiveLocationPrecondition] live location update is ignored (${location.messageId})" }
+        Error.GenericError("Live location update throttled")
+    }
 
     private fun checkThrottling(
         lastUpdateProvider: MutableMap<String, Long>,

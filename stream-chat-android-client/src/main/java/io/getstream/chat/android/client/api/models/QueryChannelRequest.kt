@@ -109,44 +109,32 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
      * @return Whether the request contains any of [Pagination] values or not. If it does the messages are being
      * filtered.
      */
-    public fun isFilteringMessages(): Boolean {
-        return Pagination.values().map { it.toString() }.intersect(messages.keys).isNotEmpty()
-    }
+    public fun isFilteringMessages(): Boolean = Pagination.values().map { it.toString() }.intersect(messages.keys).isNotEmpty()
 
     /**
      * Returns offset of watchers for a requested channel.
      */
-    public fun watchersOffset(): Int {
-        return watchers[KEY_OFFSET] as? Int ?: 0
-    }
+    public fun watchersOffset(): Int = watchers[KEY_OFFSET] as? Int ?: 0
 
     /**
      * Returns offset of members for a requested channel.
      */
-    public fun membersOffset(): Int {
-        return watchers[KEY_OFFSET] as? Int ?: 0
-    }
+    public fun membersOffset(): Int = watchers[KEY_OFFSET] as? Int ?: 0
 
     /**
      * Returns limit of messages for a requested channel.
      */
-    public fun messagesLimit(): Int {
-        return messages[KEY_LIMIT] as? Int ?: 0
-    }
+    public fun messagesLimit(): Int = messages[KEY_LIMIT] as? Int ?: 0
 
     /**
      * Returns limit of watchers for a requested channel.
      */
-    public fun watchersLimit(): Int {
-        return watchers[KEY_LIMIT] as? Int ?: 0
-    }
+    public fun watchersLimit(): Int = watchers[KEY_LIMIT] as? Int ?: 0
 
     /**
      * Returns limit of members for a requested channel.
      */
-    public fun membersLimit(): Int {
-        return messages[KEY_LIMIT] as? Int ?: 0
-    }
+    public fun membersLimit(): Int = messages[KEY_LIMIT] as? Int ?: 0
 
     /**
      * Returns a pair value of [Pagination] and id of message for this pagination. Can be absent.
@@ -192,19 +180,17 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return result
     }
 
-    override fun toString(): String {
-        return "QueryChannelRequest(" +
-            "state=$state, " +
-            "watch=$watch, " +
-            "presence=$presence, " +
-            "shouldRefresh=$shouldRefresh, " +
-            "isWatchChannel=$isWatchChannel, " +
-            "isNotificationUpdate=$isNotificationUpdate, " +
-            "messages=$messages, " +
-            "watchers=$watchers, " +
-            "members=$members, " +
-            "data=$data)"
-    }
+    override fun toString(): String = "QueryChannelRequest(" +
+        "state=$state, " +
+        "watch=$watch, " +
+        "presence=$presence, " +
+        "shouldRefresh=$shouldRefresh, " +
+        "isWatchChannel=$isWatchChannel, " +
+        "isNotificationUpdate=$isNotificationUpdate, " +
+        "messages=$messages, " +
+        "watchers=$watchers, " +
+        "members=$members, " +
+        "data=$data)"
 
     internal companion object {
         private const val KEY_LIMIT = "limit"

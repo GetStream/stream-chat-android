@@ -44,9 +44,7 @@ internal class QueryChannelsStateLogic(
 
     private val logger by taggedLogger("QueryChannelsStateLogic")
 
-    internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
-        return mutableState.handleChatEvent(event, cachedChannel)
-    }
+    internal fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult = mutableState.handleChatEvent(event, cachedChannel)
 
     /**
      * Returns the loading status.
@@ -164,11 +162,10 @@ internal class QueryChannelsStateLogic(
         }
     }
 
-    private fun Channel.joinMessages(existingChannel: Channel?): Channel =
-        copy(
-            messages = ((existingChannel?.messages ?: emptyList()) + messages)
-                .distinctBy { it.id },
-        )
+    private fun Channel.joinMessages(existingChannel: Channel?): Channel = copy(
+        messages = ((existingChannel?.messages ?: emptyList()) + messages)
+            .distinctBy { it.id },
+    )
 
     /**
      * The list of members is merged with the existing list of members but only used if it is smaller than the
@@ -178,15 +175,14 @@ internal class QueryChannelsStateLogic(
      *
      * @return Channel The channel with the members list updated.
      */
-    private fun Channel.joinMembers(existingChannel: Channel?): Channel =
-        existingChannel?.let { oldChannel ->
-            val members = (members.associateBy { it.getUserId() } + (oldChannel.members.associateBy { it.getUserId() }))
-                .takeUnless { it.size > memberCount }
-                ?.values
-                ?.toList()
-                ?: members
-            copy(members = members)
-        } ?: this
+    private fun Channel.joinMembers(existingChannel: Channel?): Channel = existingChannel?.let { oldChannel ->
+        val members = (members.associateBy { it.getUserId() } + (oldChannel.members.associateBy { it.getUserId() }))
+            .takeUnless { it.size > memberCount }
+            ?.values
+            ?.toList()
+            ?: members
+        copy(members = members)
+    } ?: this
 
     /**
      * Remove channels to state.

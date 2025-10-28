@@ -252,24 +252,22 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         mimeType: String,
         attachmentType: AttachmentType,
         uploadedFile: UploadedFile,
-    ): Attachment {
-        return copy(
-            name = file.name,
-            fileSize = file.length().toInt(),
-            mimeType = mimeType,
-            uploadState = Attachment.UploadState.Success,
-            title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
-            thumbUrl = uploadedFile.thumbUrl,
-            type = type ?: attachmentType.toString(),
-            imageUrl = when (attachmentType) {
-                AttachmentType.IMAGE -> uploadedFile.file
-                AttachmentType.VIDEO -> uploadedFile.thumbUrl
-                else -> imageUrl
-            },
-            assetUrl = uploadedFile.file,
-            extraData = (extraData + uploadedFile.extraData) - EXTRA_UPLOAD_ID,
-        )
-    }
+    ): Attachment = copy(
+        name = file.name,
+        fileSize = file.length().toInt(),
+        mimeType = mimeType,
+        uploadState = Attachment.UploadState.Success,
+        title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
+        thumbUrl = uploadedFile.thumbUrl,
+        type = type ?: attachmentType.toString(),
+        imageUrl = when (attachmentType) {
+            AttachmentType.IMAGE -> uploadedFile.file
+            AttachmentType.VIDEO -> uploadedFile.thumbUrl
+            else -> imageUrl
+        },
+        assetUrl = uploadedFile.file,
+        extraData = (extraData + uploadedFile.extraData) - EXTRA_UPLOAD_ID,
+    )
 
     private fun String?.toAttachmentType(): AttachmentType {
         if (this == null) {
@@ -288,8 +286,6 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         FILE("file"),
         ;
 
-        override fun toString(): String {
-            return value
-        }
+        override fun toString(): String = value
     }
 }

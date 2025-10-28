@@ -103,45 +103,43 @@ public class UploadAttachmentsWorker(
     }
 
     @Suppress("TooGenericExceptionCaught")
-    private suspend fun uploadAttachments(message: Message): List<Attachment> {
-        return try {
-            message.attachments.map { attachment ->
-                if (attachment.uploadState != Attachment.UploadState.Success) {
-                    logger.d {
-                        "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
-                            "for message ${message.id}"
-                    }
-                    val progressCallback = channelStateLogic?.let { logic ->
-                        ProgressCallbackImpl(
-                            message.id,
-                            attachment.uploadId!!,
-                            logic,
-                        )
-                    }
-
-                    attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
-                        .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
-                        .value
-                } else {
-                    logger.i {
-                        "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
-                            " for message ${message.id} already uploaded"
-                    }
-                    attachment
+    private suspend fun uploadAttachments(message: Message): List<Attachment> = try {
+        message.attachments.map { attachment ->
+            if (attachment.uploadState != Attachment.UploadState.Success) {
+                logger.d {
+                    "[uploadAttachments] #uploader; uploading attachment ${attachment.uploadId} " +
+                        "for message ${message.id}"
                 }
-            }.toMutableList()
-        } catch (e: Exception) {
-            logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
-            message.attachments.map {
-                it.copy(
-                    uploadState = it.uploadState
-                        .takeIf { it == Attachment.UploadState.Success }
-                        ?: Attachment.UploadState.Failed(
-                            Error.ThrowableError(message = "Could not upload attachments.", cause = e),
-                        ),
-                )
-            }.toMutableList()
-        }
+                val progressCallback = channelStateLogic?.let { logic ->
+                    ProgressCallbackImpl(
+                        message.id,
+                        attachment.uploadId!!,
+                        logic,
+                    )
+                }
+
+                attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
+                    .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
+                    .value
+            } else {
+                logger.i {
+                    "[uploadAttachments] #uploader; attachment ${attachment.uploadId}" +
+                        " for message ${message.id} already uploaded"
+                }
+                attachment
+            }
+        }.toMutableList()
+    } catch (e: Exception) {
+        logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
+        message.attachments.map {
+            it.copy(
+                uploadState = it.uploadState
+                    .takeIf { it == Attachment.UploadState.Success }
+                    ?: Attachment.UploadState.Failed(
+                        Error.ThrowableError(message = "Could not upload attachments.", cause = e),
+                    ),
+            )
+        }.toMutableList()
     }
 
     private suspend fun updateMessages(message: Message) {
@@ -160,8 +158,7 @@ public class UploadAttachmentsWorker(
         private val messageId: String,
         private val uploadId: String,
         private val channelStateLogic: ChannelMessagesUpdateLogic,
-    ) :
-        ProgressCallback {
+    ) : ProgressCallback {
         override fun onSuccess(url: String?) {
             StreamLog.i(TAG) { "[Progress.onSuccess] #uploader; url: $url" }
             updateAttachmentUploadState(messageId, uploadId, Attachment.UploadState.Success)

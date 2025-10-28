@@ -36,10 +36,8 @@ public class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
     }
 
-    override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {
-        return intent?.data.takeIf { resultCode == Activity.RESULT_OK }?.let { listOf(it) }
-            ?: parseMultipleResults(intent?.clipData?.takeIf { resultCode == Activity.RESULT_OK })
-    }
+    override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> = intent?.data.takeIf { resultCode == Activity.RESULT_OK }?.let { listOf(it) }
+        ?: parseMultipleResults(intent?.clipData?.takeIf { resultCode == Activity.RESULT_OK })
 
     private fun parseMultipleResults(clipData: ClipData?): List<Uri> {
         return clipData?.let {

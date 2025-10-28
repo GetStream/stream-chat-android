@@ -21,11 +21,9 @@ package io.getstream.chat.android.uitests.util
  *
  * @param name The name of the file to read.
  */
-fun readFileContents(name: String): String {
-    return Resources.javaClass.classLoader
-        .getResourceAsStream(name)
-        .bufferedReader()
-        .readText()
-}
+fun readFileContents(name: String): String = Resources.javaClass.classLoader
+    .getResourceAsStream(name)
+    .bufferedReader()
+    .readText()
 
 private object Resources

@@ -46,8 +46,6 @@ public sealed class ChannelsStateData {
      * Observe chatDomain.online to know if results are currently up to date
      */
     public data class Result(val channels: List<Channel>) : ChannelsStateData() {
-        override fun toString(): String {
-            return "ChannelsStateData.Result(channels.size=${channels.size})"
-        }
+        override fun toString(): String = "ChannelsStateData.Result(channels.size=${channels.size})"
     }
 }

@@ -49,24 +49,20 @@ internal class MediaAttachmentAdapter(
 
     private val attachments: MutableList<MediaAttachmentListItem> = mutableListOf()
 
-    override fun getItemViewType(position: Int): Int {
-        return when (attachments[position]) {
-            is MediaAttachmentListItem.AddMoreItem -> VIEW_TYPE_ADD_MORE
-            is MediaAttachmentListItem.MediaAttachmentItem -> VIEW_TYPE_MEDIA_ATTACHMENT
-        }
+    override fun getItemViewType(position: Int): Int = when (attachments[position]) {
+        is MediaAttachmentListItem.AddMoreItem -> VIEW_TYPE_ADD_MORE
+        is MediaAttachmentListItem.MediaAttachmentItem -> VIEW_TYPE_MEDIA_ATTACHMENT
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == VIEW_TYPE_MEDIA_ATTACHMENT) {
-            StreamUiItemAttachmentMediaBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let { MediaAttachmentViewHolder(it, onAttachmentSelected, style) }
-        } else {
-            // No other possible item types
-            StreamUiItemAttachmentMediaAddMoreBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let { AddMoreViewHolder(it, onAddMoreClick) }
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = if (viewType == VIEW_TYPE_MEDIA_ATTACHMENT) {
+        StreamUiItemAttachmentMediaBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { MediaAttachmentViewHolder(it, onAttachmentSelected, style) }
+    } else {
+        // No other possible item types
+        StreamUiItemAttachmentMediaAddMoreBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { AddMoreViewHolder(it, onAddMoreClick) }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

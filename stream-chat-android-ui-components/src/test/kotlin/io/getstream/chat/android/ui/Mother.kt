@@ -50,16 +50,15 @@ public fun randomMessageItem(
     isThreadMode: Boolean = randomBoolean(),
     isMessageRead: Boolean = randomBoolean(),
     showMessageFooter: Boolean = randomBoolean(),
-): MessageListItem.MessageItem =
-    MessageListItem.MessageItem(
-        message = message,
-        positions = positions,
-        isMine = isMine,
-        messageReadBy = messageReadBy,
-        isThreadMode = isThreadMode,
-        isMessageRead = isMessageRead,
-        showMessageFooter = showMessageFooter,
-    )
+): MessageListItem.MessageItem = MessageListItem.MessageItem(
+    message = message,
+    positions = positions,
+    isMine = isMine,
+    messageReadBy = messageReadBy,
+    isThreadMode = isThreadMode,
+    isMessageRead = isMessageRead,
+    showMessageFooter = showMessageFooter,
+)
 
 @Suppress("LongMethod")
 public fun randomMessageListViewStyle(
@@ -223,8 +222,7 @@ public fun randomScrollButtonViewStyle(
     scrollButtonInternalMargin = scrollButtonInternalMargin,
 )
 
-public fun randomNewMessagesBehaviour(): MessageListView.NewMessagesBehaviour =
-    MessageListView.NewMessagesBehaviour.entries.toTypedArray().random()
+public fun randomNewMessagesBehaviour(): MessageListView.NewMessagesBehaviour = MessageListView.NewMessagesBehaviour.entries.toTypedArray().random()
 
 public fun randomMessageListItemStyle(
     messageBackgroundColorMine: Int? = randomInt(),

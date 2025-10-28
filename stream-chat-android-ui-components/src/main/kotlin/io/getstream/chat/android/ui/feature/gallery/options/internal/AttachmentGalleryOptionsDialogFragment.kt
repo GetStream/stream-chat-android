@@ -58,11 +58,9 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
      */
     private var isMessageMine: Boolean = false
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiFragmentAttachmentOptionsBinding.inflate(requireContext().streamThemeInflater, container, false)
-            .apply { _binding = this }
-            .root
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = StreamUiFragmentAttachmentOptionsBinding.inflate(requireContext().streamThemeInflater, container, false)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -179,14 +177,12 @@ internal class AttachmentGalleryOptionsDialogFragment : FullScreenDialogFragment
             deleteOptionHandler: AttachmentOptionHandler,
             saveMediaOptionHandler: AttachmentOptionHandler,
             isMessageMine: Boolean,
-        ): AttachmentGalleryOptionsDialogFragment {
-            return AttachmentGalleryOptionsDialogFragment().apply {
-                setShowInChatOptionHandler(showInChatOptionHandler)
-                setReplyOptionHandler(replyOptionHandler)
-                setDeleteOptionHandler(deleteOptionHandler)
-                setSaveImageOptionHandler(saveMediaOptionHandler)
-                setIsMessageMine(isMessageMine)
-            }
+        ): AttachmentGalleryOptionsDialogFragment = AttachmentGalleryOptionsDialogFragment().apply {
+            setShowInChatOptionHandler(showInChatOptionHandler)
+            setReplyOptionHandler(replyOptionHandler)
+            setDeleteOptionHandler(deleteOptionHandler)
+            setSaveImageOptionHandler(saveMediaOptionHandler)
+            setIsMessageMine(isMessageMine)
         }
     }
 }

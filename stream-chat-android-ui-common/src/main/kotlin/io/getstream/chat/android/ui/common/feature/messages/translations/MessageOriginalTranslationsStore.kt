@@ -40,9 +40,7 @@ public class MessageOriginalTranslationsStore private constructor() {
      * @param messageId The ID of the message to check.
      * @return `true` if the original text translation should be shown, `false` otherwise.
      */
-    public fun shouldShowOriginalText(messageId: String): Boolean {
-        return _originalTextMessageIds.value.contains(messageId)
-    }
+    public fun shouldShowOriginalText(messageId: String): Boolean = _originalTextMessageIds.value.contains(messageId)
 
     /**
      * Shows the original text for a given translated message ID.
@@ -93,8 +91,6 @@ public class MessageOriginalTranslationsStore private constructor() {
          * @param channelId The ID of the channel for which to retrieve the store.
          * @return The [MessageOriginalTranslationsStore] associated with the specified channel ID.
          */
-        public fun forChannel(channelId: String): MessageOriginalTranslationsStore {
-            return stores.getOrPut(channelId) { MessageOriginalTranslationsStore() }
-        }
+        public fun forChannel(channelId: String): MessageOriginalTranslationsStore = stores.getOrPut(channelId) { MessageOriginalTranslationsStore() }
     }
 }

@@ -37,7 +37,9 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.att
 /**
  * An Activity representing a self-contained channel list screen with custom attachment factories.
  */
-class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListItemClickListener {
+class ChannelsActivity :
+    ChannelListActivity(),
+    ChannelListFragment.ChannelListItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,8 +86,6 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
          * @param context The context used to create the intent.
          * @return The [Intent] to start [ChannelsActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, ChannelsActivity::class.java)
     }
 }

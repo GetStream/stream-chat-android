@@ -34,25 +34,23 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemSt
  *
  * @return [MessageListItem] derived from [MessageListItemCommon].
  */
-public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
-    return when (this) {
-        is DateSeparatorItemState -> MessageListItem.DateSeparatorItem(date = date)
-        is SystemMessageItemState -> MessageListItem.MessageItem(message = message)
-        is ModeratedMessageItemState -> MessageListItem.MessageItem(message = message)
-        is ThreadDateSeparatorItemState -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = replyCount)
-        is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
-        is MessageItemState -> MessageListItem.MessageItem(
-            message = message,
-            positions = groupPosition,
-            isMine = isMine,
-            messageReadBy = messageReadBy,
-            isThreadMode = isInThread,
-            isMessageRead = isMessageRead,
-            showMessageFooter = showMessageFooter,
-            showOriginalText = showOriginalText,
-        )
-        is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
-        is UnreadSeparatorItemState -> MessageListItem.UnreadSeparatorItem(unreadCount = unreadCount)
-        is StartOfTheChannelItemState -> MessageListItem.StartOfTheChannelItem(channel = channel)
-    }
+public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem = when (this) {
+    is DateSeparatorItemState -> MessageListItem.DateSeparatorItem(date = date)
+    is SystemMessageItemState -> MessageListItem.MessageItem(message = message)
+    is ModeratedMessageItemState -> MessageListItem.MessageItem(message = message)
+    is ThreadDateSeparatorItemState -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = replyCount)
+    is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
+    is MessageItemState -> MessageListItem.MessageItem(
+        message = message,
+        positions = groupPosition,
+        isMine = isMine,
+        messageReadBy = messageReadBy,
+        isThreadMode = isInThread,
+        isMessageRead = isMessageRead,
+        showMessageFooter = showMessageFooter,
+        showOriginalText = showOriginalText,
+    )
+    is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
+    is UnreadSeparatorItemState -> MessageListItem.UnreadSeparatorItem(unreadCount = unreadCount)
+    is StartOfTheChannelItemState -> MessageListItem.StartOfTheChannelItem(channel = channel)
 }

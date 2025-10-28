@@ -65,12 +65,20 @@ internal open class ChatSocket(
         reconnectCallback = { chatSocketStateService.onWebSocketEventLost() },
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override suspend fun resume() { chatSocketStateService.onResume() }
-        override suspend fun stopped() { chatSocketStateService.onStop() }
+        override suspend fun resume() {
+            chatSocketStateService.onResume()
+        }
+        override suspend fun stopped() {
+            chatSocketStateService.onStop()
+        }
     }
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
-        override suspend fun onConnected() { chatSocketStateService.onNetworkAvailable() }
-        override suspend fun onDisconnected() { chatSocketStateService.onNetworkNotAvailable() }
+        override suspend fun onConnected() {
+            chatSocketStateService.onNetworkAvailable()
+        }
+        override suspend fun onDisconnected() {
+            chatSocketStateService.onNetworkNotAvailable()
+        }
     }
 
     @Suppress("ComplexMethod")
@@ -330,30 +338,24 @@ internal open class ChatSocket(
             is State.Disconnected.WebSocketEventLost -> DisconnectCause.WebSocketNotAvailable
         }
 
-    private fun ConnectionErrorEvent.toNetworkError(): Error.NetworkError {
-        return Error.NetworkError(
-            message = error.message +
-                moreInfoTemplate(error.moreInfo) +
-                buildDetailsTemplate(error.details),
-            serverErrorCode = error.code,
-            statusCode = error.statusCode,
-        )
+    private fun ConnectionErrorEvent.toNetworkError(): Error.NetworkError = Error.NetworkError(
+        message = error.message +
+            moreInfoTemplate(error.moreInfo) +
+            buildDetailsTemplate(error.details),
+        serverErrorCode = error.code,
+        statusCode = error.statusCode,
+    )
+
+    private fun moreInfoTemplate(moreInfo: String): String = if (moreInfo.isNotBlank()) {
+        "\nMore information available at $moreInfo"
+    } else {
+        ""
     }
 
-    private fun moreInfoTemplate(moreInfo: String): String {
-        return if (moreInfo.isNotBlank()) {
-            "\nMore information available at $moreInfo"
-        } else {
-            ""
-        }
-    }
-
-    private fun buildDetailsTemplate(details: List<ChatErrorDetail>): String {
-        return if (details.isNotEmpty()) {
-            "\nError details: $details"
-        } else {
-            ""
-        }
+    private fun buildDetailsTemplate(details: List<ChatErrorDetail>): String = if (details.isNotEmpty()) {
+        "\nError details: $details"
+    } else {
+        ""
     }
 
     companion object {

@@ -50,13 +50,9 @@ fun Fragment.showToast(text: String) {
     Toast.makeText(activity, text, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.getColorFromRes(@ColorRes id: Int): Int {
-    return ContextCompat.getColor(this, id)
-}
+fun Context.getColorFromRes(@ColorRes id: Int): Int = ContextCompat.getColor(this, id)
 
-fun Context.getDimensionPixelSize(@DimenRes id: Int): Int {
-    return resources.getDimensionPixelSize(id)
-}
+fun Context.getDimensionPixelSize(@DimenRes id: Int): Int = resources.getDimensionPixelSize(id)
 
 fun EditText.hideKeyboard() {
     val imm: InputMethodManager =

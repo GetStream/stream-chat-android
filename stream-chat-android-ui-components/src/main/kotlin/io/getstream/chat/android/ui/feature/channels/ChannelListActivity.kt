@@ -57,14 +57,12 @@ public open class ChannelListActivity : AppCompatActivity() {
      * instance of [ChannelListFragment] with custom arguments or if you want to create a subclass
      * of [ChannelListFragment].
      */
-    protected open fun createChannelListFragment(): ChannelListFragment {
-        return ChannelListFragment.newInstance {
-            setFragment(ChannelListFragment())
-            customTheme(R.style.StreamUiTheme_ChannelListScreen)
-            showSearch(true)
-            showHeader(true)
-            headerTitle(getString(R.string.stream_ui_channel_list_header_connected))
-        }
+    protected open fun createChannelListFragment(): ChannelListFragment = ChannelListFragment.newInstance {
+        setFragment(ChannelListFragment())
+        customTheme(R.style.StreamUiTheme_ChannelListScreen)
+        showSearch(true)
+        showHeader(true)
+        headerTitle(getString(R.string.stream_ui_channel_list_header_connected))
     }
 
     private fun setupEdgeToEdge() {
@@ -87,8 +85,6 @@ public open class ChannelListActivity : AppCompatActivity() {
         public fun createIntent(
             context: Context,
             activityClass: Class<out ChannelListActivity> = ChannelListActivity::class.java,
-        ): Intent {
-            return Intent(context, activityClass)
-        }
+        ): Intent = Intent(context, activityClass)
     }
 }

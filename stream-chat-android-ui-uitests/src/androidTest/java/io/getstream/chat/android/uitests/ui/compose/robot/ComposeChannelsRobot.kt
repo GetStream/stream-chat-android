@@ -28,9 +28,7 @@ import org.junit.rules.TestRule
  */
 internal fun ComposeTestRule.composeChannelsRobot(
     block: ComposeChannelsRobot.() -> Unit,
-): ComposeChannelsRobot {
-    return ComposeChannelsRobot(this).apply { block() }
-}
+): ComposeChannelsRobot = ComposeChannelsRobot(this).apply { block() }
 
 /**
  * A robot that simulates user behavior on the channels screen.

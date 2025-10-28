@@ -29,13 +29,12 @@ internal class BaselineProfileGenerator {
     internal val baselineProfileRule = BaselineProfileRule()
 
     @Test
-    fun startupComposeSample() =
-        baselineProfileRule.collect(
-            packageName = COMPOSE_SAMPLE_PACKAGE_NAME,
-            stableIterations = 2,
-            maxIterations = 8,
-            includeInStartupProfile = true,
-        ) {
-            composeSampleScenarios()
-        }
+    fun startupComposeSample() = baselineProfileRule.collect(
+        packageName = COMPOSE_SAMPLE_PACKAGE_NAME,
+        stableIterations = 2,
+        maxIterations = 8,
+        includeInStartupProfile = true,
+    ) {
+        composeSampleScenarios()
+    }
 }

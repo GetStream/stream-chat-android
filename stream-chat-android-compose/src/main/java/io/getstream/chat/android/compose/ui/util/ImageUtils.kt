@@ -100,12 +100,10 @@ internal fun initialsGradient(initials: String): Brush {
  *
  * Useful since the Painter from Compose doesn't know how to parse `autoMirrored` flags in SVGs.
  */
-public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
-    return this.scale(
-        scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
-        scaleY = 1f,
-    )
-}
+public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier = this.scale(
+    scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
+    scaleY = 1f,
+)
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
@@ -396,19 +394,17 @@ public fun rememberStreamImagePainter(
     onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
     contentScale: ContentScale = ContentScale.Fit,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-): AsyncImagePainter {
-    return rememberStreamImagePainter(
-        model = data.toImageRequest(LocalContext.current),
-        placeholderPainter = placeholderPainter,
-        errorPainter = errorPainter,
-        fallbackPainter = fallbackPainter,
-        contentScale = contentScale,
-        onSuccess = onSuccess,
-        onError = onError,
-        onLoading = onLoading,
-        filterQuality = filterQuality,
-    )
-}
+): AsyncImagePainter = rememberStreamImagePainter(
+    model = data.toImageRequest(LocalContext.current),
+    placeholderPainter = placeholderPainter,
+    errorPainter = errorPainter,
+    fallbackPainter = fallbackPainter,
+    contentScale = contentScale,
+    onSuccess = onSuccess,
+    onError = onError,
+    onLoading = onLoading,
+    filterQuality = filterQuality,
+)
 
 /**
  * Wrapper around the [coil.compose.rememberAsyncImagePainter] that plugs in our [LocalStreamImageLoader] singleton
@@ -444,22 +440,20 @@ public fun rememberStreamImagePainter(
     onError: ((AsyncImagePainter.State.Error) -> Unit)? = null,
     contentScale: ContentScale = ContentScale.Fit,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
-): AsyncImagePainter {
-    return rememberAsyncImagePainter(
-        model = model
-            .convertUrl(LocalContext.current, ChatTheme.streamImageAssetTransformer)
-            .provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
-        imageLoader = LocalStreamImageLoader.current,
-        placeholder = placeholderPainter,
-        error = errorPainter,
-        fallback = fallbackPainter,
-        contentScale = contentScale,
-        onSuccess = onSuccess,
-        onError = onError,
-        onLoading = onLoading,
-        filterQuality = filterQuality,
-    )
-}
+): AsyncImagePainter = rememberAsyncImagePainter(
+    model = model
+        .convertUrl(LocalContext.current, ChatTheme.streamImageAssetTransformer)
+        .provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
+    imageLoader = LocalStreamImageLoader.current,
+    placeholder = placeholderPainter,
+    error = errorPainter,
+    fallback = fallbackPainter,
+    contentScale = contentScale,
+    onSuccess = onSuccess,
+    onError = onError,
+    onLoading = onLoading,
+    filterQuality = filterQuality,
+)
 
 private fun (() -> ImageRequest).convertUrl(
     context: Context,
@@ -469,11 +463,9 @@ private fun (() -> ImageRequest).convertUrl(
 private fun ImageRequest.convertUrl(
     context: Context,
     imageAssetTransformer: ImageAssetTransformer,
-): ImageRequest {
-    return this.newBuilder(context)
-        .data(imageAssetTransformer.transform(data))
-        .build()
-}
+): ImageRequest = this.newBuilder(context)
+    .data(imageAssetTransformer.transform(data))
+    .build()
 
 /**
  * Converts the current lambda to another one that returns an [ImageRequest] that can be used to load the image.
@@ -485,8 +477,7 @@ private fun ImageRequest.convertUrl(
 private fun (() -> Any?).asImageRequest(
     context: Context,
     block: ImageRequest.Builder.() -> Unit = { },
-): () -> ImageRequest =
-    { this().toImageRequest(context, block) }
+): () -> ImageRequest = { this().toImageRequest(context, block) }
 
 /**
  * Converts the current data to an [ImageRequest] that can be used to load the image.
@@ -498,11 +489,10 @@ private fun (() -> Any?).asImageRequest(
 private fun Any?.toImageRequest(
     context: Context,
     block: ImageRequest.Builder.() -> Unit = { },
-): ImageRequest =
-    ImageRequest.Builder(context)
-        .data(this)
-        .apply(block)
-        .build()
+): ImageRequest = ImageRequest.Builder(context)
+    .data(this)
+    .apply(block)
+    .build()
 
 /**
  * Converts the current lambda to another one that provides headers to the [ImageRequest] based on
@@ -527,13 +517,12 @@ private fun (() -> ImageRequest).provideHeaders(
 private fun ImageRequest.provideHeaders(
     context: Context,
     imageHeaderProvider: ImageHeadersProvider,
-): ImageRequest =
-    this.newBuilder(context).apply {
-        httpHeaders(
-            imageHeaderProvider.getImageRequestHeaders(data.toString())
-                .toNetworkHeaders(),
-        )
-    }.build()
+): ImageRequest = this.newBuilder(context).apply {
+    httpHeaders(
+        imageHeaderProvider.getImageRequestHeaders(data.toString())
+            .toNetworkHeaders(),
+    )
+}.build()
 
 /**
  * Set the [SizeResolver] as a new build of the [ImageRequest].

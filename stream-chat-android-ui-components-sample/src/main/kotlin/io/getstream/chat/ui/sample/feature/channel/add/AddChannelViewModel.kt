@@ -107,12 +107,10 @@ class AddChannelViewModel : ViewModel() {
         )
     }
 
-    private fun createFilter(defaultFilter: FilterObject, optionalFilter: FilterObject?): FilterObject {
-        return if (optionalFilter != null) {
-            Filters.and(defaultFilter, optionalFilter)
-        } else {
-            defaultFilter
-        }
+    private fun createFilter(defaultFilter: FilterObject, optionalFilter: FilterObject?): FilterObject = if (optionalFilter != null) {
+        Filters.and(defaultFilter, optionalFilter)
+    } else {
+        defaultFilter
     }
 
     private fun createChannel() {

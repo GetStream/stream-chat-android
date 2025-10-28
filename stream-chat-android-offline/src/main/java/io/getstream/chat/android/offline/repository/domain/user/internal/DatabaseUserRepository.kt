@@ -96,9 +96,7 @@ internal class DatabaseUserRepository(
      *
      * @param userId String.
      */
-    override suspend fun selectUser(userId: String): User? {
-        return userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
-    }
+    override suspend fun selectUser(userId: String): User? = userCache[userId] ?: userDao.select(userId)?.let(::toModel)?.also { cacheUsers(listOf(it)) }
 
     /**
      * @return The list of users stored in the cache.
@@ -117,26 +115,25 @@ internal class DatabaseUserRepository(
         scope.launch { latestUsersFlow.value = userCache.snapshot() }
     }
 
-    private fun User.toEntity(): UserEntity =
-        UserEntity(
-            id = id,
-            name = name,
-            image = image,
-            originalId = id,
-            role = role,
-            createdAt = createdAt,
-            updatedAt = updatedAt,
-            lastActive = lastActive,
-            invisible = isInvisible,
-            privacySettings = privacySettings?.toEntity(),
-            banned = isBanned,
-            mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
-            teams = teams,
-            teamsRole = teamsRole,
-            avgResponseTime = avgResponseTime,
-            pushPreference = pushPreference?.toEntity(),
-            extraData = extraData,
-        )
+    private fun User.toEntity(): UserEntity = UserEntity(
+        id = id,
+        name = name,
+        image = image,
+        originalId = id,
+        role = role,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        lastActive = lastActive,
+        invisible = isInvisible,
+        privacySettings = privacySettings?.toEntity(),
+        banned = isBanned,
+        mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
+        teams = teams,
+        teamsRole = teamsRole,
+        avgResponseTime = avgResponseTime,
+        pushPreference = pushPreference?.toEntity(),
+        extraData = extraData,
+    )
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
         User(

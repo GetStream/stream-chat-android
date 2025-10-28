@@ -34,10 +34,8 @@ public data class MessageOptionsTheme(
     public companion object {
         public fun defaultTheme(
             optionVisibility: MessageOptionItemVisibility = MessageOptionItemVisibility(),
-        ): MessageOptionsTheme {
-            return MessageOptionsTheme(
-                optionVisibility = optionVisibility,
-            )
-        }
+        ): MessageOptionsTheme = MessageOptionsTheme(
+            optionVisibility = optionVisibility,
+        )
     }
 }

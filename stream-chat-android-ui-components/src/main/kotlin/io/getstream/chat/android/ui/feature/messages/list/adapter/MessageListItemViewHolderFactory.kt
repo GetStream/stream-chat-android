@@ -173,9 +173,7 @@ public open class MessageListItemViewHolderFactory {
      *
      * For built-in view types, see [MessageListItemViewType] and its constants.
      */
-    public open fun getItemViewType(item: MessageListItem): Int {
-        return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
-    }
+    public open fun getItemViewType(item: MessageListItem): Int = MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
 
     /**
      * Returns a view type value based on the type of the given [viewHolder].
@@ -184,26 +182,24 @@ public open class MessageListItemViewHolderFactory {
      *
      * For built-in view types, see [MessageListItemViewType] and its constants.
      */
-    public open fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
-        return when (viewHolder) {
-            is DateDividerViewHolder -> DATE_DIVIDER
-            is MessageDeletedViewHolder -> MESSAGE_DELETED
-            is MessagePlainTextViewHolder -> PLAIN_TEXT
-            is CustomAttachmentsViewHolder -> CUSTOM_ATTACHMENTS
-            is LoadingMoreViewHolder -> LOADING_INDICATOR
-            is ThreadSeparatorViewHolder -> THREAD_SEPARATOR
-            is GiphyViewHolder -> GIPHY
-            is SystemMessageViewHolder -> SYSTEM_MESSAGE
-            is ErrorMessageViewHolder -> ERROR_MESSAGE
-            is EmptyViewHolder -> viewHolder.viewType
-            is LinkAttachmentsViewHolder -> LINK_ATTACHMENTS
-            is GiphyAttachmentViewHolder -> GIPHY_ATTACHMENT
-            is FileAttachmentsViewHolder -> FILE_ATTACHMENTS
-            is MediaAttachmentsViewHolder -> MEDIA_ATTACHMENT
-            is UnreadSeparatorViewHolder -> UNREAD_SEPARATOR
-            is PollViewHolder -> POLL
-            else -> throw IllegalArgumentException("Unhandled MessageList view holder: $viewHolder")
-        }
+    public open fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int = when (viewHolder) {
+        is DateDividerViewHolder -> DATE_DIVIDER
+        is MessageDeletedViewHolder -> MESSAGE_DELETED
+        is MessagePlainTextViewHolder -> PLAIN_TEXT
+        is CustomAttachmentsViewHolder -> CUSTOM_ATTACHMENTS
+        is LoadingMoreViewHolder -> LOADING_INDICATOR
+        is ThreadSeparatorViewHolder -> THREAD_SEPARATOR
+        is GiphyViewHolder -> GIPHY
+        is SystemMessageViewHolder -> SYSTEM_MESSAGE
+        is ErrorMessageViewHolder -> ERROR_MESSAGE
+        is EmptyViewHolder -> viewHolder.viewType
+        is LinkAttachmentsViewHolder -> LINK_ATTACHMENTS
+        is GiphyAttachmentViewHolder -> GIPHY_ATTACHMENT
+        is FileAttachmentsViewHolder -> FILE_ATTACHMENTS
+        is MediaAttachmentsViewHolder -> MEDIA_ATTACHMENT
+        is UnreadSeparatorViewHolder -> UNREAD_SEPARATOR
+        is PollViewHolder -> POLL
+        else -> throw IllegalArgumentException("Unhandled MessageList view holder: $viewHolder")
     }
 
     /**
@@ -213,28 +209,26 @@ public open class MessageListItemViewHolderFactory {
     public open fun createViewHolder(
         parentView: ViewGroup,
         viewType: Int,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return when (viewType) {
-            DATE_DIVIDER -> createDateDividerViewHolder(parentView)
-            MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
-            PLAIN_TEXT -> createPlainTextViewHolder(parentView)
-            CUSTOM_ATTACHMENTS -> createCustomAttachmentsViewHolder(parentView)
-            LOADING_INDICATOR -> createLoadingMoreViewHolder(parentView)
-            THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
-            TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView, viewType)
-            GIPHY -> createGiphyMessageItemViewHolder(parentView)
-            SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
-            ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
-            THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView, viewType)
-            LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
-            GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
-            FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
-            MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
-            UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
-            START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView, viewType)
-            POLL -> createPollItemViewHolder(parentView)
-            else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
-        }
+    ): BaseMessageItemViewHolder<out MessageListItem> = when (viewType) {
+        DATE_DIVIDER -> createDateDividerViewHolder(parentView)
+        MESSAGE_DELETED -> createMessageDeletedViewHolder(parentView)
+        PLAIN_TEXT -> createPlainTextViewHolder(parentView)
+        CUSTOM_ATTACHMENTS -> createCustomAttachmentsViewHolder(parentView)
+        LOADING_INDICATOR -> createLoadingMoreViewHolder(parentView)
+        THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
+        TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView, viewType)
+        GIPHY -> createGiphyMessageItemViewHolder(parentView)
+        SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
+        ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
+        THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView, viewType)
+        LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
+        GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
+        FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
+        MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
+        UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
+        START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView, viewType)
+        POLL -> createPollItemViewHolder(parentView)
+        else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
     }
 
     /**
@@ -245,15 +239,13 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createCustomAttachmentsViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return CustomAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            textTransformer,
-            attachmentFactoryManager,
-        )
-    }
+    ): BaseMessageItemViewHolder<out MessageListItem> = CustomAttachmentsViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        textTransformer,
+        attachmentFactoryManager,
+    )
 
     /**
      * Creates the Giphy view holder, that holds various a Giphy image.
@@ -263,14 +255,12 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createGiphyAttachmentViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return GiphyAttachmentViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            markdown = textTransformer,
-        )
-    }
+    ): BaseMessageItemViewHolder<out MessageListItem> = GiphyAttachmentViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        markdown = textTransformer,
+    )
 
     /**
      * Creates a ViewHolder for messages containing image and/or video attachments and no other type
@@ -281,36 +271,30 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createMediaAttachmentsViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<out MessageListItem> {
-        return MediaAttachmentsViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            textTransformer,
-            audioRecordViewStyle,
-        )
-    }
+    ): BaseMessageItemViewHolder<out MessageListItem> = MediaAttachmentsViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        textTransformer,
+        audioRecordViewStyle,
+    )
 
     private fun createPollItemViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return PollViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            style,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = PollViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        style,
+    )
     private fun createUnreadSeparatorViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem> {
-        return UnreadSeparatorViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            style,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem> = UnreadSeparatorViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        style,
+    )
 
     /**
      * Creates a date divider view holder.
@@ -320,9 +304,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createDateDividerViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> {
-        return DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.DateSeparatorItem> = DateDividerViewHolder(parentView, decoratorProvider.decorators, style)
 
     /**
      * Creates a loading more view holder.
@@ -332,9 +314,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createLoadingMoreViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.LoadingMoreIndicatorItem> {
-        return LoadingMoreViewHolder(parentView, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.LoadingMoreIndicatorItem> = LoadingMoreViewHolder(parentView, style)
 
     /**
      * Creates the deleted message view holder, that's visible only to the user that deleted the message.
@@ -344,9 +324,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
 
     /**
      * Creates a text  view holder.
@@ -356,14 +334,12 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createPlainTextViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessagePlainTextViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            textTransformer,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = MessagePlainTextViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        textTransformer,
+    )
 
     /**
      * Creates a thread separator view holder when in a Thread.
@@ -373,9 +349,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createThreadSeparatorViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> {
-        return ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem> = ThreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
 
     /**
      * Creates the Giphy message view holder, that holds a Giphy that hasn't been sent yet and can be shuffled and canceled.
@@ -385,14 +359,12 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createGiphyMessageItemViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return GiphyViewHolder(
-            parentView,
-            decoratorProvider.decorators,
-            listeners,
-            giphyViewHolderStyle,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = GiphyViewHolder(
+        parentView,
+        decoratorProvider.decorators,
+        listeners,
+        giphyViewHolderStyle,
+    )
 
     /**
      * Creates the system message view holder.
@@ -402,9 +374,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createSystemMessageItemViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return SystemMessageViewHolder(parentView, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = SystemMessageViewHolder(parentView, style)
 
     /**
      * Creates the error message view holder.
@@ -414,9 +384,7 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createErrorMessageItemViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return ErrorMessageViewHolder(parentView, style)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = ErrorMessageViewHolder(parentView, style)
 
     /**
      * Creates the empty message view holder.
@@ -427,9 +395,7 @@ public open class MessageListItemViewHolderFactory {
     private fun createEmptyMessageItemViewHolder(
         parentView: ViewGroup,
         viewType: Int,
-    ): BaseMessageItemViewHolder<MessageListItem> {
-        return EmptyViewHolder(parentView, viewType)
-    }
+    ): BaseMessageItemViewHolder<MessageListItem> = EmptyViewHolder(parentView, viewType)
 
     /**
      * Creates a ViewHolder for messages containing file attachments.
@@ -439,14 +405,12 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createFileAttachmentsViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return FileAttachmentsViewHolder(
-            parent = parentView,
-            decorators = decoratorProvider.decorators,
-            listeners = listeners,
-            messageTextTransformer = textTransformer,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = FileAttachmentsViewHolder(
+        parent = parentView,
+        decorators = decoratorProvider.decorators,
+        listeners = listeners,
+        messageTextTransformer = textTransformer,
+    )
 
     /**
      * Creates a ViewHolder for messages containing link attachments and no other type
@@ -457,13 +421,11 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createLinkAttachmentsViewHolder(
         parentView: ViewGroup,
-    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return LinkAttachmentsViewHolder(
-            parent = parentView,
-            decorators = decoratorProvider.decorators,
-            listeners = listeners,
-            style = style,
-            messageTextTransformer = textTransformer,
-        )
-    }
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> = LinkAttachmentsViewHolder(
+        parent = parentView,
+        decorators = decoratorProvider.decorators,
+        listeners = listeners,
+        style = style,
+        messageTextTransformer = textTransformer,
+    )
 }

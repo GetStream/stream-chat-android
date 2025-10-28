@@ -29,23 +29,17 @@ import io.getstream.chat.ui.sample.feature.channel.add.header.MemberClickListene
 class AddGroupChannelMembersAdapter :
     ListAdapter<User, AddGroupChannelMembersAdapter.MemberViewHolder>(
         object : DiffUtil.ItemCallback<User>() {
-            override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
-                return oldItem.id == newItem.id
-            }
+            override fun areItemsTheSame(oldItem: User, newItem: User): Boolean = oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
-                return oldItem == newItem
-            }
+            override fun areContentsTheSame(oldItem: User, newItem: User): Boolean = oldItem == newItem
         },
     ) {
 
     var memberClickListener: MemberClickListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
-        return AddGroupChannelMemberItemBinding
-            .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-            .let(::MemberViewHolder)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder = AddGroupChannelMemberItemBinding
+        .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+        .let(::MemberViewHolder)
 
     override fun onBindViewHolder(holder: MemberViewHolder, position: Int) {
         holder.bind(getItem(position))

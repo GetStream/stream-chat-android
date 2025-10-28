@@ -48,13 +48,11 @@ public data class MessageUnreadSeparatorTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): MessageUnreadSeparatorTheme {
-            return MessageUnreadSeparatorTheme(
-                textStyle = typography.body.copy(
-                    color = colors.textHighEmphasisInverse,
-                ),
-                backgroundColor = colors.overlayDark,
-            )
-        }
+        ): MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme(
+            textStyle = typography.body.copy(
+                color = colors.textHighEmphasisInverse,
+            ),
+            backgroundColor = colors.overlayDark,
+        )
     }
 }

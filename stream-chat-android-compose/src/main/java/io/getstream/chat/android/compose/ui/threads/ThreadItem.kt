@@ -258,23 +258,21 @@ internal fun ThreadItemLatestReplyContent(
     }
 }
 
-private fun unreadCountForUser(thread: Thread, user: User?) =
-    thread.read
-        .find { it.user.id == user?.id }
-        ?.unreadMessages
-        ?: 0
+private fun unreadCountForUser(thread: Thread, user: User?) = thread.read
+    .find { it.user.id == user?.id }
+    ?.unreadMessages
+    ?: 0
 
 @Composable
-private fun formatMessage(message: Message) =
-    if (message.isDeleted()) {
-        buildAnnotatedString {
-            withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
-                append(stringResource(id = R.string.stream_ui_message_list_message_deleted))
-            }
+private fun formatMessage(message: Message) = if (message.isDeleted()) {
+    buildAnnotatedString {
+        withStyle(SpanStyle(fontStyle = FontStyle.Italic)) {
+            append(stringResource(id = R.string.stream_ui_message_list_message_deleted))
         }
-    } else {
-        ChatTheme.messagePreviewFormatter.formatMessagePreview(message, null)
     }
+} else {
+    ChatTheme.messagePreviewFormatter.formatMessagePreview(message, null)
+}
 
 @Composable
 @Preview

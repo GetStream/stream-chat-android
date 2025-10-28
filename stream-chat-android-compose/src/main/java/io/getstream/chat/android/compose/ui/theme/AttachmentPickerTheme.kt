@@ -56,16 +56,14 @@ public data class AttachmentPickerTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): AttachmentPickerTheme {
-            return AttachmentPickerTheme(
-                backgroundOverlay = colors.overlay,
-                backgroundSecondary = colors.inputBackground,
-                backgroundPrimary = colors.barsBackground,
-                checkIconBackgroundColor = colors.overlayDark,
-                checkIconTintColor = colors.textHighEmphasisInverse,
-                contentColor = colors.overlayDark,
-                saveAttachmentsOnDismiss = false,
-            )
-        }
+        ): AttachmentPickerTheme = AttachmentPickerTheme(
+            backgroundOverlay = colors.overlay,
+            backgroundSecondary = colors.inputBackground,
+            backgroundPrimary = colors.barsBackground,
+            checkIconBackgroundColor = colors.overlayDark,
+            checkIconTintColor = colors.textHighEmphasisInverse,
+            contentColor = colors.overlayDark,
+            saveAttachmentsOnDismiss = false,
+        )
     }
 }

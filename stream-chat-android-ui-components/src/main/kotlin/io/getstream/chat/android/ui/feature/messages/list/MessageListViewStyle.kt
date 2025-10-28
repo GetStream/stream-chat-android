@@ -316,7 +316,8 @@ public data class MessageListViewStyle(
                         R.styleable.AudioRecordPlayerView,
                     ).use {
                         audioRecordViewStyleOwn = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it,
+                            context = context,
+                            attributes = it,
                         )
                     }
                 }
@@ -332,7 +333,8 @@ public data class MessageListViewStyle(
                         R.styleable.AudioRecordPlayerView,
                     ).use {
                         audioRecordViewStyleTheirs = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it,
+                            context = context,
+                            attributes = it,
                         )
                     }
                 }
@@ -694,25 +696,23 @@ public data class MessageListViewStyle(
             }
         }
 
-        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle {
-            return TextStyle.Builder(typedArray)
-                .color(
-                    R.styleable.MessageListView_streamUiEmptyStateTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary),
-                )
-                .size(
-                    R.styleable.MessageListView_streamUiEmptyStateTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium),
-                )
-                .font(
-                    R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
-                    R.styleable.MessageListView_streamUiEmptyStateTextFont,
-                )
-                .style(
-                    R.styleable.MessageListView_streamUiEmptyStateTextStyle,
-                    Typeface.NORMAL,
-                )
-                .build()
-        }
+        private fun emptyViewStyle(context: Context, typedArray: TypedArray): TextStyle = TextStyle.Builder(typedArray)
+            .color(
+                R.styleable.MessageListView_streamUiEmptyStateTextColor,
+                context.getColorCompat(R.color.stream_ui_text_color_primary),
+            )
+            .size(
+                R.styleable.MessageListView_streamUiEmptyStateTextSize,
+                context.getDimension(R.dimen.stream_ui_text_medium),
+            )
+            .font(
+                R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
+                R.styleable.MessageListView_streamUiEmptyStateTextFont,
+            )
+            .style(
+                R.styleable.MessageListView_streamUiEmptyStateTextStyle,
+                Typeface.NORMAL,
+            )
+            .build()
     }
 }

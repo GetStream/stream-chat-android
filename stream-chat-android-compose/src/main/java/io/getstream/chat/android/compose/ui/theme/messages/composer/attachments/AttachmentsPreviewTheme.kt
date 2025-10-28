@@ -43,10 +43,8 @@ public data class AttachmentsPreviewTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): AttachmentsPreviewTheme {
-            return AttachmentsPreviewTheme(
-                audioRecording = AudioRecordingAttachmentPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
-            )
-        }
+        ): AttachmentsPreviewTheme = AttachmentsPreviewTheme(
+            audioRecording = AudioRecordingAttachmentPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
+        )
     }
 }

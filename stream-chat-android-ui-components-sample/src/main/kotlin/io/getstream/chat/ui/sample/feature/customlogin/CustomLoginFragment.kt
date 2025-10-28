@@ -75,14 +75,12 @@ class CustomLoginFragment : Fragment() {
         )
     }
 
-    private fun collectCredentials(): LoginCredentials {
-        return LoginCredentials(
-            apiKey = binding.apiKeyEditText.trimmedText,
-            userId = binding.userIdEditText.trimmedText,
-            userToken = binding.userTokenEditText.trimmedText,
-            userName = binding.userNameEditText.trimmedText,
-        )
-    }
+    private fun collectCredentials(): LoginCredentials = LoginCredentials(
+        apiKey = binding.apiKeyEditText.trimmedText,
+        userId = binding.userIdEditText.trimmedText,
+        userToken = binding.userTokenEditText.trimmedText,
+        userName = binding.userNameEditText.trimmedText,
+    )
 
     private fun showLoading() {
         binding.loadingProgressBar.isVisible = true

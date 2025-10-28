@@ -60,36 +60,28 @@ internal class DatabaseReactionRepository(
      *
      * @param id A [ReactionEntity.id] to search for.
      */
-    override suspend fun selectReactionById(id: Int): Reaction? {
-        return reactionDao.selectReactionById(id)?.toModel(getUser)
-    }
+    override suspend fun selectReactionById(id: Int): Reaction? = reactionDao.selectReactionById(id)?.toModel(getUser)
 
     /**
      * Selects all reactions with specified [ids]
      *
      * @param ids A list of [ReactionEntity.id] to search for.
      */
-    override suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction> {
-        return reactionDao.selectReactionsByIds(ids).map { it.toModel(getUser) }
-    }
+    override suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction> = reactionDao.selectReactionsByIds(ids).map { it.toModel(getUser) }
 
     /**
      * Selects all reaction ids with specific [SyncStatus].
      *
      * @param syncStatus [SyncStatus]
      */
-    override suspend fun selectReactionIdsBySyncStatus(syncStatus: SyncStatus): List<Int> {
-        return reactionDao.selectIdsSyncStatus(syncStatus)
-    }
+    override suspend fun selectReactionIdsBySyncStatus(syncStatus: SyncStatus): List<Int> = reactionDao.selectIdsSyncStatus(syncStatus)
 
     /**
      * Selects all reactions with specific [SyncStatus].
      *
      * @param syncStatus [SyncStatus]
      */
-    override suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction> {
-        return reactionDao.selectSyncStatus(syncStatus).map { it.toModel(getUser) }
-    }
+    override suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction> = reactionDao.selectSyncStatus(syncStatus).map { it.toModel(getUser) }
 
     /**
      * Selects the reaction of given type to the message if exists.
@@ -104,13 +96,11 @@ internal class DatabaseReactionRepository(
         reactionType: String,
         messageId: String,
         userId: String,
-    ): Reaction? {
-        return reactionDao.selectUserReactionToMessage(
-            reactionType = reactionType,
-            messageId = messageId,
-            userId = userId,
-        )?.toModel(getUser)
-    }
+    ): Reaction? = reactionDao.selectUserReactionToMessage(
+        reactionType = reactionType,
+        messageId = messageId,
+        userId = userId,
+    )?.toModel(getUser)
 
     /**
      * Selects all current user reactions of a message.
@@ -121,10 +111,8 @@ internal class DatabaseReactionRepository(
     override suspend fun selectUserReactionsToMessage(
         messageId: String,
         userId: String,
-    ): List<Reaction> {
-        return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
-            .map { it.toModel(getUser) }
-    }
+    ): List<Reaction> = reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
+        .map { it.toModel(getUser) }
 
     /**
      * Deletes a reaction.

@@ -569,25 +569,21 @@ internal class UnreadLabelCalculatorTest {
         user: User,
         createdAt: Date,
         deletedAt: Date? = null,
-    ): Message {
-        return randomMessage(
-            id = id,
-            user = user,
-            createdAt = createdAt,
-            deletedAt = deletedAt,
-            deletedForMe = false,
-        )
-    }
+    ): Message = randomMessage(
+        id = id,
+        user = user,
+        createdAt = createdAt,
+        deletedAt = deletedAt,
+        deletedForMe = false,
+    )
 
     private fun createChannelUserRead(
         lastReadMessageId: String?,
         unreadMessages: Int,
         lastRead: Date,
-    ): ChannelUserRead {
-        return randomChannelUserRead(
-            lastReadMessageId = lastReadMessageId,
-            unreadMessages = unreadMessages,
-            lastRead = lastRead,
-        )
-    }
+    ): ChannelUserRead = randomChannelUserRead(
+        lastReadMessageId = lastReadMessageId,
+        unreadMessages = unreadMessages,
+        lastRead = lastRead,
+    )
 }

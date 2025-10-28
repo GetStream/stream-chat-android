@@ -28,7 +28,9 @@ import io.getstream.chat.ui.sample.feature.channel.add.header.AddMemberButtonCli
 import io.getstream.chat.ui.sample.feature.channel.add.header.MemberClickListener
 import io.getstream.chat.ui.sample.feature.channel.add.header.MembersInputChangedListener
 
-class AddGroupChannelHeaderView : FrameLayout, AddChannelHeader {
+class AddGroupChannelHeaderView :
+    FrameLayout,
+    AddChannelHeader {
 
     override val viewContext: Context
         get() = context

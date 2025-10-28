@@ -109,9 +109,7 @@ internal class ScrollButtonView : FrameLayout {
         binding.unreadCountTextView.isVisible = isVisible
     }
 
-    private fun formatUnreadCount(unreadCount: Int): CharSequence {
-        return if (unreadCount > MAX_UNREAD_VALUE) "$MAX_UNREAD_VALUE+" else unreadCount.toString()
-    }
+    private fun formatUnreadCount(unreadCount: Int): CharSequence = if (unreadCount > MAX_UNREAD_VALUE) "$MAX_UNREAD_VALUE+" else unreadCount.toString()
 
     private companion object {
         private const val MAX_UNREAD_VALUE = 999

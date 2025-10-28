@@ -19,18 +19,14 @@ package io.getstream.chat.android.uitests.snapshot.utils
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
-internal fun randomUser(isOnline: Boolean = true): User {
-    return User(
-        id = "${('A'..'Z').random()}${('A'..'Z').random()}",
-        name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
-        online = isOnline,
-        image = randomImageUrl(),
-    )
-}
+internal fun randomUser(isOnline: Boolean = true): User = User(
+    id = "${('A'..'Z').random()}${('A'..'Z').random()}",
+    name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
+    online = isOnline,
+    image = randomImageUrl(),
+)
 
-internal fun randomMessage(): Message {
-    return Message(text = "Random message")
-}
+internal fun randomMessage(): Message = Message(text = "Random message")
 
 internal fun randomImageUrl(): String {
     val category = listOf("men", "women").random()

@@ -83,11 +83,9 @@ internal open class BaseRepositoryFacadeTest {
                 getChannel: suspend (cid: String) -> Channel?,
             ): ThreadsRepository = threadsRepository
 
-            override fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
-                messages
+            override fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository = messages
 
-            override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository =
-                reactions
+            override fun createReactionRepository(getUser: suspend (userId: String) -> User): ReactionRepository = reactions
 
             override fun createSyncStateRepository(): SyncStateRepository = syncState
         }

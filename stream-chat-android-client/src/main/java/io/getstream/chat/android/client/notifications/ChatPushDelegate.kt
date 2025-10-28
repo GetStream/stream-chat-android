@@ -37,19 +37,18 @@ internal class ChatPushDelegate : PushDelegate() {
 
     private val expectedKeys = hashSetOf(KEY_CHANNEL_ID, KEY_MESSAGE_ID, KEY_CHANNEL_TYPE, KEY_GETSTREAM)
 
-    override fun handlePushMessage(metadata: Map<String, Any?>, payload: Map<String, Any?>): Boolean =
-        payload.ifValid {
-            ChatClient.handlePushMessage(
-                PushMessage(
-                    channelType = extractChannelType(payload),
-                    channelId = extractChannelId(payload),
-                    messageId = payload.getValue(KEY_MESSAGE_ID) as String,
-                    getstream = StreamPayloadParser.parse(payload[KEY_GETSTREAM] as? String),
-                    extraData = payload.filterKeys { it !in expectedKeys },
-                    metadata = metadata,
-                ),
-            )
-        }
+    override fun handlePushMessage(metadata: Map<String, Any?>, payload: Map<String, Any?>): Boolean = payload.ifValid {
+        ChatClient.handlePushMessage(
+            PushMessage(
+                channelType = extractChannelType(payload),
+                channelId = extractChannelId(payload),
+                messageId = payload.getValue(KEY_MESSAGE_ID) as String,
+                getstream = StreamPayloadParser.parse(payload[KEY_GETSTREAM] as? String),
+                extraData = payload.filterKeys { it !in expectedKeys },
+                metadata = metadata,
+            ),
+        )
+    }
 
     override fun registerPushDevice(pushDevice: PushDevice) {
         ChatClient.setDevice(pushDevice.toDevice())
@@ -89,12 +88,11 @@ internal class ChatPushDelegate : PushDelegate() {
     }
 }
 
-internal fun PushDevice.toDevice(): Device =
-    Device(
-        token = token,
-        pushProvider = pushProvider.toDevicePushProvider(),
-        providerName = providerName,
-    )
+internal fun PushDevice.toDevice(): Device = Device(
+    token = token,
+    pushProvider = pushProvider.toDevicePushProvider(),
+    providerName = providerName,
+)
 
 private fun PushProvider.toDevicePushProvider(): DevicePushProvider = when (this) {
     PushProvider.FIREBASE -> DevicePushProvider.FIREBASE

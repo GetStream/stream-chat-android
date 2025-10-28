@@ -28,24 +28,16 @@ internal class ChannelMembersAdapter(
     private val onMemberClicked: (Member) -> Unit,
 ) : ListAdapter<Member, ChannelMembersAdapter.ChannelMemberViewHolder>(ChannelMembersDiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
-        return StreamUiItemChannelMemberBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { ChannelMemberViewHolder(it, onMemberClicked) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder = StreamUiItemChannelMemberBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { ChannelMemberViewHolder(it, onMemberClicked) }
 
-    override fun onBindViewHolder(holder: ChannelMemberViewHolder, position: Int) {
-        return holder.bind(getItem(position))
-    }
+    override fun onBindViewHolder(holder: ChannelMemberViewHolder, position: Int) = holder.bind(getItem(position))
 
     object ChannelMembersDiffCallback : DiffUtil.ItemCallback<Member>() {
-        override fun areItemsTheSame(oldItem: Member, newItem: Member): Boolean {
-            return oldItem.user.id == newItem.user.id
-        }
+        override fun areItemsTheSame(oldItem: Member, newItem: Member): Boolean = oldItem.user.id == newItem.user.id
 
-        override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean {
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: Member, newItem: Member): Boolean = oldItem == newItem
     }
 
     class ChannelMemberViewHolder(

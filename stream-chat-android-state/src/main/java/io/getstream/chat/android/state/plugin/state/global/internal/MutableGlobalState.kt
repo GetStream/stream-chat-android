@@ -177,9 +177,7 @@ internal class MutableGlobalState(
         }
     }
 
-    private fun List<Location>.removeExpired(): List<Location> =
-        filter(nonExpiredPredicate())
+    private fun List<Location>.removeExpired(): List<Location> = filter(nonExpiredPredicate())
 
-    private fun nonExpiredPredicate(): (location: Location) -> Boolean =
-        { location -> location.endAt?.after(Date(now())) ?: false }
+    private fun nonExpiredPredicate(): (location: Location) -> Boolean = { location -> location.endAt?.after(Date(now())) ?: false }
 }

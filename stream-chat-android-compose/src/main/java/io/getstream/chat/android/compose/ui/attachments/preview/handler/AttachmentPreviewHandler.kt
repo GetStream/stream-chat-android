@@ -46,12 +46,10 @@ public interface AttachmentPreviewHandler {
          * @param context The context to start the preview Activity with.
          * @return The list handlers that can be used to show a preview for an attachment.
          */
-        public fun defaultAttachmentHandlers(context: Context): List<AttachmentPreviewHandler> {
-            return listOf(
-                MediaAttachmentPreviewHandler(context),
-                DocumentAttachmentPreviewHandler(context),
-                UrlAttachmentPreviewHandler(context),
-            )
-        }
+        public fun defaultAttachmentHandlers(context: Context): List<AttachmentPreviewHandler> = listOf(
+            MediaAttachmentPreviewHandler(context),
+            DocumentAttachmentPreviewHandler(context),
+            UrlAttachmentPreviewHandler(context),
+        )
     }
 }

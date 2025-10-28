@@ -158,25 +158,19 @@ public class ChannelListView : FrameLayout {
      *
      * @return The inner [RecyclerView] with channels.
      */
-    public fun getRecyclerView(): RecyclerView {
-        return simpleChannelListView
-    }
+    public fun getRecyclerView(): RecyclerView = simpleChannelListView
 
     /**
      * Returns [LinearLayoutManager] associated with the inner [RecyclerView].
      *
      * @return [LinearLayoutManager] associated with the inner [RecyclerView]
      */
-    public fun getLayoutManager(): LinearLayoutManager? {
-        return layoutManager as? LinearLayoutManager
-    }
+    public fun getLayoutManager(): LinearLayoutManager? = layoutManager as? LinearLayoutManager
 
-    override fun onSaveInstanceState(): Parcelable {
-        return bundleOf(
-            KEY_SUPER_STATE to super.onSaveInstanceState(),
-            KEY_SCROLL_STATE to layoutManager?.onSaveInstanceState(),
-        )
-    }
+    override fun onSaveInstanceState(): Parcelable = bundleOf(
+        KEY_SUPER_STATE to super.onSaveInstanceState(),
+        KEY_SCROLL_STATE to layoutManager?.onSaveInstanceState(),
+    )
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         if (state !is Bundle) {
@@ -201,9 +195,7 @@ public class ChannelListView : FrameLayout {
     /**
      * @return if the list and its adapter are initialized.
      */
-    public fun isAdapterInitialized(): Boolean {
-        return ::simpleChannelListView.isInitialized && simpleChannelListView.isAdapterInitialized()
-    }
+    public fun isAdapterInitialized(): Boolean = ::simpleChannelListView.isInitialized && simpleChannelListView.isAdapterInitialized()
 
     /**
      * @param view Will be added to the view hierarchy of [ChannelListView] and managed by it.
@@ -431,9 +423,7 @@ public class ChannelListView : FrameLayout {
         simpleChannelListView.setPaginationEnabled(enabled)
     }
 
-    public fun hasChannels(): Boolean {
-        return simpleChannelListView.hasChannels()
-    }
+    public fun hasChannels(): Boolean = simpleChannelListView.hasChannels()
 
     private companion object {
         private val defaultChildLayoutParams: LayoutParams by lazy {

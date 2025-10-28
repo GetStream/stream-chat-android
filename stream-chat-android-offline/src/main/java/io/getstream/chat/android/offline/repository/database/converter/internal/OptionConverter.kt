@@ -29,17 +29,13 @@ internal class OptionConverter {
     private val entityListAdapter = moshi.adapter<List<OptionEntity>>()
 
     @TypeConverter
-    fun stringToOption(data: String?): OptionEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
+    fun stringToOption(data: String?): OptionEntity? = data?.let {
+        entityAdapter.fromJson(it)
     }
 
     @TypeConverter
-    fun optionToString(entity: OptionEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
+    fun optionToString(entity: OptionEntity?): String? = entity?.let {
+        entityAdapter.toJson(it)
     }
 
     @TypeConverter
@@ -51,9 +47,7 @@ internal class OptionConverter {
     }
 
     @TypeConverter
-    fun optionListToString(entities: List<OptionEntity>?): String? {
-        return entities?.let {
-            entityListAdapter.toJson(it)
-        }
+    fun optionListToString(entities: List<OptionEntity>?): String? = entities?.let {
+        entityListAdapter.toJson(it)
     }
 }

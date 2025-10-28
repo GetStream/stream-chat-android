@@ -42,9 +42,8 @@ class DraftChannelActivity : ComponentActivity() {
          * @param context The calling [Context], used for building the [Intent].
          * @param memberIds The list of member IDs to be used for creating the channel.
          */
-        fun createIntent(context: Context, memberIds: List<String>) =
-            Intent(context, DraftChannelActivity::class.java)
-                .putExtra(KEY_MEMBER_IDS, memberIds.toTypedArray())
+        fun createIntent(context: Context, memberIds: List<String>) = Intent(context, DraftChannelActivity::class.java)
+            .putExtra(KEY_MEMBER_IDS, memberIds.toTypedArray())
     }
 
     private val viewModelFactory by lazy {

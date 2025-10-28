@@ -36,11 +36,9 @@ internal class ProxyChatApi(
     private val sendMessageInterceptor: SendMessageInterceptor?,
 ) : ChatApi by delegate {
 
-    override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {
-        return sendMessageInterceptor?.let {
-            CoroutineCall(scope) {
-                it.sendMessage(channelType, channelId, message)
-            }
-        } ?: delegate.sendMessage(channelType, channelId, message)
-    }
+    override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> = sendMessageInterceptor?.let {
+        CoroutineCall(scope) {
+            it.sendMessage(channelType, channelId, message)
+        }
+    } ?: delegate.sendMessage(channelType, channelId, message)
 }

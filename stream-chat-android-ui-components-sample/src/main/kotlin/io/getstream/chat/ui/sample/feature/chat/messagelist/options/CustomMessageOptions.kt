@@ -37,9 +37,7 @@ internal object CustomMessageOptions {
     /**
      * Creates a custom message option items factory.
      */
-    fun optionFactory(context: Context): MessageOptionItemsFactory {
-        return CustomMessageOptionItemsFactory(context)
-    }
+    fun optionFactory(context: Context): MessageOptionItemsFactory = CustomMessageOptionItemsFactory(context)
 
     /**
      * Creates a custom action handler for the message list view.
@@ -90,10 +88,8 @@ private class CustomMessageOptionItemsFactory(
         isInThread: Boolean,
         ownCapabilities: Set<String>,
         style: MessageListViewStyle,
-    ): List<MessageOptionItem> {
-        return delegate.createMessageOptionItems(selectedMessage, currentUser, isInThread, ownCapabilities, style) +
-            createCustomMessageOptionItems(selectedMessage, currentUser, isInThread, ownCapabilities, style)
-    }
+    ): List<MessageOptionItem> = delegate.createMessageOptionItems(selectedMessage, currentUser, isInThread, ownCapabilities, style) +
+        createCustomMessageOptionItems(selectedMessage, currentUser, isInThread, ownCapabilities, style)
 
     private fun createCustomMessageOptionItems(
         selectedMessage: Message,
@@ -168,13 +164,9 @@ private class TranslationOption private constructor() {
             )
         }
 
-        fun isTranslateAction(extra: Map<String, Any>): Boolean {
-            return extra[ACTION] == TRANSLATE
-        }
+        fun isTranslateAction(extra: Map<String, Any>): Boolean = extra[ACTION] == TRANSLATE
 
-        fun isClearTranslationAction(extra: Map<String, Any>): Boolean {
-            return extra[ACTION] == CLEAR_TRANSLATION
-        }
+        fun isClearTranslationAction(extra: Map<String, Any>): Boolean = extra[ACTION] == CLEAR_TRANSLATION
     }
 }
 
@@ -200,6 +192,5 @@ private object DeleteForMeOption {
         )
     }
 
-    fun isDeleteForMeAction(extra: Map<String, Any>): Boolean =
-        extra[ACTION] == DELETE_FOR_ME
+    fun isDeleteForMeAction(extra: Map<String, Any>): Boolean = extra[ACTION] == DELETE_FOR_ME
 }

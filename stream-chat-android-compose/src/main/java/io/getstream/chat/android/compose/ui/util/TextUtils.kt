@@ -55,45 +55,43 @@ internal fun buildAnnotatedMessageText(
     mentionsColor: Color,
     mentionedUserNames: List<String> = emptyList(),
     builder: (AnnotatedString.Builder).() -> Unit = {},
-): AnnotatedString {
-    return buildAnnotatedString {
-        // First we add the whole text to the [AnnotatedString] and style it as a regular text.
-        append(text)
-        addStyle(
-            SpanStyle(
-                fontStyle = textFontStyle,
-                color = textColor,
-            ),
-            start = 0,
-            end = text.length,
-        )
+): AnnotatedString = buildAnnotatedString {
+    // First we add the whole text to the [AnnotatedString] and style it as a regular text.
+    append(text)
+    addStyle(
+        SpanStyle(
+            fontStyle = textFontStyle,
+            color = textColor,
+        ),
+        start = 0,
+        end = text.length,
+    )
 
-        // Then for each available link in the text, we add a different style, to represent the links,
-        // as well as add a String annotation to it. This gives us the ability to open the URL on click.
-        linkify(
-            text = text,
-            tag = AnnotationTagUrl,
-            pattern = PatternsCompat.AUTOLINK_WEB_URL,
-            matchFilter = Linkify.sUrlMatchFilter,
-            schemes = URL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        linkify(
-            text = text,
-            tag = AnnotationTagEmail,
-            pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-            schemes = EMAIL_SCHEMES,
-            textStyle = linkStyle,
-        )
-        tagUser(
-            text = text,
-            mentionsColor = mentionsColor,
-            mentionedUserNames = mentionedUserNames,
-        )
+    // Then for each available link in the text, we add a different style, to represent the links,
+    // as well as add a String annotation to it. This gives us the ability to open the URL on click.
+    linkify(
+        text = text,
+        tag = AnnotationTagUrl,
+        pattern = PatternsCompat.AUTOLINK_WEB_URL,
+        matchFilter = Linkify.sUrlMatchFilter,
+        schemes = URL_SCHEMES,
+        textStyle = linkStyle,
+    )
+    linkify(
+        text = text,
+        tag = AnnotationTagEmail,
+        pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+        schemes = EMAIL_SCHEMES,
+        textStyle = linkStyle,
+    )
+    tagUser(
+        text = text,
+        mentionsColor = mentionsColor,
+        mentionedUserNames = mentionedUserNames,
+    )
 
-        // Finally, we apply any additional styling that was passed in.
-        builder(this)
-    }
+    // Finally, we apply any additional styling that was passed in.
+    builder(this)
 }
 
 /**
@@ -183,16 +181,15 @@ private fun AnnotatedString.Builder.tagUser(
     }
 }
 
-internal fun String.ensureLowercaseScheme(schemes: List<String>): String =
-    schemes.fold(this) { acc, scheme ->
-        acc.replace(scheme, scheme.lowercase(), ignoreCase = true)
-    }.let { url ->
-        if (schemes.none { url.startsWith(it) }) {
-            schemes[0].lowercase() + url
-        } else {
-            url
-        }
+internal fun String.ensureLowercaseScheme(schemes: List<String>): String = schemes.fold(this) { acc, scheme ->
+    acc.replace(scheme, scheme.lowercase(), ignoreCase = true)
+}.let { url ->
+    if (schemes.none { url.startsWith(it) }) {
+        schemes[0].lowercase() + url
+    } else {
+        url
     }
+}
 
 private val URL_SCHEMES = listOf("http://", "https://")
 private val EMAIL_SCHEMES = listOf("mailto:")

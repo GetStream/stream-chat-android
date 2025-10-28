@@ -106,6 +106,5 @@ public interface SendReactionListener {
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
-    public suspend fun onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction): Result<Unit> =
-        onSendReactionPrecondition(currentUser, reaction)
+    public suspend fun onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction): Result<Unit> = onSendReactionPrecondition(currentUser, reaction)
 }

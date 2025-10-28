@@ -157,11 +157,10 @@ private fun mapDate(date: Date): Date {
     }.time
 }
 
-private fun List<ChannelAttachmentsViewState.Content.Item>.toAttachmentItems(): List<SharedAttachment.AttachmentItem> =
-    map { item ->
-        SharedAttachment.AttachmentItem(
-            message = item.message,
-            createdAt = item.message.getCreatedAtOrThrow(),
-            attachment = item.attachment,
-        )
-    }
+private fun List<ChannelAttachmentsViewState.Content.Item>.toAttachmentItems(): List<SharedAttachment.AttachmentItem> = map { item ->
+    SharedAttachment.AttachmentItem(
+        message = item.message,
+        createdAt = item.message.getCreatedAtOrThrow(),
+        attachment = item.attachment,
+    )
+}

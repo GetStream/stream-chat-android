@@ -68,10 +68,9 @@ public fun rememberCaptureMediaLauncher(
     }
 }
 
-private fun resolveMediaPickerMode(photo: Boolean, video: Boolean): CaptureMediaContract.Mode? =
-    when {
-        photo && video -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
-        photo -> CaptureMediaContract.Mode.PHOTO
-        video -> CaptureMediaContract.Mode.VIDEO
-        else -> null
-    }
+private fun resolveMediaPickerMode(photo: Boolean, video: Boolean): CaptureMediaContract.Mode? = when {
+    photo && video -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+    photo -> CaptureMediaContract.Mode.PHOTO
+    video -> CaptureMediaContract.Mode.VIDEO
+    else -> null
+}

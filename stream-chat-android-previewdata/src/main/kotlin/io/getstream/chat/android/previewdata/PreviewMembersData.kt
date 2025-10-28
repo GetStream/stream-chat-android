@@ -22,7 +22,6 @@ import io.getstream.chat.android.models.Member
  * Provides sample members that will be used to render previews.
  */
 public object PreviewMembersData {
-
     public val member1: Member = Member(user = PreviewUserData.user1)
     public val member2: Member = Member(user = PreviewUserData.user2)
     public val member3: Member = Member(user = PreviewUserData.user3)
@@ -30,10 +29,11 @@ public object PreviewMembersData {
 
     public val oneMember: List<Member> = listOf(member1)
 
-    public val manyMembers: List<Member> = listOf(
-        member1,
-        member2,
-        member3,
-        member4,
-    )
+    public val manyMembers: List<Member> =
+        listOf(
+            member1,
+            member2,
+            member3,
+            member4,
+        )
 }

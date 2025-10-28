@@ -58,8 +58,7 @@ internal class MessagingStyleNotificationFactory(
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
-    private val notificationBuilderTransformer:
-    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
     private val currentUserProvider: () -> User? = {
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
@@ -86,8 +85,7 @@ internal class MessagingStyleNotificationFactory(
      * @param channelId The ID of the channel.
      * @return A unique notification ID for the channel.
      */
-    internal fun createChannelNotificationId(channelType: String, channelId: String): Int =
-        "$channelType:$channelId".hashCode()
+    internal fun createChannelNotificationId(channelType: String, channelId: String): Int = "$channelType:$channelId".hashCode()
 
     /**
      * Creates a notification based on the provided [ChatNotification].
@@ -143,49 +141,42 @@ internal class MessagingStyleNotificationFactory(
         return notificationBuilderTransformer(builder, notification).build()
     }
 
-    private fun createContentIntent(notificationId: Int, channel: Channel, message: Message) =
-        PendingIntent.getActivity(
-            context,
-            notificationId,
-            newMessageIntent(message, channel),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-        )
+    private fun createContentIntent(notificationId: Int, channel: Channel, message: Message) = PendingIntent.getActivity(
+        context,
+        notificationId,
+        newMessageIntent(message, channel),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+    )
 
-    private fun restoreMessagingStyle(channel: Channel): NotificationCompat.MessagingStyle? =
-        notificationManager.activeNotifications
-            .firstOrNull { it.id == createChannelNotificationId(channel.type, channel.id) }
-            ?.notification
-            ?.let(NotificationCompat.MessagingStyle::extractMessagingStyleFromNotification)
+    private fun restoreMessagingStyle(channel: Channel): NotificationCompat.MessagingStyle? = notificationManager.activeNotifications
+        .firstOrNull { it.id == createChannelNotificationId(channel.type, channel.id) }
+        ?.notification
+        ?.let(NotificationCompat.MessagingStyle::extractMessagingStyleFromNotification)
 
-    private suspend fun createMessagingStyle(currentUser: User, channel: Channel): NotificationCompat.MessagingStyle =
-        NotificationCompat.MessagingStyle(currentUser.toPerson(context))
-            .setConversationTitle(channel.name)
-            .setGroupConversation(channel.name.isNotBlank())
+    private suspend fun createMessagingStyle(currentUser: User, channel: Channel): NotificationCompat.MessagingStyle = NotificationCompat.MessagingStyle(currentUser.toPerson(context))
+        .setConversationTitle(channel.name)
+        .setGroupConversation(channel.name.isNotBlank())
 
     private suspend fun Message.toMessagingStyleMessage(
         context: Context,
         currentUser: User?,
-    ): NotificationCompat.MessagingStyle.Message {
-        return NotificationCompat.MessagingStyle.Message(
-            notificationTextFormatter(currentUser, this),
-            timestamp,
-            person(context),
-        )
-    }
+    ): NotificationCompat.MessagingStyle.Message = NotificationCompat.MessagingStyle.Message(
+        notificationTextFormatter(currentUser, this),
+        timestamp,
+        person(context),
+    )
 
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)
 
     private val Message.timestamp: Long
         get() = (createdAt ?: createdLocallyAt ?: Date()).time
 
-    private suspend fun User.toPerson(context: Context): Person =
-        Person.Builder()
-            .setKey(id)
-            .setName(personName(context))
-            .setIcon(userIconBuilder.buildIcon(this))
-            .build()
+    private suspend fun User.toPerson(context: Context): Person = Person.Builder()
+        .setKey(id)
+        .setName(personName(context))
+        .setIcon(userIconBuilder.buildIcon(this))
+        .build()
 
-    private fun User.personName(context: Context): String =
-        name.takeIf { it.isNotBlank() }
-            ?: context.getString(R.string.stream_chat_notification_empty_username)
+    private fun User.personName(context: Context): String = name.takeIf { it.isNotBlank() }
+        ?: context.getString(R.string.stream_chat_notification_empty_username)
 }

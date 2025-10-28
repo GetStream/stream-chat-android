@@ -60,7 +60,6 @@ public enum class PushProvider(public val key: String) {
          * - "xiaomi" for [XIAOMI]
          * - any other key for [UNKNOWN]
          */
-        public fun fromKey(key: String): PushProvider =
-            entries.firstOrNull { it.key == key } ?: UNKNOWN
+        public fun fromKey(key: String): PushProvider = entries.firstOrNull { it.key == key } ?: UNKNOWN
     }
 }

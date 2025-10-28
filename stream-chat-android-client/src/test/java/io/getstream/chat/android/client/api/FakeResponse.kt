@@ -28,16 +28,10 @@ internal data class FakeResponse(val statusCode: Int, val body: Body? = null) {
 
         val buffer = Buffer().writeString(data, Charset.defaultCharset())
 
-        override fun contentLength(): Long {
-            return buffer.size
-        }
+        override fun contentLength(): Long = buffer.size
 
-        override fun contentType(): MediaType? {
-            return "application/json".toMediaType()
-        }
+        override fun contentType(): MediaType? = "application/json".toMediaType()
 
-        override fun source(): BufferedSource {
-            return buffer
-        }
+        override fun source(): BufferedSource = buffer
     }
 }

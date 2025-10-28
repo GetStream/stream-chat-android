@@ -26,8 +26,10 @@ import androidx.compose.runtime.Stable
  * @property value The value of the state.
  */
 @Immutable
-public sealed class TypingState(public val name: String, public val value: String) {
-
+public sealed class TypingState(
+    public val name: String,
+    public val value: String,
+) {
     /**
      * The state when there is no typing.
      */
@@ -40,7 +42,9 @@ public sealed class TypingState(public val name: String, public val value: Strin
      * @property messageId The id of the message that the AI assistant is thinking.
      */
     @Immutable
-    public data class Thinking(val messageId: String) : TypingState(
+    public data class Thinking(
+        val messageId: String,
+    ) : TypingState(
         name = "Thinking",
         value = "AI_STATE_THINKING",
     )
@@ -51,8 +55,9 @@ public sealed class TypingState(public val name: String, public val value: Strin
      * @property messageId The id of the message that the AI assistant is generating.
      */
     @Immutable
-    public data class Generating(val messageId: String) :
-        TypingState(name = "Generating", value = "AI_STATE_GENERATING")
+    public data class Generating(
+        val messageId: String,
+    ) : TypingState(name = "Generating", value = "AI_STATE_GENERATING")
 
     /**
      * The state when the AI assistant has finished generating a response.
@@ -61,19 +66,16 @@ public sealed class TypingState(public val name: String, public val value: Strin
     public data object Clear : TypingState(name = "Clear", value = "AI_STATE_CLEAR")
 
     public companion object {
-
         /**
          * Converts a string to a [TypingState].
          */
         @Stable
-        public fun String.toTypingState(id: String? = null): TypingState {
-            return when (this) {
-                "nothing" -> Nothing
-                "AI_STATE_THINKING" -> Thinking(id.orEmpty())
-                "AI_STATE_GENERATING" -> Generating(id.orEmpty())
-                "AI_STATE_CLEAR" -> Clear
-                else -> Nothing
-            }
+        public fun String.toTypingState(id: String? = null): TypingState = when (this) {
+            "nothing" -> Nothing
+            "AI_STATE_THINKING" -> Thinking(id.orEmpty())
+            "AI_STATE_GENERATING" -> Generating(id.orEmpty())
+            "AI_STATE_CLEAR" -> Clear
+            else -> Nothing
         }
     }
 }

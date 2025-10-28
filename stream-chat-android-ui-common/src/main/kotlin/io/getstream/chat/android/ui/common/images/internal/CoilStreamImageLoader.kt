@@ -239,22 +239,20 @@ internal object CoilStreamImageLoader : StreamImageLoader {
 
     private fun ImageRequest.Builder.applyTransformation(
         transformation: StreamImageLoader.ImageTransformation,
-    ): ImageRequest.Builder =
-        when (transformation) {
-            is StreamImageLoader.ImageTransformation.None -> this
-            is StreamImageLoader.ImageTransformation.Circle -> transformations(
-                CircleCropTransformation(),
-            )
+    ): ImageRequest.Builder = when (transformation) {
+        is StreamImageLoader.ImageTransformation.None -> this
+        is StreamImageLoader.ImageTransformation.Circle -> transformations(
+            CircleCropTransformation(),
+        )
 
-            is StreamImageLoader.ImageTransformation.RoundedCorners -> transformations(
-                RoundedCornersTransformation(
-                    transformation.radius,
-                ),
-            )
-        }
+        is StreamImageLoader.ImageTransformation.RoundedCorners -> transformations(
+            RoundedCornersTransformation(
+                transformation.radius,
+            ),
+        )
+    }
 }
 
-public fun Map<String, String>.toNetworkHeaders(): NetworkHeaders =
-    NetworkHeaders.Builder().apply {
-        forEach { (key, value) -> add(key, value) }
-    }.build()
+public fun Map<String, String>.toNetworkHeaders(): NetworkHeaders = NetworkHeaders.Builder().apply {
+    forEach { (key, value) -> add(key, value) }
+}.build()

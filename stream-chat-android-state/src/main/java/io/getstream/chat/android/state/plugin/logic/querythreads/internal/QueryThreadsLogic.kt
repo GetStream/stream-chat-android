@@ -138,8 +138,7 @@ internal class QueryThreadsLogic(
     /**
      * Retrieves a [Message] by its ID if it is stored in the Threads state.
      */
-    internal fun getMessage(messageId: String): Message? =
-        stateLogic.getMessage(messageId)
+    internal fun getMessage(messageId: String): Message? = stateLogic.getMessage(messageId)
 
     /**
      * Upsert the given [Message] in a [Thread] if such exists.
@@ -149,8 +148,7 @@ internal class QueryThreadsLogic(
     /**
      * Upsert the given [Message] from a [Thread] if such exists.
      */
-    internal fun deleteMessage(message: Message) =
-        stateLogic.deleteMessage(message)
+    internal fun deleteMessage(message: Message) = stateLogic.deleteMessage(message)
 
     private fun handleEvent(event: ChatEvent) {
         when (event) {
@@ -176,8 +174,7 @@ internal class QueryThreadsLogic(
 
     private fun QueryThreadsRequest.isNextPageRequest() = this.next != null
 
-    private fun isForceReload(request: QueryThreadsRequest) =
-        !request.isNextPageRequest() && stateLogic.getUnseenThreadIds().isNotEmpty()
+    private fun isForceReload(request: QueryThreadsRequest) = !request.isNextPageRequest() && stateLogic.getUnseenThreadIds().isNotEmpty()
 
     private fun onNewThreadMessageNotification(event: NotificationThreadMessageNewEvent) {
         val newMessageThreadId = event.message.parentId ?: return

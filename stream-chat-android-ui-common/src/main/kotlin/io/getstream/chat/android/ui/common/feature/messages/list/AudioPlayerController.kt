@@ -332,22 +332,20 @@ public class AudioPlayerController(
         waveform: List<Float>,
         playbackInMs: Int,
         durationInMs: Int,
-    ): AudioPlayerState {
-        return copy(
-            current = AudioPlayerState.CurrentAudioState(
-                playingId = audioHash,
-                audioUri = recordingUri,
-                waveform = waveform,
-                durationInMs = durationInMs,
-                playbackInMs = playbackInMs,
-                playingProgress = playbackInMs.toFloat() / durationInMs,
-            ),
-            seekTo = when (current.playingId != audioHash && current.playingId != NO_ID && current.playingProgress > 0) {
-                true -> seekTo + (current.playingId to current.playingProgress)
-                else -> seekTo
-            },
-        )
-    }
+    ): AudioPlayerState = copy(
+        current = AudioPlayerState.CurrentAudioState(
+            playingId = audioHash,
+            audioUri = recordingUri,
+            waveform = waveform,
+            durationInMs = durationInMs,
+            playbackInMs = playbackInMs,
+            playingProgress = playbackInMs.toFloat() / durationInMs,
+        ),
+        seekTo = when (current.playingId != audioHash && current.playingId != NO_ID && current.playingProgress > 0) {
+            true -> seekTo + (current.playingId to current.playingProgress)
+            else -> seekTo
+        },
+    )
 
     private companion object {
         private const val NO_ID = -1

@@ -25,8 +25,7 @@ import io.getstream.log.taggedLogger
  * Base ViewHolder used for displaying items by the
  * [io.getstream.chat.android.ui.feature.threads.list.adapter.internal.ThreadListAdapter].
  */
-public abstract class BaseThreadListItemViewHolder<T : ThreadListItem>(itemView: View) :
-    RecyclerView.ViewHolder(itemView) {
+public abstract class BaseThreadListItemViewHolder<T : ThreadListItem>(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private val logger by taggedLogger("Chat:BaseThreadListItemViewHolder")
 

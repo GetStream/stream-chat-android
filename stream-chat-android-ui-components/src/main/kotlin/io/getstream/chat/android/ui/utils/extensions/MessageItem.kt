@@ -27,14 +27,10 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
  * as it represents a single isolated message.
  */
 @InternalStreamChatApi
-public fun MessageListItem.MessageItem.isBottomPosition(): Boolean {
-    return MessagePosition.BOTTOM in positions || MessagePosition.NONE in positions
-}
+public fun MessageListItem.MessageItem.isBottomPosition(): Boolean = MessagePosition.BOTTOM in positions || MessagePosition.NONE in positions
 
 @InternalStreamChatApi
-public fun MessageListItem.MessageItem.isNotBottomPosition(): Boolean {
-    return !isBottomPosition()
-}
+public fun MessageListItem.MessageItem.isNotBottomPosition(): Boolean = !isBottomPosition()
 
 /**
  * @return If the mine message is the type of error or failed to send.

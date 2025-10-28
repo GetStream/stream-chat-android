@@ -36,20 +36,19 @@ import org.junit.runner.RunWith
 internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
 
     @Test
-    fun `Given a message in the database When persisting the updated message Should store the update`(): Unit =
-        runTest {
-            val id = randomString()
-            val originalMessage = randomMessage(id = id, deletedAt = null, deletedForMe = false)
-            val updatedText = randomString()
-            val updatedMessage = originalMessage.copy(text = updatedText)
+    fun `Given a message in the database When persisting the updated message Should store the update`(): Unit = runTest {
+        val id = randomString()
+        val originalMessage = randomMessage(id = id, deletedAt = null, deletedForMe = false)
+        val updatedText = randomString()
+        val updatedMessage = originalMessage.copy(text = updatedText)
 
-            repositoryFacade.insertMessages(listOf(originalMessage))
-            repositoryFacade.insertMessages(listOf(updatedMessage))
-            val result = repositoryFacade.selectMessage(id)
+        repositoryFacade.insertMessages(listOf(originalMessage))
+        repositoryFacade.insertMessages(listOf(updatedMessage))
+        val result = repositoryFacade.selectMessage(id)
 
-            result.shouldNotBeNull()
-            result.text shouldBeEqualTo updatedText
-        }
+        result.shouldNotBeNull()
+        result.text shouldBeEqualTo updatedText
+    }
 
     @Test
     fun `Given a message When persisting the message Should store required fields`(): Unit = runTest {
@@ -76,57 +75,54 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
     }
 
     @Test
-    fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit =
-        runTest {
-            val messageId = randomString()
-            val theirsUser = randomUser(
-                // ignoring fields that are not persisted on purpose
-                totalUnreadCount = 0,
-                unreadChannels = 0,
-                online = false,
-            )
-            val theirsReaction = randomReaction(
-                messageId = messageId,
-                user = theirsUser,
-                userId = theirsUser.id,
-                deletedAt = null,
+    fun `Given a message with theirs reaction When querying message Should return massage without own reactions`(): Unit = runTest {
+        val messageId = randomString()
+        val theirsUser = randomUser(
+            // ignoring fields that are not persisted on purpose
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            online = false,
+        )
+        val theirsReaction = randomReaction(
+            messageId = messageId,
+            user = theirsUser,
+            userId = theirsUser.id,
+            deletedAt = null,
 
-            )
-            val message = randomMessage(
-                id = messageId,
-                ownReactions = mutableListOf(),
-                latestReactions = mutableListOf(theirsReaction),
-            )
+        )
+        val message = randomMessage(
+            id = messageId,
+            ownReactions = mutableListOf(),
+            latestReactions = mutableListOf(theirsReaction),
+        )
 
-            repositoryFacade.insertCurrentUser(randomUser())
-            repositoryFacade.insertMessages(listOf(message))
-            val result: Message? = repositoryFacade.selectMessage(message.id)
+        repositoryFacade.insertCurrentUser(randomUser())
+        repositoryFacade.insertMessages(listOf(message))
+        val result: Message? = repositoryFacade.selectMessage(message.id)
 
-            result.shouldNotBeNull()
-            result.latestReactions shouldBeEqualTo mutableListOf(theirsReaction)
-            result.ownReactions.shouldBeEmpty()
-        }
-
-    @Test
-    fun `Given a message without channel info When querying message Should return message with null channel info`() =
-        runTest {
-            val message = randomMessage(channelInfo = null)
-
-            repositoryFacade.insertMessages(listOf(message))
-            val result = repositoryFacade.selectMessage(message.id)
-
-            result?.channelInfo.shouldBeNull()
-        }
+        result.shouldNotBeNull()
+        result.latestReactions shouldBeEqualTo mutableListOf(theirsReaction)
+        result.ownReactions.shouldBeEmpty()
+    }
 
     @Test
-    fun `Given a message with channel info When querying message Should return message with the same channel info`(): Unit =
-        runTest {
-            val channelInfo = randomChannelInfo()
-            val message = randomMessage(channelInfo = channelInfo)
+    fun `Given a message without channel info When querying message Should return message with null channel info`() = runTest {
+        val message = randomMessage(channelInfo = null)
 
-            repositoryFacade.insertMessages(listOf(message))
-            val result = repositoryFacade.selectMessage(message.id)
+        repositoryFacade.insertMessages(listOf(message))
+        val result = repositoryFacade.selectMessage(message.id)
 
-            result?.channelInfo shouldBeEqualTo channelInfo
-        }
+        result?.channelInfo.shouldBeNull()
+    }
+
+    @Test
+    fun `Given a message with channel info When querying message Should return message with the same channel info`(): Unit = runTest {
+        val channelInfo = randomChannelInfo()
+        val message = randomMessage(channelInfo = channelInfo)
+
+        repositoryFacade.insertMessages(listOf(message))
+        val result = repositoryFacade.selectMessage(message.id)
+
+        result?.channelInfo shouldBeEqualTo channelInfo
+    }
 }

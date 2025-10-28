@@ -30,8 +30,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @return [channelId] if not blank or new, member-based id.
  */
 @InternalStreamChatApi
-public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String {
-    return channelId.ifBlank {
-        memberIds.joinToString(prefix = "!members-")
-    }
+public fun generateChannelIdIfNeeded(channelId: String, memberIds: List<String>): String = channelId.ifBlank {
+    memberIds.joinToString(prefix = "!members-")
 }

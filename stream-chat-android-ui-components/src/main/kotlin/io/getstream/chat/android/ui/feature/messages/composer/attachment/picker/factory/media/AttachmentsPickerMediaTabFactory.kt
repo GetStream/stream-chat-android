@@ -34,9 +34,7 @@ public class AttachmentsPickerMediaTabFactory : AttachmentsPickerTabFactory {
      * @param style The style for the attachment picker dialog.
      * @return The Drawable used as the teb icon.
      */
-    override fun createTabIcon(style: AttachmentsPickerDialogStyle): Drawable {
-        return style.mediaAttachmentsTabIconDrawable
-    }
+    override fun createTabIcon(style: AttachmentsPickerDialogStyle): Drawable = style.mediaAttachmentsTabIconDrawable
 
     /**
      * Provides a new Fragment associated with this media attachments tab.
@@ -48,9 +46,7 @@ public class AttachmentsPickerMediaTabFactory : AttachmentsPickerTabFactory {
     override fun createTabFragment(
         style: AttachmentsPickerDialogStyle,
         attachmentsPickerTabListener: AttachmentsPickerTabListener,
-    ): Fragment {
-        return MediaAttachmentFragment.newInstance(style).apply {
-            setAttachmentsPickerTabListener(attachmentsPickerTabListener)
-        }
+    ): Fragment = MediaAttachmentFragment.newInstance(style).apply {
+        setAttachmentsPickerTabListener(attachmentsPickerTabListener)
     }
 }

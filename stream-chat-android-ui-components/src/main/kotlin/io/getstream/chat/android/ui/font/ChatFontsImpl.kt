@@ -50,14 +50,12 @@ internal class ChatFontsImpl(
         }
     }
 
-    override fun getFont(textStyle: TextStyle): Typeface? {
-        return when {
-            textStyle.fontResource != -1 ->
-                getFont(textStyle.fontResource)
-            !textStyle.fontAssetsPath.isNullOrEmpty() ->
-                getFont(textStyle.fontAssetsPath)
-            else -> null
-        }
+    override fun getFont(textStyle: TextStyle): Typeface? = when {
+        textStyle.fontResource != -1 ->
+            getFont(textStyle.fontResource)
+        !textStyle.fontAssetsPath.isNullOrEmpty() ->
+            getFont(textStyle.fontAssetsPath)
+        else -> null
     }
 
     private fun getFont(fontPath: String): Typeface? {
@@ -90,21 +88,17 @@ internal class ChatFontsImpl(
         }
     }
 
-    private fun safeLoadTypeface(@FontRes fontRes: Int): Typeface? {
-        return try {
-            ResourcesCompat.getFont(context, fontRes)
-        } catch (t: Throwable) {
-            logger.e(t) { "[safeLoadTypeface] failed: $t" }
-            null
-        }
+    private fun safeLoadTypeface(@FontRes fontRes: Int): Typeface? = try {
+        ResourcesCompat.getFont(context, fontRes)
+    } catch (t: Throwable) {
+        logger.e(t) { "[safeLoadTypeface] failed: $t" }
+        null
     }
 
-    private fun safeLoadTypeface(fontPath: String): Typeface? {
-        return try {
-            Typeface.createFromAsset(context.assets, fontPath)
-        } catch (t: Throwable) {
-            logger.e(t) { "[safeLoadTypeface] failed: $t" }
-            null
-        }
+    private fun safeLoadTypeface(fontPath: String): Typeface? = try {
+        Typeface.createFromAsset(context.assets, fontPath)
+    } catch (t: Throwable) {
+        logger.e(t) { "[safeLoadTypeface] failed: $t" }
+        null
     }
 }

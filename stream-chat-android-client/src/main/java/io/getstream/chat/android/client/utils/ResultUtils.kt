@@ -24,9 +24,7 @@ import io.getstream.result.Result
  */
 @JvmSynthetic
 @InternalStreamChatApi
-public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
-    return when (this) {
-        is Result.Success -> toString(value)
-        is Result.Failure -> value.toString()
-    }
+public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String = when (this) {
+    is Result.Success -> toString(value)
+    is Result.Failure -> value.toString()
 }

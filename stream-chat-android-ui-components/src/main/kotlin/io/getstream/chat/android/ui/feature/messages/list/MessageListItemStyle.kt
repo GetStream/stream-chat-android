@@ -161,14 +161,10 @@ public data class MessageListItemStyle(
 ) : ViewStyle {
 
     @ColorInt
-    public fun getStyleTextColor(isMine: Boolean): Int? {
-        return if (isMine) textStyleMine.colorOrNull() else textStyleTheirs.colorOrNull()
-    }
+    public fun getStyleTextColor(isMine: Boolean): Int? = if (isMine) textStyleMine.colorOrNull() else textStyleTheirs.colorOrNull()
 
     @ColorInt
-    public fun getStyleLinkTextColor(isMine: Boolean): Int? {
-        return if (isMine) messageLinkTextColorMine else messageLinkTextColorTheirs
-    }
+    public fun getStyleLinkTextColor(isMine: Boolean): Int? = if (isMine) messageLinkTextColorMine else messageLinkTextColorTheirs
 
     internal companion object {
         internal const val VALUE_NOT_SET = Integer.MAX_VALUE
@@ -802,13 +798,9 @@ public data class MessageListItemStyle(
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }
 
-        private fun Int.nullIfNotSet(): Int? {
-            return if (this == VALUE_NOT_SET) null else this
-        }
+        private fun Int.nullIfNotSet(): Int? = if (this == VALUE_NOT_SET) null else this
 
-        private fun TextStyle.nullIfEqualsTo(defaultValue: TextStyle): TextStyle? {
-            return if (this == defaultValue) null else this
-        }
+        private fun TextStyle.nullIfEqualsTo(defaultValue: TextStyle): TextStyle? = if (this == defaultValue) null else this
 
         private fun MessageListItemStyle.checkMessageMaxWidthFactorsRange() {
             require(messageMaxWidthFactorMine in 0.75..1.0) { "messageMaxWidthFactorMine cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorMine" }

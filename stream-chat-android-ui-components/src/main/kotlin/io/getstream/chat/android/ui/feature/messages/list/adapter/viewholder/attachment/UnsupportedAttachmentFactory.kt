@@ -43,10 +43,8 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
      * @param message The message containing custom attachments that we are going to render.
      * @return True it the message contains unsupported attachment.
      */
-    override fun canHandle(message: Message): Boolean {
-        return message.attachments.isNotEmpty() &&
-            message.attachments.all { !it.hasLink() && !it.isSupported() }
-    }
+    override fun canHandle(message: Message): Boolean = message.attachments.isNotEmpty() &&
+        message.attachments.all { !it.hasLink() && !it.isSupported() }
 
     /**
      * Creates fallback UI that represents unsupported attachments.
@@ -84,9 +82,7 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
      *
      * @return True if the attachment type is supported.
      */
-    private fun Attachment.isSupported(): Boolean {
-        return SUPPORTED_ATTACHMENT_TYPES.contains(type)
-    }
+    private fun Attachment.isSupported(): Boolean = SUPPORTED_ATTACHMENT_TYPES.contains(type)
 
     private companion object {
         /**

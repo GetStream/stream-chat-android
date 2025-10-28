@@ -77,7 +77,7 @@ internal class ChatClientExtensionTests {
         channel = randomChannel()
 
         val statePluginConfig = StatePluginConfig()
-        val globalState: GlobalState = mock() {
+        val globalState: GlobalState = mock {
         }
         val channelState: ChannelState = mock {
             on(it.cid) doReturn channel.cid
@@ -114,7 +114,7 @@ internal class ChatClientExtensionTests {
             InitializationState.NOT_INITIALIZED,
         )
 
-        val clientState: ClientState = mock() {
+        val clientState: ClientState = mock {
             on(it.user) doReturn userFlow
             on(it.initializationState) doReturn initializationStateFlow
         }

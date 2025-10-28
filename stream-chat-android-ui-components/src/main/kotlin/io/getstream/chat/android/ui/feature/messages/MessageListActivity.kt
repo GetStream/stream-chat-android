@@ -61,12 +61,10 @@ public open class MessageListActivity : AppCompatActivity() {
      * instance of [MessageListFragment] with custom arguments or if you want to create a subclass
      * of [MessageListFragment].
      */
-    protected open fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment {
-        return MessageListFragment.newInstance(cid) {
-            setFragment(MessageListFragment())
-            showHeader(true)
-            messageId(messageId)
-        }
+    protected open fun createMessageListFragment(cid: String, messageId: String?): MessageListFragment = MessageListFragment.newInstance(cid) {
+        setFragment(MessageListFragment())
+        showHeader(true)
+        messageId(messageId)
     }
 
     private fun setupEdgeToEdge() {
@@ -96,11 +94,9 @@ public open class MessageListActivity : AppCompatActivity() {
             cid: String,
             messageId: String? = null,
             activityClass: Class<out MessageListActivity> = MessageListActivity::class.java,
-        ): Intent {
-            return Intent(context, activityClass).apply {
-                putExtra(EXTRA_CID, cid)
-                putExtra(EXTRA_MESSAGE_ID, messageId)
-            }
+        ): Intent = Intent(context, activityClass).apply {
+            putExtra(EXTRA_CID, cid)
+            putExtra(EXTRA_MESSAGE_ID, messageId)
         }
     }
 }

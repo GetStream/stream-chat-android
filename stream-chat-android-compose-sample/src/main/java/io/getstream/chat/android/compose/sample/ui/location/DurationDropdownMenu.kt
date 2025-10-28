@@ -68,12 +68,11 @@ enum class Duration(val minutes: Int) {
     OneHour(60),
 }
 
-fun Duration.asDate(): Date =
-    Calendar.getInstance().apply {
-        add(Calendar.MINUTE, minutes)
-        // Add 1 second to ensure the location is shared for the full duration
-        add(Calendar.SECOND, 1)
-    }.time
+fun Duration.asDate(): Date = Calendar.getInstance().apply {
+    add(Calendar.MINUTE, minutes)
+    // Add 1 second to ensure the location is shared for the full duration
+    add(Calendar.SECOND, 1)
+}.time
 
 @Preview
 @Composable

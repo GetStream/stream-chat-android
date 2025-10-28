@@ -43,7 +43,5 @@ internal class ReminderInfoConverter {
      * Converts a [ReminderInfoEntity] to a [String].
      */
     @TypeConverter
-    fun reminderInfoToString(reminderInfo: ReminderInfoEntity?): String? {
-        return reminderInfo?.let(adapter::toJson)
-    }
+    fun reminderInfoToString(reminderInfo: ReminderInfoEntity?): String? = reminderInfo?.let(adapter::toJson)
 }

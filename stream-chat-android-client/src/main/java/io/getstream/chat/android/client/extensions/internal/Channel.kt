@@ -37,13 +37,11 @@ private const val TAG = "Chat:ChannelTools"
  * Returns all users including watchers of a channel that are associated with it.
  */
 @InternalStreamChatApi
-public fun Channel.users(): List<User> {
-    return members.map(Member::user) +
-        read.map(ChannelUserRead::user) +
-        createdBy +
-        messages.flatMap { it.users() } +
-        watchers
-}
+public fun Channel.users(): List<User> = members.map(Member::user) +
+    read.map(ChannelUserRead::user) +
+    createdBy +
+    messages.flatMap { it.users() } +
+    watchers
 
 /**
  * Retrieves the last not deleted [Message] of the [Channel], calculated as the messages with the most recent
@@ -203,8 +201,7 @@ public fun Channel.updateMembershipBanned(memberUserId: String, banned: Boolean)
  * @param currentUserId User id of the currently logged in user.
  */
 @InternalStreamChatApi
-public fun Channel.removeMembership(currentUserId: String?): Channel =
-    copy(membership = membership.takeUnless { it?.user?.id == currentUserId })
+public fun Channel.removeMembership(currentUserId: String?): Channel = copy(membership = membership.takeUnless { it?.user?.id == currentUserId })
 
 /**
  * Updates the [Channel] with a new [ChannelUserRead].
@@ -260,23 +257,20 @@ public fun Collection<Channel>.updateUsers(users: Map<String, User>): List<Chann
  * Updates a channel with more recent data of [users]. It updates messages, members, watchers, createdBy and
  * pinnedMessages of channel instance.
  */
-internal fun Channel.updateUsers(users: Map<String, User>): Channel {
-    return if (users().map(User::id).any(users::containsKey)) {
-        copy(
-            messages = messages.updateUsers(users),
-            members = members.updateUsers(users).toList(),
-            watchers = watchers.updateUsers(users),
-            createdBy = users[createdBy.id] ?: createdBy,
-            pinnedMessages = pinnedMessages.updateUsers(users),
-        )
-    } else {
-        this
-    }
+internal fun Channel.updateUsers(users: Map<String, User>): Channel = if (users().map(User::id).any(users::containsKey)) {
+    copy(
+        messages = messages.updateUsers(users),
+        members = members.updateUsers(users).toList(),
+        watchers = watchers.updateUsers(users),
+        createdBy = users[createdBy.id] ?: createdBy,
+        pinnedMessages = pinnedMessages.updateUsers(users),
+    )
+} else {
+    this
 }
 
 /**
  * Updates the live locations of the channels with the provided [locations].
  */
 @InternalStreamChatApi
-public fun Collection<Channel>.updateLiveLocations(locations: List<Location>): Collection<Channel> =
-    map { channel -> channel.copy(activeLiveLocations = locations.filter { it.cid == channel.cid }) }
+public fun Collection<Channel>.updateLiveLocations(locations: List<Location>): Collection<Channel> = map { channel -> channel.copy(activeLiveLocations = locations.filter { it.cid == channel.cid }) }

@@ -96,12 +96,11 @@ internal class ThreadQueryListenerStateTest {
     }
 
     @Test
-    fun `given a request for replies is made for more messages, the SDK should be notified that it is running`() =
-        runTest {
-            threadQueryListenerState.onGetRepliesMoreRequest(message.id, randomString(), randomInt())
+    fun `given a request for replies is made for more messages, the SDK should be notified that it is running`() = runTest {
+        threadQueryListenerState.onGetRepliesMoreRequest(message.id, randomString(), randomInt())
 
-            verify(threadLogic).setLoading(true)
-        }
+        verify(threadLogic).setLoading(true)
+    }
 
     @Test
     fun `given response it successful, the state should be updated in the SDK`() = runTest {

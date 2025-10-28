@@ -59,13 +59,12 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             context: Context,
             notificationId: Int,
             channel: Channel,
-        ): PendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                notificationId,
-                createNotifyIntent(context, channel, ACTION_REPLY),
-                MUTABLE_PENDING_INTENT_FLAGS,
-            )
+        ): PendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId,
+            createNotifyIntent(context, channel, ACTION_REPLY),
+            MUTABLE_PENDING_INTENT_FLAGS,
+        )
 
         private fun createReadPendingIntent(
             context: Context,
@@ -97,13 +96,11 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             notificationId: Int,
             channel: Channel,
             message: Message,
-        ): NotificationCompat.Action {
-            return NotificationCompat.Action.Builder(
-                android.R.drawable.ic_menu_view,
-                context.getString(R.string.stream_chat_notification_read),
-                createReadPendingIntent(context, notificationId, channel, message),
-            ).build()
-        }
+        ): NotificationCompat.Action = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_menu_view,
+            context.getString(R.string.stream_chat_notification_read),
+            createReadPendingIntent(context, notificationId, channel, message),
+        ).build()
 
         internal fun createReplyAction(
             context: Context,
@@ -124,12 +121,11 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 .build()
         }
 
-        private fun createNotifyIntent(context: Context, channel: Channel, action: String) =
-            Intent(context, NotificationMessageReceiver::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channel.id)
-                putExtra(KEY_CHANNEL_TYPE, channel.type)
-                this.action = action
-            }
+        private fun createNotifyIntent(context: Context, channel: Channel, action: String) = Intent(context, NotificationMessageReceiver::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channel.id)
+            putExtra(KEY_CHANNEL_TYPE, channel.type)
+            this.action = action
+        }
     }
 
     private val logger by taggedLogger("NotificationMessageReceiver")

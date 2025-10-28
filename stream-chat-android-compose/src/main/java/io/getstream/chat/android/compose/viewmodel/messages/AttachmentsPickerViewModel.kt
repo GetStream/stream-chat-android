@@ -205,9 +205,7 @@ public class AttachmentsPickerViewModel(
      * @param uris Selected Uris.
      * @return List of [Attachment]s ready for uploading.
      */
-    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return storageHelper.getAttachmentsFromUris(uris)
-    }
+    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> = storageHelper.getAttachmentsFromUris(uris)
 
     /**
      * Transforms the selected meta data into a list of [Attachment]s we can upload.
@@ -215,9 +213,7 @@ public class AttachmentsPickerViewModel(
      * @param metaData List of attachment meta data items.
      * @return List of [Attachment]s, ready for uploading.
      */
-    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
-        return storageHelper.getAttachmentsForUpload(metaData)
-    }
+    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> = storageHelper.getAttachmentsForUpload(metaData)
 
     /**
      * Triggered when we dismiss the attachments picker. We reset the state to show images and clear

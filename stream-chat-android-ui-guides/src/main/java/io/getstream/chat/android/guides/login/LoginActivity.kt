@@ -201,8 +201,6 @@ class LoginActivity : AppCompatActivity() {
          * @param context The context used to create the intent.
          * @return The [Intent] to start [LoginActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, LoginActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, LoginActivity::class.java)
     }
 }

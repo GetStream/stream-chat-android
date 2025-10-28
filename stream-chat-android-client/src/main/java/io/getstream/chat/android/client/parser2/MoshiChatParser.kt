@@ -86,11 +86,9 @@ internal class MoshiChatParser(
         this.add(T::class.java, adapter)
     }
 
-    override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder {
-        return builder
-            .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
-            .addConverterFactory(MoshiConverterFactory.create(moshi).withErrorLogging())
-    }
+    override fun configRetrofit(builder: Retrofit.Builder): Retrofit.Builder = builder
+        .addConverterFactory(MoshiUrlQueryPayloadFactory(moshi))
+        .addConverterFactory(MoshiConverterFactory.create(moshi).withErrorLogging())
 
     override fun toJson(any: Any): String = when {
         Map::class.java.isAssignableFrom(any.javaClass) -> serializeMap(any)
@@ -100,9 +98,7 @@ internal class MoshiChatParser(
 
     private val mapAdapter = moshi.adapter(Map::class.java)
 
-    private fun serializeMap(any: Any): String {
-        return mapAdapter.toJson(any as Map<*, *>)
-    }
+    private fun serializeMap(any: Any): String = mapAdapter.toJson(any as Map<*, *>)
 
     private val upstreamConnectedEventAdapter = moshi.adapter(UpstreamConnectedEventDto::class.java)
 
@@ -123,15 +119,11 @@ internal class MoshiChatParser(
 
     private val socketErrorResponseAdapter = moshi.adapter(SocketErrorResponse::class.java)
 
-    private fun parseSocketError(raw: String): SocketErrorMessage {
-        return socketErrorResponseAdapter.fromJson(raw)!!.toDomain()
-    }
+    private fun parseSocketError(raw: String): SocketErrorMessage = socketErrorResponseAdapter.fromJson(raw)!!.toDomain()
 
     private val errorResponseAdapter = moshi.adapter(SocketErrorResponse.ErrorResponse::class.java)
 
-    private fun parseErrorResponse(raw: String): ErrorResponse {
-        return errorResponseAdapter.fromJson(raw)!!.toDomain()
-    }
+    private fun parseErrorResponse(raw: String): ErrorResponse = errorResponseAdapter.fromJson(raw)!!.toDomain()
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 

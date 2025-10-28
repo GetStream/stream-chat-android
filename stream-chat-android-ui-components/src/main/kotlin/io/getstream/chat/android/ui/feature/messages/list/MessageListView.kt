@@ -873,9 +873,7 @@ public class MessageListView : ConstraintLayout {
      *
      * @return The inner [RecyclerView] with messages.
      */
-    public fun getRecyclerView(): RecyclerView {
-        return binding.chatMessagesRV
-    }
+    public fun getRecyclerView(): RecyclerView = binding.chatMessagesRV
 
     /**
      * Used to indicate that the message list is loading more messages.
@@ -1310,10 +1308,8 @@ public class MessageListView : ConstraintLayout {
      *
      * @return The instance of [MessageListViewStyle] associated with this [MessageListView].
      */
-    public fun requireStyle(): MessageListViewStyle {
-        return checkNotNull(messageListViewStyle) {
-            "View must be initialized first to obtain style!"
-        }
+    public fun requireStyle(): MessageListViewStyle = checkNotNull(messageListViewStyle) {
+        "View must be initialized first to obtain style!"
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
@@ -1396,11 +1392,10 @@ public class MessageListView : ConstraintLayout {
     /**
      * @return if the adapter has been initialized or not.
      */
-    public fun isAdapterInitialized(): Boolean {
-        return ::adapter.isInitialized
-    }
+    public fun isAdapterInitialized(): Boolean = ::adapter.isInitialized
 
     //region Listener setters
+
     /**
      * Sets the message click listener to be used by MessageListView.
      *
@@ -2672,24 +2667,24 @@ public class MessageListView : ConstraintLayout {
     }
 
     public enum class NewMessagesBehaviour(internal val value: Int) {
-        SCROLL_TO_BOTTOM(0), COUNT_UPDATE(1);
+        SCROLL_TO_BOTTOM(0),
+        COUNT_UPDATE(1),
+        ;
 
         internal companion object {
-            fun parseValue(value: Int): NewMessagesBehaviour {
-                return values().find { behaviour -> behaviour.value == value }
-                    ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
-            }
+            fun parseValue(value: Int): NewMessagesBehaviour = values().find { behaviour -> behaviour.value == value }
+                ?: throw IllegalArgumentException("Unknown behaviour type. It must be either SCROLL_TO_BOTTOM (int 0) or COUNT_UPDATE (int 1)")
         }
     }
 
     public enum class MessagesStart(internal val value: Int) {
-        BOTTOM(0), TOP(1);
+        BOTTOM(0),
+        TOP(1),
+        ;
 
         internal companion object {
-            fun parseValue(value: Int): MessagesStart {
-                return values().find { behaviour -> behaviour.value == value }
-                    ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
-            }
+            fun parseValue(value: Int): MessagesStart = values().find { behaviour -> behaviour.value == value }
+                ?: throw IllegalArgumentException("Unknown messages start type. It must be either BOTTOM (int 0) or TOP (int 1)")
         }
     }
 }

@@ -36,14 +36,10 @@ internal class ListConverter {
     }
 
     @TypeConverter
-    fun stringListToString(someObjects: List<String>?): String? {
-        return adapter.toJson(someObjects)
-    }
+    fun stringListToString(someObjects: List<String>?): String? = adapter.toJson(someObjects)
 
     @TypeConverter
-    fun readListToString(data: List<ChannelUserReadEntity>?): String? {
-        return channelUserReadListAdapter.toJson(data)
-    }
+    fun readListToString(data: List<ChannelUserReadEntity>?): String? = channelUserReadListAdapter.toJson(data)
 
     @TypeConverter
     fun stringToReadList(data: String?): List<ChannelUserReadEntity>? {

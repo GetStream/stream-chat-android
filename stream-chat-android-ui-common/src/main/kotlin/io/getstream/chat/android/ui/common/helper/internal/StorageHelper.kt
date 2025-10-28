@@ -160,51 +160,49 @@ public class StorageHelper {
      * @see getFileAttachments For querying all files from device storage.
      * @see getMediaAttachments For querying all media from device storage.
      */
-    public fun getAttachmentsFromUriList(context: Context, uriList: List<Uri>): List<AttachmentMetaData> {
-        return uriList.mapNotNull { uri ->
-            val columns = arrayOf(
-                MediaStore.Files.FileColumns.DISPLAY_NAME,
-                MediaStore.Files.FileColumns.MIME_TYPE,
-                MediaStore.Files.FileColumns.SIZE,
-            )
-            context.contentResolver.query(uri, columns, null, null, null)
-                ?.use { cursor ->
-                    if (cursor != null && cursor.moveToFirst()) {
-                        val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
-                        val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
-                        val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+    public fun getAttachmentsFromUriList(context: Context, uriList: List<Uri>): List<AttachmentMetaData> = uriList.mapNotNull { uri ->
+        val columns = arrayOf(
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.SIZE,
+        )
+        context.contentResolver.query(uri, columns, null, null, null)
+            ?.use { cursor ->
+                if (cursor != null && cursor.moveToFirst()) {
+                    val displayNameIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DISPLAY_NAME)
+                    val fileSizeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.SIZE)
+                    val mimeTypeIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
 
-                        val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
-                            cursor.getString(displayNameIndex)
-                        } else {
-                            null
-                        }
-
-                        val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
-                            cursor.getLong(fileSizeIndex)
-                        } else {
-                            0L
-                        }
-
-                        val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
-                            cursor.getString(mimeTypeIndex)
-                        } else {
-                            context.contentResolver.getType(uri)
-                        }
-
-                        AttachmentMetaData(
-                            uri = uri,
-                            type = getModelType(mimeType),
-                            mimeType = mimeType,
-                            title = displayName,
-                        ).apply {
-                            size = fileSize
-                        }
+                    val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
+                        cursor.getString(displayNameIndex)
                     } else {
                         null
                     }
+
+                    val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
+                        cursor.getLong(fileSizeIndex)
+                    } else {
+                        0L
+                    }
+
+                    val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
+                        cursor.getString(mimeTypeIndex)
+                    } else {
+                        context.contentResolver.getType(uri)
+                    }
+
+                    AttachmentMetaData(
+                        uri = uri,
+                        type = getModelType(mimeType),
+                        mimeType = mimeType,
+                        title = displayName,
+                    ).apply {
+                        size = fileSize
+                    }
+                } else {
+                    null
                 }
-        }
+            }
     }
 
     private fun getFilteredAttachments(context: Context, selection: String?): List<AttachmentMetaData> {
@@ -283,26 +281,19 @@ public class StorageHelper {
         return ContentUris.withAppendedId(contentUri, id)
     }
 
-    private fun getModelType(mimeType: String?): String {
-        return when {
-            isImage(mimeType) -> AttachmentType.IMAGE
-            isVideo(mimeType) -> AttachmentType.VIDEO
-            else -> AttachmentType.FILE
-        }
+    private fun getModelType(mimeType: String?): String = when {
+        isImage(mimeType) -> AttachmentType.IMAGE
+        isVideo(mimeType) -> AttachmentType.VIDEO
+        else -> AttachmentType.FILE
     }
 
-    private fun isImage(mimeType: String?): Boolean {
-        return mimeType?.startsWith("image") ?: false
-    }
+    private fun isImage(mimeType: String?): Boolean = mimeType?.startsWith("image") ?: false
 
-    private fun isVideo(mimeType: String?): Boolean {
-        return mimeType?.startsWith("video") ?: false
-    }
+    private fun isVideo(mimeType: String?): Boolean = mimeType?.startsWith("video") ?: false
 
-    private fun getUniqueCacheFolder(context: Context): File =
-        File(context.cacheDir, "$FILE_NAME_PREFIX${dateFormat.format(Date().time)}").also {
-            it.mkdirs()
-        }
+    private fun getUniqueCacheFolder(context: Context): File = File(context.cacheDir, "$FILE_NAME_PREFIX${dateFormat.format(Date().time)}").also {
+        it.mkdirs()
+    }
 
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"

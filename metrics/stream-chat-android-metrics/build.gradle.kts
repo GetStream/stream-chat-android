@@ -49,7 +49,9 @@ afterEvaluate {
         // For compose flavors, we apply the compose plugin,
         // set up build features and add common compose dependencies.
         if (flavorName.contains("compose")) {
-            val composePlugin = libs.plugins.kotlin.compose.get()
+            val composePlugin =
+                libs.plugins.kotlin.compose
+                    .get()
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
             val configurationName = "${flavorName}Implementation"

@@ -43,7 +43,9 @@ public interface MessageComposerFooterContent : MessageComposerContent {
 /**
  * Represents the default content shown at the bottom of [MessageComposerView].
  */
-public open class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerFooterContent {
+public open class DefaultMessageComposerFooterContent :
+    FrameLayout,
+    MessageComposerFooterContent {
     /**
      * Generated binding class for the XML layout.
      */

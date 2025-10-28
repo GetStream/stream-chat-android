@@ -89,8 +89,7 @@ internal class AttachmentsSender(
         message: Message,
         channelType: String,
         channelId: String,
-    ): Result<Message> =
-        uploadAttachments(message, channelType, channelId)
+    ): Result<Message> = uploadAttachments(message, channelType, channelId)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -103,18 +102,16 @@ internal class AttachmentsSender(
         message: Message,
         channelType: String,
         channelId: String,
-    ): Result<Message> {
-        return if (clientState.isNetworkAvailable) {
-            waitForAttachmentsToBeSent(message, channelType, channelId)
-        } else {
-            enqueueAttachmentUpload(message, channelType, channelId)
-            logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
-            Result.Failure(
-                Error.GenericError(
-                    "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
-                ),
-            )
-        }
+    ): Result<Message> = if (clientState.isNetworkAvailable) {
+        waitForAttachmentsToBeSent(message, channelType, channelId)
+    } else {
+        enqueueAttachmentUpload(message, channelType, channelId)
+        logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
+        Result.Failure(
+            Error.GenericError(
+                "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
+            ),
+        )
     }
 
     /**

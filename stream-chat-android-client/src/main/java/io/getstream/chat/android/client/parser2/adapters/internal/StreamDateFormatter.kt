@@ -126,11 +126,9 @@ public class StreamDateFormatter(
     /**
      * Formats the [Date] in the standard way to Stream's API
      */
-    public fun format(date: Date): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ITU.formatUtcMilli(date.toInstant().atOffset(ZoneOffset.UTC))
-        } else {
-            dateFormat.format(date)
-        }
+    public fun format(date: Date): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        ITU.formatUtcMilli(date.toInstant().atOffset(ZoneOffset.UTC))
+    } else {
+        dateFormat.format(date)
     }
 }

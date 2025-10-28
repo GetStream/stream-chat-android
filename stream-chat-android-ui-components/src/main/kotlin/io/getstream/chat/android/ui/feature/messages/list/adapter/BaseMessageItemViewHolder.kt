@@ -47,9 +47,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     /**
      * Returns the Message container that we can use to anchor UI based on its size and position.
      */
-    public open fun messageContainerView(): View? {
-        return null
-    }
+    public open fun messageContainerView(): View? = null
 
     /**
      * Workaround to allow a downcast of the MessageListItem to T.

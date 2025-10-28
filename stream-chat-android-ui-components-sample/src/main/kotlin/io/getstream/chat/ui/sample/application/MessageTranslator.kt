@@ -25,14 +25,12 @@ internal class MessageTranslator(
     private val autoTranslationEnabled: Boolean,
 ) : (MessageListItem.MessageItem) -> String {
 
-    override fun invoke(item: MessageListItem.MessageItem): String {
-        return if (autoTranslationEnabled || hasTranslation(item.message.id)) {
-            getCurrentUser()?.language?.let { language ->
-                item.message.getTranslation(language).ifEmpty { item.message.text }
-            } ?: item.message.text
-        } else {
-            item.message.text
-        }
+    override fun invoke(item: MessageListItem.MessageItem): String = if (autoTranslationEnabled || hasTranslation(item.message.id)) {
+        getCurrentUser()?.language?.let { language ->
+            item.message.getTranslation(language).ifEmpty { item.message.text }
+        } ?: item.message.text
+    } else {
+        item.message.text
     }
 
     companion object {
@@ -48,9 +46,7 @@ internal class MessageTranslator(
             translatedMessageIDs.add(messageId)
         }
 
-        fun hasTranslation(messageId: MessageId): Boolean {
-            return translatedMessageIDs.contains(messageId)
-        }
+        fun hasTranslation(messageId: MessageId): Boolean = translatedMessageIDs.contains(messageId)
 
         fun clearTranslation(messageId: MessageId) {
             logger.d { "[clearTranslation] messageId: $messageId" }

@@ -32,15 +32,11 @@ internal class ModerationConverter {
      * Converts a [String] to a [ModerationEntity].
      */
     @TypeConverter
-    fun stringToModeration(data: String?): ModerationEntity? {
-        return data?.let(entityAdapter::fromJson)
-    }
+    fun stringToModeration(data: String?): ModerationEntity? = data?.let(entityAdapter::fromJson)
 
     /**
      * Converts a [ModerationEntity] to a [String].
      */
     @TypeConverter
-    fun moderationToString(entity: ModerationEntity?): String? {
-        return entity?.let(entityAdapter::toJson)
-    }
+    fun moderationToString(entity: ModerationEntity?): String? = entity?.let(entityAdapter::toJson)
 }

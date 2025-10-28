@@ -32,19 +32,15 @@ internal class PushPreferenceConverter {
      * Converts a [String] to a [PushPreferenceEntity].
      */
     @TypeConverter
-    fun stringToPushPreference(data: String?): PushPreferenceEntity? {
-        return data?.let {
-            pushPreferenceAdapter.fromJson(it)
-        }
+    fun stringToPushPreference(data: String?): PushPreferenceEntity? = data?.let {
+        pushPreferenceAdapter.fromJson(it)
     }
 
     /**
      * Converts a [PushPreferenceEntity] to a [String].
      */
     @TypeConverter
-    fun pushPreferenceToString(entity: PushPreferenceEntity?): String? {
-        return entity?.let {
-            pushPreferenceAdapter.toJson(it)
-        }
+    fun pushPreferenceToString(entity: PushPreferenceEntity?): String? = entity?.let {
+        pushPreferenceAdapter.toJson(it)
     }
 }

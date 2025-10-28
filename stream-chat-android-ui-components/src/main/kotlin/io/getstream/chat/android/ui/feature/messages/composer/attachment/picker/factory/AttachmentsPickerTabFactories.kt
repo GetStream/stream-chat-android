@@ -45,18 +45,16 @@ public object AttachmentsPickerTabFactories {
         fileAttachmentsTabEnabled: Boolean,
         cameraAttachmentsTabEnabled: Boolean,
         pollAttachmentsTabEnabled: Boolean,
-    ): List<AttachmentsPickerTabFactory> {
-        return listOf(
-            AttachmentsPickerSystemTabFactory(
-                mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
-                visualMediaAllowMultiple = visualMediaAllowMultiple,
-                visualMediaType = visualMediaType,
-                fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
-                cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
-                pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
-            ),
-        )
-    }
+    ): List<AttachmentsPickerTabFactory> = listOf(
+        AttachmentsPickerSystemTabFactory(
+            mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
+            visualMediaAllowMultiple = visualMediaAllowMultiple,
+            visualMediaType = visualMediaType,
+            fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
+            cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
+            pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
+        ),
+    )
 
     /**
      * Creates a list of factories for the tabs that will be displayed in the attachment picker.
@@ -72,12 +70,10 @@ public object AttachmentsPickerTabFactories {
         fileAttachmentsTabEnabled: Boolean,
         cameraAttachmentsTabEnabled: Boolean,
         pollAttachmentsTabEnabled: Boolean,
-    ): List<AttachmentsPickerTabFactory> {
-        return listOfNotNull(
-            if (mediaAttachmentsTabEnabled) AttachmentsPickerMediaTabFactory() else null,
-            if (fileAttachmentsTabEnabled) AttachmentsPickerFileTabFactory() else null,
-            if (cameraAttachmentsTabEnabled) AttachmentsPickerCameraTabFactory() else null,
-            if (pollAttachmentsTabEnabled) AttachmentsPickerPollTabFactory() else null,
-        )
-    }
+    ): List<AttachmentsPickerTabFactory> = listOfNotNull(
+        if (mediaAttachmentsTabEnabled) AttachmentsPickerMediaTabFactory() else null,
+        if (fileAttachmentsTabEnabled) AttachmentsPickerFileTabFactory() else null,
+        if (cameraAttachmentsTabEnabled) AttachmentsPickerCameraTabFactory() else null,
+        if (pollAttachmentsTabEnabled) AttachmentsPickerPollTabFactory() else null,
+    )
 }

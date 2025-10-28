@@ -85,17 +85,15 @@ public fun interface QuotedMessageTextFormatter {
             linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors, shapes),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
-        ): QuotedMessageTextFormatter {
-            return DefaultQuotedMessageTextFormatter(
-                context = context,
-                autoTranslationEnabled = autoTranslationEnabled,
-                typography = typography,
-                textStyle = textStyle,
-                linkStyle = linkStyle,
-                mentionColor = mentionColor,
-                builder = builder,
-            )
-        }
+        ): QuotedMessageTextFormatter = DefaultQuotedMessageTextFormatter(
+            context = context,
+            autoTranslationEnabled = autoTranslationEnabled,
+            typography = typography,
+            textStyle = textStyle,
+            linkStyle = linkStyle,
+            mentionColor = mentionColor,
+            builder = builder,
+        )
 
         /**
          * Builds the default message text formatter.
@@ -157,12 +155,10 @@ public fun interface QuotedMessageTextFormatter {
         }
 
         @Composable
-        private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle {
-            return { isMine ->
-                when (isMine) {
-                    true -> ownTheme.quoted.textStyle
-                    else -> otherTheme.quoted.textStyle
-                }
+        private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle = { isMine ->
+            when (isMine) {
+                true -> ownTheme.quoted.textStyle
+                else -> otherTheme.quoted.textStyle
             }
         }
 
@@ -174,9 +170,7 @@ public fun interface QuotedMessageTextFormatter {
          *
          * @see [CompositeMessageTextFormatter]
          */
-        public fun composite(vararg formatters: QuotedMessageTextFormatter): QuotedMessageTextFormatter {
-            return CompositeQuotedMessageTextFormatter(formatters.toList())
-        }
+        public fun composite(vararg formatters: QuotedMessageTextFormatter): QuotedMessageTextFormatter = CompositeQuotedMessageTextFormatter(formatters.toList())
     }
 }
 

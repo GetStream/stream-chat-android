@@ -23,32 +23,29 @@ import io.getstream.chat.android.ui.feature.mentions.list.MentionListItem
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView.MentionSelectedListener
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 
-internal class MentionListAdapter :
-    ListAdapter<MentionListItem, MentionListItemViewHolder<MentionListItem>>(MentionListItemDiffCallback) {
+internal class MentionListAdapter : ListAdapter<MentionListItem, MentionListItemViewHolder<MentionListItem>>(MentionListItemDiffCallback) {
 
     var mentionSelectedListener: MentionSelectedListener? = null
 
     var previewStyle: MessagePreviewStyle? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionListItemViewHolder<MentionListItem> =
-        when (viewType) {
-            VIEW_TYPE_MESSAGE -> MentionListItemMessageViewHolder(
-                style = previewStyle,
-                parentView = parent,
-                clickListener = mentionSelectedListener,
-            )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionListItemViewHolder<MentionListItem> = when (viewType) {
+        VIEW_TYPE_MESSAGE -> MentionListItemMessageViewHolder(
+            style = previewStyle,
+            parentView = parent,
+            clickListener = mentionSelectedListener,
+        )
 
-            VIEW_TYPE_LOADING -> MentionListItemLoadingViewHolder(parent)
+        VIEW_TYPE_LOADING -> MentionListItemLoadingViewHolder(parent)
 
-            else -> error("Unknown MentionList view type: $viewType")
-        } as MentionListItemViewHolder<MentionListItem>
+        else -> error("Unknown MentionList view type: $viewType")
+    } as MentionListItemViewHolder<MentionListItem>
 
-    override fun getItemViewType(position: Int): Int =
-        if (getItem(position) is MentionListItem.MessageItem) {
-            VIEW_TYPE_MESSAGE
-        } else {
-            VIEW_TYPE_LOADING
-        }
+    override fun getItemViewType(position: Int): Int = if (getItem(position) is MentionListItem.MessageItem) {
+        VIEW_TYPE_MESSAGE
+    } else {
+        VIEW_TYPE_LOADING
+    }
 
     override fun onBindViewHolder(holder: MentionListItemViewHolder<MentionListItem>, position: Int) {
         holder.bind(getItem(position))

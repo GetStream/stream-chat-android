@@ -77,9 +77,7 @@ public data class AudioRecordingAttachmentTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): AudioRecordingAttachmentTheme {
-            return defaultTheme(own = true, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
-        }
+        ): AudioRecordingAttachmentTheme = defaultTheme(own = true, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
 
         /**
          * Builds the default theming for the audio recording attachment for other users.
@@ -98,9 +96,7 @@ public data class AudioRecordingAttachmentTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): AudioRecordingAttachmentTheme {
-            return defaultTheme(own = false, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
-        }
+        ): AudioRecordingAttachmentTheme = defaultTheme(own = false, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
 
         /**
          * Builds the default theming for the audio recording attachment.
@@ -121,53 +117,51 @@ public data class AudioRecordingAttachmentTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): AudioRecordingAttachmentTheme {
-            return AudioRecordingAttachmentTheme(
-                size = ComponentSize.fillMaxWidth(height = 60.dp),
-                padding = ComponentPadding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
-                playButton = IconContainerStyle(
-                    size = ComponentSize.square(36.dp),
-                    padding = ComponentPadding.Zero,
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                        tint = Color.Black,
-                        size = ComponentSize.square(24.dp),
-                    ),
+        ): AudioRecordingAttachmentTheme = AudioRecordingAttachmentTheme(
+            size = ComponentSize.fillMaxWidth(height = 60.dp),
+            padding = ComponentPadding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
+            playButton = IconContainerStyle(
+                size = ComponentSize.square(36.dp),
+                padding = ComponentPadding.Zero,
+                icon = IconStyle(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_play),
+                    tint = Color.Black,
+                    size = ComponentSize.square(24.dp),
                 ),
-                pauseButton = IconContainerStyle(
-                    size = ComponentSize.square(36.dp),
-                    padding = ComponentPadding.Zero,
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_pause),
-                        tint = Color.Black,
-                        size = ComponentSize.square(24.dp),
-                    ),
+            ),
+            pauseButton = IconContainerStyle(
+                size = ComponentSize.square(36.dp),
+                padding = ComponentPadding.Zero,
+                icon = IconStyle(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_pause),
+                    tint = Color.Black,
+                    size = ComponentSize.square(24.dp),
                 ),
-                timerStyle = TextContainerStyle(
-                    size = ComponentSize.width(48.dp),
-                    padding = ComponentPadding.Zero,
-                    backgroundColor = Color.Unspecified,
-                    textStyle = typography.body.copy(
-                        color = colors.textLowEmphasis,
-                    ),
+            ),
+            timerStyle = TextContainerStyle(
+                size = ComponentSize.width(48.dp),
+                padding = ComponentPadding.Zero,
+                backgroundColor = Color.Unspecified,
+                textStyle = typography.body.copy(
+                    color = colors.textLowEmphasis,
                 ),
-                waveformSliderStyle = WaveformSliderLayoutStyle(
-                    height = 36.dp,
-                    style = WaveformSliderStyle.defaultStyle(colors = colors),
-                ),
-                tailWidth = 48.dp,
-                speedButton = TextContainerStyle(
-                    size = ComponentSize.square(36.dp),
-                    padding = ComponentPadding.Zero,
-                    backgroundColor = Color.White,
-                    textStyle = typography.body,
-                ),
-                contentTypeIcon = IconStyle(
-                    size = ComponentSize(height = 40.dp, width = 34.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_file_aac),
-                    tint = Color.Unspecified,
-                ),
-            )
-        }
+            ),
+            waveformSliderStyle = WaveformSliderLayoutStyle(
+                height = 36.dp,
+                style = WaveformSliderStyle.defaultStyle(colors = colors),
+            ),
+            tailWidth = 48.dp,
+            speedButton = TextContainerStyle(
+                size = ComponentSize.square(36.dp),
+                padding = ComponentPadding.Zero,
+                backgroundColor = Color.White,
+                textStyle = typography.body,
+            ),
+            contentTypeIcon = IconStyle(
+                size = ComponentSize(height = 40.dp, width = 34.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_file_aac),
+                tint = Color.Unspecified,
+            ),
+        )
     }
 }

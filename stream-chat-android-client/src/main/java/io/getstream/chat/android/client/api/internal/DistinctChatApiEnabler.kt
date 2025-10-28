@@ -43,29 +43,17 @@ internal class DistinctChatApiEnabler(
 
     private val originalApi = distinctApi.delegate
 
-    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
-        return getApi().getRepliesMore(messageId, firstId, limit)
-    }
+    override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> = getApi().getRepliesMore(messageId, firstId, limit)
 
-    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
-        return getApi().getReplies(messageId, limit)
-    }
+    override fun getReplies(messageId: String, limit: Int): Call<List<Message>> = getApi().getReplies(messageId, limit)
 
-    override fun getNewerReplies(parentId: String, limit: Int, lastId: String?): Call<List<Message>> {
-        return getApi().getNewerReplies(parentId, limit, lastId)
-    }
+    override fun getNewerReplies(parentId: String, limit: Int, lastId: String?): Call<List<Message>> = getApi().getNewerReplies(parentId, limit, lastId)
 
-    override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
-        return getApi().getReactions(messageId, offset, limit)
-    }
+    override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> = getApi().getReactions(messageId, offset, limit)
 
-    override fun getMessage(messageId: String): Call<Message> {
-        return getApi().getMessage(messageId)
-    }
+    override fun getMessage(messageId: String): Call<Message> = getApi().getMessage(messageId)
 
-    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return getApi().getPendingMessage(messageId)
-    }
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> = getApi().getPendingMessage(messageId)
 
     override fun getPinnedMessages(
         channelType: String,
@@ -73,13 +61,9 @@ internal class DistinctChatApiEnabler(
         limit: Int,
         sort: QuerySorter<Message>,
         pagination: PinnedMessagesPagination,
-    ): Call<List<Message>> {
-        return getApi().getPinnedMessages(channelType, channelId, limit, sort, pagination)
-    }
+    ): Call<List<Message>> = getApi().getPinnedMessages(channelType, channelId, limit, sort, pagination)
 
-    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> {
-        return getApi().queryChannels(query)
-    }
+    override fun queryChannels(query: QueryChannelsRequest): Call<List<Channel>> = getApi().queryChannels(query)
 
     override fun queryBannedUsers(
         filter: FilterObject,
@@ -90,18 +74,16 @@ internal class DistinctChatApiEnabler(
         createdAtAfterOrEqual: Date?,
         createdAtBefore: Date?,
         createdAtBeforeOrEqual: Date?,
-    ): Call<List<BannedUser>> {
-        return getApi().queryBannedUsers(
-            filter,
-            sort,
-            offset,
-            limit,
-            createdAtAfter,
-            createdAtAfterOrEqual,
-            createdAtBefore,
-            createdAtBeforeOrEqual,
-        )
-    }
+    ): Call<List<BannedUser>> = getApi().queryBannedUsers(
+        filter,
+        sort,
+        offset,
+        limit,
+        createdAtAfter,
+        createdAtAfterOrEqual,
+        createdAtBefore,
+        createdAtBeforeOrEqual,
+    )
 
     override fun queryMembers(
         channelType: String,
@@ -111,13 +93,9 @@ internal class DistinctChatApiEnabler(
         filter: FilterObject,
         sort: QuerySorter<Member>,
         members: List<Member>,
-    ): Call<List<Member>> {
-        return getApi().queryMembers(channelType, channelId, offset, limit, filter, sort, members)
-    }
+    ): Call<List<Member>> = getApi().queryMembers(channelType, channelId, offset, limit, filter, sort, members)
 
-    override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> {
-        return getApi().queryChannel(channelType, channelId, query)
-    }
+    override fun queryChannel(channelType: String, channelId: String, query: QueryChannelRequest): Call<Channel> = getApi().queryChannel(channelType, channelId, query)
 
     private fun getApi() = if (distinctCallsEnabled()) distinctApi else originalApi
 }

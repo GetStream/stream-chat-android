@@ -29,11 +29,10 @@ import java.lang.reflect.Type
  * A [JsonAdapter.Factory] which provide [JsonAdapter] to serialize/deserialize [FlagRequest] entities.
  */
 internal object FlagRequestAdapterFactory : JsonAdapter.Factory {
-    override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? =
-        when (type) {
-            FlagRequest::class.java -> FlagRequestAdapter(moshi)
-            else -> null
-        }
+    override fun create(type: Type, annotations: MutableSet<out Annotation>, moshi: Moshi): JsonAdapter<*>? = when (type) {
+        FlagRequest::class.java -> FlagRequestAdapter(moshi)
+        else -> null
+    }
 
     /**
      * A [JsonAdapter] to serialize/deserialize [FlagRequest] entities.

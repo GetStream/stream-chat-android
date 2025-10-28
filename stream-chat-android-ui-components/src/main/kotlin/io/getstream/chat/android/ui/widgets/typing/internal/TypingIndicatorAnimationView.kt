@@ -130,9 +130,7 @@ private class TypingDrawable(context: Context) : Drawable() {
      * @param dotIndex The index of the current dot to be drawn.
      * @return The x-coordinate of the center of the dot.
      */
-    private fun calculateCx(dotIndex: Int): Float {
-        return dotIndex * dotDiameterPx + dotIndex * dotSpacingPx + dotRadiusPx
-    }
+    private fun calculateCx(dotIndex: Int): Float = dotIndex * dotDiameterPx + dotIndex * dotSpacingPx + dotRadiusPx
 
     override fun setAlpha(alpha: Int): Unit = Unit
 

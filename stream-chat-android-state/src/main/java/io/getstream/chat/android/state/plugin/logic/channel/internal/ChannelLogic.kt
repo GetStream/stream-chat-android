@@ -161,9 +161,7 @@ internal class ChannelLogic(
      */
     internal fun state(): ChannelState = mutableState
 
-    internal fun stateLogic(): ChannelStateLogic {
-        return channelStateLogic
-    }
+    internal fun stateLogic(): ChannelStateLogic = channelStateLogic
 
     /**
      * Starts to watch this channel.
@@ -250,10 +248,9 @@ internal class ChannelLogic(
      *
      * @param request The request object for the query.
      */
-    private suspend fun runChannelQueryOnline(request: WatchChannelRequest): Result<Channel> =
-        ChatClient.instance()
-            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
-            .await()
+    private suspend fun runChannelQueryOnline(request: WatchChannelRequest): Result<Channel> = ChatClient.instance()
+        .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
+        .await()
 
     /**
      * Fills the gap between the loaded messages and the requested messages.
@@ -407,8 +404,7 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages older than this.
      */
-    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
-        watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
+    private fun olderWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest = watchChannelRequest(Pagination.LESS_THAN, limit, baseMessageId)
 
     /**
      * Returns instance of [WatchChannelRequest] to obtain newer messages of a channel.
@@ -416,16 +412,13 @@ internal class ChannelLogic(
      * @param limit Message limit in this request.
      * @param baseMessageId Message id of the last available message. Request will fetch messages newer than this.
      */
-    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest =
-        watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
+    private fun newerWatchChannelRequest(limit: Int, baseMessageId: String?): WatchChannelRequest = watchChannelRequest(Pagination.GREATER_THAN, limit, baseMessageId)
 
-    private fun aroundIdWatchChannelRequest(aroundMessageId: String): WatchChannelRequest {
-        return QueryChannelPaginationRequest().apply {
-            messageFilterDirection = Pagination.AROUND_ID
-            messageFilterValue = aroundMessageId
-        }.toWatchChannelRequest(userPresence).apply {
-            shouldRefresh = true
-        }
+    private fun aroundIdWatchChannelRequest(aroundMessageId: String): WatchChannelRequest = QueryChannelPaginationRequest().apply {
+        messageFilterDirection = Pagination.AROUND_ID
+        messageFilterValue = aroundMessageId
+    }.toWatchChannelRequest(userPresence).apply {
+        shouldRefresh = true
     }
 
     /**
@@ -509,8 +502,7 @@ internal class ChannelLogic(
      *
      * @return [Message] if exists and wasn't hidden, null otherwise.
      */
-    internal fun getMessage(messageId: String): Message? =
-        mutableState.visibleMessages.value[messageId]?.copy()
+    internal fun getMessage(messageId: String): Message? = mutableState.visibleMessages.value[messageId]?.copy()
 
     private fun upsertUserPresence(user: User) {
         channelStateLogic.upsertUserPresence(user)

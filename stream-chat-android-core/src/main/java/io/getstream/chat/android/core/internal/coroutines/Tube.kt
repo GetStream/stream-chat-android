@@ -27,7 +27,9 @@ import kotlinx.coroutines.sync.withLock
  * A synchronous data stream that emits values and completes normally.
  */
 @InternalStreamChatApi
-public class Tube<T> : Flow<T>, FlowCollector<T> {
+public class Tube<T> :
+    Flow<T>,
+    FlowCollector<T> {
 
     private val mutex = Mutex()
     private val collectors = hashSetOf<FlowCollector<T>>()

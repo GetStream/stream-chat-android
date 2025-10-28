@@ -55,23 +55,19 @@ class ViewReactionsTest : ScreenshotTest {
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
-    private fun manyReactions(): Map<String, Int> {
-        return mutableMapOf(
-            SupportedReactions.DefaultReactionTypes.LOVE to 10,
-            SupportedReactions.DefaultReactionTypes.WUT to 20,
-            SupportedReactions.DefaultReactionTypes.LOL to 20,
-            SupportedReactions.DefaultReactionTypes.THUMBS_UP to 20,
-            "sad" to 20,
-        )
-    }
+    private fun manyReactions(): Map<String, Int> = mutableMapOf(
+        SupportedReactions.DefaultReactionTypes.LOVE to 10,
+        SupportedReactions.DefaultReactionTypes.WUT to 20,
+        SupportedReactions.DefaultReactionTypes.LOL to 20,
+        SupportedReactions.DefaultReactionTypes.THUMBS_UP to 20,
+        "sad" to 20,
+    )
 
-    private fun unsupportedReactions(): Map<String, Int> {
-        return mutableMapOf(
-            "notSupported1" to 10,
-            "notSupported2" to 10,
-            "notSupported3" to 10,
-            "notSupported4" to 10,
-            "notSupported5" to 10,
-        )
-    }
+    private fun unsupportedReactions(): Map<String, Int> = mutableMapOf(
+        "notSupported1" to 10,
+        "notSupported2" to 10,
+        "notSupported3" to 10,
+        "notSupported4" to 10,
+        "notSupported5" to 10,
+    )
 }

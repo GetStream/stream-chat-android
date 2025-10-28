@@ -75,22 +75,20 @@ public data class DraftMessage(
      */
     val replyMessage: Message? = null,
 
-) : CustomObject, ComparableFieldProvider {
+) : CustomObject,
+    ComparableFieldProvider {
 
     @Suppress("ComplexMethod")
-    override fun getComparableField(fieldName: String): Comparable<*>? =
-        when (fieldName) {
-            "id" -> id
-            "cid" -> cid
-            "text" -> text
-            "parent_id", "parentId" -> parentId
-            "silent" -> silent
-            else -> extraData[fieldName] as? Comparable<*>
-        }
-
-    private fun <A, B> Map<A, B>.get(key: A, default: B): B {
-        return get(key) ?: default
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "id" -> id
+        "cid" -> cid
+        "text" -> text
+        "parent_id", "parentId" -> parentId
+        "silent" -> silent
+        else -> extraData[fieldName] as? Comparable<*>
     }
+
+    private fun <A, B> Map<A, B>.get(key: A, default: B): B = get(key) ?: default
 
     /**
      * Identifier of message. The message can't be considered the same if the id of the message AND the id of a
@@ -163,19 +161,17 @@ public data class DraftMessage(
         public fun withShowInChannel(showInChannel: Boolean): Builder = apply { this.showInChannel = showInChannel }
         public fun withReplyMessage(replyMessage: Message?): Builder = apply { this.replyMessage = replyMessage }
 
-        public fun build(): DraftMessage {
-            return DraftMessage(
-                id = id,
-                cid = cid,
-                text = text,
-                parentId = parentId,
-                attachments = attachments,
-                mentionedUsersIds = mentionedUsersIds,
-                extraData = extraData,
-                silent = silent,
-                showInChannel = showInChannel,
-                replyMessage = replyMessage,
-            )
-        }
+        public fun build(): DraftMessage = DraftMessage(
+            id = id,
+            cid = cid,
+            text = text,
+            parentId = parentId,
+            attachments = attachments,
+            mentionedUsersIds = mentionedUsersIds,
+            extraData = extraData,
+            silent = silent,
+            showInChannel = showInChannel,
+            replyMessage = replyMessage,
+        )
     }
 }

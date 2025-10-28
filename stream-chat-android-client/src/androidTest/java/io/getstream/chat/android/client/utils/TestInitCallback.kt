@@ -25,13 +25,9 @@ internal class TestInitCallback : Call.Callback<ConnectionData> {
     private var data: ConnectionData? = null
     private var error: Error? = null
 
-    fun onSuccessIsCalled(): Boolean {
-        return data != null
-    }
+    fun onSuccessIsCalled(): Boolean = data != null
 
-    fun onErrorIsCalled(): Boolean {
-        return error != null
-    }
+    fun onErrorIsCalled(): Boolean = error != null
 
     override fun onResult(result: Result<ConnectionData>) {
         if (result.isSuccess) {

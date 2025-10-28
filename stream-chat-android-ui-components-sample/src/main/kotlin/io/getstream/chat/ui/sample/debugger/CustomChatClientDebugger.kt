@@ -34,9 +34,7 @@ class CustomChatClientDebugger : ChatClientDebugger {
         channelId: String,
         message: Message,
         isRetrying: Boolean,
-    ): SendMessageDebugger {
-        return CustomSendMessageDebugger(channelType, channelId, message, isRetrying)
-    }
+    ): SendMessageDebugger = CustomSendMessageDebugger(channelType, channelId, message, isRetrying)
 }
 
 class CustomSendMessageDebugger(

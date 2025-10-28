@@ -59,16 +59,14 @@ public object PayloadValidator {
      *
      * @return true if the payload comes from Stream Server.
      */
-    private fun isFromStreamServerV1(payload: Map<String, Any?>): Boolean =
-        payload[KEY_SENDER_V1] == VALUE_STREAM_SENDER
+    private fun isFromStreamServerV1(payload: Map<String, Any?>): Boolean = payload[KEY_SENDER_V1] == VALUE_STREAM_SENDER
 
     /**
      * Verify the payload comes from Stream Server using v2 fields.
      *
      * @return true if the payload comes from Stream Server.
      */
-    private fun isFromStreamServerV2(payload: Map<String, Any?>): Boolean =
-        payload[KEY_SENDER] == VALUE_STREAM_SENDER
+    private fun isFromStreamServerV2(payload: Map<String, Any?>): Boolean = payload[KEY_SENDER] == VALUE_STREAM_SENDER
 
     /**
      * Verify the payload contains needed field for a new message.
@@ -98,39 +96,32 @@ public object PayloadValidator {
      *
      * @return true if the payload contains all needed fields for a new message.
      */
-    private fun isValidNewMessageV1(payload: Map<String, Any?>): Boolean =
-        !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
-            !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
-            !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
+    private fun isValidNewMessageV1(payload: Map<String, Any?>): Boolean = !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
+        !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
+        !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
 
     /**
      * Verify the payload contains needed field for a new message using v2 fields.
      *
      * @return true if the payload contains all needed fields for a new message.
      */
-    private fun isValidNewMessageV2(payload: Map<String, Any?>): Boolean =
-        payload[KEY_TYPE] == VALUE_MESSAGE_NEW &&
-            !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
-            !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
-            !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
+    private fun isValidNewMessageV2(payload: Map<String, Any?>): Boolean = payload[KEY_TYPE] == VALUE_MESSAGE_NEW &&
+        !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
+        !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank() &&
+        !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
 
-    private fun isValidTypeV2(payload: Map<String, Any?>): Boolean =
-        isValidType(payload) && hasCid(payload) && hasMessageId(payload)
+    private fun isValidTypeV2(payload: Map<String, Any?>): Boolean = isValidType(payload) && hasCid(payload) && hasMessageId(payload)
 
     private fun isValidType(payload: Map<String, Any?>): Boolean {
         val type = payload[KEY_TYPE] as? String ?: return false
         return type in supportedNotificationTypes
     }
 
-    private fun hasMessageId(payload: Map<String, Any?>): Boolean {
-        return !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank()
-    }
+    private fun hasMessageId(payload: Map<String, Any?>): Boolean = !(payload[KEY_MESSAGE_ID] as? String).isNullOrBlank()
 
-    private fun hasCid(payload: Map<String, Any?>): Boolean {
-        return (
-            !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
-                !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
-            ) ||
-            !(payload[KEY_CID] as? String).isNullOrBlank()
-    }
+    private fun hasCid(payload: Map<String, Any?>): Boolean = (
+        !(payload[KEY_CHANNEL_ID] as? String).isNullOrBlank() &&
+            !(payload[KEY_CHANNEL_TYPE] as? String).isNullOrBlank()
+        ) ||
+        !(payload[KEY_CID] as? String).isNullOrBlank()
 }

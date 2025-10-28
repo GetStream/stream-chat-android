@@ -51,22 +51,18 @@ internal class ApiRequestsDumper(
      *
      * @param requestName The name of the request.
      */
-    override fun dumpRequestByName(requestName: String): String {
-        return requestsDataMap[requestName]
-            ?.toHumanReadableStringBuilder()
-            ?.toString()
-            ?: NOT_FOUND
-    }
+    override fun dumpRequestByName(requestName: String): String = requestsDataMap[requestName]
+        ?.toHumanReadableStringBuilder()
+        ?.toString()
+        ?: NOT_FOUND
 
     /**
      * Gets all the information in the analyser.
      */
-    override fun dumpAll(): String {
-        return buildString {
-            requestsDataMap.values.forEach { requestDataList ->
-                append(requestDataList.toHumanReadableStringBuilder())
-                appendLine()
-            }
+    override fun dumpAll(): String = buildString {
+        requestsDataMap.values.forEach { requestDataList ->
+            append(requestDataList.toHumanReadableStringBuilder())
+            appendLine()
         }
     }
 
@@ -104,9 +100,7 @@ internal class ApiRequestsDumper(
     /**
      * Counts all the requests made.
      */
-    override fun countAllRequests(): Int {
-        return requestsDataMap.values.fold(0) { acc, list -> acc + list.count() }
-    }
+    override fun countAllRequests(): Int = requestsDataMap.values.fold(0) { acc, list -> acc + list.count() }
 
     /**
      * A list of the same request that is converted to a human readable String

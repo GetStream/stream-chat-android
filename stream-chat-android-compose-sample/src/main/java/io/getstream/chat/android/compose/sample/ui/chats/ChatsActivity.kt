@@ -116,12 +116,11 @@ class ChatsActivity : ComponentActivity() {
             channelId: String? = null,
             messageId: String? = null,
             parentMessageId: String? = null,
-        ): Intent =
-            Intent(context, ChatsActivity::class.java)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                .putExtra(KEY_CHANNEL_ID, channelId)
-                .putExtra(KEY_MESSAGE_ID, messageId)
-                .putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
+        ): Intent = Intent(context, ChatsActivity::class.java)
+            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            .putExtra(KEY_CHANNEL_ID, channelId)
+            .putExtra(KEY_MESSAGE_ID, messageId)
+            .putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
     }
 
     private val channelId by lazy { intent.getStringExtra(KEY_CHANNEL_ID) }

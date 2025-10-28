@@ -27,9 +27,7 @@ import io.getstream.chat.android.models.AttachmentType
  */
 public class UrlAttachmentPreviewHandler(private val context: Context) : AttachmentPreviewHandler {
 
-    override fun canHandle(attachment: Attachment): Boolean {
-        return !getAttachmentUrl(attachment).isNullOrEmpty()
-    }
+    override fun canHandle(attachment: Attachment): Boolean = !getAttachmentUrl(attachment).isNullOrEmpty()
 
     override fun handleAttachmentPreview(attachment: Attachment) {
         val url = getAttachmentUrl(attachment)

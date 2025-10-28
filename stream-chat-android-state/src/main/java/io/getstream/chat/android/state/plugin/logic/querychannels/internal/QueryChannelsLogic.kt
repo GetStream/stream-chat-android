@@ -82,9 +82,7 @@ internal class QueryChannelsLogic(
 
     internal fun filter(): FilterObject = filter
 
-    internal fun recoveryNeeded(): StateFlow<Boolean> {
-        return queryChannelsStateLogic.getState().recoveryNeeded
-    }
+    internal fun recoveryNeeded(): StateFlow<Boolean> = queryChannelsStateLogic.getState().recoveryNeeded
 
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,

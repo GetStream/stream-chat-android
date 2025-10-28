@@ -19,18 +19,14 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
 
-internal fun MessageModerationDetails.toEntity(): ModerationDetailsEntity {
-    return ModerationDetailsEntity(
-        originalText = originalText,
-        action = action.rawValue,
-        errorMsg = errorMsg,
-    )
-}
+internal fun MessageModerationDetails.toEntity(): ModerationDetailsEntity = ModerationDetailsEntity(
+    originalText = originalText,
+    action = action.rawValue,
+    errorMsg = errorMsg,
+)
 
-internal fun ModerationDetailsEntity.toModel(): MessageModerationDetails {
-    return MessageModerationDetails(
-        originalText = originalText,
-        action = MessageModerationAction.fromRawValue(action),
-        errorMsg = errorMsg,
-    )
-}
+internal fun ModerationDetailsEntity.toModel(): MessageModerationDetails = MessageModerationDetails(
+    originalText = originalText,
+    action = MessageModerationAction.fromRawValue(action),
+    errorMsg = errorMsg,
+)

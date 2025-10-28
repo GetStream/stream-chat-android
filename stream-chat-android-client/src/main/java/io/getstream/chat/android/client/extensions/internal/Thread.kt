@@ -29,12 +29,10 @@ import java.util.Date
  * Updates the given Thread with the new message (parent or reply).
  */
 @InternalStreamChatApi
-public fun Thread.updateParentOrReply(message: Message): Thread {
-    return when (this.parentMessageId) {
-        message.id -> updateParent(parent = message)
-        message.parentId -> upsertReply(reply = message)
-        else -> this
-    }
+public fun Thread.updateParentOrReply(message: Message): Thread = when (this.parentMessageId) {
+    message.id -> updateParent(parent = message)
+    message.parentId -> upsertReply(reply = message)
+    else -> this
 }
 
 /**
@@ -185,12 +183,10 @@ private fun upsertThreadParticipantInList(
     }
 }
 
-private fun updateReadCounts(read: List<ChannelUserRead>, reply: Message): List<ChannelUserRead> {
-    return read.map { userRead ->
-        if (userRead.user.id != reply.user.id) {
-            userRead.copy(unreadMessages = userRead.unreadMessages + 1)
-        } else {
-            userRead
-        }
+private fun updateReadCounts(read: List<ChannelUserRead>, reply: Message): List<ChannelUserRead> = read.map { userRead ->
+    if (userRead.user.id != reply.user.id) {
+        userRead.copy(unreadMessages = userRead.unreadMessages + 1)
+    } else {
+        userRead
     }
 }

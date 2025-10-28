@@ -26,9 +26,7 @@ internal class MemberConverter {
     private val memberEntityMapAdapter = moshi.adapter<MemberEntity>()
 
     @TypeConverter
-    fun memberToString(member: MemberEntity?): String? {
-        return memberEntityMapAdapter.toJson(member)
-    }
+    fun memberToString(member: MemberEntity?): String? = memberEntityMapAdapter.toJson(member)
 
     @TypeConverter
     fun stringToMemberMap(data: String?): MemberEntity? {

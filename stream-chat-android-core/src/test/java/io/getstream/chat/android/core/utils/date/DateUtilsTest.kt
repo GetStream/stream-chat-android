@@ -122,16 +122,14 @@ internal class DateUtilsTest {
         private val dateAfter = Date.from(Instant.ofEpochMilli(1737389239))
 
         @JvmStatic
-        fun dateUtilsAfterArguments(): List<Arguments> {
-            return listOf(
-                Arguments.of(null, null, false),
-                Arguments.of(null, dateBefore, false),
-                Arguments.of(dateBefore, null, true),
-                Arguments.of(dateBefore, dateBefore, false),
-                Arguments.of(dateBefore, dateAfter, false),
-                Arguments.of(dateAfter, dateBefore, true),
-            )
-        }
+        fun dateUtilsAfterArguments(): List<Arguments> = listOf(
+            Arguments.of(null, null, false),
+            Arguments.of(null, dateBefore, false),
+            Arguments.of(dateBefore, null, true),
+            Arguments.of(dateBefore, dateBefore, false),
+            Arguments.of(dateBefore, dateAfter, false),
+            Arguments.of(dateAfter, dateBefore, true),
+        )
 
         @JvmStatic
         fun dateUtilsMaxArguments() = listOf(

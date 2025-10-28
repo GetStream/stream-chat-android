@@ -18,26 +18,22 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.Location
 
-internal fun LocationEntity.toModel(): Location {
-    return Location(
-        messageId = messageId,
-        cid = cid,
-        userId = userId,
-        endAt = endAt,
-        latitude = latitude,
-        longitude = longitude,
-        deviceId = deviceId,
-    )
-}
+internal fun LocationEntity.toModel(): Location = Location(
+    messageId = messageId,
+    cid = cid,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
+)
 
-internal fun Location.toEntity(): LocationEntity {
-    return LocationEntity(
-        messageId = messageId,
-        cid = cid,
-        userId = userId,
-        endAt = endAt,
-        latitude = latitude,
-        longitude = longitude,
-        deviceId = deviceId,
-    )
-}
+internal fun Location.toEntity(): LocationEntity = LocationEntity(
+    messageId = messageId,
+    cid = cid,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
+)

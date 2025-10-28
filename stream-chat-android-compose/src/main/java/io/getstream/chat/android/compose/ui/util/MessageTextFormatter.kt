@@ -74,16 +74,14 @@ public fun interface MessageTextFormatter {
             linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
-        ): MessageTextFormatter {
-            return DefaultMessageTextFormatter(
-                autoTranslationEnabled = autoTranslationEnabled,
-                typography = typography,
-                textStyle = textStyle,
-                linkStyle = linkStyle,
-                mentionColor = mentionColor,
-                builder = builder,
-            )
-        }
+        ): MessageTextFormatter = DefaultMessageTextFormatter(
+            autoTranslationEnabled = autoTranslationEnabled,
+            typography = typography,
+            textStyle = textStyle,
+            linkStyle = linkStyle,
+            mentionColor = mentionColor,
+            builder = builder,
+        )
 
         /**
          * Builds the default message text formatter.
@@ -145,9 +143,7 @@ public fun interface MessageTextFormatter {
          *
          * @see [CompositeMessageTextFormatter]
          */
-        public fun composite(vararg formatters: MessageTextFormatter): MessageTextFormatter {
-            return CompositeMessageTextFormatter(formatters.toList())
-        }
+        public fun composite(vararg formatters: MessageTextFormatter): MessageTextFormatter = CompositeMessageTextFormatter(formatters.toList())
     }
 }
 

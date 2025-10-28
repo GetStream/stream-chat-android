@@ -138,16 +138,14 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         /**
          * Builds [ChannelListViewModelFactory] instance.
          */
-        public fun build(): ViewModelProvider.Factory {
-            return ChannelListViewModelFactory(
-                filter = filter,
-                sort = sort,
-                limit = limit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-                chatEventHandlerFactory = chatEventHandlerFactory,
-                isDraftMessagesEnabled = isDraftMessagesEnabled,
-            )
-        }
+        public fun build(): ViewModelProvider.Factory = ChannelListViewModelFactory(
+            filter = filter,
+            sort = sort,
+            limit = limit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            chatEventHandlerFactory = chatEventHandlerFactory,
+            isDraftMessagesEnabled = isDraftMessagesEnabled,
+        )
     }
 }

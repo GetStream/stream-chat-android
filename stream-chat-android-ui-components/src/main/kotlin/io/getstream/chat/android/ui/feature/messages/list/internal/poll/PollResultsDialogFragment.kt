@@ -115,8 +115,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
             )
         }.sortedByDescending { it.votes }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder =
-            ResultViewHolder(StreamUiItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder = ResultViewHolder(StreamUiItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
         override fun getItemCount(): Int = results.size
 
@@ -148,10 +147,9 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         private val votes: List<Vote>,
     ) : RecyclerView.Adapter<UserVoteAdapter.UserVoteViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVoteViewHolder =
-            UserVoteViewHolder(
-                StreamUiItemResultUserBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            )
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVoteViewHolder = UserVoteViewHolder(
+            StreamUiItemResultUserBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+        )
 
         override fun getItemCount(): Int = votes.size
 

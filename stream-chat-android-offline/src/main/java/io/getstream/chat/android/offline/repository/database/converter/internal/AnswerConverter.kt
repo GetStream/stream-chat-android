@@ -29,17 +29,13 @@ internal class AnswerConverter {
     private val entityListAdapter = moshi.adapter<List<AnswerEntity>>()
 
     @TypeConverter
-    fun stringToAnswer(data: String?): AnswerEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
+    fun stringToAnswer(data: String?): AnswerEntity? = data?.let {
+        entityAdapter.fromJson(it)
     }
 
     @TypeConverter
-    fun answerToString(entity: AnswerEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
+    fun answerToString(entity: AnswerEntity?): String? = entity?.let {
+        entityAdapter.toJson(it)
     }
 
     @TypeConverter
@@ -51,9 +47,7 @@ internal class AnswerConverter {
     }
 
     @TypeConverter
-    fun answerListToString(entities: List<AnswerEntity>?): String? {
-        return entities?.let {
-            entityListAdapter.toJson(it)
-        }
+    fun answerListToString(entities: List<AnswerEntity>?): String? = entities?.let {
+        entityListAdapter.toJson(it)
     }
 }

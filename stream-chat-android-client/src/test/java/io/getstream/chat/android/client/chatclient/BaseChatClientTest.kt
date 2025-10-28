@@ -141,9 +141,7 @@ internal open class BaseChatClientTest {
         )
     }
 
-    protected open fun getChatSocket(): ChatSocket {
-        return fakeChatSocket
-    }
+    protected open fun getChatSocket(): ChatSocket = fakeChatSocket
 
     fun runCancellableTest(testBody: suspend TestScope.() -> Unit) {
         runTest {

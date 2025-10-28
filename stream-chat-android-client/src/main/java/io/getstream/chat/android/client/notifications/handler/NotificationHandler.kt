@@ -39,9 +39,7 @@ public interface NotificationHandler {
      *
      * @return False if notification should be handled internally.
      */
-    public fun onChatEvent(event: NewMessageEvent): Boolean {
-        return true
-    }
+    public fun onChatEvent(event: NewMessageEvent): Boolean = true
 
     /**
      * Handles showing notification after receiving [NotificationReminderDueEvent].
@@ -51,9 +49,7 @@ public interface NotificationHandler {
      * @param event The [NotificationReminderDueEvent] to handle.
      * @return True if the event was handled in the method, false if it should be handled internally.
      */
-    public fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent): Boolean {
-        return true
-    }
+    public fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent): Boolean = true
 
     /**
      * Handles showing notification after receiving [PushMessage].
@@ -62,9 +58,7 @@ public interface NotificationHandler {
      *
      * @return False if remote message should be handled internally.
      */
-    public fun onPushMessage(message: PushMessage): Boolean {
-        return false
-    }
+    public fun onPushMessage(message: PushMessage): Boolean = false
 
     /**
      * Show a notification for the given [ChatNotification].

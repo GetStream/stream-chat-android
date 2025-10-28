@@ -51,8 +51,6 @@ class ChannelsActivity : AppCompatActivity() {
          * @param context The context used to create the intent.
          * @return The [Intent] to start [ChannelsActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, ChannelsActivity::class.java)
     }
 }

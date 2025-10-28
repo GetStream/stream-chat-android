@@ -274,7 +274,8 @@ public data class Message(
      */
     val deletedForMe: Boolean = false,
 
-) : CustomObject, ComparableFieldProvider {
+) : CustomObject,
+    ComparableFieldProvider {
     public companion object {
         /**
          * Represents a 'regular' message.
@@ -293,29 +294,28 @@ public data class Message(
     }
 
     @Suppress("ComplexMethod")
-    override fun getComparableField(fieldName: String): Comparable<*>? =
-        when (fieldName) {
-            "id" -> id
-            "cid" -> cid
-            "text" -> text
-            "html" -> html
-            "parent_id", "parentId" -> parentId
-            "command" -> command
-            "reply_count", "replyCount" -> replyCount
-            "deleted_reply_count", "deletedReplyCount" -> deletedReplyCount
-            "type" -> type
-            "created_at", "createdAt" -> createdAt
-            "updated_at", "updatedAt" -> updatedAt
-            "deleted_at", "deletedAt" -> deletedAt
-            "updated_locally_at", "updatedLocallyAt" -> updatedLocallyAt
-            "created_locally_at", "createdLocallyAt" -> createdLocallyAt
-            "silent" -> silent
-            "shadowed" -> shadowed
-            "pinned" -> pinned
-            "pinned_at", "pinnedAt" -> pinnedAt
-            "pin_expires", "pinExpires" -> pinExpires
-            else -> extraData[fieldName] as? Comparable<*>
-        }
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "id" -> id
+        "cid" -> cid
+        "text" -> text
+        "html" -> html
+        "parent_id", "parentId" -> parentId
+        "command" -> command
+        "reply_count", "replyCount" -> replyCount
+        "deleted_reply_count", "deletedReplyCount" -> deletedReplyCount
+        "type" -> type
+        "created_at", "createdAt" -> createdAt
+        "updated_at", "updatedAt" -> updatedAt
+        "deleted_at", "deletedAt" -> deletedAt
+        "updated_locally_at", "updatedLocallyAt" -> updatedLocallyAt
+        "created_locally_at", "createdLocallyAt" -> createdLocallyAt
+        "silent" -> silent
+        "shadowed" -> shadowed
+        "pinned" -> pinned
+        "pinned_at", "pinnedAt" -> pinnedAt
+        "pin_expires", "pinExpires" -> pinExpires
+        else -> extraData[fieldName] as? Comparable<*>
+    }
 
     /**
      * Retrieves the translated text message for the given []language].
@@ -331,9 +331,7 @@ public data class Message(
     public val originalLanguage: String
         get() = i18n.get("language", "")
 
-    private fun <A, B> Map<A, B>.get(key: A, default: B): B {
-        return get(key) ?: default
-    }
+    private fun <A, B> Map<A, B>.get(key: A, default: B): B = get(key) ?: default
 
     /**
      * Identifier of message. The message can't be considered the same if the id of the message AND the id of a
@@ -518,8 +516,7 @@ public data class Message(
             this.mentionedUsers = mentionedUsers
         }
         public fun withReplyCount(replyCount: Int): Builder = apply { this.replyCount = replyCount }
-        public fun withDeletedReplyCount(deletedReplyCount: Int): Builder =
-            apply { this.deletedReplyCount = deletedReplyCount }
+        public fun withDeletedReplyCount(deletedReplyCount: Int): Builder = apply { this.deletedReplyCount = deletedReplyCount }
         public fun withReactionCounts(reactionCounts: Map<String, Int>): Builder = apply {
             this.reactionCounts = reactionCounts
         }
@@ -585,57 +582,55 @@ public data class Message(
         public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
         public fun withDeletedForMe(deletedForMe: Boolean): Builder = apply { this.deletedForMe = deletedForMe }
 
-        public fun build(): Message {
-            return Message(
-                id = id,
-                cid = cid,
-                text = text,
-                html = html,
-                parentId = parentId,
-                command = command,
-                attachments = attachments,
-                mentionedUsersIds = mentionedUsersIds,
-                mentionedUsers = mentionedUsers,
-                replyCount = replyCount,
-                deletedReplyCount = deletedReplyCount,
-                reactionCounts = reactionCounts,
-                reactionScores = reactionScores,
-                reactionGroups = reactionGroups,
-                syncStatus = syncStatus,
-                type = type,
-                latestReactions = latestReactions,
-                ownReactions = ownReactions,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-                deletedAt = deletedAt,
-                updatedLocallyAt = updatedLocallyAt,
-                createdLocallyAt = createdLocallyAt,
-                user = user,
-                extraData = extraData,
-                silent = silent,
-                shadowed = shadowed,
-                i18n = i18n,
-                showInChannel = showInChannel,
-                channelInfo = channelInfo,
-                replyTo = replyTo,
-                replyMessageId = replyMessageId,
-                pinned = pinned,
-                pinnedAt = pinnedAt,
-                pinExpires = pinExpires,
-                pinnedBy = pinnedBy,
-                threadParticipants = threadParticipants,
-                skipPushNotification = skipPushNotification,
-                skipEnrichUrl = skipEnrichUrl,
-                moderationDetails = moderationDetails,
-                moderation = moderation,
-                messageTextUpdatedAt = messageTextUpdatedAt,
-                restrictedVisibility = restrictedVisibility,
-                poll = poll,
-                reminder = reminder,
-                sharedLocation = sharedLocation,
-                channelRole = channelRole,
-                deletedForMe = deletedForMe,
-            )
-        }
+        public fun build(): Message = Message(
+            id = id,
+            cid = cid,
+            text = text,
+            html = html,
+            parentId = parentId,
+            command = command,
+            attachments = attachments,
+            mentionedUsersIds = mentionedUsersIds,
+            mentionedUsers = mentionedUsers,
+            replyCount = replyCount,
+            deletedReplyCount = deletedReplyCount,
+            reactionCounts = reactionCounts,
+            reactionScores = reactionScores,
+            reactionGroups = reactionGroups,
+            syncStatus = syncStatus,
+            type = type,
+            latestReactions = latestReactions,
+            ownReactions = ownReactions,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            deletedAt = deletedAt,
+            updatedLocallyAt = updatedLocallyAt,
+            createdLocallyAt = createdLocallyAt,
+            user = user,
+            extraData = extraData,
+            silent = silent,
+            shadowed = shadowed,
+            i18n = i18n,
+            showInChannel = showInChannel,
+            channelInfo = channelInfo,
+            replyTo = replyTo,
+            replyMessageId = replyMessageId,
+            pinned = pinned,
+            pinnedAt = pinnedAt,
+            pinExpires = pinExpires,
+            pinnedBy = pinnedBy,
+            threadParticipants = threadParticipants,
+            skipPushNotification = skipPushNotification,
+            skipEnrichUrl = skipEnrichUrl,
+            moderationDetails = moderationDetails,
+            moderation = moderation,
+            messageTextUpdatedAt = messageTextUpdatedAt,
+            restrictedVisibility = restrictedVisibility,
+            poll = poll,
+            reminder = reminder,
+            sharedLocation = sharedLocation,
+            channelRole = channelRole,
+            deletedForMe = deletedForMe,
+        )
     }
 }

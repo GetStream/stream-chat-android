@@ -48,8 +48,6 @@ internal fun Call<Message>.onMessageError(
     errorHandlers: List<DeleteReactionErrorHandler>,
     cid: String?,
     messageId: String,
-): Call<Message> {
-    return errorHandlers.fold(this) { messageCall, errorHandler ->
-        errorHandler.onDeleteReactionError(messageCall, cid, messageId)
-    }
+): Call<Message> = errorHandlers.fold(this) { messageCall, errorHandler ->
+    errorHandler.onDeleteReactionError(messageCall, cid, messageId)
 }

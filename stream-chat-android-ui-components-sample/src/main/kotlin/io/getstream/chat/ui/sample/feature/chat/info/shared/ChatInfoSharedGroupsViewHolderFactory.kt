@@ -31,9 +31,7 @@ import io.getstream.chat.ui.sample.databinding.ChatInfoSharedGroupsItemBinding
 
 class ChatInfoSharedGroupsViewHolderFactory : ChannelListItemViewHolderFactory() {
 
-    override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder {
-        return ChatInfoSharedGroupsViewHolder(parentView, listenerContainer.channelClickListener)
-    }
+    override fun createChannelViewHolder(parentView: ViewGroup): BaseChannelListItemViewHolder = ChatInfoSharedGroupsViewHolder(parentView, listenerContainer.channelClickListener)
 }
 
 class ChatInfoSharedGroupsViewHolder(

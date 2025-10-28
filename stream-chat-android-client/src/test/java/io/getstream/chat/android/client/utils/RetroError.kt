@@ -40,56 +40,42 @@ internal class RetroError<T : Any>(
     private val mediaType: MediaType = "text/plain".toMediaType(),
 ) : Call<T> {
 
-    fun toRetrofitCall(): RetrofitCall<T> {
-        return RetrofitCall(
-            call = this,
-            parser = ParserFactory.createMoshiChatParser(),
-            CoroutineScope(DispatcherProvider.IO),
-        )
-    }
+    fun toRetrofitCall(): RetrofitCall<T> = RetrofitCall(
+        call = this,
+        parser = ParserFactory.createMoshiChatParser(),
+        CoroutineScope(DispatcherProvider.IO),
+    )
 
     override fun enqueue(callback: Callback<T>) {
         callback.onResponse(this, execute())
     }
 
-    override fun isExecuted(): Boolean {
-        return true
-    }
+    override fun isExecuted(): Boolean = true
 
-    override fun clone(): Call<T> {
-        return this
-    }
+    override fun clone(): Call<T> = this
 
-    override fun isCanceled(): Boolean {
-        return false
-    }
+    override fun isCanceled(): Boolean = false
 
     override fun cancel() {
         // no-op
     }
 
-    override fun execute(): Response<T> {
-        return Response.error(
-            statusCode,
-            toStreamApiErrorResponseBody(
-                statusCode = statusCode,
-                streamCode = streamCode,
-                message = message,
-                exceptionFields = exceptionFields,
-                duration = duration,
-                moreInfo = moreInfo,
-                mediaType = mediaType,
-            ),
-        )
-    }
+    override fun execute(): Response<T> = Response.error(
+        statusCode,
+        toStreamApiErrorResponseBody(
+            statusCode = statusCode,
+            streamCode = streamCode,
+            message = message,
+            exceptionFields = exceptionFields,
+            duration = duration,
+            moreInfo = moreInfo,
+            mediaType = mediaType,
+        ),
+    )
 
-    override fun request(): Request {
-        return null!!
-    }
+    override fun request(): Request = null!!
 
-    override fun timeout(): Timeout {
-        return Timeout()
-    }
+    override fun timeout(): Timeout = Timeout()
 
     /**
      * Creates a facsimile of the error response sent by the backend.

@@ -43,8 +43,7 @@ public interface PollSwitchItemFactory {
          *
          * @return The default implementation opf [PollSwitchItemFactory].
          */
-        public fun defaultFactory(context: Context): PollSwitchItemFactory =
-            DefaultPollSwitchItemFactory(context = context)
+        public fun defaultFactory(context: Context): PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = context)
     }
 }
 
@@ -58,34 +57,33 @@ public class DefaultPollSwitchItemFactory(
     /**
      * Provides a default list of [PollSwitchItem] to create the poll switch item list.
      */
-    override fun providePollSwitchItemList(): List<PollSwitchItem> =
-        listOf(
-            PollSwitchItem(
-                title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
-                pollSwitchInput = PollSwitchInput(
-                    value = "",
-                    description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
-                    minValue = PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
-                    maxValue = PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
-                    keyboardType = KeyboardType.Number,
-                ),
-                key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,
-                enabled = false,
+    override fun providePollSwitchItemList(): List<PollSwitchItem> = listOf(
+        PollSwitchItem(
+            title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
+            pollSwitchInput = PollSwitchInput(
+                value = "",
+                description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
+                minValue = PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+                maxValue = PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
+                keyboardType = KeyboardType.Number,
             ),
-            PollSwitchItem(
-                title = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
-                key = PollSwitchItemKeys.VOTING_VISIBILITY,
-                enabled = false,
-            ),
-            PollSwitchItem(
-                title = context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
-                key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
-                enabled = false,
-            ),
-            PollSwitchItem(
-                title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
-                key = PollSwitchItemKeys.ALLOW_ANSWERS,
-                enabled = false,
-            ),
-        )
+            key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,
+            enabled = false,
+        ),
+        PollSwitchItem(
+            title = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
+            key = PollSwitchItemKeys.VOTING_VISIBILITY,
+            enabled = false,
+        ),
+        PollSwitchItem(
+            title = context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
+            key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
+            enabled = false,
+        ),
+        PollSwitchItem(
+            title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
+            key = PollSwitchItemKeys.ALLOW_ANSWERS,
+            enabled = false,
+        ),
+    )
 }

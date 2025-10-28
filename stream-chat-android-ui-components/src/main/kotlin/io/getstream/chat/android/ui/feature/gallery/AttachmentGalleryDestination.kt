@@ -82,14 +82,11 @@ public class AttachmentGalleryDestination(
     }
 }
 
-private class AttachmentGalleryResultContract :
-    ActivityResultContract<AttachmentGalleryResultContract.Input, AttachmentGalleryActivity.AttachmentOptionResult?>() {
+private class AttachmentGalleryResultContract : ActivityResultContract<AttachmentGalleryResultContract.Input, AttachmentGalleryActivity.AttachmentOptionResult?>() {
 
     class Input(val attachmentIndex: Int)
 
-    override fun createIntent(context: Context, input: Input): Intent {
-        return AttachmentGalleryActivity.createIntent(context, input.attachmentIndex)
-    }
+    override fun createIntent(context: Context, input: Input): Intent = AttachmentGalleryActivity.createIntent(context, input.attachmentIndex)
 
     override fun parseResult(resultCode: Int, intent: Intent?): AttachmentGalleryActivity.AttachmentOptionResult? {
         if (resultCode != Activity.RESULT_OK) {

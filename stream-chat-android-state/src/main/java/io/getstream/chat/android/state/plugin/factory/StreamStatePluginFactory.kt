@@ -59,11 +59,9 @@ public class StreamStatePluginFactory(
     private val logger by taggedLogger("Chat:StatePluginFactory")
 
     @InternalStreamChatApi
-    override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
-        return when (klass) {
-            StatePluginConfig::class -> config as T
-            else -> null
-        }
+    override fun <T : Any> resolveDependency(klass: KClass<T>): T? = when (klass) {
+        StatePluginConfig::class -> config as T
+        else -> null
     }
 
     /**
@@ -190,18 +188,16 @@ public class StreamStatePluginFactory(
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
         syncedEvents: Flow<List<ChatEvent>>,
-    ): EventHandler {
-        return EventHandlerSequential(
-            scope = scope,
-            currentUserId = user.id,
-            subscribeForEvents = { listener -> client.subscribe(listener) },
-            logicRegistry = logicRegistry,
-            stateRegistry = stateRegistry,
-            clientState = clientState,
-            mutableGlobalState = mutableGlobalState,
-            repos = repos,
-            syncedEvents = syncedEvents,
-            sideEffect = sideEffect,
-        )
-    }
+    ): EventHandler = EventHandlerSequential(
+        scope = scope,
+        currentUserId = user.id,
+        subscribeForEvents = { listener -> client.subscribe(listener) },
+        logicRegistry = logicRegistry,
+        stateRegistry = stateRegistry,
+        clientState = clientState,
+        mutableGlobalState = mutableGlobalState,
+        repos = repos,
+        syncedEvents = syncedEvents,
+        sideEffect = sideEffect,
+    )
 }

@@ -131,9 +131,9 @@ internal class WhenFetchCurrentUser : BaseChatClientTest() {
         }
     }
 
-    override fun getChatSocket(): ChatSocket {
-        return socket
-    }
+    override fun getChatSocket(): ChatSocket = socket
 }
 
-private interface FetchCurrentUserListenerPlugin : Plugin, FetchCurrentUserListener
+private interface FetchCurrentUserListenerPlugin :
+    Plugin,
+    FetchCurrentUserListener

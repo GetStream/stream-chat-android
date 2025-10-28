@@ -29,7 +29,8 @@ import kotlinx.coroutines.test.TestScope
 
 internal class ClientTestScope(
     testScope: TestScope,
-) : ClientScope, CoroutineScope by testScope + DispatcherProvider.IO + SharedCalls()
+) : ClientScope,
+    CoroutineScope by testScope + DispatcherProvider.IO + SharedCalls()
 
 internal class UserTestScope(
     clientScope: ClientTestScope,

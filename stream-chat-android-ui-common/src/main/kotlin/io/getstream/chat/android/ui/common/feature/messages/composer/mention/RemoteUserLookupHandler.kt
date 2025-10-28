@@ -37,16 +37,14 @@ public class RemoteUserLookupHandler(
 
     private val logger by taggedLogger("Chat:UserLookupRemote")
 
-    override suspend fun handleUserLookup(query: String): List<User> {
-        return when {
-            query.isNotEmpty() -> {
-                if (DEBUG) logger.v { "[handleUserLookup] search remotely" }
-                chatClient.queryMembersByUsername(channelCid = channelCid, query = query)
-            }
-            else -> {
-                if (DEBUG) logger.v { "[handleUserLookup] #empty; query: $query" }
-                emptyList()
-            }
+    override suspend fun handleUserLookup(query: String): List<User> = when {
+        query.isNotEmpty() -> {
+            if (DEBUG) logger.v { "[handleUserLookup] search remotely" }
+            chatClient.queryMembersByUsername(channelCid = channelCid, query = query)
+        }
+        else -> {
+            if (DEBUG) logger.v { "[handleUserLookup] #empty; query: $query" }
+            emptyList()
         }
     }
 

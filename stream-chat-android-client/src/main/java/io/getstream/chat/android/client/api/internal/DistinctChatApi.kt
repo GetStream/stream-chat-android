@@ -200,14 +200,12 @@ internal class DistinctChatApi(
     private fun <T : Any> getOrCreate(
         uniqueKey: Int,
         callBuilder: () -> Call<T>,
-    ): Call<T> {
-        return distinctCalls[uniqueKey] as? DistinctCall<T>
-            ?: DistinctCall(scope = scope, callBuilder = callBuilder) {
-                distinctCalls.remove(uniqueKey)
-            }.also {
-                distinctCalls[uniqueKey] = it
-            }
-    }
+    ): Call<T> = distinctCalls[uniqueKey] as? DistinctCall<T>
+        ?: DistinctCall(scope = scope, callBuilder = callBuilder) {
+            distinctCalls.remove(uniqueKey)
+        }.also {
+            distinctCalls[uniqueKey] = it
+        }
 
     private companion object {
         private const val TAG = "Chat:DistinctApi"

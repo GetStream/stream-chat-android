@@ -34,9 +34,7 @@ internal open class BaseUiComponentsTestRobot {
      *
      * @param resId The layout ID of a view to click.
      */
-    fun clickElementById(resId: Int): ViewInteraction {
-        return onView(withId(resId)).perform(ViewActions.click())
-    }
+    fun clickElementById(resId: Int): ViewInteraction = onView(withId(resId)).perform(ViewActions.click())
 
     /**
      * Waits for the View to appear and performs a click.

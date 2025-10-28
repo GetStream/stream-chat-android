@@ -335,22 +335,21 @@ internal class QueryThreadsStateLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsStateLogic When updating parent message which doesn't exist Should return false`() =
-        runTest {
-            // given
-            val mutableState = mock<QueryThreadsMutableState>()
-            whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
-            val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
-            val parent = Message(
-                id = "mId3",
-                cid = "messaging:123",
-                text = "Text",
-            )
-            // when
-            val updated = logic.updateParent(parent)
-            // then
-            updated `should be equal to` false
-        }
+    fun `Given QueryThreadsStateLogic When updating parent message which doesn't exist Should return false`() = runTest {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        val parent = Message(
+            id = "mId3",
+            cid = "messaging:123",
+            text = "Text",
+        )
+        // when
+        val updated = logic.updateParent(parent)
+        // then
+        updated `should be equal to` false
+    }
 
     @Test
     fun `Given QueryThreadsStateLogic When updating parent message which exists Should return true`() {

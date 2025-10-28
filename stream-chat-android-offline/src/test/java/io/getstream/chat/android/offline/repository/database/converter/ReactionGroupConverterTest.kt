@@ -83,46 +83,99 @@ internal class ReactionGroupConverterTest {
         private val type = randomString()
 
         @JvmStatic
-        fun encodeArguments(): List<Arguments> =
-            listOf(
-                Arguments.of(
-                    null,
-                    null,
+        fun encodeArguments(): List<Arguments> = listOf(
+            Arguments.of(
+                null,
+                null,
+            ),
+            Arguments.of(
+                ReactionGroupEntity(
+                    type = type,
+                    count = count,
+                    sumScore = sumScore,
+                    firstReactionAt = Date(0),
+                    lastReactionAt = Date(0),
                 ),
-                Arguments.of(
-                    ReactionGroupEntity(
+                "{" +
+                    "\"type\":\"$type\"," +
+                    "\"count\":$count," +
+                    "\"sumScore\":$sumScore," +
+                    "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
+                    "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
+                    "\"}",
+            ),
+        )
+
+        @JvmStatic
+        fun decodeArguments(): List<Arguments> = listOf(
+            Arguments.of(
+                null,
+                null,
+            ),
+            Arguments.of(
+                "{" +
+                    "\"type\":\"$type\"," +
+                    "\"count\":$count," +
+                    "\"sumScore\":$sumScore," +
+                    "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
+                    "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
+                    "\"}",
+                ReactionGroupEntity(
+                    type = type,
+                    count = count,
+                    sumScore = sumScore,
+                    firstReactionAt = Date(0),
+                    lastReactionAt = Date(0),
+                ),
+            ),
+        )
+
+        @JvmStatic
+        fun encodeMapArguments(): List<Arguments> = listOf(
+            Arguments.of(
+                null,
+                null,
+            ),
+            Arguments.of(
+                mapOf(
+                    type to ReactionGroupEntity(
                         type = type,
                         count = count,
                         sumScore = sumScore,
                         firstReactionAt = Date(0),
                         lastReactionAt = Date(0),
                     ),
-                    "{" +
-                        "\"type\":\"$type\"," +
-                        "\"count\":$count," +
-                        "\"sumScore\":$sumScore," +
-                        "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
-                        "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
-                        "\"}",
                 ),
-            )
+                "{\"$type\":" +
+                    "{" +
+                    "\"type\":\"$type\"," +
+                    "\"count\":$count," +
+                    "\"sumScore\":$sumScore," +
+                    "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
+                    "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
+                    "\"}" +
+                    "}",
+            ),
+        )
 
         @JvmStatic
-        fun decodeArguments(): List<Arguments> =
-            listOf(
-                Arguments.of(
-                    null,
-                    null,
-                ),
-                Arguments.of(
+        fun decodeMapArguments(): List<Arguments> = listOf(
+            Arguments.of(
+                null,
+                mutableMapOf<String, ReactionGroupEntity>(),
+            ),
+            Arguments.of(
+                "{\"$type\":" +
                     "{" +
-                        "\"type\":\"$type\"," +
-                        "\"count\":$count," +
-                        "\"sumScore\":$sumScore," +
-                        "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
-                        "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
-                        "\"}",
-                    ReactionGroupEntity(
+                    "\"type\":\"$type\"," +
+                    "\"count\":$count," +
+                    "\"sumScore\":$sumScore," +
+                    "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
+                    "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
+                    "\"}" +
+                    "}",
+                mapOf(
+                    type to ReactionGroupEntity(
                         type = type,
                         count = count,
                         sumScore = sumScore,
@@ -130,64 +183,7 @@ internal class ReactionGroupConverterTest {
                         lastReactionAt = Date(0),
                     ),
                 ),
-            )
-
-        @JvmStatic
-        fun encodeMapArguments(): List<Arguments> =
-            listOf(
-                Arguments.of(
-                    null,
-                    null,
-                ),
-                Arguments.of(
-                    mapOf(
-                        type to ReactionGroupEntity(
-                            type = type,
-                            count = count,
-                            sumScore = sumScore,
-                            firstReactionAt = Date(0),
-                            lastReactionAt = Date(0),
-                        ),
-                    ),
-                    "{\"$type\":" +
-                        "{" +
-                        "\"type\":\"$type\"," +
-                        "\"count\":$count," +
-                        "\"sumScore\":$sumScore," +
-                        "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
-                        "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
-                        "\"}" +
-                        "}",
-                ),
-            )
-
-        @JvmStatic
-        fun decodeMapArguments(): List<Arguments> =
-            listOf(
-                Arguments.of(
-                    null,
-                    mutableMapOf<String, ReactionGroupEntity>(),
-                ),
-                Arguments.of(
-                    "{\"$type\":" +
-                        "{" +
-                        "\"type\":\"$type\"," +
-                        "\"count\":$count," +
-                        "\"sumScore\":$sumScore," +
-                        "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
-                        "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
-                        "\"}" +
-                        "}",
-                    mapOf(
-                        type to ReactionGroupEntity(
-                            type = type,
-                            count = count,
-                            sumScore = sumScore,
-                            firstReactionAt = Date(0),
-                            lastReactionAt = Date(0),
-                        ),
-                    ),
-                ),
-            )
+            ),
+        )
     }
 }

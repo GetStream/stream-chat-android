@@ -232,61 +232,56 @@ constructor(
     // Create Builders from a single client to share threadpools
     private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
 
-    private fun baseClientBuilder(timeout: Long): OkHttpClient.Builder =
-        baseClient.newBuilder()
-            .followRedirects(false)
-            .apply {
-                // timeouts
-                if (baseClient != customOkHttpClient) {
-                    connectTimeout(timeout, TimeUnit.MILLISECONDS)
-                    writeTimeout(timeout, TimeUnit.MILLISECONDS)
-                    readTimeout(timeout, TimeUnit.MILLISECONDS)
-                }
-                // api analysis
-                if (config.debugRequests) {
-                    addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
-                }
-                // logging
-                if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
-                    addInterceptor(HttpLoggingInterceptor())
-                    addInterceptor(
-                        CurlInterceptor(
-                            logger = object : Logger {
-                                override fun log(message: String) {
-                                    StreamLog.i("Chat:CURL") { message }
-                                }
-                            },
-                        ),
-                    )
-                }
+    private fun baseClientBuilder(timeout: Long): OkHttpClient.Builder = baseClient.newBuilder()
+        .followRedirects(false)
+        .apply {
+            // timeouts
+            if (baseClient != customOkHttpClient) {
+                connectTimeout(timeout, TimeUnit.MILLISECONDS)
+                writeTimeout(timeout, TimeUnit.MILLISECONDS)
+                readTimeout(timeout, TimeUnit.MILLISECONDS)
             }
+            // api analysis
+            if (config.debugRequests) {
+                addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
+            }
+            // logging
+            if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
+                addInterceptor(HttpLoggingInterceptor())
+                addInterceptor(
+                    CurlInterceptor(
+                        logger = object : Logger {
+                            override fun log(message: String) {
+                                StreamLog.i("Chat:CURL") { message }
+                            }
+                        },
+                    ),
+                )
+            }
+        }
 
     protected open fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
         isAnonymousApi: Boolean,
-    ): OkHttpClient.Builder {
-        return baseClientBuilder(timeout)
-            // Stream-specific interceptors
-            .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi),
-                ),
-            )
-            .addNetworkInterceptor(ProgressInterceptor())
-    }
+    ): OkHttpClient.Builder = baseClientBuilder(timeout)
+        // Stream-specific interceptors
+        .addInterceptor(ApiKeyInterceptor(config.apiKey))
+        .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
+        .addInterceptor(
+            TokenAuthInterceptor(
+                tokenManager,
+                parser,
+                getAnonymousProvider(config, isAnonymousApi),
+            ),
+        )
+        .addNetworkInterceptor(ProgressInterceptor())
 
     private fun getAnonymousProvider(
         config: ChatClientConfig,
         isAnonymousApi: Boolean,
-    ): () -> Boolean {
-        return { isAnonymousApi || config.isAnonymous }
-    }
+    ): () -> Boolean = { isAnonymousApi || config.isAnonymous }
 
     private fun buildChatSocket(
         chatConfig: ChatClientConfig,

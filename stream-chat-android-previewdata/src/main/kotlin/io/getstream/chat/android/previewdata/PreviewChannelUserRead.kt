@@ -20,20 +20,21 @@ import io.getstream.chat.android.models.ChannelUserRead
 import java.util.Date
 
 public object PreviewChannelUserRead {
+    public val channelUserRead1: ChannelUserRead =
+        ChannelUserRead(
+            user = PreviewUserData.user1,
+            lastReceivedEventDate = Date(),
+            unreadMessages = 1,
+            lastRead = Date(),
+            lastReadMessageId = null,
+        )
 
-    public val channelUserRead1: ChannelUserRead = ChannelUserRead(
-        user = PreviewUserData.user1,
-        lastReceivedEventDate = Date(),
-        unreadMessages = 1,
-        lastRead = Date(),
-        lastReadMessageId = null,
-    )
-
-    public val channelUserRead2: ChannelUserRead = ChannelUserRead(
-        user = PreviewUserData.user2,
-        lastReceivedEventDate = Date(),
-        unreadMessages = 2,
-        lastRead = Date(),
-        lastReadMessageId = null,
-    )
+    public val channelUserRead2: ChannelUserRead =
+        ChannelUserRead(
+            user = PreviewUserData.user2,
+            lastReceivedEventDate = Date(),
+            unreadMessages = 2,
+            lastRead = Date(),
+            lastReadMessageId = null,
+        )
 }

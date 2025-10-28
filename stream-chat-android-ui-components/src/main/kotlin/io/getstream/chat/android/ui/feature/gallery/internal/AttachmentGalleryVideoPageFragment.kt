@@ -94,11 +94,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     private var imageClickListener: () -> Unit = {}
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return StreamUiItemAttachmentGalleryVideoBinding.inflate(inflater)
-            .apply { _binding = this }
-            .root
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = StreamUiItemAttachmentGalleryVideoBinding.inflate(inflater)
+        .apply { _binding = this }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -243,14 +241,12 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
         private const val CONTROLLER_SHOW_TIMEOUT = 2000
 
-        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
-            return AttachmentGalleryVideoPageFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_THUMB_URL, attachment.thumbUrl)
-                    putString(ARG_ASSET_URL, attachment.assetUrl)
-                }
-                this.imageClickListener = imageClickListener
+        fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment = AttachmentGalleryVideoPageFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_THUMB_URL, attachment.thumbUrl)
+                putString(ARG_ASSET_URL, attachment.assetUrl)
             }
+            this.imageClickListener = imageClickListener
         }
     }
 }

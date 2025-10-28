@@ -148,23 +148,19 @@ public open class AttachmentDestination(
         }
     }
 
-    private fun playableContent(mimeType: String?, type: String?): Boolean {
-        return mimeType?.contains("audio") == true ||
-            mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true ||
-            mimeType?.contains(MP4_MIME_TYPE) == true ||
-            mimeType?.contains(MPEG_MIME_TYPE) == true ||
-            mimeType?.contains(QUICKTIME_MIME_TYPE) == true ||
-            type == AUDIO_TYPE ||
-            type == VIDEO_TYPE
-    }
+    private fun playableContent(mimeType: String?, type: String?): Boolean = mimeType?.contains("audio") == true ||
+        mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true ||
+        mimeType?.contains(MP4_MIME_TYPE) == true ||
+        mimeType?.contains(MPEG_MIME_TYPE) == true ||
+        mimeType?.contains(QUICKTIME_MIME_TYPE) == true ||
+        type == AUDIO_TYPE ||
+        type == VIDEO_TYPE
 
-    private fun docMimeType(mimeType: String?): Boolean {
-        return mimeType == MimeType.MIME_TYPE_DOC ||
-            mimeType == MimeType.MIME_TYPE_TXT ||
-            mimeType == MimeType.MIME_TYPE_PDF ||
-            mimeType == MimeType.MIME_TYPE_HTML ||
-            mimeType?.contains("application/vnd") == true
-    }
+    private fun docMimeType(mimeType: String?): Boolean = mimeType == MimeType.MIME_TYPE_DOC ||
+        mimeType == MimeType.MIME_TYPE_TXT ||
+        mimeType == MimeType.MIME_TYPE_PDF ||
+        mimeType == MimeType.MIME_TYPE_HTML ||
+        mimeType?.contains("application/vnd") == true
 
     protected open fun showImageViewer(
         message: Message,

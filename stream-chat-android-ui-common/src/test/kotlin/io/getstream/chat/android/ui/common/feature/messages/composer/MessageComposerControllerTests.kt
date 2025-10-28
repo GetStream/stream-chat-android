@@ -159,17 +159,15 @@ internal class MessageComposerControllerTests {
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
         }
 
-        fun get(): MessageComposerController {
-            return MessageComposerController(
-                channelCid = cid,
-                chatClient = chatClient,
-                channelState = MutableStateFlow(channelState),
-                mediaRecorder = mock(),
-                userLookupHandler = mock(),
-                fileToUri = mock(),
-                globalState = MutableStateFlow(globalState),
-            )
-        }
+        fun get(): MessageComposerController = MessageComposerController(
+            channelCid = cid,
+            chatClient = chatClient,
+            channelState = MutableStateFlow(channelState),
+            mediaRecorder = mock(),
+            userLookupHandler = mock(),
+            fileToUri = mock(),
+            globalState = MutableStateFlow(globalState),
+        )
     }
 
     companion object {

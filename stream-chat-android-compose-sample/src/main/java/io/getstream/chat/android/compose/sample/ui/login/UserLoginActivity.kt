@@ -315,10 +315,8 @@ class UserLoginActivity : AppCompatActivity() {
     companion object {
         const val DELAY_BEFORE_LOGOUT_IN_MILLIS = 500L
 
-        fun createIntent(context: Context): Intent {
-            return Intent(context, UserLoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
+        fun createIntent(context: Context): Intent = Intent(context, UserLoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
     }
 }

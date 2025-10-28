@@ -123,75 +123,73 @@ internal class MessageRepositoryTests {
     }
 
     @Test
-    fun `when calling selectAllUserMessages, then selectByUserId from MessageDao is called and entities are mapped to messages`() =
-        runTest {
-            // given
-            val userId = randomString()
-            val messageEntities = listOf(
-                randomMessageEntity(userId = userId),
-                randomMessageEntity(userId = userId),
-                randomMessageEntity(userId = userId),
-            )
+    fun `when calling selectAllUserMessages, then selectByUserId from MessageDao is called and entities are mapped to messages`() = runTest {
+        // given
+        val userId = randomString()
+        val messageEntities = listOf(
+            randomMessageEntity(userId = userId),
+            randomMessageEntity(userId = userId),
+            randomMessageEntity(userId = userId),
+        )
 
-            whenever(messageDao.selectByUserId(userId)) doReturn messageEntities
+        whenever(messageDao.selectByUserId(userId)) doReturn messageEntities
 
-            val repository = DatabaseMessageRepository(
-                this,
-                messageDao,
-                replyMessageDao,
-                pollDao,
-                ::randomUser,
-                randomUser(id = "currentUserId"),
-                emptySet(),
-            )
+        val repository = DatabaseMessageRepository(
+            this,
+            messageDao,
+            replyMessageDao,
+            pollDao,
+            ::randomUser,
+            randomUser(id = "currentUserId"),
+            emptySet(),
+        )
 
-            // when
-            val result = repository.selectAllUserMessages(userId)
+        // when
+        val result = repository.selectAllUserMessages(userId)
 
-            // then
-            verify(messageDao).selectByUserId(userId)
-            assertEquals(messageEntities.size, result.size)
-            result.forEachIndexed { index, message ->
-                assertEquals(messageEntities[index].messageInnerEntity.id, message.id)
-                assertEquals(messageEntities[index].messageInnerEntity.userId, message.user.id)
-            }
+        // then
+        verify(messageDao).selectByUserId(userId)
+        assertEquals(messageEntities.size, result.size)
+        result.forEachIndexed { index, message ->
+            assertEquals(messageEntities[index].messageInnerEntity.id, message.id)
+            assertEquals(messageEntities[index].messageInnerEntity.userId, message.user.id)
         }
+    }
 
     @Test
-    fun `when calling selectAllChannelUserMessages, then selectByCidAndUserId from MessageDao is called and entities are mapped to messages`() =
-        runTest {
-            // given
-            val cid = randomString()
-            val userId = randomString()
-            val messageEntities = listOf(
-                randomMessageEntity(cid = cid, userId = userId),
-                randomMessageEntity(cid = cid, userId = userId),
-            )
+    fun `when calling selectAllChannelUserMessages, then selectByCidAndUserId from MessageDao is called and entities are mapped to messages`() = runTest {
+        // given
+        val cid = randomString()
+        val userId = randomString()
+        val messageEntities = listOf(
+            randomMessageEntity(cid = cid, userId = userId),
+            randomMessageEntity(cid = cid, userId = userId),
+        )
 
-            whenever(messageDao.selectByCidAndUserId(cid, userId)) doReturn messageEntities
+        whenever(messageDao.selectByCidAndUserId(cid, userId)) doReturn messageEntities
 
-            val repository = DatabaseMessageRepository(
-                this,
-                messageDao,
-                replyMessageDao,
-                pollDao,
-                ::randomUser,
-                randomUser(id = "currentUserId"),
-                emptySet(),
-            )
+        val repository = DatabaseMessageRepository(
+            this,
+            messageDao,
+            replyMessageDao,
+            pollDao,
+            ::randomUser,
+            randomUser(id = "currentUserId"),
+            emptySet(),
+        )
 
-            // when
-            val result = repository.selectAllChannelUserMessages(cid, userId)
+        // when
+        val result = repository.selectAllChannelUserMessages(cid, userId)
 
-            // then
-            verify(messageDao).selectByCidAndUserId(cid, userId)
-            assertEquals(messageEntities.size, result.size)
-            result.forEachIndexed { index, message ->
-                assertEquals(messageEntities[index].messageInnerEntity.id, message.id)
-                assertEquals(messageEntities[index].messageInnerEntity.cid, message.cid)
-                assertEquals(messageEntities[index].messageInnerEntity.userId, message.user.id)
-            }
+        // then
+        verify(messageDao).selectByCidAndUserId(cid, userId)
+        assertEquals(messageEntities.size, result.size)
+        result.forEachIndexed { index, message ->
+            assertEquals(messageEntities[index].messageInnerEntity.id, message.id)
+            assertEquals(messageEntities[index].messageInnerEntity.cid, message.cid)
+            assertEquals(messageEntities[index].messageInnerEntity.userId, message.user.id)
         }
+    }
 
     @Test
     fun `when calling deleteMessages, then deleteMessages from MessageDao is called`() = runTest(testDispatcher) {

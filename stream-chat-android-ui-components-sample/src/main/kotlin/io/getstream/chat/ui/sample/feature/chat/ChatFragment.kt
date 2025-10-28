@@ -350,11 +350,9 @@ class ChatFragment : Fragment() {
         return previousYear != year || previousDayOfYear != dayOfYear
     }
 
-    private fun Result<Flag>.isAlreadyExistsError(): Boolean {
-        return when (this) {
-            is Result.Success -> false
-            is Result.Failure -> (value as Error.NetworkError).serverErrorCode == 4
-        }
+    private fun Result<Flag>.isAlreadyExistsError(): Boolean = when (this) {
+        is Result.Success -> false
+        is Result.Failure -> (value as Error.NetworkError).serverErrorCode == 4
     }
 
     private companion object {

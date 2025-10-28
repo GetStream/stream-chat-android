@@ -77,9 +77,7 @@ abstract class ComposeScreenshotTest : ScreenshotTest {
     /**
      * Generates a name for the screenshot.
      */
-    private fun generateName(): String {
-        return testNameRule.methodName
-            .substringBefore('[')
-            .let { if (isDarkMode) "${it}_dark" else it }
-    }
+    private fun generateName(): String = testNameRule.methodName
+        .substringBefore('[')
+        .let { if (isDarkMode) "${it}_dark" else it }
 }

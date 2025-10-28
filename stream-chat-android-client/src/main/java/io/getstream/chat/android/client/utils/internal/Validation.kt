@@ -48,10 +48,8 @@ public fun validateCid(cid: String): String = cid.apply {
  * @return Successful [Result] if the cid is valid.
  */
 @InternalStreamChatApi
-public fun validateCidWithResult(cid: String): Result<String> {
-    return try {
-        Result.Success(validateCid(cid))
-    } catch (exception: IllegalArgumentException) {
-        Result.Failure(Error.ThrowableError(message = "Cid is invalid: $cid", cause = exception))
-    }
+public fun validateCidWithResult(cid: String): Result<String> = try {
+    Result.Success(validateCid(cid))
+} catch (exception: IllegalArgumentException) {
+    Result.Failure(Error.ThrowableError(message = "Cid is invalid: $cid", cause = exception))
 }

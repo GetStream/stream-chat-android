@@ -35,9 +35,7 @@ public class AttachmentFactoryManager(
      * @param message The message containing custom attachments that we are going to render.
      * @return True if there is a factory that can handle the attachments from this message.
      */
-    public fun canHandle(message: Message): Boolean {
-        return attachmentFactories.any { it.canHandle(message) }
-    }
+    public fun canHandle(message: Message): Boolean = attachmentFactories.any { it.canHandle(message) }
 
     /**
      * Create a ViewHolder for the custom attachments View which is aware of the parent's

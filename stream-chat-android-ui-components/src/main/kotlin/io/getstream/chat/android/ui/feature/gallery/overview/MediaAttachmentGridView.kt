@@ -116,9 +116,7 @@ public class MediaAttachmentGridView : FrameLayout {
         loadMoreListener = listener
     }
 
-    public fun getAttachments(): List<AttachmentGalleryItem> {
-        return adapter.currentList
-    }
+    public fun getAttachments(): List<AttachmentGalleryItem> = adapter.currentList
 
     private fun setDateText(attachmentGalleryItems: List<AttachmentGalleryItem>) {
         val createdAt = when (attachmentGalleryItems.isNotEmpty()) {

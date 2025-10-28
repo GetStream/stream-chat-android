@@ -176,7 +176,7 @@ internal class ChatClientConnectionTests {
         val result = client.connectUser(differentUser, differentJwt).await()
 
         result.shouldBeInstanceOf(Result.Failure::class)
-        (result as Result.Failure).value.message`should be equal to`
+        (result as Result.Failure).value.message `should be equal to`
             "User cannot be set until the previous one is disconnected."
     }
 
@@ -243,15 +243,14 @@ internal class ChatClientConnectionTests {
     }
 
     @Test
-    fun `When there is an user connected and try to connect a different user, an error should be propagated`() =
-        runTest {
-            userStateService.onSetUser(user, false)
+    fun `When there is an user connected and try to connect a different user, an error should be propagated`() = runTest {
+        userStateService.onSetUser(user, false)
 
-            val result = client.connectUser(user, jwt).await()
+        val result = client.connectUser(user, jwt).await()
 
-            result.shouldBeInstanceOf(Result.Failure::class)
-            (result as Result.Failure).value.message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
-        }
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to` "Failed to connect user. Please check you haven't connected a user already."
+    }
 
     @Test
     fun `Connect a guest user when no previous connection was performed should return a success`() = runCancellableTest {

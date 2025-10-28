@@ -67,20 +67,19 @@ internal class WhenUploadAttachmentsTests {
     )
 
     @Test
-    fun `when there's no attachment with pending status, there's no need to try to send attachments`() =
-        runTest {
-            val repositoryFacade = mock<MessageRepository> {
-                on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
-                on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
-            }
-
-            val sut = Fixture().givenMessageRepository(repositoryFacade).get()
-            val result = sut.uploadAttachmentsForMessage(
-                defaultMessageSentAttachments.id,
-            )
-
-            result shouldBeInstanceOf Result.Success::class
+    fun `when there's no attachment with pending status, there's no need to try to send attachments`() = runTest {
+        val repositoryFacade = mock<MessageRepository> {
+            on(it.selectMessage(defaultMessageSentAttachments.id)) doReturn defaultMessageSentAttachments
+            on(it.selectMessage(defaultMessagePendingAttachments.id)) doReturn defaultMessagePendingAttachments
         }
+
+        val sut = Fixture().givenMessageRepository(repositoryFacade).get()
+        val result = sut.uploadAttachmentsForMessage(
+            defaultMessageSentAttachments.id,
+        )
+
+        result shouldBeInstanceOf Result.Success::class
+    }
 
     @Test
     fun `when there's a pending attachment, it should be uploaded`() = runTest {
@@ -156,139 +155,136 @@ internal class WhenUploadAttachmentsTests {
     }
 
     @Test
-    fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() =
-        runTest {
-            val attachmentUploader =
-                mock<AttachmentUploader> {
-                    on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
-                }
-            val repository = mock<MessageRepository>()
-            val message = randomMessage(
-                id = "messageId123",
-                attachments = mutableListOf(
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Idle,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
-                    ),
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Success,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
-                    ),
+    fun `Given uploaded and not uploaded attachments And exception when upload Should insert message with 2 attachments`() = runTest {
+        val attachmentUploader =
+            mock<AttachmentUploader> {
+                on(it.uploadAttachment(any(), any(), any(), any())) doThrow IllegalStateException("Error")
+            }
+        val repository = mock<MessageRepository>()
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Idle,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
                 ),
-            )
-            val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader)
-                    .givenMessageRepository(repository)
-                    .givenMessage(message)
-                    .get()
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Success,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                ),
+            ),
+        )
+        val sut =
+            Fixture().givenAttachmentUploader(attachmentUploader)
+                .givenMessageRepository(repository)
+                .givenMessage(message)
+                .get()
 
-            sut.uploadAttachmentsForMessage(message.id)
+        sut.uploadAttachmentsForMessage(message.id)
 
-            verify(repository).insertMessage(
-                argThat {
-                    attachments.run {
-                        size == 2 &&
-                            any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
-                    }
-                },
-            )
-        }
+        verify(repository).insertMessage(
+            argThat {
+                attachments.run {
+                    size == 2 &&
+                        any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
+                        any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                }
+            },
+        )
+    }
 
     @Test
-    fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() =
-        runTest {
-            val attachmentUploader =
-                mock<AttachmentUploader> {
-                    on(
-                        it.uploadAttachment(
-                            any(),
-                            any(),
-                            any(),
-                            any(),
-                        ),
-                    ) doReturn Result.Failure(
-                        Error.ThrowableError(
-                            message = "",
-                            cause = IllegalArgumentException("Error:-)"),
-                        ),
-                    )
-                }
-            val repository = mock<MessageRepository>()
-            val message = randomMessage(
-                id = "messageId123",
-                attachments = mutableListOf(
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Idle,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
+    fun `Given uploaded and not uploaded attachments And failure when upload Should insert message with 2 attachments`() = runTest {
+        val attachmentUploader =
+            mock<AttachmentUploader> {
+                on(
+                    it.uploadAttachment(
+                        any(),
+                        any(),
+                        any(),
+                        any(),
                     ),
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Success,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                ) doReturn Result.Failure(
+                    Error.ThrowableError(
+                        message = "",
+                        cause = IllegalArgumentException("Error:-)"),
                     ),
+                )
+            }
+        val repository = mock<MessageRepository>()
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Idle,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
                 ),
-            )
-            val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader)
-                    .givenMessageRepository(repository)
-                    .givenMessage(message)
-                    .get()
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Success,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                ),
+            ),
+        )
+        val sut =
+            Fixture().givenAttachmentUploader(attachmentUploader)
+                .givenMessageRepository(repository)
+                .givenMessage(message)
+                .get()
 
-            sut.uploadAttachmentsForMessage(message.id)
+        sut.uploadAttachmentsForMessage(message.id)
 
-            verify(repository).insertMessage(
-                argThat {
-                    attachments.run {
-                        size == 2 &&
-                            any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
-                    }
-                },
-            )
-        }
+        verify(repository).insertMessage(
+            argThat {
+                attachments.run {
+                    size == 2 &&
+                        any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Failed } &&
+                        any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                }
+            },
+        )
+    }
 
     @Test
-    fun `Given uploaded and not uploaded attachments And upload succeed Should insert message with 2 uploaded attachments`() =
-        runTest {
-            val attachmentUploader =
-                mock<AttachmentUploader> {
-                    on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
-                        val attachment = invocation.arguments[2] as Attachment
-                        Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
-                    }
+    fun `Given uploaded and not uploaded attachments And upload succeed Should insert message with 2 uploaded attachments`() = runTest {
+        val attachmentUploader =
+            mock<AttachmentUploader> {
+                on(it.uploadAttachment(any(), any(), any(), any())) doAnswer { invocation ->
+                    val attachment = invocation.arguments[2] as Attachment
+                    Result.Success(attachment.copy(uploadState = Attachment.UploadState.Success))
                 }
-            val repository = mock<MessageRepository>()
-            val message = randomMessage(
-                id = "messageId123",
-                attachments = mutableListOf(
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Idle,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
-                    ),
-                    randomAttachment().copy(
-                        uploadState = Attachment.UploadState.Success,
-                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
-                    ),
+            }
+        val repository = mock<MessageRepository>()
+        val message = randomMessage(
+            id = "messageId123",
+            attachments = mutableListOf(
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Idle,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
                 ),
-            )
-            val sut =
-                Fixture().givenAttachmentUploader(attachmentUploader)
-                    .givenMessageRepository(repository)
-                    .givenMessage(message)
-                    .get()
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Success,
+                    extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                ),
+            ),
+        )
+        val sut =
+            Fixture().givenAttachmentUploader(attachmentUploader)
+                .givenMessageRepository(repository)
+                .givenMessage(message)
+                .get()
 
-            sut.uploadAttachmentsForMessage(message.id)
+        sut.uploadAttachmentsForMessage(message.id)
 
-            verify(repository).insertMessage(
-                argThat {
-                    attachments.run {
-                        size == 2 &&
-                            any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Success } &&
-                            any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
-                    }
-                },
-            )
-        }
+        verify(repository).insertMessage(
+            argThat {
+                attachments.run {
+                    size == 2 &&
+                        any { it.uploadId == "uploadId1" && it.uploadState is Attachment.UploadState.Success } &&
+                        any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
+                }
+            },
+        )
+    }
 
     private class Fixture {
         private val channelType = "channelType"
@@ -308,10 +304,9 @@ internal class WhenUploadAttachmentsTests {
             whenever(it.containsStoredCredentials()) doReturn true
         }
 
-        fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) =
-            apply {
-                uploader = attachmentUploader
-            }
+        fun givenAttachmentUploader(attachmentUploader: AttachmentUploader) = apply {
+            uploader = attachmentUploader
+        }
 
         fun givenMessageRepository(repository: MessageRepository) = apply {
             messageRepository = repository
@@ -325,15 +320,13 @@ internal class WhenUploadAttachmentsTests {
             whenever(chatClient.containsStoredCredentials()) doReturn false
         }
 
-        fun get(): UploadAttachmentsWorker {
-            return UploadAttachmentsWorker(
-                channelType,
-                channelId,
-                channelStateLogic = channelStateLogic,
-                messageRepository = messageRepository,
-                chatClient = chatClient,
-                attachmentUploader = uploader,
-            )
-        }
+        fun get(): UploadAttachmentsWorker = UploadAttachmentsWorker(
+            channelType,
+            channelId,
+            channelStateLogic = channelStateLogic,
+            messageRepository = messageRepository,
+            chatClient = chatClient,
+            attachmentUploader = uploader,
+        )
     }
 }

@@ -113,11 +113,10 @@ internal class EventBatchUpdate private constructor(
         userMap += (newUser.id to newUser)
     }
 
-    fun getPoll(pollId: String): Poll? =
-        messageMap.values
-            .asSequence()
-            .mapNotNull { it.poll }
-            .firstOrNull { it.id == pollId }
+    fun getPoll(pollId: String): Poll? = messageMap.values
+        .asSequence()
+        .mapNotNull { it.poll }
+        .firstOrNull { it.id == pollId }
 
     fun addPoll(poll: Poll) {
         messageMap.values

@@ -230,9 +230,7 @@ public class ChannelListViewModel(
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
+    private fun buildDefaultFilter(): Flow<FilterObject> = chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
 
     /**
      * Initializes the data necessary for the screen.
@@ -305,20 +303,18 @@ public class ChannelListViewModel(
     private fun handleChannelStateNews(
         channelState: ChannelsStateData,
         channelMutes: List<ChannelMute>,
-    ): State {
-        return when (channelState) {
-            is ChannelsStateData.NoQueryActive,
-            is ChannelsStateData.Loading,
-            -> State(isLoading = true, emptyList())
-            is ChannelsStateData.OfflineNoResults -> State(
-                isLoading = false,
-                channels = emptyList(),
-            )
-            is ChannelsStateData.Result -> State(
-                isLoading = false,
-                channels = parseMutedChannels(channelState.channels, channelMutes),
-            )
-        }
+    ): State = when (channelState) {
+        is ChannelsStateData.NoQueryActive,
+        is ChannelsStateData.Loading,
+        -> State(isLoading = true, emptyList())
+        is ChannelsStateData.OfflineNoResults -> State(
+            isLoading = false,
+            channels = emptyList(),
+        )
+        is ChannelsStateData.Result -> State(
+            isLoading = false,
+            channels = parseMutedChannels(channelState.channels, channelMutes),
+        )
     }
 
     /**

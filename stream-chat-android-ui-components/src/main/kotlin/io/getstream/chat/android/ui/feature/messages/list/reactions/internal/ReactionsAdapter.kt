@@ -30,11 +30,9 @@ internal class ReactionsAdapter(
     private val reactionClickListener: ReactionClickListener,
 ) : ListAdapter<ReactionItem, ReactionsAdapter.ReactionViewHolder>(ReactionItemDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
-        return StreamUiItemMessageReactionBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { ReactionViewHolder(it, itemSize, reactionClickListener) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder = StreamUiItemMessageReactionBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { ReactionViewHolder(it, itemSize, reactionClickListener) }
 
     override fun onBindViewHolder(holder: ReactionViewHolder, position: Int) {
         holder.bind(getItem(position))

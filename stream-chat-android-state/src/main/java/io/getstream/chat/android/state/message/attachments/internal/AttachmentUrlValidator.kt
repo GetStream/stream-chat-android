@@ -32,62 +32,52 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
         return newMessages.map { newMessage -> updateValidAttachmentsUrl(newMessage, oldMessages[newMessage.id]) }
     }
 
-    private fun updateValidAttachmentsUrl(newMessage: Message, oldMessage: Message?): Message {
-        return if (newMessage.attachments.isEmpty() || oldMessage == null) {
-            newMessage
-        } else {
-            newMessage.copy(
-                attachments = updateValidAttachmentsUrl(
-                    newMessage.attachments,
-                    oldMessage.attachments,
-                ).toMutableList(),
-            )
-        }
+    private fun updateValidAttachmentsUrl(newMessage: Message, oldMessage: Message?): Message = if (newMessage.attachments.isEmpty() || oldMessage == null) {
+        newMessage
+    } else {
+        newMessage.copy(
+            attachments = updateValidAttachmentsUrl(
+                newMessage.attachments,
+                oldMessage.attachments,
+            ).toMutableList(),
+        )
     }
 
     private fun updateValidAttachmentsUrl(
         newAttachments: List<Attachment>,
         oldAttachments: List<Attachment>,
-    ): List<Attachment> {
-        return newAttachments.map { newAttachment ->
-            updateValidAttachmentUrl(
-                newAttachment,
-                oldAttachments.firstOrNull { it.partialEquality(newAttachment) },
-            )
-        }
+    ): List<Attachment> = newAttachments.map { newAttachment ->
+        updateValidAttachmentUrl(
+            newAttachment,
+            oldAttachments.firstOrNull { it.partialEquality(newAttachment) },
+        )
     }
 
-    private fun updateValidAttachmentUrl(newAttachment: Attachment, oldAttachment: Attachment?): Attachment {
-        return when {
-            oldAttachment == null -> newAttachment
-            oldAttachment.imageUrl.isNullOrEmpty() -> newAttachment
-            oldAttachment.imageUrl == newAttachment.imageUrl -> newAttachment
-            attachmentHelper.hasStreamImageUrl(oldAttachment).not() -> newAttachment
-            attachmentHelper.hasValidImageUrl(oldAttachment).not() -> newAttachment
-            else -> newAttachment.copy(imageUrl = oldAttachment.imageUrl)
-        }
+    private fun updateValidAttachmentUrl(newAttachment: Attachment, oldAttachment: Attachment?): Attachment = when {
+        oldAttachment == null -> newAttachment
+        oldAttachment.imageUrl.isNullOrEmpty() -> newAttachment
+        oldAttachment.imageUrl == newAttachment.imageUrl -> newAttachment
+        attachmentHelper.hasStreamImageUrl(oldAttachment).not() -> newAttachment
+        attachmentHelper.hasValidImageUrl(oldAttachment).not() -> newAttachment
+        else -> newAttachment.copy(imageUrl = oldAttachment.imageUrl)
     }
 
-    private fun Attachment.partialEquality(other: Attachment): Boolean {
-        return authorName == other.authorName &&
-            titleLink == other.titleLink &&
-            mimeType == other.mimeType &&
-            fileSize == other.fileSize &&
-            title == other.title &&
-            text == other.text &&
-            type == other.type &&
-            name == other.name &&
-            fallback == other.fallback &&
-            isDefault().not()
-    }
+    private fun Attachment.partialEquality(other: Attachment): Boolean = authorName == other.authorName &&
+        titleLink == other.titleLink &&
+        mimeType == other.mimeType &&
+        fileSize == other.fileSize &&
+        title == other.title &&
+        text == other.text &&
+        type == other.type &&
+        name == other.name &&
+        fallback == other.fallback &&
+        isDefault().not()
 
-    private fun Attachment.isDefault(): Boolean {
-        return authorName.isNullOrBlank() &&
-            titleLink.isNullOrBlank() &&
-            fileSize == 0 &&
-            title.isNullOrBlank() &&
-            text.isNullOrBlank() &&
-            name.isNullOrBlank() &&
-            fallback.isNullOrBlank()
-    }
+    private fun Attachment.isDefault(): Boolean = authorName.isNullOrBlank() &&
+        titleLink.isNullOrBlank() &&
+        fileSize == 0 &&
+        title.isNullOrBlank() &&
+        text.isNullOrBlank() &&
+        name.isNullOrBlank() &&
+        fallback.isNullOrBlank()
 }

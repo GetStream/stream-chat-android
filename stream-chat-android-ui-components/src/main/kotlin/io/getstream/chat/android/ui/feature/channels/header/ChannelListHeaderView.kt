@@ -107,9 +107,8 @@ public class ChannelListHeaderView : ConstraintLayout {
         }
     }
 
-    private fun getProgressBarTint(typedArray: TypedArray) =
-        typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiOfflineProgressBarTint)
-            ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
+    private fun getProgressBarTint(typedArray: TypedArray) = typedArray.getColorStateList(R.styleable.ChannelListHeaderView_streamUiOfflineProgressBarTint)
+        ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)
 
     private fun configActionButton(typedArray: TypedArray) {
         binding.actionButton.apply {
@@ -142,45 +141,41 @@ public class ChannelListHeaderView : ConstraintLayout {
         }
     }
 
-    private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray)
-            .size(
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextSize,
-                context.getDimension(R.dimen.stream_ui_text_large),
-            )
-            .color(
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_primary),
-            )
-            .font(
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextFont,
-            )
-            .style(
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextStyle,
-                Typeface.BOLD,
-            ).build()
-    }
+    private fun getOnlineTitleTextStyle(typedArray: TypedArray): TextStyle = TextStyle.Builder(typedArray)
+        .size(
+            R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextSize,
+            context.getDimension(R.dimen.stream_ui_text_large),
+        )
+        .color(
+            R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
+            context.getColorCompat(R.color.stream_ui_text_color_primary),
+        )
+        .font(
+            R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
+            R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextFont,
+        )
+        .style(
+            R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextStyle,
+            Typeface.BOLD,
+        ).build()
 
-    private fun getOfflineTitleTextStyle(typedArray: TypedArray): TextStyle {
-        return TextStyle.Builder(typedArray)
-            .size(
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextSize,
-                context.getDimension(R.dimen.stream_ui_text_large),
-            )
-            .color(
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_primary),
-            )
-            .font(
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextFont,
-            )
-            .style(
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextStyle,
-                Typeface.BOLD,
-            ).build()
-    }
+    private fun getOfflineTitleTextStyle(typedArray: TypedArray): TextStyle = TextStyle.Builder(typedArray)
+        .size(
+            R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextSize,
+            context.getDimension(R.dimen.stream_ui_text_large),
+        )
+        .color(
+            R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
+            context.getColorCompat(R.color.stream_ui_text_color_primary),
+        )
+        .font(
+            R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,
+            R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextFont,
+        )
+        .style(
+            R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextStyle,
+            Typeface.BOLD,
+        ).build()
 
     /**
      * Sets [User] to bind user information with the avatar in the header.

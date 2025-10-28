@@ -80,9 +80,7 @@ public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = fa
  * @param reaction The reaction to remove.
  */
 @InternalStreamChatApi
-public fun Message.removeMyReaction(reaction: Reaction): Message {
-    return removeReactions(userId = reaction.userId, type = reaction.type)
-}
+public fun Message.removeMyReaction(reaction: Reaction): Message = removeReactions(userId = reaction.userId, type = reaction.type)
 
 /**
  * Removes reactions from a message.

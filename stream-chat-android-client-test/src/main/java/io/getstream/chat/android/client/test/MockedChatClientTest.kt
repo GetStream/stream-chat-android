@@ -35,7 +35,6 @@ private val MockClientState = mock<ClientState>(defaultAnswer = Answers.RETURNS_
 private val MockChatClient = mock<ChatClient>(defaultAnswer = Answers.RETURNS_MOCKS)
 
 interface MockedChatClientTest {
-
     /**
      * Mocked [ChatClient] available for configuration whenever needed. e.g.:
      *

@@ -158,8 +158,7 @@ internal class StreamMediaPlayer(
         }
     }
 
-    override fun currentSpeed(): Float =
-        if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
+    override fun currentSpeed(): Float = if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
 
     override fun dispose() {
         userScope.launch(DispatcherProvider.Main) {
@@ -438,30 +437,26 @@ internal class StreamMediaPlayer(
         }
     }
 
-    private fun NativeMediaPlayer.isSeekable(): Boolean {
-        return when (state) {
-            NativeMediaPlayerState.PREPARED,
-            NativeMediaPlayerState.STARTED,
-            NativeMediaPlayerState.PAUSED,
-            NativeMediaPlayerState.PLAYBACK_COMPLETED,
-            -> true
+    private fun NativeMediaPlayer.isSeekable(): Boolean = when (state) {
+        NativeMediaPlayerState.PREPARED,
+        NativeMediaPlayerState.STARTED,
+        NativeMediaPlayerState.PAUSED,
+        NativeMediaPlayerState.PLAYBACK_COMPLETED,
+        -> true
 
-            else -> false
-        }
+        else -> false
     }
 
-    private fun NativeMediaPlayer.isSpeedSettable(): Boolean {
-        return when (state) {
-            NativeMediaPlayerState.INITIALIZED,
-            NativeMediaPlayerState.PREPARED,
-            NativeMediaPlayerState.STARTED,
-            NativeMediaPlayerState.PAUSED,
-            NativeMediaPlayerState.PLAYBACK_COMPLETED,
-            NativeMediaPlayerState.ERROR,
-            -> true
+    private fun NativeMediaPlayer.isSpeedSettable(): Boolean = when (state) {
+        NativeMediaPlayerState.INITIALIZED,
+        NativeMediaPlayerState.PREPARED,
+        NativeMediaPlayerState.STARTED,
+        NativeMediaPlayerState.PAUSED,
+        NativeMediaPlayerState.PLAYBACK_COMPLETED,
+        NativeMediaPlayerState.ERROR,
+        -> true
 
-            else -> false
-        }
+        else -> false
     }
 }
 

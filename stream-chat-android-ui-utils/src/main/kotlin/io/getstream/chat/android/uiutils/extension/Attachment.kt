@@ -26,32 +26,26 @@ import io.getstream.chat.android.models.Attachment
 /**
  * @return If the [Attachment] is a file or not.
  */
-public fun Attachment.isAnyFileType(): Boolean {
-    return uploadId != null ||
-        upload != null ||
-        isFile() ||
-        isVideo() ||
-        isAudio() ||
-        isAudioRecording()
-}
+public fun Attachment.isAnyFileType(): Boolean = uploadId != null ||
+    upload != null ||
+    isFile() ||
+    isVideo() ||
+    isAudio() ||
+    isAudioRecording()
 
 /**
  * @return If the attachment is currently being uploaded to the server.
  */
-public fun Attachment.isUploading(): Boolean {
-    return (uploadState is Attachment.UploadState.InProgress || uploadState is Attachment.UploadState.Idle) &&
-        upload != null &&
-        uploadId != null
-}
+public fun Attachment.isUploading(): Boolean = (uploadState is Attachment.UploadState.InProgress || uploadState is Attachment.UploadState.Idle) &&
+    upload != null &&
+    uploadId != null
 
 /**
  * @return If the attachment has been failed when uploading to the server.
  */
-public fun Attachment.isFailed(): Boolean {
-    return (uploadState is Attachment.UploadState.Failed) &&
-        upload != null &&
-        uploadId != null
-}
+public fun Attachment.isFailed(): Boolean = (uploadState is Attachment.UploadState.Failed) &&
+    upload != null &&
+    uploadId != null
 
 /**
  * @return If the [Attachment] is a link attachment or not.

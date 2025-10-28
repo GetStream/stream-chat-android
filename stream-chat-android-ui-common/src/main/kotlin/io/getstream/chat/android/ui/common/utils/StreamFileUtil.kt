@@ -46,33 +46,31 @@ public object StreamFileUtil {
         return providerInfo.authority
     }
 
-    public fun getUriForFile(context: Context, file: File): Uri =
-        FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
+    public fun getUriForFile(context: Context, file: File): Uri = FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
 
     public suspend fun writeImageToSharableFile(
         context: Context,
         bitmap: Bitmap,
         getUri: (File) -> Uri = { getUriForFile(context, it) },
-    ): Result<Uri> =
-        withContext(DispatcherProvider.IO) {
-            when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
-                is Success -> {
-                    try {
-                        val streamCacheDir = getOrCreateCacheDirResult.value
-                        val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
-                        file.outputStream().use { out ->
-                            bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
-                            out.flush()
-                        }
-                        Success(getUri(file))
-                    } catch (_: IOException) {
-                        Failure(Error.GenericError("Could not write image to file."))
+    ): Result<Uri> = withContext(DispatcherProvider.IO) {
+        when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
+            is Success -> {
+                try {
+                    val streamCacheDir = getOrCreateCacheDirResult.value
+                    val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
+                    file.outputStream().use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
+                        out.flush()
                     }
+                    Success(getUri(file))
+                } catch (_: IOException) {
+                    Failure(Error.GenericError("Could not write image to file."))
                 }
-
-                is Failure -> getOrCreateCacheDirResult
             }
+
+            is Failure -> getOrCreateCacheDirResult
         }
+    }
 
     /**
      * Creates a Stream cache directory if one doesn't exist already.
@@ -87,21 +85,19 @@ public object StreamFileUtil {
     @Suppress("TooGenericExceptionCaught")
     private fun getOrCreateStreamCacheDir(
         context: Context,
-    ): Result<File> {
-        return try {
-            val file = File(context.cacheDir, STREAM_CACHE_DIR_NAME).also { streamCacheDir ->
-                streamCacheDir.mkdirs()
-            }
-
-            Success(file)
-        } catch (e: Exception) {
-            Failure(
-                Error.ThrowableError(
-                    message = "Could not get or create the Stream cache directory",
-                    cause = e,
-                ),
-            )
+    ): Result<File> = try {
+        val file = File(context.cacheDir, STREAM_CACHE_DIR_NAME).also { streamCacheDir ->
+            streamCacheDir.mkdirs()
         }
+
+        Success(file)
+    } catch (e: Exception) {
+        Failure(
+            Error.ThrowableError(
+                message = "Could not get or create the Stream cache directory",
+                cause = e,
+            ),
+        )
     }
 
     /**
@@ -113,18 +109,17 @@ public object StreamFileUtil {
      * @return The newly [File] wrapped inside [Result] if the operation was successful, otherwise returns a
      * [ChatError] wrapped inside [Result].
      */
-    internal fun createFileInCacheDir(context: Context, fileName: String): Result<File> =
-        try {
-            getOrCreateStreamCacheDir(context)
-                .flatMap { Success(File(it, fileName)) }
-        } catch (e: Exception) {
-            Failure(
-                Error.ThrowableError(
-                    message = "Could not get or create the file.",
-                    cause = e,
-                ),
-            )
-        }
+    internal fun createFileInCacheDir(context: Context, fileName: String): Result<File> = try {
+        getOrCreateStreamCacheDir(context)
+            .flatMap { Success(File(it, fileName)) }
+    } catch (e: Exception) {
+        Failure(
+            Error.ThrowableError(
+                message = "Could not get or create the file.",
+                cause = e,
+            ),
+        )
+    }
 
     /**
      * Deletes all the content contained within the
@@ -140,20 +135,18 @@ public object StreamFileUtil {
     @Suppress("TooGenericExceptionCaught")
     public fun clearStreamCache(
         context: Context,
-    ): Result<Unit> {
-        return try {
-            val directory = File(context.cacheDir, STREAM_CACHE_DIR_NAME)
-            directory.deleteRecursively()
+    ): Result<Unit> = try {
+        val directory = File(context.cacheDir, STREAM_CACHE_DIR_NAME)
+        directory.deleteRecursively()
 
-            Success(Unit)
-        } catch (e: Exception) {
-            Failure(
-                Error.ThrowableError(
-                    message = "Could clear the Stream cache directory",
-                    cause = e,
-                ),
-            )
-        }
+        Success(Unit)
+    } catch (e: Exception) {
+        Failure(
+            Error.ThrowableError(
+                message = "Could clear the Stream cache directory",
+                cause = e,
+            ),
+        )
     }
 
     /**
@@ -272,13 +265,11 @@ public object StreamFileUtil {
         runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
     }
 
-    private fun createFailureResultFromException(throwable: Throwable?): Failure {
-        return Failure(
-            throwable?.let { exception ->
-                Error.ThrowableError(message = "Could not write to file.", cause = exception)
-            } ?: Error.GenericError(message = "Could not write to file."),
-        )
-    }
+    private fun createFailureResultFromException(throwable: Throwable?): Failure = Failure(
+        throwable?.let { exception ->
+            Error.ThrowableError(message = "Could not write to file.", cause = exception)
+        } ?: Error.GenericError(message = "Could not write to file."),
+    )
 
     /**
      * The name of the Stream cache directory.

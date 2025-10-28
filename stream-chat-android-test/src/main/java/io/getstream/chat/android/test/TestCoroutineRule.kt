@@ -31,7 +31,6 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 public class TestCoroutineRule : TestWatcher() {
-
     @OptIn(ExperimentalCoroutinesApi::class)
     public val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
     public val scope: TestScope = TestScope(testDispatcher)

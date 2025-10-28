@@ -34,8 +34,7 @@ public interface CopyToClipboardHandler {
         /**
          * Creates a new instance of [CopyToClipboardHandler] using the provided [context].
          */
-        public operator fun invoke(context: Context): CopyToClipboardHandler =
-            CopyToClipboardHandlerImpl(context = context.applicationContext)
+        public operator fun invoke(context: Context): CopyToClipboardHandler = CopyToClipboardHandlerImpl(context = context.applicationContext)
     }
 }
 

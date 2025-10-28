@@ -36,11 +36,10 @@ public class OptionsAdapter(
 
     override fun getItemId(position: Int): Long = getItem(position).id.toLong()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder =
-        OptionViewHolder(
-            parent = parent,
-            onOptionChange = onOptionChange,
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OptionViewHolder = OptionViewHolder(
+        parent = parent,
+        onOptionChange = onOptionChange,
+    )
 
     override fun onBindViewHolder(holder: OptionViewHolder, position: Int) {
         holder.bind(getItem(position))
@@ -87,7 +86,6 @@ public class OptionsAdapter(
 
     private object OptionDiffCallback : DiffUtil.ItemCallback<PollAnswer>() {
         override fun areItemsTheSame(oldItem: PollAnswer, newItem: PollAnswer): Boolean = (oldItem.id == newItem.id)
-        override fun areContentsTheSame(oldItem: PollAnswer, newItem: PollAnswer): Boolean =
-            (oldItem.duplicateError == newItem.duplicateError)
+        override fun areContentsTheSame(oldItem: PollAnswer, newItem: PollAnswer): Boolean = (oldItem.duplicateError == newItem.duplicateError)
     }
 }

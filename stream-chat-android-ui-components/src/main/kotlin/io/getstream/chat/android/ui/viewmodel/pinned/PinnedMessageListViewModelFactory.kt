@@ -56,10 +56,8 @@ public class PinnedMessageListViewModelFactory(private val cid: String?) : ViewM
         /**
          * Builds [PinnedMessageListViewModelFactory] instance.
          */
-        public fun build(): ViewModelProvider.Factory {
-            return PinnedMessageListViewModelFactory(
-                cid = cid ?: error("Channel cid should not be null"),
-            )
-        }
+        public fun build(): ViewModelProvider.Factory = PinnedMessageListViewModelFactory(
+            cid = cid ?: error("Channel cid should not be null"),
+        )
     }
 }

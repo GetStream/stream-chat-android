@@ -28,7 +28,9 @@ import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
 
-class AddChannelHeaderView : FrameLayout, AddChannelHeader {
+class AddChannelHeaderView :
+    FrameLayout,
+    AddChannelHeader {
 
     override val viewContext: Context
         get() = context

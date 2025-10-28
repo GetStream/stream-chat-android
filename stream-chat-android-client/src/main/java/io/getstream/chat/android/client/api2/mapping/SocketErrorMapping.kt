@@ -21,11 +21,9 @@ import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 
-internal fun SocketErrorResponse.toDomain(): SocketErrorMessage {
-    return SocketErrorMessage(
-        error = error?.toDomain(),
-    )
-}
+internal fun SocketErrorResponse.toDomain(): SocketErrorMessage = SocketErrorMessage(
+    error = error?.toDomain(),
+)
 
 internal fun SocketErrorResponse.ErrorResponse.toDomain(): ErrorResponse {
     val dto = this

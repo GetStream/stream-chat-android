@@ -47,9 +47,7 @@ public class ListenerDelegate<L : Any>(
     private var realListener: L = initialValue
     private val wrapper: L = wrap { realListener }
 
-    override fun getValue(thisRef: Any?, property: KProperty<*>): L {
-        return wrapper
-    }
+    override fun getValue(thisRef: Any?, property: KProperty<*>): L = wrapper
 
     override fun setValue(thisRef: Any?, property: KProperty<*>, value: L) {
         realListener = value

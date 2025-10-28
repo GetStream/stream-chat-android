@@ -85,8 +85,6 @@ internal class PollAttachmentFragment : Fragment() {
          *
          * @return A new instance of the Fragment.
          */
-        fun newInstance(): PollAttachmentFragment {
-            return PollAttachmentFragment()
-        }
+        fun newInstance(): PollAttachmentFragment = PollAttachmentFragment()
     }
 }

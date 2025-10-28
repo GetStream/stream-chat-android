@@ -25,25 +25,20 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupAddUsersItemBinding
 
-class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdapter.UserViewHolder>(
-    object : DiffUtil.ItemCallback<User>() {
-        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean {
-            return oldItem.id == newItem.id
-        }
+class GroupChatInfoAddUsersAdapter :
+    ListAdapter<User, GroupChatInfoAddUsersAdapter.UserViewHolder>(
+        object : DiffUtil.ItemCallback<User>() {
+            override fun areItemsTheSame(oldItem: User, newItem: User): Boolean = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
-            return oldItem == newItem
-        }
-    },
-) {
+            override fun areContentsTheSame(oldItem: User, newItem: User): Boolean = oldItem == newItem
+        },
+    ) {
 
     private var userClickListener: UserClickListener? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        return ChatInfoGroupAddUsersItemBinding
-            .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
-            .let(::UserViewHolder)
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder = ChatInfoGroupAddUsersItemBinding
+        .inflate(LayoutInflater.from(parent.context.appThemeContext), parent, false)
+        .let(::UserViewHolder)
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         holder.bind(getItem(position))
@@ -53,8 +48,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
         userClickListener = listener
     }
 
-    inner class UserViewHolder(private val binding: ChatInfoGroupAddUsersItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class UserViewHolder(private val binding: ChatInfoGroupAddUsersItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var user: User
 

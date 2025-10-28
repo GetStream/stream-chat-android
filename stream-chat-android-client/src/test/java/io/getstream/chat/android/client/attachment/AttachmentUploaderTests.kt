@@ -82,32 +82,31 @@ internal class AttachmentUploaderTests {
     }
 
     @Test
-    fun `Should return attachment with proper data including thumb and image url when successfully sent video file`() =
-        runTest {
-            val attachment = randomAttachments(size = 1)
-                .first()
-                .copy(mimeType = "video/mp4")
+    fun `Should return attachment with proper data including thumb and image url when successfully sent video file`() = runTest {
+        val attachment = randomAttachments(size = 1)
+            .first()
+            .copy(mimeType = "video/mp4")
 
-            val url = "url"
-            val thumbUrl = "thumbUrl"
+        val url = "url"
+        val thumbUrl = "thumbUrl"
 
-            val sut = Fixture()
-                .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = url, thumbUrl = thumbUrl)))
-                .get()
+        val sut = Fixture()
+            .givenMockedFileUploads(channelType, channelId, Result.Success(UploadedFile(file = url, thumbUrl = thumbUrl)))
+            .get()
 
-            val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
+        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
 
-            with(result.value) {
-                name shouldBeEqualTo attachment.upload!!.name
-                url shouldBeEqualTo url
-                thumbUrl shouldBeEqualTo thumbUrl
-                imageUrl shouldBeEqualTo thumbUrl
-                fileSize.shouldNotBeNull()
-                type.shouldNotBeNull()
-                mimeType.shouldNotBeNull()
-                uploadState shouldBeEqualTo Attachment.UploadState.Success
-            }
+        with(result.value) {
+            name shouldBeEqualTo attachment.upload!!.name
+            url shouldBeEqualTo url
+            thumbUrl shouldBeEqualTo thumbUrl
+            imageUrl shouldBeEqualTo thumbUrl
+            fileSize.shouldNotBeNull()
+            type.shouldNotBeNull()
+            mimeType.shouldNotBeNull()
+            uploadState shouldBeEqualTo Attachment.UploadState.Success
         }
+    }
 
     @Test
     fun `Upload attachment should have the right format`() = runTest {
@@ -166,13 +165,11 @@ internal class AttachmentUploaderTests {
         }
     }
 
-    private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> {
-        return randomAttachmentsWithFile(size)
-            .map { attachment ->
-                attachment.copy(uploadState = Attachment.UploadState.Idle)
-            }
-            .toMutableList()
-    }
+    private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> = randomAttachmentsWithFile(size)
+        .map { attachment ->
+            attachment.copy(uploadState = Attachment.UploadState.Idle)
+        }
+        .toMutableList()
 
     private class Fixture {
         private var clientMock: ChatClient = mock()
@@ -211,9 +208,7 @@ internal class AttachmentUploaderTests {
             }
         }
 
-        fun get(): AttachmentUploader {
-            return AttachmentUploader(clientMock)
-        }
+        fun get(): AttachmentUploader = AttachmentUploader(clientMock)
     }
 }
 
@@ -227,6 +222,4 @@ internal fun randomAttachmentsWithFile(
     },
 ): List<Attachment> = (1..size).map(creationFunction)
 
-internal fun generateUploadId(): String {
-    return "upload_id_${UUID.randomUUID()}"
-}
+internal fun generateUploadId(): String = "upload_id_${UUID.randomUUID()}"

@@ -34,9 +34,7 @@ public class AttachmentHelper(private val timeProvider: TimeProvider = TimeProvi
         return timestamp > timeProvider.provideCurrentTimeInSeconds()
     }
 
-    public fun hasStreamImageUrl(attachment: Attachment): Boolean {
-        return attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(STREAM_CDN_HOST_PATTERN::matches) ?: false
-    }
+    public fun hasStreamImageUrl(attachment: Attachment): Boolean = attachment.imageUrl?.toHttpUrlOrNull()?.host?.let(STREAM_CDN_HOST_PATTERN::matches) ?: false
 
     private companion object {
         private const val QUERY_KEY_NAME_EXPIRES = "Expires"

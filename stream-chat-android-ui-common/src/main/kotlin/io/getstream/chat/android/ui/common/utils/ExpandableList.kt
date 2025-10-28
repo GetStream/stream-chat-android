@@ -86,9 +86,8 @@ private fun <T> visibleItems(
     items: List<T>,
     minimumVisibleItems: Int,
     isCollapsed: Boolean,
-): List<T> =
-    if (isCollapsed && canExpand(items, minimumVisibleItems)) {
-        items.take(minimumVisibleItems)
-    } else {
-        items
-    }
+): List<T> = if (isCollapsed && canExpand(items, minimumVisibleItems)) {
+    items.take(minimumVisibleItems)
+} else {
+    items
+}

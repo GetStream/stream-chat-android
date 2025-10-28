@@ -23,47 +23,52 @@ import io.getstream.chat.android.models.User
  * Provides sample pinned messages data that will be used to render component previews.
  */
 public object PreviewPinnedMessageData {
+    /**
+     * Sample pinned message.
+     */
+    public val pinnedMessage1: Message =
+        Message(
+            id = "msg1",
+            cid = "messaging:123",
+            text = "Some very long pinned message in the chat from a while ago.",
+            user =
+            User(
+                id = "usr1",
+                name = "Test User",
+            ),
+        )
 
     /**
      * Sample pinned message.
      */
-    public val pinnedMessage1: Message = Message(
-        id = "msg1",
-        cid = "messaging:123",
-        text = "Some very long pinned message in the chat from a while ago.",
-        user = User(
-            id = "usr1",
-            name = "Test User",
-        ),
-    )
-
-    /**
-     * Sample pinned message.
-     */
-    public val pinnedMessage2: Message = Message(
-        id = "msg1",
-        cid = "messaging:123",
-        text = "Important message pinned to the chat.",
-        user = User(
-            id = "usr2",
-            name = "Sample User",
-        ),
-    )
+    public val pinnedMessage2: Message =
+        Message(
+            id = "msg1",
+            cid = "messaging:123",
+            text = "Important message pinned to the chat.",
+            user =
+            User(
+                id = "usr2",
+                name = "Sample User",
+            ),
+        )
 
     /**
      * List of pinned messages.
      */
-    public val pinnedMessageList: List<Message> = listOf(
-        pinnedMessage1,
-        pinnedMessage2,
-    )
+    public val pinnedMessageList: List<Message> =
+        listOf(
+            pinnedMessage1,
+            pinnedMessage2,
+        )
 
     /**
      * List of pinned messages + loading more indicator.
      */
-    public val pinnedMessageListWithLoadingMore: List<Message> = listOf(
-        pinnedMessage1,
-        pinnedMessage2,
-        Message(), // used as loading more indicator
-    )
+    public val pinnedMessageListWithLoadingMore: List<Message> =
+        listOf(
+            pinnedMessage1,
+            pinnedMessage2,
+            Message(), // used as loading more indicator
+        )
 }

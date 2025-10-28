@@ -225,10 +225,8 @@ internal class MediaAttachmentFragment : Fragment() {
          * @param style The style for the attachment picker dialog.
          * @return A new instance of the Fragment.
          */
-        fun newInstance(style: AttachmentsPickerDialogStyle): MediaAttachmentFragment {
-            return MediaAttachmentFragment().apply {
-                setStyle(style)
-            }
+        fun newInstance(style: AttachmentsPickerDialogStyle): MediaAttachmentFragment = MediaAttachmentFragment().apply {
+            setStyle(style)
         }
 
         private const val SPAN_COUNT: Int = 3

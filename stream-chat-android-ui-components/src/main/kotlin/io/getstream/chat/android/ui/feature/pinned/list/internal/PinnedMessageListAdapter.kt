@@ -28,28 +28,25 @@ import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class PinnedMessageListAdapter :
-    ListAdapter<MessageResult, RecyclerView.ViewHolder>(MessageResultDiffCallback) {
+internal class PinnedMessageListAdapter : ListAdapter<MessageResult, RecyclerView.ViewHolder>(MessageResultDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
 
     var messagePreviewStyle: MessagePreviewStyle? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == ITEM_MESSAGE) {
-            StreamUiItemMentionListBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let { binding ->
-                    messagePreviewStyle?.let(binding.root::styleView)
-                    MessagePreviewViewHolder(binding)
-                }
-        } else {
-            StreamUiItemListLoadingBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let { binding ->
-                    PinnedMessageLoadingMoreView(binding)
-                }
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = if (viewType == ITEM_MESSAGE) {
+        StreamUiItemMentionListBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { binding ->
+                messagePreviewStyle?.let(binding.root::styleView)
+                MessagePreviewViewHolder(binding)
+            }
+    } else {
+        StreamUiItemListLoadingBinding
+            .inflate(parent.streamThemeInflater, parent, false)
+            .let { binding ->
+                PinnedMessageLoadingMoreView(binding)
+            }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -58,12 +55,10 @@ internal class PinnedMessageListAdapter :
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).message.id.isNotEmpty()) {
-            ITEM_MESSAGE
-        } else {
-            ITEM_LOADING_MORE
-        }
+    override fun getItemViewType(position: Int): Int = if (getItem(position).message.id.isNotEmpty()) {
+        ITEM_MESSAGE
+    } else {
+        ITEM_LOADING_MORE
     }
 
     fun setPinnedMessageSelectedListener(pinnedMessageSelectedListener: PinnedMessageSelectedListener?) {

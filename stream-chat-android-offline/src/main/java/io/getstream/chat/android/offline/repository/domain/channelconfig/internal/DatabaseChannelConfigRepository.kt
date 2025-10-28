@@ -40,9 +40,7 @@ internal class DatabaseChannelConfigRepository(
     /**
      * Select the [ChannelConfig] for a channel type.
      */
-    override fun selectChannelConfig(channelType: String): ChannelConfig? {
-        return channelConfigs[channelType]
-    }
+    override fun selectChannelConfig(channelType: String): ChannelConfig? = channelConfigs[channelType]
 
     /**
      * Writes many [ChannelConfig]

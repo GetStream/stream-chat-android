@@ -69,9 +69,7 @@ public data class TextStyle(
         chatFonts.setFont(this, textView, defaultFont)
     }
 
-    public fun hasFont(): Boolean {
-        return fontAssetsPath != null || fontResource != UNSET_FONT_RESOURCE
-    }
+    public fun hasFont(): Boolean = fontAssetsPath != null || fontResource != UNSET_FONT_RESOURCE
 
     public fun colorOrNull(): Int? = if (color != UNSET_COLOR) color else null
 
@@ -130,18 +128,16 @@ public data class TextStyle(
             this.style = array.getInt(ref, defValue)
         }
 
-        public fun build(): TextStyle {
-            return TextStyle(
-                fontResource = fontResource,
-                fontAssetsPath = fontAssetsPath,
-                style = style,
-                size = size,
-                color = color,
-                hint = hint,
-                hintColor = hintColor,
-                defaultFont = defaultFont,
-            )
-        }
+        public fun build(): TextStyle = TextStyle(
+            fontResource = fontResource,
+            fontAssetsPath = fontAssetsPath,
+            style = style,
+            size = size,
+            color = color,
+            hint = hint,
+            hintColor = hintColor,
+            defaultFont = defaultFont,
+        )
     }
 }
 

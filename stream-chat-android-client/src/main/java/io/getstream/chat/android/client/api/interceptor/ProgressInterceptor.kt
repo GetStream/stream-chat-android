@@ -41,11 +41,9 @@ internal class ProgressInterceptor : Interceptor {
         return chain.proceed(request)
     }
 
-    private fun wrapRequest(request: Request, progressCallback: ProgressCallback): Request {
-        return request.newBuilder()
-            // Assume that any request tagged with a ProgressCallback is a POST
-            // request and has a non-null body
-            .post(ProgressRequestBody(request.body!!, progressCallback))
-            .build()
-    }
+    private fun wrapRequest(request: Request, progressCallback: ProgressCallback): Request = request.newBuilder()
+        // Assume that any request tagged with a ProgressCallback is a POST
+        // request and has a non-null body
+        .post(ProgressRequestBody(request.body!!, progressCallback))
+        .build()
 }

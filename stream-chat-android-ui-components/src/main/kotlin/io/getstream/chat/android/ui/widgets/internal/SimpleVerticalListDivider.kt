@@ -75,7 +75,5 @@ internal class SimpleVerticalListDivider(context: Context) : RecyclerView.ItemDe
         canvas.restore()
     }
 
-    private fun determineHeight(): Int {
-        return drawableHeight ?: drawable.intrinsicHeight
-    }
+    private fun determineHeight(): Int = drawableHeight ?: drawable.intrinsicHeight
 }

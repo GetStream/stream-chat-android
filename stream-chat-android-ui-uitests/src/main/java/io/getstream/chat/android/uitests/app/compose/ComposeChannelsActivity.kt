@@ -79,8 +79,6 @@ class ComposeChannelsActivity : AppCompatActivity() {
          * @param context The context used to create the intent.
          * @return The [Intent] to start [ComposeChannelsActivity].
          */
-        fun createIntent(context: Context): Intent {
-            return Intent(context, ComposeChannelsActivity::class.java)
-        }
+        fun createIntent(context: Context): Intent = Intent(context, ComposeChannelsActivity::class.java)
     }
 }

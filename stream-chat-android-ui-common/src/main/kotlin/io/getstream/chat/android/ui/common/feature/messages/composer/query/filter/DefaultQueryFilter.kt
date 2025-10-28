@@ -83,9 +83,7 @@ public class DefaultQueryFilter<T>(
     }
 
     private data class MeasuredItem<T>(val item: T, val distance: Int) : Comparable<MeasuredItem<T>> {
-        override fun compareTo(other: MeasuredItem<T>): Int {
-            return distance.compareTo(other.distance)
-        }
+        override fun compareTo(other: MeasuredItem<T>): Int = distance.compareTo(other.distance)
     }
 
     private fun minLevenshteinDistance(search: String, target: String): Int {

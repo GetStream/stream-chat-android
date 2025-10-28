@@ -197,17 +197,16 @@ internal class MessagingStyleNotificationFactoryTest {
     }
 
     @Test
-    fun `createNotification should create notification for NotificationReminderDue when current user is available`() =
-        runTest {
-            // Given
-            val channel = randomChannel()
-            val message = randomMessage()
-            val notification = ChatNotification.NotificationReminderDue(channel, message)
+    fun `createNotification should create notification for NotificationReminderDue when current user is available`() = runTest {
+        // Given
+        val channel = randomChannel()
+        val message = randomMessage()
+        val notification = ChatNotification.NotificationReminderDue(channel, message)
 
-            // When
-            val result = factory.createNotification(notification)
+        // When
+        val result = factory.createNotification(notification)
 
-            // Then
-            assertNotNull(result)
-        }
+        // Then
+        assertNotNull(result)
+    }
 }

@@ -88,8 +88,7 @@ class ChatPreviewViewModel(
     }
 }
 
-class ChatPreviewViewModelFactory(private val memberId: String) :
-    ViewModelProvider.Factory {
+class ChatPreviewViewModelFactory(private val memberId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ChatPreviewViewModel::class.java) {
             "ChatPreviewViewModelFactory can only create instances of ChatPreviewViewModel"

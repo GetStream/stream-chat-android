@@ -32,8 +32,6 @@ public data class StreamKeyboardBehaviour(
          *
          * @return A [StreamKeyboardBehaviour] instance holding the default configuration.
          */
-        public fun defaultBehaviour(): StreamKeyboardBehaviour {
-            return StreamKeyboardBehaviour(closeKeyboardOnAttachmentPickerOpen = true)
-        }
+        public fun defaultBehaviour(): StreamKeyboardBehaviour = StreamKeyboardBehaviour(closeKeyboardOnAttachmentPickerOpen = true)
     }
 }

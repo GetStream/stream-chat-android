@@ -109,34 +109,33 @@ public class ChannelInfoMemberViewController(
     private lateinit var member: Member
     private var distinctCid: String? = null
 
-    private fun queryDistinctChannel(): Flow<Channel?> =
-        flow {
-            chatClient.getCurrentUser()?.id?.let { currentUserId ->
-                logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
-                chatClient.queryChannels(
-                    request = QueryChannelsRequest(
-                        filter = Filters.distinct(listOf(memberId, currentUserId)),
-                        querySort = QuerySortByField.descByName("last_updated"),
-                        messageLimit = 0,
-                        limit = 1,
-                    ),
-                ).await()
-                    .onSuccessSuspend { channels ->
-                        if (channels.isEmpty()) {
-                            logger.w { "[queryDistinctChannel] No distinct channel found of member: $memberId" }
-                            emit(null)
-                        } else {
-                            val channel = channels.first()
-                            logger.d { "[queryDistinctChannel] Found distinct channel: ${channel.cid}" }
-                            emit(channel)
-                        }
-                    }
-                    .onErrorSuspend {
-                        logger.e { "[queryDistinctChannel] Error querying distinct channel of member: $memberId" }
+    private fun queryDistinctChannel(): Flow<Channel?> = flow {
+        chatClient.getCurrentUser()?.id?.let { currentUserId ->
+            logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
+            chatClient.queryChannels(
+                request = QueryChannelsRequest(
+                    filter = Filters.distinct(listOf(memberId, currentUserId)),
+                    querySort = QuerySortByField.descByName("last_updated"),
+                    messageLimit = 0,
+                    limit = 1,
+                ),
+            ).await()
+                .onSuccessSuspend { channels ->
+                    if (channels.isEmpty()) {
+                        logger.w { "[queryDistinctChannel] No distinct channel found of member: $memberId" }
                         emit(null)
+                    } else {
+                        val channel = channels.first()
+                        logger.d { "[queryDistinctChannel] Found distinct channel: ${channel.cid}" }
+                        emit(channel)
                     }
-            }
+                }
+                .onErrorSuspend {
+                    logger.e { "[queryDistinctChannel] Error querying distinct channel of member: $memberId" }
+                    emit(null)
+                }
         }
+    }
 
     /**
      * Handles actions related to channel member information view.

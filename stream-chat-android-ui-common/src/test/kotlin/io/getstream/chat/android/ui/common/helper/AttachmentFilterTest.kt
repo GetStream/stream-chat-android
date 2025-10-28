@@ -135,14 +135,12 @@ internal class AttachmentFilterTest {
             blockedFileExtensions: List<String> = emptyList(),
             blockedMimeTypes: List<String> = emptyList(),
             sizeLimitInBytes: Long = positiveRandomLong(),
-        ): FileUploadConfig {
-            return FileUploadConfig(
-                allowedFileExtensions = allowedFileExtensions,
-                allowedMimeTypes = allowedMimeTypes,
-                blockedFileExtensions = blockedFileExtensions,
-                blockedMimeTypes = blockedMimeTypes,
-                sizeLimitInBytes = sizeLimitInBytes,
-            )
-        }
+        ): FileUploadConfig = FileUploadConfig(
+            allowedFileExtensions = allowedFileExtensions,
+            allowedMimeTypes = allowedMimeTypes,
+            blockedFileExtensions = blockedFileExtensions,
+            blockedMimeTypes = blockedMimeTypes,
+            sizeLimitInBytes = sizeLimitInBytes,
+        )
     }
 }

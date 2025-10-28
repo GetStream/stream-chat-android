@@ -54,31 +54,29 @@ internal data class MediaGalleryPreviewActivityState(
 /**
  * Maps [Message] to [toMediaGalleryPreviewActivityState].
  */
-internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewActivityState =
-    MediaGalleryPreviewActivityState(
-        messageId = this.id,
-        parentId = this.parentId,
-        userId = this.user.id,
-        userName = this.user.name,
-        userImage = this.user.image,
-        attachments = this.attachments.map { it.toMediaGalleryPreviewActivityAttachmentState() },
-        updatedAt = this.updatedAt,
-        createdAt = this.createdAt,
-    )
+internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewActivityState = MediaGalleryPreviewActivityState(
+    messageId = this.id,
+    parentId = this.parentId,
+    userId = this.user.id,
+    userName = this.user.name,
+    userImage = this.user.image,
+    attachments = this.attachments.map { it.toMediaGalleryPreviewActivityAttachmentState() },
+    updatedAt = this.updatedAt,
+    createdAt = this.createdAt,
+)
 
 /**
  * Maps [toMediaGalleryPreviewActivityState] to [Message].
  */
-internal fun MediaGalleryPreviewActivityState.toMessage(): Message =
-    Message(
-        id = this.messageId,
-        parentId = this.parentId,
-        user = User(
-            id = this.userId,
-            name = this.userName,
-            image = this.userImage,
-        ),
-        attachments = this.attachments.map { it.toAttachment() }.toMutableList(),
-        updatedAt = this.updatedAt,
-        createdAt = this.createdAt,
-    )
+internal fun MediaGalleryPreviewActivityState.toMessage(): Message = Message(
+    id = this.messageId,
+    parentId = this.parentId,
+    user = User(
+        id = this.userId,
+        name = this.userName,
+        image = this.userImage,
+    ),
+    attachments = this.attachments.map { it.toAttachment() }.toMutableList(),
+    updatedAt = this.updatedAt,
+    createdAt = this.createdAt,
+)

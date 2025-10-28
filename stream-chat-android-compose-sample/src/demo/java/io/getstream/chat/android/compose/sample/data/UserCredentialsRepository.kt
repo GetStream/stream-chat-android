@@ -54,9 +54,7 @@ class UserCredentialsRepository(context: Context) {
     /**
      * Loads an API key for the environment the user was logged into.
      */
-    fun loadApiKey(): String? {
-        return prefs.getString(KEY_API_KEY, null)
-    }
+    fun loadApiKey(): String? = prefs.getString(KEY_API_KEY, null)
 
     /**
      * Saves credentials for the logged-in user.

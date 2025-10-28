@@ -58,10 +58,9 @@ public fun interface DateSeparatorHandler {
          *
          * @return The default thread date separator handler.
          */
-        public fun getDefaultThreadDateSeparatorHandler(): DateSeparatorHandler =
-            DateSeparatorHandler { previousMessage, message ->
-                previousMessage?.let { defaultDateSeparatorHandler.shouldAddDateSeparator(it, message) } ?: false
-            }
+        public fun getDefaultThreadDateSeparatorHandler(): DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
+            previousMessage?.let { defaultDateSeparatorHandler.shouldAddDateSeparator(it, message) } ?: false
+        }
 
         /**
          * Checks if the two dates are in the same day.

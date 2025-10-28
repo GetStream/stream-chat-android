@@ -184,14 +184,12 @@ internal class StringExtensionsKtTest {
         fun createStreamCdnImageLink(
             originalWidth: Int = DEFAULT_ORIGINAL_WIDTH,
             originalHeight: Int = DEFAULT_ORIGINAL_HEIGHT,
-        ) =
-            "https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&Policy=akIjUneI9Kmbds2&Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&oh=$originalHeight&ow=$originalWidth"
+        ) = "https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&Policy=akIjUneI9Kmbds2&Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&oh=$originalHeight&ow=$originalWidth"
 
         /**
          * Creates a Stream CDN link without original width and height parameters.
          */
-        fun createStreamCdnImageLinkWithoutDimensionParameters() =
-            "https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&Policy=akIjUneI9Kmbds2&Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"
+        fun createStreamCdnImageLinkWithoutDimensionParameters() = "https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&Policy=akIjUneI9Kmbds2&Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"
 
         /**
          * Checks if the given link has any duplicate query parameters.

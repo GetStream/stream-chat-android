@@ -95,9 +95,7 @@ public open class DefaultMessageComposerMentionSuggestionsContent :
     @Suppress("UNCHECKED_CAST")
     protected open fun <T, VH> buildAdapter(
         style: MessageComposerViewStyle,
-    ): T where T : RecyclerView.Adapter<VH>, T : MentionSuggestionsAdapter, VH : RecyclerView.ViewHolder {
-        return MentionsAdapter(style) { mentionSelectionListener?.invoke(it) } as T
-    }
+    ): T where T : RecyclerView.Adapter<VH>, T : MentionSuggestionsAdapter, VH : RecyclerView.ViewHolder = MentionsAdapter(style) { mentionSelectionListener?.invoke(it) } as T
 
     /**
      * Initializes the content view with [MessageComposerContext].
@@ -147,7 +145,8 @@ public interface MentionSuggestionsAdapter {
 private class MentionsAdapter(
     private val style: MessageComposerViewStyle,
     private val mentionSelectionListener: (User) -> Unit,
-) : SimpleListAdapter<User, MentionsViewHolder>(), MentionSuggestionsAdapter {
+) : SimpleListAdapter<User, MentionsViewHolder>(),
+    MentionSuggestionsAdapter {
 
     /**
      * Creates and instantiates a new instance of [MentionsViewHolder].
@@ -156,11 +155,9 @@ private class MentionsAdapter(
      * @param viewType The view type of the new View.
      * @return A new [MentionsViewHolder] instance.
      */
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder {
-        return StreamUiItemMentionBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { MentionsViewHolder(it, style, mentionSelectionListener) }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionsViewHolder = StreamUiItemMentionBinding
+        .inflate(parent.streamThemeInflater, parent, false)
+        .let { MentionsViewHolder(it, style, mentionSelectionListener) }
 }
 
 /**

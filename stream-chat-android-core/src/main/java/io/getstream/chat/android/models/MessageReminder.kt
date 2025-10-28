@@ -63,13 +63,12 @@ public data class MessageReminder(
     public val updatedAt: Date,
 ) : ComparableFieldProvider {
 
-    override fun getComparableField(fieldName: String): Comparable<*>? =
-        when (fieldName) {
-            "remind_at", "remindAt" -> remindAt
-            "created_at", "createdAt" -> createdAt
-            "updated_at", "updatedAt" -> updatedAt
-            else -> null
-        }
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "remind_at", "remindAt" -> remindAt
+        "created_at", "createdAt" -> createdAt
+        "updated_at", "updatedAt" -> updatedAt
+        else -> null
+    }
 
     /**
      * Creates a [Builder] of this [MessageReminder] instance, allowing to modify some of its properties.
@@ -127,16 +126,14 @@ public data class MessageReminder(
          *
          * @throws IllegalStateException if any required property is missing.
          */
-        public fun build(): MessageReminder {
-            return MessageReminder(
-                remindAt = remindAt,
-                cid = cid,
-                channel = channel,
-                messageId = messageId,
-                message = message,
-                createdAt = createdAt,
-                updatedAt = updatedAt,
-            )
-        }
+        public fun build(): MessageReminder = MessageReminder(
+            remindAt = remindAt,
+            cid = cid,
+            channel = channel,
+            messageId = messageId,
+            message = message,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
     }
 }

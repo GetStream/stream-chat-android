@@ -150,40 +150,36 @@ private class FileAttachmentsAdapter(
         private const val VIEW_TYPE_GENERAL = 2
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (itemList.getOrNull(position)?.isAudioRecording()) {
-            true -> VIEW_TYPE_RECORDING
-            else -> VIEW_TYPE_GENERAL
-        }
+    override fun getItemViewType(position: Int): Int = when (itemList.getOrNull(position)?.isAudioRecording()) {
+        true -> VIEW_TYPE_RECORDING
+        else -> VIEW_TYPE_GENERAL
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
-        return when (viewType) {
-            VIEW_TYPE_RECORDING ->
-                StreamUiItemRecordingAttachmentBinding
-                    .inflate(parent.streamThemeInflater, parent, false)
-                    .let {
-                        RecordingFileAttachmentViewHolder(
-                            it,
-                            attachmentClickListener,
-                            attachmentLongClickListener,
-                            attachmentDownloadClickListener,
-                            style,
-                        )
-                    }
-            else ->
-                StreamUiItemFileAttachmentBinding
-                    .inflate(parent.streamThemeInflater, parent, false)
-                    .let {
-                        GeneralFileAttachmentViewHolder(
-                            it,
-                            attachmentClickListener,
-                            attachmentLongClickListener,
-                            attachmentDownloadClickListener,
-                            style,
-                        )
-                    }
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder = when (viewType) {
+        VIEW_TYPE_RECORDING ->
+            StreamUiItemRecordingAttachmentBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let {
+                    RecordingFileAttachmentViewHolder(
+                        it,
+                        attachmentClickListener,
+                        attachmentLongClickListener,
+                        attachmentDownloadClickListener,
+                        style,
+                    )
+                }
+        else ->
+            StreamUiItemFileAttachmentBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let {
+                    GeneralFileAttachmentViewHolder(
+                        it,
+                        attachmentClickListener,
+                        attachmentLongClickListener,
+                        attachmentDownloadClickListener,
+                        style,
+                    )
+                }
     }
 
     override fun onViewAttachedToWindow(holder: FileAttachmentViewHolder) {
@@ -429,8 +425,7 @@ private class RecordingFileAttachmentViewHolder(
         })
     }
 
-    private fun progressToDecimal(progress: Int, totalDuration: Float?): Int =
-        progress * (totalDuration ?: NULL_DURATION).toInt() / 100
+    private fun progressToDecimal(progress: Int, totalDuration: Float?): Int = progress * (totalDuration ?: NULL_DURATION).toInt() / 100
 
     private fun setupBackground() {
         val shapeAppearanceModel = ShapeAppearanceModel.Builder()

@@ -31,8 +31,7 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
  *
  * @param config The configuration for the media gallery.
  */
-public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig = MediaGalleryConfig()) :
-    ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
+public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig = MediaGalleryConfig()) : ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
 
     /**
      * Creates the intent to start the [MediaGalleryPreviewActivity].
@@ -40,28 +39,24 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      *
      * @return The [Intent] to start the [MediaGalleryPreviewActivity].
      */
-    override fun createIntent(context: Context, input: Input): Intent {
-        return MediaGalleryPreviewActivity.getIntent(
-            context,
-            message = input.message,
-            attachmentPosition = input.initialPosition,
-            downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
-            downloadRequestInterceptor = input.downloadRequestInterceptor,
-            videoThumbnailsEnabled = input.videoThumbnailsEnabled,
-            streamCdnImageResizing = input.streamCdnImageResizing,
-            skipEnrichUrl = input.skipEnrichUrl,
-            config = config,
-        )
-    }
+    override fun createIntent(context: Context, input: Input): Intent = MediaGalleryPreviewActivity.getIntent(
+        context,
+        message = input.message,
+        attachmentPosition = input.initialPosition,
+        downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
+        downloadRequestInterceptor = input.downloadRequestInterceptor,
+        videoThumbnailsEnabled = input.videoThumbnailsEnabled,
+        streamCdnImageResizing = input.streamCdnImageResizing,
+        skipEnrichUrl = input.skipEnrichUrl,
+        config = config,
+    )
 
     /**
      * We parse the result as [MediaGalleryPreviewResult], which can be null in case there is no result to return.
      *
      * @return The [MediaGalleryPreviewResult] or null if it doesn't exist.
      */
-    override fun parseResult(resultCode: Int, intent: Intent?): MediaGalleryPreviewResult? {
-        return intent?.getParcelableExtra(MediaGalleryPreviewActivity.KeyMediaGalleryPreviewResult)
-    }
+    override fun parseResult(resultCode: Int, intent: Intent?): MediaGalleryPreviewResult? = intent?.getParcelableExtra(MediaGalleryPreviewActivity.KeyMediaGalleryPreviewResult)
 
     /**
      * Defines the input for the [MediaGalleryPreviewContract].

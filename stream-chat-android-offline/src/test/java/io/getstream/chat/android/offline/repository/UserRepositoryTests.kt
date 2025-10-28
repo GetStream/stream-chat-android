@@ -105,67 +105,64 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `Given users were inserted When insert a new user Should propagated new value to flow`() =
-        runTest {
-            val newUser1 = randomUser()
-            val newUser2 = randomUser()
-            val newUser3 = randomUser()
-            var observedTimes = 0
+    fun `Given users were inserted When insert a new user Should propagated new value to flow`() = runTest {
+        val newUser1 = randomUser()
+        val newUser2 = randomUser()
+        val newUser3 = randomUser()
+        var observedTimes = 0
 
-            sut.observeLatestUsers()
-                .drop(1) // empty initial value
-                .onEach { observedTimes += 1 }
-                .test {
-                    sut.insertUsers(listOf(newUser1, newUser2))
+        sut.observeLatestUsers()
+            .drop(1) // empty initial value
+            .onEach { observedTimes += 1 }
+            .test {
+                sut.insertUsers(listOf(newUser1, newUser2))
 
-                    sut.insertUser(newUser3)
+                sut.insertUser(newUser3)
 
-                    observedTimes shouldBeEqualTo 2
-                    cancelAndConsumeRemainingEvents()
-                }
-        }
-
-    @Test
-    fun `Given users were inserted already When insert a user Shouldn't be propagated value to flow again`() =
-        runTest {
-            val newUser1 = randomUser()
-            val newUser2 = randomUser()
-            var observedTimes = 0
-
-            sut.observeLatestUsers()
-                .drop(1) // empty initial value
-                .onEach { observedTimes += 1 }
-                .test {
-                    sut.insertUsers(listOf(newUser1, newUser2))
-
-                    sut.insertUser(newUser1)
-
-                    observedTimes shouldBeEqualTo 1
-                    cancelAndConsumeRemainingEvents()
-                }
-        }
+                observedTimes shouldBeEqualTo 2
+                cancelAndConsumeRemainingEvents()
+            }
+    }
 
     @Test
-    fun `Given users were inserted already When insert an updated user Should propagate value to flow`() =
-        runTest {
-            val newUser1 = randomUser()
-            val newUser2 = randomUser()
-            val updatedUser1 = newUser1.copy(
-                extraData = mutableMapOf(),
-                name = "newUserName",
-            )
-            var observedTimes = 0
+    fun `Given users were inserted already When insert a user Shouldn't be propagated value to flow again`() = runTest {
+        val newUser1 = randomUser()
+        val newUser2 = randomUser()
+        var observedTimes = 0
 
-            sut.observeLatestUsers()
-                .drop(1) // empty initial value
-                .onEach { observedTimes += 1 }
-                .test {
-                    sut.insertUsers(listOf(newUser1, newUser2))
+        sut.observeLatestUsers()
+            .drop(1) // empty initial value
+            .onEach { observedTimes += 1 }
+            .test {
+                sut.insertUsers(listOf(newUser1, newUser2))
 
-                    sut.insertUser(updatedUser1)
+                sut.insertUser(newUser1)
 
-                    observedTimes shouldBeEqualTo 2
-                    cancelAndConsumeRemainingEvents()
-                }
-        }
+                observedTimes shouldBeEqualTo 1
+                cancelAndConsumeRemainingEvents()
+            }
+    }
+
+    @Test
+    fun `Given users were inserted already When insert an updated user Should propagate value to flow`() = runTest {
+        val newUser1 = randomUser()
+        val newUser2 = randomUser()
+        val updatedUser1 = newUser1.copy(
+            extraData = mutableMapOf(),
+            name = "newUserName",
+        )
+        var observedTimes = 0
+
+        sut.observeLatestUsers()
+            .drop(1) // empty initial value
+            .onEach { observedTimes += 1 }
+            .test {
+                sut.insertUsers(listOf(newUser1, newUser2))
+
+                sut.insertUser(updatedUser1)
+
+                observedTimes shouldBeEqualTo 2
+                cancelAndConsumeRemainingEvents()
+            }
+    }
 }

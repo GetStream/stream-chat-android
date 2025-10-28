@@ -28,7 +28,5 @@ public data class SyncState(
 )
 
 @InternalStreamChatApi
-public fun SyncState.stringify(): String {
-    return "SyncState(userId='$userId', activeChannelIds.size=${activeChannelIds.size}, " +
-        "lastSyncedAt=$lastSyncedAt, rawLastSyncedAt=$rawLastSyncedAt, markedAllReadAt=$markedAllReadAt)"
-}
+public fun SyncState.stringify(): String = "SyncState(userId='$userId', activeChannelIds.size=${activeChannelIds.size}, " +
+    "lastSyncedAt=$lastSyncedAt, rawLastSyncedAt=$rawLastSyncedAt, markedAllReadAt=$markedAllReadAt)"

@@ -134,10 +134,9 @@ public class DependencyResolverTest {
         public val testCoroutines: TestCoroutineExtension = TestCoroutineExtension()
 
         @JvmStatic
-        public fun initializationStatesArguments(): List<Arguments> =
-            InitializationState.values()
-                .filterNot { it == InitializationState.COMPLETE }
-                .map { Arguments.of(it) }
+        public fun initializationStatesArguments(): List<Arguments> = InitializationState.values()
+            .filterNot { it == InitializationState.COMPLETE }
+            .map { Arguments.of(it) }
     }
 
     private class Fixture {
@@ -195,8 +194,7 @@ public class DependencyResolverTest {
         }
 
         @InternalStreamChatApi
-        override fun <T : Any> resolveDependency(klass: KClass<T>): T? =
-            classes[klass] as? T
+        override fun <T : Any> resolveDependency(klass: KClass<T>): T? = classes[klass] as? T
     }
 
     private class FactoryDependency(
@@ -208,8 +206,7 @@ public class DependencyResolverTest {
         }
 
         @InternalStreamChatApi
-        override fun <T : Any> resolveDependency(klass: KClass<T>): T? =
-            classes[klass] as? T
+        override fun <T : Any> resolveDependency(klass: KClass<T>): T? = classes[klass] as? T
     }
 
     private class SomeDependency

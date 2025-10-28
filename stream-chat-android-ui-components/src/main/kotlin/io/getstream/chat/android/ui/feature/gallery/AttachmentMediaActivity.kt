@@ -208,13 +208,11 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             title: String,
             mimeType: String? = null,
             type: String? = null,
-        ): Intent {
-            return Intent(context, AttachmentMediaActivity::class.java).apply {
-                putExtra(KEY_URL, url)
-                putExtra(KEY_TITLE, title)
-                putExtra(KEY_MIME_TYPE, mimeType)
-                putExtra(KEY_TYPE, type)
-            }
+        ): Intent = Intent(context, AttachmentMediaActivity::class.java).apply {
+            putExtra(KEY_URL, url)
+            putExtra(KEY_TITLE, title)
+            putExtra(KEY_MIME_TYPE, mimeType)
+            putExtra(KEY_TYPE, type)
         }
     }
 }

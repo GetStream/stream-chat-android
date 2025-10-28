@@ -26,13 +26,11 @@ import io.getstream.chat.android.models.User
  * @param user The currently logged in user.
  * @return The default filter for the channel list view.
  */
-public fun Filters.defaultChannelListFilter(user: User?): FilterObject? {
-    return if (user == null) {
-        null
-    } else {
-        and(
-            eq("type", "messaging"),
-            `in`("members", listOf(user.id)),
-        )
-    }
+public fun Filters.defaultChannelListFilter(user: User?): FilterObject? = if (user == null) {
+    null
+} else {
+    and(
+        eq("type", "messaging"),
+        `in`("members", listOf(user.id)),
+    )
 }

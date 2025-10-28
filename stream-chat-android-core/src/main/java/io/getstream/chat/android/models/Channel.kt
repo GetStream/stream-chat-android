@@ -105,7 +105,8 @@ public data class Channel(
     val messageCount: Int? = null,
     val pushPreference: PushPreference? = null,
     override val extraData: Map<String, Any> = mapOf(),
-) : CustomObject, ComparableFieldProvider {
+) : CustomObject,
+    ComparableFieldProvider {
 
     /**
      * The date of the last message sent.
@@ -136,30 +137,28 @@ public data class Channel(
         get() = unreadCount > 0
 
     @Suppress("ComplexMethod")
-    override fun getComparableField(fieldName: String): Comparable<*>? {
-        return when (fieldName) {
-            "cid" -> cid
-            "id" -> id
-            "type" -> type
-            "name" -> name
-            "image" -> image
-            "watcher_count", "watcherCount" -> watcherCount
-            "frozen" -> frozen
-            "last_message_at", "lastMessageAt" -> lastMessageAt
-            "created_at", "createdAt" -> createdAt
-            "updated_at", "updatedAt" -> updatedAt
-            "deleted_at", "deletedAt" -> deletedAt
-            "member_count", "memberCount" -> memberCount
-            "team" -> team
-            "hidden" -> hidden
-            "cooldown" -> cooldown
-            "last_updated", "lastUpdated" -> lastUpdated
-            "unread_count", "unreadCount" -> unreadCount
-            "has_unread", "hasUnread" -> hasUnread
-            "pinned_at", "pinnedAt" -> membership?.pinnedAt
-            "archived_at", "archivedAt" -> membership?.archivedAt
-            else -> extraData[fieldName] as? Comparable<*>
-        }
+    override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
+        "cid" -> cid
+        "id" -> id
+        "type" -> type
+        "name" -> name
+        "image" -> image
+        "watcher_count", "watcherCount" -> watcherCount
+        "frozen" -> frozen
+        "last_message_at", "lastMessageAt" -> lastMessageAt
+        "created_at", "createdAt" -> createdAt
+        "updated_at", "updatedAt" -> updatedAt
+        "deleted_at", "deletedAt" -> deletedAt
+        "member_count", "memberCount" -> memberCount
+        "team" -> team
+        "hidden" -> hidden
+        "cooldown" -> cooldown
+        "last_updated", "lastUpdated" -> lastUpdated
+        "unread_count", "unreadCount" -> unreadCount
+        "has_unread", "hasUnread" -> hasUnread
+        "pinned_at", "pinnedAt" -> membership?.pinnedAt
+        "archived_at", "archivedAt" -> membership?.archivedAt
+        else -> extraData[fieldName] as? Comparable<*>
     }
 
     @SinceKotlin("99999.9")
@@ -336,23 +335,22 @@ public data class Channel(
  * @param that The [Channel] to take the new data from.
  */
 @InternalStreamChatApi
-public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
-    return copy(
-        name = that.name,
-        image = that.image,
-        hidden = that.hidden,
-        frozen = that.frozen,
-        team = that.team,
-        config = that.config,
-        extraData = that.extraData,
-        syncStatus = that.syncStatus,
-        hiddenMessagesBefore = that.hiddenMessagesBefore,
-        memberCount = that.memberCount,
-        members = that.members,
-        createdAt = that.createdAt,
-        updatedAt = that.updatedAt,
-        deletedAt = that.deletedAt,
-        messageCount = that.messageCount ?: messageCount,
+public fun Channel.mergeChannelFromEvent(that: Channel): Channel = copy(
+    name = that.name,
+    image = that.image,
+    hidden = that.hidden,
+    frozen = that.frozen,
+    team = that.team,
+    config = that.config,
+    extraData = that.extraData,
+    syncStatus = that.syncStatus,
+    hiddenMessagesBefore = that.hiddenMessagesBefore,
+    memberCount = that.memberCount,
+    members = that.members,
+    createdAt = that.createdAt,
+    updatedAt = that.updatedAt,
+    deletedAt = that.deletedAt,
+    messageCount = that.messageCount ?: messageCount,
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -362,31 +360,28 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         membership = that.membership,
         unreadCount = that.unreadCount,
          */
-    )
-}
+)
 
 /**
  * Converts the channel to the channel data.
  */
-public fun Channel.toChannelData(): ChannelData {
-    return ChannelData(
-        type = type,
-        id = id,
-        name = name,
-        image = image,
-        frozen = frozen,
-        cooldown = cooldown,
-        createdAt = createdAt,
-        updatedAt = updatedAt,
-        deletedAt = deletedAt,
-        memberCount = memberCount,
-        extraData = extraData,
-        createdBy = createdBy,
-        team = team,
-        ownCapabilities = ownCapabilities,
-        membership = membership,
-        draft = draftMessage,
-        messageCount = messageCount,
-        pushPreference = pushPreference,
-    )
-}
+public fun Channel.toChannelData(): ChannelData = ChannelData(
+    type = type,
+    id = id,
+    name = name,
+    image = image,
+    frozen = frozen,
+    cooldown = cooldown,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    memberCount = memberCount,
+    extraData = extraData,
+    createdBy = createdBy,
+    team = team,
+    ownCapabilities = ownCapabilities,
+    membership = membership,
+    draft = draftMessage,
+    messageCount = messageCount,
+    pushPreference = pushPreference,
+)

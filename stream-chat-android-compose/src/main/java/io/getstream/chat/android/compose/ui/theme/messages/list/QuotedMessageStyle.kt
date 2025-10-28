@@ -56,15 +56,13 @@ public data class QuotedMessageStyle(
             typography: StreamTypography,
             colors: StreamColors,
             shapes: StreamShapes,
-        ): QuotedMessageStyle {
-            return defaultStyle(
-                own = true,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-                shapes = shapes,
-            )
-        }
+        ): QuotedMessageStyle = defaultStyle(
+            own = true,
+            isInDarkMode = isInDarkMode,
+            typography = typography,
+            colors = colors,
+            shapes = shapes,
+        )
 
         /**
          * Builds the default quoted message style for other users' messages.
@@ -80,15 +78,13 @@ public data class QuotedMessageStyle(
                 else -> StreamColors.defaultColors()
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-        ): QuotedMessageStyle {
-            return defaultStyle(
-                own = false,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-                shapes = shapes,
-            )
-        }
+        ): QuotedMessageStyle = defaultStyle(
+            own = false,
+            isInDarkMode = isInDarkMode,
+            typography = typography,
+            colors = colors,
+            shapes = shapes,
+        )
 
         /**
          * Builds the default quoted message style.
@@ -106,25 +102,23 @@ public data class QuotedMessageStyle(
                 else -> StreamColors.defaultColors()
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-        ): QuotedMessageStyle {
-            return QuotedMessageStyle(
-                textStyle = typography.bodyBold.copy(
-                    color = when (own) {
-                        true -> colors.ownMessageQuotedText
-                        else -> colors.otherMessageQuotedText
-                    },
-                ),
-                backgroundColor = when (own) {
-                    true -> colors.ownMessageQuotedBackground
-                    else -> colors.otherMessageQuotedBackground
+        ): QuotedMessageStyle = QuotedMessageStyle(
+            textStyle = typography.bodyBold.copy(
+                color = when (own) {
+                    true -> colors.ownMessageQuotedText
+                    else -> colors.otherMessageQuotedText
                 },
-                backgroundShape = when (own) {
-                    true -> shapes.myMessageBubble
-                    else -> shapes.otherMessageBubble
-                },
-                backgroundBorder = null,
-                contentPadding = ComponentPadding.Zero,
-            )
-        }
+            ),
+            backgroundColor = when (own) {
+                true -> colors.ownMessageQuotedBackground
+                else -> colors.otherMessageQuotedBackground
+            },
+            backgroundShape = when (own) {
+                true -> shapes.myMessageBubble
+                else -> shapes.otherMessageBubble
+            },
+            backgroundBorder = null,
+            contentPadding = ComponentPadding.Zero,
+        )
     }
 }

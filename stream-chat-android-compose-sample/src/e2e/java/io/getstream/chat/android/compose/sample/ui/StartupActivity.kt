@@ -40,8 +40,6 @@ class StartupActivity : AppCompatActivity() {
             channelId: String,
             messageId: String?,
             parentMessageId: String?,
-        ): Intent {
-            return Intent(context, StartupActivity::class.java)
-        }
+        ): Intent = Intent(context, StartupActivity::class.java)
     }
 }

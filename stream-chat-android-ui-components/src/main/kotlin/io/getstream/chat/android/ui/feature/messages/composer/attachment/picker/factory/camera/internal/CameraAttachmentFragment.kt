@@ -160,10 +160,8 @@ internal class CameraAttachmentFragment : Fragment() {
          * @param style The style for the attachment picker dialog.
          * @return A new instance of the Fragment.
          */
-        fun newInstance(style: AttachmentsPickerDialogStyle): CameraAttachmentFragment {
-            return CameraAttachmentFragment().apply {
-                setStyle(style)
-            }
+        fun newInstance(style: AttachmentsPickerDialogStyle): CameraAttachmentFragment = CameraAttachmentFragment().apply {
+            setStyle(style)
         }
 
         /**

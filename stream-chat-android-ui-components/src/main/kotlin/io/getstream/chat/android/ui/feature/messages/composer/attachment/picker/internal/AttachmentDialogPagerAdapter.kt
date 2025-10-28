@@ -42,12 +42,10 @@ internal class AttachmentDialogPagerAdapter(
      * @param position The position of the page.
      * @return A new Fragment with the tab content.
      */
-    override fun createFragment(position: Int): Fragment {
-        return if (position < attachmentsPickerTabFactories.count()) {
-            attachmentsPickerTabFactories[position].createTabFragment(style, attachmentsPickerTabListener)
-        } else {
-            throw IllegalArgumentException("Can not create page for position $position")
-        }
+    override fun createFragment(position: Int): Fragment = if (position < attachmentsPickerTabFactories.count()) {
+        attachmentsPickerTabFactories[position].createTabFragment(style, attachmentsPickerTabListener)
+    } else {
+        throw IllegalArgumentException("Can not create page for position $position")
     }
 
     /**

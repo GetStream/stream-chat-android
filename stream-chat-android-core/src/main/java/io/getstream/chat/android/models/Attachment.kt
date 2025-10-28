@@ -100,7 +100,9 @@ public data class Attachment(
         /**
          * Idle state before attachment starts to upload.
          */
-        public object Idle : UploadState() { override fun toString(): String = "Idle" }
+        public object Idle : UploadState() {
+            override fun toString(): String = "Idle"
+        }
 
         /**
          * State representing attachment upload progress.
@@ -110,7 +112,9 @@ public data class Attachment(
         /**
          * State indicating that the attachment was uploaded successfully
          */
-        public object Success : UploadState() { override fun toString(): String = "Success" }
+        public object Success : UploadState() {
+            override fun toString(): String = "Success"
+        }
 
         /**
          * State indicating that the attachment upload failed.

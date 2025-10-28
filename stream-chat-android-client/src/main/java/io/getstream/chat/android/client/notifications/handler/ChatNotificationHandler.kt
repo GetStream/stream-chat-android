@@ -48,8 +48,7 @@ internal class ChatNotificationHandler(
     private val notificationChannel: () -> NotificationChannel,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
-    private val notificationBuilderTransformer:
-    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
     private val currentUserProvider: () -> User? = {
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
@@ -69,12 +68,10 @@ internal class ChatNotificationHandler(
         }
     }
 
-    private fun getNotificationChannelId(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel().id
-        } else {
-            ""
-        }
+    private fun getNotificationChannelId(): String = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        notificationChannel().id
+    } else {
+        ""
     }
 
     override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
@@ -162,14 +159,12 @@ internal class ChatNotificationHandler(
         }
     }
 
-    private fun buildReactionNewNotification(notification: ChatNotification.ReactionNew): NotificationCompat.Builder {
-        return getNotificationBuilder(
-            contentTitle = notification.title,
-            contentText = notification.body,
-            groupKey = null,
-            intent = getNewMessageIntent(message = notification.message, channel = notification.channel),
-        )
-    }
+    private fun buildReactionNewNotification(notification: ChatNotification.ReactionNew): NotificationCompat.Builder = getNotificationBuilder(
+        contentTitle = notification.title,
+        contentText = notification.body,
+        groupKey = null,
+        intent = getNewMessageIntent(message = notification.message, channel = notification.channel),
+    )
 
     private fun buildReminderDueNotification(channel: Channel, message: Message): NotificationCompat.Builder {
         val currentUser = currentUserProvider()
@@ -181,28 +176,20 @@ internal class ChatNotificationHandler(
         )
     }
 
-    private fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
-        return getNotificationBuilder(
-            contentTitle = channel.getNotificationContentTitle(),
-            contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
-            groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
-            intent = getNewMessageIntent(message = message, channel = channel),
-        ).apply {
-            setGroupSummary(true)
-        }
+    private fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder = getNotificationBuilder(
+        contentTitle = channel.getNotificationContentTitle(),
+        contentText = context.getString(R.string.stream_chat_notification_group_summary_content_text),
+        groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
+        intent = getNewMessageIntent(message = message, channel = channel),
+    ).apply {
+        setGroupSummary(true)
     }
 
-    private fun getNotificationGroupKey(channelType: String, channelId: String): String {
-        return "$channelType:$channelId"
-    }
+    private fun getNotificationGroupKey(channelType: String, channelId: String): String = "$channelType:$channelId"
 
-    private fun getNotificationGroupSummaryId(channelType: String, channelId: String): Int {
-        return getNotificationGroupKey(channelType = channelType, channelId = channelId).hashCode()
-    }
+    private fun getNotificationGroupSummaryId(channelType: String, channelId: String): Int = getNotificationGroupKey(channelType = channelType, channelId = channelId).hashCode()
 
-    private fun getRequestCode(): Int {
-        return System.currentTimeMillis().toInt()
-    }
+    private fun getRequestCode(): Int = System.currentTimeMillis().toInt()
 
     private fun getNewMessageIntent(message: Message, channel: Channel): Intent = newMessageIntent(message, channel)
 
@@ -262,10 +249,9 @@ internal class ChatNotificationHandler(
             .setGroup(groupKey)
     }
 
-    private fun Channel.getNotificationContentTitle(): String =
-        name.takeIf { it.isNotEmpty() }
-            ?: getMemberNamesWithoutCurrentUser()
-            ?: context.getString(R.string.stream_chat_notification_title)
+    private fun Channel.getNotificationContentTitle(): String = name.takeIf { it.isNotEmpty() }
+        ?: getMemberNamesWithoutCurrentUser()
+        ?: context.getString(R.string.stream_chat_notification_title)
 
     private fun Channel.getMemberNamesWithoutCurrentUser(): String? = getUsersExcludingCurrent()
         .joinToString { it.name }
@@ -314,22 +300,17 @@ internal class ChatNotificationHandler(
         }
     }
 
-    private fun getNotificationSummaryIds(): Set<Int> =
-        sharedPreferences.getStringSet(KEY_NOTIFICATION_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
+    private fun getNotificationSummaryIds(): Set<Int> = sharedPreferences.getStringSet(KEY_NOTIFICATION_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
 
-    private fun getAssociatedNotificationSummaryId(notificationId: Int): Int =
-        sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
+    private fun getAssociatedNotificationSummaryId(notificationId: Int): Int = sharedPreferences.getInt(getNotificationIdKey(notificationId), 0)
 
-    private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> =
-        sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty()
-            .map(String::toInt).toSet()
+    private fun getAssociatedNotificationIds(notificationSummaryId: Int): Set<Int> = sharedPreferences.getStringSet(getNotificationSummaryIdKey(notificationSummaryId), null).orEmpty()
+        .map(String::toInt).toSet()
 
     private fun getNotificationIdKey(notificationId: Int) = KEY_PREFIX_NOTIFICATION_ID + notificationId
-    private fun getNotificationSummaryIdKey(notificationSummaryId: Int) =
-        KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
+    private fun getNotificationSummaryIdKey(notificationSummaryId: Int) = KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
 
-    private fun getNotificationWithoutSummaryIds(): Set<Int> =
-        sharedPreferences.getStringSet(KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
+    private fun getNotificationWithoutSummaryIds(): Set<Int> = sharedPreferences.getStringSet(KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
 
     private fun clearNotificationWithoutSummaryIds() {
         sharedPreferences.edit { remove(KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS) }

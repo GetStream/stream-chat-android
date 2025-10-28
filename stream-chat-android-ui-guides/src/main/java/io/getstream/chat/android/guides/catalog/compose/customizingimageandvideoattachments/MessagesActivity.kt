@@ -84,10 +84,8 @@ class MessagesActivity : ComponentActivity() {
          * @param channelId The id of the channel.
          * @return The [Intent] to start [MessagesActivity].
          */
-        fun getIntent(context: Context, channelId: String): Intent {
-            return Intent(context, MessagesActivity::class.java).apply {
-                putExtra(KEY_CHANNEL_ID, channelId)
-            }
+        fun getIntent(context: Context, channelId: String): Intent = Intent(context, MessagesActivity::class.java).apply {
+            putExtra(KEY_CHANNEL_ID, channelId)
         }
     }
 }

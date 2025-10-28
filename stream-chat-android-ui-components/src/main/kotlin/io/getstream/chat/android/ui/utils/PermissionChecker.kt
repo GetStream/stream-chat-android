@@ -40,14 +40,13 @@ private const val SNACKBAR_ELEVATION_IN_DP = 20
 @InternalStreamChatApi
 public class PermissionChecker {
 
-    public fun isGrantedCameraPermissions(context: Context): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+    public fun isGrantedCameraPermissions(context: Context): Boolean = Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
+        ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
-    public fun isGrantedAudioRecordPermission(context: Context): Boolean =
-        ContextCompat.checkSelfPermission(
-            context, Manifest.permission.RECORD_AUDIO,
-        ) == PackageManager.PERMISSION_GRANTED
+    public fun isGrantedAudioRecordPermission(context: Context): Boolean = ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.RECORD_AUDIO,
+    ) == PackageManager.PERMISSION_GRANTED
 
     /**
      * Check if Camera Permission needs to be requested to the user
@@ -57,8 +56,7 @@ public class PermissionChecker {
      * @return True if [Manifest.permission.CAMERA] is present on the App Manifest and user didn't grant it,
      * False in another case
      */
-    public fun isNeededToRequestForCameraPermissions(context: Context): Boolean =
-        context.isPermissionDeclared(Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
+    public fun isNeededToRequestForCameraPermissions(context: Context): Boolean = context.isPermissionDeclared(Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
 
     /**
      * Requests the correct visual media permissions (image/video) based on the device's API level.

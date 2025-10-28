@@ -121,33 +121,31 @@ internal class ChannelConfigRepositoryTest {
         sut.selectChannelConfig("type2")!!.config.name shouldBeEqualTo "name2"
     }
 
-    private fun createChannelConfigEntity(type: String, name: String): ChannelConfigEntity {
-        return ChannelConfigEntity(
-            ChannelConfigInnerEntity(
-                channelType = type,
-                name = name,
-                createdAt = randomDate(),
-                updatedAt = randomDate(),
-                automod = randomString(),
-                automodBehavior = randomString(),
-                blocklistBehavior = randomString(),
-                customEventsEnabled = randomBoolean(),
-                isConnectEvents = randomBoolean(),
-                isMutes = randomBoolean(),
-                isReactionsEnabled = randomBoolean(),
-                isReadEvents = randomBoolean(),
-                isSearch = randomBoolean(),
-                isThreadEnabled = randomBoolean(),
-                isTypingEvents = randomBoolean(),
-                maxMessageLength = randomInt(),
-                messageRetention = randomString(),
-                pushNotificationsEnabled = randomBoolean(),
-                uploadsEnabled = randomBoolean(),
-                urlEnrichmentEnabled = randomBoolean(),
-                messageRemindersEnabled = randomBoolean(),
-                markMessagesPending = randomBoolean(),
-            ),
-            emptyList(),
-        )
-    }
+    private fun createChannelConfigEntity(type: String, name: String): ChannelConfigEntity = ChannelConfigEntity(
+        ChannelConfigInnerEntity(
+            channelType = type,
+            name = name,
+            createdAt = randomDate(),
+            updatedAt = randomDate(),
+            automod = randomString(),
+            automodBehavior = randomString(),
+            blocklistBehavior = randomString(),
+            customEventsEnabled = randomBoolean(),
+            isConnectEvents = randomBoolean(),
+            isMutes = randomBoolean(),
+            isReactionsEnabled = randomBoolean(),
+            isReadEvents = randomBoolean(),
+            isSearch = randomBoolean(),
+            isThreadEnabled = randomBoolean(),
+            isTypingEvents = randomBoolean(),
+            maxMessageLength = randomInt(),
+            messageRetention = randomString(),
+            pushNotificationsEnabled = randomBoolean(),
+            uploadsEnabled = randomBoolean(),
+            urlEnrichmentEnabled = randomBoolean(),
+            messageRemindersEnabled = randomBoolean(),
+            markMessagesPending = randomBoolean(),
+        ),
+        emptyList(),
+    )
 }

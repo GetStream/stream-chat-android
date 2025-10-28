@@ -24,5 +24,4 @@ import io.getstream.chat.android.models.ChannelCapabilities
  *
  * @return True if the channel has polls enabled, false otherwise.
  */
-internal fun Channel.isPollEnabled(): Boolean =
-    this.config.pollsEnabled && ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+internal fun Channel.isPollEnabled(): Boolean = this.config.pollsEnabled && ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
