@@ -17,7 +17,6 @@
 - Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
-- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 
 ### ⚠️ Changed
 
@@ -29,7 +28,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
 
 ### ⚠️ Changed
 
@@ -37,8 +35,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix poll state getting overridden by `message.new` events. [#5963](https://github.com/GetStream/stream-chat-android/pull/5963)
-- Fix polls not updated live when they are a thread parent message. [#5968](https://github.com/GetStream/stream-chat-android/pull/5968)
 
 ### ⬆️ Improved
 
@@ -61,7 +57,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix `MessageComposerView` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 
 ### ⬆️ Improved
 
@@ -73,7 +68,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix `MessageComposer` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 
 ### ⬆️ Improved
 
@@ -93,6 +87,28 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# October 24th, 2025 - 6.26.0
+## stream-chat-android-client
+### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
+
+## stream-chat-android-offline
+### ✅ Added
+- Add support for deleting messages only for the current user. [#5967](https://github.com/GetStream/stream-chat-android/pull/5967)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix poll state getting overridden by `message.new` events. [#5963](https://github.com/GetStream/stream-chat-android/pull/5963)
+- Fix polls not updated live when they are a thread parent message. [#5968](https://github.com/GetStream/stream-chat-android/pull/5968)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix `MessageComposerView` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix `MessageComposer` not respecting `send-message` and `send-reply` channel capabilities. [#5973](https://github.com/GetStream/stream-chat-android/pull/5973)
 
 # October 14th, 2025 - 6.25.1
 ## stream-chat-android-compose

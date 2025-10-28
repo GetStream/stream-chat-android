@@ -41,14 +41,18 @@ class ChannelsActivity : AppCompatActivity() {
 
     private val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 
-    private val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
-        filter = Filters.and(
-            Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
-        ),
-        sort = QuerySortByField.descByName("last_updated"),
-        limit = 30,
-    )
+    private val channelListFactory: ChannelListViewModelFactory by lazy {
+        val chatClient = ChatClient.instance()
+        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
+        ChannelListViewModelFactory(
+            filter = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf(currentUserId)),
+            ),
+            sort = QuerySortByField.descByName("last_updated"),
+            limit = 30,
+        )
+    }
     private val channelListViewModel: ChannelListViewModel by viewModels { channelListFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
