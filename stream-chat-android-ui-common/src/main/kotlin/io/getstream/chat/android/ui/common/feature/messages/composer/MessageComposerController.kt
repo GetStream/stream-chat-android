@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
@@ -77,6 +78,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -360,7 +362,7 @@ public class MessageComposerController(
     /**
      * Represents the selected mentions based on the message suggestion list.
      */
-    private val selectedMentions: MutableSet<User> = mutableSetOf()
+    private val selectedMentions: MutableSet<Mention> = mutableSetOf()
 
     private val mentionSuggester = TypingSuggester(
         TypingSuggestionOptions(symbol = MENTION_START_SYMBOL),
@@ -785,13 +787,13 @@ public class MessageComposerController(
      *
      * @return [MutableList] of user IDs of mentioned users.
      */
-    private fun filterMentions(selectedMentions: Set<User>, message: String): MutableList<String> {
+    private fun filterMentions(selectedMentions: Set<Mention>, message: String): MutableList<String> {
+        // Ignore custom, non-user mentions (for now)
+        val userMentions = selectedMentions.filterIsInstance<Mention.User>()
         val text = message.lowercase()
-
-        val remainingMentions = selectedMentions.filter {
-            text.contains("@${it.name.lowercase()}")
-        }.map { it.id }
-
+        val remainingMentions = userMentions.filter {
+            text.contains("@${it.user.name.lowercase()}")
+        }.map { it.user.id }
         this.selectedMentions.clear()
         return remainingMentions.toMutableList()
     }
@@ -833,11 +835,24 @@ public class MessageComposerController(
      * @param user The user that is used to autocomplete the mention.
      */
     public fun selectMention(user: User) {
-        val username = user.name.ifEmpty { user.id }
-        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@$username "
+        selectMention(Mention.User(user))
+    }
 
+    /**
+     * Autocompletes the current text input with the mention from the selected mention.
+     *
+     * IMPORTANT: The SDK supports only user mentions (see [Mention.User]). Custom mentions are purely visual, and will
+     * not be submitted to the server.
+     *
+     * @param mention The mention that is used for the autocomplete.
+     */
+    public fun selectMention(mention: Mention) {
+        val display = mention.display
+        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@$display "
         setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
-        selectedMentions += user
+
+        selectedMentions += mention
+        state.update { it.copy(selectedMentions = selectedMentions) }
     }
 
     /**
