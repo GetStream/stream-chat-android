@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.sample.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -202,9 +201,6 @@ class MessagesActivity : ComponentActivity() {
                 onHeaderTitleClick = ::openChannelInfo,
                 onMessageLinkClick = { _, link ->
                     openLink(link)
-                },
-                onUserMentionClick = { user ->
-                    Toast.makeText(this@MessagesActivity, "${user.name}(${user.id})", Toast.LENGTH_SHORT).show()
                 },
             )
         }
