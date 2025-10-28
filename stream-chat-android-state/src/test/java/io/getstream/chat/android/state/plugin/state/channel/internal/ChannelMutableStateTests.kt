@@ -22,6 +22,7 @@ import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -686,6 +687,50 @@ internal class ChannelMutableStateTests {
         val result = channelState.markChannelAsRead()
 
         assertEquals(true, result)
+    }
+
+    @Test
+    fun `updateDelivered should update relevant delivered info of user's read`() = runTest {
+        val user = randomUser()
+
+        // Initial read state for the user
+        val initialRead = randomChannelUserRead(user)
+        channelState.upsertReads(listOf(initialRead))
+
+        // Pre-condition check
+        var userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertEquals(initialRead, userRead)
+
+        // Update delivered info
+        val delivered = randomChannelUserRead(user.copy(name = randomString()))
+        channelState.upsertDelivered(delivered)
+
+        // Post-condition check
+        userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertNotNull(userRead)
+        assertEquals(delivered.user, userRead!!.user)
+        assertEquals(delivered.lastReceivedEventDate, userRead.lastReceivedEventDate)
+        assertEquals(delivered.lastDeliveredAt, userRead.lastDeliveredAt)
+        assertEquals(delivered.lastDeliveredMessageId, userRead.lastDeliveredMessageId)
+        assertEquals(initialRead.unreadMessages, userRead.unreadMessages)
+        assertEquals(initialRead.lastRead, userRead.lastRead)
+        assertEquals(initialRead.lastReadMessageId, userRead.lastReadMessageId)
+    }
+
+    @Test
+    fun `updateDelivered should not create new read if user read does not exist`() = runTest {
+        val user = randomUser()
+
+        // Ensure no initial read state for the user
+        channelState.upsertReads(emptyList())
+
+        // Update delivered info
+        val delivered = randomChannelUserRead(user)
+        channelState.upsertDelivered(delivered)
+
+        // Post-condition check
+        val userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertEquals(delivered, userRead)
     }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {

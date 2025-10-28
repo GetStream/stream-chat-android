@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
@@ -111,6 +112,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -197,6 +199,7 @@ internal object EventMappingTestArguments {
     private val MEMBER = Mother.randomDownstreamMemberDto()
     private val HARD_DELETE = randomBoolean()
     private val FIRST_UNREAD_MESSAGE_ID = randomString()
+    private val LAST_DELIVERED_MESSAGE_ID = randomString()
     private val LAST_READ_MESSAGE_ID = randomString()
     private val UNREAD_MESSAGES = positiveRandomInt()
     private val TOTAL_UNREAD_COUNT = positiveRandomInt()
@@ -418,6 +421,17 @@ internal object EventMappingTestArguments {
         message = MESSAGE,
         hard_delete = HARD_DELETE,
         deleted_for_me = DELETED_FOR_ME,
+    )
+
+    private val messageDeliveredDto = MessageDeliveredEventDto(
+        type = EventType.MESSAGE_DELIVERED,
+        created_at = EXACT_DATE,
+        user = USER,
+        cid = CID,
+        channel_type = CHANNEL_TYPE,
+        channel_id = CHANNEL_ID,
+        last_delivered_at = EXACT_DATE,
+        last_delivered_message_id = LAST_DELIVERED_MESSAGE_ID,
     )
 
     private val messageReadDto = MessageReadEventDto(
@@ -1047,6 +1061,18 @@ internal object EventMappingTestArguments {
         deletedForMe = messageDeletedDto.deleted_for_me ?: false,
     )
 
+    private val messageDelivered = MessageDeliveredEvent(
+        type = EventType.MESSAGE_DELIVERED,
+        createdAt = EXACT_DATE.date,
+        rawCreatedAt = EXACT_DATE.rawDate,
+        user = with(domainMapping) { USER.toDomain() },
+        cid = CID,
+        channelType = CHANNEL_TYPE,
+        channelId = CHANNEL_ID,
+        lastDeliveredAt = EXACT_DATE.date,
+        lastDeliveredMessageId = LAST_DELIVERED_MESSAGE_ID,
+    )
+
     private val messageRead = MessageReadEvent(
         type = messageReadDto.type,
         createdAt = messageReadDto.created_at.date,
@@ -1541,6 +1567,7 @@ internal object EventMappingTestArguments {
         Arguments.of(memberRemovedDto, memberRemoved),
         Arguments.of(memberUpdatedDto, memberUpdated),
         Arguments.of(messageDeletedDto, messageDeleted),
+        Arguments.of(messageDeliveredDto, messageDelivered),
         Arguments.of(messageReadDto, messageRead),
         Arguments.of(messageUpdatedDto, messageUpdated),
         Arguments.of(notificationAddedToChannelDto, notificationAddedToChannel),

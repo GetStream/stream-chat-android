@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
@@ -555,6 +556,23 @@ internal class ChannelMutableState(
     fun upsertReads(reads: List<ChannelUserRead>) {
         _rawReads?.apply {
             value = value + reads.associateBy(ChannelUserRead::getUserId)
+        }
+    }
+
+    /**
+     * Upsert the delivered status for a specific user's read.
+     */
+    fun upsertDelivered(read: ChannelUserRead) {
+        val updatedRead = rawReads.value[read.user.id]?.copy(
+            // Update only relevant fields
+            user = read.user,
+            lastReceivedEventDate = read.lastReceivedEventDate,
+            lastDeliveredAt = read.lastDeliveredAt,
+            lastDeliveredMessageId = read.lastDeliveredMessageId,
+        ) ?: read
+
+        _rawReads?.apply {
+            value = value + mapOf(read.user.id to updatedRead)
         }
     }
 

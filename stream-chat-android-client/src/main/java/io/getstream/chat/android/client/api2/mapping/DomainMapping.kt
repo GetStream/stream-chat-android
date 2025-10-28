@@ -527,6 +527,8 @@ internal class DomainMapping(
             lastRead = last_read,
             unreadMessages = unread_messages,
             lastReadMessageId = last_read_message_id,
+            lastDeliveredAt = last_delivered_at,
+            lastDeliveredMessageId = last_delivered_message_id,
         )
 
     /**

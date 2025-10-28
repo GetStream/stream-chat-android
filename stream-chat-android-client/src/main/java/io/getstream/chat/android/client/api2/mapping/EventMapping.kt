@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.api2.model.dto.MemberAddedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MemberUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.MessageDeliveredEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageReadEventDto
 import io.getstream.chat.android.client.api2.model.dto.MessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NewMessageEventDto
@@ -112,6 +113,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -189,6 +191,7 @@ internal class EventMapping(
             is MemberRemovedEventDto -> toDomain()
             is MemberUpdatedEventDto -> toDomain()
             is MessageDeletedEventDto -> toDomain()
+            is MessageDeliveredEventDto -> toDomain()
             is MessageReadEventDto -> toDomain()
             is MessageUpdatedEventDto -> toDomain()
             is NotificationAddedToChannelEventDto -> toDomain()
@@ -404,6 +407,23 @@ internal class EventMapping(
             hardDelete = hard_delete ?: false,
             channelMessageCount = channel_message_count,
             deletedForMe = deleted_for_me ?: false,
+        )
+    }
+
+    /**
+     * Transforms [MessageDeliveredEventDto] to [MessageDeliveredEvent].
+     */
+    private fun MessageDeliveredEventDto.toDomain() = with(domainMapping) {
+        MessageDeliveredEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            lastDeliveredAt = last_delivered_at.date,
+            lastDeliveredMessageId = last_delivered_message_id,
         )
     }
 

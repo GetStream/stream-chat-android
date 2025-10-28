@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -653,6 +654,8 @@ internal class ChannelLogic(
                     is MessageReadEvent -> if (event.thread == null) {
                         channelStateLogic.updateRead(event.toChannelUserRead())
                     }
+
+                    is MessageDeliveredEvent -> channelStateLogic.updateDelivered(event.toChannelUserRead())
 
                     is NotificationMarkReadEvent -> if (event.thread == null) {
                         channelStateLogic.updateRead(event.toChannelUserRead())

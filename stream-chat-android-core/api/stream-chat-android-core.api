@@ -643,15 +643,20 @@ public abstract interface class io/getstream/chat/android/models/ChannelTransfor
 }
 
 public final class io/getstream/chat/android/models/ChannelUserRead : io/getstream/chat/android/models/UserEntity {
-	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()I
 	public final fun component4 ()Ljava/util/Date;
 	public final fun component5 ()Ljava/lang/String;
-	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public final fun component6 ()Ljava/util/Date;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastDeliveredAt ()Ljava/util/Date;
+	public final fun getLastDeliveredMessageId ()Ljava/lang/String;
 	public final fun getLastRead ()Ljava/util/Date;
 	public final fun getLastReadMessageId ()Ljava/lang/String;
 	public final fun getLastReceivedEventDate ()Ljava/util/Date;
@@ -917,6 +922,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field MEMBER_REMOVED Ljava/lang/String;
 	public static final field MEMBER_UPDATED Ljava/lang/String;
 	public static final field MESSAGE_DELETED Ljava/lang/String;
+	public static final field MESSAGE_DELIVERED Ljava/lang/String;
 	public static final field MESSAGE_NEW Ljava/lang/String;
 	public static final field MESSAGE_READ Ljava/lang/String;
 	public static final field MESSAGE_UPDATED Ljava/lang/String;

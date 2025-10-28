@@ -104,6 +104,7 @@ import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomStringOrNull
 import io.getstream.chat.android.randomUser
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -716,12 +717,16 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         lastRead: Date = randomDate(),
         unreadMessages: Int = randomInt(),
-        lastReadMessageId: String? = randomString(),
-    ): DownstreamChannelUserRead = DownstreamChannelUserRead(
+        lastReadMessageId: String? = randomStringOrNull(),
+        lastDeliveredAt: Date? = randomDateOrNull(),
+        lastDeliveredMessageId: String? = randomStringOrNull(),
+    ) = DownstreamChannelUserRead(
         user = user,
         last_read = lastRead,
         unread_messages = unreadMessages,
         last_read_message_id = lastReadMessageId,
+        last_delivered_at = lastDeliveredAt,
+        last_delivered_message_id = lastDeliveredMessageId,
     )
 
     fun randomAttachmentDto(

@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -259,6 +260,26 @@ public fun randomMessageReadEvent(
         lastReadMessageId = lastReadMessageId,
     )
 }
+
+public fun randomMessageDeliveredEvent(
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    lastDeliveredAt: Date = randomDate(),
+    lastDeliveredMessageId: String = randomString(),
+) = MessageDeliveredEvent(
+    type = EventType.MESSAGE_DELIVERED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    lastDeliveredAt = lastDeliveredAt,
+    lastDeliveredMessageId = lastDeliveredMessageId,
+)
 
 public fun randomNotificationMarkReadEvent(
     createdAt: Date = Date(),

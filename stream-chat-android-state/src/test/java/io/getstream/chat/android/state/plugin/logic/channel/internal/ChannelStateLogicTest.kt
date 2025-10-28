@@ -526,6 +526,15 @@ internal class ChannelStateLogicTest {
         verify(mutableState, times(2)).setMuted(false)
     }
 
+    @Test
+    fun `Given updateDelivered is called, Then mutable state is upserted`() {
+        val read = randomChannelUserRead()
+
+        channelStateLogic.updateDelivered(read)
+
+        verify(mutableState).upsertDelivered(read)
+    }
+
     companion object {
 
         @JvmField

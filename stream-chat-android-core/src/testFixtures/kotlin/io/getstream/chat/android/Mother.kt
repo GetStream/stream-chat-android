@@ -95,6 +95,7 @@ public fun randomString(size: Int = 20): String = buildString(capacity = size) {
         append(charPool.random())
     }
 }
+public fun randomStringOrNull(): String? = randomString().takeIf { randomBoolean() }
 
 public fun randomCID(): String = "${randomString()}:${randomString()}"
 public fun randomFile(extension: String = randomString(3)): File {
@@ -473,13 +474,17 @@ public fun randomChannelUserRead(
     lastReceivedEventDate: Date = randomDate(),
     unreadMessages: Int = positiveRandomInt(),
     lastRead: Date = randomDate(),
-    lastReadMessageId: String? = randomString(),
+    lastReadMessageId: String? = randomStringOrNull(),
+    lastDeliveredAt: Date? = randomDateOrNull(),
+    lastDeliveredMessageId: String? = randomStringOrNull(),
 ): ChannelUserRead = ChannelUserRead(
     user = user,
     lastReceivedEventDate = lastReceivedEventDate,
     unreadMessages = unreadMessages,
     lastRead = lastRead,
     lastReadMessageId = lastReadMessageId,
+    lastDeliveredAt = lastDeliveredAt,
+    lastDeliveredMessageId = lastDeliveredMessageId,
 )
 
 public suspend fun suspendableRandomMessageList(

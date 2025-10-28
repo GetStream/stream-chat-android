@@ -206,6 +206,15 @@ internal class ChannelStateLogic(
     fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
     /**
+     * Updates the delivered information of this channel.
+     *
+     * @param read the information about the delivered message.
+     */
+    fun updateDelivered(read: ChannelUserRead) {
+        mutableState.upsertDelivered(read)
+    }
+
+    /**
      * Updates the list of typing users.
      * The method is responsible for adding/removing typing users, sorting the list and updating both
      * [ChannelState] and [MutableGlobalState].

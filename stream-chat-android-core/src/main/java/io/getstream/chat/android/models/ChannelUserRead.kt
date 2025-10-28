@@ -20,13 +20,17 @@ import androidx.compose.runtime.Immutable
 import java.util.Date
 
 /**
- * Information about how many messages are unread in the channel by a given user.
+ * Represents a user's last read and delivered status in a channel.
+ * Contains information about how many messages have not been read,
+ * the last read information, and the last delivered information.
  *
  * @property user The user which has read some of the messages and may have some unread messages.
  * @property lastReceivedEventDate The time of the event that updated this [ChannelUserRead] object.
  * @property lastRead The time of the last read message.
  * @property unreadMessages How many messages are unread.
  * @property lastReadMessageId The ID of the last read message.
+ * @property lastDeliveredAt The time of the last delivered message.
+ * @property lastDeliveredMessageId The ID of the last delivered message.
  */
 @Immutable
 public data class ChannelUserRead(
@@ -35,4 +39,6 @@ public data class ChannelUserRead(
     val unreadMessages: Int,
     val lastRead: Date,
     val lastReadMessageId: String?,
+    val lastDeliveredAt: Date? = null,
+    val lastDeliveredMessageId: String? = null,
 ) : UserEntity
