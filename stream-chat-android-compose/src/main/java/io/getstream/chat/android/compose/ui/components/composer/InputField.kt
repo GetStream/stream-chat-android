@@ -37,18 +37,23 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
+import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
+import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
  * Custom input field that we use for our UI. It's fairly simple - shows a basic input with clipped
@@ -65,6 +70,8 @@ import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
  * @param border The [BorderStroke] that will appear around the input field.
  * @param innerPadding The padding inside the input field, around the label or input.
  * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
+ * @param visualTransformation The [VisualTransformation] to be applied to the input. By default, it applies text
+ * styling and link styling.
  * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
  */
 @Composable
@@ -77,6 +84,11 @@ public fun InputField(
     border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+    visualTransformation: VisualTransformation = DefaultInputFieldVisualTransformation(
+        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
+        typography = ChatTheme.typography,
+        colors = ChatTheme.colors,
+    ),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
     var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
@@ -94,8 +106,6 @@ public fun InputField(
     }
 
     val theme = ChatTheme.messageComposerTheme.inputField
-    val typography = ChatTheme.typography
-    val colors = ChatTheme.colors
     val description = stringResource(id = R.string.stream_compose_cd_message_input)
 
     BasicTextField(
@@ -113,19 +123,7 @@ public fun InputField(
                 onValueChange(it.text)
             }
         },
-        visualTransformation = {
-            val styledText = buildAnnotatedMessageText(
-                text = it.text,
-                textColor = theme.textStyle.color,
-                textFontStyle = typography.body.fontStyle,
-                linkStyle = TextStyle(
-                    color = colors.primaryAccent,
-                    textDecoration = TextDecoration.Underline,
-                ),
-                mentionsColor = colors.primaryAccent,
-            )
-            TransformedText(styledText, OffsetMapping.Identity)
-        },
+        visualTransformation = visualTransformation,
         textStyle = theme.textStyle,
         cursorBrush = SolidColor(theme.cursorBrushColor),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
@@ -134,6 +132,36 @@ public fun InputField(
         enabled = enabled,
         keyboardOptions = keyboardOptions,
     )
+}
+
+/**
+ * Default visual transformation for the [InputField] composable.
+ * Applies text styling and link styling to the input text.
+ *
+ * @param inputFieldTheme The theme for the input field.
+ * @param typography The typography styles to be used.
+ * @param colors The color palette to be used.
+ */
+private class DefaultInputFieldVisualTransformation(
+    val inputFieldTheme: ComposerInputFieldTheme,
+    val typography: StreamTypography,
+    val colors: StreamColors,
+) : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val textColor = inputFieldTheme.textStyle.color
+        val fontStyle = typography.body.fontStyle
+        val linkStyle = TextStyle(
+            color = colors.primaryAccent,
+            textDecoration = TextDecoration.Underline,
+        )
+        val transformed = buildAnnotatedInputText(
+            text = text.text,
+            textColor = textColor,
+            textFontStyle = fontStyle,
+            linkStyle = linkStyle,
+        )
+        return TransformedText(transformed, OffsetMapping.Identity)
+    }
 }
 
 @Preview
