@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -217,6 +218,16 @@ public class MessageComposerViewModel(
      * @param user The user that is used to autocomplete the mention.
      */
     public fun selectMention(user: User): Unit = messageComposerController.selectMention(user)
+
+    /**
+     * Autocompletes the current text input with the mention from the selected mention.
+     *
+     * IMPORTANT: The SDK supports only user mentions (see [Mention.User]). Custom mentions are purely visual, and will
+     * not be submitted to the server.
+     *
+     * @param mention The mention that is used for the autocomplete.
+     */
+    public fun selectMention(mention: Mention): Unit = messageComposerController.selectMention(mention)
 
     /**
      * Switches the message composer to the command input mode.

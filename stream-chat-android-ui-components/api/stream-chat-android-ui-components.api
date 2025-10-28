@@ -4534,6 +4534,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun seekRecordingTo (F)V
 	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
+	public final fun selectMention (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;)V
 	public final fun sendMessage ()V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;)V
