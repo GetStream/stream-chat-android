@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MentionStyleFactory` for customizing mentions in the message composer. [#5984](https://github.com/GetStream/stream-chat-android/pull/5984)
 
 ### ⚠️ Changed
 
