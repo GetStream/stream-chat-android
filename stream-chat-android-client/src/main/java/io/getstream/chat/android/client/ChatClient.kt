@@ -131,6 +131,8 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.factory.ThrottlingPluginFactory
 import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
+import io.getstream.chat.android.client.receipts.MessageReceiptManager
+import io.getstream.chat.android.client.receipts.MessageReceiptReporter
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -331,6 +333,19 @@ internal constructor(
 
     private var _repositoryFacade: RepositoryFacade? = null
 
+    internal val messageReceiptManager = MessageReceiptManager(
+        scope = userScope,
+        now = now,
+        getCurrentUser = ::getCurrentUser,
+        messageReceiptRepository = repository,
+    )
+
+    private val messageReceiptReporter = MessageReceiptReporter(
+        scope = userScope,
+        chatClient = this,
+        messageReceiptRepository = repository,
+    )
+
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
 
@@ -451,12 +466,12 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent,
-            is NotificationReminderDueEvent,
-            -> {
-                // No other events should potentially show notifications
+            is NewMessageEvent -> {
                 notifications.onChatEvent(event)
+                messageReceiptManager.markMessagesAsDelivered(messages = listOf(event.message))
             }
+
+            is NotificationReminderDueEvent -> notifications.onChatEvent(event)
 
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
@@ -646,6 +661,7 @@ internal constructor(
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        messageReceiptReporter.start()
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
@@ -2906,15 +2922,14 @@ internal constructor(
      * @param messages The list of messages to mark as delivered.
      */
     @CheckResult
-    public fun markMessagesAsDelivered(messages: List<Message>): Call<Unit> {
-        return api.markDelivered(messages)
+    public fun markMessagesAsDelivered(messages: List<Message>): Call<Unit> =
+        api.markDelivered(messages)
             .doOnStart(userScope) {
                 logger.d { "[markMessagesAsDelivered] #doOnStart; messages: ${messages.size}" }
             }
             .doOnResult(userScope) { result ->
                 logger.v { "[markMessagesAsDelivered] #doOnResult; completed: $result" }
             }
-    }
 
     /**
      * Marks a given thread as read.
