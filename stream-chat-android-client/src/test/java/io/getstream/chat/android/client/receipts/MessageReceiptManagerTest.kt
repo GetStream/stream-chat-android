@@ -35,7 +35,9 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verifyBlocking
+import org.mockito.verification.VerificationMode
 import java.util.Date
 
 internal class MessageReceiptManagerTest {
@@ -62,7 +64,7 @@ internal class MessageReceiptManagerTest {
                 cid = deliveredMessage.cid,
             ),
         )
-        fixture.verifyUpsertMessageReceiptsCalled(receipts)
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
     }
 
     @Test
@@ -73,7 +75,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -93,7 +95,7 @@ internal class MessageReceiptManagerTest {
                 cid = message.cid,
             )
         }
-        fixture.verifyUpsertMessageReceiptsCalled(receipts)
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
     }
 
     @Test
@@ -109,7 +111,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -120,7 +122,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -131,7 +133,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -142,7 +144,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -153,7 +155,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markMessagesAsDelivered(messages)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -192,7 +194,7 @@ internal class MessageReceiptManagerTest {
                 cid = deliveredMessage.cid,
             ),
         )
-        fixture.verifyUpsertMessageReceiptsCalled(receipts)
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
     }
 
     @Test
@@ -203,7 +205,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels = listOf(channel))
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -218,7 +220,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -233,7 +235,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -248,7 +250,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -275,7 +277,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test
@@ -302,7 +304,7 @@ internal class MessageReceiptManagerTest {
 
         sut.markChannelsAsDelivered(channels)
 
-        fixture.verifyUpsertNotCalled()
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     private class Fixture {
@@ -313,12 +315,13 @@ internal class MessageReceiptManagerTest {
             getCurrentUser = { user }
         }
 
-        fun verifyUpsertMessageReceiptsCalled(receipts: List<MessageReceipt>) {
-            verifyBlocking(mockMessageReceiptRepository) { upsertMessageReceipts(receipts) }
-        }
-
-        fun verifyUpsertNotCalled() {
-            verifyBlocking(mockMessageReceiptRepository, never()) { upsertMessageReceipts(any()) }
+        fun verifyUpsertMessageReceiptsCalled(
+            mode: VerificationMode = times(1),
+            receipts: List<MessageReceipt>? = null,
+        ) {
+            verifyBlocking(mockMessageReceiptRepository, mode) {
+                upsertMessageReceipts(receipts ?: any())
+            }
         }
 
         fun get() = MessageReceiptManager(
