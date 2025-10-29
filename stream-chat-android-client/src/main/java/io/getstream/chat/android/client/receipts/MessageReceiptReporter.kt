@@ -38,38 +38,42 @@ internal class MessageReceiptReporter(
 
     private val logger by taggedLogger("Chat:MessageReceiptReporter")
 
-    fun init() {
-        logger.d { "Initializing…" }
+    fun start() {
+        logger.d { "Starting reporter…" }
         scope.launch {
-            while (isActive) {
-                val messages = messageReceiptRepository.getAllMessageReceiptsByType(
-                    type = MessageReceipt.TYPE_DELIVERY,
-                    limit = MAX_BATCH_SIZE,
-                ).map { receipt ->
-                    Message(
-                        id = receipt.messageId,
-                        cid = receipt.cid,
-                    )
-                }
+            try {
+                while (isActive) {
+                    val messages = messageReceiptRepository.getAllMessageReceiptsByType(
+                        type = MessageReceipt.TYPE_DELIVERY,
+                        limit = MAX_BATCH_SIZE,
+                    ).map { receipt ->
+                        Message(
+                            id = receipt.messageId,
+                            cid = receipt.cid,
+                        )
+                    }
 
-                if (messages.isNotEmpty()) {
-                    logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
-                    chatClient.markMessagesAsDelivered(messages)
-                        .execute()
-                        .onSuccessSuspend {
-                            logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
-                            val deliveredMessageIds = messages.map(Message::id)
-                            messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
-                        }
-                        .onError { error ->
-                            logger.e {
-                                "Failed to report delivery receipts for ${messages.size} messages: " +
-                                    error.message
+                    if (messages.isNotEmpty()) {
+                        logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
+                        chatClient.markMessagesAsDelivered(messages)
+                            .execute()
+                            .onSuccessSuspend {
+                                logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }
+                                val deliveredMessageIds = messages.map(Message::id)
+                                messageReceiptRepository.deleteMessageReceiptsByMessageIds(deliveredMessageIds)
                             }
-                        }
-                }
+                            .onError { error ->
+                                logger.e {
+                                    "Failed to report delivery receipts for ${messages.size} messages: " +
+                                        error.message
+                                }
+                            }
+                    }
 
-                delay(REPORT_INTERVAL_IN_MS)
+                    delay(REPORT_INTERVAL_IN_MS)
+                }
+            } finally {
+                logger.d { "Reporter is no longer active" }
             }
         }
     }

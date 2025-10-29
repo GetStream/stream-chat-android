@@ -59,7 +59,7 @@ internal class MessageReceiptReporterTest {
             .givenMarkMessagesAsDelivered(messages)
         val sut = fixture.get(backgroundScope)
 
-        sut.init()
+        sut.start()
         advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyMarkMessagesAsDeliveredCalled(messages = messages)
@@ -75,7 +75,7 @@ internal class MessageReceiptReporterTest {
             .givenMarkMessagesAsDelivered(error = mock())
         val sut = fixture.get(backgroundScope)
 
-        sut.init()
+        sut.start()
         advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyDeleteByMessageIdsCalled(never())
@@ -94,7 +94,7 @@ internal class MessageReceiptReporterTest {
             .givenMessageReceipts(receipts = emptyList())
         val sut = fixture.get(backgroundScope)
 
-        sut.init()
+        sut.start()
         advanceTimeBy(100) // Allow initial execution
 
         fixture.verifyMarkMessagesAsDeliveredCalled(never())
@@ -108,7 +108,7 @@ internal class MessageReceiptReporterTest {
             .givenMarkMessagesAsDelivered()
         val sut = fixture.get(backgroundScope)
 
-        sut.init()
+        sut.start()
         advanceTimeBy(100) // Allow initial execution
 
         advanceTimeBy(1000) // Advance to the second interval
@@ -127,7 +127,7 @@ internal class MessageReceiptReporterTest {
             .givenMarkMessagesAsDelivered()
         val sut = fixture.get(backgroundScope)
 
-        sut.init()
+        sut.start()
         advanceTimeBy(100) // Allow initial execution
 
         backgroundScope.cancel()
