@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
  * Parameters for the [ChatComponentFactory.MessageReactionList] component.
@@ -58,4 +59,13 @@ public data class ChannelMediaAttachmentsPreviewBottomBarParams(
     val centerContent: @Composable () -> Unit,
     val leadingContent: @Composable () -> Unit = {},
     val trailingContent: @Composable () -> Unit = {},
+)
+
+/**
+ * Parameters for the [ChatComponentFactory.MessageFooterStatusIndicator] component.
+ *
+ * @param messageItem The message item state.
+ */
+public data class MessageFooterStatusIndicatorParams(
+    val messageItem: MessageItemState,
 )

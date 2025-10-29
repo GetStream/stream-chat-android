@@ -389,8 +389,9 @@ internal class FootnoteDecorator(
             SyncStatus.SYNC_NEEDED,
             SyncStatus.AWAITING_ATTACHMENTS,
             -> itemStyle.iconIndicatorPendingSync
-            SyncStatus.COMPLETED -> when (data.isMessageRead) {
-                true -> itemStyle.iconIndicatorRead
+            SyncStatus.COMPLETED -> when {
+                data.isMessageRead -> itemStyle.iconIndicatorRead
+                data.isMessageDelivered -> itemStyle.iconIndicatorDelivered
                 else -> itemStyle.iconIndicatorSent
             }
             else -> null
