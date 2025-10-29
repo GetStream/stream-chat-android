@@ -737,9 +737,11 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
-            userScope.userId.value = user.id
             notifications.deleteDevice() // always delete device if switching users
             disconnectUserSuspend(flushPersistence = true)
+            // change userId only after disconnect,
+            // otherwise the userScope won't cancel coroutines related to the previous user.
+            userScope.userId.value = user.id
             onDisconnectionComplete()
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
                 logger.v { "[switchUser] completed('${user.id}')" }
