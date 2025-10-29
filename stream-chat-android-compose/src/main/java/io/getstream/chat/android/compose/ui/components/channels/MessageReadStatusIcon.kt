@@ -172,7 +172,7 @@ private fun IsDeliveredIcon(modifier: Modifier) {
         contentDescription = stringResource(
             R.string.stream_ui_message_list_semantics_message_status_delivered,
         ),
-        tint = ChatTheme.colors.disabled,
+        tint = ChatTheme.colors.textLowEmphasis,
     )
 }
 
