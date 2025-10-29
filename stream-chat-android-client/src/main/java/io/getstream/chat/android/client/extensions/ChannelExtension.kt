@@ -131,13 +131,18 @@ public fun Channel.userRead(userId: UserId): ChannelUserRead? =
     read.firstOrNull { read -> read.user.id == userId }
 
 /**
- * Returns a list of [ChannelUserRead] objects representing users who have read the given [message].
+ * Returns a list of [ChannelUserRead] objects representing which ones have
+ * delivered the given [message].
+ *
+ * A message is considered delivered to a user if:
+ * - The user is not the sender of the message
+ * - The user has received (delivered) the message
  *
  * @param message The [Message] object for which to find delivered reads.
- * @return A list of [ChannelUserRead] objects for users who have read the message
+ * @return A list of [ChannelUserRead] objects representing users who have delivered the message.
  */
-public fun Channel.deliveredReads(message: Message): List<ChannelUserRead> =
+public fun Channel.deliveredReadsOf(message: Message): List<ChannelUserRead> =
     read.filter { read ->
-        (read.lastDeliveredAt ?: NEVER) > message.getCreatedAtOrThrow() &&
-            read.user.id != message.user.id
+        read.user.id != message.user.id &&
+            (read.lastDeliveredAt ?: NEVER) > message.getCreatedAtOrThrow()
     }

@@ -124,6 +124,7 @@ internal class MessageReceiptManager(
         if (createdAt <= userRead.lastRead) return null
         // Check if the last message is already marked as delivered
         if (createdAt <= (userRead.lastDeliveredAt ?: NEVER)) return null
+
         return lastMessage
     }
 
