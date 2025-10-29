@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
@@ -123,6 +124,9 @@ internal class ChatClientDebuggerTest {
                 isRetrying: Boolean,
             ): SendMessageDebugger = sendMessageDebugger
         }
+        val mockRepository = mock<ChatClientRepository> {
+            onBlocking { getAllMessageReceiptsByType(type = any(), limit = any()) } doReturn emptyList()
+        }
         client = ChatClient(
             config = config,
             api = api,
@@ -143,6 +147,7 @@ internal class ChatClientDebuggerTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            repository = mockRepository,
         ).apply {
             attachmentsSender = this@ChatClientDebuggerTest.attachmentsSender
             connectUser(user, token).enqueue()

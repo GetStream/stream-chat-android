@@ -128,6 +128,7 @@ internal open class BaseChatClientTest {
             currentUserFetcher = currentUserFetcher,
             audioPlayer = mock(),
             now = { now },
+            repository = mock(),
         )
         chatClient.attachmentsSender = attachmentsSender
         chatClient.plugins = plugins

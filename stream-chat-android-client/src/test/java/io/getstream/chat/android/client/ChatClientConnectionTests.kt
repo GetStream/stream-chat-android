@@ -26,12 +26,12 @@ import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -60,6 +60,7 @@ import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -91,7 +92,6 @@ internal class ChatClientConnectionTests {
     private val mutableClientState: MutableClientState = MutableClientState(mock())
     private val streamDateFormatter = StreamDateFormatter()
     private val config = mock<ChatClientConfig>()
-    private val tokenManager = mock<TokenManager>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
 
     @BeforeEach
@@ -114,6 +114,9 @@ internal class ChatClientConnectionTests {
             tokenManager = tokenManager,
             networkStateProvider = networkStateProvider,
         )
+        val mockRepository = mock<ChatClientRepository> {
+            onBlocking { getAllMessageReceiptsByType(type = any(), limit = any()) } doReturn emptyList()
+        }
         client = ChatClient(
             config = config,
             api = chatApi,
@@ -133,6 +136,7 @@ internal class ChatClientConnectionTests {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            repository = mockRepository,
         ).apply {
             attachmentsSender = mock()
         }

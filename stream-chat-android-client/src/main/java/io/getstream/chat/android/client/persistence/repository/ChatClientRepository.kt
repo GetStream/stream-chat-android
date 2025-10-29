@@ -16,8 +16,12 @@
 
 package io.getstream.chat.android.client.persistence.repository
 
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
 
+/**
+ * Repository that aggregates all internal repositories used by [ChatClient].
+ */
 internal class ChatClientRepository(
     private val messageReceiptRepository: MessageReceiptRepository,
 ) : MessageReceiptRepository by messageReceiptRepository {

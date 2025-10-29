@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
@@ -97,8 +98,8 @@ internal class ChatClientTest {
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
     var errorHandlerFactories: List<ErrorHandlerFactory> = emptyList()
-    private val streamDateFormatter = StreamDateFormatter()
 
+    @Suppress("LongMethod")
     @BeforeEach
     fun setUp() {
         val apiKey = "api-key"
@@ -133,6 +134,9 @@ internal class ChatClientTest {
             wssUrl = wssUrl,
             networkStateProvider = networkStateProvider,
         )
+        val mockRepository = mock<ChatClientRepository> {
+            onBlocking { getAllMessageReceiptsByType(type = any(), limit = any()) } doReturn emptyList()
+        }
         client = ChatClient(
             config = config,
             api = api,
@@ -152,6 +156,7 @@ internal class ChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            repository = mockRepository,
         ).apply {
             attachmentsSender = mock()
             connectUser(user, token).enqueue()

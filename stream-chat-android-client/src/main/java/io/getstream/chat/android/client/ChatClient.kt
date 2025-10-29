@@ -122,6 +122,8 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.MessageDeliveredPluginFactory
 import io.getstream.chat.android.client.plugin.Plugin
@@ -276,6 +278,7 @@ internal constructor(
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
+    private val repository: ChatClientRepository,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -1508,6 +1511,8 @@ internal constructor(
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
+
+        repository.clear()
 
         _repositoryFacade = null
         attachmentsSender.cancelJobs()
@@ -4751,12 +4756,14 @@ internal constructor(
                 isMarshmallowOrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             )
 
+            val database = ChatClientDatabase.build(appContext)
+
             return ChatClient(
-                config,
-                module.api(),
-                module.dtoMapping,
-                module.notifications(),
-                tokenManager,
+                config = config,
+                api = module.api(),
+                dtoMapping = module.dtoMapping,
+                notifications = module.notifications(),
+                tokenManager = tokenManager,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 userStateService = module.userStateService,
                 clientDebugger = clientDebugger ?: StubChatClientDebugger,
@@ -4774,6 +4781,7 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
+                repository = ChatClientRepository.from(database),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,

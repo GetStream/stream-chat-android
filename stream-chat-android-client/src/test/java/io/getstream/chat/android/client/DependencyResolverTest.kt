@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.DependencyResolverTest.Companion.initializationStatesArguments
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
@@ -178,6 +179,7 @@ public class DependencyResolverTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            repository = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }
