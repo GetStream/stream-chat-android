@@ -180,6 +180,7 @@ public class DependencyResolverTest {
             currentUserFetcher = mock(),
             audioPlayer = mock(),
             repository = mock(),
+            messageReceiptReporter = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }

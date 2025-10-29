@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.receipts
 
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
@@ -32,8 +32,8 @@ import kotlinx.coroutines.launch
  */
 internal class MessageReceiptReporter(
     private val scope: CoroutineScope,
-    private val chatClient: ChatClient,
     private val messageReceiptRepository: MessageReceiptRepository,
+    private val api: ChatApi,
 ) {
 
     private val logger by taggedLogger("Chat:MessageReceiptReporter")
@@ -55,7 +55,7 @@ internal class MessageReceiptReporter(
 
                     if (messages.isNotEmpty()) {
                         logger.d { "Reporting delivery receipts for ${messages.size} messages…" }
-                        chatClient.markMessagesAsDelivered(messages)
+                        api.markDelivered(messages)
                             .execute()
                             .onSuccessSuspend {
                                 logger.d { "Successfully reported delivery receipts for ${messages.size} messages" }

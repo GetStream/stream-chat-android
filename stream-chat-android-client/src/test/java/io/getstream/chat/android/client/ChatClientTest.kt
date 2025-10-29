@@ -134,9 +134,6 @@ internal class ChatClientTest {
             wssUrl = wssUrl,
             networkStateProvider = networkStateProvider,
         )
-        val mockRepository = mock<ChatClientRepository> {
-            onBlocking { getAllMessageReceiptsByType(type = any(), limit = any()) } doReturn emptyList()
-        }
         client = ChatClient(
             config = config,
             api = api,
@@ -156,7 +153,8 @@ internal class ChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
-            repository = mockRepository,
+            repository = mock(),
+            messageReceiptReporter = mock(),
         ).apply {
             attachmentsSender = mock()
             connectUser(user, token).enqueue()

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.receipts
 
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.client.randomMessageReceipt
 import io.getstream.chat.android.models.Message
@@ -56,13 +56,13 @@ internal class MessageReceiptReporterTest {
         }
         val fixture = Fixture()
             .givenMessageReceipts(receipts)
-            .givenMarkMessagesAsDelivered(messages)
+            .givenMarkDelivered(messages)
         val sut = fixture.get(backgroundScope)
 
         sut.start()
         advanceTimeBy(100) // Allow initial execution
 
-        fixture.verifyMarkMessagesAsDeliveredCalled(messages = messages)
+        fixture.verifyMarkDeliveredCalled(messages = messages)
         val messageIds = messages.map(Message::id)
         fixture.verifyDeleteByMessageIdsCalled(messageIds = messageIds)
     }
@@ -72,7 +72,7 @@ internal class MessageReceiptReporterTest {
         val fixture = Fixture()
             .givenMessageReceipts(listOf(randomMessageReceipt()))
             // Simulate an error when marking messages as delivered
-            .givenMarkMessagesAsDelivered(error = mock())
+            .givenMarkDelivered(error = mock())
         val sut = fixture.get(backgroundScope)
 
         sut.start()
@@ -81,10 +81,10 @@ internal class MessageReceiptReporterTest {
         fixture.verifyDeleteByMessageIdsCalled(never())
 
         // Keep processing in the next time window
-        fixture.givenMarkMessagesAsDelivered()
+        fixture.givenMarkDelivered()
         advanceTimeBy(1000)
 
-        fixture.verifyMarkMessagesAsDeliveredCalled(times(2))
+        fixture.verifyMarkDeliveredCalled(times(2))
         fixture.verifyDeleteByMessageIdsCalled()
     }
 
@@ -97,7 +97,7 @@ internal class MessageReceiptReporterTest {
         sut.start()
         advanceTimeBy(100) // Allow initial execution
 
-        fixture.verifyMarkMessagesAsDeliveredCalled(never())
+        fixture.verifyMarkDeliveredCalled(never())
         fixture.verifyDeleteByMessageIdsCalled(never())
     }
 
@@ -105,7 +105,7 @@ internal class MessageReceiptReporterTest {
     fun `should execute periodically with correct delay`() = runTest {
         val fixture = Fixture()
             .givenMessageReceipts(listOf(randomMessageReceipt()))
-            .givenMarkMessagesAsDelivered()
+            .givenMarkDelivered()
         val sut = fixture.get(backgroundScope)
 
         sut.start()
@@ -117,14 +117,14 @@ internal class MessageReceiptReporterTest {
 
         advanceTimeBy(1000) // Advance to the fourth interval
 
-        fixture.verifyMarkMessagesAsDeliveredCalled(times(4))
+        fixture.verifyMarkDeliveredCalled(times(4))
     }
 
     @Test
     fun `should stop execution when coroutine scope is cancelled`() = runTest {
         val fixture = Fixture()
             .givenMessageReceipts(listOf(randomMessageReceipt()))
-            .givenMarkMessagesAsDelivered()
+            .givenMarkDelivered()
         val sut = fixture.get(backgroundScope)
 
         sut.start()
@@ -134,13 +134,12 @@ internal class MessageReceiptReporterTest {
 
         advanceTimeBy(1000) // Try to advance time after cancellation
 
-        fixture.verifyMarkMessagesAsDeliveredCalled(times(1))
+        fixture.verifyMarkDeliveredCalled(times(1))
     }
 
     private class Fixture {
-        private val mockChatClient = mock<ChatClient>()
-
         private val mockMessageReceiptRepository = mock<MessageReceiptRepository>()
+        private val mockApi = mock<ChatApi>()
 
         fun givenMessageReceipts(receipts: List<MessageReceipt>) = apply {
             wheneverBlocking {
@@ -151,16 +150,22 @@ internal class MessageReceiptReporterTest {
             } doReturn receipts
         }
 
-        fun givenMarkMessagesAsDelivered(messages: List<Message>? = null, error: Error? = null) = apply {
-            whenever(mockChatClient.markMessagesAsDelivered(messages ?: any())) doReturn
+        fun givenMarkDelivered(messages: List<Message>? = null, error: Error? = null) = apply {
+            whenever(mockApi.markDelivered(messages ?: any())) doReturn
                 (error?.asCall() ?: Unit.asCall())
         }
 
-        fun verifyMarkMessagesAsDeliveredCalled(mode: VerificationMode = times(1), messages: List<Message>? = null) {
-            verify(mockChatClient, mode).markMessagesAsDelivered(messages ?: any())
+        fun verifyMarkDeliveredCalled(
+            mode: VerificationMode = times(1),
+            messages: List<Message>? = null,
+        ) {
+            verify(mockApi, mode).markDelivered(messages ?: any())
         }
 
-        fun verifyDeleteByMessageIdsCalled(mode: VerificationMode = times(1), messageIds: List<String>? = null) {
+        fun verifyDeleteByMessageIdsCalled(
+            mode: VerificationMode = times(1),
+            messageIds: List<String>? = null,
+        ) {
             verifyBlocking(mockMessageReceiptRepository, mode) {
                 deleteMessageReceiptsByMessageIds(messageIds ?: any())
             }
@@ -168,8 +173,8 @@ internal class MessageReceiptReporterTest {
 
         fun get(scope: CoroutineScope) = MessageReceiptReporter(
             scope = scope,
-            chatClient = mockChatClient,
             messageReceiptRepository = mockMessageReceiptRepository,
+            api = mockApi,
         )
     }
 }

@@ -281,6 +281,7 @@ internal constructor(
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
     private val repository: ChatClientRepository,
+    private val messageReceiptReporter: MessageReceiptReporter,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -337,12 +338,6 @@ internal constructor(
         scope = userScope,
         now = now,
         getCurrentUser = ::getCurrentUser,
-        messageReceiptRepository = repository,
-    )
-
-    private val messageReceiptReporter = MessageReceiptReporter(
-        scope = userScope,
-        chatClient = this,
         messageReceiptRepository = repository,
     )
 
@@ -4756,7 +4751,8 @@ internal constructor(
                     appVersion = this.appVersion,
                 )
 
-            val appSettingsManager = AppSettingManager(module.api())
+            val api = module.api()
+            val appSettingsManager = AppSettingManager(api)
 
             val audioPlayer: AudioPlayer = StreamMediaPlayer(
                 mediaPlayer = NativeMediaPlayerImpl {
@@ -4772,10 +4768,11 @@ internal constructor(
             )
 
             val database = ChatClientDatabase.build(appContext)
+            val repository = ChatClientRepository.from(database)
 
             return ChatClient(
                 config = config,
-                api = module.api(),
+                api = api,
                 dtoMapping = module.dtoMapping,
                 notifications = module.notifications(),
                 tokenManager = tokenManager,
@@ -4796,7 +4793,12 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
-                repository = ChatClientRepository.from(database),
+                repository = repository,
+                messageReceiptReporter = MessageReceiptReporter(
+                    scope = userScope,
+                    messageReceiptRepository = repository,
+                    api = api,
+                ),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
