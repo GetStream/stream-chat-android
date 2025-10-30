@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
@@ -31,9 +32,23 @@ internal class MessageDeliveredPlugin(
     chatClient: ChatClient = ChatClient.instance(),
     private val messageReceiptManager: MessageReceiptManager = chatClient.messageReceiptManager,
 ) : Plugin {
+
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         result.onSuccess { channels ->
             messageReceiptManager.markChannelsAsDelivered(channels)
+        }
+    }
+
+    override suspend fun onQueryChannelResult(
+        result: Result<Channel>,
+        channelType: String,
+        channelId: String,
+        request: QueryChannelRequest,
+    ) {
+        result.onSuccess { channel ->
+            if (request.pagination() == null) { // only mark as delivered on initial load
+                messageReceiptManager.markChannelsAsDelivered(channels = listOf(channel))
+            }
         }
     }
 }
