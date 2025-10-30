@@ -26,46 +26,48 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import java.util.Date
 
-internal class ChannelExtensionsTests {
+internal class ChannelExtensionTest {
 
     @Test
     fun `isAnonymousChannel should return true for anonymous channel`() {
         val anonymousChannel = randomChannel(id = "!members-12345")
-        anonymousChannel.isAnonymousChannel() shouldBeEqualTo true
+        assertTrue(anonymousChannel.isAnonymousChannel())
     }
 
     @Test
     fun `isAnonymousChannel should return false for non-anonymous channel`() {
         val channel = randomChannel(id = "messaging:12345")
-        channel.isAnonymousChannel() shouldBeEqualTo false
+        assertFalse(channel.isAnonymousChannel())
     }
 
     @Test
     fun `isPinned should return true if channel is pinned`() {
         val pinnedChannel = randomChannel(membership = randomMember(pinnedAt = randomDate()))
-        pinnedChannel.isPinned() shouldBeEqualTo true
+        assertTrue(pinnedChannel.isPinned())
     }
 
     @Test
     fun `isPinned should return false if channel is not pinned`() {
         val channel = randomChannel(membership = randomMember(pinnedAt = null))
-        channel.isPinned() shouldBeEqualTo false
+        assertFalse(channel.isPinned())
     }
 
     @Test
     fun `isArchive should return true if channel is archived`() {
         val archivedChannel = randomChannel(membership = randomMember(archivedAt = randomDate()))
-        archivedChannel.isArchive() shouldBeEqualTo true
+        assertTrue(archivedChannel.isArchive())
     }
 
     @Test
     fun `isArchive should return false if channel is not archived`() {
         val channel = randomChannel(membership = randomMember(archivedAt = null))
-        channel.isArchive() shouldBeEqualTo false
+        assertFalse(channel.isArchive())
     }
 
     @Test
@@ -73,7 +75,7 @@ internal class ChannelExtensionsTests {
         val channelId = randomCID()
         val channel = randomChannel(id = channelId)
         val mutedUser = randomUser(channelMutes = listOf(randomChannelMute(channel = channel)))
-        channel.isMutedFor(mutedUser) shouldBeEqualTo true
+        assertTrue(channel.isMutedFor(mutedUser))
     }
 
     @Test
@@ -81,7 +83,7 @@ internal class ChannelExtensionsTests {
         val channelId = randomCID()
         val channel = randomChannel(id = channelId)
         val user = randomUser()
-        channel.isMutedFor(user) shouldBeEqualTo false
+        assertFalse(channel.isMutedFor(user))
     }
 
     @Test
@@ -94,8 +96,8 @@ internal class ChannelExtensionsTests {
         )
         val channel = randomChannel(members = members)
         val users = channel.getUsersExcludingCurrent(currentUser)
-        users.size shouldBeEqualTo 1
-        users.first() shouldBeEqualTo otherUser
+        assertEquals(1, users.size)
+        assertEquals(otherUser, users.first())
     }
 
     @Test
@@ -115,7 +117,7 @@ internal class ChannelExtensionsTests {
             ),
         )
         val channel = randomChannel(messages = messages)
-        channel.countUnreadMentionsForUser(user) shouldBeEqualTo 2
+        assertEquals(2, channel.countUnreadMentionsForUser(user))
     }
 
     @Test
@@ -143,7 +145,7 @@ internal class ChannelExtensionsTests {
         )
         val channelRead = randomChannelUserRead(user = user, lastRead = lastReadDate)
         val channel = randomChannel(messages = messages, read = listOf(channelRead))
-        channel.countUnreadMentionsForUser(user) shouldBeEqualTo 1
+        assertEquals(1, channel.countUnreadMentionsForUser(user))
     }
 
     @Test
@@ -152,7 +154,7 @@ internal class ChannelExtensionsTests {
         val unreadMessages = positiveRandomInt()
         val channelRead = randomChannelUserRead(user = randomUser(id = currentUserId), unreadMessages = unreadMessages)
         val channel = randomChannel(read = listOf(channelRead))
-        channel.currentUserUnreadCount(currentUserId) shouldBeEqualTo unreadMessages
+        assertEquals(unreadMessages, channel.currentUserUnreadCount(currentUserId))
     }
 
     @Test
@@ -161,6 +163,44 @@ internal class ChannelExtensionsTests {
         val unreadMessages = positiveRandomInt()
         val channelRead = randomChannelUserRead(user = randomUser(id = currentUserId), unreadMessages = unreadMessages)
         val channel = randomChannel(read = listOf(channelRead))
-        channel.syncUnreadCountWithReads(currentUserId).unreadCount shouldBeEqualTo unreadMessages
+        assertEquals(unreadMessages, channel.syncUnreadCountWithReads(currentUserId).unreadCount)
+    }
+
+    @Test
+    fun `readsOf should return correct list of ChannelUserRead who have read the message`() {
+        val createdAt = randomDate()
+        val messageUser = randomUser()
+        val otherUser1 = randomUser()
+        val otherUser2 = randomUser()
+        val lastRead = Date(createdAt.time + 1000) // After message creation time
+        val read1 = randomChannelUserRead(user = otherUser1, lastRead = lastRead)
+        val read2 = randomChannelUserRead(user = otherUser2, lastRead = lastRead)
+        val read3 = randomChannelUserRead(user = messageUser, lastRead = lastRead)
+        val channel = randomChannel(read = listOf(read1, read2, read3))
+        val message = randomMessage(user = messageUser, createdAt = createdAt)
+
+        val actual = channel.readsOf(message)
+
+        assertEquals(2, actual.size)
+        assertEquals(listOf(read1, read2), actual)
+    }
+
+    @Test
+    fun `deliveredReadsOf should return correct list of ChannelUserRead who have delivered the message`() {
+        val createdAt = randomDate()
+        val messageUser = randomUser()
+        val otherUser1 = randomUser()
+        val otherUser2 = randomUser()
+        val lastDelivered = Date(createdAt.time + 1000) // After message creation time
+        val delivered1 = randomChannelUserRead(user = otherUser1, lastDeliveredAt = lastDelivered)
+        val delivered2 = randomChannelUserRead(user = otherUser2, lastDeliveredAt = lastDelivered)
+        val delivered3 = randomChannelUserRead(user = messageUser, lastDeliveredAt = lastDelivered)
+        val channel = randomChannel(read = listOf(delivered1, delivered2, delivered3))
+        val message = randomMessage(user = messageUser, createdAt = createdAt)
+
+        val actual = channel.deliveredReadsOf(message)
+
+        assertEquals(2, actual.size)
+        assertEquals(listOf(delivered1, delivered2), actual)
     }
 }
