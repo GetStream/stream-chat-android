@@ -144,7 +144,7 @@ internal class ChatNotificationsImplTest {
                 notificationConfig = notificationConfig,
                 context = context,
                 scope = mock(),
-                chatClient = mockChatClient,
+                chatClientProvider = { mockChatClient },
             )
         }
     }
