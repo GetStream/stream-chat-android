@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
@@ -38,7 +39,12 @@ internal interface ChatNotifications {
     fun onSetUser(user: User)
     fun setDevice(device: Device)
     suspend fun deleteDevice()
-    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onPushMessage(
+        pushMessage: PushMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener =
+            PushNotificationReceivedListener { _, _ -> },
+    )
+
     fun onChatEvent(event: ChatEvent)
     suspend fun onLogout()
     fun displayNotification(notification: ChatNotification)
@@ -51,6 +57,7 @@ internal class ChatNotificationsImpl(
     private val notificationConfig: NotificationConfig,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ChatNotifications {
     private val logger by taggedLogger("Chat:Notifications")
 
@@ -95,15 +102,21 @@ internal class ChatNotificationsImpl(
     }
 
     override fun onPushMessage(
-        message: PushMessage,
+        pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) {
-        logger.i { "[onReceivePushMessage] message: $message" }
+        logger.i { "[onPushMessage] message: $pushMessage" }
 
-        pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
+        pushNotificationReceivedListener.onPushNotificationReceived(pushMessage.channelType, pushMessage.channelId)
 
-        if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(message)) {
-            handlePushMessage(message)
+        val message = Message(
+            id = pushMessage.messageId,
+            cid = "${pushMessage.channelType}:${pushMessage.channelId}",
+        )
+        chatClient.messageReceiptManager.markMessagesAsDelivered(messages = listOf(message))
+
+        if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(pushMessage)) {
+            handlePushMessage(pushMessage)
         }
     }
 
@@ -193,6 +206,7 @@ internal class ChatNotificationsImpl(
                     handler.showNotification(notification)
                 }
             }
+
             else -> handler.showNotification(notification)
         }
     }
@@ -210,7 +224,7 @@ internal object NoOpChatNotifications : ChatNotifications {
     override fun setDevice(device: Device) = Unit
     override suspend fun deleteDevice() = Unit
     override fun onPushMessage(
-        message: PushMessage,
+        pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 

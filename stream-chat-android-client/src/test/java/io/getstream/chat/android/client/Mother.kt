@@ -91,6 +91,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -1278,6 +1279,22 @@ internal object Mother {
         disabled_until = disabledUntil,
     )
 }
+
+internal fun randomPushMessage(
+    messageId: String = randomString(),
+    channelId: String = randomString(),
+    channelType: String = randomString(),
+    getstream: Map<String, Any?> = emptyMap(),
+    extraData: Map<String, Any?> = emptyMap(),
+    metadata: Map<String, Any?> = emptyMap(),
+) = PushMessage(
+    messageId = messageId,
+    channelId = channelId,
+    channelType = channelType,
+    getstream = getstream,
+    extraData = extraData,
+    metadata = metadata,
+)
 
 internal fun randomMessageReceipt(
     messageId: String = randomString(),

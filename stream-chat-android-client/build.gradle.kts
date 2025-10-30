@@ -109,6 +109,7 @@ dependencies {
     testImplementation(libs.stream.result)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.turbine)
