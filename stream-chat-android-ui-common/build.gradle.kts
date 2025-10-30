@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -8,8 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
-    alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 android {
@@ -99,19 +95,4 @@ dependencies {
     detektPlugins(libs.detekt.formatting)
 
     baselineProfile(project(":stream-chat-android-benchmark"))
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = Configuration.artifactGroup,
-        artifactId = "stream-chat-android-ui-common",
-        version = rootProject.version.toString(),
-    )
-    configure(
-        AndroidSingleVariantLibrary(
-            variant = "release",
-            sourcesJar = true,
-            publishJavadocJar = true,
-        ),
-    )
 }

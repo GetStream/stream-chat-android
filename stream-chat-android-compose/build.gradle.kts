@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -10,8 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
-    alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 apply(from = "$rootDir/scripts/detekt-compose.gradle")
@@ -126,19 +122,4 @@ dependencies {
     detektPlugins(libs.detekt.formatting)
 
     baselineProfile(project(":stream-chat-android-benchmark"))
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = Configuration.artifactGroup,
-        artifactId = "stream-chat-android-compose",
-        version = rootProject.version.toString(),
-    )
-    configure(
-        AndroidSingleVariantLibrary(
-            variant = "release",
-            sourcesJar = true,
-            publishJavadocJar = true,
-        ),
-    )
 }
