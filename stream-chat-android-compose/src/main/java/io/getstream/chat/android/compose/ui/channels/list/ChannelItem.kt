@@ -313,7 +313,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (isLastMessageFromCurrentUser) {
                     ChatTheme.componentFactory.ChannelItemReadStatusIndicator(

@@ -105,6 +105,7 @@ public fun MessageFooter(
                 } else {
                     ChatTheme.componentFactory.MessageFooterStatusIndicator(
                         params = MessageFooterStatusIndicatorParams(
+                            modifier = Modifier.padding(end = 4.dp),
                             messageItem = messageItem,
                         ),
                     )

@@ -167,7 +167,7 @@ private fun IsSentIcon(modifier: Modifier) {
 @Composable
 private fun IsDeliveredIcon(modifier: Modifier) {
     Icon(
-        modifier = Modifier.testTag("Stream_MessageReadStatus_isDelivered"),
+        modifier = modifier.testTag("Stream_MessageReadStatus_isDelivered"),
         painter = painterResource(id = R.drawable.stream_compose_message_seen),
         contentDescription = stringResource(
             R.string.stream_ui_message_list_semantics_message_status_delivered,

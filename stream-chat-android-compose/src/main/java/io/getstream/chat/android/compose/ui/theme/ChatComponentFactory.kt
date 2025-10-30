@@ -1406,7 +1406,7 @@ public interface ChatComponentFactory {
     ) {
         if (params.messageItem.isMessageDelivered) {
             MessageReadStatusIcon(
-                modifier = Modifier.padding(end = 4.dp),
+                modifier = params.modifier,
                 message = params.messageItem.message,
                 isMessageRead = params.messageItem.isMessageRead,
                 isMessageDelivered = params.messageItem.isMessageDelivered,
@@ -1414,7 +1414,7 @@ public interface ChatComponentFactory {
             )
         } else {
             MessageFooterStatusIndicator(
-                modifier = Modifier.padding(end = 4.dp),
+                modifier = params.modifier,
                 message = params.messageItem.message,
                 isMessageRead = params.messageItem.isMessageRead,
                 readCount = params.messageItem.messageReadBy.size,

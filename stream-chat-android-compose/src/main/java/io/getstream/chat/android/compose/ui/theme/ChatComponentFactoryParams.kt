@@ -65,7 +65,9 @@ public data class ChannelMediaAttachmentsPreviewBottomBarParams(
  * Parameters for the [ChatComponentFactory.MessageFooterStatusIndicator] component.
  *
  * @param messageItem The message item state.
+ * @param modifier Modifier for styling.
  */
 public data class MessageFooterStatusIndicatorParams(
     val messageItem: MessageItemState,
+    val modifier: Modifier = Modifier,
 )
