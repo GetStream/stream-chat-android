@@ -16,12 +16,27 @@
 
 package io.getstream.chat.android.client.persistence.repository
 
+import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
+import io.getstream.chat.android.client.persistence.db.dao.MessageReceiptDao
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-import org.mockito.Mockito.mock
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.verifyBlocking
 
 internal class ChatClientRepositoryTest {
+
+    @Test
+    fun `should instantiate from database`() {
+        val mockDatabase = mock<ChatClientDatabase> {
+            on { messageReceiptDao() } doReturn mock<MessageReceiptDao>()
+        }
+
+        val actual = ChatClientRepository.from(mockDatabase)
+
+        assertNotNull(actual)
+    }
 
     @Test
     fun `should clear repositories`() = runTest {
