@@ -36,7 +36,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger

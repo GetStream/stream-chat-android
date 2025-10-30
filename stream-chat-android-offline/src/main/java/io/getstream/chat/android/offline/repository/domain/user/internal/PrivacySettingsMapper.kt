@@ -33,7 +33,7 @@ internal fun PrivacySettings.toEntity(): PrivacySettingsEntity {
                 enabled = it.enabled,
             )
         },
-        deliveryReceipts = deliveryReceipts?.let { it ->
+        deliveryReceipts = deliveryReceipts?.let {
             DeliveryReceiptsEntity(
                 enabled = it.enabled,
             )
