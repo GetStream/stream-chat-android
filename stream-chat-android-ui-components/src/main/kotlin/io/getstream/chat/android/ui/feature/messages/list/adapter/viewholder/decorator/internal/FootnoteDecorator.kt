@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageStatusIndicator
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -389,11 +390,13 @@ internal class FootnoteDecorator(
             SyncStatus.SYNC_NEEDED,
             SyncStatus.AWAITING_ATTACHMENTS,
             -> itemStyle.iconIndicatorPendingSync
+
             SyncStatus.COMPLETED -> when {
                 data.isMessageRead -> itemStyle.iconIndicatorRead
                 data.isMessageDelivered -> itemStyle.iconIndicatorDelivered
                 else -> itemStyle.iconIndicatorSent
             }
+
             else -> null
         }
         if (statusIndicator != null) {
@@ -422,13 +425,8 @@ internal class FootnoteDecorator(
     }
 
     private fun shouldHideReadRelatedInfo(data: MessageListItem.MessageItem): Boolean {
-        val status = data.message.syncStatus
         val isNotBottomPosition = data.isNotBottomPosition()
         val isTheirs = data.isTheirs
-        val isEphemeral = data.message.isEphemeral()
-        val isDeleted = data.message.isDeleted()
-        val isFailedPermanently = status == SyncStatus.FAILED_PERMANENTLY
-
-        return isNotBottomPosition || isTheirs || isEphemeral || isDeleted || isFailedPermanently
+        return isNotBottomPosition || isTheirs || !data.message.shouldShowMessageStatusIndicator()
     }
 }
