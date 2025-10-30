@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.gradle.LibraryExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
@@ -19,6 +21,9 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.stream.android.library) apply false
+    alias(libs.plugins.stream.android.application) apply false
+    alias(libs.plugins.stream.java.library) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
@@ -52,10 +57,31 @@ apply(from = "${rootDir}/scripts/sonar.gradle")
 apply(from = "${rootDir}/scripts/coverage.gradle")
 
 subprojects {
-    if (name != "stream-chat-android-docs"
-            && buildFile.exists()) {
+    if (name != "stream-chat-android-docs" && buildFile.exists()) {
         apply(from = "${rootDir}/spotless/spotless.gradle")
     }
+
+    // Configure Android projects with common SDK versions as soon as either plugin is applied
+    pluginManager.withPlugin("com.android.library") {
+        extensions.configure<LibraryExtension> {
+            defaultConfig {
+                compileSdk = libs.versions.compileSdk.get().toInt()
+                minSdk = libs.versions.minSdk.get().toInt()
+                lint.targetSdk = libs.versions.targetSdk.get().toInt()
+                testOptions.targetSdk = libs.versions.targetSdk.get().toInt()
+            }
+        }
+    }
+    pluginManager.withPlugin("com.android.application") {
+        extensions.configure<ApplicationExtension> {
+            defaultConfig {
+                compileSdk = libs.versions.compileSdk.get().toInt()
+                minSdk = libs.versions.minSdk.get().toInt()
+                targetSdk = libs.versions.targetSdk.get().toInt()
+            }
+        }
+    }
+
     apply(plugin = "io.gitlab.arturbosch.detekt")
 }
 
@@ -70,7 +96,7 @@ tasks.withType<VersionPrintTask> {
 }
 
 tasks.withType<UnitTestsTask> {
-     config.outputPath = "build/tmp/unit-tests-command.sh"
+    config.outputPath = "build/tmp/unit-tests-command.sh"
 }
 
 tasks.withType<ReleaseTask> {
@@ -103,7 +129,7 @@ apiValidation {
     )
 
     nonPublicMarkers += listOf(
-            "io.getstream.chat.android.core.internal.InternalStreamChatApi",
+        "io.getstream.chat.android.core.internal.InternalStreamChatApi",
     )
 }
 

@@ -2,7 +2,7 @@ import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
@@ -14,7 +14,6 @@ rootProject.extra.apply {
 }
 
 apply(from = "$rootDir/scripts/publish-module.gradle")
-apply(from = "$rootDir/scripts/android.gradle")
 apply(from = "$rootDir/scripts/detekt-compose.gradle")
 
 android {

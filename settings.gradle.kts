@@ -2,6 +2,7 @@ import java.util.Properties
 
 pluginManagement {
 	repositories {
+		mavenLocal()
 		// fetch plugins from google maven (https://maven.google.com)
 		google {
 			content {
