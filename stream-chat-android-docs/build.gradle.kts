@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// TODO [G.]
+//    spotlessEnabled = false
+
 apply(from = "${rootDir}/scripts/detekt-disabled.gradle")
 
 android {

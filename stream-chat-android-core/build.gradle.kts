@@ -1,14 +1,9 @@
-import com.vanniktech.maven.publish.JavadocJar
-import com.vanniktech.maven.publish.KotlinJvm
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("kotlin")
     alias(libs.plugins.stream.java.library)
     id("java-test-fixtures")
-    id("kotlin")
-    alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 tasks.withType<Test>() {
@@ -49,18 +44,4 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = Configuration.artifactGroup,
-        artifactId = "stream-chat-android-core",
-        version = rootProject.version.toString(),
-    )
-    configure(
-        KotlinJvm(
-            javadocJar = JavadocJar.Dokka("dokkaJavadoc"),
-            sourcesJar = true,
-        ),
-    )
 }

@@ -1,8 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import io.getstream.chat.android.Configuration
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
 import io.getstream.chat.android.command.release.task.ReleaseTask
@@ -26,6 +24,7 @@ plugins {
     alias(libs.plugins.stream.android.library) apply false
     alias(libs.plugins.stream.android.application) apply false
     alias(libs.plugins.stream.java.library) apply false
+    alias(libs.plugins.stream.publish) apply false
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
@@ -40,7 +39,12 @@ plugins {
     alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.binary.compatibility.validator)
-    alias(libs.plugins.maven.publish)
+}
+
+streamProject {
+    publishing {
+        description.set("Stream Chat official Android SDK")
+    }
 }
 
 streamProject {
@@ -134,93 +138,4 @@ apiValidation {
     nonPublicMarkers += listOf(
         "io.getstream.chat.android.core.internal.InternalStreamChatApi",
     )
-}
-
-private val isSnapshot = System.getenv("SNAPSHOT")?.toBoolean() == true
-version = if (isSnapshot) Configuration.snapshotVersionName else Configuration.versionName
-
-subprojects {
-    plugins.withId("com.vanniktech.maven.publish") {
-        extensions.configure<MavenPublishBaseExtension> {
-            publishToMavenCentral(automaticRelease = true)
-
-            pom {
-                name.set(project.name)
-                description.set("Stream Chat official Android SDK")
-                url.set("https://github.com/getstream/stream-chat-android")
-
-                licenses {
-                    license {
-                        name.set("Stream License")
-                        url.set("https://github.com/GetStream/stream-chat-android/blob/main/LICENSE")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = "tschellenbach"
-                        name = "Thierry Schellenbach"
-                        email = "thierry@getstream.io"
-                    }
-                    developer {
-                        id = "jcminarro"
-                        name = "Jc Miñarro"
-                        email = "josecarlos@getstream.io"
-                    }
-                    developer {
-                        id = "samiuelson"
-                        name = "Samuel Urbanowicz"
-                        email = "samuel@getstream.io"
-                    }
-                    developer {
-                        id = "adasiewiczr"
-                        name = "Rafal Adasiewicz"
-                        email = "rafal@getstream.io"
-                    }
-                    developer {
-                        id = "ogkuzmin"
-                        name = "Oleg Kuzmin"
-                        email = "oleg@getstream.io"
-                    }
-                    developer {
-                        id = "zsmb13"
-                        name = "Márton Braun"
-                        email = "marton@getstream.io"
-                    }
-                    developer {
-                        id = "leandroBorgesFerreira"
-                        name = "Leandro Borges Ferreira"
-                        email = "leandro@getstream.io"
-                    }
-                    developer {
-                        id = "bychkovdmitry"
-                        name = "Dmitrii Bychkov"
-                        email = "dmitrii@getstream.io"
-                    }
-                }
-
-                scm {
-                    connection.set("scm:git:github.com/getstream/stream-chat-android.git")
-                    developerConnection.set("scm:git:ssh://github.com/getstream/stream-chat-android.git")
-                    url.set("https://github.com/getstream/stream-chat-android/tree/main")
-                }
-            }
-        }
-    }
-}
-
-tasks.register("printAllArtifacts") {
-    group = "publishing"
-    description = "Prints all artifacts that will be published"
-
-    doLast {
-        subprojects.forEach { subproject ->
-            subproject.plugins.withId("com.vanniktech.maven.publish") {
-                subproject.extensions.findByType(PublishingExtension::class.java)
-                    ?.publications
-                    ?.filterIsInstance<MavenPublication>()
-                    ?.forEach { println("${it.groupId}:${it.artifactId}:${it.version}") }
-            }
-        }
-    }
 }
