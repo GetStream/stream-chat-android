@@ -21,6 +21,7 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDraftMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageDeliveredStatus
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessagePendingStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSeenStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSentStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMuted
@@ -52,6 +53,13 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `unread messages`() {
         snapshotWithDarkMode {
             ChannelItemUnreadMessages()
+        }
+    }
+
+    @Test
+    fun `last message pending status`() {
+        snapshotWithDarkMode {
+            ChannelItemLastMessagePendingStatus()
         }
     }
 

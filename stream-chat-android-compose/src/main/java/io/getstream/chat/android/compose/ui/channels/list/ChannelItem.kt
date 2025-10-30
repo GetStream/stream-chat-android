@@ -57,6 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
@@ -376,6 +377,26 @@ internal fun ChannelItemUnreadMessages() {
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages.copy(
             read = listOf(PreviewChannelUserRead.channelUserRead1),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemLastMessagePendingStatusPreview() {
+    ChatTheme {
+        ChannelItemLastMessagePendingStatus()
+    }
+}
+
+@Composable
+internal fun ChannelItemLastMessagePendingStatus() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1, syncStatus = SyncStatus.SYNC_NEEDED)
+            },
         ),
     )
 }
