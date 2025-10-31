@@ -334,13 +334,15 @@ internal constructor(
 
     private var _repositoryFacade: RepositoryFacade? = null
 
-    internal val messageReceiptManager = MessageReceiptManager(
-        now = now,
-        getCurrentUser = ::getCurrentUser,
-        channelRepository = repositoryFacade,
-        messageReceiptRepository = repository,
-        api = api,
-    )
+    internal val messageReceiptManager by lazy {
+        MessageReceiptManager(
+            now = now,
+            getCurrentUser = ::getCurrentUser,
+            channelRepository = repositoryFacade,
+            messageReceiptRepository = repository,
+            api = api,
+        )
+    }
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }

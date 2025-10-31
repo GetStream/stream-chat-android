@@ -31,8 +31,8 @@ import io.getstream.result.onSuccessSuspend
  */
 internal class MessageDeliveredPlugin(
     chatClient: ChatClient = ChatClient.instance(),
-    private val messageReceiptManager: MessageReceiptManager = chatClient.messageReceiptManager,
 ) : Plugin {
+    private val messageReceiptManager: MessageReceiptManager by lazy { chatClient.messageReceiptManager }
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
         result.onSuccessSuspend { channels ->

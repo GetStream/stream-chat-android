@@ -115,8 +115,7 @@ internal class MessageDeliveredPluginTest {
         }
 
         fun get() = MessageDeliveredPlugin(
-            chatClient = mock(),
-            messageReceiptManager = mockMessageReceiptManager,
+            chatClient = mock { on { messageReceiptManager } doReturn mockMessageReceiptManager },
         )
     }
 }
