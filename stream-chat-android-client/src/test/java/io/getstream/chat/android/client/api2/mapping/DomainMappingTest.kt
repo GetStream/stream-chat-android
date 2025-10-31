@@ -591,6 +591,7 @@ internal class DomainMappingTest {
             name = configDto.name ?: "",
             typingEventsEnabled = configDto.typing_events,
             readEventsEnabled = configDto.read_events,
+            deliveryEventsEnabled = configDto.delivery_events,
             connectEventsEnabled = configDto.connect_events,
             searchEnabled = configDto.search,
             isReactionsEnabled = configDto.reactions,

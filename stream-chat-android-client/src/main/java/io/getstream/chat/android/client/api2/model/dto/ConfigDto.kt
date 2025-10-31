@@ -26,7 +26,7 @@ internal data class ConfigDto(
     val name: String?,
     val typing_events: Boolean,
     val read_events: Boolean,
-    val delivery_events: Boolean?,
+    val delivery_events: Boolean = true,
     val connect_events: Boolean,
     val search: Boolean,
     val reactions: Boolean,

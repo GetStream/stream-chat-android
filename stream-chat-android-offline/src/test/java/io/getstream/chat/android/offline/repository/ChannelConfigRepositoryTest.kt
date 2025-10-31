@@ -136,6 +136,7 @@ internal class ChannelConfigRepositoryTest {
                 isMutes = randomBoolean(),
                 isReactionsEnabled = randomBoolean(),
                 isReadEvents = randomBoolean(),
+                deliveryEventsEnabled = randomBoolean(),
                 isSearch = randomBoolean(),
                 isThreadEnabled = randomBoolean(),
                 isTypingEvents = randomBoolean(),

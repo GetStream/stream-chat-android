@@ -203,7 +203,7 @@ internal class MessageReceiptManagerTest {
     fun `should skip storing message delivery receipt from muted users`() = runTest {
         val message = DeliverableMessage
         val currentUser = CurrentUser.copy(
-            mutes = listOf(randomMute(user = CurrentUser, target = message.user))
+            mutes = listOf(randomMute(user = CurrentUser, target = message.user)),
         )
         val fixture = Fixture()
             .givenCurrentUser(currentUser)

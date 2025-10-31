@@ -603,6 +603,7 @@ internal class DomainMapping(
         name = name ?: "",
         typingEventsEnabled = typing_events,
         readEventsEnabled = read_events,
+        deliveryEventsEnabled = delivery_events,
         connectEventsEnabled = connect_events,
         searchEnabled = search,
         isReactionsEnabled = reactions,
