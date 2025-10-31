@@ -1,9 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.stream.android.application)
     alias(libs.plugins.kotlin.android)
 }
-
-apply(from = "$rootDir/scripts/android.gradle")
 
 android {
     namespace = "io.getstream.chat.android.metrics"
