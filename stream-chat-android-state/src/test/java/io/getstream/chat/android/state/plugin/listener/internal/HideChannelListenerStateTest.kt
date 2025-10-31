@@ -37,7 +37,7 @@ internal class HideChannelListenerStateTest {
 
     private val stateLogic: ChannelStateLogic = mock()
     private val channelLogic: ChannelLogic = mock {
-        on(it.stateLogic()) doReturn stateLogic
+        on(it.stateLogic) doReturn stateLogic
     }
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic

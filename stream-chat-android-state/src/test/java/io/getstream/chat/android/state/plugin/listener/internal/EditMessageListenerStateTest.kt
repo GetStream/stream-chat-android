@@ -47,7 +47,7 @@ internal class EditMessageListenerStateTest {
     fun `when messages are in channel and threads, they are upserted in edit message`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
@@ -86,7 +86,7 @@ internal class EditMessageListenerStateTest {
     fun `when messages edit is requested, sync status is updated correctly when online`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
@@ -126,7 +126,7 @@ internal class EditMessageListenerStateTest {
     fun `when messages edit is requested, sync status is updated correctly when offline`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
@@ -166,7 +166,7 @@ internal class EditMessageListenerStateTest {
     fun `when messages edit completes, sync status is updated correctly when successful`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
@@ -206,7 +206,7 @@ internal class EditMessageListenerStateTest {
     fun `when messages edit completes, sync status is updated correctly when failing`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()

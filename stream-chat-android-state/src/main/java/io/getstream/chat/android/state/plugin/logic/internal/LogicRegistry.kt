@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.LegacyChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
@@ -115,7 +116,7 @@ internal class LogicRegistry internal constructor(
                 coroutineScope = coroutineScope,
             )
 
-            ChannelLogic(
+            LegacyChannelLogic(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
@@ -131,7 +132,7 @@ internal class LogicRegistry internal constructor(
     }
 
     fun channelState(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
+        return channel(channelType, channelId).stateLogic
     }
 
     fun channelFromMessageId(messageId: String): ChannelLogic? {
@@ -203,7 +204,7 @@ internal class LogicRegistry internal constructor(
      * @param channelId String
      */
     override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
+        return channel(channelType, channelId).stateLogic
     }
 
     /** Returns [QueryThreadsLogic] for the given [QueryThreadsRequest]. */
