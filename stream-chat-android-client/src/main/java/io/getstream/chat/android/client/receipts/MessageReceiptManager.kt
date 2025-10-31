@@ -16,17 +16,20 @@
 
 package io.getstream.chat.android.client.receipts
 
+import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.userRead
+import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.UserId
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -40,35 +43,79 @@ internal class MessageReceiptManager(
     private val scope: CoroutineScope,
     private val now: () -> Date,
     private val getCurrentUser: () -> User?,
+    private val channelRepository: ChannelRepository,
     private val messageReceiptRepository: MessageReceiptRepository,
+    private val api: ChatApi,
 ) {
 
     private val logger by taggedLogger("Chat:MessageReceiptManager")
 
     /**
-     * Request to mark the last undelivered messages in the given channels as delivered.
+     * Request to mark the given channels as delivered
+     * if delivery receipts are enabled for the current user.
+     *
+     * A channel can have a message marked as delivered only if:
+     * - Delivery events are enabled in the channel config
      *
      * A delivery message candidate is the last non-deleted message in the channel that:
-     *
+     * - It was not sent by the current user
+     * - It is not a system message
+     * - It is not deleted
      * - Is not yet marked as read by the current user
      * - Is not yet marked as delivered by the current user
      */
     fun markChannelsAsDelivered(channels: List<Channel>) {
-        val deliveredMessageCandidates = channels.mapNotNull(::getUndeliveredMessage)
+        val currentUser = getCurrentUser() ?: run {
+            logger.w { "[markChannelsAsDelivered] Current user is null" }
+            return
+        }
+
+        if (!currentUser.isDeliveryReceiptsEnabled) return
+
+        val deliveredMessageCandidates = channels.mapNotNull { channel ->
+            channel.lastMessage?.takeIf { lastNonDeletedMessage ->
+                canMarkMessageAsDelivered(currentUser, channel, lastNonDeletedMessage)
+            }
+        }
         markMessagesAsDelivered(messages = deliveredMessageCandidates)
     }
 
     /**
-     * Request to mark the given messages as delivered if delivery receipts are enabled
-     * in the current user privacy settings.
+     * Request to mark the given message as delivered
+     * if delivery receipts are enabled for the current user.
      *
-     * A message can be marked as delivered only if:
-     *
-     * - It was not sent by the current user
-     * - It is not a system message
-     * - It is not deleted
+     * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
      */
-    fun markMessagesAsDelivered(messages: List<Message>) {
+    fun markMessageAsDelivered(message: Message) {
+        val currentUser = getCurrentUser() ?: run {
+            logger.w { "[markMessageAsDelivered] Current user is null" }
+            return
+        }
+
+        if (!currentUser.isDeliveryReceiptsEnabled) return
+
+        scope.launch {
+            val channel = getChannel(message.cid) ?: run {
+                logger.w { "[markMessageAsDelivered] Channel ${message.cid} not found" }
+                return@launch
+            }
+
+            if (canMarkMessageAsDelivered(currentUser, channel, message)) {
+                markMessagesAsDelivered(messages = listOf(message))
+            }
+        }
+    }
+
+    private suspend fun getChannel(cid: String): Channel? =
+        channelRepository.selectChannel(cid)
+            ?: run {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                val request = QueryChannelRequest()
+                api.queryChannel(channelType, channelId, request)
+                    .await().getOrNull()
+            }
+
+    private fun markMessagesAsDelivered(messages: List<Message>) {
         if (messages.isEmpty()) {
             logger.w { "[markMessagesAsDelivered] No receipts to send" }
             return
@@ -76,75 +123,63 @@ internal class MessageReceiptManager(
 
         logger.d { "[markMessagesAsDelivered] Processing delivery receipts for ${messages.size} messages…" }
 
-        val currentUser = getCurrentUser() ?: run {
-            logger.w { "[markMessagesAsDelivered] Cannot send delivery receipts: current user is null" }
-            return
-        }
-
-        // Check if delivery receipts are enabled for the current user
-        if (!currentUser.isDeliveryReceiptsEnabled) {
-            logger.w { "[markMessagesAsDelivered] Delivery receipts disabled for user ${currentUser.id}" }
-            return
-        }
-
-        // Filter out messages that shouldn't have delivery receipts sent
-        val filteredMessages = messages.filter { message ->
-            shouldSendDeliveryReceipt(currentUserId = currentUser.id, message = message)
-        }
-        if (filteredMessages.size != messages.size) {
-            logger.d {
-                "[markMessagesAsDelivered] " +
-                    "Skipping delivery receipts for ${messages.size - filteredMessages.size} messages"
-            }
-        }
-
-        if (filteredMessages.isEmpty()) {
-            logger.w { "[markMessagesAsDelivered] No receipts to send" }
-            return
-        }
-
         scope.launch {
-            val receipts = filteredMessages.map { message -> message.toDeliveryReceipt() }
+            val receipts = messages.map { message -> message.toDeliveryReceipt() }
             messageReceiptRepository.upsertMessageReceipts(receipts)
 
-            logger.d { "[markMessagesAsDelivered] ${filteredMessages.size} delivery receipts upserted" }
+            logger.d { "[markMessagesAsDelivered] ${messages.size} delivery receipts upserted" }
         }
     }
 
-    private fun getUndeliveredMessage(channel: Channel): Message? {
+    private fun canMarkMessageAsDelivered(
+        currentUser: User,
+        channel: Channel,
+        message: Message,
+    ): Boolean {
+        // Check if delivery events are enabled for the channel
         if (!channel.config.deliveryEventsEnabled) {
-            logger.w { "[getUndeliveredMessage] Delivery events disabled for channel ${channel.cid}" }
-            return null
-        }
-        val currentUser = getCurrentUser() ?: run {
-            logger.w { "[getUndeliveredMessage] Cannot get undelivered message: current user is null" }
-            return null
-        }
-        val userRead = channel.userRead(currentUser.id) ?: return null
-        // Get the last non-deleted message in the channel
-        val lastMessage = channel.lastMessage ?: return null
-        val createdAt = lastMessage.getCreatedAtOrThrow()
-        // Check if the last message is already marked as read
-        if (createdAt <= userRead.lastRead) return null
-        // Check if the last message is already marked as delivered
-        if (createdAt <= (userRead.lastDeliveredAt ?: NEVER)) return null
-
-        return lastMessage
-    }
-
-    private fun shouldSendDeliveryReceipt(currentUserId: UserId, message: Message): Boolean {
-        // Don't send delivery receipts for messages sent by the current user
-        if (message.user.id == currentUserId) {
+            logger.w { "[canMarkMessageAsDelivered] Delivery events disabled for channel ${channel.cid}" }
             return false
         }
 
-        // Don't send delivery receipts for system messages
+        // Do not send delivery receipts for messages sent by the current user
+        if (message.user.id == currentUser.id) {
+            logger.w {
+                "[canMarkMessageAsDelivered] Message ${message.id} was sent by the current user ${currentUser.id}"
+            }
+            return false
+        }
+
+        // Do not send delivery receipts for system messages
         if (message.type == MessageType.SYSTEM) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is a system message" }
             return false
         }
 
-        // Don't send delivery receipts for deleted messages
+        // Do not send delivery receipts for deleted messages
         if (message.isDeleted()) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is deleted" }
+            return false
+        }
+
+        val userRead = channel.userRead(currentUser.id) ?: run {
+            logger.w {
+                "[canMarkMessageAsDelivered] No read state for user ${currentUser.id} in channel ${channel.cid}"
+            }
+            return false
+        }
+
+        val createdAt = message.getCreatedAtOrThrow()
+
+        // Check if the last message is already marked as read
+        if (createdAt <= userRead.lastRead) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is already marked as read" }
+            return false
+        }
+
+        // Check if the last message is already marked as delivered
+        if (createdAt <= (userRead.lastDeliveredAt ?: NEVER)) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is already marked as delivered" }
             return false
         }
 

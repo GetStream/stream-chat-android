@@ -338,7 +338,9 @@ internal constructor(
         scope = userScope,
         now = now,
         getCurrentUser = ::getCurrentUser,
+        channelRepository = repositoryFacade,
         messageReceiptRepository = repository,
+        api = api,
     )
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
@@ -463,7 +465,7 @@ internal constructor(
 
             is NewMessageEvent -> {
                 notifications.onChatEvent(event)
-                messageReceiptManager.markMessagesAsDelivered(messages = listOf(event.message))
+                messageReceiptManager.markMessageAsDelivered(event.message)
             }
 
             is NotificationReminderDueEvent -> notifications.onChatEvent(event)

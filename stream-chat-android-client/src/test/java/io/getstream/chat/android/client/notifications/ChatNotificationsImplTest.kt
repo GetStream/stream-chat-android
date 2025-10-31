@@ -66,13 +66,11 @@ internal class ChatNotificationsImplTest {
 
         sut.onPushMessage(pushMessage)
 
-        val messages = listOf(
-            Message(
-                id = pushMessage.messageId,
-                cid = "${pushMessage.channelType}:${pushMessage.channelId}",
-            ),
+        val message = Message(
+            id = pushMessage.messageId,
+            cid = "${pushMessage.channelType}:${pushMessage.channelId}",
         )
-        fixture.verifyMarkMessagesAsDeliveredCalled(messages)
+        fixture.verifyMarkMessageAsDeliveredCalled(message)
     }
 
     @Test
@@ -131,8 +129,8 @@ internal class ChatNotificationsImplTest {
             notificationConfig = config
         }
 
-        fun verifyMarkMessagesAsDeliveredCalled(messages: List<Message>) {
-            verify(mockMessageReceiptManager).markMessagesAsDelivered(messages)
+        fun verifyMarkMessageAsDeliveredCalled(message: Message) {
+            verify(mockMessageReceiptManager).markMessageAsDelivered(message)
         }
 
         fun get(): ChatNotificationsImpl {
