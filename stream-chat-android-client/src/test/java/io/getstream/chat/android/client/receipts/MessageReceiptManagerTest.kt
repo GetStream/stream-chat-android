@@ -30,8 +30,6 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -345,7 +343,6 @@ internal class MessageReceiptManagerTest {
         }
 
         fun get() = MessageReceiptManager(
-            scope = CoroutineScope(UnconfinedTestDispatcher()),
             now = { Now },
             getCurrentUser = getCurrentUser,
             channelRepository = mockChannelRepository,

@@ -29,6 +29,8 @@ import io.getstream.chat.android.client.randomPushMessage
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -36,6 +38,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
 
@@ -130,7 +133,7 @@ internal class ChatNotificationsImplTest {
         }
 
         fun verifyMarkMessageAsDeliveredCalled(message: Message) {
-            verify(mockMessageReceiptManager).markMessageAsDelivered(message)
+            verifyBlocking(mockMessageReceiptManager) { markMessageAsDelivered(message) }
         }
 
         fun get(): ChatNotificationsImpl {
@@ -141,7 +144,7 @@ internal class ChatNotificationsImplTest {
                 handler = mockNotificationHandler,
                 notificationConfig = notificationConfig,
                 context = context,
-                scope = mock(),
+                scope = CoroutineScope(UnconfinedTestDispatcher()),
                 chatClientProvider = { mockChatClient },
             )
         }

@@ -335,7 +335,6 @@ internal constructor(
     private var _repositoryFacade: RepositoryFacade? = null
 
     internal val messageReceiptManager = MessageReceiptManager(
-        scope = userScope,
         now = now,
         getCurrentUser = ::getCurrentUser,
         channelRepository = repositoryFacade,

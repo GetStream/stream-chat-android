@@ -114,7 +114,7 @@ internal class ChatNotificationsImpl(
             id = pushMessage.messageId,
             cid = "${pushMessage.channelType}:${pushMessage.channelId}",
         )
-        chatClient.messageReceiptManager.markMessageAsDelivered(message)
+        scope.launch { chatClient.messageReceiptManager.markMessageAsDelivered(message) }
 
         if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(pushMessage)) {
             handlePushMessage(pushMessage)

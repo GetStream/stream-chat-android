@@ -27,7 +27,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyBlocking
 import org.mockito.verification.VerificationMode
 
 internal class MessageDeliveredPluginTest {
@@ -109,7 +109,9 @@ internal class MessageDeliveredPluginTest {
             mode: VerificationMode = times(1),
             channels: List<Channel>? = null,
         ) {
-            verify(mockMessageReceiptManager, mode).markChannelsAsDelivered(channels ?: any())
+            verifyBlocking(mockMessageReceiptManager, mode) {
+                markChannelsAsDelivered(channels ?: any())
+            }
         }
 
         fun get() = MessageDeliveredPlugin(

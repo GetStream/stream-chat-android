@@ -31,8 +31,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
@@ -40,7 +38,6 @@ import java.util.Date
  * for later reporting to the server.
  */
 internal class MessageReceiptManager(
-    private val scope: CoroutineScope,
     private val now: () -> Date,
     private val getCurrentUser: () -> User?,
     private val channelRepository: ChannelRepository,
@@ -64,7 +61,7 @@ internal class MessageReceiptManager(
      * - Is not yet marked as read by the current user
      * - Is not yet marked as delivered by the current user
      */
-    fun markChannelsAsDelivered(channels: List<Channel>) {
+    suspend fun markChannelsAsDelivered(channels: List<Channel>) {
         val currentUser = getCurrentUser() ?: run {
             logger.w { "[markChannelsAsDelivered] Current user is null" }
             return
@@ -86,7 +83,7 @@ internal class MessageReceiptManager(
      *
      * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
      */
-    fun markMessageAsDelivered(message: Message) {
+    suspend fun markMessageAsDelivered(message: Message) {
         val currentUser = getCurrentUser() ?: run {
             logger.w { "[markMessageAsDelivered] Current user is null" }
             return
@@ -94,15 +91,13 @@ internal class MessageReceiptManager(
 
         if (!currentUser.isDeliveryReceiptsEnabled) return
 
-        scope.launch {
-            val channel = getChannel(message.cid) ?: run {
-                logger.w { "[markMessageAsDelivered] Channel ${message.cid} not found" }
-                return@launch
-            }
+        val channel = getChannel(message.cid) ?: run {
+            logger.w { "[markMessageAsDelivered] Channel ${message.cid} not found" }
+            return
+        }
 
-            if (canMarkMessageAsDelivered(currentUser, channel, message)) {
-                markMessagesAsDelivered(messages = listOf(message))
-            }
+        if (canMarkMessageAsDelivered(currentUser, channel, message)) {
+            markMessagesAsDelivered(messages = listOf(message))
         }
     }
 
@@ -115,7 +110,7 @@ internal class MessageReceiptManager(
                     .await().getOrNull()
             }
 
-    private fun markMessagesAsDelivered(messages: List<Message>) {
+    private suspend fun markMessagesAsDelivered(messages: List<Message>) {
         if (messages.isEmpty()) {
             logger.w { "[markMessagesAsDelivered] No receipts to send" }
             return
@@ -123,12 +118,10 @@ internal class MessageReceiptManager(
 
         logger.d { "[markMessagesAsDelivered] Processing delivery receipts for ${messages.size} messages…" }
 
-        scope.launch {
-            val receipts = messages.map { message -> message.toDeliveryReceipt() }
-            messageReceiptRepository.upsertMessageReceipts(receipts)
+        val receipts = messages.map { message -> message.toDeliveryReceipt() }
+        messageReceiptRepository.upsertMessageReceipts(receipts)
 
-            logger.d { "[markMessagesAsDelivered] ${messages.size} delivery receipts upserted" }
-        }
+        logger.d { "[markMessagesAsDelivered] ${messages.size} delivery receipts upserted" }
     }
 
     private fun canMarkMessageAsDelivered(

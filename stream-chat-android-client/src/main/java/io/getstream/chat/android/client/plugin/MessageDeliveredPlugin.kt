@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 
 /**
  * A plugin that marks messages as delivered when channels are queried.
@@ -34,7 +35,7 @@ internal class MessageDeliveredPlugin(
 ) : Plugin {
 
     override suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest) {
-        result.onSuccess { channels ->
+        result.onSuccessSuspend { channels ->
             messageReceiptManager.markChannelsAsDelivered(channels)
         }
     }
@@ -45,7 +46,7 @@ internal class MessageDeliveredPlugin(
         channelId: String,
         request: QueryChannelRequest,
     ) {
-        result.onSuccess { channel ->
+        result.onSuccessSuspend { channel ->
             if (request.pagination() == null) { // only mark as delivered on initial load
                 messageReceiptManager.markChannelsAsDelivered(channels = listOf(channel))
             }
