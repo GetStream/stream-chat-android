@@ -25,10 +25,8 @@ import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.userRead
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import java.util.Date
@@ -56,8 +54,8 @@ internal class MessageReceiptManager(
      *
      * A delivery message candidate is the last non-deleted message in the channel that:
      * - It was not sent by the current user
-     * - It is not a system message
-     * - It is not deleted
+     * - Is not shadow banned
+     * - Was not sent by a muted user
      * - Is not yet marked as read by the current user
      * - Is not yet marked as delivered by the current user
      */
@@ -162,15 +160,15 @@ internal class MessageReceiptManager(
             return false
         }
 
-        // Do not send delivery receipts for system messages
-        if (message.type == MessageType.SYSTEM) {
-            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is a system message" }
+        // Do not send delivery receipts for shadowed messages
+        if (message.shadowed) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is shadowed" }
             return false
         }
 
-        // Do not send delivery receipts for deleted messages
-        if (message.isDeleted()) {
-            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is deleted" }
+        // Do not send delivery receipts for messages sent by muted users
+        if (currentUser.mutes.any { mute -> mute.target?.id == message.user.id }) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} was sent by a muted user ${message.user.id}" }
             return false
         }
 

@@ -27,6 +27,7 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
@@ -188,8 +189,8 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
-    fun `should skip storing message delivery receipt from system messages`() = runTest {
-        val message = DeliverableMessage.copy(type = "system")
+    fun `should skip storing message delivery receipt from shadow banned messages`() = runTest {
+        val message = DeliverableMessage.copy(shadowed = true)
         val fixture = Fixture()
         val sut = fixture.get()
 
@@ -199,9 +200,13 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
-    fun `should skip storing message delivery receipt from deleted messages`() = runTest {
-        val message = DeliverableMessage.copy(deletedAt = Date())
+    fun `should skip storing message delivery receipt from muted users`() = runTest {
+        val message = DeliverableMessage
+        val currentUser = CurrentUser.copy(
+            mutes = listOf(randomMute(user = CurrentUser, target = message.user))
+        )
         val fixture = Fixture()
+            .givenCurrentUser(currentUser)
         val sut = fixture.get()
 
         sut.markMessageAsDelivered(message)
