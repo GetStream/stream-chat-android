@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.userRead
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Channel
@@ -40,7 +40,7 @@ import java.util.Date
 internal class MessageReceiptManager(
     private val now: () -> Date,
     private val getCurrentUser: () -> User?,
-    private val channelRepository: ChannelRepository,
+    private val repositoryFacade: RepositoryFacade,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
 ) {
@@ -91,7 +91,7 @@ internal class MessageReceiptManager(
 
         if (!currentUser.isDeliveryReceiptsEnabled) return
 
-        val channel = getChannel(message.cid) ?: run {
+        val channel = retrieveChannel(message.cid) ?: run {
             logger.w { "[markMessageAsDelivered] Channel ${message.cid} not found" }
             return
         }
@@ -101,14 +101,33 @@ internal class MessageReceiptManager(
         }
     }
 
-    private suspend fun getChannel(cid: String): Channel? =
-        channelRepository.selectChannel(cid)
-            ?: run {
-                val (channelType, channelId) = cid.cidToTypeAndId()
-                val request = QueryChannelRequest()
-                api.queryChannel(channelType, channelId, request)
-                    .await().getOrNull()
-            }
+    /**
+     * Request to mark the message with the given id as delivered.
+     *
+     * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
+     */
+    suspend fun markMessageAsDelivered(messageId: String) {
+        val message = retrieveMessage(messageId) ?: run {
+            logger.w { "[markMessageAsDelivered] Message $messageId not found" }
+            return
+        }
+
+        markMessageAsDelivered(message)
+    }
+
+    private suspend fun retrieveChannel(cid: String): Channel? =
+        repositoryFacade.selectChannel(cid) ?: run {
+            val (channelType, channelId) = cid.cidToTypeAndId()
+            val request = QueryChannelRequest()
+            api.queryChannel(channelType, channelId, request)
+                .await().getOrNull()
+        }
+
+    private suspend fun retrieveMessage(id: String): Message? =
+        repositoryFacade.selectMessage(id) ?: run {
+            api.getMessage(id)
+                .await().getOrNull()
+        }
 
     private suspend fun markMessagesAsDelivered(messages: List<Message>) {
         if (messages.isEmpty()) {

@@ -338,7 +338,7 @@ internal constructor(
         MessageReceiptManager(
             now = now,
             getCurrentUser = ::getCurrentUser,
-            channelRepository = repositoryFacade,
+            repositoryFacade = repositoryFacade,
             messageReceiptRepository = repository,
             api = api,
         )

@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
@@ -110,11 +109,7 @@ internal class ChatNotificationsImpl(
 
         pushNotificationReceivedListener.onPushNotificationReceived(pushMessage.channelType, pushMessage.channelId)
 
-        val message = Message(
-            id = pushMessage.messageId,
-            cid = "${pushMessage.channelType}:${pushMessage.channelId}",
-        )
-        scope.launch { chatClient.messageReceiptManager.markMessageAsDelivered(message) }
+        scope.launch { chatClient.messageReceiptManager.markMessageAsDelivered(pushMessage.messageId) }
 
         if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(pushMessage)) {
             handlePushMessage(pushMessage)

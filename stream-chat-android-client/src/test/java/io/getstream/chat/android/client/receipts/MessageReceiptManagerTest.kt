@@ -20,7 +20,7 @@ import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistence.repository.MessageReceiptRepository
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
@@ -64,10 +64,10 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
-    fun `store message delivery receipt when channel is found from API`() = runTest {
+    fun `fetch channel from API when channel is not found from repository`() = runTest {
         val message = DeliverableMessage
         val fixture = Fixture()
-            .givenChannelNotFromRepository()
+            .givenChannelNotFoundFromRepository()
         val sut = fixture.get()
 
         sut.markMessageAsDelivered(message)
@@ -84,10 +84,43 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
+    fun `fetch message from API when message is not found from repository`() = runTest {
+        val message = DeliverableMessage
+        val fixture = Fixture()
+            .givenMessageNotFoundFromRepository()
+        val sut = fixture.get()
+
+        sut.markMessageAsDelivered(messageId = message.id)
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = message.id,
+                type = MessageReceipt.TYPE_DELIVERY,
+                createdAt = Now,
+                cid = message.cid,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+    }
+
+    @Test
+    fun `should skip storing message delivery receipt when message is not found`() = runTest {
+        val message = DeliverableMessage
+        val fixture = Fixture()
+            .givenMessageNotFoundFromRepository()
+            .givenMessageNotFoundFromApi()
+        val sut = fixture.get()
+
+        sut.markMessageAsDelivered(messageId = message.id)
+
+        fixture.verifyUpsertMessageReceiptsCalled(never())
+    }
+
+    @Test
     fun `should skip storing message delivery receipt when channel is not found`() = runTest {
         val message = DeliverableMessage
         val fixture = Fixture()
-            .givenChannelNotFromRepository()
+            .givenChannelNotFoundFromRepository()
             .givenChannelNotFoundFromApi()
         val sut = fixture.get()
 
@@ -301,8 +334,9 @@ internal class MessageReceiptManagerTest {
 
     private class Fixture {
         private var getCurrentUser: () -> User? = { CurrentUser }
-        private val mockChannelRepository = mock<ChannelRepository> {
+        private val mockRepositoryFacade = mock<RepositoryFacade> {
             onBlocking { selectChannel(DeliverableChannel.cid) } doReturn DeliverableChannel
+            onBlocking { selectMessage(DeliverableMessage.id) } doReturn DeliverableMessage
         }
         private val mockMessageReceiptRepository = mock<MessageReceiptRepository>()
         private val mockChatApi = mock<ChatApi> {
@@ -313,14 +347,19 @@ internal class MessageReceiptManagerTest {
                     query = any(),
                 )
             } doReturn DeliverableChannel.asCall()
+            on { getMessage(messageId = DeliverableMessage.id) } doReturn DeliverableMessage.asCall()
         }
 
         fun givenCurrentUser(user: User?) = apply {
             getCurrentUser = { user }
         }
 
-        fun givenChannelNotFromRepository() = apply {
-            wheneverBlocking { mockChannelRepository.selectChannel(cid = any()) } doReturn null
+        fun givenChannelNotFoundFromRepository() = apply {
+            wheneverBlocking { mockRepositoryFacade.selectChannel(cid = any()) } doReturn null
+        }
+
+        fun givenMessageNotFoundFromRepository() = apply {
+            wheneverBlocking { mockRepositoryFacade.selectMessage(messageId = any()) } doReturn null
         }
 
         fun givenChannelNotFoundFromApi() = apply {
@@ -331,6 +370,10 @@ internal class MessageReceiptManagerTest {
                     query = any(),
                 )
             } doReturn mock<Error>().asCall()
+        }
+
+        fun givenMessageNotFoundFromApi() = apply {
+            wheneverBlocking { mockChatApi.getMessage(messageId = any()) } doReturn mock<Error>().asCall()
         }
 
         fun verifyUpsertMessageReceiptsCalled(
@@ -345,7 +388,7 @@ internal class MessageReceiptManagerTest {
         fun get() = MessageReceiptManager(
             now = { Now },
             getCurrentUser = getCurrentUser,
-            channelRepository = mockChannelRepository,
+            repositoryFacade = mockRepositoryFacade,
             messageReceiptRepository = mockMessageReceiptRepository,
             api = mockChatApi,
         )

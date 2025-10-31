@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.randomPushMessage
 import io.getstream.chat.android.client.receipts.MessageReceiptManager
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -69,11 +68,7 @@ internal class ChatNotificationsImplTest {
 
         sut.onPushMessage(pushMessage)
 
-        val message = Message(
-            id = pushMessage.messageId,
-            cid = "${pushMessage.channelType}:${pushMessage.channelId}",
-        )
-        fixture.verifyMarkMessageAsDeliveredCalled(message)
+        fixture.verifyMarkMessageAsDeliveredCalled(messageId = pushMessage.messageId)
     }
 
     @Test
@@ -132,8 +127,8 @@ internal class ChatNotificationsImplTest {
             notificationConfig = config
         }
 
-        fun verifyMarkMessageAsDeliveredCalled(message: Message) {
-            verifyBlocking(mockMessageReceiptManager) { markMessageAsDelivered(message) }
+        fun verifyMarkMessageAsDeliveredCalled(messageId: String) {
+            verifyBlocking(mockMessageReceiptManager) { markMessageAsDelivered(messageId) }
         }
 
         fun get(): ChatNotificationsImpl {
