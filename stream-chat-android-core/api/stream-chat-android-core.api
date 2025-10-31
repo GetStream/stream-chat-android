@@ -499,6 +499,7 @@ public final class io/getstream/chat/android/models/ChannelCapabilities {
 	public static final field DELETE_ANY_MESSAGE Ljava/lang/String;
 	public static final field DELETE_CHANNEL Ljava/lang/String;
 	public static final field DELETE_OWN_MESSAGE Ljava/lang/String;
+	public static final field DELIVERY_EVENTS Ljava/lang/String;
 	public static final field FLAG_MESSAGE Ljava/lang/String;
 	public static final field FREEZE_CHANNEL Ljava/lang/String;
 	public static final field INSTANCE Lio/getstream/chat/android/models/ChannelCapabilities;
