@@ -51,6 +51,11 @@ public data class Config(
     val readEventsEnabled: Boolean = true,
 
     /**
+     *  Determines if events are fired for message deliveries. Enabled by default.
+     */
+    val deliveryEventsEnabled: Boolean = true,
+
+    /**
      * Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
      */
     val connectEventsEnabled: Boolean = true,

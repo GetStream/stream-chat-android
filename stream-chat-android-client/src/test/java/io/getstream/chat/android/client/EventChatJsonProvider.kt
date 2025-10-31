@@ -691,6 +691,7 @@ private fun createConfigJsonString() =
           "name": "team",
           "typing_events": true,
           "read_events": true,
+          "delivery_events": true,
           "connect_events": true,
           "search": true,
           "reactions": true,

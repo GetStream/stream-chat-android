@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
@@ -195,6 +196,17 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+    }
+
+    @Test
+    fun `should skip storing channel delivery receipts when delivery events are disabled`() = runTest {
+        val channel = randomChannel(config = randomConfig(deliveryEventsEnabled = false))
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        sut.markChannelsAsDelivered(channels = listOf(channel))
+
+        fixture.verifyUpsertMessageReceiptsCalled(never())
     }
 
     @Test

@@ -112,6 +112,10 @@ internal class MessageReceiptManager(
     }
 
     private fun getUndeliveredMessage(channel: Channel): Message? {
+        if (!channel.config.deliveryEventsEnabled) {
+            logger.w { "[getUndeliveredMessage] Delivery events disabled for channel ${channel.cid}" }
+            return null
+        }
         val currentUser = getCurrentUser() ?: run {
             logger.w { "[getUndeliveredMessage] Cannot get undelivered message: current user is null" }
             return null
