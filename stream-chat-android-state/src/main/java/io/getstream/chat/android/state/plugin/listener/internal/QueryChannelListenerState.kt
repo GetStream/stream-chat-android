@@ -76,9 +76,6 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
             "[onQueryChannelResult] cid: $channelType:$channelId, " +
                 "request: $request, result: ${result.stringify { it.cid }}"
         }
-        val channelStateLogic = logic.channel(channelType, channelId).stateLogic
-
-        result.onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }
-            .onError(channelStateLogic::propagateQueryError)
+        logic.channel(channelType, channelId).onQueryChannelResult(request, result)
     }
 }
