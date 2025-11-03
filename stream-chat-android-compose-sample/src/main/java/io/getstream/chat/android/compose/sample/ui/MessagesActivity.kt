@@ -58,12 +58,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
+import io.getstream.chat.android.compose.sample.ui.component.StickyPinnedMessagesSubheader
 import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -78,6 +80,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
@@ -191,6 +194,22 @@ class MessagesActivity : ComponentActivity() {
                 reactionSorting = ReactionSortingByLastReactionAt,
                 onBackPressed = { finish() },
                 onHeaderTitleClick = ::openChannelInfo,
+                topBarContent = {
+                    Column {
+                        MessageListHeader(
+                            modifier = Modifier.height(56.dp),
+                            channel = listViewModel.channel,
+                            currentUser = listViewModel.user.collectAsStateWithLifecycle().value,
+                            connectionState = listViewModel.connectionState.collectAsState().value,
+                            typingUsers = listViewModel.typingUsers,
+                            messageMode = listViewModel.messageMode,
+                            onBackPressed = ::finish,
+                            onHeaderTitleClick = ::openChannelInfo,
+                            onChannelAvatarClick = null,
+                        )
+                        StickyPinnedMessagesSubheader(listViewModel)
+                    }
+                },
                 onMessageLinkClick = { _, link ->
                     openLink(link)
                 },
