@@ -122,6 +122,7 @@
     </plurals>
 
     <string name="message_option_delete_for_me">Delete Message For Me</string>
+    <string name="message_option_message_info">Message Info</string>
 
     <!-- Channel Attachments -->
     <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
