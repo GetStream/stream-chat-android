@@ -51,7 +51,8 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -157,8 +158,8 @@ internal class ChatClientTest {
         val channelId = randomString()
         val channelClient = client.channel(channelType, channelId)
 
-        channelClient.channelType shouldBeEqualTo channelType
-        channelClient.channelId shouldBeEqualTo channelId
+        assertEquals(channelType, channelClient.channelType)
+        assertEquals(channelId, channelClient.channelId)
     }
 
     @Test
@@ -167,8 +168,8 @@ internal class ChatClientTest {
         val channelClient = client.channel(cid)
 
         val (type, id) = cid.cidToTypeAndId()
-        channelClient.channelType shouldBeEqualTo type
-        channelClient.channelId shouldBeEqualTo id
+        assertEquals(type, channelClient.channelType)
+        assertEquals(id, channelClient.channelId)
     }
 
     @Test
@@ -179,7 +180,7 @@ internal class ChatClientTest {
 
         fakeChatSocket.mockEventReceived(eventB)
 
-        result shouldBeEqualTo listOf(eventB)
+        assertEquals(listOf(eventB), result)
     }
 
     @Test
@@ -192,7 +193,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventB)
         fakeChatSocket.mockEventReceived(eventC)
 
-        result shouldBeEqualTo listOf(eventA, eventB, eventC)
+        assertEquals(listOf(eventA, eventB, eventC), result)
     }
 
     @Test
@@ -207,7 +208,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventE)
         fakeChatSocket.mockEventReceived(eventD)
 
-        result shouldBeEqualTo listOf(eventD, eventF, eventD)
+        assertEquals(listOf(eventD, eventF, eventD), result)
     }
 
     @Test
@@ -220,7 +221,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventB)
         fakeChatSocket.mockEventReceived(eventC)
 
-        result shouldBeEqualTo listOf(eventA, eventC)
+        assertEquals(listOf(eventA, eventC), result)
     }
 
     @Test
@@ -233,7 +234,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventB)
         fakeChatSocket.mockEventReceived(eventC)
 
-        result shouldBeEqualTo listOf(eventA, eventC)
+        assertEquals(listOf(eventA, eventC), result)
     }
 
     @Test
@@ -246,7 +247,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventD)
         fakeChatSocket.mockEventReceived(eventC)
 
-        result shouldBeEqualTo listOf(eventD)
+        assertEquals(listOf(eventD), result)
     }
 
     @Test
@@ -260,7 +261,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventD)
         fakeChatSocket.mockEventReceived(eventE)
 
-        result shouldBeEqualTo listOf(eventD)
+        assertEquals(listOf(eventD), result)
     }
 
     @Test
@@ -273,7 +274,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventD)
         fakeChatSocket.mockEventReceived(eventE)
 
-        result shouldBeEqualTo listOf(eventD)
+        assertEquals(listOf(eventD), result)
     }
 
     @Test
@@ -289,7 +290,7 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(eventB)
         fakeChatSocket.mockEventReceived(eventC)
 
-        result shouldBeEqualTo listOf(eventA)
+        assertEquals(listOf(eventA), result)
     }
 
     @Test
@@ -301,7 +302,7 @@ internal class ChatClientTest {
 
         fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(user = updateUser))
 
-        client.getCurrentUser() shouldBeEqualTo updateUser
+        assertEquals(updateUser, client.getCurrentUser())
     }
 
     @Test
@@ -335,7 +336,7 @@ internal class ChatClientTest {
         fakeChatSocket.verifySocketFactory {
             verify(it, times(1)).createSocket(any())
         }
-        client.clientState.connectionState.value shouldBeEqualTo ConnectionState.Offline
+        assertEquals(ConnectionState.Offline, client.clientState.connectionState.value)
     }
 
     @Test
@@ -363,12 +364,15 @@ internal class ChatClientTest {
         val result = client.reconnectSocket().await()
 
         /* Then */
-        result shouldBeEqualTo Result.Failure(
-            value = Error.GenericError(message = "Invalid user state NotSet without user being set!"),
+        assertEquals(
+            Result.Failure(
+                value = Error.GenericError(message = "Invalid user state NotSet without user being set!"),
+            ),
+            result,
         )
-        client.getCurrentUser() shouldBeEqualTo null
-        client.clientState.user.value shouldBeEqualTo null
-        client.clientState.connectionState.value shouldBeEqualTo ConnectionState.Offline
-        client.clientState.initializationState.value shouldBeEqualTo InitializationState.NOT_INITIALIZED
+        assertNull(client.getCurrentUser())
+        assertNull(client.clientState.user.value)
+        assertEquals(ConnectionState.Offline, client.clientState.connectionState.value)
+        assertEquals(InitializationState.NOT_INITIALIZED, client.clientState.initializationState.value)
     }
 }
