@@ -144,7 +144,7 @@ public fun Channel.userRead(userId: UserId): ChannelUserRead? =
 public fun Channel.readsOf(message: Message): List<ChannelUserRead> =
     read.filter { read ->
         read.user.id != message.user.id &&
-            read.lastRead > message.getCreatedAtOrThrow()
+            read.lastRead >= message.getCreatedAtOrThrow()
     }
 
 /**
@@ -161,5 +161,5 @@ public fun Channel.readsOf(message: Message): List<ChannelUserRead> =
 public fun Channel.deliveredReadsOf(message: Message): List<ChannelUserRead> =
     read.filter { read ->
         read.user.id != message.user.id &&
-            (read.lastDeliveredAt ?: NEVER) > message.getCreatedAtOrThrow()
+            (read.lastDeliveredAt ?: NEVER) >= message.getCreatedAtOrThrow()
     }
