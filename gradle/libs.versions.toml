@@ -1,4 +1,8 @@
 [versions]
+compileSdk = "35"
+targetSdk = "34"
+sampleTargetSdk = "35"
+minSdk = "21"
 allureKotlin = "2.4.0"
 androidGradlePlugin = "8.8.0"
 androidJunit5GradlePlugin = "1.11.2.0"
@@ -78,6 +82,7 @@ shimmerCompose = "1.3.1"
 shot = "6.1.0"
 sonarqube = "6.0.1.5171"
 spotless = "6.20.0"
+streamConventions = "0.2.0"
 streamLog = "1.3.2"
 streamPush = "1.3.1"
 streamResult = "1.3.2"
@@ -244,5 +249,8 @@ nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "g
 shot = { id = "shot", version.ref = "shot"}
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube"}
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless"}
+stream-android-library = { id = "io.getstream.android.library", version.ref = "streamConventions" }
+stream-android-application = { id = "io.getstream.android.application", version.ref = "streamConventions" }
+stream-java-library = { id = "io.getstream.java.library", version.ref = "streamConventions" }
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi"}
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}

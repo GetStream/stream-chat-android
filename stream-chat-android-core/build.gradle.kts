@@ -1,9 +1,8 @@
 import io.getstream.chat.android.Configuration
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("java-library")
+    alias(libs.plugins.stream.java.library)
     id("java-test-fixtures")
     id("kotlin")
 }
@@ -16,8 +15,6 @@ rootProject.extra.apply {
 
 apply(from = "$rootDir/scripts/publish-module.gradle")
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
     withSourcesJar()
 }
 
@@ -36,7 +33,6 @@ tasks.withType<KotlinCompile>().configureEach {
                 "-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi",
             ),
         )
-        jvmTarget.set(JvmTarget.JVM_11)
     }
 }
 

@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.junit5)
@@ -17,7 +17,6 @@ rootProject.extra.apply {
 }
 
 apply(from = "$rootDir/scripts/publish-module.gradle")
-apply(from = "$rootDir/scripts/android.gradle")
 
 android {
     namespace = "io.getstream.chat.android.offline"
