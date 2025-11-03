@@ -160,6 +160,13 @@ internal class ChannelLogicLegacyImpl(
         }
     }
 
+    override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
+        when (result) {
+            is Result.Success -> channelStateLogic.propagateChannelQuery(result.value, query)
+            is Result.Failure -> channelStateLogic.propagateQueryError(result.value)
+        }
+    }
+
     override suspend fun watch(limit: Int, userPresence: Boolean): Result<Channel> {
         logger.i { "[watch] limit: $limit, userPresence: $userPresence" }
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API

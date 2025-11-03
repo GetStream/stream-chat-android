@@ -62,6 +62,14 @@ internal interface ChannelLogic {
     fun setPaginationDirection(query: QueryChannelRequest)
 
     /**
+     * Handles the result of a query channel request.
+     *
+     * @param query The [QueryChannelRequest] that was used for the request.
+     * @param result The [Result] of the query channel request containing the resulting channel data.
+     */
+    fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>)
+
+    /**
      * Loads the channel with the latest [limit] messages and starts watching it.
      * TODO: Rethink the naming
      *
