@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.sample.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -97,6 +98,14 @@ class UserProfileViewModel(
                         .onError(::onError)
                 }
                 .onError(::onError)
+        }
+    }
+
+    fun updatePrivacySettings(settings: PrivacySettings) {
+        viewModelScope.launch {
+            val user = state.value.user!!
+            chatClient.updateUser(user = user.copy(privacySettings = settings))
+                .await()
         }
     }
 

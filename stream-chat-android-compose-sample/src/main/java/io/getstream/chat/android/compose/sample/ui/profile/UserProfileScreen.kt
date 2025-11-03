@@ -152,6 +152,9 @@ fun UserProfileScreen(
             onUpdateProfilePictureClick = {
                 modalSheet = ModalSheet.UpdateProfilePicture
             },
+            onUpdatePrivacySettingsClick = {
+                modalSheet = ModalSheet.UpdatePrivacySettings
+            },
         )
     }
     when (modalSheet) {
@@ -202,6 +205,21 @@ fun UserProfileScreen(
             )
         }
 
+        ModalSheet.UpdatePrivacySettings -> ModalBottomSheet(
+            onDismissRequest = { modalSheet = null },
+            containerColor = ChatTheme.colors.appBackground,
+        ) {
+            state.user?.let { user ->
+                UserProfilePrivacySettingsScreen(
+                    privacySettings = user.privacySettings,
+                    onSaveClick = { settings ->
+                        modalSheet = null
+                        viewModel.updatePrivacySettings(settings)
+                    },
+                )
+            }
+        }
+
         null -> Unit
     }
 
@@ -218,6 +236,7 @@ fun UserProfileScreen(
                     is UserProfileViewEvent.RemoveProfilePictureError,
                     ->
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+
                     is UserProfileViewEvent.UpdatePushPreferencesError -> {
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
                     }
@@ -284,9 +303,9 @@ private enum class ModalSheet {
     UnreadCounts,
     PushPreferences,
     UpdateProfilePicture,
+    UpdatePrivacySettings,
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
 @Composable
 private fun UserProfileScreenContent(
@@ -295,6 +314,7 @@ private fun UserProfileScreenContent(
     onUnreadCountsClick: () -> Unit = {},
     onPushPreferencesClick: () -> Unit = {},
     onUpdateProfilePictureClick: () -> Unit = {},
+    onUpdatePrivacySettingsClick: () -> Unit = {},
 ) {
     when (val user = state.user) {
         null -> {
@@ -359,57 +379,53 @@ private fun UserProfileScreenContent(
                     }
                     Divider()
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = null,
-                            indication = ripple(),
-                            onClick = onUnreadCountsClick,
-                        )
-                        .padding(start = 16.dp)
-                        .minimumInteractiveComponentSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Unread Counts",
-                        style = ChatTheme.typography.title3,
-                        color = ChatTheme.colors.textHighEmphasis,
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
+                NavigationItem(
+                    label = "Unread Counts",
+                    onClick = onUnreadCountsClick,
+                )
                 Divider()
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = null,
-                            indication = ripple(),
-                            onClick = onPushPreferencesClick,
-                        )
-                        .padding(start = 16.dp)
-                        .minimumInteractiveComponentSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Push Preferences",
-                        style = ChatTheme.typography.title3,
-                        color = ChatTheme.colors.textHighEmphasis,
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
+                NavigationItem(
+                    label = "Push Preferences",
+                    onClick = onPushPreferencesClick,
+                )
+                Divider()
+                NavigationItem(
+                    label = "Privacy Settings",
+                    onClick = onUpdatePrivacySettingsClick,
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun NavigationItem(
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = onClick,
+            )
+            .padding(start = 16.dp)
+            .minimumInteractiveComponentSize(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = ChatTheme.typography.title3,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis,
+        )
     }
 }
 
