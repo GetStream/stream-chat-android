@@ -311,6 +311,7 @@ internal class DomainMapping(
             image = image ?: "",
             role = role,
             invisible = invisible,
+            privacySettings = privacy_settings?.toDomain(),
             language = language ?: "",
             banned = banned,
             devices = devices.orEmpty().map { it.toDomain() },
