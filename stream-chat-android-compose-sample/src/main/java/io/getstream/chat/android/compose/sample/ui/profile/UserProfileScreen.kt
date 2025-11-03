@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,6 +80,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.component.PaneRow
+import io.getstream.chat.android.compose.sample.ui.component.PaneTitle
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -750,58 +751,6 @@ private fun LazyListScope.unreadChannelsByTeam(
             )
         }
     }
-}
-
-@Composable
-private fun PaneTitle(
-    text: String,
-    padding: PaddingValues = PaddingValues(
-        top = 24.dp,
-        start = 16.dp,
-        bottom = 8.dp,
-        end = 16.dp,
-    ),
-) {
-    Text(
-        modifier = Modifier.padding(padding),
-        text = text,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
-    )
-}
-
-@Composable
-private fun PaneRow(
-    index: Int,
-    lastIndex: Int,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .run {
-                val shape = when (index) {
-                    0 -> if (lastIndex == 0) {
-                        // Single item in the list
-                        RoundedCornerShape(12.dp)
-                    } else {
-                        // Top item in the list
-                        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-                    }
-                    // Bottom item in the list
-                    lastIndex -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-                    // Middle item in the list
-                    else -> RectangleShape
-                }
-                background(
-                    color = ChatTheme.colors.barsBackground,
-                    shape = shape,
-                )
-            }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        content = content,
-    )
 }
 
 @Composable
