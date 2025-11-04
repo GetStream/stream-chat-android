@@ -1,22 +1,16 @@
-import io.getstream.chat.android.Configuration
-
 plugins {
     alias(libs.plugins.android.test)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.androidx.baseline.profile)
 }
 
-apply {
-    from("$rootDir/scripts/android.gradle")
-}
-
 android {
     namespace = "io.getstream.chat.android.benchmark"
-    compileSdk = Configuration.compileSdk
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 24
-        targetSdk = Configuration.targetSdk
+        targetSdk = libs.versions.targetSdk.get().toInt()
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
         buildConfigField("String", "STREAM_CHAT_VERSION", "\"$version\"")

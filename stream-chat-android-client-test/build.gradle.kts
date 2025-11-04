@@ -1,11 +1,10 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    alias(libs.plugins.android.library)
+    alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
 }
 
-apply(from = "$rootDir/scripts/android.gradle")
 apply(from = "$rootDir/scripts/detekt-test.gradle")
 
 tasks.withType<KotlinCompile>().configureEach {
