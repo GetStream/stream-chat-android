@@ -68,6 +68,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `MessagesScreen` overlapping with itself when auto-scrolling to a message which is not loaded. [#5990](https://github.com/GetStream/stream-chat-android/pull/5990)
 
 ### ⬆️ Improved
 
