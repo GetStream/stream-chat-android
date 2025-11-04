@@ -136,7 +136,7 @@ internal class UnreadLabelCalculator {
             if (allUnreadMessagesAreFromCurrentUser) {
                 return null
             }
-            
+
             return calculateStandardUnreadLabel(
                 channelUserRead = channelUserRead,
                 unreadMessages = unreadMessages,
