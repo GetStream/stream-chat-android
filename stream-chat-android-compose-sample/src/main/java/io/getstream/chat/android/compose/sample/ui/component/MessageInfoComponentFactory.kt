@@ -189,11 +189,13 @@ private fun MessageInfoContent(
             items = reads,
             labelResId = R.string.message_info_read_by,
             skipTopPadding = true,
+            getDate = ChannelUserRead::lastRead,
         )
         // Delivered to section
         section(
             items = deliveredReads,
             labelResId = R.string.message_info_delivered_to,
+            getDate = ChannelUserRead::lastDeliveredAt,
         )
     }
 }
@@ -202,6 +204,7 @@ private fun LazyListScope.section(
     items: List<ChannelUserRead>,
     @StringRes labelResId: Int,
     skipTopPadding: Boolean = false,
+    getDate: (ChannelUserRead) -> Date?,
 ) {
     if (items.isNotEmpty()) {
         item {
@@ -226,7 +229,10 @@ private fun LazyListScope.section(
                 index = index,
                 lastIndex = items.lastIndex,
             ) {
-                ReadItem(userRead = item)
+                ReadItem(
+                    userRead = item,
+                    getDate = getDate,
+                )
             }
         }
     }
@@ -235,6 +241,7 @@ private fun LazyListScope.section(
 @Composable
 private fun ReadItem(
     userRead: ChannelUserRead,
+    getDate: (ChannelUserRead) -> Date?,
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -259,7 +266,7 @@ private fun ReadItem(
             )
 
             Timestamp(
-                date = userRead.lastDeliveredAt ?: userRead.lastRead,
+                date = getDate(userRead),
                 formatType = DateFormatType.RELATIVE,
             )
         }
