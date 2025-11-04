@@ -130,6 +130,6 @@
 
     <!-- Message Info -->
     <string name="message_info_read_by">READ BY (%d)</string>
-    <string name="message_info_delivered_to">DELIVERY TO (%d)</string>
+    <string name="message_info_delivered_to">DELIVERED TO (%d)</string>
 
 </resources>
