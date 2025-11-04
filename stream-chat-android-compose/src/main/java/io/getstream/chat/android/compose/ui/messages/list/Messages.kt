@@ -302,7 +302,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         if (focusedItemIndex != -1 &&
             !lazyListState.isScrollInProgress
         ) {
-            lazyListState.scrollToItem(focusedItemIndex, offset)
+            lazyListState.animateScrollToItem(focusedItemIndex, offset)
         }
     }
 
