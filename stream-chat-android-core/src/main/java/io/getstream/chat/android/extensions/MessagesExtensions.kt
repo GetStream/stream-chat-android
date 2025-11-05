@@ -32,5 +32,5 @@ public fun List<Message>.lastMessageAt(skipLastMsgUpdateForSystemMsgs: Boolean):
     .filterNot { it.shadowed }
     .filterNot { it.parentId != null && !it.showInChannel }
     .filterNot { it.type == MessageType.SYSTEM && skipLastMsgUpdateForSystemMsgs }
-    .maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
-    ?.let { it.createdAt ?: it.createdLocallyAt }
+    .maxByOrNull { it.createdLocallyAt ?: it.createdAt ?: Date(0) }
+    ?.let { it.createdLocallyAt ?: it.createdAt }

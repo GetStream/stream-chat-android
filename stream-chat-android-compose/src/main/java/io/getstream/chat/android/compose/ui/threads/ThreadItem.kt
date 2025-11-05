@@ -46,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
@@ -250,7 +251,7 @@ internal fun ThreadItemLatestReplyContent(
                     )
                     Timestamp(
                         modifier = Modifier.padding(start = 8.dp),
-                        date = latestReply.updatedAt ?: latestReply.createdAt ?: latestReply.createdLocallyAt,
+                        date = latestReply.updatedAt ?: latestReply.getCreatedAtOrNull(),
                     )
                 }
             }

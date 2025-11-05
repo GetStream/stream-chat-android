@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
+import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
@@ -79,7 +80,7 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     private fun renderDate(message: Message) {
-        binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
+        binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.getCreatedAtOrNull())
     }
 
     private fun renderMessage(message: Message) {

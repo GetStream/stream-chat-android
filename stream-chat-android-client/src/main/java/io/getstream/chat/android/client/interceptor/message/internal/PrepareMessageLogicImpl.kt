@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.interceptor.message.internal
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
@@ -66,7 +67,7 @@ internal class PrepareMessageLogicImpl(
             user = user,
             attachments = attachments,
             type = getMessageType(message),
-            createdLocallyAt = message.createdAt ?: message.createdLocallyAt ?: Date(),
+            createdLocallyAt = message.getCreatedAtOrDefault(Date()),
             syncStatus = when {
                 attachments.any { it.uploadState is Attachment.UploadState.Idle } -> SyncStatus.AWAITING_ATTACHMENTS
                 clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
