@@ -42,7 +42,6 @@
     <ID>MaxLineLength:StatePluginConfig.kt$StatePluginConfig$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
-    <ID>ReturnCount:SyncManager.kt$SyncManager$@VisibleForTesting internal suspend fun performSync(cids: List&lt;String>)</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
