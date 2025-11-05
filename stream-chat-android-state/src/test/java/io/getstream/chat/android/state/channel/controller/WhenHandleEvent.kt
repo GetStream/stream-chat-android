@@ -309,6 +309,86 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         verify(channelStateLogic).deletePoll(poll)
     }
 
+    // New message event with preserveCreatedLocallyAt
+    @Test
+    fun `when new message event arrives from current user, createdLocallyAt should be preserved`() = runTest {
+        val originalCreatedLocallyAt = Date(1000L)
+        val messageId = randomString()
+
+        // First, create a message from the current user with an original createdLocallyAt
+        val originalMessage = randomMessage(
+            id = messageId,
+            user = currentUser,
+            createdLocallyAt = originalCreatedLocallyAt,
+            silent = false,
+            showInChannel = true,
+        )
+        channelMutableState.setMessages(listOf(originalMessage))
+
+        // Then receive a new message event for the same message without createdLocallyAt
+        val updatedMessage = originalMessage.copy(
+            text = "Updated text",
+            createdLocallyAt = null,
+        )
+        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(updatedMessage)
+
+        val newMessageEvent = randomNewMessageEvent(
+            user = currentUser,
+            message = updatedMessage,
+        )
+
+        channelLogic.handleEvent(newMessageEvent)
+
+        // Verify that the message was upserted with the preserved createdLocallyAt
+        verify(channelStateLogic).upsertMessage(
+            org.mockito.kotlin.argThat { message ->
+                message.id == messageId &&
+                    message.text == "Updated text" &&
+                    message.createdLocallyAt == originalCreatedLocallyAt // Should preserve original
+            },
+        )
+    }
+
+    @Test
+    fun `when new message event arrives from other user, createdLocallyAt should not be preserved`() = runTest {
+        val originalCreatedLocallyAt = Date(1000L)
+        val messageId = randomString()
+        val otherUser = randomUser()
+
+        // First, create a message from another user with an original createdLocallyAt
+        val originalMessage = randomMessage(
+            id = messageId,
+            user = otherUser,
+            createdLocallyAt = originalCreatedLocallyAt,
+            silent = false,
+            showInChannel = true,
+        )
+        channelMutableState.setMessages(listOf(originalMessage))
+
+        // Then receive a new message event for the same message without createdLocallyAt
+        val updatedMessage = originalMessage.copy(
+            text = "Updated text",
+            createdLocallyAt = null,
+        )
+        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(updatedMessage)
+
+        val newMessageEvent = randomNewMessageEvent(
+            user = otherUser,
+            message = updatedMessage,
+        )
+
+        channelLogic.handleEvent(newMessageEvent)
+
+        // Verify that the message was upserted with the new createdLocallyAt
+        verify(channelStateLogic).upsertMessage(
+            org.mockito.kotlin.argThat { message ->
+                message.id == messageId &&
+                    message.text == "Updated text" &&
+                    message.createdLocallyAt == null // Should use new value
+            },
+        )
+    }
+
     private companion object {
         private const val CURRENT_USER_ID = "currentUserId"
     }
