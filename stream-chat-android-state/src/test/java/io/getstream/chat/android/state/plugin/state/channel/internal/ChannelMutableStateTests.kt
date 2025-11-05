@@ -18,6 +18,8 @@ package io.getstream.chat.android.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -558,6 +560,132 @@ internal class ChannelMutableStateTests {
         assertEquals(3, userMessages.size)
         // The order should match the original order in the map (which may not be chronological)
         assertEquals(listOf("msg1", "msg2", "msg3"), userMessages.map { it.id })
+    }
+
+    @Test
+    fun `markChannelAsRead should return true when lastReadMessageId matches lastMessage but unreadMessages greater than 0`() {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+            lastReadMessageId = lastMessage.id,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        assertEquals(readState, channelState.read.value)
+
+        val actual = channelState.markChannelAsRead()
+
+        assertEquals(true, actual)
+        assertEquals(lastMessage.createdAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdAt, channelState.read.value?.lastRead)
+        assertEquals(0, channelState.read.value?.unreadMessages)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when lastReadMessageId matches and unreadMessages is 0`() =
+        runTest {
+            val lastMessage = randomMessage(
+                parentId = null,
+                shadowed = false,
+            )
+            channelState.setMessages(listOf(lastMessage))
+            channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+            val readState = randomChannelUserRead(
+                user = currentUser,
+                unreadMessages = 0,
+                lastReadMessageId = lastMessage.id,
+            )
+            channelState.upsertReads(listOf(readState))
+
+            val result = channelState.markChannelAsRead()
+
+            assertEquals(false, result)
+        }
+
+    @Test
+    fun `markChannelAsRead should return true when lastReadMessageId differs from lastMessage`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 0,
+            lastReadMessageId = "different_message_id",
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(true, result)
+        assertEquals(lastMessage.createdAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdAt, channelState.read.value?.lastRead)
+        assertEquals(0, channelState.read.value?.unreadMessages)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when readEventsEnabled is false`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = false))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when there are no messages`() = runTest {
+        channelState.setMessages(emptyList())
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `markChannelAsRead should return true when read state is null`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        assertEquals(lastMessage, channelState.messages.value.lastOrNull())
+        assertEquals(true, channelState.channelConfig.value.readEventsEnabled)
+        assertEquals(null, channelState.read.value)
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(true, result)
     }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {

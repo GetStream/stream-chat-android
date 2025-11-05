@@ -573,9 +573,12 @@ internal class ChannelMutableState(
             when (val currentUserRead = read.value) {
                 null -> true
                 else ->
+                    // Allow marking as read if:
+                    // 1. The last read message ID differs from the last message, OR
+                    // 2. There are unread messages (even if lastReadMessageId matches, server state may differ)
                     currentUserRead
-                        .takeIf { it.lastReadMessageId != lastMessage.id }
-                        ?. let {
+                        .takeIf { it.lastReadMessageId != lastMessage.id || it.unreadMessages > 0 }
+                        ?.let {
                             upsertReads(
                                 listOf(
                                     it.copy(
