@@ -62,8 +62,8 @@ internal class ChannelExtensionsTests {
     @Test
     fun `lastMessage should return the most recent non-deleted message`() {
         // given
-        val oldestMsg = randomMessage(createdAt = Date(1000), deletedAt = null, deletedForMe = false)
-        val newestMsg = randomMessage(createdAt = Date(3000), deletedAt = null, deletedForMe = false)
+        val oldestMsg = randomMessage(createdAt = Date(1000), createdLocallyAt = null, deletedAt = null, deletedForMe = false)
+        val newestMsg = randomMessage(createdAt = Date(3000), createdLocallyAt = null, deletedAt = null, deletedForMe = false)
         val middleMsg = randomMessage(
             createdAt = null,
             createdLocallyAt = Date(2000),
@@ -104,12 +104,14 @@ internal class ChannelExtensionsTests {
         val existingMessage = randomMessage(
             id = "existing",
             createdAt = Date(1000),
+            createdLocallyAt = null,
             deletedAt = null,
             deletedForMe = false,
         )
         val newMessage = randomMessage(
             id = "new",
             createdAt = Date(2000),
+            createdLocallyAt = null,
             deletedAt = null,
             deletedForMe = false,
             silent = false,
@@ -160,12 +162,14 @@ internal class ChannelExtensionsTests {
         val existingMessage = randomMessage(
             id = "existing",
             createdAt = Date(1000),
+            createdLocallyAt = null,
             deletedAt = null,
             deletedForMe = false,
         )
         val newMessage = randomMessage(
             id = "new",
             createdAt = Date(2000),
+            createdLocallyAt = null,
             deletedAt = null,
             deletedForMe = false,
             silent = true,

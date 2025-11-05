@@ -127,15 +127,18 @@ internal class ChannelExtensionsTests {
                 text = "Hello @${user.id}",
                 mentionedUsers = listOf(user),
                 createdAt = Date(lastReadDate.time - 1000),
+                createdLocallyAt = null,
             ),
             randomMessage(
                 text = "Hi @${user.id}",
                 mentionedUsers = listOf(user),
                 createdAt = Date(lastReadDate.time + 1000),
+                createdLocallyAt = null,
             ),
             randomMessage(
                 text = "No mention here",
                 createdAt = Date(lastReadDate.time + 2000),
+                createdLocallyAt = null,
             ),
         )
         val channelRead = randomChannelUserRead(user = user, lastRead = lastReadDate)

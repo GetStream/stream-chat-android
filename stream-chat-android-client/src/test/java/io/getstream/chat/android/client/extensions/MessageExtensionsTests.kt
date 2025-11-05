@@ -73,7 +73,7 @@ internal class MessageExtensionsTests {
     @Test
     fun `getCreatedAtOrThrow should return createdAt if not null`() {
         val date = randomDate()
-        val message = randomMessage(createdAt = date)
+        val message = randomMessage(createdAt = date, createdLocallyAt = null)
         message.getCreatedAtOrThrow() shouldBeEqualTo date
     }
 
@@ -86,7 +86,7 @@ internal class MessageExtensionsTests {
     @Test
     fun `getCreatedAtOrNull should return createdAt if not null`() {
         val date = randomDate()
-        val message = randomMessage(createdAt = date)
+        val message = randomMessage(createdAt = date, createdLocallyAt = null)
         message.getCreatedAtOrThrow() shouldBeEqualTo date
     }
 
@@ -100,7 +100,7 @@ internal class MessageExtensionsTests {
     @Test
     fun `getCreatedAtOrDefault should return createdAt if not null`() {
         val date = randomDate()
-        val message = randomMessage(createdAt = date)
+        val message = randomMessage(createdAt = date, createdLocallyAt = null)
         message.getCreatedAtOrDefault(Date(0)) shouldBeEqualTo date
     }
 

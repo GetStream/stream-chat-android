@@ -587,6 +587,7 @@ internal class ChannelMutableStateTests {
                 id = "message_$i",
                 cid = CID,
                 createdAt = Date(now + i * 1000L), // Each message 1 second apart
+                createdLocallyAt = null,
                 text = "Test message $i",
                 parentId = null, // ensure message is not a thread reply
                 shadowed = false, // ensure message is not shadowed
