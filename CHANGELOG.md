@@ -36,6 +36,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Prioritize `Message.createdLocallyAt` over `Message.createdAt` when sorting messages, to ensure the message order is consistent before the messages are synced with the server. [#5993](https://github.com/GetStream/stream-chat-android/pull/5993)
 
 ### ✅ Added
 
