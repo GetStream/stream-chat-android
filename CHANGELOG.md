@@ -55,6 +55,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix thread messages not grouped properly. [#5985](https://github.com/GetStream/stream-chat-android/pull/5985)
 
 ### ⬆️ Improved
 
@@ -78,6 +79,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `MessagesScreen` overlapping with itself when auto-scrolling to a message which is not loaded. [#5990](https://github.com/GetStream/stream-chat-android/pull/5990)
 - Disallow creating polls in threads. [#5970](https://github.com/GetStream/stream-chat-android/pull/5970)
 
 ### ⬆️ Improved

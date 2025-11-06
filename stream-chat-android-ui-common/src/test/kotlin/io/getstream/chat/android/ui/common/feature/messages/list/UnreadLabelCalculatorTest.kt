@@ -562,6 +562,47 @@ internal class UnreadLabelCalculatorTest {
         )
     }
 
+    /**
+     * Test Case 15: Logout/Login Scenario - All Unread Messages Are From Current User
+     * When lastReadMessageId is not in the messages list (after logout/login, read state might be out of sync)
+     * AND all unread messages are from the current user, should return null.
+     * This simulates the scenario where:
+     * 1. User sends message offline
+     * 2. User logs out (clears history)
+     * 3. User logs back in
+     * 4. User reopens chat - lastReadMessageId from server doesn't exist in loaded messages
+     * 5. All messages are from the current user (their own synced message)
+     */
+    @Test
+    fun `should return null when last read message not found and all unread messages are from current user`() {
+        // Given: lastReadMessageId doesn't exist in the messages list (read state out of sync after logout/login)
+        // and all messages are from the current user (their own message that was sent offline and synced)
+        val ownMessage1 = createMessage(id = "msg-1", user = currentUser, createdAt = Date(1000))
+        val ownMessage2 = createMessage(id = "msg-2", user = currentUser, createdAt = Date(2000))
+
+        val messages = listOf(
+            ownMessage1,
+            ownMessage2,
+        )
+
+        val channelUserRead = createChannelUserRead(
+            lastReadMessageId = "msg-nonexistent", // Doesn't exist in messages (read state out of sync)
+            unreadMessages = 2, // Server might have incorrect count
+            lastRead = Date(500), // Before all messages
+        )
+
+        // When: Calculate unread label
+        val result = calculator.calculateUnreadLabel(
+            channelUserRead = channelUserRead,
+            messages = messages,
+            currentUserId = currentUser.id,
+            shouldShowButton = true,
+        )
+
+        // Then: Should return null - user has already seen their own messages
+        result shouldBe null
+    }
+
     // Helper functions
 
     private fun createMessage(

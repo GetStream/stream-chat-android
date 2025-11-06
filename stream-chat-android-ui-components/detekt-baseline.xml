@@ -142,10 +142,6 @@
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Attachment)</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Boolean)</ID>
-    <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
-    <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
-    <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
-    <ID>ReturnCount:MessageComposerView.kt$MessageComposerView.SuggestionPopupTouchListener$override fun onTouch(v: View?, event: MotionEvent?): Boolean</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:MessageComposerView.kt$&lt;no name provided>.&lt;no name provided>$IndexOutOfBoundsException()</ID>

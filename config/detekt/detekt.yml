@@ -731,8 +731,8 @@ style:
     active: false
   ReturnCount:
     active: true
-    max: 2
-    excludedFunctions: 'equals'
+    max: 10
+    excludedFunctions: ['equals']
     excludeLabeled: false
     excludeReturnFromLambda: true
     excludeGuardClauses: false

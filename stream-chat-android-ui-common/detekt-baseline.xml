@@ -16,16 +16,6 @@
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$1000f</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$20</ID>
     <ID>MaxLineLength:AudioPlayerController.kt$AudioPlayerController$seekTo</ID>
-    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun changeSpeed(attachment: Attachment)</ID>
-    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resetAudio(attachment: Attachment)</ID>
-    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resume()</ID>
-    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun startSeek(attachment: Attachment)</ID>
-    <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
-    <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
-    <ID>ReturnCount:DefaultQueryFilter.kt$DefaultQueryFilter$private fun levenshteinDistance(search: String, target: String): Int</ID>
-    <ID>ReturnCount:DefaultQueryFilter.kt$DefaultQueryFilter$private fun wordLevenshteinDistance(search: String, target: String): Int</ID>
-    <ID>ReturnCount:StorageHelper.kt$StorageHelper$public fun getCachedFileFromUri( context: Context, attachmentMetaData: AttachmentMetaData, ): File?</ID>
-    <ID>ReturnCount:TypingSuggester.kt$TypingSuggester$internal fun typingSuggestion(text: CharSequence, caretLocation: Int = text.length): TypingSuggestion?</ID>
     <ID>TooGenericExceptionCaught:DefaultQueryFilter.kt$DefaultQueryFilter$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Throwable</ID>

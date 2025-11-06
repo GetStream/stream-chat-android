@@ -54,8 +54,6 @@
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>MaxLineLength:WaveformSlider.kt$// StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }</ID>
-    <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryChannels()</ID>
-    <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryMessages()</ID>
     <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>

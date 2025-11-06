@@ -121,11 +121,22 @@ internal class UnreadLabelCalculator {
         val lastReadMessage = messages
             .firstOrNull { it.id == channelUserRead.lastReadMessageId }
 
-        // Step 2.1: If lastReadMessage is not found in the messages list, skip complex ownership
-        // checks and create a standard unread label with the provided lastReadMessageId.
+        // Step 2.1: If lastReadMessage is not found in the messages list, we still need to check
+        // if all unread messages are from the current user (similar to when lastReadMessage exists).
         // This handles cases where the message list was loaded around a specific message that
-        // doesn't include the actual last read message.
+        // doesn't include the actual last read message, or after logout/login when read state
+        // might be out of sync.
         if (lastReadMessage == null) {
+            // Check if all unread messages are from the current user
+            val allUnreadMessagesAreFromCurrentUser = unreadMessages.isNotEmpty() &&
+                unreadMessages.all { it.user.id == currentUserId }
+
+            // If all unread messages are from the current user, don't show the label
+            // (user has already seen their own messages)
+            if (allUnreadMessagesAreFromCurrentUser) {
+                return null
+            }
+
             return calculateStandardUnreadLabel(
                 channelUserRead = channelUserRead,
                 unreadMessages = unreadMessages,
