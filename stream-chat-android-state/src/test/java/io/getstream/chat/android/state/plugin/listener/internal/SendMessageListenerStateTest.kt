@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -94,34 +95,19 @@ internal class SendMessageListenerStateTest {
             createdLocallyAt = Date(), // Different timestamp
         )
 
+        val (channelType, channelId) = testMessage.cid.cidToTypeAndId()
+
         sendMessageListener.onMessageSendResult(
             result = Result.Success(testMessage),
-            channelType = randomString(),
-            channelId = randomString(),
+            channelType = channelType,
+            channelId = channelId,
             message = testMessage,
         )
 
-        verify(channelLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id &&
-                    message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == originalCreatedLocallyAt
-            },
-        )
-        verify(threadsLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id &&
-                    message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == originalCreatedLocallyAt
-            },
-        )
-        verify(threadLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id &&
-                    message.syncStatus == SyncStatus.COMPLETED &&
-                    message.createdLocallyAt == originalCreatedLocallyAt
-            },
-        )
+        val expected = testMessage.copy(createdLocallyAt = originalCreatedLocallyAt, syncStatus = SyncStatus.COMPLETED)
+        verify(channelLogic).upsertMessage(expected)
+        verify(threadsLogic).upsertMessage(expected)
+        verify(threadLogic).upsertMessage(expected)
     }
 
     @Test

@@ -340,13 +340,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(newMessageEvent)
 
         // Verify that the message was upserted with the preserved createdLocallyAt
-        verify(channelStateLogic).upsertMessage(
-            org.mockito.kotlin.argThat { message ->
-                message.id == messageId &&
-                    message.text == "Updated text" &&
-                    message.createdLocallyAt == originalCreatedLocallyAt // Should preserve original
-            },
-        )
+        val expected = updatedMessage.copy(createdLocallyAt = originalCreatedLocallyAt)
+        verify(channelStateLogic).upsertMessage(expected)
     }
 
     @Test
@@ -380,13 +375,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(newMessageEvent)
 
         // Verify that the message was upserted with the new createdLocallyAt
-        verify(channelStateLogic).upsertMessage(
-            org.mockito.kotlin.argThat { message ->
-                message.id == messageId &&
-                    message.text == "Updated text" &&
-                    message.createdLocallyAt == null // Should use new value
-            },
-        )
+        val expected = updatedMessage.copy(createdLocallyAt = null)
+        verify(channelStateLogic).upsertMessage(expected)
     }
 
     private companion object {
