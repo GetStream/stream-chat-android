@@ -127,7 +127,7 @@ public fun Channel.syncUnreadCountWithReads(
  * @param userId The ID of the user whose read state is to be retrieved.
  * @return The [ChannelUserRead] object representing the user's read state, or null if not found.
  */
-public fun Channel.userRead(userId: UserId): ChannelUserRead? =
+internal fun Channel.userRead(userId: UserId): ChannelUserRead? =
     read.firstOrNull { read -> read.user.id == userId }
 
 /**
