@@ -521,7 +521,7 @@ internal class DomainMapping(
     }
 
     /**
-     * Transforms [DownstreamPushPreferenceDto] to [PushPreference].
+     * Transforms [QueryPollVotesResponse] to [QueryPollVotesResult].
      */
     internal fun QueryPollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
         votes = votes.map { it.toDomain() },
