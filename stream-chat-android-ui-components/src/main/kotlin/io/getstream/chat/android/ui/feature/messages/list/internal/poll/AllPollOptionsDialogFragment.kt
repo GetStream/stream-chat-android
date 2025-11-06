@@ -210,7 +210,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 pollState.value
                     ?.let { poll ->
                         poll.ownVotes.firstOrNull { it.optionId == option.id }
-                            ?.let { chatClient.removePollVote(messageId, poll.id, it) }
+                            ?.let { chatClient.removePollVote(messageId, poll.id, it.id) }
                             ?: chatClient.castPollVote(messageId, poll.id, option)
                     }?.await()
             }

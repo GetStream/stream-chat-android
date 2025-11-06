@@ -283,6 +283,35 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun removePollVoteByIdSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val vote = randomPollVote()
+        whenever(api.removePollVote(any(), any(), any()))
+            .thenReturn(RetroSuccess(vote).toRetrofitCall())
+        // when
+        val result = chatClient.removePollVote(messageId, pollId, vote.id).await()
+        // then
+        assert(result.isSuccess)
+    }
+
+    @Test
+    fun removePollVoteByIdError() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val vote = randomPollVote()
+        val errorCode = positiveRandomInt()
+        whenever(api.removePollVote(any(), any(), any()))
+            .thenReturn(RetroError<Vote>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.removePollVote(messageId, pollId, vote.id).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun partialUpdatePollSuccessWithAllParameters() = runTest {
         // given
         val pollId = randomString()

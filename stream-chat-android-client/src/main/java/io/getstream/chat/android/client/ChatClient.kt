@@ -2083,6 +2083,13 @@ internal constructor(
         return api.castPollVote(messageId, pollId, option.id)
     }
 
+    /**
+     * Cast an answer in a poll.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param answer The answer to cast.
+     */
     @CheckResult
     public fun castPollAnswer(
         messageId: String,
@@ -2101,13 +2108,30 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for removing a vote.
      */
+    @Deprecated("Use removePollVote(messageId: String, pollId: String, voteId: String) instead.")
     @CheckResult
     public fun removePollVote(
         messageId: String,
         pollId: String,
         vote: Vote,
     ): Call<Vote> {
-        return api.removePollVote(messageId, pollId, vote.id)
+        return removePollVote(messageId = messageId, pollId = pollId, voteId = vote.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param voteId The id of the vote to remove.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        voteId: String,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, voteId)
     }
 
     /**

@@ -1966,7 +1966,7 @@ public class MessageListController(
         chatClient.removePollVote(
             messageId = messageId,
             pollId = pollId,
-            vote = vote,
+            voteId = vote.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollRemovingVoteError(it)
@@ -2401,7 +2401,7 @@ public class MessageListController(
         scope.launch {
             (
                 poll.ownVotes.firstOrNull { it.optionId == option.id }
-                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
+                    ?.let { chatClient.removePollVote(message.id, poll.id, it.id) }
                     ?: chatClient.castPollVote(message.id, poll.id, option)
                 ).await()
         }
