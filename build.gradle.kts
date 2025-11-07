@@ -41,6 +41,11 @@ plugins {
     alias(libs.plugins.binary.compatibility.validator)
 }
 
+// TODO [G.]
+Configuration.kt is still referenced:
+- publish-new-version.yml
+- buildSrc/src/main/kotlin/io/getstream/chat/android/command/version/task/Constants.kt
+
 streamProject {
     publishing {
         description.set("Stream Chat official Android SDK")
