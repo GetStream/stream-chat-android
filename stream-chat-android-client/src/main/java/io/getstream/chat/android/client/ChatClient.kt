@@ -2074,6 +2074,7 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for casting a vote.
      */
+    @Deprecated("Use castPollVote(messageId: String, pollId: String, optionId: String) instead.")
     @CheckResult
     public fun castPollVote(
         messageId: String,
@@ -2081,6 +2082,24 @@ internal constructor(
         option: Option,
     ): Call<Vote> {
         return api.castPollVote(messageId, pollId, option.id)
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param optionId The id of the option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        optionId: String,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, optionId)
     }
 
     /**

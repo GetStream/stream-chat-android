@@ -1928,7 +1928,7 @@ public class MessageListController(
         chatClient.castPollVote(
             messageId = messageId,
             pollId = pollId,
-            option = option,
+            optionId = option.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollCastingVoteError(it)
@@ -2402,7 +2402,7 @@ public class MessageListController(
             (
                 poll.ownVotes.firstOrNull { it.optionId == option.id }
                     ?.let { chatClient.removePollVote(message.id, poll.id, it.id) }
-                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                    ?: chatClient.castPollVote(message.id, poll.id, option.id)
                 ).await()
         }
     }

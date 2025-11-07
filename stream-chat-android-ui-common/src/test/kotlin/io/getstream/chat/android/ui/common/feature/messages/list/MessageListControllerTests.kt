@@ -873,7 +873,7 @@ internal class MessageListControllerTests {
             .get()
         controller.castVote(messageId, pollId, option)
 
-        verify(chatClient).castPollVote(messageId, pollId, option)
+        verify(chatClient).castPollVote(messageId, pollId, option.id)
     }
 
     @Test
@@ -1186,7 +1186,7 @@ internal class MessageListControllerTests {
         }
 
         fun givenCastVote(vote: Call<Vote>) = apply {
-            whenever(chatClient.castPollVote(any(), any(), any())) doReturn vote
+            whenever(chatClient.castPollVote(any(), any(), optionId = any())) doReturn vote
         }
 
         fun givenRemoveVote(vote: Call<Vote>) = apply {
