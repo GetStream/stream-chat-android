@@ -25,6 +25,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Fallback to empty `User` instead of crashing if the searched user is not yet inserted into the DB. [#5998](https://github.com/GetStream/stream-chat-android/pull/5998)
 
 ### ✅ Added
 
