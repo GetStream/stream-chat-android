@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
@@ -1900,6 +1901,18 @@ internal constructor(
                     ),
                 )
             }
+    }
+
+    /**
+     * Update a poll.
+     *
+     * @param poll The poll to update.
+     *
+     * @return Executable async [Call] responsible for updating a poll.
+     */
+    @CheckResult
+    public fun updatePoll(poll: UpdatePollRequest): Call<Poll> {
+        return api.updatePoll(poll)
     }
 
     /**

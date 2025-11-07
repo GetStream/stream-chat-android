@@ -16,6 +16,36 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.models.VotingVisibility
+
+/**
+ * Model holding request data for updating a poll.
+ *
+ * @param id The unique identifier of the poll to be updated.
+ * @param name The name of the poll.
+ * @param allowAnswers Indicates whether users can suggest user defined answers.
+ * @param allowUserSuggestedOptions Indicates whether users can suggest new options.
+ * @param description A description of the poll.
+ * @param enforceUniqueVote Indicates whether users can cast multiple votes.
+ * @param maxVotesAllowed Indicates the maximum amount of votes a user can cast.
+ * @param options The list of options for the poll.
+ * @param votingVisibility The visibility of the poll.
+ * @param extraData A map of additional key-value pairs to include in the creation request.
+ */
+public data class UpdatePollRequest(
+    val id: String,
+    val name: String,
+    val allowAnswers: Boolean? = null,
+    val allowUserSuggestedOptions: Boolean? = null,
+    val description: String? = null,
+    val enforceUniqueVote: Boolean? = null,
+    val isClosed: Boolean? = null,
+    val maxVotesAllowed: Int? = null,
+    val options: List<UpdatePollOptionRequest>? = null,
+    val votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+    val extraData: Map<String, Any> = emptyMap(),
+)
+
 /**
  * Model holding request data for creating a poll option.
  *

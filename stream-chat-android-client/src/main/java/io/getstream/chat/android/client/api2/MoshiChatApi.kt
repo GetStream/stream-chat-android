@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -1652,6 +1653,32 @@ constructor(
                 extraData = pollConfig.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
+    }
+
+    override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
+        val body = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
+            allow_answers = request.allowAnswers,
+            allow_user_suggested_options = request.allowUserSuggestedOptions,
+            description = request.description,
+            enforce_unique_vote = request.enforceUniqueVote,
+            id = request.id,
+            is_closed = request.isClosed,
+            max_votes_allowed = request.maxVotesAllowed,
+            name = request.name,
+            options = request.options?.map {
+                UpstreamOptionDto(
+                    id = it.id,
+                    text = it.text,
+                    extraData = it.extraData,
+                )
+            },
+            voting_visibility = when (request.votingVisibility) {
+                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
+                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+            },
+            extraData = request.extraData,
+        )
+        return pollsApi.updatePoll(body).mapDomain { it.poll.toDomain() }
     }
 
     override fun getPoll(pollId: String): Call<Poll> {

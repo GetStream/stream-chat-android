@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -578,6 +579,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun createPoll(pollConfig: PollConfig): Call<Poll>
+
+    @CheckResult
+    fun updatePoll(request: UpdatePollRequest): Call<Poll>
 
     @CheckResult
     fun getPoll(pollId: String): Call<Poll>

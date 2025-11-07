@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.PollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
@@ -57,6 +58,16 @@ internal interface PollsApi {
      */
     @POST("/polls")
     fun createPoll(@Body body: CreatePollRequest): RetrofitCall<PollResponse>
+
+    /**
+     * Updates an existing poll.
+     *
+     * See [Update poll](https://getstream.github.io/protocol/#/product%3Achat/UpdatePoll).
+     *
+     * @param body Body holding the poll properties to be updated.
+     */
+    @PUT("/polls")
+    fun updatePoll(@Body body: UpdatePollRequest): RetrofitCall<PollResponse>
 
     /**
      * Deletes a poll.
