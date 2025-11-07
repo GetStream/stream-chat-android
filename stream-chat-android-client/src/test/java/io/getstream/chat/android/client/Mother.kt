@@ -1300,24 +1300,20 @@ internal fun randomPushMessage(
 
 internal fun randomMessageReceipt(
     messageId: String = randomString(),
-    type: String = randomString(),
-    createdAt: Date = randomDate(),
     cid: String = randomCID(),
+    createdAt: Date = randomDate(),
 ) = MessageReceipt(
     messageId = messageId,
-    type = type,
-    createdAt = createdAt,
     cid = cid,
+    createdAt = createdAt,
 )
 
 internal fun randomMessageReceiptEntity(
     messageId: String = randomString(),
-    type: String = randomString(),
-    createdAt: Date = randomDate(),
     cid: String = randomCID(),
+    createdAt: Date = randomDate(),
 ) = MessageReceiptEntity(
     messageId = messageId,
-    type = type,
-    createdAt = createdAt,
     cid = cid,
+    createdAt = createdAt,
 )

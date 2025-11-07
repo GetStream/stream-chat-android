@@ -45,9 +45,8 @@ internal class MessageReceiptRepositoryImplTest {
         val expectedReceipts = listOf(
             MessageReceiptEntity(
                 messageId = receipt.messageId,
-                type = receipt.type,
-                createdAt = receipt.createdAt,
                 cid = receipt.cid,
+                createdAt = receipt.createdAt,
             ),
         )
         fixture.verifyUpsertCalled(expectedReceipts)
@@ -55,25 +54,22 @@ internal class MessageReceiptRepositoryImplTest {
 
     @Test
     fun `get message receipts by type`() = runTest {
-        val type = randomString()
         val limit = randomInt()
         val receipt = randomMessageReceiptEntity()
         val fixture = Fixture()
             .givenMessageReceiptsByType(
-                type = type,
                 limit = limit,
                 receipts = listOf(receipt),
             )
         val sut = fixture.get()
 
-        val actual = sut.getAllMessageReceiptsByType(type, limit)
+        val actual = sut.selectMessageReceipts(limit)
 
         val expected = listOf(
             MessageReceipt(
                 messageId = receipt.messageId,
-                type = receipt.type,
-                createdAt = receipt.createdAt,
                 cid = receipt.cid,
+                createdAt = receipt.createdAt,
             ),
         )
         Assertions.assertEquals(expected, actual)
@@ -107,8 +103,8 @@ internal class MessageReceiptRepositoryImplTest {
             onBlocking { deleteByMessageIds(any()) } doReturn Unit
         }
 
-        fun givenMessageReceiptsByType(type: String, limit: Int, receipts: List<MessageReceiptEntity>) = apply {
-            wheneverBlocking { mockDao.selectAllByType(type, limit) } doReturn receipts
+        fun givenMessageReceiptsByType(limit: Int, receipts: List<MessageReceiptEntity>) = apply {
+            wheneverBlocking { mockDao.selectAll(limit) } doReturn receipts
         }
 
         fun verifyUpsertCalled(receipts: List<MessageReceiptEntity>) {

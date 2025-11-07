@@ -30,7 +30,7 @@ internal interface MessageReceiptRepository {
 
     suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>)
 
-    suspend fun getAllMessageReceiptsByType(type: String, limit: Int): List<MessageReceipt>
+    suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt>
 
     suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>)
 

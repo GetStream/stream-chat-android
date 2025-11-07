@@ -56,9 +56,8 @@ internal class MessageReceiptManagerTest {
         val receipts = listOf(
             MessageReceipt(
                 messageId = message.id,
-                type = MessageReceipt.TYPE_DELIVERY,
-                createdAt = Now,
                 cid = message.cid,
+                createdAt = Now,
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
@@ -76,9 +75,8 @@ internal class MessageReceiptManagerTest {
         val receipts = listOf(
             MessageReceipt(
                 messageId = message.id,
-                type = MessageReceipt.TYPE_DELIVERY,
-                createdAt = Now,
                 cid = message.cid,
+                createdAt = Now,
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
@@ -96,9 +94,8 @@ internal class MessageReceiptManagerTest {
         val receipts = listOf(
             MessageReceipt(
                 messageId = message.id,
-                type = MessageReceipt.TYPE_DELIVERY,
-                createdAt = Now,
                 cid = message.cid,
+                createdAt = Now,
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
@@ -153,9 +150,8 @@ internal class MessageReceiptManagerTest {
         val receipts = listOf(
             MessageReceipt(
                 messageId = message.id,
-                type = MessageReceipt.TYPE_DELIVERY,
-                createdAt = Now,
                 cid = message.cid,
+                createdAt = Now,
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
@@ -226,9 +222,8 @@ internal class MessageReceiptManagerTest {
         val receipts = listOf(
             MessageReceipt(
                 messageId = message.id,
-                type = MessageReceipt.TYPE_DELIVERY,
-                createdAt = Now,
                 cid = message.cid,
+                createdAt = Now,
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)

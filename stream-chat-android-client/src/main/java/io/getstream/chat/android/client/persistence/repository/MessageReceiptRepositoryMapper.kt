@@ -21,14 +21,12 @@ import io.getstream.chat.android.client.receipts.MessageReceipt
 
 internal fun MessageReceipt.toEntity() = MessageReceiptEntity(
     messageId = messageId,
-    type = type,
-    createdAt = createdAt,
     cid = cid,
+    createdAt = createdAt,
 )
 
 internal fun MessageReceiptEntity.toModel() = MessageReceipt(
     messageId = messageId,
-    type = type,
-    createdAt = createdAt,
     cid = cid,
+    createdAt = createdAt,
 )

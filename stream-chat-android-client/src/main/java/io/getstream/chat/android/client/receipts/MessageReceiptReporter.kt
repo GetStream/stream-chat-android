@@ -43,15 +43,14 @@ internal class MessageReceiptReporter(
         scope.launch {
             try {
                 while (isActive) {
-                    val messages = messageReceiptRepository.getAllMessageReceiptsByType(
-                        type = MessageReceipt.TYPE_DELIVERY,
-                        limit = MAX_BATCH_SIZE,
-                    ).map { receipt ->
-                        Message(
-                            id = receipt.messageId,
-                            cid = receipt.cid,
-                        )
-                    }
+                    val messages = messageReceiptRepository
+                        .selectMessageReceipts(limit = MAX_BATCH_SIZE)
+                        .map { receipt ->
+                            Message(
+                                id = receipt.messageId,
+                                cid = receipt.cid,
+                            )
+                        }
 
                     if (messages.isNotEmpty()) {
                         logger.d { "Reporting delivery receipts for ${messages.size} messages…" }

@@ -198,8 +198,7 @@ internal class MessageReceiptManager(
 
     private fun Message.toDeliveryReceipt() = MessageReceipt(
         messageId = id,
-        type = MessageReceipt.TYPE_DELIVERY,
-        createdAt = now(),
         cid = cid,
+        createdAt = now(),
     )
 }

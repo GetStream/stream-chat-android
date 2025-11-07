@@ -125,7 +125,7 @@ internal class ChatClientDebuggerTest {
             ): SendMessageDebugger = sendMessageDebugger
         }
         val mockRepository = mock<ChatClientRepository> {
-            onBlocking { getAllMessageReceiptsByType(type = any(), limit = any()) } doReturn emptyList()
+            onBlocking { selectMessageReceipts(limit = any()) } doReturn emptyList()
         }
         client = ChatClient(
             config = config,

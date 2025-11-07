@@ -28,8 +28,8 @@ internal interface MessageReceiptDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(receipts: List<MessageReceiptEntity>)
 
-    @Query("SELECT * FROM message_receipt WHERE type = :type ORDER BY createdAt ASC LIMIT :limit")
-    suspend fun selectAllByType(type: String, limit: Int): List<MessageReceiptEntity>
+    @Query("SELECT * FROM message_receipt ORDER BY createdAt ASC LIMIT :limit")
+    suspend fun selectAll(limit: Int): List<MessageReceiptEntity>
 
     @Query("DELETE FROM message_receipt WHERE messageId IN (:messageIds)")
     suspend fun deleteByMessageIds(messageIds: List<String>)

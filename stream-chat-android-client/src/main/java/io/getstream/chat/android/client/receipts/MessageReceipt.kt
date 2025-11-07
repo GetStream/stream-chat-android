@@ -20,11 +20,6 @@ import java.util.Date
 
 internal data class MessageReceipt(
     val messageId: String,
-    val type: String,
-    val createdAt: Date,
     val cid: String,
-) {
-    companion object {
-        const val TYPE_DELIVERY: String = "delivery"
-    }
-}
+    val createdAt: Date,
+)

@@ -2666,7 +2666,6 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 	public static final fun readsOf (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)Ljava/util/List;
 	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Lio/getstream/chat/android/models/Channel;
 	public static synthetic fun syncUnreadCountWithReads$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/Channel;
-	public static final fun userRead (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
 }
 
 public final class io/getstream/chat/android/client/extensions/FlowExtensions {
@@ -3026,7 +3025,7 @@ public final class io/getstream/chat/android/client/persistence/db/dao/MessageRe
 	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteByMessageIds (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
-	public fun selectAllByType (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectAll (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

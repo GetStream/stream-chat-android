@@ -142,12 +142,7 @@ internal class MessageReceiptReporterTest {
         private val mockApi = mock<ChatApi>()
 
         fun givenMessageReceipts(receipts: List<MessageReceipt>) = apply {
-            wheneverBlocking {
-                mockMessageReceiptRepository.getAllMessageReceiptsByType(
-                    type = MessageReceipt.TYPE_DELIVERY,
-                    limit = 100,
-                )
-            } doReturn receipts
+            wheneverBlocking { mockMessageReceiptRepository.selectMessageReceipts(limit = 100) } doReturn receipts
         }
 
         fun givenMarkDelivered(messages: List<Message>? = null, error: Error? = null) = apply {

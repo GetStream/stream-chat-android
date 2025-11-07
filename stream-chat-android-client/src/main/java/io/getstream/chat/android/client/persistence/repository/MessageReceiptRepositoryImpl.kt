@@ -28,8 +28,8 @@ internal class MessageReceiptRepositoryImpl(
         dao.upsert(receipts.map(MessageReceipt::toEntity))
     }
 
-    override suspend fun getAllMessageReceiptsByType(type: String, limit: Int): List<MessageReceipt> =
-        dao.selectAllByType(type, limit).map(MessageReceiptEntity::toModel)
+    override suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt> =
+        dao.selectAll(limit).map(MessageReceiptEntity::toModel)
 
     override suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>) {
         dao.deleteByMessageIds(messageIds)
