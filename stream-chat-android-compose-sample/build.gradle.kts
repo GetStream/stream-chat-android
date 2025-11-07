@@ -1,10 +1,9 @@
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.stream.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.androidx.baseline.profile)
@@ -12,13 +11,12 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
-apply(from = "$rootDir/scripts/android.gradle")
 apply(from = "$rootDir/scripts/detekt-compose.gradle")
 
 android {
     namespace = "io.getstream.chat.android.compose.sample"
     defaultConfig {
-        targetSdk = Configuration.sampleTargetSdk
+        targetSdk = libs.versions.sampleTargetSdk.get().toInt()
         applicationId = "io.getstream.chat.android.compose.sample"
         versionCode = rootProject.extra.get("sampleAppVersionCode") as Int
         versionName = rootProject.extra.get("sampleAppVersionName") as String
