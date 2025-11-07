@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.receipts
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.userRead
@@ -179,7 +179,7 @@ internal class MessageReceiptManager(
             return false
         }
 
-        val createdAt = message.getCreatedAtOrThrow()
+        val createdAt = message.getCreatedAtOrDefault(NEVER)
 
         // Check if the last message is already marked as read
         if (createdAt <= userRead.lastRead) {

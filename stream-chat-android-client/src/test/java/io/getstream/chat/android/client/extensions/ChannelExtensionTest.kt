@@ -177,7 +177,7 @@ internal class ChannelExtensionTest {
         val read2 = randomChannelUserRead(user = otherUser2, lastRead = lastRead)
         val read3 = randomChannelUserRead(user = messageUser, lastRead = lastRead)
         val channel = randomChannel(read = listOf(read1, read2, read3))
-        val message = randomMessage(user = messageUser, createdAt = createdAt)
+        val message = randomMessage(user = messageUser, createdLocallyAt = createdAt)
 
         val actual = channel.readsOf(message)
 
@@ -196,7 +196,7 @@ internal class ChannelExtensionTest {
         val delivered2 = randomChannelUserRead(user = otherUser2, lastDeliveredAt = lastDelivered)
         val delivered3 = randomChannelUserRead(user = messageUser, lastDeliveredAt = lastDelivered)
         val channel = randomChannel(read = listOf(delivered1, delivered2, delivered3))
-        val message = randomMessage(user = messageUser, createdAt = createdAt)
+        val message = randomMessage(user = messageUser, createdLocallyAt = createdAt)
 
         val actual = channel.deliveredReadsOf(message)
 
