@@ -1,37 +1,4 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# November 07th, 2025 - 6.26.1
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix `markChannelAsRead` not working when `lastReadMessageId` is correct but `unreadCount` > 0. [#5994](https://github.com/GetStream/stream-chat-android/pull/5994)
@@ -39,58 +6,14 @@
 ### ⬆️ Improved
 - Prioritize `Message.createdLocallyAt` over `Message.createdAt` when sorting messages, to ensure the message order is consistent before the messages are synced with the server. [#5993](https://github.com/GetStream/stream-chat-android/pull/5993)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix thread messages not grouped properly. [#5985](https://github.com/GetStream/stream-chat-android/pull/5985)
 - Fix unread indicator showing for own messages after logout/login. [#5991](https://github.com/GetStream/stream-chat-android/pull/5991)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix `MessagesScreen` overlapping with itself when auto-scrolling to a message which is not loaded. [#5990](https://github.com/GetStream/stream-chat-android/pull/5990)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # October 24th, 2025 - 6.26.0
 ## stream-chat-android-client
