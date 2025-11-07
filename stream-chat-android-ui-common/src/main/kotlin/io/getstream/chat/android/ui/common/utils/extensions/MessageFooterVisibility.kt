@@ -72,7 +72,7 @@ private fun isFooterVisibleWithTimeDifference(
     return when {
         isLastMessageInGroup -> true
         message.isDeleted() -> false
-        message.user != nextMessage?.user ||
+        message.user.id != nextMessage?.user?.id ||
             nextMessage.isDeleted() ||
             (nextMessage.getCreatedAtOrDefault(NEVER).time) -
             (message.getCreatedAtOrDefault(NEVER).time) >
