@@ -496,10 +496,21 @@ internal class ChannelLogic(
         upsertEventMessage(message.copy(reminder = null))
     }
 
-    private fun upsertEventMessage(message: Message) {
-        val ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions
-        channelStateLogic.upsertMessage(message.copy(ownReactions = ownReactions))
-        channelStateLogic.delsertPinnedMessage(message.copy(ownReactions = ownReactions))
+    private fun upsertEventMessage(
+        message: Message,
+        preserveCreatedLocallyAt: Boolean = false,
+    ) {
+        val oldMessage = getMessage(message.id)
+        val updatedMessage = message.copy(
+            createdLocallyAt = if (preserveCreatedLocallyAt) {
+                oldMessage?.createdLocallyAt
+            } else {
+                message.createdLocallyAt
+            },
+            ownReactions = oldMessage?.ownReactions ?: message.ownReactions,
+        )
+        channelStateLogic.upsertMessage(updatedMessage)
+        channelStateLogic.delsertPinnedMessage(updatedMessage)
     }
 
     /**
@@ -542,7 +553,10 @@ internal class ChannelLogic(
             is CidEvent -> {
                 when (event) {
                     is NewMessageEvent -> {
-                        upsertEventMessage(event.message)
+                        // Preserve createdLocallyAt only for messages created by current user, to ensure they are
+                        // sorted properly
+                        val preserveCreatedLocallyAt = event.message.user.id == currentUserId
+                        upsertEventMessage(event.message, preserveCreatedLocallyAt)
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
                         event.channelMessageCount?.let(channelStateLogic::udpateMessageCount)

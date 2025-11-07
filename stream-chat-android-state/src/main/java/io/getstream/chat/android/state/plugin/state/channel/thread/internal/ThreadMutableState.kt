@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.thread.internal
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
@@ -49,7 +50,7 @@ internal class ThreadMutableState(
     val rawMessage: StateFlow<Map<String, Message>> = _messages!!
     override val messages: StateFlow<List<Message>> = rawMessage
         .map { it.values }
-        .map { threadMessages -> threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt } }
+        .map { threadMessages -> threadMessages.sortedBy { it.getCreatedAtOrNull() } }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
     override val loading: StateFlow<Boolean> = _loading!!
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!

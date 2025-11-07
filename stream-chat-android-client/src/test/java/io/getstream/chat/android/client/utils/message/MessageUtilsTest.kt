@@ -44,8 +44,8 @@ internal class MessageUtilsTest {
 
     @Test
     fun `latestOrNull should return the latest message based on createdAt`() {
-        val message1 = randomMessage(createdAt = Date(1000))
-        val message2 = randomMessage(createdAt = Date(2000))
+        val message1 = randomMessage(createdAt = Date(1000), createdLocallyAt = null)
+        val message2 = randomMessage(createdAt = Date(2000), createdLocallyAt = null)
         val messages = listOf(message1, message2)
         messages.latestOrNull() shouldBeEqualTo message2
     }
@@ -66,15 +66,15 @@ internal class MessageUtilsTest {
 
     @Test
     fun `createdAfter should return true if the message was created after the given message`() {
-        val message1 = randomMessage(createdAt = Date(1000))
-        val message2 = randomMessage(createdAt = Date(2000))
+        val message1 = randomMessage(createdAt = Date(1000), createdLocallyAt = null)
+        val message2 = randomMessage(createdAt = Date(2000), createdLocallyAt = null)
         message2.createdAfter(message1) shouldBeEqualTo true
     }
 
     @Test
     fun `createdAfter should return false if the message was created before the given message`() {
-        val message1 = randomMessage(createdAt = Date(2000))
-        val message2 = randomMessage(createdAt = Date(1000))
+        val message1 = randomMessage(createdAt = Date(2000), createdLocallyAt = null)
+        val message2 = randomMessage(createdAt = Date(1000), createdLocallyAt = null)
         message2.createdAfter(message1) shouldBeEqualTo false
     }
 

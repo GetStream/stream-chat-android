@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -92,7 +93,7 @@ public val NEVER: Date = Date(0)
  */
 @InternalStreamChatApi
 public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) >= date
+    return getCreatedAtOrDefault(NEVER) >= date
 }
 
 /**
@@ -100,7 +101,7 @@ public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
  */
 @InternalStreamChatApi
 public fun Message.wasCreatedAfter(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) > date
+    return getCreatedAtOrDefault(NEVER) > date
 }
 
 /**
@@ -108,7 +109,7 @@ public fun Message.wasCreatedAfter(date: Date?): Boolean {
  */
 @InternalStreamChatApi
 public fun Message.wasCreatedBefore(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) < date
+    return getCreatedAtOrDefault(NEVER) < date
 }
 
 /**
@@ -116,7 +117,7 @@ public fun Message.wasCreatedBefore(date: Date?): Boolean {
  */
 @InternalStreamChatApi
 public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
-    return (createdAt ?: createdLocallyAt ?: NEVER) <= date
+    return getCreatedAtOrDefault(NEVER) <= date
 }
 
 /**
