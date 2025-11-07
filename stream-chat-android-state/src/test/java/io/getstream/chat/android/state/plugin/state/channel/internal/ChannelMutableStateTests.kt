@@ -583,8 +583,8 @@ internal class ChannelMutableStateTests {
         val actual = channelState.markChannelAsRead()
 
         assertEquals(true, actual)
-        assertEquals(lastMessage.createdAt, channelState.read.value?.lastReceivedEventDate)
-        assertEquals(lastMessage.createdAt, channelState.read.value?.lastRead)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 
@@ -629,8 +629,8 @@ internal class ChannelMutableStateTests {
         val result = channelState.markChannelAsRead()
 
         assertEquals(true, result)
-        assertEquals(lastMessage.createdAt, channelState.read.value?.lastReceivedEventDate)
-        assertEquals(lastMessage.createdAt, channelState.read.value?.lastRead)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
         assertEquals(0, channelState.read.value?.unreadMessages)
     }
 
