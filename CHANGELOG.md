@@ -47,6 +47,7 @@
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix thread messages not grouped properly. [#5985](https://github.com/GetStream/stream-chat-android/pull/5985)
+- Fix unread indicator showing for own messages after logout/login. [#5991](https://github.com/GetStream/stream-chat-android/pull/5991)
 
 ### ⬆️ Improved
 
