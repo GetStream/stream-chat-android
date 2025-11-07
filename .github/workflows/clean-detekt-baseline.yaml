@@ -4,6 +4,7 @@ on:
   schedule:
     # Every midnight
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   clean_detekt_baseline_files:
@@ -26,10 +27,10 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "AUTOMATION: Clean Detekt Baseline Files"
+          author: github-actions[bot]
           title: "AUTOMATION: Clean Detekt Baseline Files"
           delete-branch: true
-          reviewers: JcMinarro
-          assignees: JcMinarro
+          team-reviewers: android-developers
           body: |
             - Clean Detekt Baseline Files
 
