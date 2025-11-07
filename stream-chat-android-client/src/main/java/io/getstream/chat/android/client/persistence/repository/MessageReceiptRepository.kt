@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.persistence.repository
 
 import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
+import io.getstream.chat.android.client.persistence.db.dao.MessageReceiptDao
+import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
 import io.getstream.chat.android.client.receipts.MessageReceipt
 
 internal interface MessageReceiptRepository {
@@ -35,4 +37,24 @@ internal interface MessageReceiptRepository {
     suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>)
 
     suspend fun clearMessageReceipts()
+}
+
+internal class MessageReceiptRepositoryImpl(
+    private val dao: MessageReceiptDao,
+) : MessageReceiptRepository {
+
+    override suspend fun upsertMessageReceipts(receipts: List<MessageReceipt>) {
+        dao.upsert(receipts.map(MessageReceipt::toEntity))
+    }
+
+    override suspend fun selectMessageReceipts(limit: Int): List<MessageReceipt> =
+        dao.selectAll(limit).map(MessageReceiptEntity::toModel)
+
+    override suspend fun deleteMessageReceiptsByMessageIds(messageIds: List<String>) {
+        dao.deleteByMessageIds(messageIds)
+    }
+
+    override suspend fun clearMessageReceipts() {
+        dao.deleteAll()
+    }
 }
