@@ -110,6 +110,32 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun updatePollSuccess() = runTest {
+        // given
+        val request = Mother.randomUpdatePollRequest()
+        val poll = randomPoll()
+        whenever(api.updatePoll(any()))
+            .thenReturn(RetroSuccess(poll).toRetrofitCall())
+        // when
+        val result = chatClient.updatePoll(request).await()
+        // then
+        verifySuccess(result, poll)
+    }
+
+    @Test
+    fun updatePollError() = runTest {
+        // given
+        val request = Mother.randomUpdatePollRequest()
+        val errorCode = positiveRandomInt()
+        whenever(api.updatePoll(any()))
+            .thenReturn(RetroError<Poll>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.updatePoll(request).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun suggestPollOptionSuccess() = runTest {
         // given
         val pollId = randomString()

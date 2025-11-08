@@ -2286,6 +2286,71 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updatePollInput")
+    fun testUpdatePoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<PollsApi>()
+        whenever(api.updatePoll(any())).doReturn(call)
+        val sut = Fixture()
+            .withPollsApi(api)
+            .get()
+        // when
+        val pollId = randomString()
+        val name = randomString()
+        val description = randomString()
+        val options = listOf(
+            UpdatePollOptionRequest(
+                id = randomString(),
+                text = randomString(),
+                extraData = randomExtraData(1),
+            ),
+        )
+        val votingVisibility = VotingVisibility.PUBLIC
+        val enforceUniqueVote = randomBoolean()
+        val maxVotesAllowed = positiveRandomInt()
+        val allowUserSuggestedOptions = randomBoolean()
+        val allowAnswers = randomBoolean()
+        val isClosed = randomBoolean()
+        val extraData = randomExtraData(1)
+        val request = io.getstream.chat.android.client.api.models.UpdatePollRequest(
+            id = pollId,
+            name = name,
+            description = description,
+            options = options,
+            votingVisibility = votingVisibility,
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            isClosed = isClosed,
+            extraData = extraData,
+        )
+        val result = sut.updatePoll(request).await()
+        // then
+        val expectedBody = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
+            id = pollId,
+            name = name,
+            description = description,
+            options = options.map {
+                UpstreamOptionDto(
+                    id = it.id,
+                    text = it.text,
+                    extraData = it.extraData,
+                )
+            },
+            voting_visibility = CreatePollRequest.VOTING_VISIBILITY_PUBLIC,
+            enforce_unique_vote = enforceUniqueVote,
+            max_votes_allowed = maxVotesAllowed,
+            allow_user_suggested_options = allowUserSuggestedOptions,
+            allow_answers = allowAnswers,
+            is_closed = isClosed,
+            extraData = extraData,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).updatePoll(expectedBody)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPollInput")
     fun testGetPoll(call: RetrofitCall<PollResponse>, expected: KClass<*>) = runTest {
         // given

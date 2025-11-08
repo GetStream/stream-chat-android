@@ -512,6 +512,9 @@ internal object MoshiChatApiTestArguments {
     fun createPollInput() = pollResponseArguments()
 
     @JvmStatic
+    fun updatePollInput() = pollResponseArguments()
+
+    @JvmStatic
     fun getPollInput() = pollResponseArguments()
 
     @JvmStatic

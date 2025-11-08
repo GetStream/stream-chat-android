@@ -1906,6 +1906,9 @@ internal constructor(
     /**
      * Update a poll.
      *
+     * IMPORTANT: All the poll properties that are omitted in the update request will either be removed or set to their
+     * default values.
+     *
      * @param poll The poll to update.
      *
      * @return Executable async [Call] responsible for updating a poll.

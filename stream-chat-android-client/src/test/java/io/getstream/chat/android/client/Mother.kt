@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
@@ -95,6 +96,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
@@ -1147,6 +1149,35 @@ internal object Mother {
         text = text,
         extraData = extraData,
     )
+
+    fun randomUpdatePollRequest(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String = randomString(),
+        options: List<UpdatePollOptionRequest>? = listOf(
+            randomUpdatePollOptionRequest(),
+        ),
+        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote: Boolean = randomBoolean(),
+        maxVotesAllowed: Int? = positiveRandomInt(),
+        allowUserSuggestedOptions: Boolean = randomBoolean(),
+        allowAnswers: Boolean = randomBoolean(),
+        isClosed: Boolean = randomBoolean(),
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): UpdatePollRequest =
+        UpdatePollRequest(
+            id = id,
+            name = name,
+            description = description,
+            options = options,
+            votingVisibility = votingVisibility,
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            isClosed = isClosed,
+            extraData = extraData,
+        )
 
     fun randomDownstreamReminderDto(
         channelCid: String = randomString(),
