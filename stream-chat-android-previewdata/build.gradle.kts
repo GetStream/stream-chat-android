@@ -1,17 +1,11 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import io.getstream.chat.android.Configuration
 
 plugins {
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.maven.publish)
 }
-
-rootProject.extra.apply {
-    set("PUBLISH_GROUP_ID", Configuration.artifactGroup)
-    set("PUBLISH_ARTIFACT_ID", "stream-chat-android-previewdata")
-    set("PUBLISH_VERSION", rootProject.extra.get("rootVersionName"))
-}
-
-apply(from = "$rootDir/scripts/publish-module.gradle")
 
 android {
     namespace = "io.getstream.chat.android.previewdata"
@@ -34,4 +28,19 @@ dependencies {
     api(project(":stream-chat-android-client"))
 
     detektPlugins(libs.detekt.formatting)
+}
+
+mavenPublishing {
+    coordinates(
+        groupId = Configuration.artifactGroup,
+        artifactId = "stream-chat-android-previewdata",
+        version = rootProject.version.toString(),
+    )
+    configure(
+        AndroidSingleVariantLibrary(
+            variant = "release",
+            sourcesJar = true,
+            publishJavadocJar = true,
+        ),
+    )
 }

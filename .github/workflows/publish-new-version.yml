@@ -58,20 +58,22 @@ jobs:
 
   publish:
     needs: generate_release_notes
-    uses: GetStream/android-ci-actions/.github/workflows/release-new-version.yml@v0.1
+    uses: GetStream/android-ci-actions/.github/workflows/release-new-version.yml@main
     with:
       ref: "release"
       bump: ${{ inputs.bump }}
       file-path: ./buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
       release-notes: ${{ needs.generate_release_notes.outputs.release_notes }}
       excluded-modules: "stream-chat-android-ui-components-sample,stream-chat-android-compose-sample,stream-chat-android-docs"
+      use-official-plugin: false
+      # Disable explicit documentation tasks as they are already included while publishing
+      documentation-tasks: tasks
     secrets:
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
       SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
       SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
       SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-      SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
       STREAM_PUBLIC_BOT_TOKEN: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
 
   update_develop_changelog:
