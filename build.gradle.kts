@@ -4,8 +4,6 @@ import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
 import io.getstream.chat.android.command.release.task.ReleaseTask
-import io.getstream.chat.android.command.unittest.task.UnitTestsTask
-import io.getstream.chat.android.command.version.task.VersionPrintTask
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -29,12 +27,8 @@ plugins {
     alias(libs.plugins.androidx.navigation) apply false
     alias(libs.plugins.sonarqube) apply false
     alias(libs.plugins.kover) apply false
-    id("io.getstream.chat.UnitTestsPlugin")
     id("io.getstream.chat.ReleasePlugin")
     id("io.getstream.chat.ChangelogReleaseSectionPlugin")
-    id("io.getstream.chat.VersionBumpPlugin")
-    id("io.getstream.chat.MinorBumpPlugin")
-    id("io.getstream.chat.VersionPrintPlugin")
     alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.nexus.publish)
@@ -89,14 +83,6 @@ tasks.withType<DependencyUpdatesTask> {
     rejectVersionIf {
         Dependencies.isStable(currentVersion) && Dependencies.isNonStable(candidate.version)
     }
-}
-
-tasks.withType<VersionPrintTask> {
-    config.printFilePath = "build/tmp/temp-version"
-}
-
-tasks.withType<UnitTestsTask> {
-    config.outputPath = "build/tmp/unit-tests-command.sh"
 }
 
 tasks.withType<ReleaseTask> {
