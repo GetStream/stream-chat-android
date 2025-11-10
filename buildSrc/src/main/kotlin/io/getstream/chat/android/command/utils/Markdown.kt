@@ -5,7 +5,6 @@ import io.getstream.chat.android.command.release.model.Document
 import io.getstream.chat.android.command.release.model.Project
 import io.getstream.chat.android.command.release.model.Section
 import java.io.File
-import kotlin.streams.asStream
 
 fun parseChangelogFile(file: File): Document {
     return file.readLines()
@@ -111,25 +110,3 @@ private fun List<String>.filterUnreleasedSection(): List<String> {
         }
     }
 }
-
-/**
- * Finds if there's a breaking change in the unreleased part of the CHANGELOG
- */
-fun hasBreakingChange(file: File): Boolean {
-    var sectionCount = 0
-
-    return file.useLines { lines ->
-        lines.asStream()
-            .filter { line ->
-                if (isStartOfMainSection(line)) {
-                    sectionCount++
-                }
-
-                sectionCount in 1..2
-            }
-            .anyMatch { line ->
-                line.contains("- \uD83D\uDEA8 Breaking change")
-            }
-        }
-}
-
