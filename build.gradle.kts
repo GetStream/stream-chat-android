@@ -156,44 +156,34 @@ subprojects {
 
                 developers {
                     developer {
-                        id = "tschellenbach"
-                        name = "Thierry Schellenbach"
-                        email = "thierry@getstream.io"
+                        id = "aleksandar-apostolov"
+                        name = "Aleksandar Apostolov"
+                        email = "aleksandar.apostolov@getstream.io"
                     }
                     developer {
-                        id = "jcminarro"
-                        name = "Jc Miñarro"
-                        email = "josecarlos@getstream.io"
+                        id = "VelikovPetar"
+                        name = "Petar Velikov"
+                        email = "petar.velikov@getstream.io"
                     }
                     developer {
-                        id = "samiuelson"
-                        name = "Samuel Urbanowicz"
-                        email = "samuel@getstream.io"
+                        id = "andremion"
+                        name = "André Mion"
+                        email = "andre.rego@getstream.io"
                     }
                     developer {
-                        id = "adasiewiczr"
-                        name = "Rafal Adasiewicz"
-                        email = "rafal@getstream.io"
+                        id = "rahul-lohra"
+                        name = "Rahul Kumar Lohra"
+                        email = "rahul.lohra@getstream.io"
                     }
                     developer {
-                        id = "ogkuzmin"
-                        name = "Oleg Kuzmin"
-                        email = "oleg@getstream.io"
+                        id = "PratimMallick"
+                        name = "Pratim Mallick"
+                        email = "pratim.mallick@getstream.io"
                     }
                     developer {
-                        id = "zsmb13"
-                        name = "Márton Braun"
-                        email = "marton@getstream.io"
-                    }
-                    developer {
-                        id = "leandroBorgesFerreira"
-                        name = "Leandro Borges Ferreira"
-                        email = "leandro@getstream.io"
-                    }
-                    developer {
-                        id = "bychkovdmitry"
-                        name = "Dmitrii Bychkov"
-                        email = "dmitrii@getstream.io"
+                        id = "gpunto"
+                        name = "Gianmarco David"
+                        email = "gianmarco.david@getstream.io"
                     }
                 }
 
