@@ -967,7 +967,7 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When hideUnreadLabel is called, unread label state is set to null`() = runTest {
+    fun `When hideUnreadSeparator is called, unread label state is set to null`() = runTest {
         val user = randomUser()
         val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
         val messages = listOf(
@@ -995,7 +995,7 @@ internal class MessageListControllerTests {
         unreadLabel.shouldNotBeNull()
 
         // Hide the unread label
-        controller.hideUnreadLabel()
+        controller.hideUnreadSeparator()
 
         // Verify unread label state is now null
         controller.unreadLabelState.value.shouldBeNull()

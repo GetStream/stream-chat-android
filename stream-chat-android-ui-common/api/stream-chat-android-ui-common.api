@@ -730,7 +730,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun getUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getUnreadLabelState ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun hideUnreadLabel ()V
+	public final fun hideUnreadSeparator ()V
 	public final fun isInThread ()Z
 	public final fun isInsideSearch ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isStartedForThread ()Z

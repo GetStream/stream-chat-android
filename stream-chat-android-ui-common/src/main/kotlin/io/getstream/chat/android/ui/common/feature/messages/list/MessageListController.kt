@@ -631,7 +631,7 @@ public class MessageListController(
     /**
      * Hides the unread label in the messages list (if already visible).
      */
-    public fun hideUnreadLabel() {
+    public fun hideUnreadSeparator() {
         unreadLabelState.value = null
     }
 

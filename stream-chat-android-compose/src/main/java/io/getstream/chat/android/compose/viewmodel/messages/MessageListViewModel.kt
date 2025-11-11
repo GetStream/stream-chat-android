@@ -551,8 +551,8 @@ public class MessageListViewModel(
     /**
      * Hides the unread label in the messages list (if already visible).
      */
-    public fun hideUnreadLabel() {
-        messageListController.hideUnreadLabel()
+    public fun hideUnreadSeparator() {
+        messageListController.hideUnreadSeparator()
     }
 
     /**
