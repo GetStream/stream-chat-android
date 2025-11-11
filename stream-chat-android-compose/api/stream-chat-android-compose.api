@@ -5049,6 +5049,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun getShowSystemMessagesState ()Z
 	public final fun getTypingUsers ()Ljava/util/List;
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun hideUnreadSeparator ()V
 	public final fun isInThread ()Z
 	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;
 	public final fun isShowingOverlay ()Z

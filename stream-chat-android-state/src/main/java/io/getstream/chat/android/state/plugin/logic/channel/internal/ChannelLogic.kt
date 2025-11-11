@@ -424,7 +424,9 @@ internal class ChannelLogic(
             messageFilterDirection = Pagination.AROUND_ID
             messageFilterValue = aroundMessageId
         }.toWatchChannelRequest(userPresence).apply {
-            shouldRefresh = true
+            // Don't refresh the whole state when loading messages around a specific message, because `fillTheGap`
+            // will load the missing messages between the already loaded and the requested messages.
+            shouldRefresh = false
         }
     }
 

@@ -134,8 +134,8 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfMessages = messagesState.endOfOldMessagesReached
-    val startOfMessages = messagesState.endOfNewMessagesReached
+    val endOfOldMessages = messagesState.endOfOldMessagesReached
+    val endOfNewMessages = messagesState.endOfNewMessagesReached
     val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
 
@@ -170,7 +170,7 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
-            if (isLoadingMoreNewMessages && !startOfMessages) {
+            if (isLoadingMoreNewMessages && !endOfNewMessages) {
                 item {
                     loadingMoreContent()
                 }
@@ -196,7 +196,7 @@ public fun Messages(
                 }
             }
 
-            if (isLoadingMoreOldMessages && !endOfMessages) {
+            if (isLoadingMoreOldMessages && !endOfOldMessages) {
                 item {
                     loadingMoreContent()
                 }
@@ -216,14 +216,15 @@ public fun Messages(
     }
 
     LoadMoreHandler(lazyListState = lazyListState) {
-        if (!endOfMessages) {
+        if (!endOfOldMessages) {
             onMessagesStartReached()
         }
     }
 
-    val isMessagesEndReached by remember {
+    // Loads more (newer) messages when the user scrolls to the bottom of the list.
+    val isMessagesEndReached by remember(endOfNewMessages) {
         derivedStateOf {
-            !startOfMessages &&
+            !endOfNewMessages &&
                 lazyListState.firstVisibleItemIndex == 0 &&
                 lazyListState.isScrollInProgress
         }
