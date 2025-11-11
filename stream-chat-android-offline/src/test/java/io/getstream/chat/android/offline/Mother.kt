@@ -35,7 +35,10 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Remi
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.DeliveryReceiptsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.ReadReceiptsEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.TypingIndicatorsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserMuteEntity
 import io.getstream.chat.android.randomBoolean
@@ -45,6 +48,7 @@ import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomStringOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import java.util.Date
@@ -82,6 +86,30 @@ internal fun randomUserEntity(
     teams = teams,
     teamsRole = teamsRole,
     extraData = extraData,
+)
+
+internal fun randomPrivacySettingsEntity(
+    typingIndicators: TypingIndicatorsEntity = TypingIndicatorsEntity(enabled = randomBoolean()),
+    readReceipts: ReadReceiptsEntity = ReadReceiptsEntity(enabled = randomBoolean()),
+    deliveryReceipts: DeliveryReceiptsEntity = DeliveryReceiptsEntity(enabled = randomBoolean()),
+): PrivacySettingsEntity = PrivacySettingsEntity(
+    typingIndicators = typingIndicators,
+    readReceipts = readReceipts,
+    deliveryReceipts = deliveryReceipts,
+)
+
+internal fun randomUserMuteEntity(
+    userId: String? = randomStringOrNull(),
+    targetId: String? = randomStringOrNull(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    expires: Date? = randomDateOrNull(),
+): UserMuteEntity = UserMuteEntity(
+    userId = userId,
+    targetId = targetId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    expires = expires,
 )
 
 internal fun randomMessageEntity(
