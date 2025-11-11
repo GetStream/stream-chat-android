@@ -629,6 +629,13 @@ public class MessageListController(
     }
 
     /**
+     * Hides the unread label in the messages list (if already visible).
+     */
+    public fun hideUnreadLabel() {
+        unreadLabelState.value = null
+    }
+
+    /**
      * Scrolls to the first unread message in the channel.
      */
     public fun scrollToFirstUnreadMessage() {
@@ -647,13 +654,6 @@ public class MessageListController(
                 }
         }
         disableUnreadLabelButton()
-    }
-
-    /**
-     * Hides the unread label in the messages list (if already visible).
-     */
-    public fun hideUnreadLabel() {
-        unreadLabelState.value = null
     }
 
     private suspend fun initialFocusMessage() {

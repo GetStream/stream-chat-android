@@ -967,6 +967,41 @@ internal class MessageListControllerTests {
     }
 
     @Test
+    fun `When hideUnreadLabel is called, unread label state is set to null`() = runTest {
+        val user = randomUser()
+        val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null, deletedForMe = false)
+        val messages = listOf(
+            firstMessage,
+            randomMessage(id = "first_unread_message_id", deletedAt = null, deletedForMe = false),
+        )
+        val channelRead = MutableStateFlow(
+            randomChannelUserRead(
+                user = user,
+                lastReadMessageId = firstMessage.id,
+                unreadMessages = 1,
+            ),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(
+                messagesState = messagesState,
+                read = channelRead,
+            )
+            .get()
+
+        // Verify unread label is initially visible
+        val unreadLabel = controller.unreadLabelState.value
+        unreadLabel.shouldNotBeNull()
+
+        // Hide the unread label
+        controller.hideUnreadLabel()
+
+        // Verify unread label state is now null
+        controller.unreadLabelState.value.shouldBeNull()
+    }
+
+    @Test
     fun `When reactToMessage is called with skipPush set to true, sendReaction is invoked with skipPush true`() = runTest {
         val messageId = randomString()
         val reactionType = "love"
