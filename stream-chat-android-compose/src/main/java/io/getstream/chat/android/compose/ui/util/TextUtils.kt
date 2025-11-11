@@ -111,7 +111,6 @@ internal fun buildAnnotatedMessageText(
 }
 
 /**
- *
  * Builds an [AnnotatedString] from a given text, applying styles and annotations for links and mentions.
  * Used in message input fields.
  *
