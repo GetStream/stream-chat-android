@@ -35,6 +35,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix jump to message overwriting the initially loaded messages in the channel. [#6000](https://github.com/GetStream/stream-chat-android/pull/6000)
 
 ### ⬆️ Improved
 
