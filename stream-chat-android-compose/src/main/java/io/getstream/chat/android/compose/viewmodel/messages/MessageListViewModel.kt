@@ -549,6 +549,13 @@ public class MessageListViewModel(
     }
 
     /**
+     * Hides the unread label in the messages list (if already visible).
+     */
+    public fun hideUnreadLabel() {
+        messageListController.hideUnreadLabel()
+    }
+
+    /**
      * Sets a handler which determines the position of a message inside a group.
      *
      * @param messagePositionHandler The handler to use.

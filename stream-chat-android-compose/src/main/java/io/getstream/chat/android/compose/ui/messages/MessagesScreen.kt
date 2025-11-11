@@ -380,6 +380,7 @@ internal fun DefaultBottomBarContent(
                         skipEnrichUrl = skipEnrichUrl,
                     ),
                 )
+                listViewModel.hideUnreadLabel()
             }
         },
     )

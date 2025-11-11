@@ -649,6 +649,13 @@ public class MessageListController(
         disableUnreadLabelButton()
     }
 
+    /**
+     * Hides the unread label in the messages list (if already visible).
+     */
+    public fun hideUnreadLabel() {
+        unreadLabelState.value = null
+    }
+
     private suspend fun initialFocusMessage() {
         messageId ?: return // No initial focus if no message id is provided
         listState

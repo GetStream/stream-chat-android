@@ -342,6 +342,13 @@ public class MessageListViewModel(
     }
 
     /**
+     * Hides the unread label in the messages list (if already visible).
+     */
+    public fun hideUnreadLabel() {
+        messageListController.hideUnreadLabel()
+    }
+
+    /**
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *
