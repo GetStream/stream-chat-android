@@ -37,6 +37,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserMuteEntity
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
@@ -55,13 +56,13 @@ internal fun randomUserEntity(
     name: String = randomString(),
     image: String = randomString(),
     role: String = randomString(),
-    createdAt: Date? = null,
-    updatedAt: Date? = null,
-    lastActive: Date? = null,
+    createdAt: Date? = randomDateOrNull(),
+    updatedAt: Date? = randomDateOrNull(),
+    lastActive: Date? = randomDateOrNull(),
     invisible: Boolean = randomBoolean(),
     privacySettings: PrivacySettingsEntity? = null,
     banned: Boolean = randomBoolean(),
-    mutes: List<String> = emptyList(),
+    mutes: List<UserMuteEntity> = emptyList(),
     teams: List<String> = emptyList(),
     teamsRole: Map<String, String> = emptyMap(),
     extraData: Map<String, Any> = emptyMap(),

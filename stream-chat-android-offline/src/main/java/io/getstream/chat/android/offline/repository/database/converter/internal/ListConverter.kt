@@ -19,13 +19,14 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserMuteEntity
 
+@OptIn(ExperimentalStdlibApi::class)
 internal class ListConverter {
-    @OptIn(ExperimentalStdlibApi::class)
-    private val adapter = moshi.adapter<List<String>>()
 
-    @OptIn(ExperimentalStdlibApi::class)
+    private val adapter = moshi.adapter<List<String>>()
     private val channelUserReadListAdapter = moshi.adapter<List<ChannelUserReadEntity>>()
+    private val userMuteListAdapter = moshi.adapter<List<UserMuteEntity>>()
 
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
@@ -52,4 +53,16 @@ internal class ListConverter {
         }
         return channelUserReadListAdapter.fromJson(data)
     }
+
+    @TypeConverter
+    fun toUserMuteList(data: String): List<UserMuteEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
+        }
+        return userMuteListAdapter.fromJson(data)
+    }
+
+    @TypeConverter
+    fun fromUserMuteList(entities: List<UserMuteEntity>?): String? =
+        userMuteListAdapter.toJson(entities)
 }
