@@ -37,7 +37,6 @@ import java.util.Date
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
-    private val getCurrentUser: () -> User?,
     private val repositoryFacade: RepositoryFacade,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
@@ -60,8 +59,8 @@ internal class MessageReceiptManager(
      * - Is not yet marked as delivered by the current user
      */
     suspend fun markChannelsAsDelivered(channels: List<Channel>) {
-        val currentUser = getCurrentUser() ?: run {
-            logger.w { "[markChannelsAsDelivered] Current user is null" }
+        val currentUser = retrieveCurrentUser() ?: run {
+            logger.w { "[markChannelsAsDelivered] Current user not found" }
             return
         }
 
@@ -82,8 +81,8 @@ internal class MessageReceiptManager(
      * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
      */
     suspend fun markMessageAsDelivered(message: Message) {
-        val currentUser = getCurrentUser() ?: run {
-            logger.w { "[markMessageAsDelivered] Current user is null" }
+        val currentUser = retrieveCurrentUser() ?: run {
+            logger.w { "[markMessageAsDelivered] Current user not found" }
             return
         }
 
@@ -112,6 +111,9 @@ internal class MessageReceiptManager(
 
         markMessageAsDelivered(message)
     }
+
+    private suspend fun retrieveCurrentUser(): User? =
+        repositoryFacade.selectUser(userId = "me")
 
     private suspend fun retrieveChannel(cid: String): Channel? =
         repositoryFacade.selectChannel(cid) ?: run {

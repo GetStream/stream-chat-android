@@ -337,7 +337,6 @@ internal constructor(
     internal val messageReceiptManager by lazy {
         MessageReceiptManager(
             now = now,
-            getCurrentUser = ::getCurrentUser,
             repositoryFacade = repositoryFacade,
             messageReceiptRepository = repository,
             api = api,

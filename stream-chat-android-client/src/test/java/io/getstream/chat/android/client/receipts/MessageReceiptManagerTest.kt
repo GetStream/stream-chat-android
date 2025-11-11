@@ -333,8 +333,8 @@ internal class MessageReceiptManagerTest {
     }
 
     private class Fixture {
-        private var getCurrentUser: () -> User? = { CurrentUser }
         private val mockRepositoryFacade = mock<RepositoryFacade> {
+            onBlocking { selectUser("me") } doReturn CurrentUser
             onBlocking { selectChannel(DeliverableChannel.cid) } doReturn DeliverableChannel
             onBlocking { selectMessage(DeliverableMessage.id) } doReturn DeliverableMessage
         }
@@ -351,7 +351,7 @@ internal class MessageReceiptManagerTest {
         }
 
         fun givenCurrentUser(user: User?) = apply {
-            getCurrentUser = { user }
+            wheneverBlocking { mockRepositoryFacade.selectUser("me") } doReturn user
         }
 
         fun givenChannelNotFoundFromRepository() = apply {
@@ -387,7 +387,6 @@ internal class MessageReceiptManagerTest {
 
         fun get() = MessageReceiptManager(
             now = { Now },
-            getCurrentUser = getCurrentUser,
             repositoryFacade = mockRepositoryFacade,
             messageReceiptRepository = mockMessageReceiptRepository,
             api = mockChatApi,
