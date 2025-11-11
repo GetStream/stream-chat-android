@@ -103,11 +103,14 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      * @param message The [Message] to upsert in the state.
      */
     private fun updateState(message: Message) {
-        logic.channelFromMessage(message)?.upsertMessage(message)
-        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
-        logic.threadFromMessage(message)?.upsertMessage(message)
+        val oldMessage = logic.getMessageById(message.id)
+        // Don't override the createdLocallyAt timestamp for own messages, to ensure they are sorted properly
+        val updatedMessage = message.copy(createdLocallyAt = oldMessage?.createdLocallyAt)
+        logic.channelFromMessage(updatedMessage)?.upsertMessage(updatedMessage)
+        logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(updatedMessage) }
+        logic.threadFromMessage(updatedMessage)?.upsertMessage(updatedMessage)
         // Update the flows for currently running queries to ensure the (new) message is properly reflected in
         // the channel list
-        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(message.cid) }
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(updatedMessage.cid) }
     }
 }

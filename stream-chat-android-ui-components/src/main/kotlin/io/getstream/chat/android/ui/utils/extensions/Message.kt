@@ -48,7 +48,7 @@ public fun Message.hasNoAttachments(): Boolean = attachments.isEmpty()
 
 public fun Message.isGiphyNotEphemeral(): Boolean = isEphemeral().not() && command == AttachmentType.GIPHY
 
-public fun Message.getCreatedAtOrNull(): Date? = createdAt ?: createdLocallyAt
+public fun Message.getCreatedAtOrNull(): Date? = createdLocallyAt ?: createdAt
 
 public fun Message.getUpdatedAtOrNull(): Date? = updatedAt ?: updatedLocallyAt
 

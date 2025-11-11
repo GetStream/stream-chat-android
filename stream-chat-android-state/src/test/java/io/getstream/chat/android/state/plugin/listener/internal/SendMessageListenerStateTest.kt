@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -34,6 +35,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class SendMessageListenerStateTest {
 
@@ -49,62 +51,6 @@ internal class SendMessageListenerStateTest {
     }
 
     private val sendMessageListener = SendMessageListenerState(logicRegistry)
-
-    @Test
-    fun `when request to send messages is successful, the message should be upserted with correct status`() = runTest {
-        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
-
-        sendMessageListener.onMessageSendResult(
-            result = Result.Success(testMessage),
-            channelType = randomString(),
-            channelId = randomString(),
-            message = testMessage,
-        )
-
-        verify(channelLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            },
-        )
-        verify(threadsLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            },
-        )
-        verify(threadLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            },
-        )
-    }
-
-    @Test
-    fun `when request to send messages fails, the message should be upserted with correct status`() = runTest {
-        val testMessage = randomMessage(syncStatus = SyncStatus.SYNC_NEEDED)
-
-        sendMessageListener.onMessageSendResult(
-            result = Result.Failure(Error.GenericError("")),
-            channelType = randomString(),
-            channelId = randomString(),
-            message = testMessage,
-        )
-
-        verify(channelLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            },
-        )
-        verify(threadsLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            },
-        )
-        verify(threadLogic).upsertMessage(
-            argThat { message ->
-                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            },
-        )
-    }
 
     @Test
     fun `when message is already in state, it should not be upserted again`() = runTest {
@@ -132,6 +78,151 @@ internal class SendMessageListenerStateTest {
         verify(threadLogic, never()).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+    }
+
+    @Test
+    fun `when old message exists with createdLocallyAt, it should be preserved on success`() = runTest {
+        val originalCreatedLocallyAt = Date()
+        val oldMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdLocallyAt = originalCreatedLocallyAt,
+        )
+        whenever(logicRegistry.getMessageById(oldMessage.id)) doReturn oldMessage
+
+        val testMessage = oldMessage.copy(
+            createdLocallyAt = Date(), // Different timestamp
+        )
+
+        val (channelType, channelId) = testMessage.cid.cidToTypeAndId()
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Success(testMessage),
+            channelType = channelType,
+            channelId = channelId,
+            message = testMessage,
+        )
+
+        val expected = testMessage.copy(createdLocallyAt = originalCreatedLocallyAt, syncStatus = SyncStatus.COMPLETED)
+        verify(channelLogic).upsertMessage(expected)
+        verify(threadsLogic).upsertMessage(expected)
+        verify(threadLogic).upsertMessage(expected)
+    }
+
+    @Test
+    fun `when old message exists with createdLocallyAt, it should be preserved on failure`() = runTest {
+        val originalCreatedLocallyAt = Date()
+        val oldMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdLocallyAt = originalCreatedLocallyAt,
+        )
+        whenever(logicRegistry.getMessageById(oldMessage.id)) doReturn oldMessage
+
+        val testMessage = oldMessage.copy(
+            createdLocallyAt = Date(), // Different timestamp
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(Error.GenericError("")),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == originalCreatedLocallyAt
+            },
+        )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == originalCreatedLocallyAt
+            },
+        )
+        verify(threadLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == originalCreatedLocallyAt
+            },
+        )
+    }
+
+    @Test
+    fun `when no old message exists, createdLocallyAt should be null on success`() = runTest {
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdLocallyAt = Date(),
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Success(testMessage),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdLocallyAt == null
+            },
+        )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdLocallyAt == null
+            },
+        )
+        verify(threadLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.COMPLETED &&
+                    message.createdLocallyAt == null
+            },
+        )
+    }
+
+    @Test
+    fun `when no old message exists, createdLocallyAt should be null on failure`() = runTest {
+        val testMessage = randomMessage(
+            syncStatus = SyncStatus.SYNC_NEEDED,
+            createdLocallyAt = Date(),
+        )
+
+        sendMessageListener.onMessageSendResult(
+            result = Result.Failure(Error.GenericError("")),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = testMessage,
+        )
+
+        verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == null
+            },
+        )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == null
+            },
+        )
+        verify(threadLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id &&
+                    message.syncStatus == SyncStatus.SYNC_NEEDED &&
+                    message.createdLocallyAt == null
             },
         )
     }

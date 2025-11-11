@@ -1077,7 +1077,7 @@ public class MessageListController(
         lastLoadedMessage: Message?,
         typingItemState: TypingItemState?,
     ): NewMessageState? {
-        val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
+        val lastLoadedMessageDate = lastLoadedMessage?.getCreatedAtOrNull()
         return when {
             typingItemState != null -> Typing
             lastMessage == null -> null

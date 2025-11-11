@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.threads.list.adapter.viewholder.int
 import android.text.SpannableStringBuilder
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -123,7 +124,7 @@ internal class ThreadItemViewHolder(
             binding.latestReplyMessageView.binding.messageLabel.text = formatMessage(latestReply)
             // Timestamp
             binding.latestReplyMessageView.binding.messageTimeLabel.text =
-                ChatUI.dateFormatter.formatDate(latestReply.createdAt ?: latestReply.createdLocallyAt)
+                ChatUI.dateFormatter.formatDate(latestReply.getCreatedAtOrNull())
             binding.latestReplyMessageView.isVisible = true
         } else {
             // Note: should never happen
