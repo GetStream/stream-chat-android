@@ -89,7 +89,7 @@ internal class ChatClientTest {
     private lateinit var result: MutableList<ChatEvent>
     private val token = randomString()
     private val userId = randomString()
-    private val user = randomUser(id = userId)
+    private val user = randomUser(id = userId, updatedAt = randomDateBefore(Date()))
     private val tokenUtils: TokenUtils = mock()
 
     @BeforeEach
@@ -297,6 +297,7 @@ internal class ChatClientTest {
     fun `Given connected user When handle event with updated user Should updated user value`() {
         val updateUser = user.copy(
             extraData = mutableMapOf(),
+            updatedAt = Date(),
             name = "updateUserName",
         )
 

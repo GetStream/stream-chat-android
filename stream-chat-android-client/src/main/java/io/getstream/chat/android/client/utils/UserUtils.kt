@@ -16,21 +16,32 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 
 /**
- * Partially merges [that] user data into [this] user data.
+ * Partially merges [that] user data into [this] user data if [that] is more up to date.
  */
 @InternalStreamChatApi
-public fun User.mergePartially(that: User): User = this.copy(
-    role = that.role,
-    createdAt = that.createdAt,
-    updatedAt = that.updatedAt,
-    lastActive = that.lastActive,
-    banned = that.banned,
-    name = that.name,
-    image = that.image,
-    privacySettings = that.privacySettings,
-    extraData = that.extraData,
-)
+public fun User.mergePartially(that: User): User =
+    if (that.isMoreUpToDateThan(this)) {
+        this.copy(
+            role = that.role,
+            createdAt = that.createdAt,
+            updatedAt = that.updatedAt,
+            lastActive = that.lastActive,
+            banned = that.banned,
+            name = that.name,
+            image = that.image,
+            privacySettings = that.privacySettings,
+            extraData = that.extraData,
+            mutes = that.mutes,
+        )
+    } else {
+        this
+    }
+
+private fun User.isMoreUpToDateThan(that: User): Boolean =
+    (this.createdAt ?: NEVER) > (that.createdAt ?: NEVER) ||
+        (this.updatedAt ?: NEVER) > (that.updatedAt ?: NEVER)

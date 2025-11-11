@@ -226,6 +226,16 @@ public fun randomUser(
     extraData = extraData,
 )
 
+public fun randomPrivacySettings(
+    typingIndicators: TypingIndicators = TypingIndicators(enabled = randomBoolean()),
+    deliveryReceipts: DeliveryReceipts = DeliveryReceipts(enabled = randomBoolean()),
+    readReceipts: ReadReceipts = ReadReceipts(enabled = randomBoolean()),
+): PrivacySettings = PrivacySettings(
+    typingIndicators = typingIndicators,
+    deliveryReceipts = deliveryReceipts,
+    readReceipts = readReceipts,
+)
+
 public fun randomReaction(
     messageId: String = randomString(),
     type: String = randomString(),
@@ -692,8 +702,8 @@ public fun randomFiles(
 
 public fun randomDateOrNull(): Date? = randomDate().takeIf { randomBoolean() }
 public fun randomDate(): Date = Date(positiveRandomLong())
-public fun randomDateBefore(date: Long): Date = Date(date - positiveRandomInt())
-public fun randomDateAfter(date: Long): Date = Date(randomLongBetween(date))
+public fun randomDateBefore(date: Date): Date = Date(date.time - positiveRandomInt())
+public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time))
 
 public fun createDate(
     year: Int = positiveRandomInt(),
