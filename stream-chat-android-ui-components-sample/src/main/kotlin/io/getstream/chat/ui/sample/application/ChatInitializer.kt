@@ -82,6 +82,13 @@ class ChatInitializer(
                     channelId = channel.id,
                 )
             },
+            onNewPushMessage = { pushMessage ->
+                ChatClient.instance()
+                    .markMessageAsDelivered(messageId = pushMessage.messageId)
+                    .enqueue()
+                // Return false to let the SDK handle the push message and show a notification
+                false
+            },
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 

@@ -22,11 +22,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.testing.WorkManagerTestInitHelper
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.randomPushMessage
-import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.models.PushMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -37,7 +35,6 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyBlocking
 import org.mockito.kotlin.whenever
 import org.robolectric.annotation.Config
 
@@ -58,17 +55,6 @@ internal class ChatNotificationsImplTest {
             channelType = pushMessage.channelType,
             channelId = pushMessage.channelId,
         )
-    }
-
-    @Test
-    fun `onPushMessage marks message as delivered`() {
-        val pushMessage = randomPushMessage()
-        val fixture = Fixture()
-        val sut = fixture.get()
-
-        sut.onPushMessage(pushMessage)
-
-        fixture.verifyMarkMessageAsDeliveredCalled(messageId = pushMessage.messageId)
     }
 
     @Test
@@ -113,11 +99,6 @@ internal class ChatNotificationsImplTest {
 
         private var mockNotificationHandler = mock<NotificationHandler>()
         private var notificationConfig = NotificationConfig()
-        private val mockMessageReceiptManager = mock<MessageReceiptManager>()
-
-        private val mockChatClient = mock<ChatClient> {
-            on { messageReceiptManager } doReturn mockMessageReceiptManager
-        }
 
         fun givenOnPushMessageHandled(pushMessage: PushMessage, handled: Boolean) = apply {
             whenever(mockNotificationHandler.onPushMessage(pushMessage)) doReturn handled
@@ -125,10 +106,6 @@ internal class ChatNotificationsImplTest {
 
         fun givenNotificationConfig(config: NotificationConfig) = apply {
             notificationConfig = config
-        }
-
-        fun verifyMarkMessageAsDeliveredCalled(messageId: String) {
-            verifyBlocking(mockMessageReceiptManager) { markMessageAsDelivered(messageId) }
         }
 
         fun get(): ChatNotificationsImpl {
@@ -140,7 +117,6 @@ internal class ChatNotificationsImplTest {
                 notificationConfig = notificationConfig,
                 context = context,
                 scope = CoroutineScope(UnconfinedTestDispatcher()),
-                chatClientProvider = { mockChatClient },
             )
         }
     }

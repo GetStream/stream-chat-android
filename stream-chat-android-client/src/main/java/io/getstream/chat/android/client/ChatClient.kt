@@ -2884,6 +2884,33 @@ internal constructor(
     }
 
     /**
+     * Request to mark the message with the given id as delivered if:
+     *
+     * - Delivery receipts are enabled for the current user.
+     * - Delivery events are enabled in the channel config.
+     *
+     * and if all of the following conditions are met for the message:
+     *
+     * - Not sent by the current user.
+     * - Not shadow banned.
+     * - Not sent by a muted user.
+     * - Not yet marked as read by the current user.
+     * - Not yet marked as delivered by the current user.
+     *
+     * @param messageId The ID of the message to mark as delivered.
+     */
+    @CheckResult
+    public fun markMessageAsDelivered(messageId: String): Call<Unit> =
+        CoroutineCall(userScope) {
+            messageReceiptManager.markMessageAsDelivered(messageId)
+            Result.Success(Unit)
+        }.doOnStart(userScope) {
+            logger.d { "[markMessageAsDelivered] #doOnStart; messageId: $messageId" }
+        }.doOnResult(userScope) {
+            logger.v { "[markMessageAsDelivered] #doOnResult; completed($messageId)" }
+        }
+
+    /**
      * Marks the given message as read.
      *
      * @param channelType The type of the channel in which the thread resides.

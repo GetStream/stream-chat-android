@@ -56,11 +56,9 @@ internal class ChatNotificationsImpl(
     private val notificationConfig: NotificationConfig,
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
-    private val chatClientProvider: () -> ChatClient = { ChatClient.instance() },
 ) : ChatNotifications {
     private val logger by taggedLogger("Chat:Notifications")
 
-    private val chatClient: ChatClient by lazy { chatClientProvider() }
     private val pushTokenUpdateHandler = PushTokenUpdateHandler()
     private val showedMessages = mutableSetOf<String>()
     private val permissionManager: NotificationPermissionManager =
@@ -108,8 +106,6 @@ internal class ChatNotificationsImpl(
         logger.i { "[onPushMessage] message: $pushMessage" }
 
         pushNotificationReceivedListener.onPushNotificationReceived(pushMessage.channelType, pushMessage.channelId)
-
-        scope.launch { chatClient.messageReceiptManager.markMessageAsDelivered(pushMessage.messageId) }
 
         if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(pushMessage)) {
             handlePushMessage(pushMessage)

@@ -25,14 +25,18 @@ import android.content.SharedPreferences
 import androidx.core.app.NotificationCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.randomPushMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
@@ -53,6 +57,7 @@ internal class ChatNotificationHandlerTest {
     private val mockSharedPreferences: SharedPreferences = mock()
     private val mockSharedPreferencesEditor: SharedPreferences.Editor = mock()
     private val mockNotificationChannel: NotificationChannel = mock()
+    private val mockOnNewPushMessage: (PushMessage) -> Boolean = mock()
 
     private val testChannel = randomChannel(type = "messaging", id = "test_channel")
     private val testMessage = randomMessage(id = "test_message", text = "Test message content")
@@ -62,8 +67,10 @@ internal class ChatNotificationHandlerTest {
     private val notificationChannel: () -> NotificationChannel = { mockNotificationChannel }
     private val notificationTextFormatter: (User?, Message) -> CharSequence = { _, message -> message.text }
     private val actionsProvider: (Int, Channel, Message) -> List<NotificationCompat.Action> = { _, _, _ -> emptyList() }
-    private val notificationBuilderTransformer:
-        (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder = { builder, _ -> builder }
+    private val notificationBuilderTransformer: (
+        NotificationCompat.Builder,
+        ChatNotification,
+    ) -> NotificationCompat.Builder = { builder, _ -> builder }
     private val currentUserProvider: () -> User? = { testUser }
 
     private lateinit var chatNotificationHandler: ChatNotificationHandler
@@ -95,6 +102,7 @@ internal class ChatNotificationHandlerTest {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             currentUserProvider = currentUserProvider,
+            onNewPushMessage = mockOnNewPushMessage,
         )
     }
 
@@ -170,5 +178,19 @@ internal class ChatNotificationHandlerTest {
 
         // Verify SharedPreferences interactions for storing notification ID without summary
         verify(mockSharedPreferencesEditor, times(1)).putStringSet(any(), any())
+    }
+
+    @Test
+    fun `onPushMessage should be handleable`() {
+        // Given
+        val handled = randomBoolean()
+        val pushMessage = randomPushMessage()
+        whenever(mockOnNewPushMessage.invoke(pushMessage)) doReturn handled
+
+        // When
+        val actual = chatNotificationHandler.onPushMessage(message = pushMessage)
+
+        // Then
+        assertEquals(handled, actual)
     }
 }

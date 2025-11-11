@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.receipts.MessageReceiptManager
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
@@ -92,6 +93,7 @@ internal open class BaseChatClientTest {
     protected val tokenUtils: TokenUtils = mock()
     protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
     protected val now = Date()
+    protected val mockMessageReceiptManager = mock<MessageReceiptManager>()
 
     @BeforeEach
     fun before() {
@@ -130,7 +132,7 @@ internal open class BaseChatClientTest {
             now = { now },
             repository = mock(),
             messageReceiptReporter = mock(),
-            messageReceiptManager = mock(),
+            messageReceiptManager = mockMessageReceiptManager,
         )
         chatClient.attachmentsSender = attachmentsSender
         chatClient.plugins = plugins

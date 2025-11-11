@@ -64,6 +64,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
 
 /**
  * Tests for the [ChatClient] channels endpoints.
@@ -988,6 +989,19 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun markMessageAsDelivered() = runTest {
+        // given
+        val messageId = randomString()
+        val sut = Fixture()
+            .givenMarkDeliveredResult(messageId)
+            .get()
+        // when
+        val result = sut.markMessageAsDelivered(messageId).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
     fun markReadSuccess() = runTest {
         // given
         val channelType = randomString()
@@ -1528,8 +1542,8 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
             whenever(api.markRead(any(), any(), any())).thenReturn(result)
         }
 
-        fun givenMarkDeliveredResult(result: Call<Unit>) = apply {
-            whenever(api.markDelivered(any())).thenReturn(result)
+        fun givenMarkDeliveredResult(messageId: String) = apply {
+            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenReturn(Unit)
         }
 
         fun givenMarkUnreadResult(result: Call<Unit>) = apply {

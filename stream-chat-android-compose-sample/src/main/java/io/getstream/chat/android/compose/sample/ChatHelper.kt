@@ -69,6 +69,13 @@ object ChatHelper {
                     parentMessageId = message.parentId,
                 )
             },
+            onNewPushMessage = { pushMessage ->
+                ChatClient.instance()
+                    .markMessageAsDelivered(messageId = pushMessage.messageId)
+                    .enqueue()
+                // Return false to let the SDK handle the push message and show a notification
+                false
+            },
         )
 
         val offlinePlugin = StreamOfflinePluginFactory(context)

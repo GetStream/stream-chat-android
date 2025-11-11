@@ -19,6 +19,7 @@
 ### ✅ Added
 - Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ⚠️ Changed
 - Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
