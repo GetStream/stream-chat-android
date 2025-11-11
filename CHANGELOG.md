@@ -51,6 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListController.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
 
 ### ⚠️ Changed
 
@@ -62,6 +63,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
 
 ### ⚠️ Changed
 
@@ -73,6 +75,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
 
 ### ⚠️ Changed
 
