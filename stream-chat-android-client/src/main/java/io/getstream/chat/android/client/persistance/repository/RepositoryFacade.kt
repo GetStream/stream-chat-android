@@ -239,9 +239,9 @@ public class RepositoryFacade private constructor(
         ): RepositoryFacade {
             val userRepository = factory.createUserRepository()
             val getUser: suspend (userId: String) -> User = { userId ->
-                requireNotNull(userRepository.selectUser(userId)) {
-                    "User with the userId: `$userId` has not been found"
-                }
+                // Fallback to an empty user if it cannot be found in the DB (in case we try to fetch the user before
+                // it was inserted).
+                userRepository.selectUser(userId) ?: User(id = userId)
             }
 
             val messageRepository = factory.createMessageRepository(getUser)
