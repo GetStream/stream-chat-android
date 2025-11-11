@@ -25,6 +25,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Fallback to empty `User` instead of crashing if the searched user is not yet inserted into the DB. [#5998](https://github.com/GetStream/stream-chat-android/pull/5998)
 
 ### ✅ Added
 
@@ -34,6 +35,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix jump to message overwriting the initially loaded messages in the channel. [#6000](https://github.com/GetStream/stream-chat-android/pull/6000)
 
 ### ⬆️ Improved
 
