@@ -44,6 +44,7 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomDateBefore
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -144,6 +145,7 @@ internal class ChatClientTest {
             audioPlayer = mock(),
             repository = mock(),
             messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         ).apply {
             attachmentsSender = mock()
             connectUser(user, token).enqueue()

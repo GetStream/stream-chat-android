@@ -387,7 +387,7 @@ internal class MessageReceiptManagerTest {
 
         fun get() = MessageReceiptManager(
             now = { Now },
-            repositoryFacade = mockRepositoryFacade,
+            getRepositoryFacade = { mockRepositoryFacade },
             messageReceiptRepository = mockMessageReceiptRepository,
             api = mockChatApi,
         )

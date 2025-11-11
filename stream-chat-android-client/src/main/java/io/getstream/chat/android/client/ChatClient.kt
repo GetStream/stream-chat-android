@@ -282,6 +282,7 @@ internal constructor(
     private val now: () -> Date = ::Date,
     private val repository: ChatClientRepository,
     private val messageReceiptReporter: MessageReceiptReporter,
+    internal val messageReceiptManager: MessageReceiptManager,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -333,15 +334,6 @@ internal constructor(
             ?: createRepositoryFacade(userScope)
 
     private var _repositoryFacade: RepositoryFacade? = null
-
-    internal val messageReceiptManager by lazy {
-        MessageReceiptManager(
-            now = now,
-            repositoryFacade = repositoryFacade,
-            messageReceiptRepository = repository,
-            api = api,
-        )
-    }
 
     private var pushNotificationReceivedListener: PushNotificationReceivedListener =
         PushNotificationReceivedListener { _, _ -> }
@@ -4783,6 +4775,12 @@ internal constructor(
                 repository = repository,
                 messageReceiptReporter = MessageReceiptReporter(
                     scope = userScope,
+                    messageReceiptRepository = repository,
+                    api = api,
+                ),
+                messageReceiptManager = MessageReceiptManager(
+                    now = ::Date,
+                    getRepositoryFacade = { instance().repositoryFacade },
                     messageReceiptRepository = repository,
                     api = api,
                 ),

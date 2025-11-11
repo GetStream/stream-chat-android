@@ -133,6 +133,7 @@ internal class ChatClientConnectionTests {
             audioPlayer = mock(),
             repository = mock(),
             messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         ).apply {
             attachmentsSender = mock()
         }

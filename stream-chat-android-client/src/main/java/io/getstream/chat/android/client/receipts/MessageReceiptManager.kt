@@ -37,10 +37,11 @@ import java.util.Date
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
-    private val repositoryFacade: RepositoryFacade,
+    private val getRepositoryFacade: () -> RepositoryFacade,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
 ) {
+    private val repositoryFacade by lazy { getRepositoryFacade() }
 
     private val logger by taggedLogger("Chat:MessageReceiptManager")
 

@@ -130,6 +130,7 @@ internal open class BaseChatClientTest {
             now = { now },
             repository = mock(),
             messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         )
         chatClient.attachmentsSender = attachmentsSender
         chatClient.plugins = plugins

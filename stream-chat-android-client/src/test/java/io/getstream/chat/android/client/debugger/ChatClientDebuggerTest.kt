@@ -149,6 +149,7 @@ internal class ChatClientDebuggerTest {
             audioPlayer = mock(),
             repository = mockRepository,
             messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         ).apply {
             attachmentsSender = this@ChatClientDebuggerTest.attachmentsSender
             connectUser(user, token).enqueue()
