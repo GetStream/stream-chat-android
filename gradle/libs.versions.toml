@@ -47,7 +47,6 @@ firebaseCrashlyticsPlugin = "3.0.2"
 firebaseMessaging = "24.1.0"
 gitversioner = "0.5.0"
 googleServices = "4.4.2"
-gradleNexusPublishPlugin = "1.3.0"
 gradleVersionsPlugin = "0.51.0"
 huaweiPush = "6.11.0.300"
 ituDateVersion = "1.10.2"
@@ -93,6 +92,7 @@ turbine = "1.2.0"
 work = "2.9.1"
 playServicesLocation = "21.3.0"
 kover = "0.9.2"
+mavenPublish = "0.34.0"
 
 [libraries]
 allure-kotlin-model = { module = "io.qameta.allure:allure-kotlin-model", version.ref = "allureKotlin"}
@@ -245,7 +245,7 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin"}
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
-nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "gradleNexusPublishPlugin"}
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish"}
 shot = { id = "shot", version.ref = "shot"}
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube"}
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless"}
