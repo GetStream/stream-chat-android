@@ -84,6 +84,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(1000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),
@@ -92,6 +93,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(3000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),
@@ -100,6 +102,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(2000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),
@@ -129,6 +132,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(1000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),
@@ -137,6 +141,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(3000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),
@@ -145,6 +150,7 @@ internal class ChannelExtensionsTest {
             messages = listOf(
                 randomMessage(
                     createdAt = Date(2000),
+                    createdLocallyAt = null,
                     parentId = null,
                 ),
             ),

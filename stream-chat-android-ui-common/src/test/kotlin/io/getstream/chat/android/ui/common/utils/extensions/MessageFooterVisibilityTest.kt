@@ -365,12 +365,14 @@ internal class MessageFooterVisibilityTest {
     private fun createMessage(
         user: User,
         createdAt: Date? = null,
+        createdLocallyAt: Date? = null,
         deletedAt: Date? = null,
         messageTextUpdatedAt: Date? = null,
     ): Message {
         return randomMessage(
             user = user,
             createdAt = createdAt,
+            createdLocallyAt = createdLocallyAt,
             deletedAt = deletedAt,
             messageTextUpdatedAt = messageTextUpdatedAt,
             deletedForMe = false,

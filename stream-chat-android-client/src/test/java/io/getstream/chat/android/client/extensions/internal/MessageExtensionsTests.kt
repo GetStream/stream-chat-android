@@ -329,6 +329,7 @@ internal class MessageExtensionsTests {
         val message = randomMessage(
             id = "message1",
             createdAt = now,
+            createdLocallyAt = null,
         )
 
         // when/then

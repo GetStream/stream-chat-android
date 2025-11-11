@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.plugin.state.channel.internal
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -171,7 +172,7 @@ internal class ChannelMutableState(
                 .filter { it.user.id == user?.id || !it.shadowed }
                 .filter(this::isMessageVisible)
                 .filter(extraPredicate)
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .sortedBy { it.getCreatedAtOrNull() }
                 .toList()
         }
     }
@@ -192,12 +193,12 @@ internal class ChannelMutableState(
 
     /** Sorted version of messages. */
     val sortedMessages: StateFlow<List<Message>> = visibleMessages.mapState { messagesMap ->
-        messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
+        messagesMap.values.sortedBy { message -> message.getCreatedAtOrNull() }
     }
 
     /** Sorted version of messages. */
     val sortedPinnedMessages: StateFlow<List<Message>> = visiblePinnedMessages.mapState { messagesMap ->
-        messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
+        messagesMap.values.sortedBy { message -> message.getCreatedAtOrNull() }
     }
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage!!
@@ -572,9 +573,12 @@ internal class ChannelMutableState(
             when (val currentUserRead = read.value) {
                 null -> true
                 else ->
+                    // Allow marking as read if:
+                    // 1. The last read message ID differs from the last message, OR
+                    // 2. There are unread messages (even if lastReadMessageId matches, server state may differ)
                     currentUserRead
-                        .takeIf { it.lastReadMessageId != lastMessage.id }
-                        ?. let {
+                        .takeIf { it.lastReadMessageId != lastMessage.id || it.unreadMessages > 0 }
+                        ?.let {
                             upsertReads(
                                 listOf(
                                     it.copy(
@@ -708,7 +712,7 @@ internal class ChannelMutableState(
         // Add buffer to avoid trimming too often
         return if (messages.size > messageLimit!! + TRIM_BUFFER) {
             val trimmedMessages = messages
-                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .sortedBy { it.getCreatedAtOrNull() }
                 .takeLast(messageLimit!!)
             // Set end of older messages to false, as we trimmed the messages
             setEndOfOlderMessages(false)

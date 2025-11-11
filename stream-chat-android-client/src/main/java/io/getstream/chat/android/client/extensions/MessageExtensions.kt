@@ -74,7 +74,7 @@ public fun Message.getCreatedAtOrThrow(): Date {
  * @return when the message was created or null.
  */
 public fun Message.getCreatedAtOrNull(): Date? {
-    return createdAt ?: createdLocallyAt
+    return createdLocallyAt ?: createdAt
 }
 
 /**

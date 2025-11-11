@@ -20,7 +20,9 @@ import android.content.Context
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -45,7 +47,7 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
         .filterNot { it.isDeleted() }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() }
-        .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
+        .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
 
 /**
  * Returns the channel name if exists, or the list of member names if the channel is distinct.
