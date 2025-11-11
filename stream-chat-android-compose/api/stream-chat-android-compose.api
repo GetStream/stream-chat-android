@@ -1669,7 +1669,7 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Cool
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/InputFieldKt {
-	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZILandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun InputField (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZILandroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Landroidx/compose/ui/text/input/VisualTransformation;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/MessageInputKt {
@@ -3367,24 +3367,27 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposerCancelIcon
 public final class io/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme$Companion;
-	public synthetic fun <init> (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JLio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JLio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component2-0d7_KjU ()J
 	public final fun component3 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component4-0d7_KjU ()J
-	public final fun copy-3bbok98 (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;J)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
-	public static synthetic fun copy-3bbok98$default (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;
+	public final fun copy-wffgcV4 (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JLio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
+	public static synthetic fun copy-wffgcV4$default (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/text/TextStyle;JLio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor-0d7_KjU ()J
 	public final fun getBorderShape ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getCursorBrushColor-0d7_KjU ()J
+	public final fun getMentionStyleFactory ()Lio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;
 	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme$Companion {
-	public final fun defaultTheme (Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
+	public final fun defaultTheme (Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme {
@@ -3456,6 +3459,15 @@ public final class io/getstream/chat/android/compose/ui/theme/IconStyle {
 	public final fun getTint-0d7_KjU ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/compose/ui/theme/MentionStyleFactory {
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/MentionStyleFactory$Companion;
+	public abstract fun styleFor (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;)Landroidx/compose/ui/text/SpanStyle;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/MentionStyleFactory$Companion {
+	public final fun getNoStyle ()Lio/getstream/chat/android/compose/ui/theme/MentionStyleFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes {
@@ -4992,6 +5004,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun seekRecordingTo (F)V
 	public final fun selectCommand (Lio/getstream/chat/android/models/Command;)V
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
+	public final fun selectMention (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/Mention;)V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;)V
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;ILjava/lang/Object;)V
 	public final fun sendRecording ()V

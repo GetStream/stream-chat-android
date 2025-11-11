@@ -76,6 +76,7 @@
 
 ### ✅ Added
 - Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+- Add `MentionStyleFactory` for customizing mentions in the message composer. [#5984](https://github.com/GetStream/stream-chat-android/pull/5984)
 
 ### ⚠️ Changed
 

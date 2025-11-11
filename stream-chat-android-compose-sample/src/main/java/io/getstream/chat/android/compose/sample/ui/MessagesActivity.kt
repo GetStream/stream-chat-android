@@ -64,6 +64,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
+import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
 import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -80,6 +81,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
@@ -145,7 +147,13 @@ class MessagesActivity : ComponentActivity() {
         val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
         val shapes = StreamShapes.defaultShapes()
-        val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
+        val messageComposerTheme = MessageComposerTheme
+            .defaultTheme(isInDarkMode, typography, shapes, colors)
+            .copy(
+                inputField = ComposerInputFieldTheme.defaultTheme(
+                    mentionStyleFactory = CustomMentionStyleFactory(colors.primaryAccent),
+                ),
+            )
         val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
         val attachmentsPickerTabFactories = AttachmentsPickerTabFactories.defaultFactories() +
             LocationPickerTabFactory(viewModelFactory = SharedLocationViewModelFactory(cid))
