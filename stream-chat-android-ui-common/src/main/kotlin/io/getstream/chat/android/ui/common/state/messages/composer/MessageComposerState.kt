@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
@@ -45,6 +46,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param pollsEnabled Indicator if polls are enabled for the current channel.
  * @param sendEnabled Whether the send action is enabled or not. If true, the send button is enabled and input file is
  * editable unless the user doesn't have proper [ChannelCapabilities] to send messages, otherwise it's disabled.
+ * @param selectedMentions The list of selected mentions in the current input.
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -63,4 +65,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val recording: RecordingState = RecordingState.Idle,
     val pollsEnabled: Boolean = false,
     val sendEnabled: Boolean = true,
+    val selectedMentions: Set<Mention> = emptySet(),
 )

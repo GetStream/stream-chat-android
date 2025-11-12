@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingTheme
 import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
  * Represents the theming for the message composer.
@@ -187,12 +189,14 @@ public data class ComposerLinkPreviewTheme(
  * @param backgroundColor The background color for the input field.
  * @param textStyle The text style for the input field.
  * @param cursorBrushColor The color for the cursor in the input field.
+ * @param mentionStyleFactory Factory for customization of the mention styles.
  */
 public data class ComposerInputFieldTheme(
     val borderShape: Shape,
     val backgroundColor: Color,
     val textStyle: TextStyle,
     val cursorBrushColor: Color,
+    val mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
 ) {
 
     public companion object {
@@ -204,6 +208,7 @@ public data class ComposerInputFieldTheme(
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
+            mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
         ): ComposerInputFieldTheme {
             return ComposerInputFieldTheme(
                 borderShape = shapes.inputField,
@@ -213,7 +218,32 @@ public data class ComposerInputFieldTheme(
                     textDirection = TextDirection.Content,
                 ),
                 cursorBrushColor = colors.primaryAccent,
+                mentionStyleFactory = mentionStyleFactory,
             )
+        }
+    }
+}
+
+/**
+ * Factory interface to provide custom styles for mentions.
+ */
+public interface MentionStyleFactory {
+
+    /**
+     * Returns the [SpanStyle] to be applied for the given [mention], or null to apply no special style.
+     *
+     * @param mention The mention for which to get the style.
+     * @return The [SpanStyle] to be applied, or null.
+     */
+    public fun styleFor(mention: Mention): SpanStyle?
+
+    public companion object {
+
+        /**
+         * A mention style factory that doesn't apply any styles.
+         */
+        public val NoStyle: MentionStyleFactory = object : MentionStyleFactory {
+            override fun styleFor(mention: Mention): SpanStyle? = null
         }
     }
 }

@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
+import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
  * Custom input field that we use for our Poll option UI. It's fairly simple - shows a basic input with clipped
@@ -122,7 +122,7 @@ public fun PollOptionInput(
                 }
             },
             visualTransformation = {
-                val styledText = buildAnnotatedMessageText(
+                val styledText = buildAnnotatedInputText(
                     text = it.text,
                     textColor = textColor,
                     textFontStyle = typography.body.fontStyle,
@@ -130,7 +130,6 @@ public fun PollOptionInput(
                         color = colors.primaryAccent,
                         textDecoration = TextDecoration.Underline,
                     ),
-                    mentionsColor = colors.primaryAccent,
                 )
                 TransformedText(styledText, OffsetMapping.Identity)
             },

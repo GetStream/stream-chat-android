@@ -42,6 +42,8 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -354,6 +356,33 @@ internal class MessageComposerViewModelTest {
             viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
             viewModel.mentionSuggestions.value.size `should be equal to` 0
             viewModel.input.value `should be equal to` "@Jc Miñarro "
+        }
+
+    @Test
+    fun `Given message composer When selecting a custom mention Should populate the input with the mention`() =
+        runTest {
+            val customMention = object : Mention {
+                override val type: MentionType = MentionType("custom")
+                override val display: String = "Custom Mention"
+            }
+
+            val viewModel = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(members = listOf(Member(user = user1), Member(user = user2)))
+                .get()
+
+            // Handling mentions on input changes is debounced so we advance time until idle to make sure
+            // all operations have finished before checking state.
+            viewModel.setMessageInput("@")
+            advanceUntilIdle()
+
+            viewModel.selectMention(customMention)
+            advanceUntilIdle()
+
+            viewModel.messageComposerState.value.mentionSuggestions.size `should be equal to` 0
+            viewModel.mentionSuggestions.value.size `should be equal to` 0
+            viewModel.input.value `should be equal to` "@Custom Mention "
         }
 
     private class Fixture(

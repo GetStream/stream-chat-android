@@ -88,6 +88,28 @@
 
 ### ❌ Removed
 
+# November 11th, 2025 - 6.27.0
+## stream-chat-android-offline
+### ⬆️ Improved
+- Fallback to empty `User` instead of crashing if the searched user is not yet inserted into the DB. [#5998](https://github.com/GetStream/stream-chat-android/pull/5998)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix jump to message overwriting the initially loaded messages in the channel. [#6000](https://github.com/GetStream/stream-chat-android/pull/6000)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Add `MessageListController.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+
+## stream-chat-android-compose
+### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+- Add `MentionStyleFactory` for customizing mentions in the message composer. [#5984](https://github.com/GetStream/stream-chat-android/pull/5984)
+
 # November 07th, 2025 - 6.26.1
 ## stream-chat-android-state
 ### 🐞 Fixed
