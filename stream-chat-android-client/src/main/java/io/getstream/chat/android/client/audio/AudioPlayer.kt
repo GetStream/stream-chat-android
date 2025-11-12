@@ -70,7 +70,7 @@ public interface AudioPlayer {
      * Plays an audio track with sourceUrl.
      *
      * @param sourceUrl the URL of the audio track
-     * @param hash the identifier of the audio track
+     * @param audioHash the identifier of the audio track
      */
     public fun play(sourceUrl: String, audioHash: Int)
 

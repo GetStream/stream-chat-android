@@ -38,16 +38,15 @@ internal class StreamMediaPlayerTest {
 
     private lateinit var userScope: UserTestScope
     private lateinit var mediaPlayer: NativeMediaPlayerMock
-    private lateinit var streamPlayer: StreamMediaPlayer
+    private lateinit var streamPlayer: StreamAudioPlayer
 
     @BeforeEach
     fun setUp() {
         userScope = UserTestScope(testCoroutines.scope)
         mediaPlayer = NativeMediaPlayerMock(userScope)
-        streamPlayer = StreamMediaPlayer(
+        streamPlayer = StreamAudioPlayer(
             mediaPlayer = mediaPlayer,
             userScope = userScope,
-            isMarshmallowOrHigher = true,
         )
     }
 

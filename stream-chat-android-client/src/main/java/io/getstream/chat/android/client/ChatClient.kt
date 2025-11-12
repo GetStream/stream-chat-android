@@ -17,15 +17,15 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
+import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -69,7 +69,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
-import io.getstream.chat.android.client.audio.StreamMediaPlayer
+import io.getstream.chat.android.client.audio.StreamAudioPlayer
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -984,7 +984,7 @@ internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -1108,7 +1108,6 @@ internal constructor(
      * @see FileUploader
      */
     @CheckResult
-    @JvmOverloads
     public fun deleteImage(
         url: String,
     ): Call<Unit> = api.deleteImage(url)
@@ -4602,8 +4601,8 @@ internal constructor(
         }
 
         /**
-         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
-         * release builds as it uses a memory cache.
+         * Debug requests using [io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser]. Use this to
+         * debug your requests. This shouldn't be enabled in release builds as it uses a memory cache.
          */
         public fun debugRequests(shouldDebug: Boolean): Builder = apply {
             this.debugRequests = shouldDebug
@@ -4719,17 +4718,18 @@ internal constructor(
 
             val appSettingsManager = AppSettingManager(module.api())
 
-            val audioPlayer: AudioPlayer = StreamMediaPlayer(
-                mediaPlayer = NativeMediaPlayerImpl {
-                    MediaPlayer().apply {
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-                            .let(this::setAudioAttributes)
-                    }
+            val audioPlayer: AudioPlayer = StreamAudioPlayer(
+                mediaPlayer = NativeMediaPlayerImpl(appContext) {
+                    ExoPlayer.Builder(appContext)
+                        .setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
+                                .build(),
+                            true,
+                        )
+                        .build()
                 },
                 userScope = userScope,
-                isMarshmallowOrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             )
 
             return ChatClient(
@@ -4878,7 +4878,6 @@ internal constructor(
          */
         @Throws(IllegalStateException::class)
         @JvmStatic
-        @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
                 val type = pushMessage.type.orEmpty()
