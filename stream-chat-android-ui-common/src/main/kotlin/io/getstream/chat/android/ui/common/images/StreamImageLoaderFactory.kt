@@ -35,7 +35,7 @@ import okio.Path.Companion.toOkioPath
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
 private const val DEFAULT_DISK_CACHE_PERCENTAGE = 0.02
-private const val DISK_CACHE_DIRECTORY = "image_cache"
+private const val DISK_CACHE_DIRECTORY = "stream_coil3_image_cache"
 
 public class StreamImageLoaderFactory(
     private val builder: ImageLoader.Builder.() -> Unit = {},
