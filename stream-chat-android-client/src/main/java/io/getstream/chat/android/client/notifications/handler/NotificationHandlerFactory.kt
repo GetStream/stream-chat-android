@@ -56,7 +56,7 @@ public object NotificationHandlerFactory {
      * @param actionsProvider Lambda expression used to provide actions for the notification.
      * @param notificationBuilderTransformer Lambda expression used to transform the [NotificationCompat.Builder]
      * before building the notification.
-     * @param onNewPushMessage Lambda expression called when a new push message is received. Return true if the
+     * @param onNewMessage Lambda expression called when a new push message is received. Return true if the
      * push message was handled and no further processing is required.
      *
      * @return A [NotificationHandler] instance.
@@ -78,7 +78,7 @@ public object NotificationHandlerFactory {
             getDefaultActionsProvider(context),
         notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
             { builder, _ -> builder },
-        onNewPushMessage: (pushMessage: PushMessage) -> Boolean = { false },
+        onNewMessage: (pushMessage: PushMessage) -> Boolean = { false },
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
@@ -89,7 +89,7 @@ public object NotificationHandlerFactory {
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
-            onNewPushMessage = onNewPushMessage,
+            onNewMessage = onNewMessage,
         )
     } else {
         ChatNotificationHandler(
@@ -99,7 +99,7 @@ public object NotificationHandlerFactory {
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
-            onNewPushMessage = onNewPushMessage,
+            onNewMessage = onNewMessage,
         )
     }
 

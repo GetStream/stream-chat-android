@@ -53,7 +53,7 @@ internal class MessagingStyleNotificationHandler(
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
-    private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
+    private val onNewMessage: (pushMessage: PushMessage) -> Boolean,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -109,7 +109,7 @@ internal class MessagingStyleNotificationHandler(
         getShownNotifications().forEach(::dismissNotification)
     }
 
-    override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
+    override fun onPushMessage(message: PushMessage): Boolean = onNewMessage(message)
 
     private fun showNotificationInternal(chatNotification: ChatNotification) {
         ChatClient.instance().launch {

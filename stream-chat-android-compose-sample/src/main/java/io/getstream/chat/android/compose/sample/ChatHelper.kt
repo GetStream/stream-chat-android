@@ -69,7 +69,7 @@ object ChatHelper {
                     parentMessageId = message.parentId,
                 )
             },
-            onNewPushMessage = { pushMessage ->
+            onNewMessage = { pushMessage ->
                 ChatClient.instance()
                     .markMessageAsDelivered(messageId = pushMessage.messageId)
                     .enqueue()

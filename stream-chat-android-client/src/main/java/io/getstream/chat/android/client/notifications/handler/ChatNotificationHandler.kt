@@ -54,7 +54,7 @@ internal class ChatNotificationHandler(
     private val currentUserProvider: () -> User? = {
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
-    private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
+    private val onNewMessage: (pushMessage: PushMessage) -> Boolean,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -90,7 +90,7 @@ internal class ChatNotificationHandler(
         showNotificationInternal(ChatNotification.MessageNew(channel, message))
     }
 
-    override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
+    override fun onPushMessage(message: PushMessage): Boolean = onNewMessage(message)
 
     private fun showNotificationInternal(notification: ChatNotification) {
         when (notification) {
