@@ -15,6 +15,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
 - Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)

@@ -20,7 +20,7 @@ plugins {
     alias(libs.plugins.paparazzi) apply false
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
-    alias(libs.plugins.spotless) apply false
+    alias(libs.plugins.stream.project)
     alias(libs.plugins.stream.android.library) apply false
     alias(libs.plugins.stream.android.application) apply false
     alias(libs.plugins.stream.java.library) apply false
@@ -35,6 +35,12 @@ plugins {
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.binary.compatibility.validator)
     alias(libs.plugins.maven.publish)
+}
+
+streamProject {
+    spotless {
+        ignoredModules = setOf("stream-chat-android-docs")
+    }
 }
 
 buildscript {
@@ -52,10 +58,6 @@ apply(from = "${rootDir}/scripts/sonar.gradle")
 apply(from = "${rootDir}/scripts/coverage.gradle")
 
 subprojects {
-    if (name != "stream-chat-android-docs" && buildFile.exists()) {
-        apply(from = "${rootDir}/spotless/spotless.gradle")
-    }
-
     // Configure Android projects with common SDK versions as soon as either plugin is applied
     pluginManager.withPlugin("com.android.library") {
         extensions.configure<LibraryExtension> {
