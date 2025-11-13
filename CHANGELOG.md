@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Use a Stream specific cache directory for the `coil:3.x.x` instance to avoid potential clash with the default (`image_cache`) directory from an existing `coil2.x.x` instance. [#6002](https://github.com/GetStream/stream-chat-android/pull/6002)
 
 ### ⬆️ Improved
 
