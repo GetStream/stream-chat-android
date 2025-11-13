@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.sample.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,9 +48,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.readsOf
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -189,13 +186,11 @@ private fun MessageInfoContent(
             items = reads,
             labelResId = R.string.message_info_read_by,
             skipTopPadding = true,
-            getDate = ChannelUserRead::lastRead,
         )
         // Delivered to section
         section(
             items = deliveredReads,
             labelResId = R.string.message_info_delivered_to,
-            getDate = ChannelUserRead::lastDeliveredAt,
         )
     }
 }
@@ -204,7 +199,6 @@ private fun LazyListScope.section(
     items: List<ChannelUserRead>,
     @StringRes labelResId: Int,
     skipTopPadding: Boolean = false,
-    getDate: (ChannelUserRead) -> Date?,
 ) {
     if (items.isNotEmpty()) {
         item {
@@ -229,20 +223,14 @@ private fun LazyListScope.section(
                 index = index,
                 lastIndex = items.lastIndex,
             ) {
-                ReadItem(
-                    userRead = item,
-                    getDate = getDate,
-                )
+                ReadItem(userRead = item)
             }
         }
     }
 }
 
 @Composable
-private fun ReadItem(
-    userRead: ChannelUserRead,
-    getDate: (ChannelUserRead) -> Date?,
-) {
+private fun ReadItem(userRead: ChannelUserRead) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -254,22 +242,13 @@ private fun ReadItem(
             contentDescription = userRead.user.name,
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                text = userRead.user.name.takeIf(String::isNotBlank) ?: userRead.user.id,
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-
-            Timestamp(
-                date = getDate(userRead),
-                formatType = DateFormatType.RELATIVE,
-            )
-        }
+        Text(
+            text = userRead.user.name.takeIf(String::isNotBlank) ?: userRead.user.id,
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

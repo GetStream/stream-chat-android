@@ -75,7 +75,7 @@ internal class MessagingStyleNotificationHandlerTest {
     private val notificationTextFormatter: (User?, Message) -> CharSequence = { _, message -> message.text }
     private val actionsProvider: (Int, Channel, Message) -> List<NotificationCompat.Action> = { _, _, _ -> emptyList() }
     private val notificationBuilderTransformer:
-            (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder = { builder, _ -> builder }
+        (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder = { builder, _ -> builder }
 
     private lateinit var handler: MessagingStyleNotificationHandler
 
