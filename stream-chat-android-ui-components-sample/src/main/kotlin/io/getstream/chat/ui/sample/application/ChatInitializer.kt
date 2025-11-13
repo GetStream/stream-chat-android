@@ -82,7 +82,7 @@ class ChatInitializer(
                     channelId = channel.id,
                 )
             },
-            onNewMessage = { pushMessage ->
+            onPushMessage = { pushMessage ->
                 ChatClient.instance()
                     .markMessageAsDelivered(messageId = pushMessage.messageId)
                     .enqueue()

@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.StartupActivity
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
@@ -69,10 +70,13 @@ object ChatHelper {
                     parentMessageId = message.parentId,
                 )
             },
-            onNewMessage = { pushMessage ->
-                ChatClient.instance()
-                    .markMessageAsDelivered(messageId = pushMessage.messageId)
-                    .enqueue()
+            onPushMessage = { pushMessage ->
+                // Mark the message as delivered when a push for a new message is received
+                if (EventType.MESSAGE_NEW == pushMessage.type) {
+                    ChatClient.instance()
+                        .markMessageAsDelivered(messageId = pushMessage.messageId)
+                        .enqueue()
+                }
                 // Return false to let the SDK handle the push message and show a notification
                 false
             },

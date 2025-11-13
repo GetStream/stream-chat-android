@@ -57,7 +57,7 @@ internal class ChatNotificationHandlerTest {
     private val mockSharedPreferences: SharedPreferences = mock()
     private val mockSharedPreferencesEditor: SharedPreferences.Editor = mock()
     private val mockNotificationChannel: NotificationChannel = mock()
-    private val mockOnNewMessage: (PushMessage) -> Boolean = mock()
+    private val mockOnPushMessage: (PushMessage) -> Boolean = mock()
 
     private val testChannel = randomChannel(type = "messaging", id = "test_channel")
     private val testMessage = randomMessage(id = "test_message", text = "Test message content")
@@ -102,7 +102,7 @@ internal class ChatNotificationHandlerTest {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             currentUserProvider = currentUserProvider,
-            onNewMessage = mockOnNewMessage,
+            onNewPushMessage = mockOnPushMessage,
         )
     }
 
@@ -185,7 +185,7 @@ internal class ChatNotificationHandlerTest {
         // Given
         val handled = randomBoolean()
         val pushMessage = randomPushMessage()
-        whenever(mockOnNewMessage.invoke(pushMessage)) doReturn handled
+        whenever(mockOnPushMessage.invoke(pushMessage)) doReturn handled
 
         // When
         val actual = chatNotificationHandler.onPushMessage(message = pushMessage)
