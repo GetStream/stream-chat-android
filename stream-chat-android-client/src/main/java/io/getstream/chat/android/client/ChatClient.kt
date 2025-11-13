@@ -2897,8 +2897,9 @@ internal constructor(
      * - Not yet marked as read by the current user.
      * - Not yet marked as delivered by the current user.
      *
-     * IMPORTANT: This feature requires the offline plugin to work properly and efficiently to prevent extra API calls
-     * for retrieving the messages and channels data.
+     * IMPORTANT: For this feature to function correctly and efficiently,
+     * the [offline plugin](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/)
+     * must be enabled to avoid extra API calls to retrieve message and channel data.
      *
      * @param messageId The ID of the message to mark as delivered.
      *
