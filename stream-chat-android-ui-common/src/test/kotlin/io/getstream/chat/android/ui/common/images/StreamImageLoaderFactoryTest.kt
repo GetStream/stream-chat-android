@@ -62,7 +62,7 @@ internal class StreamImageLoaderFactoryTest {
         val diskCache = imageLoader.diskCache
         assertNotNull(diskCache)
         val expected = DiskCache.Builder()
-            .directory(context.cacheDir.resolve("image_cache").toOkioPath())
+            .directory(context.cacheDir.resolve("stream_coil3_image_cache").toOkioPath())
             .maxSizePercent(percent = 0.02)
             .build()
         assertEquals(expected.maxSize, diskCache!!.maxSize)
