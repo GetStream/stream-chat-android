@@ -1,13 +1,13 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>ComplexCondition:NativeMediaPlayerMock.kt$NativeMediaPlayerMock$_state != NativeMediaPlayerState.PREPARED &amp;&amp; _state != NativeMediaPlayerState.PAUSED &amp;&amp; _state != NativeMediaPlayerState.STARTED &amp;&amp; _state != NativeMediaPlayerState.PLAYBACK_COMPLETED</ID>
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
     <ID>LongMethod:ChatClient.kt$ChatClient$private suspend fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:ChatClientDebuggerTest.kt$ChatClientDebuggerTest$@BeforeEach fun setUp()</ID>
     <ID>LongMethod:ChatSocket.kt$ChatSocket$@Suppress("ComplexMethod") private fun observeSocketStateService(): Job</ID>
-    <ID>LongMethod:PinnedMessagesRequest.kt$PinnedMessagesRequest.Companion$fun create( limit: Int, sort: QuerySorter&lt;Message>, pagination: PinnedMessagesPagination, ): PinnedMessagesRequest</ID>
+    <ID>LongMethod:PinnedMessagesRequest.kt$PinnedMessagesRequest.Companion$fun create( limit: Int, sort: QuerySorter&lt;Message&gt;, pagination: PinnedMessagesPagination, ): PinnedMessagesRequest</ID>
     <ID>MagicNumber:AttachmentExtensions.kt$1000</ID>
     <ID>MagicNumber:Identifiers.kt$31</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100</ID>
@@ -22,9 +22,9 @@
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$32767f</ID>
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$4</ID>
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$8</ID>
-    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$16</ID>
-    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$32</ID>
-    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$8</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided&gt;$16</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided&gt;$32</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided&gt;$8</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
@@ -35,6 +35,5 @@
     <ID>TooGenericExceptionCaught:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
     <ID>TooManyFunctions:Identifiers.kt$io.getstream.chat.android.client.api.models.identifier.Identifiers.kt</ID>
     <ID>TooManyFunctions:NativeMediaPlayer.kt$NativeMediaPlayer</ID>
-    <ID>UnusedPrivateMember:StreamAudioPlayer.kt$StreamMediaPlayer$private fun normalize(uri: String): String</ID>
   </CurrentIssues>
 </SmellBaseline>
