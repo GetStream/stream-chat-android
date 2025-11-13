@@ -2897,13 +2897,22 @@ internal constructor(
      * - Not yet marked as read by the current user.
      * - Not yet marked as delivered by the current user.
      *
+     * IMPORTANT: This feature requires the offline plugin to work properly and efficiently to prevent extra API calls
+     * for retrieving the messages and channels data.
+     *
      * @param messageId The ID of the message to mark as delivered.
+     *
+     * @return Executable async [Call] which completes with [Result] having data equal to true if the message
+     * was marked as delivered, false otherwise.
      */
     @CheckResult
-    public fun markMessageAsDelivered(messageId: String): Call<Unit> =
+    public fun markMessageAsDelivered(messageId: String): Call<Boolean> =
         CoroutineCall(userScope) {
-            messageReceiptManager.markMessageAsDelivered(messageId)
-            Result.Success(Unit)
+            runCatching { messageReceiptManager.markMessageAsDelivered(messageId) }
+                .fold(
+                    onSuccess = { Result.Success(it) },
+                    onFailure = { Result.Failure(Error.GenericError(it.message.orEmpty())) },
+                )
         }.doOnStart(userScope) {
             logger.d { "[markMessageAsDelivered] #doOnStart; messageId: $messageId" }
         }.doOnResult(userScope) {

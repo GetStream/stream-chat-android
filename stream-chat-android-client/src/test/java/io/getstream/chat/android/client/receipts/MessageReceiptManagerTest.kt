@@ -33,6 +33,8 @@ import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -51,7 +53,7 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         val receipts = listOf(
             MessageReceipt(
@@ -61,6 +63,7 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
     }
 
     @Test
@@ -70,7 +73,7 @@ internal class MessageReceiptManagerTest {
             .givenChannelNotFoundFromRepository()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         val receipts = listOf(
             MessageReceipt(
@@ -80,6 +83,7 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
     }
 
     @Test
@@ -109,9 +113,10 @@ internal class MessageReceiptManagerTest {
             .givenMessageNotFoundFromApi()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(messageId = message.id)
+        val result = sut.markMessageAsDelivered(messageId = message.id)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -122,9 +127,10 @@ internal class MessageReceiptManagerTest {
             .givenChannelNotFoundFromApi()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -133,9 +139,10 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture().givenCurrentUser(user = null)
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -145,7 +152,7 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture().givenCurrentUser(currentUser)
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         val receipts = listOf(
             MessageReceipt(
@@ -155,6 +162,7 @@ internal class MessageReceiptManagerTest {
             ),
         )
         fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
     }
 
     @Test
@@ -168,9 +176,10 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture().givenCurrentUser(currentUser)
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -179,9 +188,10 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -190,9 +200,10 @@ internal class MessageReceiptManagerTest {
         val fixture = Fixture()
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test
@@ -205,9 +216,10 @@ internal class MessageReceiptManagerTest {
             .givenCurrentUser(currentUser)
         val sut = fixture.get()
 
-        sut.markMessageAsDelivered(message)
+        val result = sut.markMessageAsDelivered(message)
 
         fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
     }
 
     @Test

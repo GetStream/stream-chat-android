@@ -81,22 +81,24 @@ internal class MessageReceiptManager(
      *
      * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
      */
-    suspend fun markMessageAsDelivered(message: Message) {
+    suspend fun markMessageAsDelivered(message: Message): Boolean {
         val currentUser = retrieveCurrentUser() ?: run {
             logger.w { "[markMessageAsDelivered] Current user not found" }
-            return
+            return false
         }
 
-        if (!currentUser.isDeliveryReceiptsEnabled) return
+        if (!currentUser.isDeliveryReceiptsEnabled) return false
 
         val channel = retrieveChannel(message.cid) ?: run {
             logger.w { "[markMessageAsDelivered] Channel ${message.cid} not found" }
-            return
+            return false
         }
 
         if (canMarkMessageAsDelivered(currentUser, channel, message)) {
-            markMessagesAsDelivered(messages = listOf(message))
+            return markMessagesAsDelivered(messages = listOf(message))
         }
+
+        return false
     }
 
     /**
@@ -104,13 +106,13 @@ internal class MessageReceiptManager(
      *
      * @see [markChannelsAsDelivered] for the conditions to mark a message as delivered.
      */
-    suspend fun markMessageAsDelivered(messageId: String) {
+    suspend fun markMessageAsDelivered(messageId: String): Boolean {
         val message = retrieveMessage(messageId) ?: run {
             logger.w { "[markMessageAsDelivered] Message $messageId not found" }
-            return
+            return false
         }
 
-        markMessageAsDelivered(message)
+        return markMessageAsDelivered(message)
     }
 
     private suspend fun retrieveCurrentUser(): User? =
@@ -130,10 +132,10 @@ internal class MessageReceiptManager(
                 .await().getOrNull()
         }
 
-    private suspend fun markMessagesAsDelivered(messages: List<Message>) {
+    private suspend fun markMessagesAsDelivered(messages: List<Message>): Boolean {
         if (messages.isEmpty()) {
             logger.w { "[markMessagesAsDelivered] No receipts to send" }
-            return
+            return false
         }
 
         logger.d { "[markMessagesAsDelivered] Processing delivery receipts for ${messages.size} messages…" }
@@ -142,6 +144,8 @@ internal class MessageReceiptManager(
         messageReceiptRepository.upsertMessageReceipts(receipts)
 
         logger.d { "[markMessagesAsDelivered] ${messages.size} delivery receipts upserted" }
+
+        return true
     }
 
     private fun canMarkMessageAsDelivered(

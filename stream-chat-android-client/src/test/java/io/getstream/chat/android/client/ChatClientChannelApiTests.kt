@@ -989,16 +989,31 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markMessageAsDelivered() = runTest {
+    fun markMessageAsDeliveredSuccess() = runTest {
         // given
         val messageId = randomString()
+        val result = randomBoolean()
         val sut = Fixture()
-            .givenMarkDeliveredResult(messageId)
+            .givenMarkDeliveredResult(messageId, result)
             .get()
         // when
-        val result = sut.markMessageAsDelivered(messageId).await()
+        val actual = sut.markMessageAsDelivered(messageId).await()
         // then
-        verifySuccess(result, Unit)
+        verifySuccess(actual, result)
+    }
+
+    @Test
+    fun markMessageAsDeliveredError() = runTest {
+        // given
+        val messageId = randomString()
+        val exception = RuntimeException("Error")
+        val sut = Fixture()
+            .givenMarkDeliveredResult(messageId, exception)
+            .get()
+        // when
+        val actual = sut.markMessageAsDelivered(messageId).await()
+        // then
+        verifyGenericError(actual, exception.message!!)
     }
 
     @Test
@@ -1542,8 +1557,12 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
             whenever(api.markRead(any(), any(), any())).thenReturn(result)
         }
 
-        fun givenMarkDeliveredResult(messageId: String) = apply {
-            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenReturn(Unit)
+        fun givenMarkDeliveredResult(messageId: String, result: Boolean) = apply {
+            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenReturn(result)
+        }
+
+        fun givenMarkDeliveredResult(messageId: String, exception: RuntimeException) = apply {
+            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenThrow(exception)
         }
 
         fun givenMarkUnreadResult(result: Call<Unit>) = apply {
