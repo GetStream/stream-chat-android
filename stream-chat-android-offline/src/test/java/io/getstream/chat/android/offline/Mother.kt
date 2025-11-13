@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.LocationEntity
@@ -273,3 +274,62 @@ internal fun randomThreadEntity(
     latestReplyIds = latestReplyIds,
     extraData = extraData,
 )
+
+internal fun randomChannelEntity(
+    type: String = randomString(),
+    channelId: String = randomString(),
+    name: String = randomString(),
+    image: String = randomString(),
+    cooldown: Int = randomInt(),
+    filterTags: List<String> = emptyList(),
+    frozen: Boolean = randomBoolean(),
+    createdAt: Date? = randomDate(),
+    updatedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
+    extraData: Map<String, Any> = emptyMap(),
+    syncStatus: SyncStatus = SyncStatus.COMPLETED,
+    hidden: Boolean? = randomBoolean(),
+    hideMessagesBefore: Date? = randomDateOrNull(),
+    members: MutableMap<String, MemberEntity> = mutableMapOf(),
+    memberCount: Int = randomInt(),
+    reads: MutableMap<String, ChannelUserReadEntity> = mutableMapOf(),
+    lastMessageId: String? = randomString(),
+    lastMessageAt: Date? = randomDate(),
+    createdByUserId: String = randomString(),
+    watcherIds: List<String> = emptyList(),
+    watcherCount: Int = randomInt(),
+    team: String = randomString(),
+    ownCapabilities: Set<String> = emptySet(),
+    membership: MemberEntity? = null,
+    activeLiveLocations: List<LocationEntity> = emptyList(),
+    messageCount: Int? = randomInt(),
+): io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity =
+    io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity(
+        type = type,
+        channelId = channelId,
+        name = name,
+        image = image,
+        cooldown = cooldown,
+        filterTags = filterTags,
+        frozen = frozen,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+        extraData = extraData,
+        syncStatus = syncStatus,
+        hidden = hidden,
+        hideMessagesBefore = hideMessagesBefore,
+        members = members,
+        memberCount = memberCount,
+        reads = reads,
+        lastMessageId = lastMessageId,
+        lastMessageAt = lastMessageAt,
+        createdByUserId = createdByUserId,
+        watcherIds = watcherIds,
+        watcherCount = watcherCount,
+        team = team,
+        ownCapabilities = ownCapabilities,
+        membership = membership,
+        activeLiveLocations = activeLiveLocations,
+        messageCount = messageCount,
+    )

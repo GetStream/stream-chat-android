@@ -59,6 +59,7 @@ internal data class DownstreamChannelDto(
     val name: String?,
     val image: String?,
     val watcher_count: Int = 0,
+    val filter_tags: List<String>?,
     val frozen: Boolean,
     val last_message_at: Date?,
     val created_at: Date?,
