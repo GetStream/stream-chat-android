@@ -41,6 +41,7 @@ import org.junit.rules.TestName
 abstract class StreamTestCase {
 
     lateinit var mockServer: MockServer
+    open var useMockServer = true
     val userRobot = UserRobot()
     lateinit var backendRobot: BackendRobot
     lateinit var participantRobot: ParticipantRobot
@@ -53,16 +54,20 @@ abstract class StreamTestCase {
 
     @Before
     fun setUp() {
-        mockServer = MockServer(testName.methodName)
-        backendRobot = BackendRobot(mockServer)
-        participantRobot = ParticipantRobot(mockServer)
+        if (useMockServer) {
+            mockServer = MockServer(testName.methodName)
+            backendRobot = BackendRobot(mockServer)
+            participantRobot = ParticipantRobot(mockServer)
+        }
         startApp()
         grantAppPermissions()
     }
 
     @After
     fun tearDown() {
-        mockServer.stop()
+        if (useMockServer) {
+            mockServer.stop()
+        }
     }
 
     @SuppressLint("InlinedApi")
@@ -84,8 +89,10 @@ abstract class StreamTestCase {
     private fun startApp() {
         testContext.packageManager.getLaunchIntentForPackage(packageName)?.let {
             it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            it.putExtra("BASE_URL", mockServer.url)
             it.putExtra("InitTestActivity", initTestActivity())
+            if (useMockServer) {
+                it.putExtra("BASE_URL", mockServer.url)
+            }
             testContext.startActivity(it)
         } ?: throw IllegalStateException("No launch intent found for package: $packageName")
     }
