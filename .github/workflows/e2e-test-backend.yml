@@ -5,10 +5,6 @@ on:
 
   pull_request: # TODO: Delete after testing
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
@@ -24,10 +20,6 @@ jobs:
       ANDROID_API_LEVEL: 34
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: actions/download-artifact@v4.1.8
-        continue-on-error: true
-        with:
-          name: apks
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
