@@ -224,7 +224,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
-        messageCount = messageCount ?: this.messageCount,
+        messageCount = that.messageCount ?: this.messageCount,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,
