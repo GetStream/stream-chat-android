@@ -91,7 +91,7 @@ lane :run_e2e_test do |options|
   install_test_services
   upload_attachments
 
-  stream_apk_folder_path = is_ci ? '..' : "../#{test_flavor}/build/outputs/apk"
+  stream_apk_folder_path = "../#{test_flavor}/build/outputs/apk"
   stream_app_path = "#{stream_apk_folder_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk"
   stream_test_path = "#{stream_apk_folder_path}/androidTest/e2e/debug/stream-chat-android-compose-sample-e2e-debug-androidTest.apk"
   sh("adb install -r #{stream_app_path}")
