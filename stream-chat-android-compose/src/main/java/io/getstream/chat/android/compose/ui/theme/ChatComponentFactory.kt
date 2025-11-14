@@ -1373,6 +1373,18 @@ public interface ChatComponentFactory {
     /**
      * The default read status indicator in the message footer, weather the message is sent, pending or read.
      */
+    @Deprecated(
+        message = "Use the new version of MessageFooterStatusIndicator that takes MessageFooterStatusIndicatorParams.",
+        replaceWith = ReplaceWith(
+            "MessageFooterStatusIndicator(\n" +
+                "    params = MessageFooterStatusIndicatorParams(\n" +
+                "        modifier = modifier,\n" +
+                "        messageItem = messageItem,\n" +
+                "    ),\n" +
+                ")",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @Composable
     public fun MessageFooterStatusIndicator(
         modifier: Modifier,
@@ -1386,6 +1398,28 @@ public interface ChatComponentFactory {
             isMessageRead = isMessageRead,
             readCount = readCount,
         )
+    }
+
+    @Composable
+    public fun MessageFooterStatusIndicator(
+        params: MessageFooterStatusIndicatorParams,
+    ) {
+        if (params.messageItem.isMessageDelivered) {
+            MessageReadStatusIcon(
+                modifier = params.modifier,
+                message = params.messageItem.message,
+                isMessageRead = params.messageItem.isMessageRead,
+                isMessageDelivered = params.messageItem.isMessageDelivered,
+                readCount = params.messageItem.messageReadBy.size,
+            )
+        } else {
+            MessageFooterStatusIndicator(
+                modifier = params.modifier,
+                message = params.messageItem.message,
+                isMessageRead = params.messageItem.isMessageRead,
+                readCount = params.messageItem.messageReadBy.size,
+            )
+        }
     }
 
     /**

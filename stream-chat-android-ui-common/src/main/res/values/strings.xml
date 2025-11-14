@@ -62,6 +62,7 @@
     <string name="stream_ui_message_list_semantics_message_status_read_by">Message read by %d members</string>
     <string name="stream_ui_message_list_semantics_message_status_pending">Message is pending</string>
     <string name="stream_ui_message_list_semantics_message_status_sent">Message is sent</string>
+    <string name="stream_ui_message_list_semantics_message_status_delivered">Message is delivered</string>
     <string name="stream_ui_message_list_semantics_message_attachments">%d attachments</string>
     <string name="stream_ui_message_list_semantics_message_attachment_image">Image attachment</string>
     <string name="stream_ui_message_list_semantics_message_attachment_video">Video attachment</string>

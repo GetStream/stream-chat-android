@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,6 +80,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.component.PaneRow
+import io.getstream.chat.android.compose.sample.ui.component.PaneTitle
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -151,6 +152,9 @@ fun UserProfileScreen(
             onUpdateProfilePictureClick = {
                 modalSheet = ModalSheet.UpdateProfilePicture
             },
+            onUpdatePrivacySettingsClick = {
+                modalSheet = ModalSheet.UpdatePrivacySettings
+            },
         )
     }
     when (modalSheet) {
@@ -201,6 +205,21 @@ fun UserProfileScreen(
             )
         }
 
+        ModalSheet.UpdatePrivacySettings -> ModalBottomSheet(
+            onDismissRequest = { modalSheet = null },
+            containerColor = ChatTheme.colors.appBackground,
+        ) {
+            state.user?.let { user ->
+                UserProfilePrivacySettingsScreen(
+                    privacySettings = user.privacySettings,
+                    onSaveClick = { settings ->
+                        modalSheet = null
+                        viewModel.updatePrivacySettings(settings)
+                    },
+                )
+            }
+        }
+
         null -> Unit
     }
 
@@ -217,6 +236,7 @@ fun UserProfileScreen(
                     is UserProfileViewEvent.RemoveProfilePictureError,
                     ->
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+
                     is UserProfileViewEvent.UpdatePushPreferencesError -> {
                         snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
                     }
@@ -283,9 +303,9 @@ private enum class ModalSheet {
     UnreadCounts,
     PushPreferences,
     UpdateProfilePicture,
+    UpdatePrivacySettings,
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Suppress("LongMethod")
 @Composable
 private fun UserProfileScreenContent(
@@ -294,6 +314,7 @@ private fun UserProfileScreenContent(
     onUnreadCountsClick: () -> Unit = {},
     onPushPreferencesClick: () -> Unit = {},
     onUpdateProfilePictureClick: () -> Unit = {},
+    onUpdatePrivacySettingsClick: () -> Unit = {},
 ) {
     when (val user = state.user) {
         null -> {
@@ -358,57 +379,53 @@ private fun UserProfileScreenContent(
                     }
                     Divider()
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = null,
-                            indication = ripple(),
-                            onClick = onUnreadCountsClick,
-                        )
-                        .padding(start = 16.dp)
-                        .minimumInteractiveComponentSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Unread Counts",
-                        style = ChatTheme.typography.title3,
-                        color = ChatTheme.colors.textHighEmphasis,
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
+                NavigationItem(
+                    label = "Unread Counts",
+                    onClick = onUnreadCountsClick,
+                )
                 Divider()
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = null,
-                            indication = ripple(),
-                            onClick = onPushPreferencesClick,
-                        )
-                        .padding(start = 16.dp)
-                        .minimumInteractiveComponentSize(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Push Preferences",
-                        style = ChatTheme.typography.title3,
-                        color = ChatTheme.colors.textHighEmphasis,
-                    )
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
+                NavigationItem(
+                    label = "Push Preferences",
+                    onClick = onPushPreferencesClick,
+                )
+                Divider()
+                NavigationItem(
+                    label = "Privacy Settings",
+                    onClick = onUpdatePrivacySettingsClick,
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun NavigationItem(
+    label: String,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = onClick,
+            )
+            .padding(start = 16.dp)
+            .minimumInteractiveComponentSize(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = label,
+            style = ChatTheme.typography.title3,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis,
+        )
     }
 }
 
@@ -750,58 +767,6 @@ private fun LazyListScope.unreadChannelsByTeam(
             )
         }
     }
-}
-
-@Composable
-private fun PaneTitle(
-    text: String,
-    padding: PaddingValues = PaddingValues(
-        top = 24.dp,
-        start = 16.dp,
-        bottom = 8.dp,
-        end = 16.dp,
-    ),
-) {
-    Text(
-        modifier = Modifier.padding(padding),
-        text = text,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
-    )
-}
-
-@Composable
-private fun PaneRow(
-    index: Int,
-    lastIndex: Int,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .run {
-                val shape = when (index) {
-                    0 -> if (lastIndex == 0) {
-                        // Single item in the list
-                        RoundedCornerShape(12.dp)
-                    } else {
-                        // Top item in the list
-                        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-                    }
-                    // Bottom item in the list
-                    lastIndex -> RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
-                    // Middle item in the list
-                    else -> RectangleShape
-                }
-                background(
-                    color = ChatTheme.colors.barsBackground,
-                    shape = shape,
-                )
-            }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        content = content,
-    )
 }
 
 @Composable

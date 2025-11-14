@@ -31,6 +31,7 @@ import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 
@@ -52,6 +53,7 @@ internal class MessagingStyleNotificationHandler(
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -106,6 +108,8 @@ internal class MessagingStyleNotificationHandler(
     override fun dismissAllNotifications() {
         getShownNotifications().forEach(::dismissNotification)
     }
+
+    override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
 
     private fun showNotificationInternal(chatNotification: ChatNotification) {
         ChatClient.instance().launch {

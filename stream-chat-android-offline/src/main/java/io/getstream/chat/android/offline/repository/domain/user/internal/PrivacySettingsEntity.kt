@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonClass
 internal data class PrivacySettingsEntity(
     val typingIndicators: TypingIndicatorsEntity? = null,
     val readReceipts: ReadReceiptsEntity? = null,
+    val deliveryReceipts: DeliveryReceiptsEntity? = null,
 )
 
 @JsonClass(generateAdapter = true)
@@ -31,5 +32,10 @@ internal data class TypingIndicatorsEntity(
 
 @JsonClass(generateAdapter = true)
 internal data class ReadReceiptsEntity(
+    val enabled: Boolean,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DeliveryReceiptsEntity(
     val enabled: Boolean,
 )

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
@@ -23,6 +24,7 @@ import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.CommandDto
 import io.getstream.chat.android.client.api2.model.dto.ConfigDto
+import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
@@ -309,6 +311,7 @@ internal class DomainMapping(
             image = image ?: "",
             role = role,
             invisible = invisible,
+            privacySettings = privacy_settings?.toDomain(),
             language = language ?: "",
             banned = banned,
             devices = devices.orEmpty().map { it.toDomain() },
@@ -525,6 +528,8 @@ internal class DomainMapping(
             lastRead = last_read,
             unreadMessages = unread_messages,
             lastReadMessageId = last_read_message_id,
+            lastDeliveredAt = last_delivered_at,
+            lastDeliveredMessageId = last_delivered_message_id,
         )
 
     /**
@@ -599,6 +604,7 @@ internal class DomainMapping(
         name = name ?: "",
         typingEventsEnabled = typing_events,
         readEventsEnabled = read_events,
+        deliveryEventsEnabled = delivery_events,
         connectEventsEnabled = connect_events,
         searchEnabled = search,
         isReactionsEnabled = reactions,
@@ -675,6 +681,7 @@ internal class DomainMapping(
      */
     internal fun PrivacySettingsDto.toDomain(): PrivacySettings = PrivacySettings(
         typingIndicators = typing_indicators?.toDomain(),
+        deliveryReceipts = delivery_receipts?.toDomain(),
         readReceipts = read_receipts?.toDomain(),
     )
 
@@ -684,6 +691,11 @@ internal class DomainMapping(
     internal fun TypingIndicatorsDto.toDomain(): TypingIndicators = TypingIndicators(
         enabled = enabled,
     )
+
+    /**
+     * Transforms [DeliveryReceiptsDto] to [DeliveryReceipts].
+     */
+    internal fun DeliveryReceiptsDto.toDomain() = DeliveryReceipts(enabled = enabled)
 
     /**
      * Transforms [ReadReceiptsDto] to [ReadReceipts].

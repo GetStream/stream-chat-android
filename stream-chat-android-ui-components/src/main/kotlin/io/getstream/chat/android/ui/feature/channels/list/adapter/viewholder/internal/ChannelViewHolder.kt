@@ -25,6 +25,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
+import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
@@ -356,8 +357,15 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             style.indicatorPendingSyncIcon
         } else {
             val lastMessageWasRead = readCount > 0
+            val lastMessageWasDelivered = channel.deliveredReadsOf(lastMessage).isNotEmpty()
 
-            if (lastMessageWasRead) style.indicatorReadIcon else style.indicatorSentIcon
+            if (lastMessageWasRead) {
+                style.indicatorReadIcon
+            } else if (lastMessageWasDelivered) {
+                style.indicatorDeliveredIcon
+            } else {
+                style.indicatorSentIcon
+            }
         }
 
         if (readCount > 1 && style.readCountEnabled) {

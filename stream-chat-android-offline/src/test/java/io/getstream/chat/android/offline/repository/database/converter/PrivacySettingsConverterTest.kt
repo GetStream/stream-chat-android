@@ -17,18 +17,20 @@
 package io.getstream.chat.android.offline.repository.database.converter
 
 import io.getstream.chat.android.offline.repository.database.converter.internal.PrivacySettingsConverter
+import io.getstream.chat.android.offline.repository.domain.user.internal.DeliveryReceiptsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.ReadReceiptsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.TypingIndicatorsEntity
-import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 
 internal class PrivacySettingsConverterTest {
     @Test
     fun testNullEncoding() {
         val converter = PrivacySettingsConverter()
-        converter.privacySettingsToString(null) shouldBeEqualTo null
+        assertNull(converter.privacySettingsToString(null))
     }
 
     @Test
@@ -41,13 +43,16 @@ internal class PrivacySettingsConverterTest {
             readReceipts = ReadReceiptsEntity(
                 enabled = false,
             ),
+            deliveryReceipts = DeliveryReceiptsEntity(
+                enabled = false,
+            ),
         )
 
         @Language("JSON")
-        val encoded = """
-            {"typingIndicators":{"enabled":false},"readReceipts":{"enabled":false}}
+        val expected = """
+            {"typingIndicators":{"enabled":false},"readReceipts":{"enabled":false},"deliveryReceipts":{"enabled":false}}
         """.trimIndent()
-        converter.privacySettingsToString(settings) shouldBeEqualTo encoded
+        assertEquals(expected, converter.privacySettingsToString(settings))
     }
 
     @Test
@@ -56,16 +61,21 @@ internal class PrivacySettingsConverterTest {
 
         @Language("JSON")
         val encoded = """
-            {"typingIndicators":{"enabled":false},"readReceipts":{"enabled":false}}
+            {"typingIndicators":{"enabled":false},"readReceipts":{"enabled":false},"deliveryReceipts":{"enabled":false}}
         """.trimIndent()
-        val decoded = converter.stringToPrivacySettings(encoded)
-        decoded shouldBeEqualTo PrivacySettingsEntity(
+        val actual = converter.stringToPrivacySettings(encoded)
+
+        val expected = PrivacySettingsEntity(
             typingIndicators = TypingIndicatorsEntity(
                 enabled = false,
             ),
             readReceipts = ReadReceiptsEntity(
                 enabled = false,
             ),
+            deliveryReceipts = DeliveryReceiptsEntity(
+                enabled = false,
+            ),
         )
+        assertEquals(expected, actual)
     }
 }

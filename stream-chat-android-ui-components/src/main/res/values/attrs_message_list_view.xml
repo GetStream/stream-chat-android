@@ -313,6 +313,7 @@
         <!-- Indicator icons -->
         <attr name="streamUiShowMessageDeliveryStatusIndicator" format="boolean" />
         <attr name="streamUiIconIndicatorSent" format="reference" />
+        <attr name="streamUiIconIndicatorDelivered" format="reference" />
         <attr name="streamUiIconIndicatorRead" format="reference" />
         <attr name="streamUiIconIndicatorPendingSync" format="reference" />
         <attr name="streamUiIconOnlyVisibleToYou" format="reference" />

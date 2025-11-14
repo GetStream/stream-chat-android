@@ -1,12 +1,27 @@
+public final class io/getstream/chat/android/DeliveryReceipts {
+	public fun <init> ()V
+	public fun <init> (Z)V
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/getstream/chat/android/DeliveryReceipts;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/DeliveryReceipts;ZILjava/lang/Object;)Lio/getstream/chat/android/DeliveryReceipts;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnabled ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/PrivacySettings {
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/ReadReceipts;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/ReadReceipts;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/DeliveryReceipts;Lio/getstream/chat/android/ReadReceipts;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/DeliveryReceipts;Lio/getstream/chat/android/ReadReceipts;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/TypingIndicators;
-	public final fun component2 ()Lio/getstream/chat/android/ReadReceipts;
-	public final fun copy (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/ReadReceipts;)Lio/getstream/chat/android/PrivacySettings;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/PrivacySettings;Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/ReadReceipts;ILjava/lang/Object;)Lio/getstream/chat/android/PrivacySettings;
+	public final fun component2 ()Lio/getstream/chat/android/DeliveryReceipts;
+	public final fun component3 ()Lio/getstream/chat/android/ReadReceipts;
+	public final fun copy (Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/DeliveryReceipts;Lio/getstream/chat/android/ReadReceipts;)Lio/getstream/chat/android/PrivacySettings;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/PrivacySettings;Lio/getstream/chat/android/TypingIndicators;Lio/getstream/chat/android/DeliveryReceipts;Lio/getstream/chat/android/ReadReceipts;ILjava/lang/Object;)Lio/getstream/chat/android/PrivacySettings;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDeliveryReceipts ()Lio/getstream/chat/android/DeliveryReceipts;
 	public final fun getReadReceipts ()Lio/getstream/chat/android/ReadReceipts;
 	public final fun getTypingIndicators ()Lio/getstream/chat/android/TypingIndicators;
 	public fun hashCode ()I
@@ -484,6 +499,7 @@ public final class io/getstream/chat/android/models/ChannelCapabilities {
 	public static final field DELETE_ANY_MESSAGE Ljava/lang/String;
 	public static final field DELETE_CHANNEL Ljava/lang/String;
 	public static final field DELETE_OWN_MESSAGE Ljava/lang/String;
+	public static final field DELIVERY_EVENTS Ljava/lang/String;
 	public static final field FLAG_MESSAGE Ljava/lang/String;
 	public static final field FREEZE_CHANNEL Ljava/lang/String;
 	public static final field INSTANCE Lio/getstream/chat/android/models/ChannelCapabilities;
@@ -628,15 +644,20 @@ public abstract interface class io/getstream/chat/android/models/ChannelTransfor
 }
 
 public final class io/getstream/chat/android/models/ChannelUserRead : io/getstream/chat/android/models/UserEntity {
-	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()I
 	public final fun component4 ()Ljava/util/Date;
 	public final fun component5 ()Ljava/lang/String;
-	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public final fun component6 ()Ljava/util/Date;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastDeliveredAt ()Ljava/util/Date;
+	public final fun getLastDeliveredMessageId ()Ljava/lang/String;
 	public final fun getLastRead ()Ljava/util/Date;
 	public final fun getLastReadMessageId ()Ljava/lang/String;
 	public final fun getLastReceivedEventDate ()Ljava/util/Date;
@@ -666,8 +687,8 @@ public final class io/getstream/chat/android/models/Command {
 
 public final class io/getstream/chat/android/models/Config {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZ)V
-	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZ)V
+	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -676,16 +697,17 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component14 ()Z
 	public final fun component15 ()Z
 	public final fun component16 ()Z
-	public final fun component17 ()Ljava/lang/String;
-	public final fun component18 ()I
-	public final fun component19 ()Ljava/lang/String;
+	public final fun component17 ()Z
+	public final fun component18 ()Ljava/lang/String;
+	public final fun component19 ()I
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component20 ()Ljava/lang/String;
 	public final fun component21 ()Ljava/lang/String;
-	public final fun component22 ()Ljava/util/List;
-	public final fun component23 ()Z
+	public final fun component22 ()Ljava/lang/String;
+	public final fun component23 ()Ljava/util/List;
 	public final fun component24 ()Z
 	public final fun component25 ()Z
+	public final fun component26 ()Z
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
@@ -693,8 +715,8 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZ)Lio/getstream/chat/android/models/Config;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
+	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZ)Lio/getstream/chat/android/models/Config;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZZILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAutomod ()Ljava/lang/String;
 	public final fun getAutomodBehavior ()Ljava/lang/String;
@@ -703,6 +725,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun getConnectEventsEnabled ()Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustomEventsEnabled ()Z
+	public final fun getDeliveryEventsEnabled ()Z
 	public final fun getMarkMessagesPending ()Z
 	public final fun getMaxMessageLength ()I
 	public final fun getMessageRemindersEnabled ()Z
@@ -902,6 +925,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field MEMBER_REMOVED Ljava/lang/String;
 	public static final field MEMBER_UPDATED Ljava/lang/String;
 	public static final field MESSAGE_DELETED Ljava/lang/String;
+	public static final field MESSAGE_DELIVERED Ljava/lang/String;
 	public static final field MESSAGE_NEW Ljava/lang/String;
 	public static final field MESSAGE_READ Ljava/lang/String;
 	public static final field MESSAGE_UPDATED Ljava/lang/String;
@@ -2346,6 +2370,7 @@ public final class io/getstream/chat/android/models/User : io/getstream/chat/and
 	public final fun getUpdatedAt ()Ljava/util/Date;
 	public fun hashCode ()I
 	public final fun isBanned ()Z
+	public final fun isDeliveryReceiptsEnabled ()Z
 	public final fun isInvisible ()Z
 	public final fun isReadReceiptsEnabled ()Z
 	public final fun isTypingIndicatorsEnabled ()Z

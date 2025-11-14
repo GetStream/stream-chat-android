@@ -66,6 +66,9 @@ public object ChannelCapabilities {
     /** Ability to receive read events. */
     public const val READ_EVENTS: String = "read-events"
 
+    /** Ability to receive delivery events. */
+    public const val DELIVERY_EVENTS: String = "delivery-events"
+
     /** Ability to use message search. */
     public const val SEARCH_MESSAGES: String = "search-messages"
 

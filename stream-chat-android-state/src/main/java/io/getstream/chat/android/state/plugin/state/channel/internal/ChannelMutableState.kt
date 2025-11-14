@@ -559,6 +559,23 @@ internal class ChannelMutableState(
     }
 
     /**
+     * Upsert the delivered status for a specific user's read.
+     */
+    fun upsertDelivered(read: ChannelUserRead) {
+        val updatedRead = rawReads.value[read.user.id]?.copy(
+            // Update only relevant fields
+            user = read.user,
+            lastReceivedEventDate = read.lastReceivedEventDate,
+            lastDeliveredAt = read.lastDeliveredAt,
+            lastDeliveredMessageId = read.lastDeliveredMessageId,
+        ) ?: read
+
+        _rawReads?.apply {
+            value = value + mapOf(read.user.id to updatedRead)
+        }
+    }
+
+    /**
      * Marks channel as read locally if different conditions are met:
      * 1. Channel has read events enabled
      * 2. Channel has messages not marked as read yet

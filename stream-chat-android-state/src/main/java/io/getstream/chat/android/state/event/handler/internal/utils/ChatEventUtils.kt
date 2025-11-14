@@ -19,9 +19,11 @@ package io.getstream.chat.android.state.event.handler.internal.utils
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.events.MessageDeliveredEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.models.ChannelUserRead
 
 internal val ChatEvent.realType get() = when (this) {
@@ -38,6 +40,18 @@ internal fun MessageReadEvent.toChannelUserRead() = ChannelUserRead(
 // TODO: Backend should send us the last read message id
     lastReadMessageId = null,
 )
+
+internal fun MessageDeliveredEvent.toChannelUserRead() = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = createdAt,
+    lastDeliveredAt = lastDeliveredAt,
+    lastDeliveredMessageId = lastDeliveredMessageId,
+    // The following fields are not applicable for delivered events
+    lastRead = NEVER,
+    unreadMessages = 0,
+    lastReadMessageId = null,
+)
+
 internal fun NotificationMarkReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
     lastReceivedEventDate = createdAt,

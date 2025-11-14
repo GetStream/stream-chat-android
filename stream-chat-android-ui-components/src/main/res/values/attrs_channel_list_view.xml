@@ -87,7 +87,10 @@
 
         <!-- Drawable of the message sent state indicator -->
         <attr name="streamUiShowChannelDeliveryStatusIndicator" format="boolean" />
+        <!-- Drawable of the message sent state indicator -->
         <attr name="streamUiIndicatorSentIcon" format="reference" />
+        <!-- Drawable of the message delivered state indicator -->
+        <attr name="streamUiIndicatorDeliveredIcon" format="reference" />
         <!-- Drawable of the message read state indicator -->
         <attr name="streamUiIndicatorReadIcon" format="reference" />
         <!-- Drawable of the message pending sync indicator  -->

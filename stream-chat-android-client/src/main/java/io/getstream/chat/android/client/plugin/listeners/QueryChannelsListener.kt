@@ -35,19 +35,21 @@ public interface QueryChannelsListener {
      *
      * @return [Result.Success] if precondition passes otherwise [Result.Failure]
      */
-    public suspend fun onQueryChannelsPrecondition(
-        request: QueryChannelsRequest,
-    ): Result<Unit>
+    public suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> =
+        Result.Success(Unit)
 
     /**
      * Runs side effect before the request is launched.
      *
      * @param request [QueryChannelsRequest] which is going to be used for the request.
      */
-    public suspend fun onQueryChannelsRequest(request: QueryChannelsRequest)
+    public suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) { /* No-Op */ }
 
     /**
      * Runs this function on the [Result] of this [QueryChannelsRequest].
      */
-    public suspend fun onQueryChannelsResult(result: Result<List<Channel>>, request: QueryChannelsRequest)
+    public suspend fun onQueryChannelsResult(
+        result: Result<List<Channel>>,
+        request: QueryChannelsRequest,
+    ) { /* No-Op */ }
 }

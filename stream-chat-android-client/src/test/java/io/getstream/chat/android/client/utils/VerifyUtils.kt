@@ -18,35 +18,33 @@ package io.getstream.chat.android.client.utils
 
 import io.getstream.result.Error
 import io.getstream.result.Result
-import org.amshove.kluent.shouldBeEqualTo
-import org.amshove.kluent.shouldBeInstanceOf
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertInstanceOf
+import org.junit.jupiter.api.assertInstanceOf
 
 internal fun <T : Any> verifyNetworkError(result: Result<T>, statusCode: Int) {
-    result shouldBeInstanceOf Result.Failure::class
-    (result as Result.Failure).value.shouldBeInstanceOf<Error.NetworkError>()
-
-    val error = result.value as Error.NetworkError
-    error.statusCode shouldBeEqualTo statusCode
+    assertInstanceOf<Result.Failure>(result)
+    val error = result.value
+    assertInstanceOf<Error.NetworkError>(error)
+    assertEquals(statusCode, error.statusCode)
 }
 
 internal fun <T : Any> verifyThrowableError(result: Result<T>, message: String, cause: Class<out Throwable>) {
-    result shouldBeInstanceOf Result.Failure::class
-    (result as Result.Failure).value.shouldBeInstanceOf<Error.ThrowableError>()
-
-    val error = result.value as Error.ThrowableError
-    error.message shouldBeEqualTo message
-    error.cause shouldBeInstanceOf cause
+    assertInstanceOf<Result.Failure>(result)
+    val error = result.value
+    assertInstanceOf<Error.ThrowableError>(error)
+    assertEquals(message, error.message)
+    assertInstanceOf(cause, error.cause)
 }
 
 internal fun <T : Any> verifyGenericError(result: Result<T>, message: String) {
-    result shouldBeInstanceOf Result.Failure::class
-    (result as Result.Failure).value.shouldBeInstanceOf<Error.GenericError>()
-
-    val error = result.value as Error.GenericError
-    error.message shouldBeEqualTo message
+    assertInstanceOf<Result.Failure>(result)
+    val error = result.value
+    assertInstanceOf<Error.GenericError>(error)
+    assertEquals(message, error.message)
 }
 
 internal fun <T : Any> verifySuccess(result: Result<T>, equalsTo: T) {
-    result shouldBeInstanceOf Result.Success::class
-    (result as Result.Success).value shouldBeEqualTo equalsTo
+    assertInstanceOf<Result.Success<T>>(result)
+    assertEquals(equalsTo, result.value)
 }

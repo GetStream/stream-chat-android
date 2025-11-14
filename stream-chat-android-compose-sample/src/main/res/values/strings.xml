@@ -122,9 +122,14 @@
     </plurals>
 
     <string name="message_option_delete_for_me">Delete Message For Me</string>
+    <string name="message_option_message_info">Message Info</string>
 
     <!-- Channel Attachments -->
     <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
     <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
+
+    <!-- Message Info -->
+    <string name="message_info_read_by">READ BY (%d)</string>
+    <string name="message_info_delivered_to">DELIVERED TO (%d)</string>
 
 </resources>

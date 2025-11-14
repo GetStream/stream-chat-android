@@ -48,6 +48,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
             messageReadBy = messageReadBy,
             isThreadMode = isInThread,
             isMessageRead = isMessageRead,
+            isMessageDelivered = isMessageDelivered,
             showMessageFooter = showMessageFooter,
             showOriginalText = showOriginalText,
         )

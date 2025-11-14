@@ -126,6 +126,9 @@ internal class MockClientBuilder(
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = streamPlayer,
+            repository = mock(),
+            messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         )
 
         client.attachmentsSender = attachmentSender

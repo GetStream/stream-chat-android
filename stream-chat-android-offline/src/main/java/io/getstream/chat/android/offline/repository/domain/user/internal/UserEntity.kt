@@ -61,7 +61,7 @@ internal data class UserEntity(
     val invisible: Boolean = false,
     val privacySettings: PrivacySettingsEntity?,
     val banned: Boolean = false,
-    val mutes: List<String> = emptyList(),
+    val mutes: List<UserMuteEntity>,
     val teams: List<String> = emptyList(),
     val teamsRole: Map<String, String> = emptyMap(),
     val extraData: Map<String, Any> = emptyMap(),

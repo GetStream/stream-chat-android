@@ -17,10 +17,29 @@
 package io.getstream.chat.android.offline.repository
 
 import app.cash.turbine.test
+import io.getstream.chat.android.DeliveryReceipts
+import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.ReadReceipts
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.randomPrivacySettingsEntity
+import io.getstream.chat.android.offline.randomUserEntity
+import io.getstream.chat.android.offline.randomUserMuteEntity
+import io.getstream.chat.android.offline.repository.domain.push.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import io.getstream.chat.android.offline.repository.domain.user.internal.DeliveryReceiptsEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.ReadReceiptsEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.TypingIndicatorsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.UserMuteEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.toEntity
+import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomPrivacySettings
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,13 +48,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class UserRepositoryTests {
@@ -45,7 +66,6 @@ internal class UserRepositoryTests {
     private lateinit var sut: UserRepository
 
     private lateinit var userDao: UserDao
-    private val currentUser: User = randomUser(id = "currentUserId")
 
     @BeforeEach
     fun setup() {
@@ -55,11 +75,55 @@ internal class UserRepositoryTests {
 
     @Test
     fun `When insert users Should insert to dao`() = runTest {
-        val users = listOf(randomUser(), randomUser())
+        val users = listOf(
+            randomUser(
+                privacySettings = randomPrivacySettings(),
+                mutes = List(10) { randomMute() },
+            ),
+        )
 
         sut.insertUsers(users)
 
-        verify(userDao).insertMany(argThat { size == 2 })
+        val expected = users.map { user ->
+            UserEntity(
+                id = user.id,
+                originalId = user.id,
+                name = user.name,
+                image = user.image,
+                role = user.role,
+                createdAt = user.createdAt,
+                updatedAt = user.updatedAt,
+                lastActive = user.lastActive,
+                invisible = user.isInvisible,
+                privacySettings = PrivacySettingsEntity(
+                    typingIndicators = TypingIndicatorsEntity(
+                        enabled = user.privacySettings?.typingIndicators?.enabled ?: false,
+                    ),
+                    readReceipts = ReadReceiptsEntity(
+                        enabled = user.privacySettings?.readReceipts?.enabled ?: false,
+                    ),
+                    deliveryReceipts = DeliveryReceiptsEntity(
+                        enabled = user.privacySettings?.deliveryReceipts?.enabled ?: false,
+                    ),
+                ),
+                banned = user.isBanned,
+                mutes = user.mutes.map { mute ->
+                    UserMuteEntity(
+                        userId = mute.user?.id,
+                        targetId = mute.target?.id,
+                        createdAt = mute.createdAt,
+                        updatedAt = mute.updatedAt,
+                        expires = mute.expires,
+                    )
+                },
+                teams = user.teams,
+                teamsRole = user.teamsRole,
+                extraData = user.extraData,
+                avgResponseTime = user.avgResponseTime,
+                pushPreference = user.pushPreference?.toEntity(),
+            )
+        }
+        verify(userDao).insertMany(expected)
     }
 
     @Test
@@ -70,12 +134,44 @@ internal class UserRepositoryTests {
     }
 
     @Test
-    fun `When insert me Should insert entity with me id to dao`() = runTest {
-        val user = randomUser(id = "userId")
+    fun `When insert current user Should insert entity with me id to dao`() = runTest {
+        val user = randomUser(
+            privacySettings = randomPrivacySettings(),
+            mutes = List(10) { randomMute() },
+        )
 
         sut.insertCurrentUser(user)
 
-        verify(userDao).insert(argThat { id == "me" && originalId == "userId" })
+        val expected = UserEntity(
+            id = "me",
+            originalId = user.id,
+            name = user.name,
+            image = user.image,
+            role = user.role,
+            createdAt = user.createdAt,
+            updatedAt = user.updatedAt,
+            lastActive = user.lastActive,
+            invisible = user.isInvisible,
+            privacySettings = PrivacySettingsEntity(
+                typingIndicators = TypingIndicatorsEntity(
+                    enabled = user.privacySettings?.typingIndicators?.enabled ?: false,
+                ),
+                readReceipts = ReadReceiptsEntity(
+                    enabled = user.privacySettings?.readReceipts?.enabled ?: false,
+                ),
+                deliveryReceipts = DeliveryReceiptsEntity(
+                    enabled = user.privacySettings?.deliveryReceipts?.enabled ?: false,
+                ),
+            ),
+            banned = user.isBanned,
+            mutes = user.mutes.map(Mute::toEntity),
+            teams = user.teams,
+            teamsRole = user.teamsRole,
+            extraData = user.extraData,
+            avgResponseTime = user.avgResponseTime,
+            pushPreference = user.pushPreference?.toEntity(),
+        )
+        verify(userDao).insert(expected)
     }
 
     @Test
@@ -168,4 +264,75 @@ internal class UserRepositoryTests {
                     cancelAndConsumeRemainingEvents()
                 }
         }
+
+    @Test
+    fun `When selectUser If user in cache Should return from cache without querying dao`() = runTest {
+        val user = randomUser(
+            privacySettings = randomPrivacySettings(),
+            mutes = List(10) { randomMute() },
+        )
+        sut.insertUser(user)
+
+        val result = sut.selectUser(user.id)
+
+        assertEquals(user, result)
+        verify(userDao, never()).select(any<String>())
+    }
+
+    @Test
+    fun `When selectUser If user not in cache but in dao Should query dao and cache result`() = runTest {
+        val userId = randomString()
+        val userEntity = randomUserEntity(
+            id = userId,
+            originalId = userId,
+            privacySettings = randomPrivacySettingsEntity(),
+            mutes = List(10) { randomUserMuteEntity() },
+        )
+        whenever(userDao.select(userId)).thenReturn(userEntity)
+
+        val result = sut.selectUser(userId)
+
+        val expected = User(
+            id = userEntity.id,
+            name = userEntity.name,
+            image = userEntity.image,
+            role = userEntity.role,
+            createdAt = userEntity.createdAt,
+            updatedAt = userEntity.updatedAt,
+            lastActive = userEntity.lastActive,
+            invisible = userEntity.invisible,
+            privacySettings = PrivacySettings(
+                typingIndicators = TypingIndicators(
+                    enabled = userEntity.privacySettings?.typingIndicators?.enabled ?: false,
+                ),
+                readReceipts = ReadReceipts(
+                    enabled = userEntity.privacySettings?.readReceipts?.enabled ?: false,
+                ),
+                deliveryReceipts = DeliveryReceipts(
+                    enabled = userEntity.privacySettings?.deliveryReceipts?.enabled ?: false,
+                ),
+            ),
+            banned = userEntity.banned,
+            mutes = userEntity.mutes.map { mute ->
+                Mute(
+                    user = mute.userId?.let(::User),
+                    target = mute.targetId?.let(::User),
+                    createdAt = mute.createdAt,
+                    updatedAt = mute.updatedAt,
+                    expires = mute.expires,
+                )
+            },
+            teams = userEntity.teams,
+            teamsRole = userEntity.teamsRole,
+            avgResponseTime = userEntity.avgResponseTime,
+            pushPreference = null,
+            extraData = userEntity.extraData,
+        )
+        assertEquals(expected, result)
+        // Verify it's now in cache - second call should not query dao
+        val cachedResult = sut.selectUser(userId)
+        assertEquals(expected, cachedResult)
+        // Should only query dao once (first call), second call uses cache
+        verify(userDao, times(1)).select(userId)
+    }
 }
