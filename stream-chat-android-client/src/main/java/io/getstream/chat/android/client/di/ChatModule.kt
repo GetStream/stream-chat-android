@@ -117,7 +117,7 @@ import java.util.concurrent.TimeUnit
  * @param appVersion Optional app version added to default headers for tracking.
  */
 @Suppress("TooManyFunctions")
-internal open class BaseChatModule
+internal class ChatModule
 @Suppress("LongParameterList")
 constructor(
     private val appContext: Context,
@@ -261,7 +261,7 @@ constructor(
                 }
             }
 
-    protected open fun clientBuilder(
+    private fun clientBuilder(
         timeout: Long,
         config: ChatClientConfig,
         parser: ChatParser,
@@ -402,7 +402,7 @@ constructor(
             throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
         }
 
-    private companion object {
+    private companion object Companion {
         private const val BASE_TIMEOUT = 30_000L
         private var CDN_TIMEOUT = 30_000L
     }
