@@ -35,13 +35,14 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 
 /**
  * Class responsible for handling chat notifications.
  * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
@@ -53,6 +54,7 @@ internal class ChatNotificationHandler(
     private val currentUserProvider: () -> User? = {
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
+    private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -87,6 +89,8 @@ internal class ChatNotificationHandler(
         // Only possible type is message.new
         showNotificationInternal(ChatNotification.MessageNew(channel, message))
     }
+
+    override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
 
     private fun showNotificationInternal(notification: ChatNotification) {
         when (notification) {

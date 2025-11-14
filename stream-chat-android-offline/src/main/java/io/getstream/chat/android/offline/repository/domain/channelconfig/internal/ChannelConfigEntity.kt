@@ -33,6 +33,7 @@ internal data class ChannelConfigInnerEntity(
     val name: String,
     val isTypingEvents: Boolean,
     val isReadEvents: Boolean,
+    val deliveryEventsEnabled: Boolean,
     val isConnectEvents: Boolean,
     val isSearch: Boolean,
     val isReactionsEnabled: Boolean,

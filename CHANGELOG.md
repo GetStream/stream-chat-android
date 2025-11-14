@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce message delivery receipts. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ⚠️ Changed
 
@@ -17,9 +18,13 @@
 - Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
+- Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
 
 ### ⚠️ Changed
+- Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ❌ Removed
 
@@ -3614,7 +3619,7 @@ The following items are breaking changes, since it was very important to improve
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
 - Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
 - Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
-- Added ways to show/hide the delivery status indicators for channels and messages. [#3102](https://github.com/GetStream/stream-chat-android/pull/3102)
+- Added ways to show/hide the delivery receipts indicators for channels and messages. [#3102](https://github.com/GetStream/stream-chat-android/pull/3102)
 
 ### ⚠️ Changed
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)

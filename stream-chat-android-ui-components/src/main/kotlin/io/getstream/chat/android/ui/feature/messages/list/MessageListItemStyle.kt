@@ -70,6 +70,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property reactionsViewStyle Style for [ViewReactionsView].
  * @property editReactionsViewStyle Style for [EditReactionsView].
  * @property iconIndicatorSent Icon for message's sent status. Default value is [R.drawable.stream_ui_ic_check_single].
+ * @property iconIndicatorDelivered Icon for message's delivered status. Default value is [R.drawable.stream_ui_ic_check_double_grey].
  * @property iconIndicatorRead Icon for message's read status. Default value is [R.drawable.stream_ui_ic_check_double].
  * @property iconIndicatorPendingSync Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_clock].
  * @property iconOnlyVisibleToYou Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_icon_eye_off].
@@ -119,6 +120,7 @@ public data class MessageListItemStyle(
     public val reactionsViewStyle: ViewReactionsViewStyle,
     public val editReactionsViewStyle: EditReactionsViewStyle,
     public val iconIndicatorSent: Drawable,
+    public val iconIndicatorDelivered: Drawable,
     public val iconIndicatorRead: Drawable,
     public val iconIndicatorPendingSync: Drawable,
     public val iconOnlyVisibleToYou: Drawable,
@@ -519,6 +521,9 @@ public data class MessageListItemStyle(
             val iconIndicatorSent = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconIndicatorSent,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
+            val iconIndicatorDelivered = attributes.getDrawable(
+                R.styleable.MessageListView_streamUiIconIndicatorDelivered,
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double_grey)!!
             val iconIndicatorRead = attributes.getDrawable(
                 R.styleable.MessageListView_streamUiIconIndicatorRead,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double)!!
@@ -769,6 +774,7 @@ public data class MessageListItemStyle(
                 reactionsViewStyle = reactionsViewStyle,
                 editReactionsViewStyle = editReactionsViewStyle,
                 iconIndicatorSent = iconIndicatorSent,
+                iconIndicatorDelivered = iconIndicatorDelivered,
                 iconIndicatorRead = iconIndicatorRead,
                 iconIndicatorPendingSync = iconIndicatorPendingSync,
                 iconOnlyVisibleToYou = iconOnlyVisibleToYou,

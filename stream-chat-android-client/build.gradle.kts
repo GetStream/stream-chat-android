@@ -92,6 +92,10 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.ok2curl)
 
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
     // Unused dependencies: The following dependencies (appcompat, constraintlayout, livedata-ktx) are not used in the
     // `stream-chat-android-client` module. They are still declared here to prevent potential breaking changes for
     // integrations that might be relying on them transitively. Consider removing them in future major releases.
@@ -106,8 +110,10 @@ dependencies {
     testImplementation(libs.stream.result)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 

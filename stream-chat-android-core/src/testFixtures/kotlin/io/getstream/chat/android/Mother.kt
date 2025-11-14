@@ -95,6 +95,7 @@ public fun randomString(size: Int = 20): String = buildString(capacity = size) {
         append(charPool.random())
     }
 }
+public fun randomStringOrNull(): String? = randomString().takeIf { randomBoolean() }
 
 public fun randomCID(): String = "${randomString()}:${randomString()}"
 public fun randomFile(extension: String = randomString(3)): File {
@@ -223,6 +224,16 @@ public fun randomUser(
     blockedUserIds = blockedUserIds,
     privacySettings = privacySettings,
     extraData = extraData,
+)
+
+public fun randomPrivacySettings(
+    typingIndicators: TypingIndicators = TypingIndicators(enabled = randomBoolean()),
+    deliveryReceipts: DeliveryReceipts = DeliveryReceipts(enabled = randomBoolean()),
+    readReceipts: ReadReceipts = ReadReceipts(enabled = randomBoolean()),
+): PrivacySettings = PrivacySettings(
+    typingIndicators = typingIndicators,
+    deliveryReceipts = deliveryReceipts,
+    readReceipts = readReceipts,
 )
 
 public fun randomReaction(
@@ -475,13 +486,17 @@ public fun randomChannelUserRead(
     lastReceivedEventDate: Date = randomDate(),
     unreadMessages: Int = positiveRandomInt(),
     lastRead: Date = randomDate(),
-    lastReadMessageId: String? = randomString(),
+    lastReadMessageId: String? = randomStringOrNull(),
+    lastDeliveredAt: Date? = randomDateOrNull(),
+    lastDeliveredMessageId: String? = randomStringOrNull(),
 ): ChannelUserRead = ChannelUserRead(
     user = user,
     lastReceivedEventDate = lastReceivedEventDate,
     unreadMessages = unreadMessages,
     lastRead = lastRead,
     lastReadMessageId = lastReadMessageId,
+    lastDeliveredAt = lastDeliveredAt,
+    lastDeliveredMessageId = lastDeliveredMessageId,
 )
 
 public suspend fun suspendableRandomMessageList(
@@ -523,6 +538,7 @@ public fun randomConfig(
     name: String = randomString(),
     typingEventsEnabled: Boolean = randomBoolean(),
     readEventsEnabled: Boolean = randomBoolean(),
+    deliveryEventsEnabled: Boolean = randomBoolean(),
     connectEventsEnabled: Boolean = randomBoolean(),
     searchEnabled: Boolean = randomBoolean(),
     isReactionsEnabled: Boolean = randomBoolean(),
@@ -545,6 +561,7 @@ public fun randomConfig(
     name = name,
     typingEventsEnabled = typingEventsEnabled,
     readEventsEnabled = readEventsEnabled,
+    deliveryEventsEnabled = deliveryEventsEnabled,
     connectEventsEnabled = connectEventsEnabled,
     searchEnabled = searchEnabled,
     isReactionsEnabled = isReactionsEnabled,
@@ -687,8 +704,8 @@ public fun randomFiles(
 
 public fun randomDateOrNull(): Date? = randomDate().takeIf { randomBoolean() }
 public fun randomDate(): Date = Date(positiveRandomLong())
-public fun randomDateBefore(date: Long): Date = Date(date - positiveRandomInt())
-public fun randomDateAfter(date: Long): Date = Date(randomLongBetween(date))
+public fun randomDateBefore(date: Date): Date = Date(date.time - positiveRandomInt())
+public fun randomDateAfter(date: Date): Date = Date(randomLongBetween(date.time))
 
 public fun createDate(
     year: Int = positiveRandomInt(),

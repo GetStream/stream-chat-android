@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.TokenUtils
@@ -91,7 +90,6 @@ internal class ChatClientConnectionTests {
     private val mutableClientState: MutableClientState = MutableClientState(mock())
     private val streamDateFormatter = StreamDateFormatter()
     private val config = mock<ChatClientConfig>()
-    private val tokenManager = mock<TokenManager>()
     private val userCredentialStorage = mock<UserCredentialStorage>()
 
     @BeforeEach
@@ -133,6 +131,9 @@ internal class ChatClientConnectionTests {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            repository = mock(),
+            messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         ).apply {
             attachmentsSender = mock()
         }

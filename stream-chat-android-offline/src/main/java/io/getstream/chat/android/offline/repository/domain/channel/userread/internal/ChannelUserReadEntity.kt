@@ -29,4 +29,6 @@ internal data class ChannelUserReadEntity(
     val unreadMessages: Int,
     val lastRead: Date,
     val lastReadMessageId: String?,
+    val lastDeliveredAt: Date?,
+    val lastDeliveredMessageId: String?,
 )

@@ -38,7 +38,12 @@ internal interface ChatNotifications {
     fun onSetUser(user: User)
     fun setDevice(device: Device)
     suspend fun deleteDevice()
-    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onPushMessage(
+        pushMessage: PushMessage,
+        pushNotificationReceivedListener: PushNotificationReceivedListener =
+            PushNotificationReceivedListener { _, _ -> },
+    )
+
     fun onChatEvent(event: ChatEvent)
     suspend fun onLogout()
     fun displayNotification(notification: ChatNotification)
@@ -95,15 +100,15 @@ internal class ChatNotificationsImpl(
     }
 
     override fun onPushMessage(
-        message: PushMessage,
+        pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) {
-        logger.i { "[onReceivePushMessage] message: $message" }
+        logger.i { "[onPushMessage] message: $pushMessage" }
 
-        pushNotificationReceivedListener.onPushNotificationReceived(message.channelType, message.channelId)
+        pushNotificationReceivedListener.onPushNotificationReceived(pushMessage.channelType, pushMessage.channelId)
 
-        if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(message)) {
-            handlePushMessage(message)
+        if (notificationConfig.shouldShowNotificationOnPush() && !handler.onPushMessage(pushMessage)) {
+            handlePushMessage(pushMessage)
         }
     }
 
@@ -193,6 +198,7 @@ internal class ChatNotificationsImpl(
                     handler.showNotification(notification)
                 }
             }
+
             else -> handler.showNotification(notification)
         }
     }
@@ -210,7 +216,7 @@ internal object NoOpChatNotifications : ChatNotifications {
     override fun setDevice(device: Device) = Unit
     override suspend fun deleteDevice() = Unit
     override fun onPushMessage(
-        message: PushMessage,
+        pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 

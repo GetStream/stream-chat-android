@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
@@ -81,6 +82,16 @@ class ChatInitializer(
                     channelType = channel.type,
                     channelId = channel.id,
                 )
+            },
+            onPushMessage = { pushMessage ->
+                // Mark the message as delivered when a push for a new message is received
+                if (EventType.MESSAGE_NEW == pushMessage.type) {
+                    ChatClient.instance()
+                        .markMessageAsDelivered(messageId = pushMessage.messageId)
+                        .enqueue()
+                }
+                // Return false to let the SDK handle the push message and show a notification
+                false
             },
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING

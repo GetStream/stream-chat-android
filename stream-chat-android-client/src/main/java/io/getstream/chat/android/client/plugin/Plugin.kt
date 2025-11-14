@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
@@ -270,20 +269,6 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) {
-        /* No-Op */
-    }
-
-    override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> =
-        Result.Success(Unit)
-
-    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
-        /* No-Op */
-    }
-
-    override suspend fun onQueryChannelsResult(
-        result: Result<List<Channel>>,
-        request: QueryChannelsRequest,
     ) {
         /* No-Op */
     }

@@ -134,6 +134,14 @@ public data class Channel(
     /**
      * Whether a channel contains unread messages or not.
      */
+    @Deprecated(
+        message = "Use the extension property Channel.currentUserUnreadCount instead and check if it's greater than 0",
+        replaceWith = ReplaceWith(
+            expression = "currentUserUnreadCount",
+            imports = ["io.getstream.chat.android.client.extensions.currentUserUnreadCount"],
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     val hasUnread: Boolean
         get() = unreadCount > 0
 

@@ -21,11 +21,17 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 internal data class PrivacySettingsDto(
     val typing_indicators: TypingIndicatorsDto? = null,
+    val delivery_receipts: DeliveryReceiptsDto? = null,
     val read_receipts: ReadReceiptsDto? = null,
 )
 
 @JsonClass(generateAdapter = true)
 internal data class TypingIndicatorsDto(
+    val enabled: Boolean,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DeliveryReceiptsDto(
     val enabled: Boolean,
 )
 

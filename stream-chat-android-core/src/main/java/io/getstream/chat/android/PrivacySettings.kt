@@ -22,11 +22,13 @@ import androidx.compose.runtime.Immutable
  * Represents the privacy settings of a user.
  *
  * @param typingIndicators Typing indicators settings.
+ * @param deliveryReceipts Delivery receipts settings.
  * @param readReceipts Read receipts settings.
  */
 @Immutable
 public data class PrivacySettings(
     public val typingIndicators: TypingIndicators? = null,
+    public val deliveryReceipts: DeliveryReceipts? = null,
     public val readReceipts: ReadReceipts? = null,
 )
 
@@ -38,6 +40,17 @@ public data class PrivacySettings(
  */
 @Immutable
 public data class TypingIndicators(
+    val enabled: Boolean = true,
+)
+
+/**
+ * Represents the delivery receipts settings.
+ * If false, the user delivery events will not be sent to other users, along with the user's delivery state.
+ *
+ * @param enabled Whether delivery receipts are enabled or not.
+ */
+@Immutable
+public data class DeliveryReceipts(
     val enabled: Boolean = true,
 )
 

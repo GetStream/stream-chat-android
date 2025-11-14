@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -46,6 +48,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -54,10 +57,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewUserData
+import java.util.Date
 
 /**
  * The basic channel item, that shows the channel in a list and exposes single and long click actions.
@@ -308,7 +313,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 if (isLastMessageFromCurrentUser) {
                     ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
@@ -378,6 +383,26 @@ internal fun ChannelItemUnreadMessages() {
 
 @Preview(showBackground = true)
 @Composable
+private fun ChannelItemLastMessagePendingStatusPreview() {
+    ChatTheme {
+        ChannelItemLastMessagePendingStatus()
+    }
+}
+
+@Composable
+internal fun ChannelItemLastMessagePendingStatus() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1, syncStatus = SyncStatus.SYNC_NEEDED)
+            },
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun ChannelItemLastMessageSentStatusPreview() {
     ChatTheme {
         ChannelItemLastMessageSentStatus()
@@ -392,6 +417,32 @@ internal fun ChannelItemLastMessageSentStatus() {
             messages = PreviewChannelData.channelWithMessages.messages.map { message ->
                 message.copy(user = PreviewUserData.user1)
             },
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemLastMessageDeliveredStatusPreview() {
+    ChatTheme {
+        ChannelItemLastMessageDeliveredStatus()
+    }
+}
+
+@Composable
+internal fun ChannelItemLastMessageDeliveredStatus() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1)
+            },
+            read = listOf(
+                PreviewChannelUserRead.channelUserRead2.copy(
+                    lastRead = NEVER,
+                    lastDeliveredAt = Date(),
+                ),
+            ),
         ),
     )
 }

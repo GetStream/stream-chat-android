@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
@@ -974,6 +975,8 @@ public class MessageListController(
                     .filter { it.second >= index }
                     .map { it.first }
 
+                val isMessageDelivered = channel?.deliveredReadsOf(message)?.isEmpty() == false
+
                 val isMessageFocused = message.id == focusedMessage?.id
                 if (isMessageFocused) removeMessageFocus(message.id)
 
@@ -986,6 +989,7 @@ public class MessageListController(
                         isMine = user.id == currentUser?.id,
                         isInThread = isInThread,
                         isMessageRead = isMessageRead,
+                        isMessageDelivered = isMessageDelivered,
                         deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy,
