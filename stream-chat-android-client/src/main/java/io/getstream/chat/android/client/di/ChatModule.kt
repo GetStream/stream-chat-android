@@ -402,8 +402,8 @@ constructor(
             throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
         }
 
-    private companion object Companion {
+    private companion object {
         private const val BASE_TIMEOUT = 30_000L
-        private var CDN_TIMEOUT = 30_000L
+        private const val CDN_TIMEOUT = 30_000L
     }
 }
