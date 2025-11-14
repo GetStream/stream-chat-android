@@ -46,10 +46,12 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
+import io.getstream.chat.android.client.api2.model.requests.DeliveredMessageDto
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
@@ -147,6 +149,7 @@ import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomPollConfig
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -1387,6 +1390,31 @@ internal class MoshiChatApiTest {
         val expectedRequest = MarkReadRequest(message_id = messageId)
         result `should be instance of` expected
         verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markDeliveredInput")
+    fun testMarkDelivered(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markDelivered(any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val messages = randomMessageList(10)
+        val result = sut.markDelivered(messages).await()
+        // then
+        val expectedRequest = MarkDeliveredRequest(
+            latest_delivered_messages = messages.map { messageInfo ->
+                DeliveredMessageDto(
+                    cid = messageInfo.cid,
+                    id = messageInfo.id,
+                )
+            },
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).markDelivered(expectedRequest)
     }
 
     @ParameterizedTest

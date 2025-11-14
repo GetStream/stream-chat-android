@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.parser2.testdata
 
+import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
@@ -146,6 +147,9 @@ internal object UserDtoTestData {
               },
               "read_receipts": {
                 "enabled": false
+              },
+              "delivery_receipts": {
+                "enabled": false
               }
             },
             "language": "language",
@@ -199,6 +203,9 @@ internal object UserDtoTestData {
                     enabled = false,
                 ),
                 read_receipts = ReadReceiptsDto(
+                    enabled = false,
+                ),
+                delivery_receipts = DeliveryReceiptsDto(
                     enabled = false,
                 ),
             ),
@@ -282,6 +289,9 @@ internal object UserDtoTestData {
               },
               "read_receipts": {
                 "enabled": false
+              },
+              "delivery_receipts": {
+                "enabled": false
               }
             },
             "language": "language",
@@ -309,6 +319,9 @@ internal object UserDtoTestData {
                 enabled = false,
             ),
             read_receipts = ReadReceiptsDto(
+                enabled = false,
+            ),
+            delivery_receipts = DeliveryReceiptsDto(
                 enabled = false,
             ),
         ),

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.domain.user.internal
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
@@ -32,6 +33,11 @@ internal fun PrivacySettings.toEntity(): PrivacySettingsEntity {
                 enabled = it.enabled,
             )
         },
+        deliveryReceipts = deliveryReceipts?.let {
+            DeliveryReceiptsEntity(
+                enabled = it.enabled,
+            )
+        },
     )
 }
 
@@ -44,6 +50,11 @@ internal fun PrivacySettingsEntity.toModel(): PrivacySettings {
         },
         readReceipts = readReceipts?.let {
             ReadReceipts(
+                enabled = it.enabled,
+            )
+        },
+        deliveryReceipts = deliveryReceipts?.let {
+            DeliveryReceipts(
                 enabled = it.enabled,
             )
         },

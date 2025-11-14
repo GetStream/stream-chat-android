@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.User
 import kotlin.reflect.full.primaryConstructor
 
@@ -55,6 +56,8 @@ public object NotificationHandlerFactory {
      * @param actionsProvider Lambda expression used to provide actions for the notification.
      * @param notificationBuilderTransformer Lambda expression used to transform the [NotificationCompat.Builder]
      * before building the notification.
+     * @param onPushMessage Lambda expression called when a new push message is received. Return true if the
+     * push message was handled and no further processing is required.
      *
      * @return A [NotificationHandler] instance.
      * @see NotificationHandler
@@ -75,6 +78,7 @@ public object NotificationHandlerFactory {
             getDefaultActionsProvider(context),
         notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
             { builder, _ -> builder },
+        onPushMessage: (pushMessage: PushMessage) -> Boolean = { false },
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
@@ -85,6 +89,7 @@ public object NotificationHandlerFactory {
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
+            onNewPushMessage = onPushMessage,
         )
     } else {
         ChatNotificationHandler(
@@ -94,6 +99,7 @@ public object NotificationHandlerFactory {
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
+            onNewPushMessage = onPushMessage,
         )
     }
 

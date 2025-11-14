@@ -296,6 +296,21 @@ public data class MessageReadEvent(
 ) : CidEvent(), UserEvent
 
 /**
+ * Triggered when a message is marked as delivered
+ */
+public data class MessageDeliveredEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val user: User,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val lastDeliveredAt: Date,
+    val lastDeliveredMessageId: String,
+) : CidEvent(), UserEvent
+
+/**
  * Triggered when a message is updated
  */
 public data class MessageUpdatedEvent(

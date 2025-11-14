@@ -64,6 +64,7 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * @param currentUser The currently logged in user.
  * @param groupPosition The [MessagePosition] of the item inside a group.
  * @param isMessageRead Whether the message has been read or not.
+ * @param isMessageDelivered Whether the message has been delivered or not.
  * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the visibility of deleted messages in
  * the UI.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
@@ -81,6 +82,7 @@ public data class MessageItemState(
     public val currentUser: User? = null,
     public val groupPosition: List<MessagePosition> = listOf(MessagePosition.NONE),
     public val isMessageRead: Boolean = false,
+    public val isMessageDelivered: Boolean = false,
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList(),

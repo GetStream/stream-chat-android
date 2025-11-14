@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.utils.observable
 
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
-import org.amshove.kluent.internal.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
@@ -27,7 +27,8 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.concurrent.CountDownLatch
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 internal class SubscriptionImplTest {
 
@@ -143,33 +144,40 @@ internal class SubscriptionImplTest {
 
     @Test
     fun `onNext should not call listener if disposed concurrently`() {
-        val latch = CountDownLatch(1)
+        val gate = CompletableFuture<Unit>() // blocks the filter
+        val filterEntered = CompletableFuture<Unit>() // signals we are inside the filter
+
         val mockListener = mock<ChatEventListener<ChatEvent>>()
-        val subscription = SubscriptionImpl(filter = {
-            latch.await() // Introduce a pause in the filter
-            true
-        }, listener = mockListener)
+        val subscription = SubscriptionImpl(
+            filter = {
+                filterEntered.complete(Unit) // tell the test we are here
+                gate.get() // wait until the test lets us go
+                true
+            },
+            listener = mockListener,
+        )
 
         val event = mock<ChatEvent>()
         val exceptions = mutableListOf<Throwable>()
 
-        val onNextThread = Thread {
+        val onNextFuture = CompletableFuture.runAsync {
             try {
                 subscription.onNext(event)
             } catch (e: Throwable) {
                 exceptions.add(e)
             }
         }
-        val disposerThread = Thread {
-            subscription.dispose()
-            latch.countDown() // Release the latch to allow the filter to continue
-        }
-        onNextThread.start()
-        disposerThread.start()
-        onNextThread.join()
-        disposerThread.join()
 
-        assertEquals("Expected no exceptions", 0, exceptions.size)
+        // Wait until the filter is entered (ensures onNext is truly paused)
+        filterEntered.get(1, TimeUnit.SECONDS)
+
+        subscription.dispose() //  Dispose from the test thread – this is the concurrent part
+
+        gate.complete(Unit) // Unblock the filter so onNext can finish its execution
+
+        // Verify the outcome (no exception, listener never called)
+        onNextFuture.get(1, TimeUnit.SECONDS)
+        assertEquals(0, exceptions.size)
         verify(mockListener, never()).onEvent(event)
     }
 }

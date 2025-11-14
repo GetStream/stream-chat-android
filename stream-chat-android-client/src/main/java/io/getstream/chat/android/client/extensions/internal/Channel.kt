@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.extensions.internal
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.extensions.userRead
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -218,7 +219,7 @@ public fun Channel.removeMembership(currentUserId: String?): Channel =
  */
 @InternalStreamChatApi
 public fun Channel.updateReads(newRead: ChannelUserRead, currentUserId: UserId): Channel {
-    val oldRead = read.firstOrNull { it.user.id == newRead.user.id }
+    val oldRead = userRead(newRead.user.id)
     return copy(
         read = if (oldRead != null) {
             read - oldRead + newRead

@@ -17,11 +17,14 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.containsUserMention
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 
@@ -85,7 +88,7 @@ public fun Channel.getMembersExcludingCurrent(
  * @return Number of messages containing unread user mention.
  */
 public fun Channel.countUnreadMentionsForUser(user: User): Int {
-    val lastMessageSeenDate = read.firstOrNull { read -> read.user.id == user.id }?.lastRead
+    val lastMessageSeenDate = userRead(user.id)?.lastRead
 
     val messagesToCheck = if (lastMessageSeenDate == null) {
         messages
@@ -103,7 +106,7 @@ public fun Channel.countUnreadMentionsForUser(user: User): Int {
  */
 public fun Channel.currentUserUnreadCount(
     currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
-): Int = read.firstOrNull { it.user.id == currentUserId }?.unreadMessages ?: 0
+): Int = currentUserId?.let(::userRead)?.unreadMessages ?: 0
 
 /**
  * Synchronizes the unread count of the channel with the read state of the current user.
@@ -117,3 +120,46 @@ public fun Channel.syncUnreadCountWithReads(
     currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
 ): Channel =
     copy(unreadCount = currentUserUnreadCount(currentUserId))
+
+/**
+ * Returns the user's read state for this channel.
+ *
+ * @param userId The ID of the user whose read state is to be retrieved.
+ * @return The [ChannelUserRead] object representing the user's read state, or null if not found.
+ */
+internal fun Channel.userRead(userId: UserId): ChannelUserRead? =
+    read.firstOrNull { read -> read.user.id == userId }
+
+/**
+ * Returns a list of [ChannelUserRead] objects representing which ones have
+ * read the given [message].
+ *
+ * A message is considered read by a user if:
+ * - The user is not the sender of the message
+ * - The user has read the message
+ *
+ * @param message The [Message] object for which to find read reads.
+ * @return A list of [ChannelUserRead] objects representing users who have read the message
+ */
+public fun Channel.readsOf(message: Message): List<ChannelUserRead> =
+    read.filter { read ->
+        read.user.id != message.user.id &&
+            read.lastRead >= message.getCreatedAtOrDefault(NEVER)
+    }
+
+/**
+ * Returns a list of [ChannelUserRead] objects representing which ones have
+ * delivered the given [message].
+ *
+ * A message is considered delivered to a user if:
+ * - The user is not the sender of the message
+ * - The user has received (delivered) the message
+ *
+ * @param message The [Message] object for which to find delivered reads.
+ * @return A list of [ChannelUserRead] objects representing users who have delivered the message.
+ */
+public fun Channel.deliveredReadsOf(message: Message): List<ChannelUserRead> =
+    read.filter { read ->
+        read.user.id != message.user.id &&
+            (read.lastDeliveredAt ?: NEVER) >= message.getCreatedAtOrDefault(NEVER)
+    }

@@ -166,9 +166,9 @@ internal class ChannelStateLogicTest {
     @Test
     fun `given a message is outdated it should not be upserted`() {
         val createdAt = randomDate()
-        val createdLocallyAt = randomDateBefore(createdAt.time)
-        val updatedAt = randomDateAfter(createdAt.time)
-        val oldUpdatedAt = randomDateBefore(updatedAt.time)
+        val createdLocallyAt = randomDateBefore(createdAt)
+        val updatedAt = randomDateAfter(createdAt)
+        val oldUpdatedAt = randomDateBefore(updatedAt)
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(_messages)
 
         val recentMessage = randomMessage(
@@ -315,8 +315,8 @@ internal class ChannelStateLogicTest {
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(mapOf(message.id to message))
         val updatedMessage = message.copy(
             text = "new text",
-            updatedAt = randomDateAfter((message.updatedAt ?: message.updatedLocallyAt ?: NEVER).time),
-            updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time),
+            updatedAt = randomDateAfter(message.updatedAt ?: message.updatedLocallyAt ?: NEVER),
+            updatedLocallyAt = randomDateAfter(message.updatedLocallyAt ?: message.updatedAt ?: NEVER),
         )
 
         channelStateLogic.upsertMessage(updatedMessage)
@@ -524,6 +524,15 @@ internal class ChannelStateLogicTest {
         // then
         // Verify called twice, once in the `init` block and once in the function call
         verify(mutableState, times(2)).setMuted(false)
+    }
+
+    @Test
+    fun `Given updateDelivered is called, Then mutable state is upserted`() {
+        val read = randomChannelUserRead()
+
+        channelStateLogic.updateDelivered(read)
+
+        verify(mutableState).upsertDelivered(read)
     }
 
     companion object {

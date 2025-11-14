@@ -40,6 +40,7 @@ public object EventType {
     public const val MESSAGE_UPDATED: String = "message.updated"
     public const val MESSAGE_DELETED: String = "message.deleted"
     public const val MESSAGE_READ: String = "message.read"
+    public const val MESSAGE_DELIVERED: String = "message.delivered"
     public const val REACTION_NEW: String = "reaction.new"
     public const val REACTION_DELETED: String = "reaction.deleted"
     public const val REACTION_UPDATED: String = "reaction.updated"

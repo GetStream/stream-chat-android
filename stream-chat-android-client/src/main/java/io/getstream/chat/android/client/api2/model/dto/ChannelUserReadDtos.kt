@@ -32,4 +32,6 @@ internal data class DownstreamChannelUserRead(
     val last_read: Date,
     val unread_messages: Int,
     val last_read_message_id: String?,
+    val last_delivered_at: Date? = null,
+    val last_delivered_message_id: String? = null,
 )

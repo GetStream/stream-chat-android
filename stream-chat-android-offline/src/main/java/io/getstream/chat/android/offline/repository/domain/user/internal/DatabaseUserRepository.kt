@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.extensions.launchWithMutex
 import io.getstream.chat.android.offline.repository.domain.push.internal.toEntity
@@ -37,7 +38,7 @@ internal class DatabaseUserRepository(
 ) : UserRepository {
     private val logger by taggedLogger("Chat:UserRepository")
 
-    // the user cache is simple, just keeps the last 100 users in memory
+    // the user cache is simple, just keeps the last x users in memory, defined by cacheSize
     private val userCache = LruCache<String, User>(cacheSize)
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
     private val dbMutex = Mutex()
@@ -130,7 +131,7 @@ internal class DatabaseUserRepository(
             invisible = isInvisible,
             privacySettings = privacySettings?.toEntity(),
             banned = isBanned,
-            mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
+            mutes = mutes.map(Mute::toEntity),
             teams = teams,
             teamsRole = teamsRole,
             avgResponseTime = avgResponseTime,
@@ -150,6 +151,7 @@ internal class DatabaseUserRepository(
             invisible = invisible,
             privacySettings = privacySettings?.toModel(),
             banned = banned,
+            mutes = mutes.map(UserMuteEntity::toModel),
             teams = teams,
             teamsRole = teamsRole,
             avgResponseTime = avgResponseTime,

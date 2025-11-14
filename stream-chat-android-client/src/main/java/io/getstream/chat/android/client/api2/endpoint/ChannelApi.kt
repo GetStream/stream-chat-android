@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
@@ -211,4 +212,9 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @UrlQueryPayload @Query("payload") payload: PinnedMessagesRequest,
     ): RetrofitCall<MessagesResponse>
+
+    @POST("/channels/delivered")
+    fun markDelivered(
+        @Body request: MarkDeliveredRequest,
+    ): RetrofitCall<CompletableResponse>
 }
