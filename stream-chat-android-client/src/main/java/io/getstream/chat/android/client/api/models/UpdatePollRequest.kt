@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 
 /**
@@ -41,31 +42,7 @@ public data class UpdatePollRequest(
     val enforceUniqueVote: Boolean? = null,
     val isClosed: Boolean? = null,
     val maxVotesAllowed: Int? = null,
-    val options: List<UpdatePollOptionRequest>? = null,
+    val options: List<PollOption>? = null,
     val votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
-    val extraData: Map<String, Any> = emptyMap(),
-)
-
-/**
- * Model holding request data for creating a poll option.
- *
- * @param text The text of the poll option.
- * @param extraData A map of additional key-value pairs to include in the creation request.
- */
-public data class CreatePollOptionRequest(
-    val text: String,
-    val extraData: Map<String, Any> = emptyMap(),
-)
-
-/**
- * Model holding request data for updating a poll option.
- *
- * @param id The unique identifier of the poll option to be updated.
- * @param text The new text for the poll option.
- * @param extraData A map of additional key-value pairs to include in the update request.
- */
-public data class UpdatePollOptionRequest(
-    val id: String,
-    val text: String,
     val extraData: Map<String, Any> = emptyMap(),
 )

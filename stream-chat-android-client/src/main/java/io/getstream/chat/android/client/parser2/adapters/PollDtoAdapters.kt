@@ -23,9 +23,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.ToJson
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
-import io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
-import io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 
 /**
@@ -79,46 +77,6 @@ internal object CreatePollRequestAdapter : CustomObjectDtoAdapter<CreatePollRequ
         request: CreatePollRequest?,
         mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
         requestAdapter: JsonAdapter<CreatePollRequest>,
-    ) = serializeWithExtraData(jsonWriter, request, mapAdapter, requestAdapter)
-}
-
-/**
- * Serializer for [CreatePollOptionRequest] that handles the
- * [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto] implementation.
- */
-internal object CreatePollOptionRequestAdapter :
-    CustomObjectDtoAdapter<CreatePollOptionRequest>(CreatePollOptionRequest::class) {
-
-    @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): CreatePollOptionRequest = error("Can't parse this from Json")
-
-    @ToJson
-    fun toJson(
-        jsonWriter: JsonWriter,
-        request: CreatePollOptionRequest?,
-        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
-        requestAdapter: JsonAdapter<CreatePollOptionRequest>,
-    ) = serializeWithExtraData(jsonWriter, request, mapAdapter, requestAdapter)
-}
-
-/**
- * Serializer for [UpdatePollOptionRequest] that handles the
- * [io.getstream.chat.android.client.api2.model.dto.ExtraDataDto] implementation.
- */
-internal object UpdatePollOptionRequestAdapter :
-    CustomObjectDtoAdapter<UpdatePollOptionRequest>(UpdatePollOptionRequest::class) {
-
-    @FromJson
-    @Suppress("UNUSED_PARAMETER")
-    fun fromJson(jsonReader: JsonReader): UpdatePollOptionRequest = error("Can't parse this from Json")
-
-    @ToJson
-    fun toJson(
-        jsonWriter: JsonWriter,
-        request: UpdatePollOptionRequest?,
-        mapAdapter: JsonAdapter<MutableMap<String, Any?>>,
-        requestAdapter: JsonAdapter<UpdatePollOptionRequest>,
     ) = serializeWithExtraData(jsonWriter, request, mapAdapter, requestAdapter)
 }
 

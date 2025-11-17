@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_S
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -38,7 +37,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
@@ -193,6 +191,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
@@ -1996,23 +1995,23 @@ internal constructor(
         pollId: String,
         option: String,
     ): Call<Option> {
-        val request = CreatePollOptionRequest(option)
-        return createPollOption(pollId, request)
+        return createPollOption(pollId, option = PollOption(text = option))
+            .map { Option(id = it.id ?: "", text = it.text, extraData = it.extraData) }
     }
 
     /**
      * Create a new option for a poll.
      *
      * @param pollId The poll id.
-     * @param option The option to create.
+     * @param option The option to create. Note: Don't pass [PollOption.id] as it is ignored for creation.
      *
      * @return Executable async [Call] responsible for creating a new option.
      */
     @CheckResult
     public fun createPollOption(
         pollId: String,
-        option: CreatePollOptionRequest,
-    ): Call<Option> {
+        option: PollOption,
+    ): Call<PollOption> {
         return api.createPollOption(pollId, option)
     }
 
@@ -2020,13 +2019,13 @@ internal constructor(
      * Update an existing option in a poll.
      *
      * @param pollId The poll id.
-     * @param option The option to update.
+     * @param option The option to update. Note: [PollOption.id] is mandatory for performing an update.
      */
     @CheckResult
     public fun updatePollOption(
         pollId: String,
-        option: UpdatePollOptionRequest,
-    ): Call<Option> {
+        option: PollOption,
+    ): Call<PollOption> {
         return api.updatePollOption(pollId, option)
     }
 

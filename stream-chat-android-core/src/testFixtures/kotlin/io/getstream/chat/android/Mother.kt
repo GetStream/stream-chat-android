@@ -852,7 +852,7 @@ public fun randomPollConfig(
 ): PollConfig = PollConfig(
     name = name,
     description = description,
-    options = options.map(::PollOption),
+    options = options.map { PollOption(text = it) },
     votingVisibility = votingVisibility,
     enforceUniqueVote = enforceUniqueVote,
     maxVotesAllowed = maxVotesAllowed,
@@ -871,7 +871,7 @@ public fun randomPoll(
     voteCountsByOption: Map<String, Int> = emptyMap(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
-    options: List<Option> = listOf(randomPollOption()),
+    options: List<Option> = listOf(randomOption()),
     votes: List<Vote> = emptyList(),
     ownVotes: List<Vote> = emptyList(),
     createdAt: Date = randomDate(),
@@ -904,12 +904,22 @@ public fun randomPoll(
     createdBy = createdBy,
 )
 
-public fun randomPollOption(
+public fun randomOption(
     id: String = randomString(),
     text: String = randomString(),
 ): Option = Option(
     id = id,
     text = text,
+)
+
+public fun randomPollOption(
+    id: String? = randomString(),
+    text: String = randomString(),
+    extraData: Map<String, Any> = randomExtraData(1),
+): PollOption = PollOption(
+    id = id,
+    text = text,
+    extraData = extraData,
 )
 
 public fun randomPollVote(

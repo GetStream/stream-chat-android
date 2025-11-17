@@ -28,8 +28,8 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
-import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
@@ -297,7 +297,7 @@ internal class PollExtensionsTests {
     @Test
     fun `getVotesUnlessAnonymous returns votes when poll is not anonymous`() {
         val optionId = randomString()
-        val option = randomPollOption(id = optionId)
+        val option = randomOption(id = optionId)
         val votes = listOf(randomPollVote(optionId = optionId))
         val poll = randomPoll(
             options = listOf(option),
@@ -313,7 +313,7 @@ internal class PollExtensionsTests {
     @Test
     fun `getVotesUnlessAnonymous returns empty list when poll is anonymous`() {
         val optionId = randomString()
-        val option = randomPollOption(id = optionId)
+        val option = randomOption(id = optionId)
         val poll = randomPoll(
             options = listOf(option),
             votingVisibility = VotingVisibility.ANONYMOUS,
@@ -331,9 +331,9 @@ internal class PollExtensionsTests {
         val optionId2 = randomString()
         val optionId3 = randomString()
         val options = listOf(
-            randomPollOption(id = optionId1),
-            randomPollOption(id = optionId2),
-            randomPollOption(id = optionId3),
+            randomOption(id = optionId1),
+            randomOption(id = optionId2),
+            randomOption(id = optionId3),
         )
         val voteCountsByOption = mapOf(optionId1 to 10, optionId2 to 5, optionId3 to 3)
         val poll = randomPoll(options = options, voteCountsByOption = voteCountsByOption)
@@ -348,8 +348,8 @@ internal class PollExtensionsTests {
         val optionId1 = randomString()
         val optionId2 = randomString()
         val options = listOf(
-            randomPollOption(id = optionId1),
-            randomPollOption(id = optionId2),
+            randomOption(id = optionId1),
+            randomOption(id = optionId2),
         )
         val voteCountsByOption = mapOf(optionId1 to 5, optionId2 to 5)
         val poll = randomPoll(options = options, voteCountsByOption = voteCountsByOption)

@@ -63,7 +63,7 @@ internal fun pollConfigFrom(
     }
     return PollConfig(
         name = pollQuestion,
-        options = options.map(::PollOption),
+        options = options.map { text -> PollOption(text = text) },
         allowUserSuggestedOptions = allowUserSuggestedOptions,
         allowAnswers = allowAnswers,
         votingVisibility = votingVisibility,

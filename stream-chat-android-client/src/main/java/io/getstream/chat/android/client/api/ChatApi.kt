@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
-import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -25,7 +24,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -46,10 +44,10 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -592,10 +590,10 @@ internal interface ChatApi {
     fun getPoll(pollId: String): Call<Poll>
 
     @CheckResult
-    fun createPollOption(pollId: String, option: CreatePollOptionRequest): Call<Option>
+    fun createPollOption(pollId: String, option: PollOption): Call<PollOption>
 
     @CheckResult
-    fun updatePollOption(pollId: String, option: UpdatePollOptionRequest): Call<Option>
+    fun updatePollOption(pollId: String, option: PollOption): Call<PollOption>
 
     @CheckResult
     fun deletePollOption(pollId: String, optionId: String): Call<Unit>

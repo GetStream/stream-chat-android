@@ -54,7 +54,7 @@ internal class PollConfigTest {
         Assertions.assertEquals(options, pollConfig.options)
         Assertions.assertEquals(emptyMap<String, Any>(), pollConfig.extraData)
         Assertions.assertEquals(
-            options.map { PollOption(it) },
+            options.map { text -> PollOption(text = text) },
             pollConfig.optionsWithExtraData,
         )
     }
@@ -123,8 +123,8 @@ internal class PollConfigTest {
     fun `new constructor with defaults applies default values correctly`() {
         val name = "Minimal Poll"
         val options = listOf(
-            PollOption("Option 1"),
-            PollOption("Option 2"),
+            PollOption(text = "Option 1"),
+            PollOption(text = "Option 2"),
         )
 
         val pollConfig = PollConfig(

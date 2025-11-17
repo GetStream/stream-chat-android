@@ -1793,14 +1793,18 @@ public final class io/getstream/chat/android/models/PollConfig {
 }
 
 public final class io/getstream/chat/android/models/PollOption {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/models/PollOption;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PollOption;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/PollOption;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/chat/android/models/PollOption;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PollOption;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/PollOption;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getExtraData ()Ljava/util/Map;
+	public final fun getId ()Ljava/lang/String;
 	public final fun getText ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

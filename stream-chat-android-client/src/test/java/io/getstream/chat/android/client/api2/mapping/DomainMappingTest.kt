@@ -865,7 +865,7 @@ internal class DomainMappingTest {
             votes = input.votes.map { with(sut) { it.toDomain() } },
             next = input.next,
         )
-        result shouldBeEqualTo expected
+        assertEquals(expected, result)
     }
 
     @Test
@@ -877,7 +877,7 @@ internal class DomainMappingTest {
             polls = input.polls.map { with(sut) { it.toDomain() } },
             next = input.next,
         )
-        result shouldBeEqualTo expected
+        assertEquals(expected, result)
     }
 
     @Test

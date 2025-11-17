@@ -100,6 +100,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
@@ -471,11 +472,21 @@ internal class DomainMapping(
     }
 
     /**
-     * Transforms DownstreamOptionDto to Option
+     * Transforms [DownstreamPollOptionDto] to [Option]
      *
      * @return Option
      */
     internal fun DownstreamPollOptionDto.toDomain(): Option = Option(
+        id = id,
+        text = text,
+        extraData = extraData ?: emptyMap(),
+    )
+
+    /**
+     * Transforms [DownstreamPollOptionDto] to [PollOption].
+     * Note: Not following the naming convention because of clash with the existing [DownstreamPollOptionDto.toDomain].
+     */
+    internal fun DownstreamPollOptionDto.toPollOption(): PollOption = PollOption(
         id = id,
         text = text,
         extraData = extraData ?: emptyMap(),

@@ -99,7 +99,7 @@ public class CreatePollViewModel : ViewModel() {
             ) { title, options, allowMultipleVotes, maxAnswers ->
                 PollConfig(
                     name = title,
-                    options = options.map { PollOption(it.text) },
+                    options = options.map { PollOption(text = it.text) },
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,
                     allowUserSuggestedOptions = suggestAnOption,
                     maxVotesAllowed = maxAnswers.takeIf { allowMultipleVotes } ?: 1,

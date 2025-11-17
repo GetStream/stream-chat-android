@@ -17,9 +17,7 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
-import io.getstream.chat.android.client.api.models.UpdatePollOptionRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -159,6 +157,7 @@ import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomPollConfig
+import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUploadedFile
@@ -2225,13 +2224,10 @@ internal class MoshiChatApiTest {
             .get()
         // when
         val pollId = randomString()
-        val option = randomString()
-        val extraData = randomExtraData(1)
-        val request = CreatePollOptionRequest(option, extraData)
-        val result = sut.createPollOption(pollId, request).await()
+        val option = randomPollOption()
+        val result = sut.createPollOption(pollId, option).await()
         // then
-        val expectedOption =
-            io.getstream.chat.android.client.api2.model.requests.CreatePollOptionRequest(option, extraData)
+        val expectedOption = UpstreamOptionDto(text = option.text, extraData = option.extraData)
         result `should be instance of` expected
         verify(api, times(1)).createPollOption(pollId, expectedOption)
     }
@@ -2247,14 +2243,10 @@ internal class MoshiChatApiTest {
             .get()
         // when
         val pollId = randomString()
-        val optionId = randomString()
-        val text = randomString()
-        val extraData = randomExtraData(1)
-        val request = UpdatePollOptionRequest(optionId, text, extraData)
-        val result = sut.updatePollOption(pollId, request).await()
+        val option = randomPollOption()
+        val result = sut.updatePollOption(pollId, option).await()
         // then
-        val expectedOption =
-            io.getstream.chat.android.client.api2.model.requests.UpdatePollOptionRequest(optionId, text, extraData)
+        val expectedOption = UpstreamOptionDto(option.id, option.text, option.extraData)
         result `should be instance of` expected
         verify(api, times(1)).updatePollOption(pollId, expectedOption)
     }
@@ -2326,13 +2318,7 @@ internal class MoshiChatApiTest {
         val pollId = randomString()
         val name = randomString()
         val description = randomString()
-        val options = listOf(
-            UpdatePollOptionRequest(
-                id = randomString(),
-                text = randomString(),
-                extraData = randomExtraData(1),
-            ),
-        )
+        val options = listOf(randomPollOption())
         val votingVisibility = VotingVisibility.PUBLIC
         val enforceUniqueVote = randomBoolean()
         val maxVotesAllowed = positiveRandomInt()

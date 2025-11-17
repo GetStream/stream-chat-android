@@ -96,32 +96,6 @@ internal data class UpstreamOptionDto(
 ) : ExtraDataDto
 
 /**
- * Used for creating a new poll option.
- *
- * @property text the text of the option.
- * @property extraData any additional custom fields.
- */
-@JsonClass(generateAdapter = true)
-internal data class CreatePollOptionRequest(
-    val text: String,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
-/**
- * Used for updating an existing poll option.
- *
- * @property id the id of the option to update.
- * @property text the new text of the option.
- * @property extraData any additional custom fields.
- */
-@JsonClass(generateAdapter = true)
-internal data class UpdatePollOptionRequest(
-    val id: String,
-    val text: String,
-    val extraData: Map<String, Any>,
-) : ExtraDataDto
-
-/**
  * Used for voting on a poll.
  *
  * @property vote the vote object.

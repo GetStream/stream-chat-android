@@ -176,7 +176,7 @@ public data class PollConfig internal constructor(
         allowAnswers: Boolean = false,
     ) : this(
         name = name,
-        optionsWithExtraData = options.map { PollOption(it) },
+        optionsWithExtraData = options.map { text -> PollOption(text = text) },
         description = description,
         votingVisibility = votingVisibility,
         enforceUniqueVote = enforceUniqueVote,
@@ -229,15 +229,33 @@ public data class PollConfig internal constructor(
 }
 
 /**
- * Model representing the input required to create a poll option.
+ * Model representing the input required to create/update a poll option.
  *
+ * @property id The ID of the option to update. Should be null when used for creating a new poll option.
  * @property text The text of the option.
  * @property extraData Any additional data associated with the option.
  */
 public data class PollOption(
+    val id: String?,
     val text: String,
     val extraData: Map<String, Any> = emptyMap(),
-)
+) {
+
+    /**
+     * Constructs a [PollOption] without an [id].
+     *
+     * @param text The text of the option.
+     * @param extraData Any additional data associated with the option.
+     */
+    public constructor(
+        text: String,
+        extraData: Map<String, Any> = emptyMap(),
+    ) : this(
+        id = null,
+        text = text,
+        extraData = extraData,
+    )
+}
 
 /**
  * The Vote object represents a vote in a poll.

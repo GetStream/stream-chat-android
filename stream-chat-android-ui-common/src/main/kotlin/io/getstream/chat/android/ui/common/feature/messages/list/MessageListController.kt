@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.CreatePollOptionRequest
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -53,6 +52,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -2437,7 +2437,7 @@ public class MessageListController(
      */
     public fun addPollOption(poll: Poll, option: String) {
         scope.launch {
-            chatClient.createPollOption(poll.id, CreatePollOptionRequest(option)).await()
+            chatClient.createPollOption(poll.id, PollOption(text = option)).await()
         }
     }
 

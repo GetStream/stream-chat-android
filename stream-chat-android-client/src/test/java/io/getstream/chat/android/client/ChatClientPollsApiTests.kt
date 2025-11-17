@@ -22,13 +22,14 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomPollConfig
 import io.getstream.chat.android.randomPollOption
@@ -156,7 +157,7 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         val option = randomString()
         val errorCode = positiveRandomInt()
         whenever(api.createPollOption(any(), any()))
-            .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
+            .thenReturn(RetroError<PollOption>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.suggestPollOption(pollId, option).await()
         // then
@@ -167,10 +168,9 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     fun createPollOptionSuccess() = runTest {
         // given
         val pollId = randomString()
-        val option = Mother.randomCreatePollOptionRequest()
-        val resultOption = randomPollOption()
+        val option = randomPollOption()
         whenever(api.createPollOption(any(), any()))
-            .thenReturn(RetroSuccess(resultOption).toRetrofitCall())
+            .thenReturn(RetroSuccess(option).toRetrofitCall())
         // when
         val result = chatClient.createPollOption(pollId, option).await()
         // then
@@ -181,10 +181,10 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     fun createPollOptionError() = runTest {
         // given
         val pollId = randomString()
-        val option = Mother.randomCreatePollOptionRequest()
+        val option = randomPollOption()
         val errorCode = positiveRandomInt()
         whenever(api.createPollOption(any(), any()))
-            .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
+            .thenReturn(RetroError<PollOption>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.createPollOption(pollId, option).await()
         // then
@@ -195,10 +195,9 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     fun updatePollOptionSuccess() = runTest {
         // given
         val pollId = randomString()
-        val option = Mother.randomUpdatePollOptionRequest()
-        val resultOption = randomPollOption()
+        val option = randomPollOption()
         whenever(api.updatePollOption(any(), any()))
-            .thenReturn(RetroSuccess(resultOption).toRetrofitCall())
+            .thenReturn(RetroSuccess(option).toRetrofitCall())
         // when
         val result = chatClient.updatePollOption(pollId, option).await()
         // then
@@ -209,10 +208,10 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     fun updatePollOptionError() = runTest {
         // given
         val pollId = randomString()
-        val option = Mother.randomUpdatePollOptionRequest()
+        val option = randomPollOption()
         val errorCode = positiveRandomInt()
         whenever(api.updatePollOption(any(), any()))
-            .thenReturn(RetroError<Option>(errorCode).toRetrofitCall())
+            .thenReturn(RetroError<PollOption>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.updatePollOption(pollId, option).await()
         // then
@@ -224,7 +223,7 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         // given
         val messageId = randomString()
         val pollId = randomString()
-        val option = randomPollOption()
+        val option = randomOption()
         val resultVote = randomPollVote()
         whenever(api.castPollVote(any(), any(), any()))
             .thenReturn(RetroSuccess(resultVote).toRetrofitCall())
@@ -239,7 +238,7 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         // given
         val messageId = randomString()
         val pollId = randomString()
-        val option = randomPollOption()
+        val option = randomOption()
         val errorCode = positiveRandomInt()
         whenever(api.castPollVote(any(), any(), any()))
             .thenReturn(RetroError<Vote>(errorCode).toRetrofitCall())

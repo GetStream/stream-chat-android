@@ -47,7 +47,7 @@ internal class AttachmentsPickerPollUtilsTest {
         // then
         val expected = PollConfig(
             name = "Poll question",
-            options = listOf(PollOption("Answer 1"), PollOption("Answer 2")),
+            options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = true,
@@ -104,7 +104,7 @@ internal class AttachmentsPickerPollUtilsTest {
         // then
         val expected = PollConfig(
             name = "Poll question",
-            options = listOf(PollOption("Answer 1"), PollOption("Answer 2")),
+            options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
             votingVisibility = VotingVisibility.ANONYMOUS,
             enforceUniqueVote = false,
