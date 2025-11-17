@@ -30,11 +30,22 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
+import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -70,6 +81,13 @@ public fun MessageInput(
     val (value, attachments, activeAction) = messageComposerState
     val canSendMessage = messageComposerState.canSendMessage()
 
+    val visualTransformation = MessageInputVisualTransformation(
+        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
+        typography = ChatTheme.typography,
+        colors = ChatTheme.colors,
+        mentions = messageComposerState.selectedMentions,
+    )
+
     InputField(
         modifier = modifier,
         value = value,
@@ -78,6 +96,7 @@ public fun MessageInput(
         enabled = canSendMessage,
         innerPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
@@ -123,6 +142,40 @@ public fun MessageInput(
             }
         },
     )
+}
+
+/**
+ * Visual transformation applied to the message input field.
+ * Applies text styling, link styling, and mention styling to the input text.
+ *
+ * @param inputFieldTheme The theme for the input field.
+ * @param typography The typography styles to be used.
+ * @param colors The color palette to be used.
+ * @param mentions The set of mentions to be styled in the input text.
+ */
+private class MessageInputVisualTransformation(
+    val inputFieldTheme: ComposerInputFieldTheme,
+    val typography: StreamTypography,
+    val colors: StreamColors,
+    val mentions: Set<Mention>,
+) : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val textColor = inputFieldTheme.textStyle.color
+        val fontStyle = typography.body.fontStyle
+        val linkStyle = TextStyle(
+            color = colors.primaryAccent,
+            textDecoration = TextDecoration.Underline,
+        )
+        val transformed = buildAnnotatedInputText(
+            text = text.text,
+            textColor = textColor,
+            textFontStyle = fontStyle,
+            linkStyle = linkStyle,
+            mentions = mentions,
+            mentionStyleFactory = inputFieldTheme.mentionStyleFactory,
+        )
+        return TransformedText(transformed, OffsetMapping.Identity)
+    }
 }
 
 /**

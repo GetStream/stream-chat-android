@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkDeliveredRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
@@ -965,6 +966,11 @@ constructor(
             request = MarkReadRequest(message_id = messageId),
         ).toUnitCall()
     }
+
+    override fun markDelivered(messages: List<Message>): Call<Unit> =
+        channelApi.markDelivered(
+            request = MarkDeliveredRequest.create(messages),
+        ).toUnitCall()
 
     override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
         return channelApi.markRead(

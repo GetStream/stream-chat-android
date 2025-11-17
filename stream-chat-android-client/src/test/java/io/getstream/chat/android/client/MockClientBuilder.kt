@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentsSender
-import io.getstream.chat.android.client.audio.StreamMediaPlayer
+import io.getstream.chat.android.client.audio.StreamAudioPlayer
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -99,7 +99,7 @@ internal class MockClientBuilder(
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
         fileUploader = mock()
         notificationsManager = mock()
-        val streamPlayer = mock<StreamMediaPlayer>()
+        val streamPlayer = mock<StreamAudioPlayer>()
 
         api = mock()
         attachmentSender = mock()
@@ -126,6 +126,9 @@ internal class MockClientBuilder(
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = streamPlayer,
+            repository = mock(),
+            messageReceiptReporter = mock(),
+            messageReceiptManager = mock(),
         )
 
         client.attachmentsSender = attachmentSender

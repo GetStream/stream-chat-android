@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
@@ -137,7 +136,6 @@ import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
-import java.util.InputMismatchException
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "Chat:EventHandlerSeq"
@@ -539,10 +537,6 @@ internal class EventHandlerSequential(
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
             when (event) {
-                is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    event.me.id mustBe currentUserId
-                    repos.insertCurrentUser(event.me)
-                }
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
@@ -637,11 +631,6 @@ internal class EventHandlerSequential(
                         batch.addChannel(it.copy(hidden = false))
                     }
                 }
-                is NotificationMutesUpdatedEvent -> {
-                    event.me.id mustBe currentUserId
-                    repos.insertCurrentUser(event.me)
-                }
-
                 is ReactionNewEvent -> {
                     val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessage(enrichedMessage)
@@ -738,10 +727,6 @@ internal class EventHandlerSequential(
                         ?.mergeChannelFromEvent(event.channel) ?: event.channel
                     batch.addChannel(channel)
                 }
-                is NotificationChannelMutesUpdatedEvent -> {
-                    event.me.id mustBe currentUserId
-                    repos.insertCurrentUser(event.me)
-                }
                 is NotificationChannelTruncatedEvent -> {
                     val channel = batch.getCurrentChannel(event.cid)
                         ?.mergeChannelFromEvent(event.channel) ?: event.channel
@@ -783,9 +768,6 @@ internal class EventHandlerSequential(
                 is GlobalUserUnbannedEvent -> {
                     batch.addUser(event.user.copy(banned = false))
                 }
-                is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    repos.insertCurrentUser(event.user)
-                }
                 is PollClosedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollUpdatedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is VoteCastedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
@@ -796,6 +778,18 @@ internal class EventHandlerSequential(
                 is ReminderCreatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
                 is ReminderUpdatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
                 is ReminderDeletedEvent -> batch.deleteReminder(event.messageId)
+                else -> Unit
+            }
+
+            // finally, handle user updates for the current user
+            when (event) {
+                is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
+                    repos.insertCurrentUser(event.me)
+                }
+                is HasOwnUser -> repos.insertCurrentUser(user = event.me)
+                is UserUpdatedEvent -> if (event.user.id == currentUserId) {
+                    repos.insertCurrentUser(user = event.user)
+                }
                 else -> Unit
             }
         }
@@ -921,15 +915,6 @@ internal class EventHandlerSequential(
     private fun Message.enrichWithOwnPoll(batch: EventBatchUpdate): Message {
         val localMessage = batch.getCurrentMessage(id)
         return copy(poll = poll ?: localMessage?.poll)
-    }
-
-    private infix fun UserId.mustBe(currentUserId: UserId?) {
-        if (this != currentUserId) {
-            throw InputMismatchException(
-                "received connect event for user with id $this while for user configured " +
-                    "has id $currentUserId. Looks like there's a problem in the user set",
-            )
-        }
     }
 
     private suspend fun EventBatchUpdate.addThreadIfExists(message: Message) {

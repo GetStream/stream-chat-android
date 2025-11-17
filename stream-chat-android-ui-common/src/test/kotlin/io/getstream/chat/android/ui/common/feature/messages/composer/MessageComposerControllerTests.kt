@@ -29,12 +29,16 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should contain`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
@@ -112,6 +116,123 @@ internal class MessageComposerControllerTests {
             .get()
         // then
         controller.state.value.pollsEnabled `should be` true
+    }
+
+    @Test
+    fun `Given user mention When selectMention called Then message input is autocompleted with user name`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
+        controller.state.value.selectedMentions.size `should be equal to` 1
+        controller.state.value.selectedMentions `should contain` Mention.User(user)
+    }
+
+    @Test
+    fun `Given partial mention text When selectMention called Then partial text is replaced with full name`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @jo")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
+    }
+
+    @Test
+    fun `Given custom mention When selectMention called Then message input is autocompleted with display text`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val customMention = CustomTestMention("Channel Name")
+        controller.setMessageInput("Notify @")
+
+        // When
+        controller.selectMention(customMention)
+
+        // Then
+        controller.messageInput.value.text `should be equal to` "Notify @Channel Name "
+        controller.state.value.selectedMentions.size `should be equal to` 1
+        controller.state.value.selectedMentions `should contain` customMention
+    }
+
+    @Test
+    fun `Given multiple mentions When selectMention called multiple times Then all mentions are tracked`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user1 = User(id = "user1", name = "John Doe")
+        val user2 = User(id = "user2", name = "Jane Smith")
+
+        // When
+        controller.setMessageInput("Hello @")
+        controller.selectMention(user1)
+        controller.setMessageInput("Hello @John Doe and @")
+        controller.selectMention(user2)
+
+        // Then
+        controller.messageInput.value.text `should be equal to` "Hello @John Doe and @Jane Smith "
+        controller.state.value.selectedMentions.size `should be equal to` 2
+    }
+
+    @Test
+    fun `Given message input source is MentionSelected When selectMention called Then source is set to MentionSelected`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val user = User(id = "user1", name = "John Doe")
+        controller.setMessageInput("Hello @")
+
+        // When
+        controller.selectMention(user)
+
+        // Then
+        controller.messageInput.value.source `should be equal to` MessageInput.Source.MentionSelected
+    }
+
+    /**
+     * Custom test implementation of [Mention] for testing purposes.
+     */
+    private data class CustomTestMention(
+        override val display: String,
+    ) : Mention {
+        override val type: MentionType = MentionType("channel")
     }
 
     private class Fixture(

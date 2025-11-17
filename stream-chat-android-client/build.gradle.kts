@@ -1,3 +1,4 @@
+import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
 import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -8,15 +9,8 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
+    alias(libs.plugins.maven.publish)
 }
-
-rootProject.extra.apply {
-    set("PUBLISH_GROUP_ID", Configuration.artifactGroup)
-    set("PUBLISH_ARTIFACT_ID", "stream-chat-android-client")
-    set("PUBLISH_VERSION", rootProject.extra.get("rootVersionName"))
-}
-
-apply(from = "$rootDir/scripts/publish-module.gradle")
 
 android {
     namespace = "io.getstream.chat.android.client"
@@ -83,6 +77,7 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.work)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
@@ -96,6 +91,10 @@ dependencies {
     ksp(libs.moshi.codegen)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.ok2curl)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Unused dependencies: The following dependencies (appcompat, constraintlayout, livedata-ktx) are not used in the
     // `stream-chat-android-client` module. They are still declared here to prevent potential breaking changes for
@@ -111,8 +110,10 @@ dependencies {
     testImplementation(libs.stream.result)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
@@ -134,13 +135,17 @@ dependencies {
     baselineProfile(project(":stream-chat-android-benchmark"))
 }
 
-/* Uncomment if the Dokka page per module is required
-tasks.withType(dokkaHtmlPartial.getClass()) {
-    dokkaSourceSets {
-        named("main") {
-            moduleName.set("LLC")
-            includes.from("DokkaModule.md")
-        }
-    }
+mavenPublishing {
+    coordinates(
+        groupId = Configuration.artifactGroup,
+        artifactId = "stream-chat-android-client",
+        version = rootProject.version.toString(),
+    )
+    configure(
+        AndroidSingleVariantLibrary(
+            variant = "release",
+            sourcesJar = true,
+            publishJavadocJar = true,
+        ),
+    )
 }
-*/

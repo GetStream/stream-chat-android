@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property lastMessageText Appearance for last message text, displayed in [ChannelViewHolder].
  * @property lastMessageDateText Appearance for last message date text displayed in [ChannelViewHolder].
  * @property indicatorSentIcon Icon for indicating message sent status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_check_single].
+ * @property indicatorDeliveredIcon Icon for indicating message delivered status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_check_double_grey].
  * @property indicatorReadIcon Icon for indicating message read status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_check_double].
  * @property indicatorPendingSyncIcon Icon for indicating sync pending status in [ChannelViewHolder]. Default value is [R.drawable.stream_ui_ic_clock].
  * @property foregroundLayoutColor Foreground color for [ChannelViewHolder]. Default value is [R.color.stream_ui_white_snow].
@@ -83,6 +84,7 @@ public data class ChannelListViewStyle(
     public val lastMessageText: TextStyle,
     public val lastMessageDateText: TextStyle,
     public val indicatorSentIcon: Drawable,
+    public val indicatorDeliveredIcon: Drawable,
     public val indicatorReadIcon: Drawable,
     public val indicatorPendingSyncIcon: Drawable,
     @ColorInt public val foregroundLayoutColor: Int,
@@ -232,6 +234,9 @@ public data class ChannelListViewStyle(
                 val indicatorSentIcon = a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorSentIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_single)!!
 
+                val indicatorDeliveredIcon = a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorDeliveredIcon)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double_grey)!!
+
                 val indicatorReadIcon = a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorReadIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_check_double)!!
 
@@ -339,6 +344,7 @@ public data class ChannelListViewStyle(
                     lastMessageText = lastMessageText,
                     lastMessageDateText = lastMessageDateText,
                     indicatorSentIcon = indicatorSentIcon,
+                    indicatorDeliveredIcon = indicatorDeliveredIcon,
                     indicatorReadIcon = indicatorReadIcon,
                     indicatorPendingSyncIcon = indicatorPendingSyncIcon,
                     foregroundLayoutColor = foregroundLayoutColor,

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import android.util.LruCache
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
@@ -166,11 +168,11 @@ internal class DatabaseChannelRepository(
     /**
      * Select a list of channels by cid.
      *
-     * @param cids List<String>
+     * @param channelCIDs List<String>
      */
-    override suspend fun selectChannels(cids: List<String>): List<Channel> {
-        val cachedChannels = cids.mapNotNull { channelCache[it] }
-        val missingChannelIds = cids.minus(cachedChannels.map(Channel::cid).toSet())
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
+        val cachedChannels = channelCIDs.mapNotNull { channelCache[it] }
+        val missingChannelIds = channelCIDs.minus(cachedChannels.map(Channel::cid).toSet())
         return cachedChannels +
             channelDao.select(missingChannelIds)
                 .map { it.toModel(getUser, getMessage, getDraftMessage) }
@@ -271,7 +273,7 @@ internal class DatabaseChannelRepository(
                 cachedChannel.messages.filter { it.after(hideMessagesBefore) }
             )
             .distinctBy { it.id }
-            .sortedBy { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
+            .sortedBy { it.getCreatedAtOrDefault(NEVER) }
         val read = (read + cachedChannel.read).distinctBy { it.getUserId() }
         return copy(
             messages = messages,
@@ -281,7 +283,7 @@ internal class DatabaseChannelRepository(
         ).syncUnreadCountWithReads()
     }
     private fun Message.after(date: Date?): Boolean =
-        date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
+        date?.let { (getCreatedAtOrDefault(NEVER)).after(it) } ?: true
 
     override suspend fun evictChannel(cid: String) {
         logger.v { "[evictChannel] cid: $cid" }

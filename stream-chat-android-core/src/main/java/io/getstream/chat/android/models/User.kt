@@ -99,6 +99,11 @@ public data class User(
      */
     val isReadReceiptsEnabled: Boolean get() = privacySettings?.readReceipts?.enabled ?: true
 
+    /**
+     * Determines if the user has delivery receipts enabled.
+     */
+    val isDeliveryReceiptsEnabled: Boolean get() = privacySettings?.deliveryReceipts?.enabled ?: true
+
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
             "id" -> id

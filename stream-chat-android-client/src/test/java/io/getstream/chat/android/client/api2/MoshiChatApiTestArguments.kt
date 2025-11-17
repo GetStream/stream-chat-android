@@ -307,6 +307,9 @@ internal object MoshiChatApiTestArguments {
     fun markReadInput() = completableResponseArguments()
 
     @JvmStatic
+    fun markDeliveredInput() = completableResponseArguments()
+
+    @JvmStatic
     fun markThreadReadInput() = completableResponseArguments()
 
     @JvmStatic

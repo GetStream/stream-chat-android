@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce message delivery receipts. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ⚠️ Changed
 
@@ -14,8 +15,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
+- Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Add `ChatClient.getPoll(pollId: String)` for retrieving a poll by its ID. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Add `ChatClient.partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>)` for partially updating a poll. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Add `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)` for creating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
@@ -26,6 +31,7 @@
 - Add `PollConfig` constructor with support for extra custom data for the poll and the poll options. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 
 ### ⚠️ Changed
+- Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Deprecate `PollConfig` constructor without support for custom data. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Deprecate `ChatClient.suggestPollOption(pollId: String, option: String)` in favour of `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)`. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 
@@ -55,7 +61,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fix thread messages not grouped properly. [#5985](https://github.com/GetStream/stream-chat-android/pull/5985)
+- Use a Stream specific cache directory for the `coil:3.x.x` instance to avoid potential clash with the default (`image_cache`) directory from an existing `coil2.x.x` instance. [#6002](https://github.com/GetStream/stream-chat-android/pull/6002)
 
 ### ⬆️ Improved
 
@@ -67,7 +73,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Disallow creating polls in threads. [#5970](https://github.com/GetStream/stream-chat-android/pull/5970)
 
 ### ⬆️ Improved
 
@@ -79,8 +84,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix `MessagesScreen` overlapping with itself when auto-scrolling to a message which is not loaded. [#5990](https://github.com/GetStream/stream-chat-android/pull/5990)
-- Disallow creating polls in threads. [#5970](https://github.com/GetStream/stream-chat-android/pull/5970)
 
 ### ⬆️ Improved
 
@@ -100,6 +103,45 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 11th, 2025 - 6.27.0
+## stream-chat-android-offline
+### ⬆️ Improved
+- Fallback to empty `User` instead of crashing if the searched user is not yet inserted into the DB. [#5998](https://github.com/GetStream/stream-chat-android/pull/5998)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix jump to message overwriting the initially loaded messages in the channel. [#6000](https://github.com/GetStream/stream-chat-android/pull/6000)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Add `MessageListController.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+
+## stream-chat-android-compose
+### ✅ Added
+- Add `MessageListViewModel.hideUnreadSeparator()` method to manually hide the unread separator. [#6001](https://github.com/GetStream/stream-chat-android/pull/6001)
+- Add `MentionStyleFactory` for customizing mentions in the message composer. [#5984](https://github.com/GetStream/stream-chat-android/pull/5984)
+
+# November 07th, 2025 - 6.26.1
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix `markChannelAsRead` not working when `lastReadMessageId` is correct but `unreadCount` > 0. [#5994](https://github.com/GetStream/stream-chat-android/pull/5994)
+
+### ⬆️ Improved
+- Prioritize `Message.createdLocallyAt` over `Message.createdAt` when sorting messages, to ensure the message order is consistent before the messages are synced with the server. [#5993](https://github.com/GetStream/stream-chat-android/pull/5993)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix thread messages not grouped properly. [#5985](https://github.com/GetStream/stream-chat-android/pull/5985)
+- Fix unread indicator showing for own messages after logout/login. [#5991](https://github.com/GetStream/stream-chat-android/pull/5991)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix `MessagesScreen` overlapping with itself when auto-scrolling to a message which is not loaded. [#5990](https://github.com/GetStream/stream-chat-android/pull/5990)
 
 # October 24th, 2025 - 6.26.0
 ## stream-chat-android-client
@@ -3587,7 +3629,7 @@ The following items are breaking changes, since it was very important to improve
 - Added `ChatUI.channelNameFormatter` to allow customizing the channel's name format. [#3068](https://github.com/GetStream/stream-chat-android/pull/3068)
 - Added a customizable height attribute to SearchInputView [#3081](https://github.com/GetStream/stream-chat-android/pull/3081)
 - Added `ChatUI.dateFormatter` to allow customizing the way the dates are formatted. [#3085](https://github.com/GetStream/stream-chat-android/pull/3085)
-- Added ways to show/hide the delivery status indicators for channels and messages. [#3102](https://github.com/GetStream/stream-chat-android/pull/3102)
+- Added ways to show/hide the delivery receipts indicators for channels and messages. [#3102](https://github.com/GetStream/stream-chat-android/pull/3102)
 
 ### ⚠️ Changed
 - Disabled editing on Giphy messages given that it's breaking the UX and can override the GIF that was previously put in. [#3071](https://github.com/GetStream/stream-chat-android/pull/3071)

@@ -16,7 +16,10 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.extensions.userRead
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -53,7 +56,7 @@ public fun Channel.users(): List<User> {
 public val Channel.lastMessage: Message?
     get() = messages
         .filterNot { it.isDeleted() }
-        .maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
+        .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
 
 /**
  * Updates the [Channel] with newest [Message].
@@ -68,7 +71,7 @@ public fun Channel.updateLastMessage(
     message: Message,
     currentUserId: String,
 ): Channel {
-    val createdAt = message.createdAt ?: message.createdLocallyAt
+    val createdAt = message.getCreatedAtOrNull()
     checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
     val newMessages = (
@@ -77,7 +80,7 @@ public fun Channel.updateLastMessage(
         )
         .values
         .filterNot { it.isDeleted() }
-        .sortedBy { it.createdAt ?: it.createdLocallyAt }
+        .sortedBy { it.getCreatedAtOrNull() }
 
     val newReads = read.map { read ->
         read.takeUnless { it.user.id == currentUserId }
@@ -216,7 +219,7 @@ public fun Channel.removeMembership(currentUserId: String?): Channel =
  */
 @InternalStreamChatApi
 public fun Channel.updateReads(newRead: ChannelUserRead, currentUserId: UserId): Channel {
-    val oldRead = read.firstOrNull { it.user.id == newRead.user.id }
+    val oldRead = userRead(newRead.user.id)
     return copy(
         read = if (oldRead != null) {
             read - oldRead + newRead

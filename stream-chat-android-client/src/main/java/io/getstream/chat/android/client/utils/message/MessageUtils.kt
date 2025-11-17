@@ -19,6 +19,7 @@
 
 package io.getstream.chat.android.client.utils.message
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.models.AttachmentType
@@ -55,8 +56,8 @@ public fun List<Message>.latestOrNull(): Message? = when (size >= ITEM_COUNT_OF_
  */
 @InternalStreamChatApi
 public fun Message.createdAfter(that: Message): Boolean {
-    val thisDate = this.createdAt ?: this.createdLocallyAt
-    val thatDate = that.createdAt ?: that.createdLocallyAt
+    val thisDate = this.getCreatedAtOrNull()
+    val thatDate = that.getCreatedAtOrNull()
     return thisDate after thatDate
 }
 

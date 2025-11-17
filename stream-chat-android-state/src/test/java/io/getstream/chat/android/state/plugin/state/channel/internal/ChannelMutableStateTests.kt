@@ -18,14 +18,19 @@ package io.getstream.chat.android.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannelUserRead
+import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -105,9 +110,9 @@ internal class ChannelMutableStateTests {
         channelState.upsertWatchers(watchers, watchers.size)
 
         // then
-        channelState.watcherCount.value shouldBeEqualTo watchers.size
-        channelState.watchers.value.size shouldBeEqualTo watchers.size
-        channelState.watchers.value shouldBeEqualTo watchers
+        assertEquals(watchers.size, channelState.watcherCount.value)
+        assertEquals(watchers.size, channelState.watchers.value.size)
+        assertEquals(watchers, channelState.watchers.value)
     }
 
     @Test
@@ -122,9 +127,9 @@ internal class ChannelMutableStateTests {
         channelState.deleteWatcher(anotherUser, newWatcherCount)
 
         // then
-        channelState.watcherCount.value shouldBeEqualTo newWatcherCount
-        channelState.watchers.value.size shouldBeEqualTo newWatcherCount
-        channelState.watchers.value shouldBeEqualTo listOf(currentUser)
+        assertEquals(newWatcherCount, channelState.watcherCount.value)
+        assertEquals(newWatcherCount, channelState.watchers.value.size)
+        assertEquals(listOf(currentUser), channelState.watchers.value)
     }
 
     @Test
@@ -146,12 +151,12 @@ internal class ChannelMutableStateTests {
         channelStateWithoutLimit.setLoadingOlderMessages(true)
 
         // then
-        channelStateWithoutLimit.loadingOlderMessages.value shouldBeEqualTo true
+        assertEquals(true, channelStateWithoutLimit.loadingOlderMessages.value)
         // messageLimit should remain null - we can verify this by checking that all messages are retained
         // even after setting a large number of messages
         val manyMessages = createMessages(200)
         channelStateWithoutLimit.setMessages(manyMessages)
-        channelStateWithoutLimit.messages.value.size shouldBeEqualTo 200
+        assertEquals(200, channelStateWithoutLimit.messages.value.size)
     }
 
     @Test
@@ -178,13 +183,13 @@ internal class ChannelMutableStateTests {
             channelStateWithLimit.setLoadingOlderMessages(false)
 
             // then
-            channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
+            assertEquals(false, channelStateWithLimit.loadingOlderMessages.value)
             // messageLimit should remain unchanged (neutral multiplier = 1.0)
             // We can verify this by checking that the limit is still effectively 100
             val messagesAtLimit = createMessages(150) // 150 messages
             channelStateWithLimit.upsertMessages(messagesAtLimit)
             // Should trim to baseLimit (100) + TRIM_BUFFER (30) = 130, then take last 100
-            channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
+            assertEquals(baseLimit, channelStateWithLimit.messages.value.size)
         }
 
     @Test
@@ -211,13 +216,13 @@ internal class ChannelMutableStateTests {
             channelStateWithLimit.setLoadingOlderMessages(false)
 
             // then
-            channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
+            assertEquals(false, channelStateWithLimit.loadingOlderMessages.value)
             // messageLimit should be increased by LIMIT_MULTIPLIER (1.5)
             // We can verify this by checking that more messages are retained
             val manyMessages = createMessages(200) // More than original limit but within new limit
             channelStateWithLimit.upsertMessages(manyMessages)
             // New limit should be 100 * 1.5 = 150
-            channelStateWithLimit.messages.value.size shouldBeEqualTo 150
+            assertEquals(150, channelStateWithLimit.messages.value.size)
         }
 
     @Test
@@ -240,12 +245,12 @@ internal class ChannelMutableStateTests {
         channelStateWithLimit.setLoadingOlderMessages(false)
 
         // then
-        channelStateWithLimit.loadingOlderMessages.value shouldBeEqualTo false
+        assertEquals(false, channelStateWithLimit.loadingOlderMessages.value)
         // messageLimit should not be changed even though message count >= limit + buffer
         val manyMessages = createMessages(200)
         channelStateWithLimit.upsertMessages(manyMessages)
         // Should still use original limit of 100
-        channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
+        assertEquals(baseLimit, channelStateWithLimit.messages.value.size)
     }
 
     @Test
@@ -266,7 +271,7 @@ internal class ChannelMutableStateTests {
         channelStateWithoutLimit.setMessages(messages)
 
         // then
-        channelStateWithoutLimit.messages.value.size shouldBeEqualTo 200
+        assertEquals(200, channelStateWithoutLimit.messages.value.size)
     }
 
     @Test
@@ -290,7 +295,7 @@ internal class ChannelMutableStateTests {
 
         // then
         // Should not apply limit while loading older messages
-        channelStateWithLimit.messages.value.size shouldBeEqualTo 100
+        assertEquals(100, channelStateWithLimit.messages.value.size)
     }
 
     @Test
@@ -314,7 +319,7 @@ internal class ChannelMutableStateTests {
             channelStateWithLimit.setMessages(messages)
 
             // then
-            channelStateWithLimit.messages.value.size shouldBeEqualTo 120
+            assertEquals(120, channelStateWithLimit.messages.value.size)
         }
 
     @Test
@@ -338,15 +343,15 @@ internal class ChannelMutableStateTests {
 
         // then
         // Should trim to last 50 messages (the limit)
-        channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
-        channelStateWithLimit.endOfOlderMessages.value shouldBeEqualTo false
+        assertEquals(baseLimit, channelStateWithLimit.messages.value.size)
+        assertEquals(false, channelStateWithLimit.endOfOlderMessages.value)
 
         // Verify that the most recent messages are kept
         val sortedOriginalMessages = messages.sortedBy { it.createdAt }
         val expectedKeptMessages = sortedOriginalMessages.takeLast(baseLimit)
         val actualMessages = channelStateWithLimit.messages.value.sortedBy { it.createdAt }
 
-        actualMessages.map { it.id } shouldBeEqualTo expectedKeptMessages.map { it.id }
+        assertEquals(expectedKeptMessages.map { it.id }, actualMessages.map { it.id })
     }
 
     @Test
@@ -370,11 +375,11 @@ internal class ChannelMutableStateTests {
         channelStateWithLimit.setMessages(messages)
 
         // then
-        channelStateWithLimit.messages.value.size shouldBeEqualTo baseLimit
+        assertEquals(baseLimit, channelStateWithLimit.messages.value.size)
         // Should keep the last 30 messages (71-100)
         val keptMessages = channelStateWithLimit.messages.value.sortedBy { it.createdAt }
-        keptMessages.first().text shouldBeEqualTo "Test message 71"
-        keptMessages.last().text shouldBeEqualTo "Test message 100"
+        assertEquals("Test message 71", keptMessages.first().text)
+        assertEquals("Test message 100", keptMessages.last().text)
     }
 
     @Test
@@ -388,14 +393,14 @@ internal class ChannelMutableStateTests {
         channelState.deleteMessages(messagesToDelete)
 
         // then
-        channelState.messages.value.size shouldBeEqualTo 3
+        assertEquals(3, channelState.messages.value.size)
         val remainingMessageIds = channelState.messages.value.map { it.id }.toSet()
         messagesToDelete.forEach { messageToDelete ->
-            remainingMessageIds.contains(messageToDelete.id) shouldBeEqualTo false
+            assertEquals(false, remainingMessageIds.contains(messageToDelete.id))
         }
         // Verify remaining messages are still there
         messages.drop(2).forEach { remainingMessage ->
-            remainingMessageIds.contains(remainingMessage.id) shouldBeEqualTo true
+            assertEquals(true, remainingMessageIds.contains(remainingMessage.id))
         }
     }
 
@@ -410,8 +415,8 @@ internal class ChannelMutableStateTests {
         channelState.deleteMessages(emptyList())
 
         // then
-        channelState.messages.value.size shouldBeEqualTo initialMessageCount
-        channelState.messages.value.map { it.id }.toSet() shouldBeEqualTo messages.map { it.id }.toSet()
+        assertEquals(initialMessageCount, channelState.messages.value.size)
+        assertEquals(messages.map { it.id }.toSet(), channelState.messages.value.map { it.id }.toSet())
     }
 
     @Test
@@ -430,8 +435,8 @@ internal class ChannelMutableStateTests {
         channelState.deleteMessages(listOf(nonExistentMessage))
 
         // then
-        channelState.messages.value.size shouldBeEqualTo 3
-        channelState.messages.value.map { it.id }.toSet() shouldBeEqualTo existingMessages.map { it.id }.toSet()
+        assertEquals(3, channelState.messages.value.size)
+        assertEquals(existingMessages.map { it.id }.toSet(), channelState.messages.value.map { it.id }.toSet())
     }
 
     @Test
@@ -451,13 +456,13 @@ internal class ChannelMutableStateTests {
         channelState.deleteMessages(listOf(messageToDelete, nonExistentMessage))
 
         // then
-        channelState.messages.value.size shouldBeEqualTo 3
+        assertEquals(3, channelState.messages.value.size)
         val remainingMessageIds = channelState.messages.value.map { it.id }.toSet()
-        remainingMessageIds.contains(messageToDelete.id) shouldBeEqualTo false
-        remainingMessageIds.contains(nonExistentMessage.id) shouldBeEqualTo false
+        assertEquals(false, remainingMessageIds.contains(messageToDelete.id))
+        assertEquals(false, remainingMessageIds.contains(nonExistentMessage.id))
         // Other existing messages should remain
         existingMessages.filterNot { it.id == messageToDelete.id }.forEach { message ->
-            remainingMessageIds.contains(message.id) shouldBeEqualTo true
+            assertEquals(true, remainingMessageIds.contains(message.id))
         }
     }
 
@@ -483,15 +488,15 @@ internal class ChannelMutableStateTests {
         val user2Messages = channelState.getMessagesFromUser("user2")
 
         // then
-        user1Messages.size shouldBeEqualTo 2
-        user1Messages.map { it.id }.toSet() shouldBeEqualTo setOf("msg1", "msg3")
+        assertEquals(2, user1Messages.size)
+        assertEquals(setOf("msg1", "msg3"), user1Messages.map { it.id }.toSet())
         user1Messages.forEach { message ->
-            message.user.id shouldBeEqualTo "user1"
+            assertEquals("user1", message.user.id)
         }
 
-        user2Messages.size shouldBeEqualTo 1
-        user2Messages.first().id shouldBeEqualTo "msg2"
-        user2Messages.first().user.id shouldBeEqualTo "user2"
+        assertEquals(1, user2Messages.size)
+        assertEquals("msg2", user2Messages.first().id)
+        assertEquals("user2", user2Messages.first().user.id)
     }
 
     @Test
@@ -507,7 +512,7 @@ internal class ChannelMutableStateTests {
         val messagesFromNonExistentUser = channelState.getMessagesFromUser("non_existent_user")
 
         // then
-        messagesFromNonExistentUser shouldBeEqualTo emptyList()
+        assertTrue(messagesFromNonExistentUser.isEmpty())
     }
 
     @Test
@@ -519,7 +524,7 @@ internal class ChannelMutableStateTests {
         val messages = channelState.getMessagesFromUser("any_user")
 
         // then
-        messages shouldBeEqualTo emptyList()
+        assertTrue(messages.isEmpty())
     }
 
     @Test
@@ -533,8 +538,8 @@ internal class ChannelMutableStateTests {
         val messages = channelState.getMessagesFromUser("user1")
 
         // then
-        messages.size shouldBeEqualTo 1
-        messages.first().id shouldBeEqualTo "msg1"
+        assertEquals(1, messages.size)
+        assertEquals("msg1", messages.first().id)
     }
 
     @Test
@@ -554,9 +559,179 @@ internal class ChannelMutableStateTests {
         val userMessages = channelState.getMessagesFromUser("user1")
 
         // then
-        userMessages.size shouldBeEqualTo 3
+        assertEquals(3, userMessages.size)
         // The order should match the original order in the map (which may not be chronological)
-        userMessages.map { it.id } shouldBeEqualTo listOf("msg1", "msg2", "msg3")
+        assertEquals(listOf("msg1", "msg2", "msg3"), userMessages.map { it.id })
+    }
+
+    @Test
+    fun `markChannelAsRead should return true when lastReadMessageId matches lastMessage but unreadMessages greater than 0`() {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+            lastReadMessageId = lastMessage.id,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        assertEquals(readState, channelState.read.value)
+
+        val actual = channelState.markChannelAsRead()
+
+        assertEquals(true, actual)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
+        assertEquals(0, channelState.read.value?.unreadMessages)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when lastReadMessageId matches and unreadMessages is 0`() =
+        runTest {
+            val lastMessage = randomMessage(
+                parentId = null,
+                shadowed = false,
+            )
+            channelState.setMessages(listOf(lastMessage))
+            channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+            val readState = randomChannelUserRead(
+                user = currentUser,
+                unreadMessages = 0,
+                lastReadMessageId = lastMessage.id,
+            )
+            channelState.upsertReads(listOf(readState))
+
+            val result = channelState.markChannelAsRead()
+
+            assertEquals(false, result)
+        }
+
+    @Test
+    fun `markChannelAsRead should return true when lastReadMessageId differs from lastMessage`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 0,
+            lastReadMessageId = "different_message_id",
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(true, result)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastReceivedEventDate)
+        assertEquals(lastMessage.createdLocallyAt, channelState.read.value?.lastRead)
+        assertEquals(0, channelState.read.value?.unreadMessages)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when readEventsEnabled is false`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = false))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `markChannelAsRead should return false when there are no messages`() = runTest {
+        channelState.setMessages(emptyList())
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        val readState = randomChannelUserRead(
+            user = currentUser,
+            unreadMessages = 1,
+        )
+        channelState.upsertReads(listOf(readState))
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(false, result)
+    }
+
+    @Test
+    fun `markChannelAsRead should return true when read state is null`() = runTest {
+        val lastMessage = randomMessage(
+            parentId = null,
+            shadowed = false,
+        )
+        channelState.setMessages(listOf(lastMessage))
+        channelState.setChannelConfig(randomConfig(readEventsEnabled = true))
+
+        assertEquals(lastMessage, channelState.messages.value.lastOrNull())
+        assertEquals(true, channelState.channelConfig.value.readEventsEnabled)
+        assertEquals(null, channelState.read.value)
+
+        val result = channelState.markChannelAsRead()
+
+        assertEquals(true, result)
+    }
+
+    @Test
+    fun `updateDelivered should update relevant delivered info of user's read`() = runTest {
+        val user = randomUser()
+
+        // Initial read state for the user
+        val initialRead = randomChannelUserRead(user)
+        channelState.upsertReads(listOf(initialRead))
+
+        // Pre-condition check
+        var userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertEquals(initialRead, userRead)
+
+        // Update delivered info
+        val delivered = randomChannelUserRead(user.copy(name = randomString()))
+        channelState.upsertDelivered(delivered)
+
+        // Post-condition check
+        userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertNotNull(userRead)
+        assertEquals(delivered.user, userRead!!.user)
+        assertEquals(delivered.lastReceivedEventDate, userRead.lastReceivedEventDate)
+        assertEquals(delivered.lastDeliveredAt, userRead.lastDeliveredAt)
+        assertEquals(delivered.lastDeliveredMessageId, userRead.lastDeliveredMessageId)
+        assertEquals(initialRead.unreadMessages, userRead.unreadMessages)
+        assertEquals(initialRead.lastRead, userRead.lastRead)
+        assertEquals(initialRead.lastReadMessageId, userRead.lastReadMessageId)
+    }
+
+    @Test
+    fun `updateDelivered should not create new read if user read does not exist`() = runTest {
+        val user = randomUser()
+
+        // Ensure no initial read state for the user
+        channelState.upsertReads(emptyList())
+
+        // Update delivered info
+        val delivered = randomChannelUserRead(user)
+        channelState.upsertDelivered(delivered)
+
+        // Post-condition check
+        val userRead = channelState.reads.value.find { it.user.id == user.id }
+        assertEquals(delivered, userRead)
     }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
@@ -587,6 +762,7 @@ internal class ChannelMutableStateTests {
                 id = "message_$i",
                 cid = CID,
                 createdAt = Date(now + i * 1000L), // Each message 1 second apart
+                createdLocallyAt = null,
                 text = "Test message $i",
                 parentId = null, // ensure message is not a thread reply
                 shadowed = false, // ensure message is not shadowed

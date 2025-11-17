@@ -29,6 +29,7 @@ import androidx.core.app.Person
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -176,7 +177,7 @@ internal class MessagingStyleNotificationFactory(
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)
 
     private val Message.timestamp: Long
-        get() = (createdAt ?: createdLocallyAt ?: Date()).time
+        get() = getCreatedAtOrDefault(Date()).time
 
     private suspend fun User.toPerson(context: Context): Person =
         Person.Builder()

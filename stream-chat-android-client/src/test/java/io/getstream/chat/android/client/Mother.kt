@@ -86,6 +86,8 @@ import io.getstream.chat.android.client.logger.ChatLoggerConfig
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
+import io.getstream.chat.android.client.persistence.db.entity.MessageReceiptEntity
+import io.getstream.chat.android.client.receipts.MessageReceipt
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
@@ -94,6 +96,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
@@ -109,6 +112,7 @@ import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomStringOrNull
 import io.getstream.chat.android.randomUser
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -484,6 +488,7 @@ internal object Mother {
         name: String? = randomString(),
         typing_events: Boolean = randomBoolean(),
         read_events: Boolean = randomBoolean(),
+        delivery_events: Boolean = randomBoolean(),
         connect_events: Boolean = randomBoolean(),
         search: Boolean = randomBoolean(),
         reactions: Boolean = randomBoolean(),
@@ -510,6 +515,7 @@ internal object Mother {
         name = name,
         typing_events = typing_events,
         read_events = read_events,
+        delivery_events = delivery_events,
         connect_events = connect_events,
         search = search,
         reactions = reactions,
@@ -721,12 +727,16 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         lastRead: Date = randomDate(),
         unreadMessages: Int = randomInt(),
-        lastReadMessageId: String? = randomString(),
-    ): DownstreamChannelUserRead = DownstreamChannelUserRead(
+        lastReadMessageId: String? = randomStringOrNull(),
+        lastDeliveredAt: Date? = randomDateOrNull(),
+        lastDeliveredMessageId: String? = randomStringOrNull(),
+    ) = DownstreamChannelUserRead(
         user = user,
         last_read = lastRead,
         unread_messages = unreadMessages,
         last_read_message_id = lastReadMessageId,
+        last_delivered_at = lastDeliveredAt,
+        last_delivered_message_id = lastDeliveredMessageId,
     )
 
     fun randomAttachmentDto(
@@ -1359,3 +1369,39 @@ internal object Mother {
         disabled_until = disabledUntil,
     )
 }
+
+internal fun randomPushMessage(
+    messageId: String = randomString(),
+    channelId: String = randomString(),
+    channelType: String = randomString(),
+    getstream: Map<String, Any?> = emptyMap(),
+    extraData: Map<String, Any?> = emptyMap(),
+    metadata: Map<String, Any?> = emptyMap(),
+) = PushMessage(
+    messageId = messageId,
+    channelId = channelId,
+    channelType = channelType,
+    getstream = getstream,
+    extraData = extraData,
+    metadata = metadata,
+)
+
+internal fun randomMessageReceipt(
+    messageId: String = randomString(),
+    cid: String = randomCID(),
+    createdAt: Date = randomDate(),
+) = MessageReceipt(
+    messageId = messageId,
+    cid = cid,
+    createdAt = createdAt,
+)
+
+internal fun randomMessageReceiptEntity(
+    messageId: String = randomString(),
+    cid: String = randomCID(),
+    createdAt: Date = randomDate(),
+) = MessageReceiptEntity(
+    messageId = messageId,
+    cid = cid,
+    createdAt = createdAt,
+)

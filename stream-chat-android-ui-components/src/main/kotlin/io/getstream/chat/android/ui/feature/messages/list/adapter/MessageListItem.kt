@@ -75,6 +75,7 @@ public sealed class MessageListItem {
      * @property messageReadBy The list of users that already read the message.
      * @property isThreadMode True if the message is in a thread mode, otherwise false.
      * @property isMessageRead True if the message has been read or not.
+     * @property isMessageDelivered Whether the message has been delivered or not.
      * @property showMessageFooter True if the message footer should be displayed, otherwise false.
      * @property isTheirs True if the message is sent by another user, otherwise false.
      * @property showMessageFooter True if the message footer should be displayed, otherwise false.
@@ -88,6 +89,7 @@ public sealed class MessageListItem {
         val messageReadBy: List<ChannelUserRead> = listOf(),
         val isThreadMode: Boolean = false,
         val isMessageRead: Boolean = true,
+        val isMessageDelivered: Boolean = false,
         val showMessageFooter: Boolean = false,
         val showOriginalText: Boolean = false,
     ) : MessageListItem() {

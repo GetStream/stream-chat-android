@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.audio
 
+import androidx.media3.common.PlaybackException
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.delay
@@ -31,7 +32,7 @@ internal class NativeMediaPlayerMock(
     private var _duration: Int = Int.MAX_VALUE
 
     private var _onCompletionListener: (() -> Unit)? = null
-    private var _onErrorListener: ((what: Int, extra: Int) -> Boolean)? = null
+    private var _onErrorListener: ((errorCode: Int) -> Boolean)? = null
     private var _onPreparedListener: (() -> Unit)? = null
 
     private val validStates = hashSetOf(
@@ -56,7 +57,7 @@ internal class NativeMediaPlayerMock(
     override var speed: Float = 1.0f
         set(value) {
             if (_state !in validStates) {
-                onError("[setSpeed] invalid state: $_state", what = 1)
+                onError("[setSpeed] invalid state: $_state", 1)
                 throw IllegalStateException("[setSpeed] invalid state: $_state")
             }
             field = value
@@ -64,24 +65,20 @@ internal class NativeMediaPlayerMock(
     override val currentPosition: Int
         get() {
             if (_state !in validStates) {
-                onError("[getCurrentPosition] invalid state: $_state", what = 2)
+                onError("[getCurrentPosition] invalid state: $_state", 2)
             }
             return _currentPosition++
         }
     override val duration: Int
         get() {
             if (_state !in validStates) {
-                onError("[getDuration] invalid state: $_state", what = 3)
+                onError("[getDuration] invalid state: $_state", 3)
             }
             return _duration
         }
 
     override fun setDataSource(path: String) {
         publishState(NativeMediaPlayerState.INITIALIZED)
-    }
-
-    override fun prepare() {
-        publishState(NativeMediaPlayerState.PREPARED)
     }
 
     override fun prepareAsync() {
@@ -99,7 +96,7 @@ internal class NativeMediaPlayerMock(
             _state != NativeMediaPlayerState.STARTED &&
             _state != NativeMediaPlayerState.PLAYBACK_COMPLETED
         ) {
-            onError("[seekTo] invalid state: $_state", what = NativeMediaPlayer.MEDIA_ERROR_INVALID_OPERATION)
+            onError("[seekTo] invalid state: $_state", PlaybackException.ERROR_CODE_BAD_VALUE)
             return
         }
         _currentPosition = msec
@@ -110,7 +107,7 @@ internal class NativeMediaPlayerMock(
             _state != NativeMediaPlayerState.PAUSED &&
             _state != NativeMediaPlayerState.PLAYBACK_COMPLETED
         ) {
-            onError("[start] invalid state: $_state", what = 4)
+            onError("[start] invalid state: $_state", 4)
             return
         }
         publishState(NativeMediaPlayerState.STARTED)
@@ -140,7 +137,7 @@ internal class NativeMediaPlayerMock(
         _onCompletionListener = listener
     }
 
-    override fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean) {
+    override fun setOnErrorListener(listener: (errorCode: Int) -> Boolean) {
         _onErrorListener = listener
     }
 
@@ -148,10 +145,10 @@ internal class NativeMediaPlayerMock(
         _onPreparedListener = listener
     }
 
-    private fun onError(message: String, what: Int = 0, extra: Int = 0) {
+    private fun onError(message: String, errorCode: Int = 0) {
         // logger.e { message }
         if (publishState(NativeMediaPlayerState.ERROR)) {
-            _onErrorListener?.invoke(what, extra)
+            _onErrorListener?.invoke(errorCode)
         }
     }
 

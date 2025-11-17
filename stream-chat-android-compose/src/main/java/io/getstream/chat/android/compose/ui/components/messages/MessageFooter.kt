@@ -39,10 +39,12 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageFooterStatusIndicatorParams
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageStatusIndicator
 
 /**
  * Default message footer, which contains either [MessageThreadFooter] or the default footer, which
@@ -101,12 +103,12 @@ public fun MessageFooter(
                         maxLines = 1,
                         color = ChatTheme.colors.textLowEmphasis,
                     )
-                } else {
+                } else if (message.shouldShowMessageStatusIndicator()) {
                     ChatTheme.componentFactory.MessageFooterStatusIndicator(
-                        modifier = Modifier.padding(end = 4.dp),
-                        message = message,
-                        isMessageRead = messageItem.isMessageRead,
-                        readCount = messageItem.messageReadBy.size,
+                        params = MessageFooterStatusIndicatorParams(
+                            modifier = Modifier.padding(end = 4.dp),
+                            messageItem = messageItem,
+                        ),
                     )
                 }
 

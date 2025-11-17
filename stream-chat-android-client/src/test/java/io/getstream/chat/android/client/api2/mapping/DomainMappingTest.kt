@@ -117,9 +117,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldBeEqualTo
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -139,7 +137,7 @@ internal class DomainMappingTest {
             randomDownstreamMessageDto().toDomain()
         }
 
-        result `should be equal to` transformedMessage
+        assertEquals(transformedMessage, result)
     }
 
     @Test
@@ -162,7 +160,7 @@ internal class DomainMappingTest {
             ).toDomain()
         }
 
-        result `should be equal to` transformedMessage
+        assertEquals(transformedMessage, result)
     }
 
     @Test
@@ -191,7 +189,7 @@ internal class DomainMappingTest {
             draftMessageResponse.toDomain()
         }
 
-        result `should be equal to` expectedMappedDraftMessage
+        assertEquals(expectedMappedDraftMessage, result)
     }
 
     @Test
@@ -203,7 +201,7 @@ internal class DomainMappingTest {
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
         val result = with(sut) { downstreamPendingMessageDto.toDomain() }
-        Assertions.assertEquals(expected, result)
+        assertEquals(expected, result)
     }
 
     @Test
@@ -217,7 +215,7 @@ internal class DomainMappingTest {
             metadata = pendingMessageMetadata,
         )
         val result = with(sut) { messageResponse.toDomain() }
-        Assertions.assertEquals(expected, result)
+        assertEquals(expected, result)
     }
 
     @Test
@@ -233,7 +231,7 @@ internal class DomainMappingTest {
             randomDownstreamUserDto().toDomain()
         }
 
-        result `should be equal to` transformedUser
+        assertEquals(transformedUser, result)
     }
 
     @Test
@@ -249,7 +247,7 @@ internal class DomainMappingTest {
             randomDownstreamChannelDto().toDomain()
         }
 
-        result `should be equal to` transformedChannel
+        assertEquals(transformedChannel, result)
     }
 
     @Test
@@ -279,7 +277,7 @@ internal class DomainMappingTest {
         )
 
         with(sut) {
-            response.toDomain() `should be equal to` expected
+            assertEquals(expected, response.toDomain())
         }
     }
 
@@ -302,7 +300,7 @@ internal class DomainMappingTest {
             deletedAt = null,
             emojiCode = downstreamReactionDto.emoji_code,
         )
-        reaction shouldBeEqualTo expected
+        assertEquals(expected, reaction)
     }
 
     @Test
@@ -319,7 +317,7 @@ internal class DomainMappingTest {
             updatedAt = downstreamMuteDto.updated_at,
             expires = downstreamMuteDto.expires,
         )
-        mute shouldBeEqualTo expected
+        assertEquals(expected, mute)
     }
 
     @Test
@@ -336,7 +334,7 @@ internal class DomainMappingTest {
             updatedAt = downstreamMuteDto.updated_at,
             expires = downstreamMuteDto.expires,
         )
-        mute shouldBeEqualTo expected
+        assertEquals(expected, mute)
     }
 
     @Test
@@ -354,7 +352,7 @@ internal class DomainMappingTest {
             firstReactionAt = downstreamReactionGroupDto.first_reaction_at,
             lastReactionAt = downstreamReactionGroupDto.last_reaction_at,
         )
-        reactionGroup shouldBeEqualTo expected
+        assertEquals(expected, reactionGroup)
     }
 
     @Test
@@ -381,7 +379,7 @@ internal class DomainMappingTest {
             archivedAt = downstreamMemberDto.archived_at,
             extraData = downstreamMemberDto.extraData,
         )
-        member shouldBeEqualTo expected
+        assertEquals(expected, member)
     }
 
     @Test
@@ -464,7 +462,7 @@ internal class DomainMappingTest {
             createdBy = with(sut) { pollDto.created_by?.toDomain() },
             extraData = pollDto.extraData ?: emptyMap(),
         )
-        Assertions.assertEquals(expected, poll)
+        assertEquals(expected, poll)
     }
 
     @Test
@@ -472,7 +470,7 @@ internal class DomainMappingTest {
         val value = "public"
         val sut = Fixture().get()
         val votingVisibility = with(sut) { value.toVotingVisibility() }
-        votingVisibility shouldBeEqualTo VotingVisibility.PUBLIC
+        assertEquals(VotingVisibility.PUBLIC, votingVisibility)
     }
 
     @Test
@@ -480,7 +478,7 @@ internal class DomainMappingTest {
         val value = "anonymous"
         val sut = Fixture().get()
         val votingVisibility = with(sut) { value.toVotingVisibility() }
-        votingVisibility shouldBeEqualTo VotingVisibility.ANONYMOUS
+        assertEquals(VotingVisibility.ANONYMOUS, votingVisibility)
     }
 
     @Test
@@ -506,9 +504,11 @@ internal class DomainMappingTest {
             unreadMessages = downstreamChannelUserRead.unread_messages,
             lastReadMessageId = downstreamChannelUserRead.last_read_message_id,
             lastReceivedEventDate = lastReceivedEventDate,
+            lastDeliveredAt = downstreamChannelUserRead.last_delivered_at,
+            lastDeliveredMessageId = downstreamChannelUserRead.last_delivered_message_id,
         )
 
-        channelUserRead shouldBeEqualTo expected
+        assertEquals(expected, channelUserRead)
     }
 
     @Test
@@ -538,7 +538,7 @@ internal class DomainMappingTest {
             originalWidth = attachmentDto.original_width,
             extraData = attachmentDto.extraData.toMutableMap(),
         )
-        attachment shouldBeEqualTo expected
+        assertEquals(expected, attachment)
     }
 
     @Test
@@ -555,7 +555,7 @@ internal class DomainMappingTest {
             shadow = bannedUserResponse.shadow,
             reason = bannedUserResponse.reason,
         )
-        bannedUser shouldBeEqualTo expected
+        assertEquals(expected, bannedUser)
     }
 
     @Test
@@ -571,7 +571,7 @@ internal class DomainMappingTest {
             memberCount = channelInfoDto.member_count,
             image = channelInfoDto.image,
         )
-        channelInfo shouldBeEqualTo expected
+        assertEquals(expected, channelInfo)
     }
 
     @Test
@@ -585,7 +585,7 @@ internal class DomainMappingTest {
             args = commandDto.args,
             set = commandDto.set,
         )
-        command shouldBeEqualTo expected
+        assertEquals(expected, command)
     }
 
     @Test
@@ -599,6 +599,7 @@ internal class DomainMappingTest {
             name = configDto.name ?: "",
             typingEventsEnabled = configDto.typing_events,
             readEventsEnabled = configDto.read_events,
+            deliveryEventsEnabled = configDto.delivery_events,
             connectEventsEnabled = configDto.connect_events,
             searchEnabled = configDto.search,
             isReactionsEnabled = configDto.reactions,
@@ -620,7 +621,7 @@ internal class DomainMappingTest {
             sharedLocationsEnabled = configDto.shared_locations ?: false,
             markMessagesPending = configDto.mark_messages_pending,
         )
-        config shouldBeEqualTo expected
+        assertEquals(expected, config)
     }
 
     @Test
@@ -633,7 +634,7 @@ internal class DomainMappingTest {
             pushProvider = PushProvider.fromKey(deviceDto.id),
             providerName = deviceDto.push_provider_name,
         )
-        device shouldBeEqualTo expected
+        assertEquals(expected, device)
     }
 
     @Test
@@ -653,7 +654,7 @@ internal class DomainMappingTest {
             approvedAt = downstreamFlagDto.approved_at,
             rejectedAt = downstreamFlagDto.rejected_at,
         )
-        flag shouldBeEqualTo expected
+        assertEquals(expected, flag)
     }
 
     @Test
@@ -666,7 +667,7 @@ internal class DomainMappingTest {
             action = MessageModerationAction(downstreamModerationDetailsDto.action.orEmpty()),
             errorMsg = downstreamModerationDetailsDto.error_msg.orEmpty(),
         )
-        moderationDetails shouldBeEqualTo expected
+        assertEquals(expected, moderationDetails)
     }
 
     @Test
@@ -683,7 +684,7 @@ internal class DomainMappingTest {
             semanticFilterMatched = downstreamModerationDto.semantic_filter_matched,
             platformCircumvented = downstreamModerationDto.platform_circumvented ?: false,
         )
-        moderation shouldBeEqualTo expected
+        assertEquals(expected, moderation)
     }
 
     @Test
@@ -695,7 +696,7 @@ internal class DomainMappingTest {
             typingIndicators = TypingIndicators(enabled = privacySettingsDto.typing_indicators?.enabled == true),
             readReceipts = ReadReceipts(enabled = privacySettingsDto.read_receipts?.enabled == true),
         )
-        privacySettings shouldBeEqualTo expected
+        assertEquals(expected, privacySettings)
     }
 
     @Test
@@ -709,7 +710,7 @@ internal class DomainMappingTest {
             warningCode = searchWarningDto.warning_code,
             warningDescription = searchWarningDto.warning_description,
         )
-        searchWarning shouldBeEqualTo expected
+        assertEquals(expected, searchWarning)
     }
 
     @Test
@@ -770,7 +771,7 @@ internal class DomainMappingTest {
             },
             extraData = downstreamThreadDto.extraData,
         )
-        thread shouldBeEqualTo expected
+        assertEquals(expected, thread)
     }
 
     @Test
@@ -794,7 +795,7 @@ internal class DomainMappingTest {
             updatedAt = downstreamThreadInfoDto.updated_at,
             extraData = downstreamThreadInfoDto.extraData,
         )
-        threadInfo shouldBeEqualTo expected
+        assertEquals(expected, threadInfo)
     }
 
     @Test
@@ -810,7 +811,7 @@ internal class DomainMappingTest {
                 blockedAt = downstreamUserBlockDto.created_at,
             ),
         )
-        blocklist shouldBeEqualTo expected
+        assertEquals(expected, blocklist)
     }
 
     @Test
@@ -823,7 +824,7 @@ internal class DomainMappingTest {
             userId = blockUserResponse.blocked_user_id,
             blockedAt = blockUserResponse.created_at,
         )
-        userBlock shouldBeEqualTo expected
+        assertEquals(expected, userBlock)
     }
 
     @Test
@@ -840,7 +841,7 @@ internal class DomainMappingTest {
             createdAt = downstreamReminderDto.created_at,
             updatedAt = downstreamReminderDto.updated_at,
         )
-        messageReminder shouldBeEqualTo expected
+        assertEquals(expected, messageReminder)
     }
 
     @Test
@@ -852,7 +853,7 @@ internal class DomainMappingTest {
             reminders = input.reminders.map { with(sut) { it.toDomain() } },
             next = input.next,
         )
-        result shouldBeEqualTo expected
+        assertEquals(expected, result)
     }
 
     @Test
@@ -916,7 +917,7 @@ internal class DomainMappingTest {
                 )
             },
         )
-        result shouldBeEqualTo expected
+        assertEquals(expected, result)
     }
 
     internal class Fixture {

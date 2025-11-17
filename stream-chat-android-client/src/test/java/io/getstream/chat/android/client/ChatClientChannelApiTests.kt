@@ -64,6 +64,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
+import org.mockito.kotlin.wheneverBlocking
 
 /**
  * Tests for the [ChatClient] channels endpoints.
@@ -988,6 +989,34 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun markMessageAsDeliveredSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val result = randomBoolean()
+        val sut = Fixture()
+            .givenMarkDeliveredResult(messageId, result)
+            .get()
+        // when
+        val actual = sut.markMessageAsDelivered(messageId).await()
+        // then
+        verifySuccess(actual, result)
+    }
+
+    @Test
+    fun markMessageAsDeliveredError() = runTest {
+        // given
+        val messageId = randomString()
+        val exception = RuntimeException("Error")
+        val sut = Fixture()
+            .givenMarkDeliveredResult(messageId, exception)
+            .get()
+        // when
+        val actual = sut.markMessageAsDelivered(messageId).await()
+        // then
+        verifyGenericError(actual, exception.message!!)
+    }
+
+    @Test
     fun markReadSuccess() = runTest {
         // given
         val channelType = randomString()
@@ -1526,6 +1555,14 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
 
         fun givenMarkReadResult(result: Call<Unit>) = apply {
             whenever(api.markRead(any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenMarkDeliveredResult(messageId: String, result: Boolean) = apply {
+            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenReturn(result)
+        }
+
+        fun givenMarkDeliveredResult(messageId: String, exception: RuntimeException) = apply {
+            wheneverBlocking { mockMessageReceiptManager.markMessageAsDelivered(messageId) }.thenThrow(exception)
         }
 
         fun givenMarkUnreadResult(result: Call<Unit>) = apply {

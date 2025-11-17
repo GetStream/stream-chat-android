@@ -21,9 +21,6 @@ import io.getstream.chat.android.client.api2.model.dto.ConfigDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelUserRead
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -38,6 +35,7 @@ internal object ChannelDtoTestData {
           "name" : "config1",
           "typing_events": true,
           "read_events": true,
+          "delivery_events": true,
           "connect_events": true,
           "search": false,
           "reactions": true,
@@ -74,6 +72,7 @@ internal object ChannelDtoTestData {
         name = "config1",
         typing_events = true,
         read_events = true,
+        delivery_events = true,
         connect_events = true,
         search = false,
         reactions = true,
@@ -307,151 +306,6 @@ internal object ChannelDtoTestData {
         cooldown = 0,
         pinned_messages = emptyList(),
         membership = null,
-        extraData = emptyMap(),
-    )
-
-    @Language("JSON")
-    val upstreamJson =
-        """{
-          "cid": "channelType:channelId",
-          "id": "channelId",
-          "type": "channelType",
-          "name": "channelName",
-          "image": "channelImage",
-          "watcher_count": 1,
-          "frozen": false,
-          "last_message_at": "2020-06-10T11:04:31.588Z",
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "deleted_at": "2020-06-10T11:04:31.588Z",
-          "updated_at": "2020-06-10T11:04:31.588Z",
-          "member_count": 2,
-          "messages": [${MessageDtoTestData.upstreamJson}],
-          "members": [
-           {
-            "user": ${UserDtoTestData.upstreamJson},
-            "created_at": "2020-06-10T11:04:31.000Z",
-            "updated_at": "2020-06-10T11:04:31.588Z",
-            "invited": true,
-            "invite_accepted_at": "2020-06-10T11:04:31.588Z",
-            "shadow_banned": false,
-            "banned": false,
-            "channel_role": "member",
-            "notifications_muted": false,
-            "status": "member",
-            "ban_expires" : "2021-03-08T15:42:31.355Z",
-            "pinned_at": "2020-06-10T11:04:31.588Z",
-            "archived_at": "2020-06-10T11:04:31.588Z"
-           }
-          ],
-          "watchers": [${UserDtoTestData.upstreamJson}],
-          "read": [
-           {
-            "user": ${UserDtoTestData.upstreamJson},
-            "last_read": "2020-06-10T11:04:31.000Z",
-            "unread_messages": 1
-           }
-          ],
-          "config": $configJson,
-          "created_by": ${UserDtoTestData.upstreamJson},
-          "team": "team1",
-          "cooldown": 1,
-          "pinned_messages": [${MessageDtoTestData.upstreamJson}],
-          "draft": true
-        }
-        """.withoutWhitespace()
-    val upstreamChannel = UpstreamChannelDto(
-        cid = "channelType:channelId",
-        id = "channelId",
-        type = "channelType",
-        name = "channelName",
-        image = "channelImage",
-        watcher_count = 1,
-        frozen = false,
-        last_message_at = Date(1591787071588),
-        created_at = Date(1591787071000),
-        deleted_at = Date(1591787071588),
-        updated_at = Date(1591787071588),
-        member_count = 2,
-        messages = listOf(MessageDtoTestData.upstreamMessage),
-        members = listOf(
-            UpstreamMemberDto(
-                user = UserDtoTestData.upstreamUser,
-                created_at = Date(1591787071000),
-                updated_at = Date(1591787071588),
-                invited = true,
-                invite_accepted_at = Date(1591787071588),
-                invite_rejected_at = null,
-                shadow_banned = false,
-                banned = false,
-                channel_role = "member",
-                notifications_muted = false,
-                status = "member",
-                ban_expires = Date(1615218151355),
-                pinned_at = Date(1591787071588),
-                archived_at = Date(1591787071588),
-                extraData = emptyMap(),
-            ),
-        ),
-        watchers = listOf(UserDtoTestData.upstreamUser),
-        read = listOf(
-            UpstreamChannelUserRead(
-                user = UserDtoTestData.upstreamUser,
-                last_read = Date(1591787071000),
-                unread_messages = 1,
-            ),
-        ),
-        config = configDto,
-        created_by = UserDtoTestData.upstreamUser,
-        team = "team1",
-        cooldown = 1,
-        pinned_messages = listOf(MessageDtoTestData.upstreamMessage),
-        extraData = mapOf("draft" to true),
-    )
-
-    @Language("JSON")
-    val upstreamJsonWithoutExtraData =
-        """{
-          "cid": "channelType:channelId",
-          "id": "channelId",
-          "type": "channelType",
-          "name": "channelName",
-          "image": "channelImage",
-          "watcher_count": 0,
-          "frozen": false,
-          "member_count": 0,
-          "messages": [],
-          "members": [],
-          "watchers": [],
-          "read": [],
-          "config": $configJson,
-          "created_by": ${UserDtoTestData.upstreamJson},
-          "team": "",
-          "cooldown": 0,
-          "pinned_messages": []
-        }
-        """.withoutWhitespace()
-    val upstreamChannelWithoutExtraData = UpstreamChannelDto(
-        cid = "channelType:channelId",
-        id = "channelId",
-        type = "channelType",
-        name = "channelName",
-        image = "channelImage",
-        watcher_count = 0,
-        frozen = false,
-        last_message_at = null,
-        created_at = null,
-        deleted_at = null,
-        updated_at = null,
-        member_count = 0,
-        messages = emptyList(),
-        members = emptyList(),
-        watchers = emptyList(),
-        read = emptyList(),
-        config = configDto,
-        created_by = UserDtoTestData.upstreamUser,
-        team = "",
-        cooldown = 0,
-        pinned_messages = emptyList(),
         extraData = emptyMap(),
     )
 }

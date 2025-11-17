@@ -45,7 +45,9 @@ import io.getstream.chat.android.ui.common.utils.canDeleteMessage
 /**
  * Factory for creating components related to deleting messages for the current user.
  */
-class DeleteMessageForMeComponentFactory : ChatComponentFactory {
+class DeleteMessageForMeComponentFactory(
+    private val delegate: ChatComponentFactory = MessageInfoComponentFactory(),
+) : ChatComponentFactory by delegate {
 
     /**
      * Creates a message menu with option for deleting messages for the current user.
@@ -117,7 +119,7 @@ class DeleteMessageForMeComponentFactory : ChatComponentFactory {
             )
         }
 
-        super.MessageMenu(
+        delegate.MessageMenu(
             modifier = modifier,
             message = message,
             messageOptions = allOptions,

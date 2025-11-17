@@ -17,15 +17,15 @@
 package io.getstream.chat.android.client
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C.AUDIO_CONTENT_TYPE_MUSIC
+import androidx.media3.exoplayer.ExoPlayer
 import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
@@ -72,7 +72,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
-import io.getstream.chat.android.client.audio.StreamMediaPlayer
+import io.getstream.chat.android.client.audio.StreamAudioPlayer
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.clientstate.DisconnectCause
@@ -81,7 +81,7 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.debugger.SendMessageDebugger
 import io.getstream.chat.android.client.debugger.StubChatClientDebugger
-import io.getstream.chat.android.client.di.BaseChatModule
+import io.getstream.chat.android.client.di.ChatModule
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
@@ -125,12 +125,17 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
+import io.getstream.chat.android.client.persistence.db.ChatClientDatabase
+import io.getstream.chat.android.client.persistence.repository.ChatClientRepository
 import io.getstream.chat.android.client.plugin.DependencyResolver
+import io.getstream.chat.android.client.plugin.MessageDeliveredPluginFactory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.factory.ThrottlingPluginFactory
 import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
+import io.getstream.chat.android.client.receipts.MessageReceiptManager
+import io.getstream.chat.android.client.receipts.MessageReceiptReporter
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -280,6 +285,9 @@ internal constructor(
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
     private val now: () -> Date = ::Date,
+    private val repository: ChatClientRepository,
+    private val messageReceiptReporter: MessageReceiptReporter,
+    internal val messageReceiptManager: MessageReceiptManager,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -452,12 +460,12 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent,
-            is NotificationReminderDueEvent,
-            -> {
-                // No other events should potentially show notifications
+            is NewMessageEvent -> {
                 notifications.onChatEvent(event)
+                messageReceiptManager.markMessageAsDelivered(event.message)
             }
+
+            is NotificationReminderDueEvent -> notifications.onChatEvent(event)
 
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
@@ -647,6 +655,7 @@ internal constructor(
         tokenManager.setTokenProvider(tokenProvider)
         appSettingsManager.loadAppSettings()
         warmUp()
+        messageReceiptReporter.start()
         logger.i { "[initializeClientWithUser] user.id: '${user.id}'completed" }
     }
 
@@ -742,9 +751,11 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
-            userScope.userId.value = user.id
             notifications.deleteDevice() // always delete device if switching users
             disconnectUserSuspend(flushPersistence = true)
+            // change userId only after disconnect,
+            // otherwise the userScope won't cancel coroutines related to the previous user.
+            userScope.userId.value = user.id
             onDisconnectionComplete()
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds).also {
                 logger.v { "[switchUser] completed('${user.id}')" }
@@ -989,7 +1000,7 @@ internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -1113,7 +1124,6 @@ internal constructor(
      * @see FileUploader
      */
     @CheckResult
-    @JvmOverloads
     public fun deleteImage(
         url: String,
     ): Call<Unit> = api.deleteImage(url)
@@ -1510,6 +1520,8 @@ internal constructor(
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
+
+        repository.clear()
 
         _repositoryFacade = null
         attachmentsSender.cancelJobs()
@@ -3064,6 +3076,43 @@ internal constructor(
                 onDeleteChannelPrecondition(getCurrentUser(), channelType, channelId)
             }
     }
+
+    /**
+     * Request to mark the message with the given id as delivered if:
+     *
+     * - Delivery receipts are enabled for the current user.
+     * - Delivery events are enabled in the channel config.
+     *
+     * and if all of the following conditions are met for the message:
+     *
+     * - Not sent by the current user.
+     * - Not shadow banned.
+     * - Not sent by a muted user.
+     * - Not yet marked as read by the current user.
+     * - Not yet marked as delivered by the current user.
+     *
+     * IMPORTANT: For this feature to function correctly and efficiently,
+     * the [offline plugin](https://getstream.io/chat/docs/sdk/android/client/guides/offline-support/)
+     * must be enabled to avoid extra API calls to retrieve message and channel data.
+     *
+     * @param messageId The ID of the message to mark as delivered.
+     *
+     * @return Executable async [Call] which completes with [Result] having data equal to true if the message
+     * was marked as delivered, false otherwise.
+     */
+    @CheckResult
+    public fun markMessageAsDelivered(messageId: String): Call<Boolean> =
+        CoroutineCall(userScope) {
+            runCatching { messageReceiptManager.markMessageAsDelivered(messageId) }
+                .fold(
+                    onSuccess = { Result.Success(it) },
+                    onFailure = { Result.Failure(Error.GenericError(it.message.orEmpty())) },
+                )
+        }.doOnStart(userScope) {
+            logger.d { "[markMessageAsDelivered] #doOnStart; messageId: $messageId" }
+        }.doOnResult(userScope) {
+            logger.v { "[markMessageAsDelivered] #doOnResult; completed($messageId)" }
+        }
 
     /**
      * Marks the given message as read.
@@ -4797,8 +4846,8 @@ internal constructor(
         }
 
         /**
-         * Debug requests using [ApiRequestsAnalyser]. Use this to debug your requests. This shouldn't be enabled in
-         * release builds as it uses a memory cache.
+         * Debug requests using [io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser]. Use this to
+         * debug your requests. This shouldn't be enabled in release builds as it uses a memory cache.
          */
         public fun debugRequests(shouldDebug: Boolean): Builder = apply {
             this.debugRequests = shouldDebug
@@ -4890,7 +4939,7 @@ internal constructor(
             }
 
             val module =
-                BaseChatModule(
+                ChatModule(
                     appContext = appContext,
                     clientScope = clientScope,
                     userScope = userScope,
@@ -4912,27 +4961,32 @@ internal constructor(
                     appVersion = this.appVersion,
                 )
 
-            val appSettingsManager = AppSettingManager(module.api())
+            val api = module.api()
+            val appSettingsManager = AppSettingManager(api)
 
-            val audioPlayer: AudioPlayer = StreamMediaPlayer(
-                mediaPlayer = NativeMediaPlayerImpl {
-                    MediaPlayer().apply {
-                        AudioAttributes.Builder()
-                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                            .build()
-                            .let(this::setAudioAttributes)
-                    }
+            val audioPlayer: AudioPlayer = StreamAudioPlayer(
+                mediaPlayer = NativeMediaPlayerImpl(appContext) {
+                    ExoPlayer.Builder(appContext)
+                        .setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setContentType(AUDIO_CONTENT_TYPE_MUSIC)
+                                .build(),
+                            true,
+                        )
+                        .build()
                 },
                 userScope = userScope,
-                isMarshmallowOrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             )
 
+            val database = ChatClientDatabase.build(appContext)
+            val repository = ChatClientRepository.from(database)
+
             return ChatClient(
-                config,
-                module.api(),
-                module.dtoMapping,
-                module.notifications(),
-                tokenManager,
+                config = config,
+                api = api,
+                dtoMapping = module.dtoMapping,
+                notifications = module.notifications(),
+                tokenManager = tokenManager,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
                 userStateService = module.userStateService,
                 clientDebugger = clientDebugger ?: StubChatClientDebugger,
@@ -4950,6 +5004,18 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
+                repository = repository,
+                messageReceiptReporter = MessageReceiptReporter(
+                    scope = userScope,
+                    messageReceiptRepository = repository,
+                    api = api,
+                ),
+                messageReceiptManager = MessageReceiptManager(
+                    now = ::Date,
+                    getRepositoryFacade = { instance().repositoryFacade },
+                    messageReceiptRepository = repository,
+                    api = api,
+                ),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
@@ -4994,7 +5060,10 @@ internal constructor(
          * @see [Plugin]
          * @see [PluginFactory]
          */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(ThrottlingPluginFactory)
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(
+            ThrottlingPluginFactory,
+            MessageDeliveredPluginFactory,
+        )
 
         /**
          * Create a [ChatClient] instance based on the current configuration
@@ -5073,7 +5142,6 @@ internal constructor(
          */
         @Throws(IllegalStateException::class)
         @JvmStatic
-        @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
                 val type = pushMessage.type.orEmpty()
