@@ -37,9 +37,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -65,6 +65,8 @@ import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
@@ -98,9 +100,12 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryPollVotesResult
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
@@ -440,7 +445,7 @@ internal class DomainMapping(
             .values
             .toList()
 
-        val answer = latest_answers?.map { it.toAnswerDomain() } ?: emptyList()
+        val answers = latest_answers?.map { it.toAnswerDomain() } ?: emptyList()
 
         return Poll(
             id = id,
@@ -452,24 +457,39 @@ internal class DomainMapping(
             maxVotesAllowed = max_votes_allowed ?: 1,
             allowUserSuggestedOptions = allow_user_suggested_options,
             allowAnswers = allow_answers,
+            voteCount = vote_count,
             voteCountsByOption = vote_counts_by_option ?: emptyMap(),
             votes = votes,
             ownVotes = ownVotes,
             createdAt = created_at,
             updatedAt = updated_at,
-            closed = is_closed,
-            answers = answer,
+            closed = is_closed ?: false,
+            answersCount = answers_count,
+            answers = answers,
+            createdBy = created_by?.toDomain(),
+            extraData = extraData ?: emptyMap(),
         )
     }
 
     /**
-     * Transforms DownstreamOptionDto to Option
+     * Transforms [DownstreamPollOptionDto] to [Option]
      *
      * @return Option
      */
-    internal fun DownstreamOptionDto.toDomain(): Option = Option(
+    internal fun DownstreamPollOptionDto.toDomain(): Option = Option(
         id = id,
         text = text,
+        extraData = extraData ?: emptyMap(),
+    )
+
+    /**
+     * Transforms [DownstreamPollOptionDto] to [PollOption].
+     * Note: Not following the naming convention because of clash with the existing [DownstreamPollOptionDto.toDomain].
+     */
+    internal fun DownstreamPollOptionDto.toPollOption(): PollOption = PollOption(
+        id = id,
+        text = text,
+        extraData = extraData ?: emptyMap(),
     )
 
     /**
@@ -513,6 +533,22 @@ internal class DomainMapping(
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
     }
+
+    /**
+     * Transforms [QueryPollVotesResponse] to [QueryPollVotesResult].
+     */
+    internal fun QueryPollVotesResponse.toDomain(): QueryPollVotesResult = QueryPollVotesResult(
+        votes = votes.map { it.toDomain() },
+        next = next,
+    )
+
+    /**
+     * Transforms the network [QueryPollsResponse] to a domain [QueryPollsResult].
+     */
+    internal fun QueryPollsResponse.toDomain(): QueryPollsResult = QueryPollsResult(
+        polls = polls.map { it.toDomain() },
+        next = next,
+    )
 
     /**
      * Transform [DownstreamChannelUserRead] to [ChannelUserRead].

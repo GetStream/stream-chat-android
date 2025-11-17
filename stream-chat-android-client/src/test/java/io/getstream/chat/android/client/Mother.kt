@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
@@ -40,9 +41,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPushPreferenceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -70,6 +71,8 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
@@ -91,8 +94,11 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
@@ -104,6 +110,7 @@ import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomPendingMessageMetadata
+import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomStringOrNull
 import io.getstream.chat.android.randomUser
@@ -1047,7 +1054,7 @@ internal object Mother {
         maxVotesAllowed: Int = randomInt(),
         allowUserSuggestedOptions: Boolean = randomBoolean(),
         allowAnswers: Boolean = randomBoolean(),
-        options: List<DownstreamOptionDto> = listOf(randomDownstreamOptionDto()),
+        options: List<DownstreamPollOptionDto> = listOf(randomDownstreamOptionDto()),
         voteCountsByOption: Map<String, Int> = emptyMap(),
         latestVotesByOption: Map<String, List<DownstreamVoteDto>> = emptyMap(),
         latestAnswers: List<DownstreamVoteDto> = listOf(randomAnswerDownstreamVoteDto()),
@@ -1057,7 +1064,9 @@ internal object Mother {
         ownVotes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
         updatedAt: Date = randomDate(),
         voteCount: Int = randomInt(),
+        answersCount: Int = randomInt(),
         isClosed: Boolean = randomBoolean(),
+        extraData: Map<String, Any> = randomExtraData(1),
     ): DownstreamPollDto = DownstreamPollDto(
         id = id,
         name = name,
@@ -1077,15 +1086,19 @@ internal object Mother {
         own_votes = ownVotes,
         updated_at = updatedAt,
         vote_count = voteCount,
+        answers_count = answersCount,
         is_closed = isClosed,
+        extraData = extraData,
     )
 
     fun randomDownstreamOptionDto(
         id: String = randomString(),
         text: String = randomString(),
-    ): DownstreamOptionDto = DownstreamOptionDto(
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): DownstreamPollOptionDto = DownstreamPollOptionDto(
         id = id,
         text = text,
+        extraData = extraData,
     )
 
     fun randomDownstreamVoteDto(
@@ -1129,6 +1142,33 @@ internal object Mother {
         answer_text = answerText,
     )
 
+    fun randomUpdatePollRequest(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String = randomString(),
+        options: List<PollOption>? = listOf(randomPollOption()),
+        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote: Boolean = randomBoolean(),
+        maxVotesAllowed: Int? = positiveRandomInt(),
+        allowUserSuggestedOptions: Boolean = randomBoolean(),
+        allowAnswers: Boolean = randomBoolean(),
+        isClosed: Boolean = randomBoolean(),
+        extraData: Map<String, Any> = randomExtraData(1),
+    ): UpdatePollRequest =
+        UpdatePollRequest(
+            id = id,
+            name = name,
+            description = description,
+            options = options,
+            votingVisibility = votingVisibility,
+            enforceUniqueVote = enforceUniqueVote,
+            maxVotesAllowed = maxVotesAllowed,
+            allowUserSuggestedOptions = allowUserSuggestedOptions,
+            allowAnswers = allowAnswers,
+            isClosed = isClosed,
+            extraData = extraData,
+        )
+
     fun randomDownstreamReminderDto(
         channelCid: String = randomString(),
         channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
@@ -1152,6 +1192,34 @@ internal object Mother {
         next: String? = randomString(),
     ): QueryRemindersResponse = QueryRemindersResponse(
         reminders = reminders,
+        next = next,
+    )
+
+    fun randomQueryPollsResponse(
+        polls: List<DownstreamPollDto> = listOf(randomDownstreamPollDto()),
+        next: String? = randomString(),
+        prev: String? = randomString(),
+    ): QueryPollsResponse = QueryPollsResponse(
+        polls = polls,
+        next = next,
+        prev = prev,
+    )
+
+    fun randomQueryPollVotesResponse(
+        votes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
+        next: String? = randomString(),
+        prev: String? = randomString(),
+    ): QueryPollVotesResponse = QueryPollVotesResponse(
+        votes = votes,
+        next = next,
+        prev = prev,
+    )
+
+    fun randomQueryPollVotesResult(
+        votes: List<io.getstream.chat.android.models.Vote> = listOf(io.getstream.chat.android.randomPollVote()),
+        next: String? = randomString(),
+    ): QueryPollVotesResult = QueryPollVotesResult(
+        votes = votes,
         next = next,
     )
 

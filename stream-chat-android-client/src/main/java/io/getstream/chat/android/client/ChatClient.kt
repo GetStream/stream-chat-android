@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
@@ -190,10 +191,13 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollVotesResult
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -1740,35 +1744,6 @@ internal constructor(
     }
 
     /**
-     * Send a message with a poll to the given channel.
-     *
-     * IMPORTANT: Polls cannot be sent inside a thread!
-     *
-     * @param channelType The channel type. ie messaging.
-     * @param channelId The channel id. ie 123.
-     * @param pollConfig The poll configuration.
-     *
-     * @return Executable async [Call] responsible for sending a poll.
-     */
-    @CheckResult
-    public fun sendPoll(
-        channelType: String,
-        channelId: String,
-        pollConfig: PollConfig,
-    ): Call<Message> {
-        return api.createPoll(pollConfig)
-            .flatMap { poll ->
-                sendMessage(
-                    channelType = channelType,
-                    channelId = channelId,
-                    Message(
-                        extraData = mapOf("poll_id" to poll.id),
-                    ),
-                )
-            }
-    }
-
-    /**
      * Sends a static location message to the given channel.
      *
      * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
@@ -1910,57 +1885,76 @@ internal constructor(
             }
     }
 
+    /**
+     * Send a message with a poll to the given channel.
+     *
+     * IMPORTANT: Polls cannot be sent inside a thread!
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param pollConfig The poll configuration.
+     *
+     * @return Executable async [Call] responsible for sending a poll.
+     */
     @CheckResult
-    public fun suggestPollOption(
-        pollId: String,
-        option: String,
-    ): Call<Option> {
-        return api.suggestPollOption(pollId, option)
+    public fun sendPoll(
+        channelType: String,
+        channelId: String,
+        pollConfig: PollConfig,
+    ): Call<Message> {
+        return api.createPoll(pollConfig)
+            .flatMap { poll ->
+                sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    Message(
+                        extraData = mapOf("poll_id" to poll.id),
+                    ),
+                )
+            }
     }
 
     /**
-     * Cast a vote for a poll in a message.
+     * Update a poll.
      *
-     * @param messageId The message id where the poll is.
-     * @param pollId The poll id.
-     * @param option The option to vote for.
+     * IMPORTANT: All the poll properties that are omitted in the update request will either be removed or set to their
+     * default values.
      *
-     * @return Executable async [Call] responsible for casting a vote.
+     * @param poll The poll to update.
+     *
+     * @return Executable async [Call] responsible for updating a poll.
      */
     @CheckResult
-    public fun castPollVote(
-        messageId: String,
-        pollId: String,
-        option: Option,
-    ): Call<Vote> {
-        return api.castPollVote(messageId, pollId, option.id)
-    }
-
-    @CheckResult
-    public fun castPollAnswer(
-        messageId: String,
-        pollId: String,
-        answer: String,
-    ): Call<Vote> {
-        return api.castPollAnswer(messageId, pollId, answer)
+    public fun updatePoll(poll: UpdatePollRequest): Call<Poll> {
+        return api.updatePoll(poll)
     }
 
     /**
-     * Remove a vote for a poll in a message.
+     * Get a poll by id.
      *
-     * @param messageId The message id where the poll is.
      * @param pollId The poll id.
-     * @param vote The vote to remove.
-     *
-     * @return Executable async [Call] responsible for removing a vote.
+     * @return Executable async [Call] responsible for fetching a poll.
      */
     @CheckResult
-    public fun removePollVote(
-        messageId: String,
+    public fun getPoll(pollId: String): Call<Poll> {
+        return api.getPoll(pollId)
+    }
+
+    /**
+     * Partially update a poll.
+     *
+     * @param pollId The poll id.
+     * @param set Map of fields to set.
+     * @param unset List of fields to unset.
+     * @return Executable async [Call] responsible for updating a poll.
+     */
+    @CheckResult
+    public fun partialUpdatePoll(
         pollId: String,
-        vote: Vote,
-    ): Call<Vote> {
-        return api.removePollVote(messageId, pollId, vote.id)
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Poll> {
+        return api.partialUpdatePoll(pollId, set, unset)
     }
 
     /**
@@ -1984,6 +1978,206 @@ internal constructor(
     @CheckResult
     public fun deletePoll(pollId: String): Call<Unit> {
         return api.deletePoll(pollId)
+    }
+
+    /**
+     * Create a new option for a poll.
+     * Note: To create an option with custom data, use [createPollOption] instead.
+     *
+     * @param pollId The poll id.
+     * @param option The option to create.
+     *
+     * @return Executable async [Call] responsible for creating a new option.
+     */
+    @Deprecated("ChatClient.suggestPollOption doesn't allow passing custom data. Use createPollOption instead.")
+    @CheckResult
+    public fun suggestPollOption(
+        pollId: String,
+        option: String,
+    ): Call<Option> {
+        return createPollOption(pollId, option = PollOption(text = option))
+            .map { Option(id = it.id ?: "", text = it.text, extraData = it.extraData) }
+    }
+
+    /**
+     * Create a new option for a poll.
+     *
+     * @param pollId The poll id.
+     * @param option The option to create. Note: Don't pass [PollOption.id] as it is ignored for creation.
+     *
+     * @return Executable async [Call] responsible for creating a new option.
+     */
+    @CheckResult
+    public fun createPollOption(
+        pollId: String,
+        option: PollOption,
+    ): Call<PollOption> {
+        return api.createPollOption(pollId, option)
+    }
+
+    /**
+     * Update an existing option in a poll.
+     *
+     * @param pollId The poll id.
+     * @param option The option to update. Note: [PollOption.id] is mandatory for performing an update.
+     */
+    @CheckResult
+    public fun updatePollOption(
+        pollId: String,
+        option: PollOption,
+    ): Call<PollOption> {
+        return api.updatePollOption(pollId, option)
+    }
+
+    /**
+     * Delete an option from a poll.
+     *
+     * @param pollId The poll id.
+     * @param optionId The option id to delete.
+     *
+     * @return Executable async [Call] responsible for deleting an option.
+     */
+    @CheckResult
+    public fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
+        return api.deletePollOption(pollId, optionId)
+    }
+
+    /**
+     * Query votes for a specific poll with optional filtering, pagination, and sorting.
+     *
+     * @param pollId The poll id.
+     * @param filter The filter conditions to filter the votes. For available fields check
+     * [Votes Queryable Fields](https://getstream.io/chat/docs/android/polls_api/#votes-queryable-built-in-fields).
+     * @param limit The maximum number of votes to return.
+     * @param next The pagination token for fetching the next set of results.
+     * @param sort The sort object for the query: Supported fields:
+     *  - `created_at` Vote creation timestamp
+     *
+     * @return Executable async [Call] responsible for querying votes for a specific poll.
+     */
+    @CheckResult
+    public fun queryPollVotes(
+        pollId: String,
+        filter: FilterObject? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySorter<Vote>? = null,
+    ): Call<QueryPollVotesResult> {
+        return api.queryPollVotes(pollId, filter, limit, next, sort)
+    }
+
+    /**
+     * Query polls with optional filtering, pagination, and sorting.
+     *
+     * @param filter The filter conditions to filter the polls. For available fields check
+     * [Poll Queryable Fields](https://getstream.io/chat/docs/android/polls_api/#poll-queryable-built-in-fields).
+     * @param limit The maximum number of polls to return.
+     * @param next The pagination token for fetching the next set of results.
+     * @param sort The sort object for the query: Supported fields:
+     *  - `id` Unique identifier of the poll
+     *  - `name` Name of the poll
+     *  - `created_at` Poll creation timestamp
+     *  - `updated_at` Poll last update timestamp
+     *  - `is_closed` Whether the poll is closed or not
+     *
+     * @return Executable async [Call] responsible for querying polls.
+     */
+    @CheckResult
+    public fun queryPolls(
+        filter: FilterObject? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySorter<Poll>? = null,
+    ): Call<QueryPollsResult> {
+        return api.queryPolls(filter, limit, next, sort)
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @Deprecated("Use castPollVote(messageId: String, pollId: String, optionId: String) instead.")
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, option.id)
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param optionId The id of the option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        optionId: String,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, optionId)
+    }
+
+    /**
+     * Cast an answer in a poll.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param answer The answer to cast.
+     */
+    @CheckResult
+    public fun castPollAnswer(
+        messageId: String,
+        pollId: String,
+        answer: String,
+    ): Call<Vote> {
+        return api.castPollAnswer(messageId, pollId, answer)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote to remove.
+     *
+     * @return Executable async [Call] responsible for removing a vote.
+     */
+    @Deprecated("Use removePollVote(messageId: String, pollId: String, voteId: String) instead.")
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ): Call<Vote> {
+        return removePollVote(messageId = messageId, pollId = pollId, voteId = vote.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param voteId The id of the vote to remove.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        voteId: String,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, voteId)
     }
 
     /**

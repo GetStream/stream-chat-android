@@ -52,6 +52,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -1938,7 +1939,7 @@ public class MessageListController(
         chatClient.castPollVote(
             messageId = messageId,
             pollId = pollId,
-            option = option,
+            optionId = option.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollCastingVoteError(it)
@@ -1976,7 +1977,7 @@ public class MessageListController(
         chatClient.removePollVote(
             messageId = messageId,
             pollId = pollId,
-            vote = vote,
+            voteId = vote.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollRemovingVoteError(it)
@@ -2411,8 +2412,8 @@ public class MessageListController(
         scope.launch {
             (
                 poll.ownVotes.firstOrNull { it.optionId == option.id }
-                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
-                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                    ?.let { chatClient.removePollVote(message.id, poll.id, it.id) }
+                    ?: chatClient.castPollVote(message.id, poll.id, option.id)
                 ).await()
         }
     }
@@ -2428,9 +2429,15 @@ public class MessageListController(
         }
     }
 
+    /**
+     * Creates a new poll option for the given poll.
+     *
+     * @param poll The poll to which the option will be added.
+     * @param option The text of the new option to be added.
+     */
     public fun addPollOption(poll: Poll, option: String) {
         scope.launch {
-            chatClient.suggestPollOption(poll.id, option).await()
+            chatClient.createPollOption(poll.id, PollOption(text = option)).await()
         }
     }
 

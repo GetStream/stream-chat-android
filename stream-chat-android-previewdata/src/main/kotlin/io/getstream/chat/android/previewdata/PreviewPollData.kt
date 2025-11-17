@@ -53,6 +53,7 @@ public object PreviewPollData {
         maxVotesAllowed = 1,
         allowUserSuggestedOptions = false,
         allowAnswers = true,
+        voteCount = 5,
         voteCountsByOption = mapOf(
             option1.id to 3,
             option2.id to 1,
@@ -104,6 +105,8 @@ public object PreviewPollData {
         createdAt = Now,
         updatedAt = Now,
         closed = false,
+        answersCount = 0,
+        createdBy = null,
     )
 }
 

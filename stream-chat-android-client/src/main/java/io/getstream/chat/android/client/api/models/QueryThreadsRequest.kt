@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @property filter The filter object for the query. Supported fields:
  *  - `channel_cid` Filter by channel CID. Supported operators: `$eq`, `$in`
  *  - `channel.disabled` Filter by channel disabled status. Supported operators: `$eq`
+ *  - `channel.team` Filter by channel team. Supported operators: `$eq`, `$in`
  *  - `parent_message_id` Filter by parent message ID. Supported operators: `$eq`, `$in`
  *  - `created_by_user_id` Filter by thread creator’s user ID. Supported operators: `$eq`, `$in`
  *  - `created_at` Filter by thread creation timestamp. Supported operators: `$eq`, `$gt`, `$lt`, `$gte`, `$lte`

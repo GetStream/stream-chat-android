@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.utils.extensions
 
 import android.content.Context
+import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
-import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.ui.common.R
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -43,7 +43,7 @@ internal class PollExtensionsTest {
     @Test
     fun `getSubtitle should return multiple answers subtitle when maxVotesAllowed is greater than 1`() {
         val poll = randomPoll(
-            options = listOf(randomPollOption(), randomPollOption()),
+            options = listOf(randomOption(), randomOption()),
             maxVotesAllowed = 2,
             closed = false,
         )

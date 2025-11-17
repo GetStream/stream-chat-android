@@ -21,9 +21,19 @@
 - Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Add `ChatClient.getPoll(pollId: String)` for retrieving a poll by its ID. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>)` for partially updating a poll. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)` for creating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.updatePollOption(pollId: String, option: UpdatePollOptionRequest)` for updating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.deletePollOption(pollId: String, optionId: String)` for deleting a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.queryPollVotes(pollId: String, filter: FilterObject?, limit: Int?, next: String?, sort: QuerySorter<Vote>?)` for querying poll votes with filtering, sorting, and pagination support. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.queryPolls(filter: FilterObject?, limit: Int?, next: String?, sort: QuerySorter<Poll>?)` for querying polls with filtering, sorting, and pagination support. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `PollConfig` constructor with support for extra custom data for the poll and the poll options. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 
 ### ⚠️ Changed
 - Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Deprecate `PollConfig` constructor without support for custom data. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Deprecate `ChatClient.suggestPollOption(pollId: String, option: String)` in favour of `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)`. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 
 ### ❌ Removed
 

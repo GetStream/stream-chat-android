@@ -50,6 +50,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
@@ -851,7 +852,7 @@ public fun randomPollConfig(
 ): PollConfig = PollConfig(
     name = name,
     description = description,
-    options = options,
+    options = options.map { PollOption(text = it) },
     votingVisibility = votingVisibility,
     enforceUniqueVote = enforceUniqueVote,
     maxVotesAllowed = maxVotesAllowed,
@@ -866,16 +867,20 @@ public fun randomPoll(
     votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
     enforceUniqueVote: Boolean = randomBoolean(),
     maxVotesAllowed: Int = positiveRandomInt(),
+    voteCount: Int = positiveRandomInt(),
     voteCountsByOption: Map<String, Int> = emptyMap(),
     allowUserSuggestedOptions: Boolean = randomBoolean(),
     allowAnswers: Boolean = randomBoolean(),
-    options: List<Option> = listOf(randomPollOption()),
+    options: List<Option> = listOf(randomOption()),
     votes: List<Vote> = emptyList(),
     ownVotes: List<Vote> = emptyList(),
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
     closed: Boolean = randomBoolean(),
+    answersCount: Int = positiveRandomInt(),
     answers: List<Answer> = emptyList(),
+    createdBy: User = randomUser(),
+    extraData: Map<String, Any> = randomExtraData(1),
 ): Poll = Poll(
     id = id,
     name = name,
@@ -883,6 +888,7 @@ public fun randomPoll(
     votingVisibility = votingVisibility,
     enforceUniqueVote = enforceUniqueVote,
     maxVotesAllowed = maxVotesAllowed,
+    voteCount = voteCount,
     voteCountsByOption = voteCountsByOption,
     allowUserSuggestedOptions = allowUserSuggestedOptions,
     allowAnswers = allowAnswers,
@@ -892,15 +898,28 @@ public fun randomPoll(
     createdAt = createdAt,
     updatedAt = updatedAt,
     closed = closed,
+    answersCount = answersCount,
     answers = answers,
+    extraData = extraData,
+    createdBy = createdBy,
 )
 
-public fun randomPollOption(
+public fun randomOption(
     id: String = randomString(),
     text: String = randomString(),
 ): Option = Option(
     id = id,
     text = text,
+)
+
+public fun randomPollOption(
+    id: String? = randomString(),
+    text: String = randomString(),
+    extraData: Map<String, Any> = randomExtraData(1),
+): PollOption = PollOption(
+    id = id,
+    text = text,
+    extraData = extraData,
 )
 
 public fun randomPollVote(
