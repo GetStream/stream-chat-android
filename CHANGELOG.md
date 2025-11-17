@@ -1,19 +1,9 @@
-# UNRELEASED CHANGELOG
+# November 17th, 2025 - 6.28.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduce message delivery receipts. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
@@ -35,74 +25,9 @@
 - Deprecate `PollConfig` constructor without support for custom data. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 - Deprecate `ChatClient.suggestPollOption(pollId: String, option: String)` in favour of `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)`. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
 
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Use a Stream specific cache directory for the `coil:3.x.x` instance to avoid potential clash with the default (`image_cache`) directory from an existing `coil2.x.x` instance. [#6002](https://github.com/GetStream/stream-chat-android/pull/6002)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 11th, 2025 - 6.27.0
 ## stream-chat-android-offline
