@@ -31,21 +31,24 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.CreatePollRequestAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamPollDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamPollOptionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamThreadInfoDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
-import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamOptionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
@@ -67,7 +70,6 @@ internal class MoshiChatParser(
             .add(DownstreamModerationDetailsDtoAdapter)
             .add(UpstreamMessageDtoAdapter)
             .add(DownstreamChannelDtoAdapter)
-            .add(UpstreamChannelDtoAdapter)
             .add(AttachmentDtoAdapter)
             .add(DownstreamReactionDtoAdapter)
             .add(UpstreamReactionDtoAdapter)
@@ -79,6 +81,10 @@ internal class MoshiChatParser(
             .add(FlagRequestAdapterFactory)
             .add(DownstreamThreadDtoAdapter)
             .add(DownstreamThreadInfoDtoAdapter)
+            .add(DownstreamPollDtoAdapter)
+            .add(DownstreamPollOptionDtoAdapter)
+            .add(CreatePollRequestAdapter)
+            .add(UpstreamOptionDtoAdapter)
             .build()
     }
 

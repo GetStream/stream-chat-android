@@ -117,7 +117,7 @@ class UserRobot {
     fun deleteMessage(messageCellIndex: Int = 0, hard: Boolean = false): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.delete.waitToAppear().click()
-        ContextMenu.ok.findObject().click()
+        ContextMenu.ok.waitToAppear().click()
         return this
     }
 

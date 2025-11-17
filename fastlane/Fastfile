@@ -65,7 +65,9 @@ lane :build_and_run_e2e_test do |options|
     batch: options[:batch],
     batch_count: options[:batch_count],
     local_server: options[:local_server],
-    mock_server_branch: options[:mock_server_branch]
+    mock_server_branch: options[:mock_server_branch],
+    apk_folder_path: "../#{test_flavor}/build/outputs/apk",
+    use_backend: options[:use_backend]
   )
 end
 
@@ -90,7 +92,7 @@ lane :run_e2e_test do |options|
   install_test_services
   upload_attachments
 
-  stream_apk_folder_path = is_ci ? '..' : "../#{test_flavor}/build/outputs/apk"
+  stream_apk_folder_path = options[:apk_folder_path] || '..'
   stream_app_path = "#{stream_apk_folder_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk"
   stream_test_path = "#{stream_apk_folder_path}/androidTest/e2e/debug/stream-chat-android-compose-sample-e2e-debug-androidTest.apk"
   sh("adb install -r #{stream_app_path}")
@@ -102,16 +104,24 @@ lane :run_e2e_test do |options|
   orchestrator_package_name = 'androidx.test.orchestrator/.AndroidTestOrchestrator'
   androidx_test_services_path = sh('adb shell pm path androidx.test.services').strip
 
-  run_tests_in_batches = batch_tests(
-    batch: options[:batch],
-    batch_count: options[:batch_count],
-    test_apk_path: stream_test_path
-  )
+  backend_test_class = 'io.getstream.chat.android.compose.tests.BackendTests'
+
+  if options[:use_backend]
+    test_filter = "-e class #{backend_test_class}"
+  else
+    run_tests_in_batches = batch_tests(
+      batch: options[:batch],
+      batch_count: options[:batch_count],
+      test_apk_path: stream_test_path
+    )
+    exclude_backend = "-e notClass #{backend_test_class}"
+    test_filter = run_tests_in_batches.empty? ? exclude_backend : "#{run_tests_in_batches} #{exclude_backend}"
+  end
 
   result = sh(
     "adb shell 'CLASSPATH=#{androidx_test_services_path}' " \
     'app_process / androidx.test.services.shellexecutor.ShellMain am instrument -w -e clearPackageData true ' \
-    "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{run_tests_in_batches} #{orchestrator_package_name}"
+    "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{test_filter} #{orchestrator_package_name}"
   )
 
   sh("adb exec-out sh -c 'cd #{adb_test_results_path} && tar cf - #{allure_results_path}' | tar xvf - -C .") if is_ci

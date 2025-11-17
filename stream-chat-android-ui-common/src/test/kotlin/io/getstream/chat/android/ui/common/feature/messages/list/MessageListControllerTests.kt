@@ -47,7 +47,7 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
-import io.getstream.chat.android.randomPollOption
+import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -863,7 +863,7 @@ internal class MessageListControllerTests {
     fun `When calling castVote, ChannelClient castPollVote is invoked`() = runTest {
         val messageId = randomString()
         val pollId = randomString()
-        val option = randomPollOption()
+        val option = randomOption()
         val messagesState = MutableStateFlow(emptyList<Message>())
         val chatClient = mock<ChatClient>()
         val controller = Fixture(chatClient = chatClient)
@@ -873,14 +873,14 @@ internal class MessageListControllerTests {
             .get()
         controller.castVote(messageId, pollId, option)
 
-        verify(chatClient).castPollVote(messageId, pollId, option)
+        verify(chatClient).castPollVote(messageId, pollId, option.id)
     }
 
     @Test
     fun `When castVote fails, errorEvent is emitted`() = runTest {
         val messageId = randomString()
         val pollId = randomString()
-        val option = randomPollOption()
+        val option = randomOption()
         val messagesState = MutableStateFlow(emptyList<Message>())
         val error = Error.GenericError("error")
         val chatClient = mock<ChatClient>()
@@ -909,7 +909,7 @@ internal class MessageListControllerTests {
             .get()
         controller.removeVote(messageId, pollId, vote)
 
-        verify(chatClient).removePollVote(messageId, pollId, vote)
+        verify(chatClient).removePollVote(messageId, pollId, vote.id)
     }
 
     @Test
@@ -1221,11 +1221,11 @@ internal class MessageListControllerTests {
         }
 
         fun givenCastVote(vote: Call<Vote>) = apply {
-            whenever(chatClient.castPollVote(any(), any(), any())) doReturn vote
+            whenever(chatClient.castPollVote(any(), any(), optionId = any())) doReturn vote
         }
 
         fun givenRemoveVote(vote: Call<Vote>) = apply {
-            whenever(chatClient.removePollVote(any(), any(), any())) doReturn vote
+            whenever(chatClient.removePollVote(any(), any(), voteId = any())) doReturn vote
         }
 
         fun givenSendReaction(reaction: Call<Reaction>) = apply {

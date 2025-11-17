@@ -178,11 +178,15 @@ internal class ThreadExtensionsTests {
             allowUserSuggestedOptions = false,
             allowAnswers = false,
             voteCountsByOption = emptyMap(),
+            voteCount = 0,
             votes = emptyList(),
             ownVotes = emptyList(),
             createdAt = now,
             updatedAt = now,
             closed = false,
+            answersCount = 0,
+            answers = emptyList(),
+            createdBy = null,
         )
         val threadWithPoll = baseThread.copy(
             parentMessage = parentMessage.copy(poll = originalPoll),
@@ -216,11 +220,15 @@ internal class ThreadExtensionsTests {
             allowUserSuggestedOptions = false,
             allowAnswers = false,
             voteCountsByOption = emptyMap(),
+            voteCount = 0,
             votes = emptyList(),
             ownVotes = emptyList(),
             createdAt = now,
             updatedAt = now,
             closed = false,
+            answersCount = 0,
+            answers = emptyList(),
+            createdBy = null,
         )
         val newPoll = Poll(
             id = "poll2",
@@ -236,11 +244,15 @@ internal class ThreadExtensionsTests {
             allowUserSuggestedOptions = true,
             allowAnswers = true,
             voteCountsByOption = mapOf("option1" to 5),
+            voteCount = 0,
             votes = emptyList(),
             ownVotes = emptyList(),
             createdAt = now,
             updatedAt = now,
             closed = true,
+            answersCount = 0,
+            answers = emptyList(),
+            createdBy = null,
         )
         val threadWithPoll = baseThread.copy(
             parentMessage = parentMessage.copy(poll = originalPoll),
@@ -275,11 +287,15 @@ internal class ThreadExtensionsTests {
             allowUserSuggestedOptions = false,
             allowAnswers = false,
             voteCountsByOption = emptyMap(),
+            voteCount = 0,
             votes = emptyList(),
             ownVotes = emptyList(),
             createdAt = now,
             updatedAt = now,
             closed = false,
+            answersCount = 0,
+            answers = emptyList(),
+            createdBy = null,
         )
         val updatedParent = parentMessage.copy(
             text = "Updated parent message",

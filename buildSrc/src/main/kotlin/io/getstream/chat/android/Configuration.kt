@@ -2,7 +2,7 @@ package io.getstream.chat.android
 
 object Configuration {
     const val majorVersion = 6
-    const val minorVersion = 27
+    const val minorVersion = 28
     const val patchVersion = 0
     const val versionName = "$majorVersion.$minorVersion.$patchVersion"
     const val snapshotVersionName = "$majorVersion.$minorVersion.${patchVersion + 1}-SNAPSHOT"

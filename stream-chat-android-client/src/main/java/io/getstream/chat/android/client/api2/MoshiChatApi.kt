@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -51,6 +52,7 @@ import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
+import io.getstream.chat.android.client.api2.model.requests.CreatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -63,15 +65,16 @@ import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdatePollRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
-import io.getstream.chat.android.client.api2.model.requests.PollRequest
-import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -80,7 +83,6 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
-import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
@@ -130,13 +132,15 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollVotesResult
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -1569,36 +1573,120 @@ constructor(
             voteId,
         ).mapDomain { it.vote.toDomain() }
 
-    override fun closePoll(pollId: String): Call<Poll> =
-        pollsApi.updatePoll(
-            pollId,
-            PollUpdateRequest(
-                set = mapOf("is_closed" to true),
-            ),
-        ).mapDomain { it.poll.toDomain() }
+    override fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll> {
+        val request = PartialUpdatePollRequest(set, unset)
+        return pollsApi.partialUpdatePoll(pollId, request).mapDomain { it.poll.toDomain() }
+    }
 
-    override fun suggestPollOption(pollId: String, option: String): Call<Option> =
-        pollsApi.suggestPollOption(
-            pollId,
-            SuggestPollOptionRequest(option),
-        ).mapDomain { it.poll_option.toDomain() }
+    override fun closePoll(pollId: String): Call<Poll> {
+        val set = mapOf("is_closed" to true)
+        return partialUpdatePoll(pollId, set, emptyList())
+    }
+
+    override fun createPollOption(pollId: String, option: PollOption): Call<PollOption> {
+        val body = UpstreamOptionDto(
+            text = option.text,
+            extraData = option.extraData,
+        )
+        return pollsApi.createPollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
+    }
+
+    override fun updatePollOption(pollId: String, option: PollOption): Call<PollOption> {
+        val body = UpstreamOptionDto(
+            id = option.id,
+            text = option.text,
+            extraData = option.extraData,
+        )
+        return pollsApi.updatePollOption(pollId, body).mapDomain { it.poll_option.toPollOption() }
+    }
+
+    override fun deletePollOption(pollId: String, optionId: String): Call<Unit> {
+        return pollsApi.deletePollOption(pollId, optionId).toUnitCall()
+    }
+
+    override fun queryPollVotes(
+        pollId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Vote>?,
+    ): Call<QueryPollVotesResult> {
+        val request = QueryPollVotesRequest(
+            filter = filter?.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort?.toDto(),
+        )
+        return pollsApi.queryPollVotes(pollId, request).mapDomain { it.toDomain() }
+    }
+
+    override fun queryPolls(
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Poll>?,
+    ): Call<QueryPollsResult> {
+        val request = QueryPollsRequest(
+            filter = filter?.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort?.toDto(),
+        )
+        return pollsApi.queryPolls(request).mapDomain { it.toDomain() }
+    }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
         return pollsApi.createPoll(
-            PollRequest(
-                name = pollConfig.name,
+            CreatePollRequest(
+                allow_answers = pollConfig.allowAnswers,
+                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
                 description = pollConfig.description,
-                options = pollConfig.options.map(::UpstreamOptionDto),
-                voting_visibility = when (pollConfig.votingVisibility) {
-                    VotingVisibility.PUBLIC -> PollRequest.VOTING_VISIBILITY_PUBLIC
-                    VotingVisibility.ANONYMOUS -> PollRequest.VOTING_VISIBILITY_ANONYMOUS
-                },
                 enforce_unique_vote = pollConfig.enforceUniqueVote,
                 max_votes_allowed = pollConfig.maxVotesAllowed,
-                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
-                allow_answers = pollConfig.allowAnswers,
+                name = pollConfig.name,
+                options = pollConfig.optionsWithExtraData.map {
+                    UpstreamOptionDto(
+                        text = it.text,
+                        extraData = it.extraData,
+                    )
+                },
+                voting_visibility = when (pollConfig.votingVisibility) {
+                    VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
+                    VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+                },
+                extraData = pollConfig.extraData,
             ),
         ).mapDomain { it.poll.toDomain() }
+    }
+
+    override fun updatePoll(request: UpdatePollRequest): Call<Poll> {
+        val body = io.getstream.chat.android.client.api2.model.requests.UpdatePollRequest(
+            allow_answers = request.allowAnswers,
+            allow_user_suggested_options = request.allowUserSuggestedOptions,
+            description = request.description,
+            enforce_unique_vote = request.enforceUniqueVote,
+            id = request.id,
+            is_closed = request.isClosed,
+            max_votes_allowed = request.maxVotesAllowed,
+            name = request.name,
+            options = request.options?.map {
+                UpstreamOptionDto(
+                    id = it.id,
+                    text = it.text,
+                    extraData = it.extraData,
+                )
+            },
+            voting_visibility = when (request.votingVisibility) {
+                VotingVisibility.PUBLIC -> CreatePollRequest.VOTING_VISIBILITY_PUBLIC
+                VotingVisibility.ANONYMOUS -> CreatePollRequest.VOTING_VISIBILITY_ANONYMOUS
+            },
+            extraData = request.extraData,
+        )
+        return pollsApi.updatePoll(body).mapDomain { it.poll.toDomain() }
+    }
+
+    override fun getPoll(pollId: String): Call<Poll> {
+        return pollsApi.getPoll(pollId).mapDomain { it.poll.toDomain() }
     }
 
     override fun deletePoll(pollId: String): Call<Unit> {

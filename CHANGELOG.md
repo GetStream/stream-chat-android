@@ -5,7 +5,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce message delivery receipts. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ⚠️ Changed
 
@@ -15,16 +14,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
 
 ### ✅ Added
-- Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
-- Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
-- Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 - Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
 
 ### ⚠️ Changed
-- Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
 
 ### ❌ Removed
 
@@ -93,6 +87,37 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 17th, 2025 - 6.28.0
+## Common changes for all artifacts
+### ✅ Added
+- Introduce message delivery receipts. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+
+## stream-chat-android-client
+### ⬆️ Improved
+- Use `ExoPlayer` instead of `MediaPlayer` for audio message playback. [#5980](https://github.com/GetStream/stream-chat-android/pull/5980)
+
+### ✅ Added
+- Introduce `Channel.userRead` extension function to get the read status of a specific user in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `Channel.readsOf` extension function to get the read statuses representing which users have read the given message in the channel. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Introduce `ChatClient.markMessageAsDelivered` to mark a message as delivered for the current user. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Add `ChatClient.getPoll(pollId: String)` for retrieving a poll by its ID. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>)` for partially updating a poll. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)` for creating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.updatePollOption(pollId: String, option: UpdatePollOptionRequest)` for updating a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.deletePollOption(pollId: String, optionId: String)` for deleting a poll option. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.queryPollVotes(pollId: String, filter: FilterObject?, limit: Int?, next: String?, sort: QuerySorter<Vote>?)` for querying poll votes with filtering, sorting, and pagination support. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `ChatClient.queryPolls(filter: FilterObject?, limit: Int?, next: String?, sort: QuerySorter<Poll>?)` for querying polls with filtering, sorting, and pagination support. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Add `PollConfig` constructor with support for extra custom data for the poll and the poll options. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+
+### ⚠️ Changed
+- Deprecate `Channel.hasUnread` property in favor of `Channel.currentUserUnreadCount`. [#5979](https://github.com/GetStream/stream-chat-android/pull/5979)
+- Deprecate `PollConfig` constructor without support for custom data. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+- Deprecate `ChatClient.suggestPollOption(pollId: String, option: String)` in favour of `ChatClient.createPollOption(pollId: String, option: CreatePollOptionRequest)`. [#5966](https://github.com/GetStream/stream-chat-android/pull/5966)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Use a Stream specific cache directory for the `coil:3.x.x` instance to avoid potential clash with the default (`image_cache`) directory from an existing `coil2.x.x` instance. [#6002](https://github.com/GetStream/stream-chat-android/pull/6002)
 
 # November 11th, 2025 - 6.27.0
 ## stream-chat-android-offline

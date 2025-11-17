@@ -34,19 +34,24 @@ internal class PollEntity(
     val maxVotesAllowed: Int,
     val allowUserSuggestedOptions: Boolean,
     val allowAnswers: Boolean,
+    val voteCount: Int,
     val voteCountsByOption: Map<String, Int>,
     val votes: List<VoteEntity>,
     val ownVotes: List<VoteEntity>,
     val createdAt: Date,
     val updatedAt: Date,
     val closed: Boolean,
+    val answersCount: Int,
     val answers: List<AnswerEntity>,
+    val createdById: String?,
+    val extraData: Map<String, Any>,
 )
 
 @JsonClass(generateAdapter = true)
 internal class OptionEntity(
     val id: String,
     val text: String,
+    val extraData: Map<String, Any>,
 )
 
 @JsonClass(generateAdapter = true)

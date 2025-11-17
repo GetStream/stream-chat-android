@@ -34,8 +34,8 @@ import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageReminder
+import io.getstream.chat.android.randomOption
 import io.getstream.chat.android.randomPoll
-import io.getstream.chat.android.randomPollOption
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
@@ -611,8 +611,8 @@ internal class ThreadLogicTest {
         // given
         val pollId = randomString()
         val currentUserId = randomString()
-        val optionId1 = randomPollOption()
-        val optionId2 = randomPollOption()
+        val optionId1 = randomOption()
+        val optionId2 = randomOption()
         val initialPoll = randomPoll(
             id = pollId,
             options = listOf(optionId1, optionId2),

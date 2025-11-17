@@ -1,0 +1,39 @@
+name: Backend Checks
+
+on:
+  workflow_dispatch:
+
+env:
+  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
+  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
+  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
+  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test-backend-integration:
+    name: Test Backend Integration
+    runs-on: ubuntu-24.04
+    env:
+      ANDROID_API_LEVEL: 34
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
+      - name: Run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 45
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          disable-animations: true
+          profile: pixel
+          arch : x86_64
+          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          script: bundle exec fastlane build_and_run_e2e_test use_backend:true
+      - name: Upload test results
+        uses: actions/upload-artifact@v4.4.3
+        if: failure()
+        with:
+          name: logs_${{ env.ANDROID_API_LEVEL }}
+          path: fastlane/stream-chat-test-mock-server/logs/*

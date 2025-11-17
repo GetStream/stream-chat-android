@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.UpdatePollRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -43,13 +44,15 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
-import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryPollVotesResult
+import io.getstream.chat.android.models.QueryPollsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -581,7 +584,36 @@ internal interface ChatApi {
     fun createPoll(pollConfig: PollConfig): Call<Poll>
 
     @CheckResult
-    fun suggestPollOption(pollId: String, option: String): Call<Option>
+    fun updatePoll(request: UpdatePollRequest): Call<Poll>
+
+    @CheckResult
+    fun getPoll(pollId: String): Call<Poll>
+
+    @CheckResult
+    fun createPollOption(pollId: String, option: PollOption): Call<PollOption>
+
+    @CheckResult
+    fun updatePollOption(pollId: String, option: PollOption): Call<PollOption>
+
+    @CheckResult
+    fun deletePollOption(pollId: String, optionId: String): Call<Unit>
+
+    @CheckResult
+    fun queryPollVotes(
+        pollId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Vote>?,
+    ): Call<QueryPollVotesResult>
+
+    @CheckResult
+    fun queryPolls(
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Poll>?,
+    ): Call<QueryPollsResult>
 
     @CheckResult
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>
@@ -591,6 +623,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote>
+
+    @CheckResult
+    fun partialUpdatePoll(pollId: String, set: Map<String, Any>, unset: List<String>): Call<Poll>
 
     @CheckResult
     fun closePoll(pollId: String): Call<Poll>

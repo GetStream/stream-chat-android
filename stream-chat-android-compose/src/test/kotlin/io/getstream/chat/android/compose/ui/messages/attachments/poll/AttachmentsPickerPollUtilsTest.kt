@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.compose.ui.text.input.KeyboardType
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
@@ -46,7 +47,7 @@ internal class AttachmentsPickerPollUtilsTest {
         // then
         val expected = PollConfig(
             name = "Poll question",
-            options = listOf("Answer 1", "Answer 2"),
+            options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
             votingVisibility = VotingVisibility.PUBLIC,
             enforceUniqueVote = true,
@@ -103,7 +104,7 @@ internal class AttachmentsPickerPollUtilsTest {
         // then
         val expected = PollConfig(
             name = "Poll question",
-            options = listOf("Answer 1", "Answer 2"),
+            options = listOf(PollOption(text = "Answer 1"), PollOption(text = "Answer 2")),
             description = "",
             votingVisibility = VotingVisibility.ANONYMOUS,
             enforceUniqueVote = false,
