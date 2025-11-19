@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Prevent marking thread replies as delivered. [#6011](https://github.com/GetStream/stream-chat-android/pull/6011)
 
 ### ⬆️ Improved
 
