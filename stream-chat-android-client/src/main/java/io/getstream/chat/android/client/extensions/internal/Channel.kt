@@ -49,13 +49,14 @@ public fun Channel.users(): List<User> {
 }
 
 /**
- * Retrieves the last not deleted [Message] of the [Channel], calculated as the messages with the most recent
- * [Message.createdAt] or [Message.createdLocallyAt].
+ * Retrieves the last not deleted [Message] of the [Channel] which is not a thread reply,
+ * calculated as the message with the most recent [Message.createdAt] or [Message.createdLocallyAt].
  */
 @InternalStreamChatApi
 public val Channel.lastMessage: Message?
     get() = messages
         .filterNot { it.isDeleted() }
+        .filterNot { it.parentId != null && !it.showInChannel }
         .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
 
 /**
