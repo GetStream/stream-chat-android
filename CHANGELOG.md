@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#6013](https://github.com/GetStream/stream-chat-android/pull/6013)
 
 ### ⬆️ Improved
 
