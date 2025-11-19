@@ -179,6 +179,12 @@ internal class MessageReceiptManager(
             return false
         }
 
+        // Do not send delivery receipts for thread replies (which are not sent in channel)
+        if (message.parentId != null && !message.showInChannel) {
+            logger.w { "[canMarkMessageAsDelivered] Message ${message.id} is a reply and not shown in channel" }
+            return false
+        }
+
         val userRead = channel.userRead(currentUser.id) ?: run {
             logger.w {
                 "[canMarkMessageAsDelivered] No read state for user ${currentUser.id} in channel ${channel.cid}"
