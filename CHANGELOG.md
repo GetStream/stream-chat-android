@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Prevent marking thread replies as delivered. [#6011](https://github.com/GetStream/stream-chat-android/pull/6011)
+- Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
 
 ### ⬆️ Improved
 

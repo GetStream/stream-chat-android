@@ -31,6 +31,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldContainAll
 import org.amshove.kluent.shouldNotContain
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
@@ -60,10 +61,10 @@ internal class ChannelExtensionsTests {
     }
 
     @Test
-    fun `lastMessage should return the most recent non-deleted message`() {
+    fun `lastMessage should return the most recent non-deleted message when there are no thread replies`() {
         // given
-        val oldestMsg = randomMessage(createdAt = Date(1000), createdLocallyAt = null, deletedAt = null, deletedForMe = false)
-        val newestMsg = randomMessage(createdAt = Date(3000), createdLocallyAt = null, deletedAt = null, deletedForMe = false)
+        val oldestMsg = randomMessage(createdAt = Date(1000), createdLocallyAt = null, deletedAt = null, deletedForMe = false, parentId = null)
+        val newestMsg = randomMessage(createdAt = Date(3000), createdLocallyAt = null, deletedAt = null, deletedForMe = false, parentId = null)
         val middleMsg = randomMessage(
             createdAt = null,
             createdLocallyAt = Date(2000),
@@ -81,6 +82,138 @@ internal class ChannelExtensionsTests {
 
         // then
         result shouldBeEqualTo newestMsg
+    }
+
+    @Test
+    fun `lastMessage should ignore thread replies not shown in channel`() {
+        // given
+        val parentMsg = randomMessage(
+            id = "parent-1",
+            createdAt = Date(1000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+        val threadReply = randomMessage(
+            id = "reply-1",
+            createdAt = Date(3000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = "parent-1",
+            showInChannel = false,
+        )
+        val regularMsg = randomMessage(
+            id = "regular-1",
+            createdAt = Date(2000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+
+        val channel = randomChannel(
+            messages = listOf(parentMsg, threadReply, regularMsg),
+        )
+
+        // when
+        val result = channel.lastMessage
+
+        // then
+        // Should return regularMsg (2000) instead of threadReply (3000) because thread reply is not shown in channel
+        result shouldBeEqualTo regularMsg
+    }
+
+    @Test
+    fun `lastMessage should include thread replies shown in channel`() {
+        // given
+        val parentMsg = randomMessage(
+            id = "parent-1",
+            createdAt = Date(1000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+        val threadReplyShownInChannel = randomMessage(
+            id = "reply-1",
+            createdAt = Date(3000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = "parent-1",
+            showInChannel = true,
+        )
+        val regularMsg = randomMessage(
+            id = "regular-1",
+            createdAt = Date(2000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+
+        val channel = randomChannel(
+            messages = listOf(parentMsg, threadReplyShownInChannel, regularMsg),
+        )
+
+        // when
+        val result = channel.lastMessage
+
+        // then
+        // Should return threadReplyShownInChannel (3000) because it has showInChannel = true
+        result shouldBeEqualTo threadReplyShownInChannel
+    }
+
+    @Test
+    fun `lastMessage should handle mixed thread replies correctly`() {
+        // given
+        val parentMsg = randomMessage(
+            id = "parent-1",
+            createdAt = Date(1000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+        val threadReplyNotShown = randomMessage(
+            id = "reply-1",
+            createdAt = Date(4000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = "parent-1",
+            showInChannel = false,
+        )
+        val threadReplyShown = randomMessage(
+            id = "reply-2",
+            createdAt = Date(3000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = "parent-1",
+            showInChannel = true,
+        )
+        val regularMsg = randomMessage(
+            id = "regular-1",
+            createdAt = Date(2000),
+            createdLocallyAt = null,
+            deletedAt = null,
+            deletedForMe = false,
+            parentId = null,
+        )
+
+        val channel = randomChannel(
+            messages = listOf(parentMsg, threadReplyNotShown, threadReplyShown, regularMsg),
+        )
+
+        // when
+        val result = channel.lastMessage
+
+        // then
+        // Should return threadReplyShown (3000), ignoring threadReplyNotShown (4000)
+        Assertions.assertEquals(threadReplyShown, result)
     }
 
     @Test
