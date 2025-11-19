@@ -35,7 +35,7 @@ import io.getstream.chat.android.ui.R
  *
  * Usage:
  * ```xml
- * <io.getstream.chat.android.ui.widgets.StreamPlayerView
+ * <io.getstream.chat.android.ui.widgets.internal.StreamPlayerView
  *     android:id="@+id/streamPlayerView"
  *     android:layout_width="match_parent"
  *     android:layout_height="match_parent" />
