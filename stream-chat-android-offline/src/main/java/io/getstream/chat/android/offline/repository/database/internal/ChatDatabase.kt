@@ -217,11 +217,11 @@ private class StreamSQLiteCallback(
     }
 
     override fun onOpen(db: SupportSQLiteDatabase) {
-        delegate.onCreate(db)
+        delegate.onOpen(db)
     }
 
     override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        delegate.onCreate(db)
+        delegate.onUpgrade(db, oldVersion, newVersion)
     }
 
     override fun onDowngrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
