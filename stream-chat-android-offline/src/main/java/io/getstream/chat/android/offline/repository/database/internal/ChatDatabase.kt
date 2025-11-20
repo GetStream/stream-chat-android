@@ -214,29 +214,32 @@ private class StreamSQLiteCallback(
 
     override fun onCreate(db: SupportSQLiteDatabase) {
         delegate.onCreate(db)
+        logger.d { "onCreate called for DB" }
     }
 
     override fun onOpen(db: SupportSQLiteDatabase) {
         delegate.onOpen(db)
+        logger.d { "onOpen called for DB" }
     }
 
     override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
         delegate.onUpgrade(db, oldVersion, newVersion)
+        logger.d { "onUpgrade called for DB" }
     }
 
     override fun onDowngrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
         delegate.onDowngrade(db, oldVersion, newVersion)
+        logger.d { "onDowngrade called for DB" }
     }
 
     override fun onConfigure(db: SupportSQLiteDatabase) {
         delegate.onConfigure(db)
+        logger.d { "onConfigure called for DB" }
     }
 
     override fun onCorruption(db: SupportSQLiteDatabase) {
         delegate.onCorruption(db)
         this.onCorrupted(db)
-        logger.d {
-            "StreamSQLiteCallback onCorruption called for database path=${db.path.orEmpty()}"
-        }
+        logger.d { "onCorruption called for DB" }
     }
 }
