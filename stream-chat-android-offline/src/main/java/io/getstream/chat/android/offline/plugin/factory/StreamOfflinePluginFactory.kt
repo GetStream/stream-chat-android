@@ -83,7 +83,10 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
     override fun createRepositoryFactory(user: User): RepositoryFactory {
         logger.d { "[createRepositoryFactory] user.id: '${user.id}'" }
         return DatabaseRepositoryFactory(
-            database = createDatabase(appContext, user),
+            database = {
+                // Lazily fetch the current instance of ChatDatabase
+                ChatDatabase.getDatabase(appContext, user.id)
+            },
             currentUser = user,
             scope = ChatClient.instance().inheritScope { SupervisorJob(it) },
             ignoredChannelTypes = ignoredChannelTypes,
@@ -225,12 +228,5 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             queryThreadsListener = queryThreadsListener,
             draftMessageListener = draftMessageListener,
         )
-    }
-
-    private fun createDatabase(
-        context: Context,
-        user: User,
-    ): ChatDatabase {
-        return ChatDatabase.getDatabase(context, user.id)
     }
 }

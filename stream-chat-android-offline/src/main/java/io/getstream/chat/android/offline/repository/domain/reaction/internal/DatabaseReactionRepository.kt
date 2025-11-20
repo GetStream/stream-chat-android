@@ -20,16 +20,27 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.launchWithMutex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 /**
  * Repository to read and write reactions. This implementation uses database.
  * We don't do any caching on reactions since usage is infrequent.
+ *
+ * @param scope The [CoroutineScope] to be used for writing operations.
+ * @param reactionDao The [ReactionDao] for accessing the DB.
+ * @param getUser Logic for retrieving a [User] by its ID.
  */
 internal class DatabaseReactionRepository(
+    private val scope: CoroutineScope,
     private val reactionDao: ReactionDao,
     private val getUser: suspend (userId: String) -> User,
 ) : ReactionRepository {
+
+    private val mutex = Mutex()
 
     /**
      * Inserts a reaction.
@@ -41,7 +52,9 @@ internal class DatabaseReactionRepository(
         require(reaction.type.isNotEmpty()) { "type can't be empty when creating a reaction" }
         require(reaction.userId.isNotEmpty()) { "user id can't be empty when creating a reaction" }
 
-        reactionDao.insert(reaction.toEntity())
+        scope.launchWithMutex(mutex) {
+            reactionDao.insert(reaction.toEntity())
+        }
     }
 
     /**
@@ -52,7 +65,9 @@ internal class DatabaseReactionRepository(
      * @param deletedAt Date.
      */
     override suspend fun updateReactionsForMessageByDeletedDate(userId: String, messageId: String, deletedAt: Date) {
-        reactionDao.setDeleteAt(userId, messageId, deletedAt)
+        scope.launchWithMutex(mutex) {
+            reactionDao.setDeleteAt(userId, messageId, deletedAt)
+        }
     }
 
     /**
@@ -132,10 +147,14 @@ internal class DatabaseReactionRepository(
      * @param reaction [Reaction]
      */
     override suspend fun deleteReaction(reaction: Reaction) {
-        reactionDao.delete(reaction.toEntity())
+        scope.launchWithMutex(mutex) {
+            reactionDao.delete(reaction.toEntity())
+        }
     }
 
     override suspend fun clear() {
-        reactionDao.deleteAll()
+        mutex.withLock {
+            reactionDao.deleteAll()
+        }
     }
 }

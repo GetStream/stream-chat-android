@@ -104,7 +104,7 @@ internal class MessageRepositoryTests {
     }
 
     @Test
-    fun `when calling deletePoll, then deletePoll from PollDao is called`() = runTest {
+    fun `when calling deletePoll, then deletePoll from PollDao is called`() = runTest(testDispatcher) {
         // given
         val repository = DatabaseMessageRepository(
             this,

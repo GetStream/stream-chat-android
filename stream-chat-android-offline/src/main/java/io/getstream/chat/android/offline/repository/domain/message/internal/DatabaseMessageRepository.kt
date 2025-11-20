@@ -127,24 +127,24 @@ internal class DatabaseMessageRepository(
             .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
-            .filter { messageCache.get(it.id) != it }
+            .filter { messageCache[it.id] != it }
             .map(Message::toEntity)
         val replyMessages = validMessages
             .mapNotNull { message -> message.replyTo }
 
         val replyMessagesToInsert = replyMessages
-            .filter { replyMessageCache.get(it.id) != it }
+            .filter { replyMessageCache[it.id] != it }
             .map(Message::toReplyEntity)
 
         validMessages.filter { it.isDeleted() }.let { deletedMessageIds.addAll(it.map { it.id }) }
-        (replyMessages + messages)
-            .mapNotNull { it.poll?.toEntity() }
-            .takeUnless { it.isEmpty() }
-            ?.let { pollDao.insertPolls(it) }
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
         scope.launchWithMutex(dbMutex) {
+            (replyMessages + messages)
+                .mapNotNull { it.poll?.toEntity() }
+                .takeUnless { it.isEmpty() }
+                ?.let { pollDao.insertPolls(it) }
             replyMessagesToInsert.takeUnless { it.isEmpty() }
                 ?.let { replyMessageDao.insert(it) }
             messagesToInsert.takeUnless { it.isEmpty() }
@@ -163,11 +163,15 @@ internal class DatabaseMessageRepository(
 
     override suspend fun insertDraftMessage(message: DraftMessage) {
         message.replyMessage?.let { insertMessage(it) }
-        messageDao.insertDraftMessages(message.toEntity())
+        scope.launchWithMutex(dbMutex) {
+            messageDao.insertDraftMessages(message.toEntity())
+        }
     }
 
     override suspend fun deleteDraftMessage(message: DraftMessage) {
-        messageDao.deleteDraftMessage(message.id)
+        scope.launchWithMutex(dbMutex) {
+            messageDao.deleteDraftMessage(message.id)
+        }
     }
 
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
@@ -250,7 +254,9 @@ internal class DatabaseMessageRepository(
     }
 
     override suspend fun deletePoll(pollId: String) {
-        pollDao.deletePoll(pollId)
+        scope.launchWithMutex(dbMutex) {
+            pollDao.deletePoll(pollId)
+        }
     }
 
     override suspend fun clear() {
@@ -327,7 +333,7 @@ internal class DatabaseMessageRepository(
     private fun Message.filterReactions(): Message = copy(
         ownReactions = ownReactions
             .filter { it.deletedAt == null }
-            .filter { currentUser == null || it.userId == currentUser.id },
+            .filter { it.userId == currentUser.id },
         latestReactions = latestReactions.filter { it.deletedAt == null },
     )
 

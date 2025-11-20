@@ -22,6 +22,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteOpenHelper
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import io.getstream.chat.android.offline.repository.database.converter.internal.AnswerConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.DateConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ExtraDataConverter
@@ -69,6 +71,8 @@ import io.getstream.chat.android.offline.repository.domain.threads.internal.Thre
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadOrderEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
+import io.getstream.log.TaggedLogger
+import io.getstream.log.taggedLogger
 
 @Database(
     entities = [
@@ -134,23 +138,105 @@ internal abstract class ChatDatabase : RoomDatabase() {
         fun getDatabase(context: Context, userId: String): ChatDatabase {
             if (!INSTANCES.containsKey(userId)) {
                 synchronized(this) {
-                    val db = Room.databaseBuilder(
-                        context.applicationContext,
-                        ChatDatabase::class.java,
-                        "stream_chat_database_$userId",
-                    ).fallbackToDestructiveMigration()
-                        .addCallback(
-                            object : Callback() {
-                                override fun onOpen(db: SupportSQLiteDatabase) {
-                                    db.execSQL("PRAGMA synchronous = 1")
-                                }
-                            },
-                        )
-                        .build()
+                    val db = createDb(context, userId)
                     INSTANCES[userId] = db
                 }
             }
             return INSTANCES[userId] ?: error("DB not created")
+        }
+
+        private fun createDb(context: Context, userId: String): ChatDatabase {
+            synchronized(this) {
+                val db = Room.databaseBuilder(
+                    context.applicationContext,
+                    ChatDatabase::class.java,
+                    "stream_chat_database_$userId",
+                )
+                    .fallbackToDestructiveMigration()
+                    .addCallback(
+                        object : Callback() {
+                            override fun onOpen(db: SupportSQLiteDatabase) {
+                                db.execSQL("PRAGMA synchronous = 1")
+                            }
+                        },
+                    )
+                    .openHelperFactory(
+                        StreamSQLiteOpenHelperFactory(onCorrupted = {
+                            synchronized(this) {
+                                // Re-instantiate the DB if corrupted
+                                INSTANCES.remove(userId)
+                                INSTANCES[userId] = createDb(context, userId)
+                            }
+                        }),
+                    )
+                    .build()
+                return db
+            }
+        }
+    }
+}
+
+/**
+ * A [SupportSQLiteOpenHelper.Factory] binding the [StreamSQLiteCallback] to the [ChatDatabase] instance.
+ *
+ * @param delegate The original [SupportSQLiteOpenHelper.Factory] to delegate all operations to.
+ * @param onCorrupted Callback invoked when the database is corrupted.
+ */
+private class StreamSQLiteOpenHelperFactory(
+    private val delegate: SupportSQLiteOpenHelper.Factory = FrameworkSQLiteOpenHelperFactory(),
+    private val onCorrupted: (SupportSQLiteDatabase) -> Unit,
+) : SupportSQLiteOpenHelper.Factory {
+
+    override fun create(configuration: SupportSQLiteOpenHelper.Configuration): SupportSQLiteOpenHelper {
+        val callback = StreamSQLiteCallback(configuration.callback, onCorrupted)
+        val newConfig = SupportSQLiteOpenHelper.Configuration.builder(configuration.context)
+            .name(configuration.name)
+            .callback(callback)
+            .noBackupDirectory(configuration.useNoBackupDirectory)
+            .allowDataLossOnRecovery(configuration.allowDataLossOnRecovery)
+            .build()
+        return delegate.create(newConfig)
+    }
+}
+
+/**
+ * A [SupportSQLiteOpenHelper.Callback] informing about the database corruption event.
+ *
+ * @param delegate The original [SupportSQLiteOpenHelper.Callback] to delegate all operations to.
+ * @param onCorrupted Callback invoked when the database is corrupted.
+ */
+private class StreamSQLiteCallback(
+    private val delegate: SupportSQLiteOpenHelper.Callback,
+    private val onCorrupted: (SupportSQLiteDatabase) -> Unit,
+) : SupportSQLiteOpenHelper.Callback(delegate.version) {
+
+    private val logger: TaggedLogger by taggedLogger("Chat:StreamSQLiteCallback")
+
+    override fun onCreate(db: SupportSQLiteDatabase) {
+        delegate.onCreate(db)
+    }
+
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        delegate.onCreate(db)
+    }
+
+    override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        delegate.onCreate(db)
+    }
+
+    override fun onDowngrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        delegate.onDowngrade(db, oldVersion, newVersion)
+    }
+
+    override fun onConfigure(db: SupportSQLiteDatabase) {
+        delegate.onConfigure(db)
+    }
+
+    override fun onCorruption(db: SupportSQLiteDatabase) {
+        delegate.onCorruption(db)
+        this.onCorrupted(db)
+        logger.d {
+            "StreamSQLiteCallback onCorruption called for database path=${db.path.orEmpty()}"
         }
     }
 }

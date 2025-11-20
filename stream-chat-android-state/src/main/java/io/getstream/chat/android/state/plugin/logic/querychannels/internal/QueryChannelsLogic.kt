@@ -119,9 +119,6 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>) {
-        var cids = queryChannelsStateLogic.getQuerySpecs().cids
-        cids += channels.map { it.cid }
-
         queryChannelsStateLogic.addChannelsState(channels)
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
@@ -294,16 +291,6 @@ internal class QueryChannelsLogic(
      */
     internal fun refreshAllChannelsState() {
         queryChannelsStateLogic.getQuerySpecs().cids.let(::refreshChannelsState)
-    }
-
-    internal suspend fun parseChatEventResult(chatEvent: ChatEvent): EventHandlingResult {
-        val cachedChannel = if (chatEvent is CidEvent) {
-            queryChannelsDatabaseLogic.selectChannel(chatEvent.cid)
-        } else {
-            null
-        }
-
-        return queryChannelsStateLogic.handleChatEvent(chatEvent, cachedChannel)
     }
 
     internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {

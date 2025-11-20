@@ -24,10 +24,15 @@ import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.launchWithMutex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Implementation of the [ThreadsRepository] backed by a database.
  *
+ * @param scope The [CoroutineScope] to use for write operations.
  * @param threadDao The [ThreadDao] implementation for accessing the threads data.
  * @param threadOrderDao The [ThreadOrderDao] implementation for accessing the thread order data.
  * @param getUser Logic for retrieving a [User] by its ID.
@@ -36,7 +41,9 @@ import io.getstream.chat.android.models.User
  * @param getDraftMessage Logic for retrieving a [DraftMessage] by the Message ID it belongs to.
  * @param cacheSize The number of threads to cache.
  */
+@Suppress("LongParameterList")
 internal class DatabaseThreadsRepository(
+    private val scope: CoroutineScope,
     private val threadDao: ThreadDao,
     private val threadOrderDao: ThreadOrderDao,
     private val getUser: suspend (userId: String) -> User,
@@ -47,9 +54,12 @@ internal class DatabaseThreadsRepository(
 ) : ThreadsRepository {
 
     private val cache = LruCache<String, Thread>(cacheSize)
+    private val mutex = Mutex()
 
     override suspend fun insertThreadOrder(id: String, order: List<String>) {
-        threadOrderDao.insertThreadOrder(ThreadOrderEntity(id, order))
+        scope.launchWithMutex(mutex) {
+            threadOrderDao.insertThreadOrder(ThreadOrderEntity(id, order))
+        }
     }
 
     override suspend fun selectThreadOrder(id: String): List<String> {
@@ -62,8 +72,10 @@ internal class DatabaseThreadsRepository(
             cache.put(thread.parentMessageId, thread)
         }
         // Update DB
-        val entities = threads.map(Thread::toEntity)
-        threadDao.insertThreads(entities)
+        scope.launchWithMutex(mutex) {
+            val entities = threads.map(Thread::toEntity)
+            threadDao.insertThreads(entities)
+        }
     }
 
     override suspend fun upsertMessageInThread(message: Message) {
@@ -76,7 +88,9 @@ internal class DatabaseThreadsRepository(
         // Update cache
         cache.put(threadId, updatedThread)
         // Update DB
-        threadDao.insertThread(updatedThread.toEntity())
+        scope.launchWithMutex(mutex) {
+            threadDao.insertThread(updatedThread.toEntity())
+        }
     }
 
     override suspend fun upsertMessagesInThread(messages: List<Message>) {
@@ -113,7 +127,9 @@ internal class DatabaseThreadsRepository(
             }
             .map(Thread::toEntity)
         // Update DB
-        threadDao.insertThreads(updatedThreads)
+        scope.launchWithMutex(mutex) {
+            threadDao.insertThreads(updatedThreads)
+        }
     }
 
     override suspend fun selectThread(id: String): Thread? {
@@ -140,12 +156,16 @@ internal class DatabaseThreadsRepository(
 
     override suspend fun deleteChannelThreads(cid: String) {
         cache.evictAll()
-        threadDao.deleteThreads(cid)
+        scope.launchWithMutex(mutex) {
+            threadDao.deleteThreads(cid)
+        }
     }
 
     override suspend fun clear() {
         cache.evictAll()
-        threadDao.deleteAll()
-        threadOrderDao.deleteAll()
+        mutex.withLock {
+            threadDao.deleteAll()
+            threadOrderDao.deleteAll()
+        }
     }
 }

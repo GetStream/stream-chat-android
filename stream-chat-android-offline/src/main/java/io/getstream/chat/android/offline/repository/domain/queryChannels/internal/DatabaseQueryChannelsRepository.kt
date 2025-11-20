@@ -21,13 +21,23 @@ import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.offline.extensions.launchWithMutex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * Repository for queries of channels. This implementation uses the database.
+ *
+ * @param scope The [CoroutineScope] to be used for writing operations.
+ * @param queryChannelsDao The [QueryChannelsDao] for accessing the DB.
  */
 internal class DatabaseQueryChannelsRepository(
+    private val scope: CoroutineScope,
     private val queryChannelsDao: QueryChannelsDao,
 ) : QueryChannelsRepository {
+
+    private val mutex = Mutex()
 
     /**
      * Inserts a query channels.
@@ -35,7 +45,9 @@ internal class DatabaseQueryChannelsRepository(
      * @param queryChannelsSpec [QueryChannelsSpec]
      */
     override suspend fun insertQueryChannels(queryChannelsSpec: QueryChannelsSpec) {
-        queryChannelsDao.insert(toEntity(queryChannelsSpec))
+        scope.launchWithMutex(mutex) {
+            queryChannelsDao.insert(toEntity(queryChannelsSpec))
+        }
     }
 
     /**
@@ -49,7 +61,9 @@ internal class DatabaseQueryChannelsRepository(
     }
 
     override suspend fun clear() {
-        queryChannelsDao.deleteAll()
+        mutex.withLock {
+            queryChannelsDao.deleteAll()
+        }
     }
 
     private companion object {

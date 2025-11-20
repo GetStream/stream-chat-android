@@ -47,6 +47,7 @@ internal interface MessageDao {
     @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
     fun deleteAttachmentsChunked(messageIds: List<String>)
 
+    @Deprecated("This method is no longer used and will be removed in the future.")
     @Transaction
     suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
 
@@ -59,6 +60,7 @@ internal interface MessageDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     fun updateMessageInnerEntity(messageInnerEntity: MessageInnerEntity)
 
+    @Deprecated("This method is no longer used and will be removed in the future.")
     @Transaction
     suspend fun upsertMessageInnerEntity(messageInnerEntity: MessageInnerEntity) {
         val rowId = insertMessageInnerEntity(messageInnerEntity)
