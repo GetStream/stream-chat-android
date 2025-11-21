@@ -151,7 +151,7 @@ internal class QueryChannelsMutableState(
     /**
      * Set the end of channels.
      *
-     * @parami isEnd Boolean
+     * @param isEnd If the end of channels is reached.
      */
     fun setEndOfChannels(isEnd: Boolean) {
         _endOfChannels?.value = isEnd

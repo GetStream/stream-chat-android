@@ -31,11 +31,16 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
+import kotlin.math.min
 
 private const val MESSAGE_LIMIT = 1
 private const val MEMBER_LIMIT = 30
 private const val INITIAL_CHANNEL_OFFSET = 0
-private const val CHANNEL_LIMIT = 30
+
+/**
+ * Hard limit for channels per page as defined by back-end.
+ */
+private const val HARD_CHANNEL_LIMIT = 30
 
 @Suppress("TooManyFunctions")
 internal class QueryChannelsLogic(
@@ -119,9 +124,6 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>) {
-        var cids = queryChannelsStateLogic.getQuerySpecs().cids
-        cids += channels.map { it.cid }
-
         queryChannelsStateLogic.addChannelsState(channels)
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
@@ -150,7 +152,7 @@ internal class QueryChannelsLogic(
         val request = QueryChannelsRequest(
             filter = filter,
             offset = INITIAL_CHANNEL_OFFSET,
-            limit = CHANNEL_LIMIT,
+            limit = HARD_CHANNEL_LIMIT,
             querySort = sort,
             messageLimit = MESSAGE_LIMIT,
             memberLimit = MEMBER_LIMIT,
@@ -170,7 +172,8 @@ internal class QueryChannelsLogic(
             is Result.Success -> {
                 // store the results in the database
                 val channelsResponse = result.value.toSet()
-                queryChannelsStateLogic.setEndOfChannels(channelsResponse.size < request.limit)
+                val endOfChannels = channelsResponse.size < min(HARD_CHANNEL_LIMIT, request.limit)
+                queryChannelsStateLogic.setEndOfChannels(endOfChannels)
 
                 val channelConfigs = channelsResponse.map { ChannelConfig(it.type, it.config) }
                 // first things first, store the configs
