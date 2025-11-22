@@ -728,6 +728,8 @@ public class ChannelClient internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message object that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param hideHistoryBefore Hides the channel history before the provided date from the added members. If
+     * [hideHistory] and [hideHistoryBefore] are both specified, [hideHistoryBefore] takes precedence.
      * @param skipPush Skip sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
@@ -737,6 +739,7 @@ public class ChannelClient internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        hideHistoryBefore: Date? = null,
         skipPush: Boolean? = null,
     ): Call<Channel> {
         return client.addMembers(
@@ -745,6 +748,7 @@ public class ChannelClient internal constructor(
             memberIds = memberIds,
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
             skipPush = skipPush,
         )
     }

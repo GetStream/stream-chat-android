@@ -18,18 +18,22 @@ package io.getstream.chat.android.client.query
 
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import java.util.Date
 
 /**
  * Model holding data required for adding members to a channel.
  *
  * @param members The list of the members with extra data to be added.
- * @param hideHistory Hides the history of the channel to the added members.
- * @param skipPush If true, skips sending push notifications.
  * @param systemMessage The system message that will be shown in the channel.
+ * @param hideHistory Hides the history of the channel from the added members.
+ * @param hideHistoryBefore Hides the channel history before the provided date from the added members. If [hideHistory]
+ * and [hideHistoryBefore] are both specified, [hideHistoryBefore] takes precedence.
+ * @param skipPush If true, skips sending push notifications.
  */
 public data class AddMembersParams(
     val members: List<MemberData>,
     val systemMessage: Message? = null,
     val hideHistory: Boolean? = null,
+    val hideHistoryBefore: Date? = null,
     val skipPush: Boolean? = null,
 )

@@ -420,6 +420,7 @@ internal interface ChatApi {
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel>
 

@@ -40,6 +40,7 @@ import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
@@ -57,6 +58,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.spy
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -1243,13 +1245,16 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val memberIds = listOf(randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val response = randomChannel()
         val sut = Fixture()
             .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
             .get()
         // when
-        val result = sut.addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = sut
+            .addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
+            .await()
         // then
         verifySuccess(result, response)
     }
@@ -1262,13 +1267,16 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val memberIds = listOf(randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
             .givenAddMembersResult(RetroError<Channel>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = sut
+            .addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
+            .await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -1582,7 +1590,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenAddMembersResult(result: Call<Channel>) = apply {
-            whenever(api.addMembers(any(), any(), any(), any(), any(), any())).thenReturn(result)
+            whenever(api.addMembers(any(), any(), any(), any(), any(), anyOrNull(), any())).thenReturn(result)
         }
 
         fun givenRemoveMembersResult(result: Call<Channel>) = apply {

@@ -1012,6 +1012,7 @@ constructor(
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.addMembers(
@@ -1022,6 +1023,7 @@ constructor(
                     add_members = members.map { it.toDto() },
                     message = systemMessage?.toDto(),
                     hide_history = hideHistory,
+                    hide_history_before = hideHistoryBefore,
                     skip_push = skipPush,
                 )
             },
