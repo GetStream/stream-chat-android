@@ -80,10 +80,12 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
  * [ChannelMessageLimit] for configuration details.
  */
 public data class StatePluginConfig @JvmOverloads constructor(
-    @Deprecated("The background sync on push notification is no longer needed to keep the state in sync and " +
-        "will be removed in the future. If you are using the default UI components, or building your own UI using " +
-        "[ChatClient.queryChannelsAsState] / [ChatClient.watchChannelAsState], the state will always be up-to-date. " +
-        "We recommend disabling it to avoid unnecessary background work.")
+    @Deprecated(
+        "The background sync on push notification is no longer needed to keep the state in sync and " +
+            "will be removed in the future. If you are using the default UI components, or building your own UI " +
+            "using [ChatClient.queryChannelsAsState] / [ChatClient.watchChannelAsState], the state will always be " +
+            "up-to-date. We recommend disabling it to avoid unnecessary background work.",
+    )
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val isAutomaticSyncOnReconnectEnabled: Boolean = true,
