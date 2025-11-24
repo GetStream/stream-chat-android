@@ -438,6 +438,85 @@ internal class SyncManagerTest {
         verify(chatClient).deleteMessageForMe(message.id)
     }
 
+    @Test
+    fun `when isAutomaticSyncOnReconnectEnabled is true, getSyncHistory should be called on connected event`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val testSyncState = SyncState(
+                userId = user.id,
+                activeChannelIds = listOf(randomCID()),
+                lastSyncedAt = createdAt,
+                rawLastSyncedAt = rawCreatedAt,
+                markedAllReadAt = createdAt,
+            )
+
+            val mockedChatEvent: ChatEvent = mock {
+                on(it.createdAt) doReturn createdAt
+                on(it.rawCreatedAt) doReturn rawCreatedAt
+            }
+
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn testSyncState
+            whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+                Result.Success(listOf(mockedChatEvent)),
+            )
+            whenever(clientState.isOnline) doReturn true
+
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = true)
+
+            val connectingEvent = ConnectedEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+                me = user,
+            )
+
+            /* When */
+            syncManager.onEvent(connectingEvent)
+            delay(100)
+
+            /* Then */
+            verify(chatClient).getSyncHistory(any(), any<String>())
+        }
+
+    @Test
+    fun `when isAutomaticSyncOnReconnectEnabled is false, getSyncHistory should not be called on connected event`() =
+        runTest(testDispatcher) {
+            /* Given */
+            val createdAt = localDate()
+            val rawCreatedAt = streamDateFormatter.format(createdAt)
+            val testSyncState = SyncState(
+                userId = user.id,
+                activeChannelIds = listOf(randomCID()),
+                lastSyncedAt = createdAt,
+                rawLastSyncedAt = rawCreatedAt,
+                markedAllReadAt = createdAt,
+            )
+
+            whenever(repositoryFacade.selectSyncState(user.id)) doReturn testSyncState
+            whenever(clientState.isOnline) doReturn true
+
+            val syncManager = buildSyncManager(isAutomaticSyncOnReconnectEnabled = false)
+
+            val connectingEvent = ConnectedEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+                me = user,
+            )
+
+            /* When */
+            syncManager.onEvent(connectingEvent)
+            delay(100)
+
+            /* Then */
+            verify(chatClient, never()).getSyncHistory(any(), any<String>())
+            verify(chatClient, never()).getSyncHistory(any(), any<Date>())
+        }
+
     private fun TestScope.localRandomMessage() = randomMessage(
         createdLocallyAt = Date(currentTime),
         createdAt = null,
@@ -448,7 +527,10 @@ internal class SyncManagerTest {
 
     private fun TestScope.localDate() = Date(currentTime)
 
-    private fun TestScope.buildSyncManager(syncMaxThreshold: TimeDuration = TimeDuration.seconds(5)): SyncManager {
+    private fun TestScope.buildSyncManager(
+        isAutomaticSyncOnReconnectEnabled: Boolean = true,
+        syncMaxThreshold: TimeDuration = TimeDuration.seconds(5),
+    ): SyncManager {
         return SyncManager(
             currentUserId = user.id,
             scope = backgroundScope,
@@ -461,6 +543,7 @@ internal class SyncManagerTest {
             userPresence = true,
             events = _syncEvents,
             syncState = _syncState,
+            isAutomaticSyncOnReconnectEnabled = isAutomaticSyncOnReconnectEnabled,
             syncMaxThreshold = syncMaxThreshold,
             now = { currentTime },
         )
