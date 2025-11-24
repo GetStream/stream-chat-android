@@ -43,6 +43,7 @@
 - Add `StatePluginConfig.isAutomaticSyncOnReconnectEnabled` for configuring the automatic sync process on connect/reconnect. [#6017](https://github.com/GetStream/stream-chat-android/pull/6017)
 
 ### ⚠️ Changed
+- Deprecate `StatePluginConfig.backgroundSyncEnabled`. [#6017](https://github.com/GetStream/stream-chat-android/pull/6017)
 
 ### ❌ Removed
 
