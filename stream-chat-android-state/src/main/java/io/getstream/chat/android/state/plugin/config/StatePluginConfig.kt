@@ -59,11 +59,11 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
  * ```
  *
  * @param syncMaxThreshold The maximum age threshold for pending local operations (channels, messages, reactions)
- *  * before they are considered too old to retry and are discarded. Default is 12 hours. When the SDK attempts to
- *  * retry failed operations (e.g., sending a message, creating a channel, adding a reaction) upon reconnection, it
- *  * checks if the operation's timestamp (createdLocallyAt, updatedLocallyAt, deletedAt, or createdAt) exceeds this
- *  * threshold. If it does, the operation is removed from the local database instead of being retried, preventing
- *  * the SDK from attempting to sync stale operations that are no longer relevant.
+ * before they are considered too old to retry and are discarded. Default is 12 hours. When the SDK attempts to
+ * retry failed operations (e.g., sending a message, creating a channel, adding a reaction) upon reconnection, it
+ * checks if the operation's timestamp (createdLocallyAt, updatedLocallyAt, deletedAt, or createdAt) exceeds this
+ * threshold. If it does, the operation is removed from the local database instead of being retried, preventing
+ * the SDK from attempting to sync stale operations that are no longer relevant.
  *
  * @param now A function that provides the current time in milliseconds since epoch (Unix timestamp). Defaults to
  * [System.currentTimeMillis]. This is used throughout the state plugin for time-based operations such as:
@@ -80,6 +80,10 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
  * [ChannelMessageLimit] for configuration details.
  */
 public data class StatePluginConfig @JvmOverloads constructor(
+    @Deprecated("The background sync on push notification is no longer needed to keep the state in sync and " +
+        "will be removed in the future. If you are using the default UI components, or building your own UI using " +
+        "[ChatClient.queryChannelsAsState] / [ChatClient.watchChannelAsState], the state will always be up-to-date. " +
+        "We recommend disabling it to avoid unnecessary background work.")
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val isAutomaticSyncOnReconnectEnabled: Boolean = true,
