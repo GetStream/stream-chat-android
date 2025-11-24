@@ -237,7 +237,12 @@ internal class ChannelLogic(
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult = runChannelQueryOnline(request)
-            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
+            .onSuccess {
+                // Fill the missing messages gap only if loading around ID
+                if (request.isFilteringAroundIdMessages()) {
+                    fillTheGap(request.messagesLimit(), loadedMessages, it.messages)
+                }
+            }
 
         return when {
             onlineResult is Result.Success -> onlineResult
@@ -478,15 +483,6 @@ internal class ChannelLogic(
      */
     private fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
         channelStateLogic.removeMessagesBefore(date, systemMessage)
-    }
-
-    /**
-     * Hides the messages created before the given date.
-     *
-     * @param date The date used for generating result.
-     */
-    internal fun hideMessagesBefore(date: Date) {
-        channelStateLogic.hideMessagesBefore(date)
     }
 
     private fun upsertReminder(messageId: String, reminder: MessageReminder) {
