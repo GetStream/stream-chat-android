@@ -476,7 +476,7 @@ private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: In
  * The threshold of items away from the bottom of the list to auto-scroll / show the scroll to bottom button.
  * Set to 2 to also consider the Typing indicator as part of the visible items.
  */
-private const val AutoScrollThreshold = 2
+private const val AutoScrollThreshold = 3
 
 /**
  * The default loading more indicator.
