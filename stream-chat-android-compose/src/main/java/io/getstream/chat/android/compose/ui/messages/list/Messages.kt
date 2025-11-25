@@ -411,7 +411,7 @@ private fun shouldScrollToBottomOnNewMessage(
     return focusedItemIndex == -1 &&
         !isScrollInProgress &&
         areNewestMessagesLoaded &&
-        (firstVisibleItemIndex < 3 || newMessageState is MyOwn)
+        (firstVisibleItemIndex < AutoScrollThreshold || newMessageState is MyOwn)
 }
 
 /**
@@ -469,8 +469,14 @@ private fun isScrollToBottomButtonVisibleInMessageList(
  * @return Whether the scroll to bottom button should be visible given the first visible item index.
  */
 private fun shouldScrollToBottomButtonBeVisibleAtIndex(firstVisibleItemIndex: Int): Boolean {
-    return abs(firstVisibleItemIndex) >= 3
+    return abs(firstVisibleItemIndex) >= AutoScrollThreshold
 }
+
+/**
+ * The threshold of items away from the bottom of the list to auto-scroll / show the scroll to bottom button.
+ * Set to 2 to also consider the Typing indicator as part of the visible items.
+ */
+private const val AutoScrollThreshold = 2
 
 /**
  * The default loading more indicator.
