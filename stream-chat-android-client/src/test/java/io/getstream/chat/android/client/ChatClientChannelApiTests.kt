@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundExcept
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -1260,6 +1261,25 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun addMembersWithDefaultArgumentsSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val response = randomChannel()
+        val sut = spy(
+            Fixture()
+                .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
+                .get(),
+        )
+        // when
+        val result = sut.addMembers(channelType, channelId, memberIds).await()
+        // then
+        verifySuccess(result, response)
+        verify(sut).addMembers(channelType, channelId, memberIds, null, null, null, null)
+    }
+
+    @Test
     fun addMembersError() = runTest {
         // given
         val channelType = randomString()
@@ -1277,6 +1297,60 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val result = sut
             .addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
             .await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun addMembersWithParamsSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val systemMessage = randomMessage()
+        val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
+        val skipPush = randomBoolean()
+        val params = AddMembersParams(
+            members = memberIds.map { MemberData(it) },
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
+            skipPush = skipPush,
+        )
+        val response = randomChannel()
+        val sut = Fixture()
+            .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.addMembers(channelType, channelId, params).await()
+        // then
+        verifySuccess(result, response)
+    }
+
+    @Test
+    fun addMembersWithParamsError() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val systemMessage = randomMessage()
+        val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
+        val skipPush = randomBoolean()
+        val params = AddMembersParams(
+            members = memberIds.map { MemberData(it) },
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
+            skipPush = skipPush,
+        )
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenAddMembersResult(RetroError<Channel>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.addMembers(channelType, channelId, params).await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -1590,7 +1664,17 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenAddMembersResult(result: Call<Channel>) = apply {
-            whenever(api.addMembers(any(), any(), any(), any(), any(), anyOrNull(), any())).thenReturn(result)
+            whenever(
+                api.addMembers(
+                    any(),
+                    any(),
+                    any(),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull()
+                )
+            ).thenReturn(result)
         }
 
         fun givenRemoveMembersResult(result: Call<Channel>) = apply {
