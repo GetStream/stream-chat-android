@@ -27,8 +27,6 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
-    alias(libs.plugins.sonarqube) apply false
-    alias(libs.plugins.kover) apply false
     id("io.getstream.chat.ReleasePlugin")
     id("io.getstream.chat.ChangelogReleaseSectionPlugin")
     alias(libs.plugins.gitversioner)
@@ -40,6 +38,28 @@ plugins {
 streamProject {
     spotless {
         ignoredModules = setOf("stream-chat-android-docs")
+    }
+
+    coverage {
+        includedModules = setOf(
+            "stream-chat-android-client",
+            "stream-chat-android-compose",
+            "stream-chat-android-core",
+            "stream-chat-android-markdown-transformer",
+            "stream-chat-android-offline",
+            "stream-chat-android-state",
+            "stream-chat-android-ui-common",
+            "stream-chat-android-ui-utils",
+        )
+    }
+}
+
+afterEvaluate {
+    tasks.named("testCoverage") {
+        // Run Paparazzi tests of the UI Components module but do not include its coverage in the report
+        // until we can update Paparazzi and Kover libraries alongside Kotlin and Compose.
+        // See https://linear.app/stream/issue/AND-819/update-paparazzi-and-kover-libraries
+        dependsOn("stream-chat-android-ui-components:verifyPaparazziDebug")
     }
 }
 
@@ -54,8 +74,6 @@ buildscript {
 }
 
 apply(from = "${rootDir}/scripts/sample-app-versioner.gradle")
-apply(from = "${rootDir}/scripts/sonar.gradle")
-apply(from = "${rootDir}/scripts/coverage.gradle")
 
 subprojects {
     // Configure Android projects with common SDK versions as soon as either plugin is applied
