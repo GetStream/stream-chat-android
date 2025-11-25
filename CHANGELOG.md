@@ -69,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Prevent the message list from auto-scrolling when receiving a message if it was scrolled beyond the last message. [#6019](https://github.com/GetStream/stream-chat-android/pull/6019)
 
 ### ⬆️ Improved
 
