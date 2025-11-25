@@ -1672,8 +1672,8 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
                     anyOrNull(),
                     anyOrNull(),
                     anyOrNull(),
-                    anyOrNull()
-                )
+                    anyOrNull(),
+                ),
             ).thenReturn(result)
         }
 
