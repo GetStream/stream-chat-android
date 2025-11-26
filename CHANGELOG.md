@@ -18,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add option to hide history before given date when adding members to a channel. [#6020](https://github.com/GetStream/stream-chat-android/pull/6020)
 
 ### ⚠️ Changed
 
