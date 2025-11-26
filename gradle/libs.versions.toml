@@ -79,8 +79,7 @@ room = "2.6.1"
 shimmer = "0.5.0"
 shimmerCompose = "1.3.1"
 shot = "6.1.0"
-sonarqube = "6.0.1.5171"
-streamConventions = "0.3.0"
+streamConventions = "0.4.0"
 streamLog = "1.3.2"
 streamPush = "1.3.1"
 streamResult = "1.3.2"
@@ -90,7 +89,6 @@ timber = "5.0.1"
 turbine = "1.2.0"
 work = "2.9.1"
 playServicesLocation = "21.3.0"
-kover = "0.9.2"
 mavenPublish = "0.34.0"
 
 [libraries]
@@ -246,10 +244,8 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish"}
 shot = { id = "shot", version.ref = "shot"}
-sonarqube = { id = "org.sonarqube", version.ref = "sonarqube"}
 stream-project = { id = "io.getstream.project", version.ref = "streamConventions" }
 stream-android-library = { id = "io.getstream.android.library", version.ref = "streamConventions" }
 stream-android-application = { id = "io.getstream.android.application", version.ref = "streamConventions" }
 stream-java-library = { id = "io.getstream.java.library", version.ref = "streamConventions" }
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi"}
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"}
