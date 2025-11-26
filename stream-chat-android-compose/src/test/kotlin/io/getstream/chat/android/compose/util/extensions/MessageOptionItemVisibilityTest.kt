@@ -55,7 +55,11 @@ internal class MessageOptionItemVisibilityTest {
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canThreadReplyToMessage(isInThread, message, ownCapabilities) `should be` expectedResult
+        messageOptionItemVisibility.canThreadReplyToMessage(
+            isInThread,
+            message,
+            ownCapabilities,
+        ) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -408,40 +412,62 @@ internal class MessageOptionItemVisibilityTest {
             ),
         )
 
+        @Suppress("LongMethod")
         @JvmStatic
         fun canThreadReplyToMessageArguments() = listOf(
+            // case: threads disabled
             Arguments.of(
                 MessageOptionItemVisibility(isThreadReplyVisible = false),
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 MessageOptionItemVisibility(),
                 randomBoolean(),
-                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
+                ),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no SEND_REPLY capability
             Arguments.of(
                 MessageOptionItemVisibility(),
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: already in thread
             Arguments.of(
                 MessageOptionItemVisibility(isThreadReplyVisible = true),
                 true,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message is a thread reply
             Arguments.of(
                 MessageOptionItemVisibility(isThreadReplyVisible = true),
                 false,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(
+                    parentId = "parentId",
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                MessageOptionItemVisibility(isThreadReplyVisible = true),
+                false,
+                randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 true,
             ),
