@@ -1516,8 +1516,9 @@ internal class MoshiChatApiTest {
         val members = listOf(randomMemberData())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
-        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush).await()
+        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         result `should be instance of` expected
         verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())

@@ -266,7 +266,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh"), null, false, false).enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), null, false, null, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
@@ -294,7 +294,7 @@ public class Channels {
                     .withText("Thierry and Josh were added to this channel")
                     .build();
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage, false, false).enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage, false, null, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
