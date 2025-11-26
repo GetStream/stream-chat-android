@@ -19,8 +19,8 @@
 package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.client.utils.attachment.isGiphy
-import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
+import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -67,7 +67,7 @@ public fun canReplyToMessage(
  * A thread reply is allowed when:
  * - Thread functionality is enabled in the UI configuration
  * - The user is not currently viewing a thread
- * - The message does not already belong to a thread
+ * - The message is not a thread reply
  * - The message has been successfully synced with the backend
  * - The user has the capability to send replies in the channel
  *
@@ -85,7 +85,7 @@ public fun canThreadReplyToMessage(
 ): Boolean =
     threadsEnabled &&
         !isInThread &&
-        !message.belongsToThread() &&
+        !message.isThreadReply() &&
         message.isSynced() &&
         ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
 

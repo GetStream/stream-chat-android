@@ -27,7 +27,6 @@ import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomSyncStatus
-import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.randomMessageListViewStyle
 import org.amshove.kluent.`should be`
@@ -446,18 +445,6 @@ internal class MessageListViewExtensionsKtTest {
                 randomMessageListViewStyle(threadsEnabled = true),
                 true,
                 randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
-                randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
-                false,
-            ),
-            // case: message is a thread root
-            Arguments.of(
-                randomMessageListViewStyle(threadsEnabled = true),
-                false,
-                randomMessage(
-                    parentId = null,
-                    threadParticipants = listOf(randomUser()),
-                    syncStatus = SyncStatus.COMPLETED,
-                ),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),

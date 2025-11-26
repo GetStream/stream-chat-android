@@ -28,7 +28,6 @@ import io.getstream.chat.android.randomChannelCapabilities
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomSyncStatus
-import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -449,18 +448,6 @@ internal class MessageOptionItemVisibilityTest {
                 MessageOptionItemVisibility(isThreadReplyVisible = true),
                 true,
                 randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
-                randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
-                false,
-            ),
-            // case: message is a thread root
-            Arguments.of(
-                MessageOptionItemVisibility(isThreadReplyVisible = true),
-                false,
-                randomMessage(
-                    parentId = null,
-                    threadParticipants = listOf(randomUser()),
-                    syncStatus = SyncStatus.COMPLETED,
-                ),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
