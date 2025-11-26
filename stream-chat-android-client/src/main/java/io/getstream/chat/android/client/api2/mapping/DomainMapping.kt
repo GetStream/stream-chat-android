@@ -163,6 +163,7 @@ internal class DomainMapping(
             name = name ?: "",
             image = image ?: "",
             watcherCount = watcher_count,
+            filterTags = filter_tags.orEmpty(),
             frozen = frozen,
             createdAt = created_at,
             deletedAt = deleted_at,

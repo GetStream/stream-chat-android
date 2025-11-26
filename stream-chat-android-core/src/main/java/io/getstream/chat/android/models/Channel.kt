@@ -61,6 +61,7 @@ import java.util.Date
  * @param activeLiveLocations The list of active live locations in the channel.
  * @param messageCount The total number of messages in the channel.
  * @param pushPreference Channel-specific push preferences (if set).
+ * @param filterTags The list of filter tags applied to the channel.
  */
 @Immutable
 public data class Channel(
@@ -104,6 +105,7 @@ public data class Channel(
     val activeLiveLocations: List<Location> = emptyList(),
     val messageCount: Int? = null,
     val pushPreference: PushPreference? = null,
+    val filterTags: List<String> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -207,6 +209,7 @@ public data class Channel(
         private var activeLiveLocations: List<Location> = emptyList()
         private var messageCount: Int? = null
         private var pushPreference: PushPreference? = null
+        private var filterTags: List<String> = emptyList()
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -241,6 +244,7 @@ public data class Channel(
             activeLiveLocations = channel.activeLiveLocations
             messageCount = channel.messageCount
             pushPreference = channel.pushPreference
+            filterTags = channel.filterTags
             extraData = channel.extraData
         }
 
@@ -291,6 +295,7 @@ public data class Channel(
         public fun withPushPreference(pushPreference: PushPreference?): Builder = apply {
             this.pushPreference = pushPreference
         }
+        public fun withFilterTags(filterTags: List<String>): Builder = apply { this.filterTags = filterTags }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -333,6 +338,7 @@ public data class Channel(
             activeLiveLocations = activeLiveLocations,
             messageCount = messageCount,
             pushPreference = pushPreference,
+            filterTags = filterTags,
             extraData = extraData,
         )
     }
@@ -350,6 +356,7 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         image = that.image,
         hidden = that.hidden,
         frozen = that.frozen,
+        filterTags = that.filterTags,
         team = that.team,
         config = that.config,
         extraData = that.extraData,
@@ -382,6 +389,7 @@ public fun Channel.toChannelData(): ChannelData {
         id = id,
         name = name,
         image = image,
+        filterTags = filterTags,
         frozen = frozen,
         cooldown = cooldown,
         createdAt = createdAt,
