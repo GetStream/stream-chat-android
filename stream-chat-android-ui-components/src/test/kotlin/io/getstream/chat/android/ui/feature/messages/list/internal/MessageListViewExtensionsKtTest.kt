@@ -409,40 +409,62 @@ internal class MessageListViewExtensionsKtTest {
             ),
         )
 
+        @Suppress("LongMethod")
         @JvmStatic
         fun canThreadReplyToMessageArguments() = listOf(
+            // case: threads disabled
             Arguments.of(
                 randomMessageListViewStyle(threadsEnabled = false),
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 randomMessageListViewStyle(),
                 randomBoolean(),
-                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
+                ),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no SEND_REPLY capability
             Arguments.of(
                 randomMessageListViewStyle(),
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(parentId = null, threadParticipants = emptyList()),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: already in thread
             Arguments.of(
                 randomMessageListViewStyle(threadsEnabled = true),
                 true,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message is a thread reply
             Arguments.of(
                 randomMessageListViewStyle(threadsEnabled = true),
                 false,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(
+                    parentId = "parentId",
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                randomMessageListViewStyle(threadsEnabled = true),
+                false,
+                randomMessage(parentId = null, threadParticipants = emptyList(), syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 true,
             ),

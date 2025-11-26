@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `Thread Reply` option visible for messages belonging to a thread. [#6021](https://github.com/GetStream/stream-chat-android/pull/6021)
 
 ### ⬆️ Improved
 

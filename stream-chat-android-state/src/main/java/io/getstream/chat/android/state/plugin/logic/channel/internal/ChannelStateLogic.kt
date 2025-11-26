@@ -195,7 +195,64 @@ internal class ChannelStateLogic(
      */
     private fun updateReads(reads: List<ChannelUserRead>) {
         logger.v { "[updateReads] cid: ${mutableState.cid}, reads.size: ${reads.size}" }
-        mutableState.upsertReads(reads)
+        val currentUserId = clientState.user.value?.id
+        val currentUserRead = mutableState.read.value
+
+        // Root cause fix: When updating reads from server data, we should preserve local state
+        // if it's more recent (has a newer lastReceivedEventDate). This prevents stale server
+        // data from overwriting recent local updates, which happens when:
+        // 1. Hidden channels receive messages (server doesn't track unread counts for hidden channels)
+        // 2. Race conditions where updateCurrentUserRead() has updated local state but a concurrent
+        //    query channels update calls updateReads() with stale server data
+        // 3. When visible channels work correctly, server data is more recent, so it's used
+        val readsToUpsert = if (currentUserId != null && currentUserRead != null) {
+            reads.map { serverRead ->
+                if (serverRead.getUserId() == currentUserId) {
+                    mergeCurrentUserRead(currentUserRead, serverRead)
+                } else {
+                    serverRead
+                }
+            }
+        } else {
+            reads
+        }
+
+        mutableState.upsertReads(readsToUpsert)
+    }
+
+    /**
+     * Merges local and server read states for the current user.
+     * Preserves local state if it's more recent, otherwise uses server data.
+     *
+     * @param localRead The local read state.
+     * @param serverRead The server read state.
+     * @return The merged read state.
+     */
+    private fun mergeCurrentUserRead(
+        localRead: ChannelUserRead,
+        serverRead: ChannelUserRead,
+    ): ChannelUserRead {
+        return if (localRead.lastReceivedEventDate.after(serverRead.lastReceivedEventDate)) {
+            // Local state is more recent, preserve it but merge other fields from server
+            logger.d {
+                "[updateReads] Local read state is more recent, preserving: " +
+                    "local.lastReceivedEventDate=${localRead.lastReceivedEventDate}, " +
+                    "server.lastReceivedEventDate=${serverRead.lastReceivedEventDate}, " +
+                    "local.unreadMessages=${localRead.unreadMessages}, " +
+                    "server.unreadMessages=${serverRead.unreadMessages}"
+            }
+            localRead.copy(
+                user = serverRead.user,
+                lastRead = maxOf(localRead.lastRead, serverRead.lastRead),
+                lastReadMessageId = serverRead.lastReadMessageId ?: localRead.lastReadMessageId,
+                lastDeliveredAt = serverRead.lastDeliveredAt ?: localRead.lastDeliveredAt,
+                lastDeliveredMessageId = serverRead.lastDeliveredMessageId ?: localRead.lastDeliveredMessageId,
+                // lastReceivedEventDate and unreadMessages are preserved from local (not set in copy)
+            )
+        } else {
+            // Server data is more recent, use it
+            serverRead
+        }
     }
 
     /**
@@ -476,6 +533,7 @@ internal class ChannelStateLogic(
                         banExpires = banExpires,
                         shadowBanned = shadow,
                     )
+
                     false -> member
                 }
             },
@@ -700,6 +758,7 @@ internal class ChannelStateLogic(
                 mutableState.setEndOfOlderMessages(false)
                 mutableState.setEndOfNewerMessages(false)
             }
+
             noMoreMessages -> if (request.isFilteringNewerMessages()) {
                 mutableState.setEndOfNewerMessages(true)
             } else {
