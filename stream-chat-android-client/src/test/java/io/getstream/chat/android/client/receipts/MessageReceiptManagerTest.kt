@@ -207,6 +207,43 @@ internal class MessageReceiptManagerTest {
     }
 
     @Test
+    fun `should skip storing message delivery receipt for thread replies not sent to channel`() = runTest {
+        val message = DeliverableMessage.copy(
+            parentId = "parentId",
+            showInChannel = false,
+        )
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(message)
+
+        fixture.verifyUpsertMessageReceiptsCalled(never())
+        assertFalse(result)
+    }
+
+    @Test
+    fun `should store message delivery receipt for thread replies sent to channel`() = runTest {
+        val message = DeliverableMessage.copy(
+            parentId = "parentId",
+            showInChannel = true,
+        )
+        val fixture = Fixture()
+        val sut = fixture.get()
+
+        val result = sut.markMessageAsDelivered(message)
+
+        val receipts = listOf(
+            MessageReceipt(
+                messageId = message.id,
+                cid = message.cid,
+                createdAt = Now,
+            ),
+        )
+        fixture.verifyUpsertMessageReceiptsCalled(receipts = receipts)
+        assertTrue(result)
+    }
+
+    @Test
     fun `should skip storing message delivery receipt from muted users`() = runTest {
         val message = DeliverableMessage
         val currentUser = CurrentUser.copy(
@@ -418,6 +455,7 @@ private val DeliverableMessage = randomMessage(
     createdLocallyAt = Now,
     deletedAt = null,
     deletedForMe = false,
+    parentId = null,
 )
 
 private val DeliverableChannel = randomChannel(

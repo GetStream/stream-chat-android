@@ -12,11 +12,14 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Prevent marking thread replies as delivered. [#6011](https://github.com/GetStream/stream-chat-android/pull/6011)
+- Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
+- Add option to hide history before given date when adding members to a channel. [#6020](https://github.com/GetStream/stream-chat-android/pull/6020)
 
 ### ⚠️ Changed
 
@@ -46,6 +49,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `Thread Reply` option visible for messages belonging to a thread. [#6021](https://github.com/GetStream/stream-chat-android/pull/6021)
 
 ### ⬆️ Improved
 
