@@ -1554,7 +1554,7 @@ internal constructor(
 
     @CheckResult
     public fun deleteDevice(device: Device): Call<Unit> {
-        return api.deleteDevice(id = device.token)
+        return api.deleteDevice(device.token)
             .share(userScope) { DeleteDeviceIdentifier(device) }
     }
 

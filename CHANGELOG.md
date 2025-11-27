@@ -16,6 +16,7 @@
 - Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
 
 ### ⬆️ Improved
+- Prevent potential duplicate calls to the `CreateDevice` when connecting a user or after a push token refresh. [#6023](https://github.com/GetStream/stream-chat-android/pull/6023)
 
 ### ✅ Added
 - Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
