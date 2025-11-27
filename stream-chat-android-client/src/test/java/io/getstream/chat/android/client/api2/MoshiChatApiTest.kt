@@ -482,11 +482,11 @@ internal class MoshiChatApiTest {
             .withDeviceApi(api)
             .get()
         // when
-        val device = randomDevice()
-        val result = sut.deleteDevice(device).await()
+        val id = randomString()
+        val result = sut.deleteDevice(id).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteDevice(device.token)
+        verify(api, times(1)).deleteDevice(id)
     }
 
     @ParameterizedTest

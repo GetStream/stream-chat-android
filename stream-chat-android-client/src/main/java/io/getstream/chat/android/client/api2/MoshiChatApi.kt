@@ -440,8 +440,8 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
+    override fun deleteDevice(id: String): Call<Unit> {
+        return deviceApi.deleteDevice(id).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {

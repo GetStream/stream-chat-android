@@ -116,6 +116,7 @@ internal class ChatNotificationsImplTest {
                 handler = mockNotificationHandler,
                 notificationConfig = notificationConfig,
                 context = context,
+                api = mock(),
                 scope = CoroutineScope(UnconfinedTestDispatcher()),
             )
         }

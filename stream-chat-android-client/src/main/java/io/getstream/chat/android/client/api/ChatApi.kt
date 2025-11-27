@@ -126,7 +126,7 @@ internal interface ChatApi {
     fun addDevice(device: Device): Call<Unit>
 
     @CheckResult
-    fun deleteDevice(device: Device): Call<Unit>
+    fun deleteDevice(id: String): Call<Unit>
 
     @CheckResult
     fun getDevices(): Call<List<Device>>
