@@ -51,6 +51,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -65,6 +66,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -787,6 +789,28 @@ internal class ChannelStateLogicTest {
                 ),
             ),
         )
+    }
+
+    @Test
+    fun `When propagateQueryError is called for recoverable error, Then channel is marked for recovery and loading is reset`() {
+        // when
+        channelStateLogic.propagateQueryError(Error.GenericError("Test error"))
+
+        // then
+        verify(mutableState).recoveryNeeded = true
+        verify(mutableState).setLoadingOlderMessages(false)
+        verify(mutableState).setLoadingNewerMessages(false)
+    }
+
+    @Test
+    fun `When propagateQueryError is called for unrecoverable error, Then channel is not marked for recovery and loading is reset`() {
+        // when
+        channelStateLogic.propagateQueryError(Error.NetworkError("Test network error", 500))
+
+        // then
+        verify(mutableState, never()).recoveryNeeded = any<Boolean>()
+        verify(mutableState).setLoadingOlderMessages(false)
+        verify(mutableState).setLoadingNewerMessages(false)
     }
 
     companion object {
