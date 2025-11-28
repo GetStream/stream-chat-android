@@ -100,7 +100,7 @@ class ChatInitializer(
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
-                backgroundSyncEnabled = true,
+                backgroundSyncEnabled = false,
                 userPresence = true,
             ),
             appContext = context,

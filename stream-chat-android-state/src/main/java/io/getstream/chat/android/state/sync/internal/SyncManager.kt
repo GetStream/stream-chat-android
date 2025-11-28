@@ -92,6 +92,7 @@ internal class SyncManager(
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
+    private val isAutomaticSyncOnReconnectEnabled: Boolean,
     private val syncMaxThreshold: TimeDuration,
     private val now: () -> Long,
     scope: CoroutineScope,
@@ -245,8 +246,13 @@ internal class SyncManager(
             logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
             updateAllReadStateForDate(userId, currentDate = Date(now()))
         }
-        performSync()
-        restoreActiveChannels()
+        if (isAutomaticSyncOnReconnectEnabled) {
+            logger.i { "[onConnectionEstablished] performing sync and restoring active channels" }
+            performSync()
+            restoreActiveChannels()
+        } else {
+            logger.i { "[onConnectionEstablished] skipping sync, isAutomaticSyncOnReconnectEnabled=false" }
+        }
         state.value = State.Idle
 
         logger.i { "[onConnectionEstablished] <<< completed" }

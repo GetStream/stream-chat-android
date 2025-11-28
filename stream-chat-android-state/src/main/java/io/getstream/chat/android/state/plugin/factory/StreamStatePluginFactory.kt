@@ -134,6 +134,7 @@ public class StreamStatePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
+            isAutomaticSyncOnReconnectEnabled = config.isAutomaticSyncOnReconnectEnabled,
             syncMaxThreshold = config.syncMaxThreshold,
             now = { System.currentTimeMillis() },
         )
