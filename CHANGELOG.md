@@ -18,6 +18,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
+- Add option to hide history before given date when adding members to a channel. [#6020](https://github.com/GetStream/stream-chat-android/pull/6020)
 
 ### ⚠️ Changed
 
@@ -60,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#6013](https://github.com/GetStream/stream-chat-android/pull/6013)
 
 ### ⬆️ Improved
 

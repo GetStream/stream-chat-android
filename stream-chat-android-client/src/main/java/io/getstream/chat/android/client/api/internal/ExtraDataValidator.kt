@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
+import java.util.Date
 
 /**
  * Intercepts [ChatApi] calls and validates [CustomObject.extraData] keys to prevent passing reserved names.
@@ -94,10 +95,11 @@ internal class ExtraDataValidator(
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel> {
         return delegate
-            .addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush)
+            .addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush)
             .withExtraDataValidation(systemMessage)
             .validateMembersExtraData(members)
     }

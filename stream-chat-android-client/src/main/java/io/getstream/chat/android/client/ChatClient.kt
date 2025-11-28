@@ -3617,6 +3617,8 @@ internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param hideHistoryBefore Hides the channel history before the provided date from the added members. If
+     * [hideHistory] and [hideHistoryBefore] are both specified, [hideHistoryBefore] takes precedence.
      * @param skipPush If true, skips sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
@@ -3628,12 +3630,14 @@ internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        hideHistoryBefore: Date? = null,
         skipPush: Boolean? = null,
     ): Call<Channel> {
         val params = AddMembersParams(
             members = memberIds.map(::MemberData),
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
             skipPush = skipPush,
         )
         return addMembers(channelType, channelId, params)
@@ -3660,6 +3664,7 @@ internal constructor(
             members = params.members,
             systemMessage = params.systemMessage,
             hideHistory = params.hideHistory,
+            hideHistoryBefore = params.hideHistoryBefore,
             skipPush = params.skipPush,
         )
     }
