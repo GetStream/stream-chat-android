@@ -48,7 +48,7 @@ internal open class BaseRepositoryFacadeIntegrationTest {
     open fun setup() {
         chatDatabase = createRoomDB()
         repositoryFacade = RepositoryFacade.create(
-            DatabaseRepositoryFactory(chatDatabase, currentUser, testCoroutines.scope, emptySet()),
+            DatabaseRepositoryFactory({ chatDatabase }, currentUser, testCoroutines.scope, emptySet()),
             testCoroutines.scope,
         )
     }

@@ -54,7 +54,7 @@ internal class ReactionRepositoryTest {
         runTest {
             currentUser = randomUser()
             reactionDao = mock()
-            reactionRepo = DatabaseReactionRepository(reactionDao) { currentUser }
+            reactionRepo = DatabaseReactionRepository(testCoroutines.scope, reactionDao) { currentUser }
         }
     }
 
