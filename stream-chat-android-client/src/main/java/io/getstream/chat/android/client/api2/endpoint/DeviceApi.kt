@@ -33,9 +33,9 @@ internal interface DeviceApi {
     @GET("/devices")
     fun getDevices(): RetrofitCall<DevicesResponse>
 
-    @POST("devices")
+    @POST("/devices")
     fun addDevices(@Body request: AddDeviceRequest): RetrofitCall<CompletableResponse>
 
     @DELETE("/devices")
-    fun deleteDevice(@Query("id") deviceId: String): RetrofitCall<CompletableResponse>
+    fun deleteDevice(@Query("id") id: String): RetrofitCall<CompletableResponse>
 }

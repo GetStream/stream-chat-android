@@ -440,8 +440,8 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
+    override fun deleteDevice(id: String): Call<Unit> {
+        return deviceApi.deleteDevice(id).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
@@ -1012,6 +1012,7 @@ constructor(
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.addMembers(
@@ -1022,6 +1023,7 @@ constructor(
                     add_members = members.map { it.toDto() },
                     message = systemMessage?.toDto(),
                     hide_history = hideHistory,
+                    hide_history_before = hideHistoryBefore,
                     skip_push = skipPush,
                 )
             },

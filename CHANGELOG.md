@@ -16,8 +16,11 @@
 - Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
 
 ### ⬆️ Improved
+- Prevent potential duplicate calls to the `CreateDevice` when connecting a user or after a push token refresh. [#6023](https://github.com/GetStream/stream-chat-android/pull/6023)
 
 ### ✅ Added
+- Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
+- Add option to hide history before given date when adding members to a channel. [#6020](https://github.com/GetStream/stream-chat-android/pull/6020)
 
 ### ⚠️ Changed
 
@@ -36,6 +39,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Prevent duplicate `GetOrCreateChannel` calls when paginating messages. [#6016](https://github.com/GetStream/stream-chat-android/pull/6016)
 
 ### ⬆️ Improved
 
@@ -49,6 +53,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `Thread Reply` option visible for messages belonging to a thread. [#6021](https://github.com/GetStream/stream-chat-android/pull/6021)
 
 ### ⬆️ Improved
 
@@ -60,6 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#6013](https://github.com/GetStream/stream-chat-android/pull/6013)
 
 ### ⬆️ Improved
 

@@ -34,6 +34,7 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ExtraDataValidatorTests {
 
@@ -191,6 +192,7 @@ internal class ExtraDataValidatorTests {
         )
         val systemMessage: Message = mock()
         val hideHistory = false
+        val hideHistoryBefore: Date? = null
         val skipPush = false
 
         whenever(
@@ -200,6 +202,7 @@ internal class ExtraDataValidatorTests {
                 members,
                 systemMessage,
                 hideHistory,
+                hideHistoryBefore,
                 skipPush,
             ),
         ) doReturn channel.asCall()
@@ -211,6 +214,7 @@ internal class ExtraDataValidatorTests {
             members = members,
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
             skipPush = skipPush,
         ).await()
 

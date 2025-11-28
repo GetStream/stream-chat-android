@@ -35,6 +35,7 @@ import java.util.Date
  * @param image Channel's image.
  * @param cooldown Cooldown period after sending each message in seconds.
  * @param createdByUserId Id of the user who created the channel.
+ * @param filterTags The list of filter tags applied to the channel.
  * @param frozen If the channel is frozen or not (new messages wont be allowed).
  * @param hidden If the channel is hidden (new messages changes this field to false).
  * @param hideMessagesBefore Messages before this date are hidden from the user.
@@ -64,6 +65,7 @@ internal data class ChannelEntity(
     val image: String,
     val cooldown: Int,
     val createdByUserId: String,
+    val filterTags: List<String>,
     val frozen: Boolean,
     val hidden: Boolean?,
     val hideMessagesBefore: Date?,

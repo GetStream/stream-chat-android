@@ -147,10 +147,14 @@ public class AttachmentMediaActivity : AppCompatActivity() {
                     binding.controls.show()
                 }
             }
-            controllerHideOnTouch = true
+            setControllerHideOnTouch(true)
             setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
-            artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_OFF
+            setArtworkDisplayMode(PlayerView.ARTWORK_DISPLAY_MODE_OFF)
+            // Disable default controller because we use the legacy one
+            setUseController(false)
         }
+
+        // Setup legacy controller
         binding.controls.player = player
         binding.controls.showTimeoutMs = CONTROLLER_SHOW_TIMEOUT
         binding.controls.setShowNextButton(false)

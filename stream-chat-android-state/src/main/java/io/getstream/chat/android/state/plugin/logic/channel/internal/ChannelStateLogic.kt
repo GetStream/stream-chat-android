@@ -784,6 +784,8 @@ internal class ChannelStateLogic(
             }
             mutableState.recoveryNeeded = true
         }
+        mutableState.setLoadingOlderMessages(false)
+        mutableState.setLoadingNewerMessages(false)
     }
 
     /**

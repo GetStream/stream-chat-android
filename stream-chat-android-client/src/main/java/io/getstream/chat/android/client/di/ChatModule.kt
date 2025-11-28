@@ -207,7 +207,7 @@ constructor(
         handler: NotificationHandler,
         notificationConfig: NotificationConfig,
     ): ChatNotifications = if (notificationConfig.pushNotificationsEnabled) {
-        ChatNotificationsImpl(handler, notificationConfig, appContext)
+        ChatNotificationsImpl(handler, notificationConfig, appContext, defaultApi)
     } else {
         NoOpChatNotifications
     }

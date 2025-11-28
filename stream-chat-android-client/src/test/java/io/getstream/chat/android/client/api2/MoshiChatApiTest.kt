@@ -482,11 +482,11 @@ internal class MoshiChatApiTest {
             .withDeviceApi(api)
             .get()
         // when
-        val device = randomDevice()
-        val result = sut.deleteDevice(device).await()
+        val id = randomString()
+        val result = sut.deleteDevice(id).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteDevice(device.token)
+        verify(api, times(1)).deleteDevice(id)
     }
 
     @ParameterizedTest
@@ -1516,8 +1516,9 @@ internal class MoshiChatApiTest {
         val members = listOf(randomMemberData())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
-        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush).await()
+        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         result `should be instance of` expected
         verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())

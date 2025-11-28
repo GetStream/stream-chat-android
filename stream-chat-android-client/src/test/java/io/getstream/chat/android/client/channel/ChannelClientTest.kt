@@ -1556,15 +1556,16 @@ internal class ChannelClientTest {
         val memberIds = listOf(randomString(), randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val channel = randomChannel()
         val successCall = RetroSuccess(channel).toRetrofitCall()
-        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any(), any())).thenReturn(successCall)
         // when
-        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         verifySuccess(result, channel)
-        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush)
+        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
     }
 
     @Test
@@ -1582,13 +1583,14 @@ internal class ChannelClientTest {
                     anyOrNull(),
                     anyOrNull(),
                     anyOrNull(),
+                    anyOrNull(),
                 ),
             ).thenReturn(successCall)
             // when
             val result = channelClient.addMembers(memberIds).await()
             // then
             verifySuccess(result, channel)
-            verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null)
+            verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null, null)
         }
 
     @Test
@@ -1597,15 +1599,16 @@ internal class ChannelClientTest {
         val memberIds = listOf(randomString(), randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
-        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any(), any())).thenReturn(errorCall)
         // when
-        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush)
+        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
     }
 
     @Test

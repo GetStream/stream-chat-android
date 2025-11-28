@@ -195,9 +195,9 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private fun setupPlayerView(player: Player) {
         binding.playerView.apply {
             this.player = player
-            controllerShowTimeoutMs = CONTROLLER_SHOW_TIMEOUT
-            controllerAutoShow = false
-            controllerHideOnTouch = true
+            setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT)
+            setControllerAutoShow(false)
+            setControllerHideOnTouch(true)
             setShowPreviousButton(false)
             setShowNextButton(false)
             setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
