@@ -39,6 +39,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Prevent duplicate `GetOrCreateChannel` calls when paginating messages. [#6016](https://github.com/GetStream/stream-chat-android/pull/6016)
 
 ### ⬆️ Improved
 
