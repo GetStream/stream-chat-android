@@ -86,7 +86,7 @@ internal class ChatClientDeviceApiTests : BaseChatClientTest() {
     fun deleteDeviceSuccess() = runTest {
         // given
         val device = randomDevice()
-        whenever(api.deleteDevice(device))
+        whenever(api.deleteDevice(device.token))
             .thenReturn(RetroSuccess(Unit).toRetrofitCall())
         // when
         val result = chatClient.deleteDevice(device).await()
@@ -99,7 +99,7 @@ internal class ChatClientDeviceApiTests : BaseChatClientTest() {
         // given
         val device = randomDevice()
         val errorCode = positiveRandomInt()
-        whenever(api.deleteDevice(device))
+        whenever(api.deleteDevice(device.token))
             .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.deleteDevice(device).await()

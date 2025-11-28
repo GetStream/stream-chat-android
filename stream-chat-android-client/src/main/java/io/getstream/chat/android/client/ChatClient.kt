@@ -750,7 +750,7 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
-            notifications.deleteDevice() // always delete device if switching users
+            notifications.deleteDevice(getCurrentUser()) // always delete device if switching users
             disconnectUserSuspend(flushPersistence = true)
             // change userId only after disconnect,
             // otherwise the userScope won't cancel coroutines related to the previous user.
@@ -1480,7 +1480,7 @@ internal constructor(
             when (isUserSet()) {
                 true -> {
                     if (deleteDevice) {
-                        notifications.deleteDevice()
+                        notifications.deleteDevice(getCurrentUser())
                     }
                     disconnectSuspend(flushPersistence)
                     Result.Success(Unit)
@@ -1554,7 +1554,7 @@ internal constructor(
 
     @CheckResult
     public fun deleteDevice(device: Device): Call<Unit> {
-        return api.deleteDevice(device)
+        return api.deleteDevice(device.token)
             .share(userScope) { DeleteDeviceIdentifier(device) }
     }
 
@@ -5175,7 +5175,9 @@ internal constructor(
          */
         @Throws(IllegalStateException::class)
         internal fun setDevice(device: Device) {
-            ensureClientInitialized().notifications.setDevice(device)
+            val client = ensureClientInitialized()
+            val user = client.getCurrentUser()
+            client.notifications.setDevice(user, device)
         }
 
         @Throws(IllegalStateException::class)

@@ -20,6 +20,7 @@ import android.app.Application
 import android.content.Context
 import io.getstream.android.push.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationReminderDueEvent
@@ -34,19 +35,72 @@ import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+/**
+ * Interface defining chat notification handling methods.
+ */
 internal interface ChatNotifications {
+
+    /**
+     * Called when a user is set in the chat client.
+     * If configured, creates and registers a push device for the user.
+     *
+     * @param user The user that has been set.
+     */
     fun onSetUser(user: User)
-    fun setDevice(device: Device)
-    suspend fun deleteDevice()
+
+    /**
+     * Sets the push device for the specified user.
+     *
+     * @param user The user for whom the device is being set.
+     * @param device The push device to set.
+     */
+    fun setDevice(user: User?, device: Device)
+
+    /**
+     * Deletes the current push device for the specified user.
+     *
+     * @param user The user for whom the device is being deleted.
+     */
+    suspend fun deleteDevice(user: User?)
+
+    /**
+     * Handles an incoming push message.
+     *
+     * @param pushMessage The push message received.
+     * @param pushNotificationReceivedListener Listener to be notified when a push notification is received.
+     */
     fun onPushMessage(
         pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener =
             PushNotificationReceivedListener { _, _ -> },
     )
 
+    /**
+     * Handles a chat event.
+     *
+     * @param event The chat event to handle.
+     */
     fun onChatEvent(event: ChatEvent)
+
+    /**
+     * Called when the user logs out.
+     * Cleans up notification-related resources.
+     */
     suspend fun onLogout()
+
+    /**
+     * Displays the specified chat notification.
+     *
+     * @param notification The chat notification to display.
+     */
     fun displayNotification(notification: ChatNotification)
+
+    /**
+     * Dismiss notification associated to the [channelType] and [channelId] received on the params.
+     *
+     * @param channelType The channel type of the channel you want to dismiss notifications.
+     * @param channelId The channel id of the channel you want to dismiss notifications.
+     */
     fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
@@ -55,11 +109,12 @@ internal class ChatNotificationsImpl(
     private val handler: NotificationHandler,
     private val notificationConfig: NotificationConfig,
     private val context: Context,
+    api: ChatApi,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
     private val logger by taggedLogger("Chat:Notifications")
 
-    private val pushTokenUpdateHandler = PushTokenUpdateHandler()
+    private val pushTokenUpdateHandler = PushTokenUpdateHandler(api)
     private val showedMessages = mutableSetOf<String>()
     private val permissionManager: NotificationPermissionManager =
         NotificationPermissionManager.createNotificationPermissionsManager(
@@ -89,14 +144,14 @@ internal class ChatNotificationsImpl(
             }
     }
 
-    override fun setDevice(device: Device) {
-        logger.i { "[setDevice] device: $device" }
-        // If no user is passed, we assume the device is NOT already registered
-        setDeviceForUser(null, device)
+    override fun setDevice(user: User?, device: Device) {
+        logger.i { "[setDevice] userId: ${user?.id}, device: $device" }
+        setDeviceForUser(user, device)
     }
 
-    override suspend fun deleteDevice() {
-        pushTokenUpdateHandler.deleteDevice()
+    override suspend fun deleteDevice(user: User?) {
+        logger.i { "[deleteDevice] userId: ${user?.id}" }
+        pushTokenUpdateHandler.deleteDevice(user)
     }
 
     override fun onPushMessage(
@@ -213,8 +268,8 @@ internal class ChatNotificationsImpl(
 
 internal object NoOpChatNotifications : ChatNotifications {
     override fun onSetUser(user: User) = Unit
-    override fun setDevice(device: Device) = Unit
-    override suspend fun deleteDevice() = Unit
+    override fun setDevice(user: User?, device: Device) = Unit
+    override suspend fun deleteDevice(user: User?) = Unit
     override fun onPushMessage(
         pushMessage: PushMessage,
         pushNotificationReceivedListener: PushNotificationReceivedListener,
