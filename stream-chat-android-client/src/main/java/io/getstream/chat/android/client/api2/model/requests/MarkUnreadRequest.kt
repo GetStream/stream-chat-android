@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
+import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class MarkUnreadRequest(
-    val message_id: String,
+    val message_id: String? = null,
+    val message_timestamp: Date? = null,
     val thread_id: String? = null,
 )
