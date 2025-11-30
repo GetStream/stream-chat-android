@@ -1,11 +1,11 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" ?>
 <SmellBaseline>
-  <ManuallySuppressedIssues/>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
   <CurrentIssues>
     <ID>EmptyFunctionBlock:DeleteChannelListenerState.kt$DeleteChannelListenerState${ }</ID>
     <ID>ForbiddenComment:ChatEventUtils.kt$// TODO: Backend should send us the last read message id</ID>
     <ID>ForbiddenComment:ChatEventUtils.kt$// TODO: remove this once the backend is fixed and is sending us the number of unread messages</ID>
-    <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
+    <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have &gt; 100 members isn't the right behaviour</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
     <ID>LongMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:ChatClientExtensionTests.kt$ChatClientExtensionTests$@BeforeEach fun setUp()</ID>
@@ -26,10 +26,10 @@
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$*</ID>
     <ID>MaxLineLength:ChannelsStateData.kt$ChannelsStateData.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
     <ID>MaxLineLength:ChatClient.kt$*</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt; 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it &lt;= 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
-    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it >= 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any&gt;, value as? Comparable&lt;Any&gt;) { it &lt; 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any&gt;, value as? Comparable&lt;Any&gt;) { it &lt;= 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any&gt;, value as? Comparable&lt;Any&gt;) { it &gt; 0 }</ID>
+    <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any&gt;, value as? Comparable&lt;Any&gt;) { it &gt;= 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
     <ID>MaxLineLength:DeleteReactionErrorHandlerImpl.kt$DeleteReactionErrorHandlerImpl$*</ID>
@@ -39,9 +39,8 @@
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:SocketEventCollector.kt$SocketEventCollector$*</ID>
     <ID>MaxLineLength:StatePlugin.kt$StatePlugin$*</ID>
-    <ID>MaxLineLength:StatePluginConfig.kt$StatePluginConfig$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
-    <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
+    <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject&gt; FilterObject.filter(t: T): Boolean</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
