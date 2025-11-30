@@ -1075,7 +1075,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadByIdSuccess() = runTest {
+    fun markUnreadFromMessageSuccess() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1090,7 +1090,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadByIdError() = runTest {
+    fun markUnreadFromMessageError() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1106,7 +1106,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadByTimestampSuccess() = runTest {
+    fun markUnreadFromTimestampSuccess() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1121,7 +1121,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadByTimestampError() = runTest {
+    fun markUnreadFromTimestampError() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1199,7 +1199,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markThreadUnreadFromMessageIdSuccess() = runTest {
+    fun markThreadUnreadFromMessageSuccess() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1215,7 +1215,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markThreadUnreadFromMessageIdError() = runTest {
+    fun markThreadUnreadFromMessageError() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()

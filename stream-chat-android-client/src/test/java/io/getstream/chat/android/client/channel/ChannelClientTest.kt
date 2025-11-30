@@ -884,7 +884,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread by ID should return success when ChatClient returns success`() = runTest {
+    fun `markUnread from message should return success when ChatClient returns success`() = runTest {
         // given
         val messageId = randomString()
         val successCall = RetroSuccess(Unit).toRetrofitCall()
@@ -897,7 +897,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread by ID should return error when ChatClient returns error`() = runTest {
+    fun `markUnread from message should return error when ChatClient returns error`() = runTest {
         // given
         val messageId = randomString()
         val errorCode = positiveRandomInt()
@@ -911,7 +911,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread by timestamp should return success when ChatClient returns success`() = runTest {
+    fun `markUnread from timestamp should return success when ChatClient returns success`() = runTest {
         // given
         val timestamp = randomDate()
         val successCall = RetroSuccess(Unit).toRetrofitCall()
@@ -924,7 +924,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread by timestamp should return error when ChatClient returns error`() = runTest {
+    fun `markUnread from timestamp should return error when ChatClient returns error`() = runTest {
         // given
         val timestamp = randomDate()
         val errorCode = positiveRandomInt()
@@ -965,7 +965,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markThreadUnread with messageId should return success when ChatClient returns success`() = runTest {
+    fun `markThreadUnread from message should return success when ChatClient returns success`() = runTest {
         // given
         val threadId = randomString()
         val messageId = randomString()
@@ -979,7 +979,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markThreadUnread with messageId should return error when ChatClient returns error`() = runTest {
+    fun `markThreadUnread from message should return error when ChatClient returns error`() = runTest {
         // given
         val threadId = randomString()
         val messageId = randomString()
