@@ -33,9 +33,14 @@ import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
@@ -105,6 +110,9 @@ public class AttachmentsPickerViewModel(
      */
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
+
+    private val _attachmentsForUpload: MutableSharedFlow<List<Attachment>> = MutableSharedFlow(extraBufferCapacity = 1)
+    internal val attachmentsForUpload: SharedFlow<List<Attachment>> = _attachmentsForUpload.asSharedFlow()
 
     /**
      * Loads all the items based on the current type.
@@ -217,6 +225,12 @@ public class AttachmentsPickerViewModel(
      */
     public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
         return storageHelper.getAttachmentsForUpload(metaData)
+    }
+
+    internal fun getAttachmentsFromMetadataAsync(metaData: List<AttachmentMetaData>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _attachmentsForUpload.emit(storageHelper.getAttachmentsForUpload(metaData))
+        }
     }
 
     /**
