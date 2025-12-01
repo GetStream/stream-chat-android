@@ -208,7 +208,7 @@ internal class ChannelLogicLegacyImpl(
         return runChannelQuery("loadMessagesAroundId", aroundIdWatchChannelRequest(messageId))
     }
 
-    override suspend fun loadNewest(limit: Int): kotlin.Result<Channel> {
+    override suspend fun loadNewest(limit: Int): Result<Channel> {
         TODO("Not used, it uses `suspend fun watch` instead")
     }
 

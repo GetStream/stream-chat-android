@@ -124,7 +124,7 @@ internal interface ChannelLogic {
      *
      * @param limit The number of newest messages to load.
      */
-    suspend fun loadNewest(limit: Int): kotlin.Result<Channel>
+    suspend fun loadNewest(limit: Int): Result<Channel>
 
     /**
      * Retrieves the message with the specified [messageId] from the channel's state.
