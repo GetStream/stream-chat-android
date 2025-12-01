@@ -74,6 +74,6 @@ internal fun MarkAllReadEvent.toChannelUserRead() = ChannelUserRead(
     lastReceivedEventDate = createdAt,
     lastRead = createdAt,
     unreadMessages = 0,
-// TODO: Backend should send us the last read message id
+    // MarkAllReadEvent does not provide last read message ID because it is a global event
     lastReadMessageId = null,
 )

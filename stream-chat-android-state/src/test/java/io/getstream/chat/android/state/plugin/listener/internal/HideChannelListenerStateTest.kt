@@ -48,7 +48,7 @@ internal class HideChannelListenerStateTest {
     fun `before the request is made, the channel should be set to hidden`() = runTest {
         hideChannelListenerState.onHideChannelRequest(randomString(), randomString(), randomBoolean())
 
-        verify(stateLogic).toggleHidden(true)
+        verify(stateLogic).setHidden(true)
     }
 
     @Test
@@ -60,7 +60,7 @@ internal class HideChannelListenerStateTest {
             randomBoolean(),
         )
 
-        verify(stateLogic).toggleHidden(false)
+        verify(stateLogic).setHidden(false)
     }
 
     @Test
@@ -72,7 +72,7 @@ internal class HideChannelListenerStateTest {
             clearHistory = true,
         )
 
-        verify(stateLogic, never()).toggleHidden(false)
+        verify(stateLogic, never()).setHidden(false)
         verify(stateLogic).run {
             hideMessagesBefore(any())
             removeMessagesBefore(any(), any())

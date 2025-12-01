@@ -68,6 +68,7 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -86,6 +87,7 @@ import io.getstream.chat.android.randomPollAnswer
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import java.util.Date
 
@@ -291,6 +293,7 @@ public fun randomNotificationMarkReadEvent(
     unreadChannels: Int = randomInt(),
     lastReadMessageId: String? = randomString(),
     threadId: String? = randomString(),
+    thread: ThreadInfo? = randomThreadInfo(),
     unreadThreads: Int? = randomInt(),
     unreadThreadMessages: Int? = randomInt(),
 ): NotificationMarkReadEvent = NotificationMarkReadEvent(
@@ -305,6 +308,7 @@ public fun randomNotificationMarkReadEvent(
     unreadChannels = unreadChannels,
     lastReadMessageId = lastReadMessageId,
     threadId = threadId,
+    thread = thread,
     unreadThreads = unreadThreads,
     unreadThreadMessages = unreadThreadMessages,
 )

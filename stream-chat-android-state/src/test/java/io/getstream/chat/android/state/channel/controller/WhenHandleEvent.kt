@@ -127,7 +127,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).upsertMessage(newMessage)
         verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
-        verify(channelStateLogic).toggleHidden(false)
+        verify(channelStateLogic).setHidden(false)
     }
 
     // Message update
@@ -163,7 +163,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).toggleHidden(false)
+        verify(channelStateLogic).setHidden(false)
     }
 
     @Test

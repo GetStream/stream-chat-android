@@ -570,9 +570,9 @@ internal class ChannelStateLogic(
     /**
      * Sets channel as hidden.
      *
-     * @param hidden Boolean.
+     * @param hidden Whether the channel is hidden.
      */
-    fun toggleHidden(hidden: Boolean) {
+    fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 

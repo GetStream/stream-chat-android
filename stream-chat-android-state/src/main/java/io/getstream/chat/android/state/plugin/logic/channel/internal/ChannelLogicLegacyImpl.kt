@@ -21,87 +21,15 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.events.AIIndicatorClearEvent
-import io.getstream.chat.android.client.events.AIIndicatorStopEvent
-import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
-import io.getstream.chat.android.client.events.AnswerCastedEvent
-import io.getstream.chat.android.client.events.ChannelDeletedEvent
-import io.getstream.chat.android.client.events.ChannelHiddenEvent
-import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
-import io.getstream.chat.android.client.events.ChannelUserBannedEvent
-import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
-import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.ConnectingEvent
-import io.getstream.chat.android.client.events.ConnectionErrorEvent
-import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
-import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
-import io.getstream.chat.android.client.events.ErrorEvent
-import io.getstream.chat.android.client.events.GlobalUserBannedEvent
-import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
-import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.events.MarkAllReadEvent
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.MemberUpdatedEvent
-import io.getstream.chat.android.client.events.MessageDeletedEvent
-import io.getstream.chat.android.client.events.MessageDeliveredEvent
-import io.getstream.chat.android.client.events.MessageReadEvent
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
-import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
-import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
-import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
-import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
-import io.getstream.chat.android.client.events.NotificationInvitedEvent
-import io.getstream.chat.android.client.events.NotificationMarkReadEvent
-import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
-import io.getstream.chat.android.client.events.NotificationReminderDueEvent
-import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
-import io.getstream.chat.android.client.events.PollClosedEvent
-import io.getstream.chat.android.client.events.PollDeletedEvent
-import io.getstream.chat.android.client.events.PollUpdatedEvent
-import io.getstream.chat.android.client.events.ReactionDeletedEvent
-import io.getstream.chat.android.client.events.ReactionNewEvent
-import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.client.events.ReminderCreatedEvent
-import io.getstream.chat.android.client.events.ReminderDeletedEvent
-import io.getstream.chat.android.client.events.ReminderUpdatedEvent
-import io.getstream.chat.android.client.events.TypingStartEvent
-import io.getstream.chat.android.client.events.TypingStopEvent
-import io.getstream.chat.android.client.events.UnknownEvent
-import io.getstream.chat.android.client.events.UserDeletedEvent
-import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
-import io.getstream.chat.android.client.events.UserPresenceChangedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
-import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.events.VoteCastedEvent
-import io.getstream.chat.android.client.events.VoteChangedEvent
-import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
-import io.getstream.chat.android.client.extensions.internal.processPoll
-import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageReminder
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
@@ -130,6 +58,7 @@ internal class ChannelLogicLegacyImpl(
 ) : ChannelLogic {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
+    private val eventHandler = ChannelEventHandler(cid, channelStateLogic, getCurrentUserId)
     private val logger by taggedLogger("Chat:ChannelLogicDB")
 
     override val cid: String
@@ -254,196 +183,7 @@ internal class ChannelLogicLegacyImpl(
     override fun handleEvent(event: ChatEvent) {
         val currentUserId = getCurrentUserId()
         logger.d { "[handleEvent] cid: $cid, currentUserId: $currentUserId, event: $event" }
-        when (event) {
-            is CidEvent -> {
-                when (event) {
-                    is NewMessageEvent -> {
-                        // Preserve createdLocallyAt only for messages created by current user, to ensure they are
-                        // sorted properly
-                        val preserveCreatedLocallyAt = event.message.user.id == currentUserId
-                        upsertEventMessage(event.message, preserveCreatedLocallyAt)
-                        channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                        channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
-                        event.channelMessageCount?.let(channelStateLogic::udpateMessageCount)
-                    }
-
-                    is MessageUpdatedEvent -> {
-                        val originalMessage = mutableState.getMessageById(event.message.id)
-                        // Enrich the poll as it might not be present in the event
-                        val poll = event.message.poll ?: originalMessage?.poll
-                        event.message.copy(
-                            replyTo = event.message.replyMessageId
-                                ?.let { mutableState.getMessageById(it) }
-                                ?: event.message.replyTo,
-                            poll = poll,
-                        ).let(::upsertEventMessage)
-                        channelStateLogic.toggleHidden(false)
-                    }
-
-                    is MessageDeletedEvent -> {
-                        if (event.hardDelete) {
-                            deleteMessage(event.message)
-                        } else {
-                            upsertEventMessage(event.message)
-                        }
-                        channelStateLogic.toggleHidden(false)
-                        event.channelMessageCount?.let(channelStateLogic::udpateMessageCount)
-                    }
-
-                    is NotificationMessageNewEvent -> {
-                        if (!mutableState.insideSearch.value) {
-                            upsertEventMessage(event.message)
-                        }
-                        channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                        channelStateLogic.toggleHidden(false)
-                    }
-
-                    is NotificationThreadMessageNewEvent -> upsertEventMessage(event.message)
-                    is ReactionNewEvent -> upsertEventMessage(event.message)
-                    is ReactionUpdateEvent -> upsertEventMessage(event.message)
-                    is ReactionDeletedEvent -> upsertEventMessage(event.message)
-                    is MemberAddedEvent -> {
-                        channelStateLogic.addMember(event.member)
-                        // Set the channel.membership if the current user is added to the channel
-                        if (event.member.getUserId() == currentUserId) {
-                            channelStateLogic.addMembership(event.member)
-                        }
-                    }
-
-                    is MemberRemovedEvent -> {
-                        channelStateLogic.deleteMember(event.member)
-                        // Remove the channel.membership if the current user is removed from the channel
-                        if (event.member.getUserId() == currentUserId) {
-                            channelStateLogic.removeMembership()
-                        }
-                    }
-
-                    is MemberUpdatedEvent -> {
-                        channelStateLogic.upsertMember(event.member)
-                        channelStateLogic.updateMembership(event.member)
-                    }
-
-                    is NotificationAddedToChannelEvent -> {
-                        channelStateLogic.upsertMembers(event.channel.members)
-                    }
-
-                    is NotificationRemovedFromChannelEvent -> {
-                        channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
-                        channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
-                    }
-
-                    is UserStartWatchingEvent -> channelStateLogic.upsertWatcher(event)
-                    is UserStopWatchingEvent -> channelStateLogic.deleteWatcher(event)
-                    is ChannelUpdatedEvent -> channelStateLogic.updateChannelData(event)
-                    is ChannelUpdatedByUserEvent -> channelStateLogic.updateChannelData(event)
-                    is ChannelHiddenEvent -> {
-                        channelStateLogic.toggleHidden(true)
-                        if (event.clearHistory) {
-                            removeMessagesBefore(event.createdAt)
-                        }
-                    }
-
-                    is ChannelVisibleEvent -> channelStateLogic.toggleHidden(false)
-                    is ChannelDeletedEvent -> {
-                        removeMessagesBefore(event.createdAt)
-                        channelStateLogic.deleteChannel(event.createdAt)
-                    }
-
-                    is ChannelTruncatedEvent -> removeMessagesBefore(event.createdAt, event.message)
-                    is NotificationChannelTruncatedEvent -> removeMessagesBefore(event.createdAt)
-                    is TypingStopEvent -> channelStateLogic.setTyping(event.user.id, null)
-                    is TypingStartEvent -> channelStateLogic.setTyping(event.user.id, event)
-                    is MessageReadEvent -> if (event.thread == null) {
-                        channelStateLogic.updateRead(event.toChannelUserRead())
-                    }
-
-                    is MessageDeliveredEvent -> channelStateLogic.updateDelivered(event.toChannelUserRead())
-
-                    is NotificationMarkReadEvent -> if (event.thread == null) {
-                        channelStateLogic.updateRead(event.toChannelUserRead())
-                    }
-
-                    is NotificationMarkUnreadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
-                    is NotificationInviteAcceptedEvent -> {
-                        channelStateLogic.addMember(event.member)
-                        channelStateLogic.updateChannelData(event)
-                    }
-
-                    is NotificationInviteRejectedEvent -> {
-                        channelStateLogic.deleteMember(event.member)
-                        channelStateLogic.updateChannelData(event)
-                    }
-
-                    is ChannelUserBannedEvent -> {
-                        channelStateLogic.updateMemberBanned(
-                            memberUserId = event.user.id,
-                            banned = true,
-                            banExpires = event.expiration,
-                            shadow = event.shadow,
-                        )
-                    }
-
-                    is ChannelUserUnbannedEvent -> {
-                        channelStateLogic.updateMemberBanned(
-                            memberUserId = event.user.id,
-                            banned = false,
-                            banExpires = null,
-                            shadow = false,
-                        )
-                    }
-
-                    is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-                    is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-                    is PollDeletedEvent -> channelStateLogic.deletePoll(event.poll)
-                    is VoteCastedEvent ->
-                        channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
-
-                    is VoteChangedEvent ->
-                        channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
-
-                    is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-                    is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-                    is ReminderCreatedEvent -> upsertReminder(event.messageId, event.reminder)
-                    is ReminderUpdatedEvent -> upsertReminder(event.messageId, event.reminder)
-                    is ReminderDeletedEvent -> deleteReminder(event.messageId)
-                    is AIIndicatorUpdatedEvent,
-                    is AIIndicatorClearEvent,
-                    is AIIndicatorStopEvent,
-                    is NotificationChannelDeletedEvent,
-                    is NotificationInvitedEvent,
-                    is NotificationReminderDueEvent,
-                    -> Unit // Ignore these events
-                }
-            }
-
-            is UserPresenceChangedEvent -> upsertUserPresence(event.user)
-            is UserUpdatedEvent -> upsertUser(event.user)
-            is MarkAllReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
-            is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
-                mute.channel?.cid == mutableState.cid
-            }.let(channelStateLogic::updateMute)
-
-            is UserMessagesDeletedEvent -> channelStateLogic.deleteMessagesFromUser(
-                userId = event.user.id,
-                hard = event.hardDelete,
-                deletedAt = event.createdAt,
-            )
-
-            is ConnectedEvent,
-            is ConnectionErrorEvent,
-            is ConnectingEvent,
-            is DisconnectedEvent,
-            is ErrorEvent,
-            is GlobalUserBannedEvent,
-            is GlobalUserUnbannedEvent,
-            is HealthEvent,
-            is NotificationMutesUpdatedEvent,
-            is UnknownEvent,
-            is UserDeletedEvent,
-            is DraftMessageUpdatedEvent,
-            is DraftMessageDeletedEvent,
-            -> Unit // Ignore these events
-        }
+        eventHandler.handle(event)
     }
 
     private suspend fun runChannelQuery(
@@ -569,7 +309,7 @@ internal class ChannelLogicLegacyImpl(
                 "scrollUpdate: $scrollUpdate, shouldRefreshMessages: $shouldRefreshMessages, " +
                 "isChannelsStateUpdate: $isChannelsStateUpdate"
         }
-        localChannel.hidden?.let(channelStateLogic::toggleHidden)
+        localChannel.hidden?.let(channelStateLogic::setHidden)
         localChannel.hiddenMessagesBefore?.let(channelStateLogic::hideMessagesBefore)
         updateDataForChannel(
             localChannel,
@@ -583,7 +323,7 @@ internal class ChannelLogicLegacyImpl(
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         logger.v { "[updateOldMessagesFromLocalChannel] localChannel.cid: ${localChannel.cid}" }
-        localChannel.hidden?.let(channelStateLogic::toggleHidden)
+        localChannel.hidden?.let(channelStateLogic::setHidden)
         channelStateLogic.updateOldMessagesFromChannel(localChannel)
     }
 
@@ -663,51 +403,5 @@ internal class ChannelLogicLegacyImpl(
             Pagination.AROUND_ID,
             -> messages.first()
         }
-    }
-
-    /**
-     * Removes messages before the given date and optionally adds a system message
-     * that was coming with the event.
-     *
-     * @param date The date used for generating result.
-     * @param systemMessage The system message to display.
-     */
-    private fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
-        channelStateLogic.removeMessagesBefore(date, systemMessage)
-    }
-
-    private fun upsertReminder(messageId: String, reminder: MessageReminder) {
-        val message = reminder.message ?: mutableState.getMessageById(messageId) ?: return
-        upsertEventMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
-    }
-
-    private fun deleteReminder(messageId: String) {
-        val message = mutableState.getMessageById(messageId) ?: return
-        upsertEventMessage(message.copy(reminder = null))
-    }
-
-    private fun upsertEventMessage(
-        message: Message,
-        preserveCreatedLocallyAt: Boolean = false,
-    ) {
-        val oldMessage = getMessage(message.id)
-        val updatedMessage = message.copy(
-            createdLocallyAt = if (preserveCreatedLocallyAt) {
-                oldMessage?.createdLocallyAt
-            } else {
-                message.createdLocallyAt
-            },
-            ownReactions = oldMessage?.ownReactions ?: message.ownReactions,
-        )
-        channelStateLogic.upsertMessage(updatedMessage)
-        channelStateLogic.delsertPinnedMessage(updatedMessage)
-    }
-
-    private fun upsertUserPresence(user: User) {
-        channelStateLogic.upsertUserPresence(user)
-    }
-
-    private fun upsertUser(user: User) {
-        upsertUserPresence(user)
     }
 }
