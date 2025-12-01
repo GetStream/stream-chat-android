@@ -32,6 +32,7 @@ plugins {
     alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.binary.compatibility.validator)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.maven.publish)
 }
 
