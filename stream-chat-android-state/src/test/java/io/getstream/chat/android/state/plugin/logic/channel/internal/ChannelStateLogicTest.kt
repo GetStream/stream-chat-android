@@ -207,7 +207,7 @@ internal class ChannelStateLogicTest {
 
         channelStateLogic.setTyping(typingStartEvent.user.id, typingStartEvent)
 
-        verify(mutableState, times(0)).updateTypingEvents(any(), any())
+        verify(mutableState, times(0)).updateTypingEvent(any())
         verify(spyMutableGlobalState, times(0)).tryEmitTypingEvent(any(), any())
     }
 

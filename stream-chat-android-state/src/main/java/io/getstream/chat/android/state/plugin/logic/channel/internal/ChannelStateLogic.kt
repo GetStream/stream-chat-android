@@ -295,7 +295,7 @@ internal class ChannelStateLogic(
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
     ) {
-        mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
+        mutableState.updateTypingEvent(typingEvent = typingEvent)
         globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
