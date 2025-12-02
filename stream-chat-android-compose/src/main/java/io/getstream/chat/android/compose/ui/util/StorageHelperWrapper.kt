@@ -97,7 +97,7 @@ public class StorageHelperWrapper(
      * @return List of [Attachment]s with files prepared for uploading.
      */
     public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return getAttachmentsMetadataFromUris(uris).let(::getAttachmentsFromMetaData) // not used
+        return getAttachmentsMetadataFromUris(uris).let(::getAttachmentsFromMetaData)
     }
 
     /**

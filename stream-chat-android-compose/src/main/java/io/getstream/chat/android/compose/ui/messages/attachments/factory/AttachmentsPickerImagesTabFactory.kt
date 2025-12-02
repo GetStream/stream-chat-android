@@ -101,7 +101,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context)),
+            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
         LaunchedEffect(processingViewModel) {
             processingViewModel.mediaMetadata.collectLatest { metaData ->

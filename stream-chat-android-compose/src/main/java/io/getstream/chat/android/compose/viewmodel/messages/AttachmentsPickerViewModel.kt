@@ -226,7 +226,7 @@ public class AttachmentsPickerViewModel(
      * @return List of [Attachment]s ready for uploading.
      */
     public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return storageHelper.getAttachmentsFromUris(uris) // not used
+        return storageHelper.getAttachmentsFromUris(uris)
     }
 
     /**

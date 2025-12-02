@@ -212,7 +212,7 @@ public class AttachmentsPickerSystemTabFactory(
         val context = LocalContext.current
 
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context)),
+            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
 
         LaunchedEffect(processingViewModel) {

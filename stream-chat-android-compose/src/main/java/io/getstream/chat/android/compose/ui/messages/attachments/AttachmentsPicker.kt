@@ -166,7 +166,6 @@ public fun AttachmentsPicker(
                     },
                     color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
-                    // Tab content
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
                         allowedFactories.getOrNull(it)
                             ?.PickerTabContent(
