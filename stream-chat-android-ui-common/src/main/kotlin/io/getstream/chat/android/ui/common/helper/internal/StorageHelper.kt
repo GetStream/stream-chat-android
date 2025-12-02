@@ -152,6 +152,9 @@ public class StorageHelper {
      * The attachment type (image, video, or file) is automatically determined based on
      * the MIME type.
      *
+     * IMPORTANT: This method performs a potentially expensive query operation and should be called from a
+     * background thread to avoid blocking the UI.
+     *
      * @param context The Android context used to access the content resolver.
      * @param uriList The list of content URIs (using the `content://` scheme) to query.
      * @return A list of [AttachmentMetaData] objects with parsed metadata. URIs that fail

@@ -92,10 +92,16 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
+    // Listen for attachments to be ready for upload
+    LaunchedEffect(attachmentsPickerViewModel) {
+        attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
+            onAttachmentsSelected(it)
+        }
+    }
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
-            onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
         }
         onDismiss()
     }
@@ -146,7 +152,7 @@ public fun AttachmentsPicker(
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
-                            onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+                            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
                         },
                     )
                 }
@@ -160,12 +166,6 @@ public fun AttachmentsPicker(
                     },
                     color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
-                    // Listen for attachments to be ready for upload
-                    LaunchedEffect(attachmentsPickerViewModel) {
-                        attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
-                            onAttachmentsSelected(it)
-                        }
-                    }
                     // Tab content
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
                         allowedFactories.getOrNull(it)

@@ -60,14 +60,77 @@ internal class AttachmentsProcessingViewModelTest {
         }
         val viewModel = AttachmentsProcessingViewModel(storageHelper)
 
-        viewModel.result.test {
-            viewModel.processAttachmentsFromUris(uris)
+        viewModel.attachmentsMetadataFromUris.test {
+            viewModel.getAttachmentsMetadataFromUrisAsync(uris)
             advanceUntilIdle()
 
             val result = awaitItem()
             assertEquals(uris, result.uris)
-            assertEquals(expectedMetadata, result.processedAttachments)
-            assertEquals(2, result.processedAttachments.size)
+            assertEquals(expectedMetadata, result.attachmentsMetadata)
+            assertEquals(2, result.attachmentsMetadata.size)
+        }
+    }
+
+    @Test
+    fun `Given files When getting files async Should emit files metadata`() = runTest {
+        val expectedFilesMetadata = listOf(
+            AttachmentMetaData(
+                type = "file",
+                mimeType = "application/pdf",
+                title = "document.pdf",
+            ),
+            AttachmentMetaData(
+                type = "file",
+                mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                title = "report.docx",
+            ),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getFiles()) doReturn expectedFilesMetadata
+        }
+        val viewModel = AttachmentsProcessingViewModel(storageHelper)
+
+        viewModel.filesMetadata.test {
+            viewModel.getFilesAsync()
+            advanceUntilIdle()
+
+            val result = awaitItem()
+            assertEquals(expectedFilesMetadata, result)
+            assertEquals(2, result.size)
+        }
+    }
+
+    @Test
+    fun `Given media When getting media async Should emit media metadata`() = runTest {
+        val expectedMediaMetadata = listOf(
+            AttachmentMetaData(
+                type = "image",
+                mimeType = "image/jpeg",
+                title = "photo1.jpg",
+            ),
+            AttachmentMetaData(
+                type = "video",
+                mimeType = "video/mp4",
+                title = "video1.mp4",
+            ),
+            AttachmentMetaData(
+                type = "image",
+                mimeType = "image/png",
+                title = "screenshot.png",
+            ),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getMedia()) doReturn expectedMediaMetadata
+        }
+        val viewModel = AttachmentsProcessingViewModel(storageHelper)
+
+        viewModel.mediaMetadata.test {
+            viewModel.getMediaAsync()
+            advanceUntilIdle()
+
+            val result = awaitItem()
+            assertEquals(expectedMediaMetadata, result)
+            assertEquals(3, result.size)
         }
     }
 }

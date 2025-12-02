@@ -44,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -55,6 +56,7 @@ import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.uiutils.util.openSystemSettings
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -96,6 +98,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
      * @param onAttachmentItemSelected Handler when the item selection state changes.
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
+    @Suppress("LongMethod")
     @Composable
     override fun PickerTabContent(
         onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
@@ -106,8 +109,27 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     ) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
-        val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context)
+        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
+            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context)),
+        )
+        LaunchedEffect(processingViewModel) {
+            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+                // Check if some of the files were filtered out due to upload config
+                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                    Toast.makeText(
+                        context,
+                        R.string.stream_compose_message_composer_file_not_supported,
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+            }
+        }
+        LaunchedEffect(processingViewModel) {
+            processingViewModel.filesMetadata.collectLatest { metaData ->
+                val items = metaData.map { AttachmentPickerItemState(it, false) }
+                onAttachmentsChanged(items)
+            }
         }
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
         val permissionLauncher =
@@ -118,9 +140,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
             }
         val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
             if (value != FilesAccess.DENIED) {
-                onAttachmentsChanged(
-                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
-                )
+                processingViewModel.getFilesAsync()
             }
         }
 
@@ -135,17 +155,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     onBrowseFilesResult = { uris ->
-                        val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
-                        // Check if some of the files were filtered out due to upload config
-                        if (uris.size != attachments.size) {
-                            Toast.makeText(
-                                context,
-                                R.string.stream_compose_message_composer_file_not_supported,
-                                Toast.LENGTH_SHORT,
-                            ).show()
-                        }
-
-                        onAttachmentsSubmitted(attachments)
+                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
                     },
                 )
             },

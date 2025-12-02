@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
@@ -25,7 +26,11 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.amshove.kluent.`should be equal to`
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
@@ -51,13 +56,13 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changeAttachmentState(true)
         viewModel.loadData()
 
-        viewModel.isShowingAttachments `should be equal to` true
-        viewModel.attachmentsPickerMode `should be equal to` Images
-        viewModel.images.size `should be equal to` 2
-        viewModel.files.size `should be equal to` 0
-        viewModel.hasPickedImages `should be equal to` false
-        viewModel.hasPickedFiles `should be equal to` false
-        viewModel.getSelectedAttachments().size `should be equal to` 0
+        assertTrue(viewModel.isShowingAttachments)
+        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertEquals(2, viewModel.images.size)
+        assertEquals(0, viewModel.files.size)
+        assertFalse(viewModel.hasPickedImages)
+        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
     @Test
@@ -70,13 +75,13 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changeAttachmentState(true)
         viewModel.changeAttachmentPickerMode(Files)
 
-        viewModel.isShowingAttachments `should be equal to` true
-        viewModel.attachmentsPickerMode `should be equal to` Files
-        viewModel.images.size `should be equal to` 0
-        viewModel.files.size `should be equal to` 2
-        viewModel.hasPickedImages `should be equal to` false
-        viewModel.hasPickedFiles `should be equal to` false
-        viewModel.getSelectedAttachments().size `should be equal to` 0
+        assertTrue(viewModel.isShowingAttachments)
+        assertEquals(Files, viewModel.attachmentsPickerMode)
+        assertEquals(0, viewModel.images.size)
+        assertEquals(2, viewModel.files.size)
+        assertFalse(viewModel.hasPickedImages)
+        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
     @Test
@@ -91,13 +96,13 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.loadData()
         viewModel.changeSelectedAttachments(viewModel.images.first())
 
-        viewModel.isShowingAttachments `should be equal to` true
-        viewModel.attachmentsPickerMode `should be equal to` Images
-        viewModel.images.size `should be equal to` 2
-        viewModel.files.size `should be equal to` 0
-        viewModel.hasPickedImages `should be equal to` true
-        viewModel.hasPickedFiles `should be equal to` false
-        viewModel.getSelectedAttachments().size `should be equal to` 1
+        assertTrue(viewModel.isShowingAttachments)
+        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertEquals(2, viewModel.images.size)
+        assertEquals(0, viewModel.files.size)
+        assertTrue(viewModel.hasPickedImages)
+        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(1, viewModel.getSelectedAttachments().size)
     }
 
     @Test
@@ -111,13 +116,13 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changeAttachmentPickerMode(Files)
         viewModel.changeAttachmentState(false)
 
-        viewModel.isShowingAttachments `should be equal to` false
-        viewModel.attachmentsPickerMode `should be equal to` Images
-        viewModel.images.size `should be equal to` 0
-        viewModel.files.size `should be equal to` 0
-        viewModel.hasPickedImages `should be equal to` false
-        viewModel.hasPickedFiles `should be equal to` false
-        viewModel.getSelectedAttachments().size `should be equal to` 0
+        assertFalse(viewModel.isShowingAttachments)
+        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertEquals(0, viewModel.images.size)
+        assertEquals(0, viewModel.files.size)
+        assertFalse(viewModel.hasPickedImages)
+        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
     @Test
@@ -125,9 +130,83 @@ internal class AttachmentsPickerViewModelTest {
         val storageHelper: StorageHelperWrapper = mock()
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.isShowingAttachments `should be equal to` false
+        assertFalse(viewModel.isShowingAttachments)
         verify(storageHelper, never()).getFiles()
         verify(storageHelper, never()).getMedia()
+    }
+
+    @Test
+    fun `Given selected images When getting selected attachments async Should emit attachments for upload`() = runTest {
+        val expectedAttachments = listOf(
+            Attachment(type = "image", upload = mock()),
+            Attachment(type = "image", upload = mock()),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
+            whenever(it.getAttachmentsForUpload(any())) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.attachmentsForUpload.test {
+            viewModel.changeAttachmentState(true)
+            viewModel.loadData()
+            viewModel.changeSelectedAttachments(viewModel.images.first())
+            viewModel.changeSelectedAttachments(viewModel.images.last())
+
+            viewModel.getSelectedAttachmentsAsync()
+            advanceUntilIdle()
+
+            val result = awaitItem()
+            assertEquals(2, result.size)
+            assertEquals(expectedAttachments, result)
+        }
+    }
+
+    @Test
+    fun `Given selected files When getting selected attachments async Should emit attachments for upload`() = runTest {
+        val expectedAttachments = listOf(
+            Attachment(type = "file", upload = mock()),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
+            whenever(it.getAttachmentsForUpload(any())) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.attachmentsForUpload.test {
+            viewModel.changeAttachmentState(true)
+            viewModel.changeAttachmentPickerMode(Files)
+            viewModel.changeSelectedAttachments(viewModel.files.first())
+
+            viewModel.getSelectedAttachmentsAsync()
+            advanceUntilIdle()
+
+            val result = awaitItem()
+            assertEquals(1, result.size)
+            assertEquals(expectedAttachments, result)
+        }
+    }
+
+    @Test
+    fun `Given attachment metadata When getting attachments from metadata async Should emit attachments for upload`() = runTest {
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val expectedAttachments = listOf(
+            Attachment(type = "image", upload = mock()),
+            Attachment(type = "image", upload = mock()),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.attachmentsForUpload.test {
+            viewModel.getAttachmentsFromMetadataAsync(metadata)
+            advanceUntilIdle()
+
+            val result = awaitItem()
+            assertEquals(2, result.size)
+            assertEquals(expectedAttachments, result)
+        }
     }
 
     companion object {

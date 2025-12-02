@@ -30,10 +30,10 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.util.extensions.asState
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -208,13 +208,25 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
+     * Loads up the currently selected attachments. It uses the [attachmentsPickerMode] to know which
+     * attachments to use - files or images.
+     * Runs the [getSelectedAttachments] method on [DispatcherProvider.IO] and emits the result
+     * via the [attachmentsForUpload] flow.
+     */
+    internal fun getSelectedAttachmentsAsync() {
+        viewModelScope.launch(DispatcherProvider.IO) {
+            _attachmentsForUpload.emit(getSelectedAttachments())
+        }
+    }
+
+    /**
      * Transforms selected file Uris to a list of [Attachment]s we can upload.
      *
      * @param uris Selected Uris.
      * @return List of [Attachment]s ready for uploading.
      */
     public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return storageHelper.getAttachmentsFromUris(uris)
+        return storageHelper.getAttachmentsFromUris(uris) // not used
     }
 
     /**
@@ -227,9 +239,16 @@ public class AttachmentsPickerViewModel(
         return storageHelper.getAttachmentsForUpload(metaData)
     }
 
-    internal fun getAttachmentsFromMetadataAsync(metaData: List<AttachmentMetaData>) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _attachmentsForUpload.emit(storageHelper.getAttachmentsForUpload(metaData))
+    /**
+     * Transforms the selected meta data into a list of [Attachment]s we can upload.
+     * Runs the [getAttachmentsFromMetadataAsync] method on [DispatcherProvider.IO] and emits the result
+     * via the [_attachmentsForUpload] flow.
+     *
+     * @param metadata List of attachment meta data items.
+     */
+    internal fun getAttachmentsFromMetadataAsync(metadata: List<AttachmentMetaData>) {
+        viewModelScope.launch(DispatcherProvider.IO) {
+            _attachmentsForUpload.emit(getAttachmentsFromMetaData(metadata))
         }
     }
 

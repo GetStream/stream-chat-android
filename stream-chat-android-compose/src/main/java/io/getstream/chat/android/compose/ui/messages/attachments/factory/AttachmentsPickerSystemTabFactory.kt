@@ -216,27 +216,27 @@ public class AttachmentsPickerSystemTabFactory(
         )
 
         LaunchedEffect(processingViewModel) {
-            processingViewModel.result.collectLatest { event ->
+            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
                 // Check if some of the files were filtered out due to upload config
-                if (event.uris.size != event.processedAttachments.size) {
+                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
                     Toast.makeText(
                         context,
                         R.string.stream_compose_message_composer_file_not_supported,
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
-                onAttachmentsSubmitted(event.processedAttachments)
+                onAttachmentsSubmitted(metadata.attachmentsMetadata)
             }
         }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->
             val uris = listOf(uri)
-            processingViewModel.processAttachmentsFromUris(uris)
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
         }
 
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                processingViewModel.processAttachmentsFromUris(uris)
+                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(
