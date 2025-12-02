@@ -121,8 +121,10 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun markMessageRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markUnread (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun muteChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -746,8 +748,10 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun markMessageRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead ()Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markUnread (Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun mute ()Lio/getstream/result/call/Call;
 	public final fun mute (Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun mute$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;

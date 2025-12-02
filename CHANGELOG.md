@@ -16,8 +16,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markThreadUnread(String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ⚠️ Changed
+- Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ❌ Removed
 
