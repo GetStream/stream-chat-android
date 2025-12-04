@@ -18,6 +18,8 @@ package io.getstream.chat.android.offline.repository.domain.channelconfig.intern
 
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.models.ChannelConfig
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Collections
 
 /**
@@ -28,6 +30,7 @@ internal class DatabaseChannelConfigRepository(
     private val channelConfigDao: ChannelConfigDao,
 ) : ChannelConfigRepository {
     private val channelConfigs: MutableMap<String, ChannelConfig> = Collections.synchronizedMap(mutableMapOf())
+    private val mutex = Mutex()
 
     /**
      * Caches in memory data from DB.
@@ -52,7 +55,9 @@ internal class DatabaseChannelConfigRepository(
         channelConfigs += configs.associateBy(ChannelConfig::type)
 
         // insert into room db
-        channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
+        mutex.withLock {
+            channelConfigDao.insert(configs.map(ChannelConfig::toEntity))
+        }
     }
 
     /**
@@ -60,10 +65,14 @@ internal class DatabaseChannelConfigRepository(
      */
     override suspend fun insertChannelConfig(config: ChannelConfig) {
         channelConfigs += config.type to config
-        channelConfigDao.insert(config.toEntity())
+        mutex.withLock {
+            channelConfigDao.insert(config.toEntity())
+        }
     }
 
     override suspend fun clear() {
-        channelConfigDao.deleteAll()
+        mutex.withLock {
+            channelConfigDao.deleteAll()
+        }
     }
 }
