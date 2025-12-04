@@ -103,6 +103,9 @@ public class StorageHelperWrapper(
     /**
      * Takes a list of file Uris and transforms them into a list of [AttachmentMetaData].
      *
+     * IMPORTANT: This method performs a potentially expensive query operation and should be called from a
+     * background thread to avoid blocking the UI.
+     *
      * @param uris Selected file Uris, to be transformed.
      * @return List of [AttachmentMetaData] that describe the files.
      */

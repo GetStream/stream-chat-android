@@ -61,6 +61,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -81,6 +82,7 @@ import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerCo
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -208,27 +210,33 @@ public class AttachmentsPickerSystemTabFactory(
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         val context = LocalContext.current
-        val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context)
+
+        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
+            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
+        )
+
+        LaunchedEffect(processingViewModel) {
+            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+                // Check if some of the files were filtered out due to upload config
+                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                    Toast.makeText(
+                        context,
+                        R.string.stream_compose_message_composer_file_not_supported,
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                }
+                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+            }
         }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->
             val uris = listOf(uri)
-            val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
-            // Check if some of the files were filtered out due to upload config
-            if (uris.size != attachments.size) {
-                Toast.makeText(
-                    context,
-                    R.string.stream_compose_message_composer_file_not_supported,
-                    Toast.LENGTH_SHORT,
-                ).show()
-            }
-            onAttachmentsSubmitted(attachments)
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
         }
 
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(uris))
+                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(
