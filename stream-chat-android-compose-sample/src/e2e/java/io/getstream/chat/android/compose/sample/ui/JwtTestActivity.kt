@@ -184,7 +184,7 @@ class JwtTestActivity : AppCompatActivity() {
 
     private suspend fun fetchJwtToken(baseUrl: String, userId: String): String {
         return withContext(Dispatchers.IO) {
-            val endpoint = "$baseUrl/jwt/get?api_key=$API_KEY&user_id=$userId"
+            val endpoint = "$baseUrl/jwt/get?platform=android"
             val request = Request.Builder().url(endpoint).build()
 
             OkHttpClient().newCall(request).execute().use { response ->
