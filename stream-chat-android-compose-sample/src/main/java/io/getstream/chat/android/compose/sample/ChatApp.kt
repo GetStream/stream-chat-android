@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.sample
 
 import android.app.Application
+import android.os.StrictMode
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
 import io.getstream.chat.android.compose.sample.service.SharedLocationService
@@ -43,6 +44,22 @@ class ChatApp : Application() {
                 ChatHelper.connectUser(userCredentials)
             }
         }
+
+        enableStrictMode()
+    }
+
+    private fun enableStrictMode() {
+        val threadPolicy = StrictMode.ThreadPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setThreadPolicy(threadPolicy)
+
+        val vmPolicy = StrictMode.VmPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setVmPolicy(vmPolicy)
     }
 
     private fun getApiKey(): String {
