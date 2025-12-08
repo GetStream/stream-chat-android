@@ -886,7 +886,9 @@ public class MessageComposerController(
      * from [RecordingState.Idle] to [RecordingState.Hold].
      */
     public fun startRecording(offset: Pair<Float, Float>? = null) {
-        audioRecordingController.startRecording(offset)
+        scope.launch {
+            audioRecordingController.startRecording(offset)
+        }
     }
 
     /**
@@ -914,13 +916,21 @@ public class MessageComposerController(
     /**
      * Stops audio recording and moves [MessageComposerState.recording] state to [RecordingState.Overview].
      */
-    public fun stopRecording(): Unit = audioRecordingController.stopRecording()
+    public fun stopRecording() {
+        scope.launch {
+            audioRecordingController.stopRecording()
+        }
+    }
 
     /**
      * Completes audio recording and moves [MessageComposerState.recording] state to [RecordingState.Complete].
      * Also, it wil update [MessageComposerState.attachments] list.
      */
-    public fun completeRecording(): Unit = audioRecordingController.completeRecording()
+    public fun completeRecording() {
+        scope.launch {
+            audioRecordingController.completeRecording()
+        }
+    }
 
     /**
      * Pauses audio recording and sets [RecordingState.Overview.isPlaying] to false.
@@ -933,6 +943,18 @@ public class MessageComposerController(
      * Sets [RecordingState.Overview.playingProgress] to the given progress.
      */
     public fun seekRecordingTo(progress: Float): Unit = audioRecordingController.seekRecordingTo(progress)
+
+    /**
+     * Completes the active audio recording and sends the recorded audio as an attachment.
+     */
+    public fun sendRecording() {
+        scope.launch {
+            audioRecordingController.completeRecordingSync().onSuccess { recording ->
+                val attachments = selectedAttachments.value + recording
+                sendMessage(buildNewMessage(messageInput.value.text, attachments), callback = {})
+            }
+        }
+    }
 
     /**
      * Shows the mention suggestion list popup if necessary.
