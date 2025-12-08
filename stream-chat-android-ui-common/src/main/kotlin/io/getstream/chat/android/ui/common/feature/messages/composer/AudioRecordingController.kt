@@ -340,13 +340,13 @@ internal class AudioRecordingController(
 
     suspend fun completeRecordingSync(): Result<Attachment> {
         val state = this.recordingState.value
-        logger.w { "[completeRecordingWithResult] state: $state" }
+        logger.w { "[completeRecordingSync] state: $state" }
         if (state is RecordingState.Idle) {
-            logger.w { "[completeRecordingWithResult] rejected (state is Idle)" }
+            logger.w { "[completeRecordingSync] rejected (state is Idle)" }
             return Result.Failure(Error.GenericError("Recording is in Idle state"))
         }
         if (state is RecordingState.Overview) {
-            logger.d { "[completeRecordingWithResult] completing from Overview state" }
+            logger.d { "[completeRecordingSync] completing from Overview state" }
             clearData()
             val attachment = state.attachment.copy(
                 extraData = state.attachment.extraData + mapOf(
@@ -362,14 +362,14 @@ internal class AudioRecordingController(
         }
         when (result) {
             is Result.Failure -> {
-                logger.e { "[completeRecordingWithResult] failed: ${result.value}" }
+                logger.e { "[completeRecordingSync] failed: ${result.value}" }
                 clearData()
                 setState(RecordingState.Idle)
                 return result
             }
 
             is Result.Success -> {
-                logger.d { "[completeRecordingWithResult] complete from state: $state" }
+                logger.d { "[completeRecordingSync] complete from state: $state" }
                 val adjusted = samples.downsampleMax(samplesTarget)
                 val normalized = adjusted.normalize()
                 clearData()
