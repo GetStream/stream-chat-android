@@ -12,14 +12,18 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Prevent marking thread replies as delivered. [#6011](https://github.com/GetStream/stream-chat-android/pull/6011)
-- Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markThreadUnread(String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ⚠️ Changed
+- Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ❌ Removed
 
@@ -88,6 +92,37 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 28th, 2025 - 6.29.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Prevent marking thread replies as delivered. [#6011](https://github.com/GetStream/stream-chat-android/pull/6011)
+- Fix channel ordering glitch (exclude thread replies from the last channel message calculation). [#6012](https://github.com/GetStream/stream-chat-android/pull/6012)
+
+### ⬆️ Improved
+- Prevent potential duplicate calls to the `CreateDevice` when connecting a user or after a push token refresh. [#6023](https://github.com/GetStream/stream-chat-android/pull/6023)
+
+### ✅ Added
+- Add `filter_tags` to `Channel`. [#6006](https://github.com/GetStream/stream-chat-android/pull/6006)
+- Add option to hide history before given date when adding members to a channel. [#6020](https://github.com/GetStream/stream-chat-android/pull/6020)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Prevent duplicate `GetOrCreateChannel` calls when paginating messages. [#6016](https://github.com/GetStream/stream-chat-android/pull/6016)
+
+### ✅ Added
+- Add `StatePluginConfig.isAutomaticSyncOnReconnectEnabled` for configuring the automatic sync process on connect/reconnect. [#6017](https://github.com/GetStream/stream-chat-android/pull/6017)
+
+### ⚠️ Changed
+- Deprecate `StatePluginConfig.backgroundSyncEnabled`. [#6017](https://github.com/GetStream/stream-chat-android/pull/6017)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix `Thread Reply` option visible for messages belonging to a thread. [#6021](https://github.com/GetStream/stream-chat-android/pull/6021)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#6013](https://github.com/GetStream/stream-chat-android/pull/6013)
 
 # November 17th, 2025 - 6.28.0
 ## Common changes for all artifacts

@@ -19,11 +19,13 @@ package io.getstream.chat.android.client.api2.model.requests
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class AddMembersRequest(
     val add_members: List<UpstreamMemberDataDto>,
     val message: UpstreamMessageDto?,
     val hide_history: Boolean?,
+    val hide_history_before: Date?,
     val skip_push: Boolean?,
 )

@@ -474,11 +474,36 @@ public class ChannelClient internal constructor(
     }
 
     /**
+     * Marks all messages in the channel as unread that were created after the specified timestamp.
+     *
+     * @param timestamp The timestamp used to find the first message to mark as unread.
+     */
+    @CheckResult
+    public fun markUnread(timestamp: Date): Call<Unit> {
+        return client.markUnread(channelType, channelId, timestamp)
+    }
+
+    /**
+     * Marks a given thread in the channel as unread.
+     *
+     * @param threadId Id of the thread to mark as unread.
+     */
+    @CheckResult
+    public fun markThreadUnread(threadId: String): Call<Unit> {
+        return client.markThreadUnread(channelType, channelId, threadId = threadId)
+    }
+
+    /**
      * Marks a given thread in the channel starting from the given message as unread.
      *
      * @param messageId Id of the message from where the thread should be marked as unread.
      * @param threadId Id of the thread to mark as unread.
      */
+    @Deprecated(
+        "Marking a thread as unread from a given message is currently not supported. " +
+            "Passing messageId has no effect and the whole thread is marked as unread." +
+            "Use markThreadUnread(channelType, channelId, threadId) instead.",
+    )
     @CheckResult
     public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> {
         return client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
@@ -728,6 +753,8 @@ public class ChannelClient internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message object that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param hideHistoryBefore Hides the channel history before the provided date from the added members. If
+     * [hideHistory] and [hideHistoryBefore] are both specified, [hideHistoryBefore] takes precedence.
      * @param skipPush Skip sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
@@ -737,6 +764,7 @@ public class ChannelClient internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        hideHistoryBefore: Date? = null,
         skipPush: Boolean? = null,
     ): Call<Channel> {
         return client.addMembers(
@@ -745,6 +773,7 @@ public class ChannelClient internal constructor(
             memberIds = memberIds,
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
             skipPush = skipPush,
         )
     }

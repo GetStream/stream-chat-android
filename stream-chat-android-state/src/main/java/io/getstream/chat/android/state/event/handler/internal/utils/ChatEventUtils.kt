@@ -35,10 +35,9 @@ internal fun MessageReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
     lastReceivedEventDate = createdAt,
     lastRead = createdAt,
-// TODO: remove this once the backend is fixed and is sending us the number of unread messages
+    lastReadMessageId = lastReadMessageId,
+// TODO Backend should send us the number of unread messages
     unreadMessages = 0,
-// TODO: Backend should send us the last read message id
-    lastReadMessageId = null,
 )
 
 internal fun MessageDeliveredEvent.toChannelUserRead() = ChannelUserRead(

@@ -13,8 +13,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun addDevice (Lio/getstream/chat/android/models/Device;)Lio/getstream/result/call/Call;
 	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/query/AddMembersParams;)Lio/getstream/result/call/Call;
-	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
-	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
+	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun addSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun appSettings ()Lio/getstream/result/call/Call;
 	public final fun archiveChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -121,8 +121,10 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun markMessageRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markUnread (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun muteChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -709,8 +711,8 @@ public final class io/getstream/chat/android/client/audio/WaveformExtractorKt {
 public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun acceptInvite (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun addMembers (Lio/getstream/chat/android/client/query/AddMembersParams;)Lio/getstream/result/call/Call;
-	public final fun addMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
-	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun addMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
+	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun archive ()Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun create (Lio/getstream/chat/android/client/query/CreateChannelParams;)Lio/getstream/result/call/Call;
@@ -746,8 +748,10 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun markMessageRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead ()Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markUnread (Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun mute ()Lio/getstream/result/call/Call;
 	public final fun mute (Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun mute$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -3373,16 +3377,18 @@ public final class io/getstream/chat/android/client/plugins/requests/ApiRequests
 }
 
 public final class io/getstream/chat/android/client/query/AddMembersParams {
-	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)V
-	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;)V
+	public synthetic fun <init> (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Lio/getstream/chat/android/models/Message;
 	public final fun component3 ()Ljava/lang/Boolean;
-	public final fun component4 ()Ljava/lang/Boolean;
-	public final fun copy (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lio/getstream/chat/android/client/query/AddMembersParams;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/AddMembersParams;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/AddMembersParams;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()Ljava/lang/Boolean;
+	public final fun copy (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;)Lio/getstream/chat/android/client/query/AddMembersParams;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/query/AddMembersParams;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/util/Date;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/chat/android/client/query/AddMembersParams;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getHideHistory ()Ljava/lang/Boolean;
+	public final fun getHideHistoryBefore ()Ljava/util/Date;
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getSkipPush ()Ljava/lang/Boolean;
 	public final fun getSystemMessage ()Lio/getstream/chat/android/models/Message;

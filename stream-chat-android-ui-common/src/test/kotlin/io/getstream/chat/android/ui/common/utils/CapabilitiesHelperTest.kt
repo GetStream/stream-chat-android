@@ -407,54 +407,100 @@ internal class CapabilitiesHelperTest {
             ),
         )
 
+        @Suppress("LongMethod")
         @JvmStatic
         fun canThreadReplyToMessageArguments() = listOf(
+            // case: threads disabled
             Arguments.of(
                 false,
                 false,
-                randomMessage(),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                ),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: message not synced
             Arguments.of(
                 randomBoolean(),
                 randomBoolean(),
-                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
+                ),
                 randomChannelCapabilities(),
                 false,
             ),
+            // case: no SEND_REPLY capability
             Arguments.of(
                 randomBoolean(),
                 randomBoolean(),
-                randomMessage(),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                ),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message already in a thread
             Arguments.of(
                 true,
                 true,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message not synced, with SEND_REPLY capability
             Arguments.of(
                 true,
                 false,
-                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED)),
+                ),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message is synced, without SEND_REPLY capability
             Arguments.of(
                 true,
                 false,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.SEND_REPLY)),
                 false,
             ),
+            // case: message is a thread reply
             Arguments.of(
                 true,
                 false,
-                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomMessage(
+                    parentId = "parentId",
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
+                false,
+            ),
+            // case: all conditions met
+            Arguments.of(
+                true,
+                false,
+                randomMessage(
+                    parentId = null,
+                    threadParticipants = emptyList(),
+                    syncStatus = SyncStatus.COMPLETED,
+                ),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.SEND_REPLY)),
                 true,
             ),

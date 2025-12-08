@@ -482,11 +482,11 @@ internal class MoshiChatApiTest {
             .withDeviceApi(api)
             .get()
         // when
-        val device = randomDevice()
-        val result = sut.deleteDevice(device).await()
+        val id = randomString()
+        val result = sut.deleteDevice(id).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteDevice(device.token)
+        verify(api, times(1)).deleteDevice(id)
     }
 
     @ParameterizedTest
@@ -1457,30 +1457,12 @@ internal class MoshiChatApiTest {
         val channelType = randomString()
         val channelId = randomString()
         val messageId = randomString()
-        val result = sut.markUnread(channelType, channelId, messageId).await()
-        // then
-        val expectedRequest = MarkUnreadRequest(message_id = messageId)
-        result `should be instance of` expected
-        verify(api, times(1)).markUnread(channelType, channelId, expectedRequest)
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#markThreadUnreadInput")
-    fun testMarkThreadUnread(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
-        // given
-        val api = mock<ChannelApi>()
-        whenever(api.markUnread(any(), any(), any())).doReturn(call)
-        val sut = Fixture()
-            .withChannelApi(api)
-            .get()
-        // when
-        val channelType = randomString()
-        val channelId = randomString()
+        val messageTimestamp = randomDate()
         val threadId = randomString()
-        val messageId = randomString()
-        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
+        val result = sut.markUnread(channelType, channelId, messageId, messageTimestamp, threadId).await()
         // then
-        val expectedRequest = MarkUnreadRequest(thread_id = threadId, message_id = messageId)
+        val expectedRequest =
+            MarkUnreadRequest(message_id = messageId, message_timestamp = messageTimestamp, thread_id = threadId)
         result `should be instance of` expected
         verify(api, times(1)).markUnread(channelType, channelId, expectedRequest)
     }
@@ -1516,8 +1498,9 @@ internal class MoshiChatApiTest {
         val members = listOf(randomMemberData())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
-        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush).await()
+        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         result `should be instance of` expected
         verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())

@@ -43,6 +43,7 @@ import java.util.Date
  * @param draft The current user's draft message for this channel, if any.
  * @param messageCount The total number of messages in the channel, if known.
  * @param pushPreference The current user's push notification preference for this channel, if set.
+ * @param filterTags The list of filter tags applied to the channel.
  */
 @Immutable
 public data class ChannelData(
@@ -64,6 +65,7 @@ public data class ChannelData(
     val draft: DraftMessage? = null,
     val messageCount: Int? = null,
     val pushPreference: PushPreference? = null,
+    val filterTags: List<String> = emptyList(),
 ) {
 
     /**
@@ -107,6 +109,7 @@ public data class ChannelData(
         draft = channel.draftMessage,
         messageCount = channel.messageCount,
         pushPreference = channel.pushPreference,
+        filterTags = channel.filterTags,
     )
 
     @Deprecated(
@@ -163,6 +166,7 @@ public data class ChannelData(
             id = id,
             name = name,
             image = image,
+            filterTags = filterTags,
             frozen = frozen,
             createdAt = createdAt,
             updatedAt = updatedAt,
@@ -210,6 +214,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
     return copy(
         name = that.name,
         image = that.image,
+        filterTags = that.filterTags,
         frozen = that.frozen,
         cooldown = that.cooldown,
         team = that.team,
@@ -219,7 +224,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
-        messageCount = messageCount ?: this.messageCount,
+        messageCount = that.messageCount ?: this.messageCount,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundExcept
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
@@ -40,6 +41,7 @@ import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomExtraData
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
@@ -57,6 +59,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.spy
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -1072,7 +1075,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadSuccess() = runTest {
+    fun markUnreadFromMessageSuccess() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1087,7 +1090,7 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun markUnreadError() = runTest {
+    fun markUnreadFromMessageError() = runTest {
         // given
         val channelType = randomString()
         val channelId = randomString()
@@ -1098,6 +1101,37 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
             .get()
         // when
         val result = sut.markUnread(channelType, channelId, messageId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun markUnreadFromTimestampSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val timestamp = randomDate()
+        val sut = Fixture()
+            .givenMarkUnreadResult(RetroSuccess(Unit).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markUnread(channelType, channelId, timestamp).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun markUnreadFromTimestampError() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val timestamp = randomDate()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenMarkUnreadResult(RetroError<Unit>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markUnread(channelType, channelId, timestamp).await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -1139,12 +1173,11 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val channelType = randomString()
         val channelId = randomString()
         val threadId = randomString()
-        val messageId = randomString()
         val sut = Fixture()
-            .givenMarkThreadUnreadResult(RetroSuccess(Unit).toRetrofitCall())
+            .givenMarkUnreadResult(RetroSuccess(Unit).toRetrofitCall())
             .get()
         // when
-        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
+        val result = sut.markThreadUnread(channelType, channelId, threadId).await()
         // then
         verifySuccess(result, Unit)
     }
@@ -1155,10 +1188,42 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val channelType = randomString()
         val channelId = randomString()
         val threadId = randomString()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenMarkUnreadResult(RetroError<Unit>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markThreadUnread(channelType, channelId, threadId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun markThreadUnreadFromMessageSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val threadId = randomString()
+        val messageId = randomString()
+        val sut = Fixture()
+            .givenMarkUnreadResult(RetroSuccess(Unit).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun markThreadUnreadFromMessageError() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val threadId = randomString()
         val messageId = randomString()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenMarkThreadUnreadResult(RetroError<Unit>(errorCode).toRetrofitCall())
+            .givenMarkUnreadResult(RetroError<Unit>(errorCode).toRetrofitCall())
             .get()
         // when
         val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
@@ -1243,15 +1308,37 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val memberIds = listOf(randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val response = randomChannel()
         val sut = Fixture()
             .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
             .get()
         // when
-        val result = sut.addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = sut
+            .addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
+            .await()
         // then
         verifySuccess(result, response)
+    }
+
+    @Test
+    fun addMembersWithDefaultArgumentsSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val response = randomChannel()
+        val sut = spy(
+            Fixture()
+                .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
+                .get(),
+        )
+        // when
+        val result = sut.addMembers(channelType, channelId, memberIds).await()
+        // then
+        verifySuccess(result, response)
+        verify(sut).addMembers(channelType, channelId, memberIds, null, null, null, null)
     }
 
     @Test
@@ -1262,13 +1349,70 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         val memberIds = listOf(randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
             .givenAddMembersResult(RetroError<Channel>(errorCode).toRetrofitCall())
             .get()
         // when
-        val result = sut.addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = sut
+            .addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
+            .await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun addMembersWithParamsSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val systemMessage = randomMessage()
+        val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
+        val skipPush = randomBoolean()
+        val params = AddMembersParams(
+            members = memberIds.map { MemberData(it) },
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
+            skipPush = skipPush,
+        )
+        val response = randomChannel()
+        val sut = Fixture()
+            .givenAddMembersResult(RetroSuccess(response).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.addMembers(channelType, channelId, params).await()
+        // then
+        verifySuccess(result, response)
+    }
+
+    @Test
+    fun addMembersWithParamsError() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val memberIds = listOf(randomString())
+        val systemMessage = randomMessage()
+        val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
+        val skipPush = randomBoolean()
+        val params = AddMembersParams(
+            members = memberIds.map { MemberData(it) },
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
+            skipPush = skipPush,
+        )
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenAddMembersResult(RetroError<Channel>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.addMembers(channelType, channelId, params).await()
         // then
         verifyNetworkError(result, errorCode)
     }
@@ -1566,15 +1710,11 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenMarkUnreadResult(result: Call<Unit>) = apply {
-            whenever(api.markUnread(any(), any(), any())).thenReturn(result)
+            whenever(api.markUnread(any(), any(), anyOrNull(), anyOrNull(), anyOrNull())).thenReturn(result)
         }
 
         fun givenMarkThreadReadResult(result: Call<Unit>) = apply {
             whenever(api.markThreadRead(any(), any(), any())).thenReturn(result)
-        }
-
-        fun givenMarkThreadUnreadResult(result: Call<Unit>) = apply {
-            whenever(api.markThreadUnread(any(), any(), any(), any())).thenReturn(result)
         }
 
         fun givenStopWatchingResult(result: Call<Unit>) = apply {
@@ -1582,7 +1722,17 @@ internal class ChatClientChannelApiTests : BaseChatClientTest() {
         }
 
         fun givenAddMembersResult(result: Call<Channel>) = apply {
-            whenever(api.addMembers(any(), any(), any(), any(), any(), any())).thenReturn(result)
+            whenever(
+                api.addMembers(
+                    any(),
+                    any(),
+                    any(),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull(),
+                    anyOrNull(),
+                ),
+            ).thenReturn(result)
         }
 
         fun givenRemoveMembersResult(result: Call<Channel>) = apply {

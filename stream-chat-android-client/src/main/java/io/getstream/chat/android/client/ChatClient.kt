@@ -750,7 +750,7 @@ internal constructor(
     ): Call<ConnectionData> {
         return CoroutineCall(clientScope) {
             logger.d { "[switchUser] user.id: '${user.id}'" }
-            notifications.deleteDevice() // always delete device if switching users
+            notifications.deleteDevice(getCurrentUser()) // always delete device if switching users
             disconnectUserSuspend(flushPersistence = true)
             // change userId only after disconnect,
             // otherwise the userScope won't cancel coroutines related to the previous user.
@@ -1480,7 +1480,7 @@ internal constructor(
             when (isUserSet()) {
                 true -> {
                     if (deleteDevice) {
-                        notifications.deleteDevice()
+                        notifications.deleteDevice(getCurrentUser())
                     }
                     disconnectSuspend(flushPersistence)
                     Result.Success(Unit)
@@ -1554,7 +1554,7 @@ internal constructor(
 
     @CheckResult
     public fun deleteDevice(device: Device): Call<Unit> {
-        return api.deleteDevice(device)
+        return api.deleteDevice(device.token)
             .share(userScope) { DeleteDeviceIdentifier(device) }
     }
 
@@ -3458,23 +3458,54 @@ internal constructor(
         channelId: String,
         messageId: String,
     ): Call<Unit> {
-        return api.markUnread(channelType, channelId, messageId)
-            .doOnStart(userScope) {
-                logger.d { "[markUnread] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
-            }
-            .doOnResult(userScope) {
-                logger.v { "[markUnread] #doOnResult; completed($channelType:$channelId, $messageId): $it" }
-            }
+        return api.markUnread(channelType, channelId, messageId = messageId)
     }
 
     /**
-     * Marks a given thread starting from the given message as unread.
+     * Marks all messages in the channel as unread that were created after the specified timestamp.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     * @param timestamp The timestamp used to find the first message to mark as unread.
+     */
+    @CheckResult
+    public fun markUnread(
+        channelType: String,
+        channelId: String,
+        timestamp: Date,
+    ): Call<Unit> {
+        return api.markUnread(channelType, channelId, messageTimestamp = timestamp)
+    }
+
+    /**
+     * Marks a thread as unread.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     * @param threadId Id of the thread to mark as unread.
+     */
+    @CheckResult
+    public fun markThreadUnread(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+    ): Call<Unit> {
+        return api.markUnread(channelType, channelId, threadId = threadId)
+    }
+
+    /**
+     * Marks a thread as unread.
      *
      * @param channelType Type of the channel.
      * @param channelId Id of the channel.
      * @param threadId Id of the thread to mark as unread.
      * @param messageId Id of the message from where the thread should be marked as unread.
      */
+    @Deprecated(
+        "Marking a thread as unread from a given message is currently not supported. " +
+            "Passing messageId has no effect and the whole thread is marked as unread." +
+            "Use markThreadUnread(channelType, channelId, threadId) instead.",
+    )
     @CheckResult
     public fun markThreadUnread(
         channelType: String,
@@ -3482,7 +3513,7 @@ internal constructor(
         threadId: String,
         messageId: String,
     ): Call<Unit> {
-        return api.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
+        return api.markUnread(channelType, channelId, messageId = messageId, threadId = threadId)
     }
 
     /**
@@ -3617,6 +3648,8 @@ internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param hideHistoryBefore Hides the channel history before the provided date from the added members. If
+     * [hideHistory] and [hideHistoryBefore] are both specified, [hideHistoryBefore] takes precedence.
      * @param skipPush If true, skips sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
@@ -3628,12 +3661,14 @@ internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        hideHistoryBefore: Date? = null,
         skipPush: Boolean? = null,
     ): Call<Channel> {
         val params = AddMembersParams(
             members = memberIds.map(::MemberData),
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            hideHistoryBefore = hideHistoryBefore,
             skipPush = skipPush,
         )
         return addMembers(channelType, channelId, params)
@@ -3660,6 +3695,7 @@ internal constructor(
             members = params.members,
             systemMessage = params.systemMessage,
             hideHistory = params.hideHistory,
+            hideHistoryBefore = params.hideHistoryBefore,
             skipPush = params.skipPush,
         )
     }
@@ -5170,7 +5206,9 @@ internal constructor(
          */
         @Throws(IllegalStateException::class)
         internal fun setDevice(device: Device) {
-            ensureClientInitialized().notifications.setDevice(device)
+            val client = ensureClientInitialized()
+            val user = client.getCurrentUser()
+            client.notifications.setDevice(user, device)
         }
 
         @Throws(IllegalStateException::class)

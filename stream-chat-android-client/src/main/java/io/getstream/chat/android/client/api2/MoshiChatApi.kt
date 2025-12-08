@@ -440,8 +440,8 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun deleteDevice(device: Device): Call<Unit> {
-        return deviceApi.deleteDevice(deviceId = device.token).toUnitCall()
+    override fun deleteDevice(id: String): Call<Unit> {
+        return deviceApi.deleteDevice(id).toUnitCall()
     }
 
     override fun getDevices(): Call<List<Device>> {
@@ -978,28 +978,19 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun markUnread(channelType: String, channelId: String, messageId: String): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(messageId),
-        ).toUnitCall()
-    }
-
-    override fun markThreadUnread(
+    override fun markUnread(
         channelType: String,
         channelId: String,
-        threadId: String,
-        messageId: String,
+        messageId: String?,
+        messageTimestamp: Date?,
+        threadId: String?,
     ): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(
-                thread_id = threadId,
-                message_id = messageId,
-            ),
-        ).toUnitCall()
+        val request = MarkUnreadRequest(
+            message_id = messageId,
+            message_timestamp = messageTimestamp,
+            thread_id = threadId,
+        )
+        return channelApi.markUnread(channelType, channelId, request).toUnitCall()
     }
 
     override fun markAllRead(): Call<Unit> {
@@ -1012,6 +1003,7 @@ constructor(
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.addMembers(
@@ -1022,6 +1014,7 @@ constructor(
                     add_members = members.map { it.toDto() },
                     message = systemMessage?.toDto(),
                     hide_history = hideHistory,
+                    hide_history_before = hideHistoryBefore,
                     skip_push = skipPush,
                 )
             },

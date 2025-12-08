@@ -44,8 +44,8 @@ class GettingStarted {
         // Create a state plugin factory
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
-                // Enables background sync which syncs user actions performed while offline
-                backgroundSyncEnabled = true,
+                // Enables/disables background sync which syncs user actions performed while offline
+                backgroundSyncEnabled = false,
                 // Enables tracking online states for users
                 userPresence = true
             ),
@@ -65,8 +65,8 @@ class GettingStarted {
         // Create a state plugin factory
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
-                // Enables background sync which syncs user actions performed while offline.
-                backgroundSyncEnabled = true,
+                // Enables/disables background synchronization when push notifications are received
+                backgroundSyncEnabled = false,
                 // Enables tracking online states for users
                 userPresence = true,
             ),

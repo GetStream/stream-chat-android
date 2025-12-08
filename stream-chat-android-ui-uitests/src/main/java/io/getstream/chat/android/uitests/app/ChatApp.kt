@@ -32,7 +32,7 @@ class ChatApp : Application() {
         val offlinePluginFactory = StreamOfflinePluginFactory(appContext = this)
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
-                backgroundSyncEnabled = true,
+                backgroundSyncEnabled = false,
                 userPresence = true,
             ),
             appContext = this,

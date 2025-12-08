@@ -16,14 +16,9 @@
 
 package io.getstream.chat.ui.sample.application
 
-import android.app.Application
-
 object ApplicationConfigurator {
 
     const val HUAWEI_APP_ID = "104598359"
     const val XIAOMI_APP_ID = "2882303761520059340"
     const val XIAOMI_APP_KEY = "5792005994340"
-
-    fun configureApp(application: Application) {
-    }
 }

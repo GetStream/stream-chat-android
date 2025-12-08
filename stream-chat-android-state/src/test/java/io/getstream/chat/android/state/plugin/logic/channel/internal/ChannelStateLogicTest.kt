@@ -51,6 +51,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -65,6 +66,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -111,7 +113,7 @@ internal class ChannelStateLogicTest {
     private var _messages: Map<String, Message> = emptyMap()
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
     private val unreadCount = randomInt()
-    private val _read: MutableStateFlow<ChannelUserRead> = MutableStateFlow(
+    private val _read: MutableStateFlow<ChannelUserRead?> = MutableStateFlow(
         ChannelUserRead(
             user = user,
             lastReceivedEventDate = Date(Long.MIN_VALUE),
@@ -533,6 +535,282 @@ internal class ChannelStateLogicTest {
         channelStateLogic.updateDelivered(read)
 
         verify(mutableState).upsertDelivered(read)
+    }
+
+    @Test
+    fun `Given local read state is more recent than server, When updateDataForChannel is called, Then local unread count is preserved`() {
+        // given - local state has more recent lastReceivedEventDate and higher unread count
+        val localLastReceivedEventDate = Date(100L)
+        val serverLastReceivedEventDate = Date(50L)
+        val localUnreadCount = 5
+        val serverUnreadCount = 0
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = localLastReceivedEventDate,
+            unreadMessages = localUnreadCount,
+            lastRead = Date(90L),
+            lastReadMessageId = "local-read-id",
+            lastDeliveredAt = Date(80L),
+            lastDeliveredMessageId = "local-delivered-id",
+        )
+        _read.value = localRead
+
+        val serverRead = ChannelUserRead(
+            user = user.copy(name = "Updated Name"), // Server has updated user data
+            lastReceivedEventDate = serverLastReceivedEventDate,
+            unreadMessages = serverUnreadCount,
+            lastRead = Date(95L), // Server has more recent lastRead
+            lastReadMessageId = "server-read-id",
+            lastDeliveredAt = Date(85L),
+            lastDeliveredMessageId = "server-delivered-id",
+        )
+
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - local unread count and lastReceivedEventDate should be preserved
+        // but other fields should be merged from server
+        verify(mutableState).upsertReads(
+            eq(
+                listOf(
+                    localRead.copy(
+                        user = serverRead.user, // User data from server
+                        lastRead = serverRead.lastRead, // More recent lastRead from server
+                        lastReadMessageId = serverRead.lastReadMessageId,
+                        lastDeliveredAt = serverRead.lastDeliveredAt,
+                        lastDeliveredMessageId = serverRead.lastDeliveredMessageId,
+                        // lastReceivedEventDate and unreadMessages are preserved from local
+                    ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `Given server read state is more recent than local, When updateDataForChannel is called, Then server data is used`() {
+        // given - server state has more recent lastReceivedEventDate
+        val localLastReceivedEventDate = Date(50L)
+        val serverLastReceivedEventDate = Date(100L)
+        val localUnreadCount = 3
+        val serverUnreadCount = 2
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = localLastReceivedEventDate,
+            unreadMessages = localUnreadCount,
+            lastRead = Date(40L),
+            lastReadMessageId = "local-read-id",
+        )
+        _read.value = localRead
+
+        val serverRead = ChannelUserRead(
+            user = user.copy(name = "Updated Name"),
+            lastReceivedEventDate = serverLastReceivedEventDate,
+            unreadMessages = serverUnreadCount,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+        )
+
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - server data should be used entirely (it's more recent)
+        verify(mutableState).upsertReads(eq(listOf(serverRead)))
+    }
+
+    @Test
+    fun `Given local and server read states have same lastReceivedEventDate, When updateDataForChannel is called, Then server data is used`() {
+        // given - same lastReceivedEventDate, server should win
+        val sameDate = Date(100L)
+        val localUnreadCount = 5
+        val serverUnreadCount = 2
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = sameDate,
+            unreadMessages = localUnreadCount,
+            lastRead = Date(90L),
+            lastReadMessageId = "local-read-id",
+        )
+        _read.value = localRead
+
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = sameDate,
+            unreadMessages = serverUnreadCount,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+        )
+
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - server data should be used (when dates are equal, server wins)
+        verify(mutableState).upsertReads(eq(listOf(serverRead)))
+    }
+
+    @Test
+    fun `Given local read state is more recent, When updateDataForChannel is called with multiple reads, Then only current user read is preserved`() {
+        // given
+        val otherUser = randomUser(id = "other-user-id")
+        val localLastReceivedEventDate = Date(100L)
+        val serverLastReceivedEventDate = Date(50L)
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = localLastReceivedEventDate,
+            unreadMessages = 5,
+            lastRead = Date(90L),
+            lastReadMessageId = "local-read-id",
+        )
+        _read.value = localRead
+
+        val serverReads = listOf(
+            ChannelUserRead(
+                user = user,
+                lastReceivedEventDate = serverLastReceivedEventDate,
+                unreadMessages = 0,
+                lastRead = Date(95L),
+                lastReadMessageId = "server-read-id",
+            ),
+            ChannelUserRead(
+                user = otherUser,
+                lastReceivedEventDate = Date(200L),
+                unreadMessages = 10,
+                lastRead = Date(190L),
+                lastReadMessageId = "other-read-id",
+            ),
+        )
+
+        val channel = randomChannel(read = serverReads)
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - current user's read should preserve local state, other user's read should use server
+        verify(mutableState).upsertReads(
+            eq(
+                listOf(
+                    localRead.copy(
+                        lastRead = serverReads[0].lastRead,
+                        lastReadMessageId = serverReads[0].lastReadMessageId,
+                    ),
+                    serverReads[1], // Other user's read unchanged
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `Given no local read state exists, When updateDataForChannel is called, Then server data is used`() {
+        // given - no local read state
+        _read.value = null
+
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(100L),
+            unreadMessages = 3,
+            lastRead = Date(95L),
+            lastReadMessageId = "server-read-id",
+        )
+
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - server data should be used
+        verify(mutableState).upsertReads(eq(listOf(serverRead)))
+    }
+
+    @Test
+    fun `Given local read state is more recent with higher unread count, When updateDataForChannel is called, Then local unread count is preserved even if server has lower count`() {
+        // given - scenario: hidden channel received messages, local count incremented
+        val localLastReceivedEventDate = Date(100L)
+        val serverLastReceivedEventDate = Date(50L)
+        val localUnreadCount = 10 // Local has higher count (messages arrived while hidden)
+        val serverUnreadCount = 0 // Server has 0 (doesn't track unread for hidden channels)
+
+        val localRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = localLastReceivedEventDate,
+            unreadMessages = localUnreadCount,
+            lastRead = Date(30L),
+            lastReadMessageId = null,
+        )
+        _read.value = localRead
+
+        val serverRead = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = serverLastReceivedEventDate,
+            unreadMessages = serverUnreadCount,
+            lastRead = Date(30L),
+            lastReadMessageId = null,
+        )
+
+        val channel = randomChannel(read = listOf(serverRead))
+
+        // when
+        channelStateLogic.updateDataForChannel(
+            channel = channel,
+            messageLimit = 0,
+        )
+
+        // then - local unread count should be preserved
+        verify(mutableState).upsertReads(
+            eq(
+                listOf(
+                    localRead.copy(
+                        lastRead = serverRead.lastRead,
+                        lastReadMessageId = serverRead.lastReadMessageId,
+                    ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `When propagateQueryError is called for recoverable error, Then channel is marked for recovery and loading is reset`() {
+        // when
+        channelStateLogic.propagateQueryError(Error.GenericError("Test error"))
+
+        // then
+        verify(mutableState).recoveryNeeded = true
+        verify(mutableState).setLoadingOlderMessages(false)
+        verify(mutableState).setLoadingNewerMessages(false)
+    }
+
+    @Test
+    fun `When propagateQueryError is called for unrecoverable error, Then channel is not marked for recovery and loading is reset`() {
+        // when
+        channelStateLogic.propagateQueryError(Error.NetworkError("Test network error", 500))
+
+        // then
+        verify(mutableState, never()).recoveryNeeded = any<Boolean>()
+        verify(mutableState).setLoadingOlderMessages(false)
+        verify(mutableState).setLoadingNewerMessages(false)
     }
 
     companion object {

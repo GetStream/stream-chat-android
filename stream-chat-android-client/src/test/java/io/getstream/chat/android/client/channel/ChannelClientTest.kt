@@ -884,11 +884,11 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread should return success when ChatClient returns success`() = runTest {
+    fun `markUnread from message should return success when ChatClient returns success`() = runTest {
         // given
         val messageId = randomString()
         val successCall = RetroSuccess(Unit).toRetrofitCall()
-        whenever(chatClient.markUnread(any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.markUnread(any(), any(), any<String>())).thenReturn(successCall)
         // when
         val result = channelClient.markUnread(messageId).await()
         // then
@@ -897,12 +897,12 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markUnread should return error when ChatClient returns error`() = runTest {
+    fun `markUnread from message should return error when ChatClient returns error`() = runTest {
         // given
         val messageId = randomString()
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Unit>(errorCode).toRetrofitCall()
-        whenever(chatClient.markUnread(any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.markUnread(any(), any(), any<String>())).thenReturn(errorCall)
         // when
         val result = channelClient.markUnread(messageId).await()
         // then
@@ -911,7 +911,61 @@ internal class ChannelClientTest {
     }
 
     @Test
+    fun `markUnread from timestamp should return success when ChatClient returns success`() = runTest {
+        // given
+        val timestamp = randomDate()
+        val successCall = RetroSuccess(Unit).toRetrofitCall()
+        whenever(chatClient.markUnread(any(), any(), any<Date>())).thenReturn(successCall)
+        // when
+        val result = channelClient.markUnread(timestamp).await()
+        // then
+        verifySuccess(result, Unit)
+        verify(chatClient).markUnread(channelType, channelId, timestamp)
+    }
+
+    @Test
+    fun `markUnread from timestamp should return error when ChatClient returns error`() = runTest {
+        // given
+        val timestamp = randomDate()
+        val errorCode = positiveRandomInt()
+        val errorCall = RetroError<Unit>(errorCode).toRetrofitCall()
+        whenever(chatClient.markUnread(any(), any(), any<Date>())).thenReturn(errorCall)
+        // when
+        val result = channelClient.markUnread(timestamp).await()
+        // then
+        verifyNetworkError(result, errorCode)
+        verify(chatClient).markUnread(channelType, channelId, timestamp)
+    }
+
+    @Test
     fun `markThreadUnread should return success when ChatClient returns success`() = runTest {
+        // given
+        val threadId = randomString()
+        val successCall = RetroSuccess(Unit).toRetrofitCall()
+        whenever(chatClient.markThreadUnread(any(), any(), any())).thenReturn(successCall)
+        // when
+        val result = channelClient.markThreadUnread(threadId).await()
+        // then
+        verifySuccess(result, Unit)
+        verify(chatClient).markThreadUnread(channelType, channelId, threadId)
+    }
+
+    @Test
+    fun `markThreadUnread should return error when ChatClient returns error`() = runTest {
+        // given
+        val threadId = randomString()
+        val errorCode = positiveRandomInt()
+        val errorCall = RetroError<Unit>(errorCode).toRetrofitCall()
+        whenever(chatClient.markThreadUnread(any(), any(), any())).thenReturn(errorCall)
+        // when
+        val result = channelClient.markThreadUnread(threadId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+        verify(chatClient).markThreadUnread(channelType, channelId, threadId)
+    }
+
+    @Test
+    fun `markThreadUnread from message should return success when ChatClient returns success`() = runTest {
         // given
         val threadId = randomString()
         val messageId = randomString()
@@ -925,7 +979,7 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `markThreadUnread should return error when ChatClient returns error`() = runTest {
+    fun `markThreadUnread from message should return error when ChatClient returns error`() = runTest {
         // given
         val threadId = randomString()
         val messageId = randomString()
@@ -1556,15 +1610,16 @@ internal class ChannelClientTest {
         val memberIds = listOf(randomString(), randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val channel = randomChannel()
         val successCall = RetroSuccess(channel).toRetrofitCall()
-        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any(), any())).thenReturn(successCall)
         // when
-        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         verifySuccess(result, channel)
-        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush)
+        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
     }
 
     @Test
@@ -1582,13 +1637,14 @@ internal class ChannelClientTest {
                     anyOrNull(),
                     anyOrNull(),
                     anyOrNull(),
+                    anyOrNull(),
                 ),
             ).thenReturn(successCall)
             // when
             val result = channelClient.addMembers(memberIds).await()
             // then
             verifySuccess(result, channel)
-            verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null)
+            verify(chatClient).addMembers(channelType, channelId, memberIds, null, null, null, null)
         }
 
     @Test
@@ -1597,15 +1653,16 @@ internal class ChannelClientTest {
         val memberIds = listOf(randomString(), randomString())
         val systemMessage = randomMessage()
         val hideHistory = randomBoolean()
+        val hideHistoryBefore = randomDate()
         val skipPush = randomBoolean()
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Channel>(errorCode).toRetrofitCall()
-        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.addMembers(any(), any(), any<List<String>>(), any(), any(), any(), any())).thenReturn(errorCall)
         // when
-        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, skipPush).await()
+        val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush)
+        verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, hideHistoryBefore, skipPush)
     }
 
     @Test

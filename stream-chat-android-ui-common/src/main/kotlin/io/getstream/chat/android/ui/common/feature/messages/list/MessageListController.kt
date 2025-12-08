@@ -1210,15 +1210,14 @@ public class MessageListController(
         logger.d { "[loadOlderMessages] messageLimit: $messageLimit" }
         if (clientState.isOffline) return
 
-        _mode.value.run {
-            when (this) {
-                is MessageMode.Normal -> {
-                    if (channelState.value?.endOfOlderMessages?.value == true) return
-                    chatClient.loadOlderMessages(cid, messageLimit).enqueue()
-                }
-
-                is MessageMode.MessageThread -> threadLoadMore(this)
+        when (val mode = _mode.value) {
+            is MessageMode.Normal -> {
+                val endOfOlderMessages = channelState.value?.endOfOlderMessages?.value == true
+                val loadingOlderMessages = channelState.value?.loadingOlderMessages?.value == true
+                if (endOfOlderMessages || loadingOlderMessages) return
+                chatClient.loadOlderMessages(cid, messageLimit).enqueue()
             }
+            is MessageMode.MessageThread -> threadLoadMore(mode)
         }
     }
 
@@ -1807,7 +1806,7 @@ public class MessageListController(
                 }
 
                 is MessageMode.MessageThread -> {
-                    chatClient.markThreadUnread(channelType, channelId, mode.parentMessage.id, messageId = message.id)
+                    chatClient.markThreadUnread(channelType, channelId, threadId = mode.parentMessage.id)
                 }
             }
             call.enqueue { response ->

@@ -20,7 +20,7 @@
     android:background="@color/stream_ui_literal_black"
     >
 
-    <androidx.media3.ui.PlayerView
+    <io.getstream.chat.android.ui.widgets.internal.StreamPlayerView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,8 +56,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:indeterminateDuration="1000"
         android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+        android:indeterminateDuration="1000"
         android:visibility="gone"
         />
 

@@ -126,7 +126,7 @@ internal interface ChatApi {
     fun addDevice(device: Device): Call<Unit>
 
     @CheckResult
-    fun deleteDevice(device: Device): Call<Unit>
+    fun deleteDevice(id: String): Call<Unit>
 
     @CheckResult
     fun getDevices(): Call<List<Device>>
@@ -357,15 +357,9 @@ internal interface ChatApi {
     fun markUnread(
         channelType: String,
         channelId: String,
-        messageId: String,
-    ): Call<Unit>
-
-    @CheckResult
-    fun markThreadUnread(
-        channelType: String,
-        channelId: String,
-        threadId: String,
-        messageId: String,
+        messageId: String? = null,
+        messageTimestamp: Date? = null,
+        threadId: String? = null,
     ): Call<Unit>
 
     @CheckResult
@@ -420,6 +414,7 @@ internal interface ChatApi {
         members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        hideHistoryBefore: Date?,
         skipPush: Boolean?,
     ): Call<Channel>
 

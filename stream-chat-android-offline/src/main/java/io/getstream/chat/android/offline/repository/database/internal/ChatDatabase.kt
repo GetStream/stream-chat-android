@@ -92,7 +92,7 @@ import io.getstream.log.taggedLogger
         ThreadOrderEntity::class,
         DraftMessageEntity::class,
     ],
-    version = 97,
+    version = 98,
     exportSchema = false,
 )
 @TypeConverters(
