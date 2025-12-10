@@ -117,6 +117,7 @@ public class AttachmentsPickerViewModel(
     /**
      * Loads all the items based on the current type.
      */
+    @Deprecated("This method is no longer used and will be removed in future versions.")
     public fun loadData() {
         loadAttachmentsData(attachmentsPickerMode)
     }
