@@ -1439,39 +1439,6 @@ internal class ChannelClientTest {
     }
 
     @Test
-    fun `getReactions with firstReactionId and limit should return success when ChatClient returns success`() =
-        runTest {
-            // given
-            val messageId = randomString()
-            val firstReactionId = randomString()
-            val limit = positiveRandomInt()
-            val messages = listOf<Message>(mock(), mock())
-            val successCall = RetroSuccess(messages).toRetrofitCall()
-            whenever(chatClient.getRepliesMore(any(), any(), any())).thenReturn(successCall)
-            // when
-            val result = channelClient.getReactions(messageId, firstReactionId, limit).await()
-            // then
-            verifySuccess(result, messages)
-            verify(chatClient).getRepliesMore(messageId, firstReactionId, limit)
-        }
-
-    @Test
-    fun `getReactions with firstReactionId and limit should return error when ChatClient returns error`() = runTest {
-        // given
-        val messageId = randomString()
-        val firstReactionId = randomString()
-        val limit = positiveRandomInt()
-        val errorCode = positiveRandomInt()
-        val errorCall = RetroError<List<Message>>(errorCode).toRetrofitCall()
-        whenever(chatClient.getRepliesMore(any(), any(), any())).thenReturn(errorCall)
-        // when
-        val result = channelClient.getReactions(messageId, firstReactionId, limit).await()
-        // then
-        verifyNetworkError(result, errorCode)
-        verify(chatClient).getRepliesMore(messageId, firstReactionId, limit)
-    }
-
-    @Test
     fun `update should return success when ChatClient returns success`() = runTest {
         // given
         val message = randomMessage()
