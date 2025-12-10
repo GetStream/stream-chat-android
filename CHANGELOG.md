@@ -24,6 +24,7 @@
 ### ⚠️ Changed
 - Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.getReactions(messageId: String, firstReactionId: String, limit: Int)` because it is no longer supported. [#6039](https://github.com/GetStream/stream-chat-android/pull/6039)
 
 ### ❌ Removed
 
