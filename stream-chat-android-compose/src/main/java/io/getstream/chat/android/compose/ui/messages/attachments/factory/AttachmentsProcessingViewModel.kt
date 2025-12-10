@@ -49,51 +49,27 @@ internal class AttachmentsProcessingViewModel(
 
     /**
      * Flow of events emitted when attachments metadata is retrieved from URIs.
-     *
-     * This [SharedFlow] emits [AttachmentsMetadataFromUris] events that contain both the original URIs
-     * and the retrieved [AttachmentMetaData]. The UI can collect from this flow to react to metadata
-     * retrieval and update the attachment state accordingly.
      */
     val attachmentsMetadataFromUris: SharedFlow<AttachmentsMetadataFromUris> =
         _attachmentsMetadataFromUris.asSharedFlow()
 
     /**
      * Flow of events emitted when files metadata is retrieved.
-     *
-     * This [SharedFlow] emits lists of [AttachmentMetaData] representing the files retrieved from storage.
-     * The UI can collect from this flow to react to file metadata retrieval and update the attachment state
-     * accordingly.
      */
     val filesMetadata: SharedFlow<List<AttachmentMetaData>> =
         _filesMetadata.asSharedFlow()
 
     /**
      * Flow of events emitted when media metadata is retrieved.
-     *
-     * This [SharedFlow] emits lists of [AttachmentMetaData] representing the media retrieved from storage.
-     * The UI can collect from this flow to react to media metadata retrieval and update the attachment state
-     * accordingly.
      */
     val mediaMetadata: SharedFlow<List<AttachmentMetaData>> =
         _mediaMetadata.asSharedFlow()
 
     /**
      * Processes a list of attachment URIs in the background and emits the result.
+     * Observe the [attachmentsMetadataFromUris] flow to be notified about the result.
      *
-     * This method launches a coroutine on [DispatcherProvider.IO] to perform disk I/O operations without
-     * blocking the main thread. Once processing completes, it emits an [AttachmentsMetadataFromUris]
-     * event through the [attachmentsMetadataFromUris] flow.
-     *
-     * The processing is fire-and-forget; multiple calls to this method will queue up separate
-     * processing jobs that execute independently. Each job runs in the [viewModelScope] and will
-     * be cancelled automatically if the ViewModel is cleared before completion.
-     *
-     * ## Threading
-     * - **Caller thread**: Any (method returns immediately)
-     * - **Execution thread**: [DispatcherProvider.IO] (coroutine context)
-     * - **Emission thread**: Depends on the collector's coroutine context
-     *
-     * @param uris The list of URIs to process. Can be empty, in which case an empty result is emitted.
+     * @param uris The list of URIs to process.
      */
     fun getAttachmentsMetadataFromUrisAsync(uris: List<Uri>) {
         viewModelScope.launch(DispatcherProvider.IO) {
@@ -108,19 +84,7 @@ internal class AttachmentsProcessingViewModel(
 
     /**
      * Retrieves files metadata asynchronously and emits the result.
-     *
-     * This method launches a coroutine on [DispatcherProvider.IO] to perform disk I/O operations without
-     * blocking the main thread. Once retrieval completes, it emits a list of [AttachmentMetaData]
-     * through the [filesMetadata] flow.
-     *
-     * The retrieval is fire-and-forget; multiple calls to this method will queue up separate
-     * retrieval jobs that execute independently. Each job runs in the [viewModelScope] and will
-     * be cancelled automatically if the ViewModel is cleared before completion.
-     *
-     * ## Threading
-     * - **Caller thread**: Any (method returns immediately)
-     * - **Execution thread**: [DispatcherProvider.IO] (coroutine context)
-     * - **Emission thread**: Depends on the collector's coroutine context
+     * Observe the [filesMetadata] flow to be notified about the result.
      */
     fun getFilesAsync() {
         viewModelScope.launch(DispatcherProvider.IO) {
@@ -131,19 +95,7 @@ internal class AttachmentsProcessingViewModel(
 
     /**
      * Retrieves media metadata asynchronously and emits the result.
-     *
-     * This method launches a coroutine on [DispatcherProvider.IO] to perform disk I/O operations without
-     * blocking the main thread. Once retrieval completes, it emits a list of [AttachmentMetaData]
-     * through the [mediaMetadata] flow.
-     *
-     * The retrieval is fire-and-forget; multiple calls to this method will queue up separate
-     * retrieval jobs that execute independently. Each job runs in the [viewModelScope] and will
-     * be cancelled automatically if the ViewModel is cleared before completion.
-     *
-     * ## Threading
-     * - **Caller thread**: Any (method returns immediately)
-     * - **Execution thread**: [DispatcherProvider.IO] (coroutine context)
-     * - **Emission thread**: Depends on the collector's coroutine context
+     * Observe the [mediaMetadata] flow to be notified about the result.
      */
     fun getMediaAsync() {
         viewModelScope.launch(DispatcherProvider.IO) {
@@ -156,22 +108,9 @@ internal class AttachmentsProcessingViewModel(
 /**
  * Data class representing the result of processing attachment URIs into metadata.
  *
- * This class pairs the original list of [Uri]s with their corresponding [AttachmentMetaData] that
- * was retrieved from storage. It's emitted through [AttachmentsProcessingViewModel.attachmentsMetadataFromUris]
- * after the async processing completes.
+ * @property uris The original list of URIs that were submitted for processing.
+ * @property attachmentsMetadata The list of successfully retrieved attachment metadata.
  *
- * The presence of both the original URIs and the metadata allows consumers to:
- * - Match results back to the original request
- * - Handle cases where some URIs may not produce valid metadata
- * - Track processing progress across multiple async operations
- *
- * @property uris The original list of URIs that were submitted for processing. This list maintains
- * the order in which URIs were provided to [AttachmentsProcessingViewModel.getAttachmentsMetadataFromUrisAsync].
- * @property attachmentsMetadata The list of successfully retrieved attachment metadata. May contain
- * fewer entries than [uris] if some URIs could not be processed.
- *
- * @see AttachmentsProcessingViewModel.attachmentsMetadataFromUris
- * @see AttachmentsProcessingViewModel.getAttachmentsMetadataFromUrisAsync
  */
 internal data class AttachmentsMetadataFromUris(
     val uris: List<Uri>,
@@ -181,13 +120,7 @@ internal data class AttachmentsMetadataFromUris(
 /**
  * A [ViewModelProvider.Factory] for creating [AttachmentsProcessingViewModel] instances.
  *
- * This factory is used to construct [AttachmentsProcessingViewModel] with the required [StorageHelperWrapper]
- * dependency. It ensures that only [AttachmentsProcessingViewModel] instances can be created and throws an
- * [IllegalArgumentException] if an unsupported ViewModel class is requested.
- *
  * @param storageHelper The helper used to access file metadata from storage.
- *
- * @see AttachmentsProcessingViewModel
  */
 internal class AttachmentsProcessingViewModelFactory(
     private val storageHelper: StorageHelperWrapper,
