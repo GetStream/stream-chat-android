@@ -29,7 +29,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicLegacyImpl
+import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
@@ -116,7 +116,7 @@ internal class LogicRegistry internal constructor(
                 coroutineScope = coroutineScope,
             )
 
-            ChannelLogicLegacyImpl(
+            ChannelLogicImpl(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,

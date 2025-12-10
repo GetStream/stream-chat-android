@@ -49,7 +49,7 @@ import java.util.Date
  * @property channelStateLogic [ChannelStateLogic]
  */
 @Suppress("TooManyFunctions", "LargeClass")
-internal class ChannelLogicLegacyImpl(
+internal class ChannelLogicImpl(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
@@ -135,10 +135,6 @@ internal class ChannelLogicLegacyImpl(
     override suspend fun loadAround(messageId: String): Result<Channel> {
         logger.i { "[loadMessagesAroundId] messageId: $messageId" }
         return runChannelQuery("loadMessagesAroundId", aroundIdWatchChannelRequest(messageId))
-    }
-
-    override suspend fun loadNewest(limit: Int): Result<Channel> {
-        TODO("Not used, it uses `suspend fun watch` instead")
     }
 
     override fun getMessage(messageId: String): Message? {

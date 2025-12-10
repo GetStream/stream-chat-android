@@ -38,7 +38,7 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicLegacyImpl
+import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -98,7 +98,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelLogic = ChannelLogicLegacyImpl(
+        channelLogic = ChannelLogicImpl(
             repos,
             false,
             channelStateLogic,
