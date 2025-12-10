@@ -53,6 +53,7 @@ import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
+import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -176,6 +177,15 @@ internal interface ChatApi {
         offset: Int,
         limit: Int,
     ): Call<List<Reaction>>
+
+    @CheckResult
+    fun queryReactions(
+        messageId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Reaction>?,
+    ): Call<QueryReactionsResult>
 
     @CheckResult
     fun sendReaction(reaction: Reaction, enforceUnique: Boolean, skipPush: Boolean): Call<Reaction>
