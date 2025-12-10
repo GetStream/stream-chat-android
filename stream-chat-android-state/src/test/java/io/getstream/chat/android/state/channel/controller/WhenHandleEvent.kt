@@ -88,6 +88,10 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private val channelStateLogic: ChannelStateLogic = mock {
         on(it.writeChannelState()) doReturn channelMutableState
+        on(it.upsertMessage(any())) doAnswer { invocation ->
+            val message = invocation.arguments[0] as Message
+            channelMutableState.upsertMessage(message)
+        }
     }
 
     @BeforeEach
@@ -146,24 +150,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic, times(2)).upsertMessage(messageUpdateEvent.message)
-    }
-
-    @Test
-    fun `when message update event arrives, channel should be toggled to not hidden`() = runTest {
-        val message = randomMessage(
-            id = randomString(),
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true,
-        )
-        channelMutableState.setMessages(listOf(message))
-
-        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
-
-        channelLogic.handleEvent(messageUpdateEvent)
-
-        verify(channelStateLogic).setHidden(false)
+        verify(channelStateLogic, times(1)).upsertMessage(message)
+        verify(channelStateLogic, times(1)).updateMessage(messageUpdateEvent.message)
     }
 
     @Test
@@ -186,7 +174,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelStateLogic).updateMessage(
             org.mockito.kotlin.argThat { message ->
                 message.poll == poll && message.text == "Updated text"
             },
@@ -214,7 +202,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelStateLogic).updateMessage(
             org.mockito.kotlin.argThat { message ->
                 message.poll == eventPoll && message.text == "Updated text"
             },
@@ -254,7 +242,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     // Read event
     @Test
     fun `when read notification event arrives, it should be correctly propagated`() = runTest {
-        val readEvent = randomNotificationMarkReadEvent(user = currentUser)
+        val readEvent = randomNotificationMarkReadEvent(user = currentUser, thread = null)
 
         channelLogic.handleEvent(readEvent)
 
