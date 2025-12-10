@@ -1806,7 +1806,7 @@ public class MessageListController(
                 }
 
                 is MessageMode.MessageThread -> {
-                    chatClient.markThreadUnread(channelType, channelId, mode.parentMessage.id, messageId = message.id)
+                    chatClient.markThreadUnread(channelType, channelId, threadId = mode.parentMessage.id)
                 }
             }
             call.enqueue { response ->

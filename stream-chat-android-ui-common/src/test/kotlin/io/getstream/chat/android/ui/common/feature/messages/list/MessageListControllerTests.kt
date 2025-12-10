@@ -1164,7 +1164,7 @@ internal class MessageListControllerTests {
         }
 
         fun givenMarkMessageUnread() = apply {
-            whenever(chatClient.markUnread(any(), any(), any())) doReturn Unit.asCall()
+            whenever(chatClient.markUnread(any(), any(), any<String>())) doReturn Unit.asCall()
         }
 
         fun givenDeleteMessage(message: Call<Message>) = apply {

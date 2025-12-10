@@ -978,28 +978,19 @@ constructor(
         ).toUnitCall()
     }
 
-    override fun markUnread(channelType: String, channelId: String, messageId: String): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(messageId),
-        ).toUnitCall()
-    }
-
-    override fun markThreadUnread(
+    override fun markUnread(
         channelType: String,
         channelId: String,
-        threadId: String,
-        messageId: String,
+        messageId: String?,
+        messageTimestamp: Date?,
+        threadId: String?,
     ): Call<Unit> {
-        return channelApi.markUnread(
-            channelType = channelType,
-            channelId = channelId,
-            request = MarkUnreadRequest(
-                thread_id = threadId,
-                message_id = messageId,
-            ),
-        ).toUnitCall()
+        val request = MarkUnreadRequest(
+            message_id = messageId,
+            message_timestamp = messageTimestamp,
+            thread_id = threadId,
+        )
+        return channelApi.markUnread(channelType, channelId, request).toUnitCall()
     }
 
     override fun markAllRead(): Call<Unit> {

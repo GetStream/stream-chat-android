@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.application
 
 import android.app.Application
+import android.os.StrictMode
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.data.user.UserRepository
 
@@ -30,8 +31,21 @@ class App : Application() {
         super.onCreate()
         chatInitializer.init(getApiKey())
         instance = this
-        DebugMetricsHelper.init()
-        ApplicationConfigurator.configureApp(this)
+        enableStrictMode()
+    }
+
+    private fun enableStrictMode() {
+        val threadPolicy = StrictMode.ThreadPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setThreadPolicy(threadPolicy)
+
+        val vmPolicy = StrictMode.VmPolicy.Builder()
+            .detectAll()
+            .penaltyLog()
+            .build()
+        StrictMode.setVmPolicy(vmPolicy)
     }
 
     private fun getApiKey(): String {

@@ -474,11 +474,36 @@ public class ChannelClient internal constructor(
     }
 
     /**
+     * Marks all messages in the channel as unread that were created after the specified timestamp.
+     *
+     * @param timestamp The timestamp used to find the first message to mark as unread.
+     */
+    @CheckResult
+    public fun markUnread(timestamp: Date): Call<Unit> {
+        return client.markUnread(channelType, channelId, timestamp)
+    }
+
+    /**
+     * Marks a given thread in the channel as unread.
+     *
+     * @param threadId Id of the thread to mark as unread.
+     */
+    @CheckResult
+    public fun markThreadUnread(threadId: String): Call<Unit> {
+        return client.markThreadUnread(channelType, channelId, threadId = threadId)
+    }
+
+    /**
      * Marks a given thread in the channel starting from the given message as unread.
      *
      * @param messageId Id of the message from where the thread should be marked as unread.
      * @param threadId Id of the thread to mark as unread.
      */
+    @Deprecated(
+        "Marking a thread as unread from a given message is currently not supported. " +
+            "Passing messageId has no effect and the whole thread is marked as unread." +
+            "Use markThreadUnread(channelType, channelId, threadId) instead.",
+    )
     @CheckResult
     public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> {
         return client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)

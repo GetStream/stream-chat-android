@@ -357,15 +357,9 @@ internal interface ChatApi {
     fun markUnread(
         channelType: String,
         channelId: String,
-        messageId: String,
-    ): Call<Unit>
-
-    @CheckResult
-    fun markThreadUnread(
-        channelType: String,
-        channelId: String,
-        threadId: String,
-        messageId: String,
+        messageId: String? = null,
+        messageTimestamp: Date? = null,
+        threadId: String? = null,
     ): Call<Unit>
 
     @CheckResult
