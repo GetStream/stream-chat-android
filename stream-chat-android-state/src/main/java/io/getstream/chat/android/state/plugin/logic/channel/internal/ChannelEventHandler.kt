@@ -88,10 +88,14 @@ internal class ChannelEventHandler(
     private val mutableState: ChannelMutableState
         get() = stateLogic.writeChannelState()
 
+    /**
+     * Handles the given [event] and updates the channel state accordingly.
+     *
+     * @param event The [ChatEvent] to handle.
+     */
     fun handle(event: ChatEvent) {
         when (event) {
             is CidEvent -> handleCidEvent(event)
-            // TODO: Ensure these two events should be handled the same
             is UserPresenceChangedEvent -> stateLogic.upsertUserPresence(event.user)
             is UserUpdatedEvent -> stateLogic.upsertUserPresence(event.user)
             is MarkAllReadEvent -> stateLogic.updateRead(event.toChannelUserRead())
@@ -119,7 +123,7 @@ internal class ChannelEventHandler(
                 // Preserve createdLocallyAt only for messages created by current user, to ensure they are
                 // sorted properly
                 val preserveCreatedLocallyAt = event.message.user.id == getCurrentUserId()
-                upsertEventMessage(event.message, preserveCreatedLocallyAt)
+                upsertMessage(event.message, preserveCreatedLocallyAt)
                 // Update channel read state
                 stateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 // Update hidden state if the message is not shadowed
@@ -130,9 +134,20 @@ internal class ChannelEventHandler(
                 event.channelMessageCount?.let(stateLogic::udpateMessageCount)
             }
 
+            is NotificationMessageNewEvent -> {
+                if (!mutableState.insideSearch.value) {
+                    upsertMessage(event.message)
+                }
+                // Update channel read state
+                stateLogic.updateCurrentUserRead(event.createdAt, event.message)
+                // Update hidden state if the message is not shadowed
+                if (!event.message.shadowed) {
+                    stateLogic.setHidden(false)
+                }
+            }
+
             is MessageUpdatedEvent -> {
                 val originalMessage = mutableState.getMessageById(event.message.id)
-                // TODO: Skip update if the message is not found (not yet loaded)
                 // Enrich the poll as it might not be present in the event
                 val poll = event.message.poll ?: originalMessage?.poll
                 // Enrich the reply message (if present)
@@ -143,43 +158,33 @@ internal class ChannelEventHandler(
                     poll = poll,
                     replyTo = replyTo,
                 )
-                upsertEventMessage(enrichedMessage)
-                // TODO: Verify if channel should be unhidden
-                stateLogic.setHidden(false)
+                updateMessage(enrichedMessage)
             }
 
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
                     stateLogic.deleteMessage(event.message)
                 } else {
-                    // TODO: Skip update if the message is not found (not yet loaded)
-                    upsertEventMessage(event.message)
+                    updateMessage(event.message)
                 }
-                // TODO: Verify if channel should be unhidden
-                stateLogic.setHidden(false)
                 // Update message count
                 event.channelMessageCount?.let(stateLogic::udpateMessageCount)
             }
 
-            is NotificationMessageNewEvent -> {
-                if (!mutableState.insideSearch.value) {
-                    upsertEventMessage(event.message)
-                }
-                // Update channel read state
-                stateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                // Update hidden state TODO: Check for shadowed?
-                stateLogic.setHidden(false)
-            }
-
             is NotificationThreadMessageNewEvent -> {
-                // TODO: Call only for messages sent in channel as well
-                upsertEventMessage(event.message)
+                // Handle only if thread reply was sent to channel as well
+                if (event.message.showInChannel) {
+                    upsertMessage(event.message)
+                    // Update hidden state if the message is not shadowed
+                    if (!event.message.shadowed) {
+                        stateLogic.setHidden(false)
+                    }
+                }
             }
             // Reaction events
-            // TODO: Skip update if the message is not found (not yet loaded)
-            is ReactionNewEvent -> upsertEventMessage(event.message)
-            is ReactionUpdateEvent -> upsertEventMessage(event.message)
-            is ReactionDeletedEvent -> upsertEventMessage(event.message)
+            is ReactionNewEvent -> updateMessage(event.message)
+            is ReactionUpdateEvent -> updateMessage(event.message)
+            is ReactionDeletedEvent -> updateMessage(event.message)
             // Member events
             is MemberAddedEvent -> {
                 stateLogic.addMember(event.member)
@@ -246,7 +251,6 @@ internal class ChannelEventHandler(
                     stateLogic.updateRead(event.toChannelUserRead())
                 }
             }
-            // TODO verify this for threads?
             is NotificationMarkUnreadEvent -> stateLogic.updateRead(event.toChannelUserRead())
             is MessageDeliveredEvent -> stateLogic.updateDelivered(event.toChannelUserRead())
             // Invitation events
@@ -286,18 +290,17 @@ internal class ChannelEventHandler(
             is VoteRemovedEvent -> stateLogic.upsertPoll(event.processPoll(stateLogic::getPoll))
             is AnswerCastedEvent -> stateLogic.upsertPoll(event.processPoll(stateLogic::getPoll))
             // Reminder events
-            is ReminderCreatedEvent -> upsertReminder(event.messageId, event.reminder)
-            is ReminderUpdatedEvent -> upsertReminder(event.messageId, event.reminder)
+            is ReminderCreatedEvent -> updateReminder(event.messageId, event.reminder)
+            is ReminderUpdatedEvent -> updateReminder(event.messageId, event.reminder)
             is ReminderDeletedEvent -> deleteReminder(event.messageId)
             else -> Unit // Ignore other events
         }
     }
 
-    private fun upsertEventMessage(
+    private fun upsertMessage(
         message: Message,
         preserveCreatedLocallyAt: Boolean = false,
     ) {
-        // TODO: We have to distinguish between insert vs update (we mustn't upsert messages outside of the loaded ones)
         val oldMessage = getMessage(message.id)
         val createdLocallyAt = if (preserveCreatedLocallyAt) {
             oldMessage?.createdLocallyAt
@@ -310,19 +313,25 @@ internal class ChannelEventHandler(
         stateLogic.delsertPinnedMessage(updatedMessage)
     }
 
+    private fun updateMessage(message: Message) {
+        val oldMessage = getMessage(message.id) ?: return
+        val ownReactions = oldMessage.ownReactions
+        val enrichedMessage = message.copy(ownReactions = ownReactions)
+        stateLogic.updateMessage(enrichedMessage)
+    }
+
     private fun getMessage(id: String): Message? {
         return mutableState.visibleMessages.value[id]?.copy()
     }
 
-    private fun upsertReminder(messageId: String, reminder: MessageReminder) {
-        // TODO: Skip update if the message is not found (not yet loaded)
-        val message = reminder.message ?: mutableState.getMessageById(messageId) ?: return
-        upsertEventMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+    private fun updateReminder(messageId: String, reminder: MessageReminder) {
+        // Update reminder only if message exists
+        val message = mutableState.getMessageById(messageId) ?: return
+        updateMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
     }
 
     private fun deleteReminder(messageId: String) {
-        // TODO: Skip update if the message is not found (not yet loaded)
         val message = mutableState.getMessageById(messageId) ?: return
-        upsertEventMessage(message.copy(reminder = null))
+        updateMessage(message.copy(reminder = null))
     }
 }

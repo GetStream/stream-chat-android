@@ -57,13 +57,11 @@ internal interface ChannelLogic {
 
     /**
      * Exposes the logic for managing the channel's state.
-     * TODO: Potentially rethink this: Do we want to expose state logic directly?
      */
     val stateLogic: ChannelStateLogic
 
     /**
      * Loads data in the channel previously stored in the database, respecting the given [query] parameters.
-     * TODO: Rethink the naming
      *
      * @param query The [QueryChannelRequest] containing parameters for loading the channel state.
      */
@@ -71,7 +69,6 @@ internal interface ChannelLogic {
 
     /**
      * Sets the pagination direction based on the provided [query].
-     * TODO: Check if this is really necessary - maybe it can be handled directly in the pagination logic
      *
      * @param query The [QueryChannelRequest] containing pagination parameters.
      */
@@ -87,7 +84,6 @@ internal interface ChannelLogic {
 
     /**
      * Loads the channel with the latest [limit] messages and starts watching it.
-     * TODO: Rethink the naming
      *
      * @param limit The number of messages to load when watching the channel. Default is 30.
      * @param userPresence Whether to register for [io.getstream.chat.android.client.events.UserPresenceChangedEvent]s
@@ -143,7 +139,6 @@ internal interface ChannelLogic {
 
     /**
      * Deletes the given [message] from the channel's state.
-     * TODO: Check if this can be simplified by just passing the message ID
      *
      * @param message The [Message] to delete.
      */

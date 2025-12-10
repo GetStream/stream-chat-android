@@ -125,6 +125,7 @@ class ChannelsActivity : ComponentActivity() {
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
             isDraftMessageEnabled = true,
+            channelLimit = 15,
         )
     }
 
