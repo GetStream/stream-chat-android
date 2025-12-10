@@ -29,50 +29,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 /**
- * Internal ViewModel responsible for asynchronous processing of attachment metadata.
- *
- * This ViewModel handles the background retrieval and processing of attachment metadata from various
- * sources (URIs, files, media) without blocking the main thread. It uses [StorageHelperWrapper] to
- * interact with the device's storage and emits results through [SharedFlow]s that the UI can collect.
- *
- * All processing operations run on [DispatcherProvider.IO] to avoid blocking the main thread during
- * disk I/O operations. The ViewModel provides three main capabilities:
- *
- * 1. **URI Processing**: Converts a list of URIs to attachment metadata via [getAttachmentsMetadataFromUrisAsync]
- * 2. **File Retrieval**: Fetches file metadata from storage via [getFilesAsync]
- * 3. **Media Retrieval**: Fetches media metadata from storage via [getMediaAsync]
- *
- * ## Threading Model
- * All operations are launched in the [viewModelScope] with [DispatcherProvider.IO] to ensure:
- * - Non-blocking execution on the main thread
- * - Automatic cancellation when the ViewModel is cleared
- * - Sequential emission of results through SharedFlows
- *
- * ## Usage
- * This ViewModel is typically used within the message composer to handle attachment selection
- * and processing:
- *
- * ```kotlin
- * val viewModel = viewModel<AttachmentsProcessingViewModel>(
- *     factory = AttachmentsProcessingViewModelFactory(storageHelper)
- * )
- *
- * // Collect metadata updates
- * LaunchedEffect(Unit) {
- *     viewModel.attachmentsMetadataFromUris.collect { result ->
- *         // Handle attachment metadata
- *     }
- * }
- *
- * // Trigger processing
- * viewModel.getAttachmentsMetadataFromUrisAsync(selectedUris)
- * ```
+ * ViewModel responsible for asynchronous processing of attachment metadata.
+ * It handles the background retrieval and processing of attachment metadata from various
+ * sources (URIs, files, media) without blocking the main thread.
  *
  * @param storageHelper The wrapper around storage helper functionality used to retrieve attachment
  * metadata from the device's storage system.
- *
- * @see AttachmentsMetadataFromUris
- * @see AttachmentsProcessingViewModelFactory
  */
 internal class AttachmentsProcessingViewModel(
     private val storageHelper: StorageHelperWrapper,
