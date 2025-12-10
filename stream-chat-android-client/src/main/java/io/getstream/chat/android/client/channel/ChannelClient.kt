@@ -673,6 +673,11 @@ public class ChannelClient internal constructor(
         return client.getReactions(messageId, offset, limit)
     }
 
+    @Deprecated(
+        message = "This operation is not supported. " +
+            "Use ChannelClient.getReactions(messageId: String, offset: Int, limit: Int) instead.",
+        level = DeprecationLevel.ERROR,
+    )
     @CheckResult
     public fun getReactions(
         messageId: String,
