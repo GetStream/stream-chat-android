@@ -256,10 +256,7 @@ public class MessageComposerViewModel(
 
     public fun seekRecordingTo(progress: Float): Unit = messageComposerController.seekRecordingTo(progress)
 
-    public fun sendRecording() {
-        completeRecording()
-        sendMessage(buildNewMessage())
-    }
+    public fun sendRecording(): Unit = messageComposerController.sendRecording()
 
     /**
      * Disposes the inner [MessageComposerController].

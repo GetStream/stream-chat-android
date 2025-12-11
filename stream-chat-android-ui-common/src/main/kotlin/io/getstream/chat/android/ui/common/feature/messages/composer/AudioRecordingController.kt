@@ -22,14 +22,18 @@ import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.copy
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import kotlin.math.abs
@@ -41,7 +45,6 @@ import kotlin.math.sqrt
 /**
  * Controller responsible for recording audio messages.
  *
- * @param channelId The ID of the channel we're chatting in.
  * @param audioPlayer The audio player used to play audio messages.
  * @param mediaRecorder The media recorder used to record audio messages.
  * @param fileToUri Coverts [File] into Uri like string.
@@ -49,7 +52,6 @@ import kotlin.math.sqrt
  * @param scope MessageComposerController's scope.
  */
 internal class AudioRecordingController(
-    private val channelId: String,
     private val audioPlayer: AudioPlayer,
     private val mediaRecorder: StreamMediaRecorder,
     private val fileToUri: (File) -> String,
@@ -158,7 +160,7 @@ internal class AudioRecordingController(
         }
     }
 
-    public fun startRecording(offset: Pair<Float, Float>? = null) {
+    suspend fun startRecording(offset: Pair<Float, Float>? = null) {
         val state = this.recordingState.value
         if (state !is RecordingState.Idle) {
             logger.w { "[startRecording] rejected (state is not Idle): $state" }
@@ -166,11 +168,14 @@ internal class AudioRecordingController(
         }
         logger.i { "[startRecording] state: $state" }
         val recordingName = "audio_recording_${Date()}.aac"
-        mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
+        // Call on Dispatchers.IO because it accesses file system
+        withContext(DispatcherProvider.IO) {
+            mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
+        }
         setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
     }
 
-    public fun holdRecording(offset: Pair<Float, Float>? = null) {
+    fun holdRecording(offset: Pair<Float, Float>? = null) {
         val state = this.recordingState.value
         if (state !is RecordingState.Hold) {
             logger.w { "[holdRecording] rejected (state is not Hold): $state" }
@@ -184,7 +189,7 @@ internal class AudioRecordingController(
         setState(state.copy(offset = offset))
     }
 
-    public fun lockRecording() {
+    fun lockRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Hold) {
             logger.w { "[lockRecording] rejected (state is not Hold): $state" }
@@ -194,10 +199,10 @@ internal class AudioRecordingController(
         setState(RecordingState.Locked(state.durationInMs, state.waveform))
     }
 
-    public fun cancelRecording() {
+    fun cancelRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            logger.w { "[cancelRecording] rejected (state is not Idle)" }
+            logger.w { "[cancelRecording] rejected (state is Idle)" }
             return
         }
         logger.i { "[cancelRecording] state: $state" }
@@ -209,7 +214,7 @@ internal class AudioRecordingController(
         setState(RecordingState.Idle)
     }
 
-    public fun toggleRecordingPlayback() {
+    fun toggleRecordingPlayback() {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.v { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
@@ -278,14 +283,17 @@ internal class AudioRecordingController(
         }
     }
 
-    public fun stopRecording() {
+    suspend fun stopRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Locked) {
             logger.w { "[stopRecording] rejected (state is not Locked): $state" }
             return
         }
         logger.i { "[stopRecording] no args: $state" }
-        val result = mediaRecorder.stopRecording()
+        // Call on Dispatchers.IO because it accesses file system
+        val result = withContext(DispatcherProvider.IO) {
+            mediaRecorder.stopRecording()
+        }
         if (result.isFailure) {
             logger.e { "[stopRecording] failed: ${result.errorOrNull()}" }
             clearData()
@@ -300,7 +308,7 @@ internal class AudioRecordingController(
         setState(RecordingState.Overview(recorded.durationInMs, normalized, recorded.attachment))
     }
 
-    public fun seekRecordingTo(progress: Float) {
+    fun seekRecordingTo(progress: Float) {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.w { "[seekRecordingTo] rejected (state is not Overview)" }
@@ -317,7 +325,7 @@ internal class AudioRecordingController(
         setState(state.copy(playingProgress = progress))
     }
 
-    public fun pauseRecording() {
+    fun pauseRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.w { "[pauseRecording] rejected (state is not Overview)" }
@@ -328,7 +336,52 @@ internal class AudioRecordingController(
         setState(state.copy(isPlaying = false))
     }
 
-    public fun completeRecording() {
+    suspend fun completeRecordingSync(): Result<Attachment> {
+        val state = this.recordingState.value
+        logger.w { "[completeRecordingSync] state: $state" }
+        if (state is RecordingState.Idle) {
+            logger.w { "[completeRecordingSync] rejected (state is Idle)" }
+            return Result.Failure(Error.GenericError("Recording is in Idle state"))
+        }
+        if (state is RecordingState.Overview) {
+            logger.d { "[completeRecordingSync] completing from Overview state" }
+            clearData()
+            val attachment = state.attachment.copy(
+                extraData = state.attachment.extraData + mapOf(
+                    EXTRA_WAVEFORM_DATA to state.waveform,
+                ),
+            )
+            setState(RecordingState.Idle)
+            return Result.Success(attachment)
+        }
+        // Call on Dispatchers.IO because it accesses file system
+        val result = withContext(DispatcherProvider.IO) {
+            mediaRecorder.stopRecording()
+        }
+        when (result) {
+            is Result.Failure -> {
+                logger.e { "[completeRecordingSync] failed: ${result.value}" }
+                clearData()
+                setState(RecordingState.Idle)
+                return result
+            }
+
+            is Result.Success -> {
+                logger.d { "[completeRecordingSync] complete from state: $state" }
+                val adjusted = samples.downsampleMax(samplesTarget)
+                val normalized = adjusted.normalize()
+                clearData()
+                val attachment = result.value.attachment
+                val attachmentWithWaveform = attachment.copy(
+                    extraData = attachment.extraData + mapOf(EXTRA_WAVEFORM_DATA to normalized),
+                )
+                setState(RecordingState.Idle)
+                return Result.Success(attachmentWithWaveform)
+            }
+        }
+    }
+
+    suspend fun completeRecording() {
         val state = this.recordingState.value
         logger.w { "[completeRecording] state: $state" }
         if (state is RecordingState.Idle) {
@@ -339,19 +392,22 @@ internal class AudioRecordingController(
             logger.d { "[completeRecording] completing from Overview state" }
             audioPlayer.resetAudio(state.playingId)
             clearData()
-            setState(
-                RecordingState.Complete(
-                    state.attachment.copy(
-                        extraData = state.attachment.extraData + mapOf(
-                            EXTRA_WAVEFORM_DATA to state.waveform,
-                        ),
-                    ),
+            val complete = RecordingState.Complete(
+                state.attachment.copy(
+                    extraData = state.attachment.extraData + mapOf(EXTRA_WAVEFORM_DATA to state.waveform),
                 ),
             )
-            setState(RecordingState.Idle)
+            // Run on Dispatchers.Main to ensure both state updates are published in order (complete and idle)
+            withContext(DispatcherProvider.Main) {
+                setState(complete)
+                setState(RecordingState.Idle)
+            }
             return
         }
-        val result = mediaRecorder.stopRecording()
+        // Run on Dispatchers.IO because it accesses file system
+        val result = withContext(DispatcherProvider.IO) {
+            mediaRecorder.stopRecording()
+        }
         if (result.isFailure) {
             logger.e { "[completeRecording] failed: ${result.errorOrNull()}" }
             clearData()
@@ -364,18 +420,19 @@ internal class AudioRecordingController(
         val recorded = result.getOrThrow().let {
             it.copy(
                 attachment = it.attachment.copy(
-                    extraData = it.attachment.extraData + mapOf(
-                        EXTRA_WAVEFORM_DATA to normalized,
-                    ),
+                    extraData = it.attachment.extraData + mapOf(EXTRA_WAVEFORM_DATA to normalized),
                 ),
             )
         }
         logger.d { "[completeRecording] complete from state: $state" }
-        setState(RecordingState.Complete(recorded.attachment))
-        setState(RecordingState.Idle)
+        // Run on Dispatchers.Main to ensure both state updates are published in order (complete and idle)
+        withContext(DispatcherProvider.Main) {
+            setState(RecordingState.Complete(recorded.attachment))
+            setState(RecordingState.Idle)
+        }
     }
 
-    public fun onCleared() {
+    fun onCleared() {
         logger.i { "[onCleared] no args" }
         mediaRecorder.release()
         val state = this.recordingState.value
