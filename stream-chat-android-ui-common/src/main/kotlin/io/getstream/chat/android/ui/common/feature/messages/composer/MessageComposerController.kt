@@ -143,7 +143,6 @@ public class MessageComposerController(
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     private val audioRecordingController = AudioRecordingController(
-        channelCid,
         chatClient.audioPlayer,
         mediaRecorder,
         fileToUri,

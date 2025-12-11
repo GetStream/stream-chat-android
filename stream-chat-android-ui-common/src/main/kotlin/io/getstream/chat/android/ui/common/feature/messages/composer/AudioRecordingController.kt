@@ -45,7 +45,6 @@ import kotlin.math.sqrt
 /**
  * Controller responsible for recording audio messages.
  *
- * @param channelId The ID of the channel we're chatting in.
  * @param audioPlayer The audio player used to play audio messages.
  * @param mediaRecorder The media recorder used to record audio messages.
  * @param fileToUri Coverts [File] into Uri like string.
@@ -53,7 +52,6 @@ import kotlin.math.sqrt
  * @param scope MessageComposerController's scope.
  */
 internal class AudioRecordingController(
-    private val channelId: String,
     private val audioPlayer: AudioPlayer,
     private val mediaRecorder: StreamMediaRecorder,
     private val fileToUri: (File) -> String,
@@ -177,7 +175,7 @@ internal class AudioRecordingController(
         setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
     }
 
-    public fun holdRecording(offset: Pair<Float, Float>? = null) {
+    fun holdRecording(offset: Pair<Float, Float>? = null) {
         val state = this.recordingState.value
         if (state !is RecordingState.Hold) {
             logger.w { "[holdRecording] rejected (state is not Hold): $state" }
@@ -191,7 +189,7 @@ internal class AudioRecordingController(
         setState(state.copy(offset = offset))
     }
 
-    public fun lockRecording() {
+    fun lockRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Hold) {
             logger.w { "[lockRecording] rejected (state is not Hold): $state" }
@@ -201,10 +199,10 @@ internal class AudioRecordingController(
         setState(RecordingState.Locked(state.durationInMs, state.waveform))
     }
 
-    public fun cancelRecording() {
+    fun cancelRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            logger.w { "[cancelRecording] rejected (state is not Idle)" }
+            logger.w { "[cancelRecording] rejected (state is Idle)" }
             return
         }
         logger.i { "[cancelRecording] state: $state" }
@@ -216,7 +214,7 @@ internal class AudioRecordingController(
         setState(RecordingState.Idle)
     }
 
-    public fun toggleRecordingPlayback() {
+    fun toggleRecordingPlayback() {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.v { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
@@ -310,7 +308,7 @@ internal class AudioRecordingController(
         setState(RecordingState.Overview(recorded.durationInMs, normalized, recorded.attachment))
     }
 
-    public fun seekRecordingTo(progress: Float) {
+    fun seekRecordingTo(progress: Float) {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.w { "[seekRecordingTo] rejected (state is not Overview)" }
@@ -327,7 +325,7 @@ internal class AudioRecordingController(
         setState(state.copy(playingProgress = progress))
     }
 
-    public fun pauseRecording() {
+    fun pauseRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
             logger.w { "[pauseRecording] rejected (state is not Overview)" }
@@ -434,7 +432,7 @@ internal class AudioRecordingController(
         }
     }
 
-    public fun onCleared() {
+    fun onCleared() {
         logger.i { "[onCleared] no args" }
         mediaRecorder.release()
         val state = this.recordingState.value
