@@ -25,6 +25,7 @@ import io.getstream.result.Result
 import io.getstream.sdk.chat.audio.recording.RecordedMedia
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -43,6 +44,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class AudioRecordingControllerTest {
 
     @get:Rule
