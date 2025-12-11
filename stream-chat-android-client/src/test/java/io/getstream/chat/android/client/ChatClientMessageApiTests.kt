@@ -24,8 +24,10 @@ import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PendingMessage
+import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -616,6 +618,43 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun queryReactionsSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val filter = Filters.neutral()
+        val limit = positiveRandomInt()
+        val next = randomString()
+        val sort = QuerySortByField<Reaction>()
+        val reactions = listOf(randomReaction(messageId = messageId))
+        val queryResult = QueryReactionsResult(reactions = reactions, next = randomString())
+        val sut = Fixture()
+            .givenQueryReactionsResult(queryResult.asCall())
+            .get()
+        // when
+        val result = sut.queryReactions(messageId, filter, limit, next, sort).await()
+        // then
+        verifySuccess(result, queryResult)
+    }
+
+    @Test
+    fun queryReactionsError() = runTest {
+        // given
+        val messageId = randomString()
+        val filter = Filters.neutral()
+        val limit = positiveRandomInt()
+        val next = randomString()
+        val sort = QuerySortByField<Reaction>()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenQueryReactionsResult(RetroError<QueryReactionsResult>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.queryReactions(messageId, filter, limit, next, sort).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun updateMessageSuccess() = runTest {
         // given
         val message = randomMessage()
@@ -890,6 +929,10 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
         fun givenGetReactionsResult(result: Call<List<Reaction>>) = apply {
             whenever(api.getReactions(any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenQueryReactionsResult(result: Call<QueryReactionsResult>) = apply {
+            whenever(api.queryReactions(any(), any(), any(), any(), any())).thenReturn(result)
         }
 
         fun givenUpdateMessageResult(result: Call<Message>) = apply {

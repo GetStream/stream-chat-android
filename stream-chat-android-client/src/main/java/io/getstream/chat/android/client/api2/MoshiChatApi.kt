@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -141,6 +142,7 @@ import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
+import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -402,6 +404,27 @@ constructor(
             response.reactions.map {
                 it.toDomain()
             }
+        }
+    }
+
+    override fun queryReactions(
+        messageId: String,
+        filter: FilterObject?,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<Reaction>?,
+    ): Call<QueryReactionsResult> {
+        val body = QueryReactionsRequest(
+            filter = filter?.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort?.toDto(),
+        )
+        return messageApi.queryReactions(messageId, body).mapDomain {
+            QueryReactionsResult(
+                reactions = it.reactions.map { reaction -> reaction.toDomain() },
+                next = it.next,
+            )
         }
     }
 
