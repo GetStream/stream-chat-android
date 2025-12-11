@@ -40,6 +40,9 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix `notification.thread_message_new` event upserting the message in the channel even when not sent to channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
+- Fix `message.updated` and `message.deleted` events unhiding the channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
+- Fix inserting instead of updating a message breaking pagination. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
 
 ### ⬆️ Improved
 
