@@ -198,6 +198,7 @@ import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.QueryPollsResult
+import io.getstream.chat.android.models.QueryReactionsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -1142,6 +1143,26 @@ internal constructor(
         limit: Int,
     ): Call<List<Reaction>> {
         return api.getReactions(messageId, offset, limit)
+    }
+
+    /**
+     * Queries reactions for a given message.
+     *
+     * @param messageId The ID of the message to which the reactions belong.
+     * @param filter The filter to apply to the reactions.
+     * @param limit The maximum number of reactions to retrieve.
+     * @param next The pagination token for fetching the next set of results.
+     * @param sort The sorting criteria for the reactions.
+     */
+    @CheckResult
+    public fun queryReactions(
+        messageId: String,
+        filter: FilterObject? = null,
+        limit: Int? = null,
+        next: String? = null,
+        sort: QuerySorter<Reaction>? = null,
+    ): Call<QueryReactionsResult> {
+        return api.queryReactions(messageId, filter, limit, next, sort)
     }
 
     /**
