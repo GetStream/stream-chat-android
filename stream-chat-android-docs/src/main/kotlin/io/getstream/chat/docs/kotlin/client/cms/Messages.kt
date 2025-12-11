@@ -295,13 +295,6 @@ class Messages(
                 offset = 10,
                 limit = 10,
             ).enqueue { /* ... */ }
-
-            // Get 10 reactions after particular reaction
-            channelClient.getReactions(
-                messageId = "message-id",
-                firstReactionId = "reaction-id",
-                limit = 10,
-            ).enqueue { /* ... */ }
         }
 
         /**
