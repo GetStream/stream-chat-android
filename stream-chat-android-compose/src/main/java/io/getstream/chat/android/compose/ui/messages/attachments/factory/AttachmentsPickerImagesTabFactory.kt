@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -46,6 +47,7 @@ import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.uiutils.util.openSystemSettings
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "images" tab in the attachment picker.
@@ -98,13 +100,18 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         val permissions = Permissions.visualMediaPermissions()
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
-        val storageHelper: StorageHelperWrapper =
-            remember { StorageHelperWrapper(context) }
+        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
+            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
+        )
+        LaunchedEffect(processingViewModel) {
+            processingViewModel.mediaMetadata.collectLatest { metaData ->
+                val items = metaData.map { AttachmentPickerItemState(it, false) }
+                onAttachmentsChanged(items)
+            }
+        }
         val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
             if (value != VisualMediaAccess.DENIED) {
-                val media = storageHelper.getMedia()
-                val mediaAttachments = media.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(mediaAttachments)
+                processingViewModel.getMediaAsync()
             }
         }
 
