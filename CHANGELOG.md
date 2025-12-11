@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.queryReactions(String, FilterObject?, Int?, String?, QuerySorter<Reaction>?)` operation for querying reactions with filtering, sorting, and pagination support. [#6040](https://github.com/GetStream/stream-chat-android/pull/6040)
 - Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
@@ -24,6 +25,7 @@
 ### ⚠️ Changed
 - Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.getReactions(messageId: String, firstReactionId: String, limit: Int)` because it is no longer supported. [#6039](https://github.com/GetStream/stream-chat-android/pull/6039)
 
 ### ❌ Removed
 
@@ -76,6 +78,7 @@
 - Ensure `isAppInForegroundAsState` lifecycle observer removal occurs on the main thread. [#6033](https://github.com/GetStream/stream-chat-android/pull/6033)
 
 ### ⬆️ Improved
+- Fix `StrictMode` violations in the `AttachmentsPicker`. [#6029](https://github.com/GetStream/stream-chat-android/pull/6029)
 
 ### ✅ Added
 

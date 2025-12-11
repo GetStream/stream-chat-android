@@ -291,11 +291,6 @@ public class Messages {
             offset = 10;
             channelClient.getReactions("message-id", offset, limit)
                     .enqueue(result -> { /* ... */ });
-
-            // Get 10 reactions after particular reaction
-            String reactionId = "reaction-id";
-            channelClient.getReactions("message-id", reactionId, limit)
-                    .enqueue(result -> { /* ... */ });
         }
 
         /**

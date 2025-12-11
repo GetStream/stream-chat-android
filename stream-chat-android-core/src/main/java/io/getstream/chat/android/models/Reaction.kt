@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
@@ -56,7 +57,7 @@ public data class Reaction(
     val enforceUnique: Boolean = false,
     val skipPush: Boolean = false,
     val emojiCode: String? = null,
-) : CustomObject {
+) : CustomObject, ComparableFieldProvider {
 
     /**
      * The unique identifier of the reaction.
@@ -69,6 +70,13 @@ public data class Reaction(
     // this needs more investigation on the backend side of things
     public fun fetchUserId(): String {
         return user?.id ?: userId
+    }
+
+    override fun getComparableField(fieldName: String): Comparable<*>? {
+        return when (fieldName) {
+            "created_at", "createdAt" -> createdAt
+            else -> extraData[fieldName] as? Comparable<*>
+        }
     }
 
     @SinceKotlin("99999.9")
