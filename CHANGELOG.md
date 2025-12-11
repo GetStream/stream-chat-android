@@ -75,6 +75,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Fix `StrictMode` violations in the `AttachmentsPicker`. [#6029](https://github.com/GetStream/stream-chat-android/pull/6029)
 
 ### ✅ Added
 

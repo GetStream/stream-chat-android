@@ -30,12 +30,17 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.util.extensions.asState
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
@@ -106,9 +111,13 @@ public class AttachmentsPickerViewModel(
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
 
+    private val _attachmentsForUpload: MutableSharedFlow<List<Attachment>> = MutableSharedFlow(extraBufferCapacity = 1)
+    internal val attachmentsForUpload: SharedFlow<List<Attachment>> = _attachmentsForUpload.asSharedFlow()
+
     /**
      * Loads all the items based on the current type.
      */
+    @Deprecated("This method is no longer used and will be removed in future versions.")
     public fun loadData() {
         loadAttachmentsData(attachmentsPickerMode)
     }
@@ -200,6 +209,18 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
+     * Loads up the currently selected attachments. It uses the [attachmentsPickerMode] to know which
+     * attachments to use - files or images.
+     * Runs the [getSelectedAttachments] method on [DispatcherProvider.IO] and emits the result
+     * via the [attachmentsForUpload] flow.
+     */
+    internal fun getSelectedAttachmentsAsync() {
+        viewModelScope.launch(DispatcherProvider.IO) {
+            _attachmentsForUpload.emit(getSelectedAttachments())
+        }
+    }
+
+    /**
      * Transforms selected file Uris to a list of [Attachment]s we can upload.
      *
      * @param uris Selected Uris.
@@ -217,6 +238,19 @@ public class AttachmentsPickerViewModel(
      */
     public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
         return storageHelper.getAttachmentsForUpload(metaData)
+    }
+
+    /**
+     * Transforms the selected meta data into a list of [Attachment]s we can upload.
+     * Runs the [getAttachmentsFromMetadataAsync] method on [DispatcherProvider.IO] and emits the result
+     * via the [_attachmentsForUpload] flow.
+     *
+     * @param metadata List of attachment meta data items.
+     */
+    internal fun getAttachmentsFromMetadataAsync(metadata: List<AttachmentMetaData>) {
+        viewModelScope.launch(DispatcherProvider.IO) {
+            _attachmentsForUpload.emit(getAttachmentsFromMetaData(metadata))
+        }
     }
 
     /**
