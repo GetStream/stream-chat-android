@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -132,6 +134,12 @@ internal interface MessageApi {
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,
     ): RetrofitCall<ReactionsResponse>
+
+    @POST("/messages/{id}/reactions")
+    fun queryReactions(
+        @Path("id") messageId: String,
+        @Body body: QueryReactionsRequest,
+    ): RetrofitCall<QueryReactionsResponse>
 
     @POST("/messages/{messageId}/translate")
     fun translate(

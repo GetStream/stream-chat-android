@@ -66,6 +66,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollVotesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryPollsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryReactionsRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
@@ -102,6 +103,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesRe
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollVotesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryPollsResponse
+import io.getstream.chat.android.client.api2.model.response.QueryReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
@@ -137,6 +139,7 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreferenceLevel
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.Vote
@@ -411,6 +414,33 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).getReactions(messageId, offset, limit)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryReactionsInput")
+    fun testQueryReactions(call: RetrofitCall<QueryReactionsResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.queryReactions(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val messageId = randomString()
+        val filter = Filters.neutral()
+        val limit = randomInt()
+        val next = randomString()
+        val sort = QuerySortByField<Reaction>()
+        val result = sut.queryReactions(messageId, filter, limit, next, sort).await()
+        // then
+        val expectedRequest = QueryReactionsRequest(
+            filter = filter.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort.toDto(),
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).queryReactions(messageId, expectedRequest)
     }
 
     @ParameterizedTest

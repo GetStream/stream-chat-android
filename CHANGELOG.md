@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.queryReactions(String, FilterObject?, Int?, String?, QuerySorter<Reaction>?)` operation for querying reactions with filtering, sorting, and pagination support. [#6040](https://github.com/GetStream/stream-chat-android/pull/6040)
 - Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 - Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
