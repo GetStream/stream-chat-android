@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.compose.util
 
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * Produces a [State] that indicates whether the app is currently in the foreground.
@@ -38,7 +42,31 @@ internal fun isAppInForegroundAsState(): State<Boolean> {
                 else -> value
             }
         }
-        lifecycle.addObserver(observer)
-        awaitDispose { lifecycle.removeObserver(observer) }
+        withContext(Dispatchers.Main.immediate) {
+            lifecycle.addObserver(observer)
+        }
+        awaitDispose {
+            lifecycle.removeObserverOnMainThread(observer)
+        }
+    }
+}
+
+/**
+ * Removes a lifecycle observer on the main thread.
+ *
+ * [Lifecycle.removeObserver] must be called on the main thread. During normal app execution
+ * this is typically the case, but in instrumentation tests this might be called on the
+ * Compose test dispatcher thread. To avoid IllegalStateException, we ensure the removal
+ * happens on the main thread.
+ *
+ * @param observer The [LifecycleEventObserver] to remove.
+ */
+private fun Lifecycle.removeObserverOnMainThread(observer: LifecycleEventObserver) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+        removeObserver(observer)
+    } else {
+        Handler(Looper.getMainLooper()).post {
+            removeObserver(observer)
+        }
     }
 }

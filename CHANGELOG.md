@@ -75,6 +75,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Ensure `isAppInForegroundAsState` lifecycle observer removal occurs on the main thread. [#6033](https://github.com/GetStream/stream-chat-android/pull/6033)
 
 ### ⬆️ Improved
 - Fix `StrictMode` violations in the `AttachmentsPicker`. [#6029](https://github.com/GetStream/stream-chat-android/pull/6029)
