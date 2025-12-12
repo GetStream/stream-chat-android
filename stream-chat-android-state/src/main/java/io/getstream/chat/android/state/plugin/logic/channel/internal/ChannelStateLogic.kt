@@ -189,6 +189,15 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Updates a message in the channel (if it exists).
+     *
+     * @param message The message to be updated.
+     */
+    fun updateMessage(message: Message) {
+        mutableState.updateMessage(message)
+    }
+
+    /**
      * Updates the read information of this channel.
      *
      * @param reads the information about the read.
@@ -295,7 +304,7 @@ internal class ChannelStateLogic(
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
     ) {
-        mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
+        mutableState.updateTypingEvent(typingEvent = typingEvent)
         globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
@@ -570,9 +579,9 @@ internal class ChannelStateLogic(
     /**
      * Sets channel as hidden.
      *
-     * @param hidden Boolean.
+     * @param hidden Whether the channel is hidden.
      */
-    fun toggleHidden(hidden: Boolean) {
+    fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 

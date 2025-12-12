@@ -59,6 +59,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.UnreadChannel
 import io.getstream.chat.android.models.UnreadChannelByType
@@ -1002,6 +1003,36 @@ public fun randomThread(
     latestReplies = latestReplies,
     read = read,
     draft = draftMessage,
+)
+
+public fun randomThreadInfo(
+    activeParticipantCount: Int = positiveRandomInt(),
+    cid: String = randomCID(),
+    parentMessageId: String = randomString(),
+    parentMessage: Message = randomMessage(id = parentMessageId),
+    createdByUserId: String = randomString(),
+    createdBy: User = randomUser(id = createdByUserId),
+    participantCount: Int = positiveRandomInt(),
+    lastMessageAt: Date = randomDate(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
+    replyCount: Int = positiveRandomInt(),
+    title: String = randomString(),
+): ThreadInfo = ThreadInfo(
+    activeParticipantCount = activeParticipantCount,
+    cid = cid,
+    parentMessageId = parentMessageId,
+    parentMessage = parentMessage,
+    createdByUserId = createdByUserId,
+    createdBy = createdBy,
+    participantCount = participantCount,
+    lastMessageAt = lastMessageAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    replyCount = replyCount,
+    title = title,
 )
 
 public fun randomAppSettings(

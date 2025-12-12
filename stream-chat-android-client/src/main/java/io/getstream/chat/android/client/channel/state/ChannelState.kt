@@ -60,6 +60,7 @@ public interface ChannelState {
     public val messagesState: StateFlow<MessagesState>
 
     /** The collection of messages from previous pages of data.*/
+    @Deprecated("This property is not used anymore and will be removed in future versions.")
     public val oldMessages: StateFlow<List<Message>>
 
     /** The number of people currently watching the channel.*/
@@ -131,7 +132,7 @@ public interface ChannelState {
     public fun toChannel(): Channel
 
     /**
-     * Gets message using the ID. This is a more performatic way to request one message than request the whole list
+     * Gets message using the ID. This is a more performant way to request one message than request the whole list
      * of messages
      */
     public fun getMessageById(id: String): Message?
