@@ -29,7 +29,6 @@ import androidx.core.graphics.drawable.IconCompat
 import io.getstream.android.push.permissions.DefaultNotificationPermissionHandler
 import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
@@ -54,6 +53,7 @@ public object NotificationHandlerFactory {
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
      * @param actionsProvider Lambda expression used to provide actions for the notification.
+     * See [NotificationActionsFactory] for customizing the default actions.
      * @param notificationBuilderTransformer Lambda expression used to transform the [NotificationCompat.Builder]
      * before building the notification.
      * @param onPushMessage Lambda expression called when a new push message is received. Return true if the
@@ -108,8 +108,8 @@ public object NotificationHandlerFactory {
     ): (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
         { notificationId, channel, message ->
             listOf(
-                NotificationMessageReceiver.createReadAction(context, notificationId, channel, message),
-                NotificationMessageReceiver.createReplyAction(context, notificationId, channel),
+                NotificationActionsFactory.createMarkReadAction(context, notificationId, channel, message),
+                NotificationActionsFactory.createReplyAction(context, notificationId, channel),
             )
         }
 

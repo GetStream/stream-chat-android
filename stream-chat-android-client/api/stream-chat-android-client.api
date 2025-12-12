@@ -2874,6 +2874,14 @@ public final class io/getstream/chat/android/client/notifications/handler/ChatNo
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/notifications/handler/NotificationActionsFactory {
+	public static final field INSTANCE Lio/getstream/chat/android/client/notifications/handler/NotificationActionsFactory;
+	public final fun createMarkReadAction (Landroid/content/Context;ILio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;ILjava/lang/String;Landroid/app/PendingIntent;)Landroidx/core/app/NotificationCompat$Action;
+	public static synthetic fun createMarkReadAction$default (Lio/getstream/chat/android/client/notifications/handler/NotificationActionsFactory;Landroid/content/Context;ILio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;ILjava/lang/String;Landroid/app/PendingIntent;ILjava/lang/Object;)Landroidx/core/app/NotificationCompat$Action;
+	public final fun createReplyAction (Landroid/content/Context;ILio/getstream/chat/android/models/Channel;ILjava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;)Landroidx/core/app/NotificationCompat$Action;
+	public static synthetic fun createReplyAction$default (Lio/getstream/chat/android/client/notifications/handler/NotificationActionsFactory;Landroid/content/Context;ILio/getstream/chat/android/models/Channel;ILjava/lang/String;Ljava/lang/String;Landroid/app/PendingIntent;ILjava/lang/Object;)Landroidx/core/app/NotificationCompat$Action;
+}
+
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {
 	public fun <init> ()V
 	public fun <init> (Z)V
