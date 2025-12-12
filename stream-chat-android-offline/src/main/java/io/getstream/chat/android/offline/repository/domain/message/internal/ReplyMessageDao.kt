@@ -43,6 +43,7 @@ internal interface ReplyMessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAttachments(attachmentEntities: List<ReplyAttachmentEntity>)
 
+    @Deprecated("This method is no longer used and will be removed in the future.")
     @Delete
     suspend fun delete(replyMessageInnerEntity: ReplyMessageInnerEntity)
 

@@ -30,19 +30,30 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
+import io.getstream.chat.android.offline.repository.domain.channel.internal.RecoverableChannelDao
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
+import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.RecoverableChannelConfigDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
+import io.getstream.chat.android.offline.repository.domain.message.internal.RecoverableMessageDao
+import io.getstream.chat.android.offline.repository.domain.message.internal.RecoverablePollDao
+import io.getstream.chat.android.offline.repository.domain.message.internal.RecoverableReplyMessageDao
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
+import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.RecoverableQueryChannelsDao
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
+import io.getstream.chat.android.offline.repository.domain.reaction.internal.RecoverableReactionDao
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
+import io.getstream.chat.android.offline.repository.domain.syncState.internal.RecoverableSyncStateDao
 import io.getstream.chat.android.offline.repository.domain.threads.internal.DatabaseThreadsRepository
+import io.getstream.chat.android.offline.repository.domain.threads.internal.RecoverableThreadDao
+import io.getstream.chat.android.offline.repository.domain.threads.internal.RecoverableThreadOrderDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import io.getstream.chat.android.offline.repository.domain.user.internal.RecoverableUserDao
 import kotlinx.coroutines.CoroutineScope
 
 private const val DEFAULT_CACHE_SIZE = 1000
 
 internal class DatabaseRepositoryFactory(
-    private val database: ChatDatabase,
+    private val database: () -> ChatDatabase,
     private val currentUser: User,
     private val scope: CoroutineScope,
     private val ignoredChannelTypes: Set<String>,
@@ -55,7 +66,7 @@ internal class DatabaseRepositoryFactory(
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
 
         return databaseUserRepository ?: run {
-            DatabaseUserRepository(scope, database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
+            DatabaseUserRepository(scope, RecoverableUserDao(database), DEFAULT_CACHE_SIZE).also { repository ->
                 repositoriesCache[UserRepository::class.java] = repository
             }
         }
@@ -66,7 +77,7 @@ internal class DatabaseRepositoryFactory(
             repositoriesCache[ChannelConfigRepository::class.java] as? DatabaseChannelConfigRepository?
 
         return databaseChannelConfigRepository ?: run {
-            DatabaseChannelConfigRepository(database.channelConfigDao()).also { repository ->
+            DatabaseChannelConfigRepository(RecoverableChannelConfigDao(database)).also { repository ->
                 repositoriesCache[ChannelConfigRepository::class.java] = repository
             }
         }
@@ -82,7 +93,7 @@ internal class DatabaseRepositoryFactory(
         return databaseChannelRepository ?: run {
             DatabaseChannelRepository(
                 scope,
-                database.channelStateDao(),
+                RecoverableChannelDao(database),
                 getUser,
                 getMessage,
                 messageRepository::selectDraftMessagesByCid,
@@ -99,7 +110,7 @@ internal class DatabaseRepositoryFactory(
             repositoriesCache[QueryChannelsRepository::class.java] as? QueryChannelsRepository?
 
         return databaseQueryChannelsRepository ?: run {
-            DatabaseQueryChannelsRepository(database.queryChannelsDao()).also { repository ->
+            DatabaseQueryChannelsRepository(scope, RecoverableQueryChannelsDao(database)).also { repository ->
                 repositoriesCache[QueryChannelsRepository::class.java] = repository
             }
         }
@@ -115,8 +126,9 @@ internal class DatabaseRepositoryFactory(
 
         return repository ?: run {
             DatabaseThreadsRepository(
-                threadDao = database.threadDao(),
-                threadOrderDao = database.threadOrderDao(),
+                scope = scope,
+                threadDao = RecoverableThreadDao(database),
+                threadOrderDao = RecoverableThreadOrderDao(database),
                 getUser = getUser,
                 getMessage = getMessage,
                 getChannel = getChannel,
@@ -135,9 +147,9 @@ internal class DatabaseRepositoryFactory(
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
                 scope,
-                database.messageDao(),
-                database.replyMessageDao(),
-                database.pollDao(),
+                RecoverableMessageDao(database),
+                RecoverableReplyMessageDao(database),
+                RecoverablePollDao(database),
                 getUser,
                 currentUser,
                 ignoredChannelTypes,
@@ -153,7 +165,7 @@ internal class DatabaseRepositoryFactory(
             repositoriesCache[ReactionRepository::class.java] as? DatabaseReactionRepository?
 
         return databaseReactionRepository ?: run {
-            DatabaseReactionRepository(database.reactionDao(), getUser).also { repository ->
+            DatabaseReactionRepository(scope, RecoverableReactionDao(database), getUser).also { repository ->
                 repositoriesCache[ReactionRepository::class.java] = repository
             }
         }
@@ -164,7 +176,7 @@ internal class DatabaseRepositoryFactory(
             repositoriesCache[SyncStateRepository::class.java] as? DatabaseSyncStateRepository?
 
         return databaseSyncStateRepository ?: run {
-            DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
+            DatabaseSyncStateRepository(RecoverableSyncStateDao(database)).also { repository ->
                 repositoriesCache[SyncStateRepository::class.java] = repository
             }
         }
