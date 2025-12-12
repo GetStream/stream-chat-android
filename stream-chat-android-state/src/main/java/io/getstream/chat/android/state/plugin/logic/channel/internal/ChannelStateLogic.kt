@@ -44,11 +44,13 @@ import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateUpdates
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 
 @Suppress("TooManyFunctions")
@@ -69,7 +71,7 @@ internal class ChannelStateLogic(
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
     private val now: () -> Long = { System.currentTimeMillis() },
     coroutineScope: CoroutineScope,
-) : ChannelMessagesUpdateLogic {
+) : ChannelMessagesUpdateLogic, ChannelStateUpdates {
 
     private val polls = mutableMapOf<String, Poll>()
     private val messageIdsWithPoll = mutableMapOf<String, Set<String>>()
@@ -141,7 +143,7 @@ internal class ChannelStateLogic(
      *
      * @param membership The membership to be updated.
      */
-    fun updateMembership(membership: Member) {
+    override fun updateMembership(membership: Member) {
         mutableState.updateChannelData { curData ->
             curData?.copy(
                 membership = membership.takeIf { membership.getUserId() == curData.membership?.getUserId() }
@@ -160,7 +162,7 @@ internal class ChannelStateLogic(
      *
      * @param member The [Member] to be added as a membership to the channel.
      */
-    fun addMembership(member: Member) {
+    override fun addMembership(member: Member) {
         mutableState.updateChannelData { data ->
             data?.copy(membership = member)
         }
@@ -169,7 +171,7 @@ internal class ChannelStateLogic(
     /**
      * Removes the membership from the channel. Used when the current user leaves the channel.
      */
-    fun removeMembership() {
+    override fun removeMembership() {
         mutableState.updateChannelData { data ->
             data?.copy(membership = null)
         }
@@ -180,7 +182,7 @@ internal class ChannelStateLogic(
      *
      * @param event The event containing the channel data.
      */
-    fun updateChannelData(event: HasChannel) {
+    override fun updateChannelData(event: HasChannel) {
         mutableState.updateChannelData { curData ->
             event.channel.toChannelData().let { newData ->
                 curData?.mergeFromEvent(newData) ?: newData
@@ -193,7 +195,7 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be updated.
      */
-    fun updateMessage(message: Message) {
+    override fun updateMessage(message: Message) {
         mutableState.updateMessage(message)
     }
 
@@ -269,14 +271,14 @@ internal class ChannelStateLogic(
      *
      * @param read the information about the read.
      */
-    fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
+    override fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
 
     /**
      * Updates the delivered information of this channel.
      *
      * @param read the information about the delivered message.
      */
-    fun updateDelivered(read: ChannelUserRead) {
+    override fun updateDelivered(read: ChannelUserRead) {
         mutableState.upsertDelivered(read)
     }
 
@@ -288,7 +290,7 @@ internal class ChannelStateLogic(
      * @param userId The id of the user that receives update.
      * @param event The start typing event or null if user stops typing.
      */
-    fun setTyping(userId: String, event: TypingStartEvent?) {
+    override fun setTyping(userId: String, event: TypingStartEvent?) {
         if (userId != clientState.user.value?.id) {
             typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
@@ -322,7 +324,7 @@ internal class ChannelStateLogic(
      *
      * @param watchers the list of [User] to be set
      */
-    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+    override fun setWatchers(watchers: List<User>, watchersCount: Int) {
         mutableState.setWatchers(watchers, watchersCount)
     }
 
@@ -436,11 +438,26 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Retrieves a [Message] by its [id] from the channel state.
+     *
+     * @param id The ID of the message to retrieve.
+     */
+    override fun getMessageById(id: String): Message? {
+        return mutableState.getMessageById(id)
+    }
+
+    /**
+     * Returns the flow of visible messages in the channel.
+     */
+    override val visibleMessages: StateFlow<Map<String, Message>>
+        get() = mutableState.visibleMessages
+
+    /**
      * Deletes a message for the channel
      *
      * @param message [Message]
      */
-    fun deleteMessage(message: Message) {
+    override fun deleteMessage(message: Message) {
         mutableState.deleteMessage(message)
     }
 
@@ -450,12 +467,12 @@ internal class ChannelStateLogic(
      * @param date all messages will be removed before this date.
      * @param systemMessage the system message to be added to inform the user.
      */
-    fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
+    override fun removeMessagesBefore(date: Date, systemMessage: Message?) {
         mutableState.removeMessagesBefore(date)
         systemMessage?.let(mutableState::upsertMessage)
     }
 
-    fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
+    override fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
         val messagesFromUser = mutableState.getMessagesFromUser(userId)
         if (messagesFromUser.isEmpty()) {
             return
@@ -479,7 +496,7 @@ internal class ChannelStateLogic(
         mutableState.hideMessagesBefore = date
     }
 
-    fun upsertUserPresence(user: User) {
+    override fun upsertUserPresence(user: User) {
         mutableState.upsertUserPresence(user)
     }
 
@@ -488,7 +505,7 @@ internal class ChannelStateLogic(
      *
      * @param member the member to be upserted.
      */
-    fun upsertMember(member: Member) {
+    override fun upsertMember(member: Member) {
         upsertMembers(listOf(member))
     }
 
@@ -497,7 +514,7 @@ internal class ChannelStateLogic(
      *
      * @param members list of members to be upserted.
      */
-    fun upsertMembers(members: List<Member>) {
+    override fun upsertMembers(members: List<Member>) {
         mutableState.upsertMembers(members)
     }
 
@@ -507,7 +524,7 @@ internal class ChannelStateLogic(
      * @param members The list of members.
      * @param membersCount The count of members.
      */
-    fun setMembers(members: List<Member>, membersCount: Int) {
+    override fun setMembers(members: List<Member>, membersCount: Int) {
         mutableState.setMembers(members, membersCount)
     }
 
@@ -516,30 +533,30 @@ internal class ChannelStateLogic(
      *
      * @param member The member to be removed.
      */
-    fun deleteMember(member: Member) {
+    override fun deleteMember(member: Member) {
         mutableState.deleteMember(member)
     }
 
     /**
      * Updates banned state of a member.
      *
-     * @param memberUserId Updated member user id.
+     * @param memberId Updated member user id.
      * @param banned Shows whether a user is banned or not in this channel.
-     * @param banExpires The date when the ban expires.
+     * @param expiry The date when the ban expires.
      * @param shadow Shows whether a user is shadow banned or not in this channel.
      */
-    fun updateMemberBanned(
-        memberUserId: String?,
+    override fun updateMemberBan(
+        memberId: String?,
         banned: Boolean,
-        banExpires: Date?,
+        expiry: Date?,
         shadow: Boolean,
     ) {
         mutableState.upsertMembers(
             mutableState.members.value.map { member ->
-                when (member.user.id == memberUserId) {
+                when (member.user.id == memberId) {
                     true -> member.copy(
                         banned = banned,
-                        banExpires = banExpires,
+                        banExpires = expiry,
                         shadowBanned = shadow,
                     )
 
@@ -552,10 +569,10 @@ internal class ChannelStateLogic(
     /**
      * Deletes channel.
      *
-     * @param deleteDate The date when the channel was deleted.
+     * @param deletedAt The date when the channel was deleted.
      */
-    fun deleteChannel(deleteDate: Date) {
-        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deleteDate))
+    override fun deleteChannel(deletedAt: Date) {
+        mutableState.setChannelData(mutableState.channelData.value.copy(deletedAt = deletedAt))
     }
 
     /**
@@ -563,7 +580,7 @@ internal class ChannelStateLogic(
      *
      * @param event [UserStartWatchingEvent]
      */
-    fun upsertWatcher(event: UserStartWatchingEvent) {
+    override fun upsertWatcher(event: UserStartWatchingEvent) {
         upsertWatchers(listOf(event.user), event.watcherCount)
     }
 
@@ -572,7 +589,7 @@ internal class ChannelStateLogic(
      *
      * @param event [UserStopWatchingEvent]
      */
-    fun deleteWatcher(event: UserStopWatchingEvent) {
+    override fun deleteWatcher(event: UserStopWatchingEvent) {
         mutableState.deleteWatcher(event.user, event.watcherCount)
     }
 
@@ -581,7 +598,7 @@ internal class ChannelStateLogic(
      *
      * @param hidden Whether the channel is hidden.
      */
-    fun setHidden(hidden: Boolean) {
+    override fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 
@@ -597,10 +614,10 @@ internal class ChannelStateLogic(
     /**
      * Sets the channels as muted or unmuted.
      *
-     * @param isMuted
+     * @param muted Indicator if the channel is muted.
      */
-    fun updateMute(isMuted: Boolean) {
-        mutableState.setMuted(isMuted)
+    override fun setMuted(muted: Boolean) {
+        mutableState.setMuted(muted)
     }
 
     /**
@@ -805,7 +822,7 @@ internal class ChannelStateLogic(
         val cid = mutableState.cid
         val isMuted = globalMutableState.channelMutes.value.any { it.channel?.cid == cid }
         logger.d { "[syncMuteState] cid: $cid, isMuted: $isMuted" }
-        updateMute(isMuted)
+        setMuted(isMuted)
     }
 
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
@@ -816,23 +833,16 @@ internal class ChannelStateLogic(
         }
     }
 
-    private fun Message.lastUpdateTime(): Long = listOfNotNull(
-        createdAt,
-        updatedAt,
-        deletedAt,
-    ).map { it.time }
-        .maxOrNull()
+    private fun Message.lastUpdateTime(): Long =
+        listOfNotNull(createdAt, updatedAt, deletedAt)
+            .maxOfOrNull { it.time }
+            ?: NEVER.time
+
+    private fun Message.lastLocalUpdateTime(): Long = listOfNotNull(createdLocallyAt, updatedLocallyAt, deletedAt)
+        .maxOfOrNull { it.time }
         ?: NEVER.time
 
-    private fun Message.lastLocalUpdateTime(): Long = listOfNotNull(
-        createdLocallyAt,
-        updatedLocallyAt,
-        deletedAt,
-    ).map { it.time }
-        .maxOrNull()
-        ?: NEVER.time
-
-    fun addMember(member: Member) {
+    override fun addMember(member: Member) {
         mutableState.addMember(member)
     }
 
@@ -871,7 +881,7 @@ internal class ChannelStateLogic(
      * @param eventReceivedDate The date when the event was received.
      * @param message The message that was received.
      */
-    fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
+    override fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
         val isMuted = mutableState.muted.value
         if (isMuted) {
             // Skip update to the unread count if the channel is muted
@@ -905,7 +915,7 @@ internal class ChannelStateLogic(
         }
     }
 
-    fun upsertPoll(poll: Poll) {
+    override fun upsertPoll(poll: Poll) {
         polls[poll.id] = poll
         messageIdsWithPoll[poll.id]?.forEach {
             mutableState.getMessageById(it)?.let { message ->
@@ -919,7 +929,7 @@ internal class ChannelStateLogic(
      *
      * @param poll The Poll to be deleted.
      */
-    fun deletePoll(poll: Poll) {
+    override fun deletePoll(poll: Poll) {
         // remove poll
         polls.remove(poll.id)
         // remove poll from each message linked to the poll
@@ -933,9 +943,10 @@ internal class ChannelStateLogic(
         messageIdsWithPoll.remove(poll.id)
     }
 
-    fun getPoll(pollId: String): Poll? = polls[pollId]
-    fun udpateMessageCount(channelMessageCount: Int) {
-        updateChannelData { it?.copy(messageCount = channelMessageCount) }
+    override fun getPoll(id: String): Poll? = polls[id]
+
+    override fun setMessageCount(count: Int) {
+        updateChannelData { it?.copy(messageCount = count) }
     }
 
     private companion object {

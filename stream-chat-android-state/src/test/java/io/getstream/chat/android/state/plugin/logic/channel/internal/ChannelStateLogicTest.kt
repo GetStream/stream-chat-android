@@ -348,10 +348,10 @@ internal class ChannelStateLogicTest {
         }
 
         /* When */
-        channelStateLogic.updateMemberBanned(
-            memberUserId = bannedEvent.user.id,
+        channelStateLogic.updateMemberBan(
+            memberId = bannedEvent.user.id,
             banned = true,
-            banExpires = bannedEvent.expiration,
+            expiry = bannedEvent.expiration,
             shadow = false,
         )
 

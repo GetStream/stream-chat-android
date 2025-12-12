@@ -175,7 +175,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).udpateMessageCount(messageCount)
+        verify(stateLogic).setMessageCount(messageCount)
     }
 
     // MessageUpdatedEvent tests
@@ -290,7 +290,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).udpateMessageCount(messageCount)
+        verify(stateLogic).setMessageCount(messageCount)
     }
 
     // NotificationMessageNewEvent tests
@@ -809,10 +809,10 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).updateMemberBanned(
-            memberUserId = user.id,
+        verify(stateLogic).updateMemberBan(
+            memberId = user.id,
             banned = true,
-            banExpires = expiration,
+            expiry = expiration,
             shadow = false,
         )
     }
@@ -824,10 +824,10 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).updateMemberBanned(
-            memberUserId = user.id,
+        verify(stateLogic).updateMemberBan(
+            memberId = user.id,
             banned = true,
-            banExpires = event.expiration,
+            expiry = event.expiration,
             shadow = true,
         )
     }
@@ -847,10 +847,10 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).updateMemberBanned(
-            memberUserId = user.id,
+        verify(stateLogic).updateMemberBan(
+            memberId = user.id,
             banned = false,
-            banExpires = null,
+            expiry = null,
             shadow = false,
         )
     }
@@ -1047,7 +1047,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).updateMute(true)
+        verify(stateLogic).setMuted(true)
     }
 
     @Test
@@ -1057,7 +1057,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).updateMute(false)
+        verify(stateLogic).setMuted(false)
     }
 
     // UserMessagesDeletedEvent tests
