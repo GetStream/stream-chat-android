@@ -32,13 +32,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,9 +46,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.lifecycle.ViewModelStore
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -66,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.threads.ThreadList
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
@@ -767,37 +763,6 @@ private fun InfoPane(
     ViewModelStore(arguments) {
         Box(modifier = Modifier.safeDrawingPadding()) {
             infoContent(arguments)
-        }
-    }
-}
-
-/**
- * Creates a new [ViewModelStore] whenever the provided keys change.
- */
-@Composable
-private inline fun ViewModelStore(
-    vararg keys: Any?,
-    crossinline content: @Composable () -> Unit,
-) {
-    // Restart composition on every new combination of values
-    key(keys) {
-        // Create a fresh ViewModelStore on each new composition
-        val viewModelStore = remember { ViewModelStore() }
-        val viewModelStoreOwner = remember(viewModelStore) {
-            object : ViewModelStoreOwner {
-                override val viewModelStore: ViewModelStore get() = viewModelStore
-            }
-        }
-
-        // Ensure the store is cleared when the composition is disposed
-        DisposableEffect(Unit) {
-            onDispose {
-                viewModelStore.clear()
-            }
-        }
-
-        CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-            content()
         }
     }
 }
