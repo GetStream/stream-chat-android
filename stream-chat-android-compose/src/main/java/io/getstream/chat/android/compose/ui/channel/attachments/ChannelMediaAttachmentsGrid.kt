@@ -156,14 +156,14 @@ internal fun ChannelMediaAttachmentsGrid(
         ) {
             itemsIndexed(
                 items = content.items,
-                key = { _, item -> item.id },
+                key = { index, item -> "${item.id}-$index " },
             ) { index, item ->
                 itemContent(index, item) {
                     previewItemIndex = index
                 }
             }
             if (content.isLoadingMore) {
-                item { loadingItem() }
+                item(key = "loading_item") { loadingItem() }
             }
         }
 
