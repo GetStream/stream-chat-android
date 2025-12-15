@@ -68,18 +68,4 @@ internal class PollViewResultDialogTest : PaparazziComposeTest {
             PollResultsLoadingMore()
         }
     }
-
-    @Test
-    fun `error in light mode`() {
-        snapshot(isInDarkMode = false) {
-            PollResultsError()
-        }
-    }
-
-    @Test
-    fun `error in dark mode`() {
-        snapshot(isInDarkMode = true) {
-            PollResultsError()
-        }
-    }
 }

@@ -59,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
-import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -323,15 +322,11 @@ private fun PollResultsLoadingPreview() {
 @Composable
 internal fun PollResultsLoading() {
     val poll = PreviewPollData.poll1
-    val sortedOptions = poll.options.sortedByDescending { option ->
-        poll.voteCountsByOption[option.id] ?: 0
-    }
-    val sortedPoll = poll.copy(options = sortedOptions)
     Content(
         state = PollResultsViewState(
             isLoading = true,
-            poll = sortedPoll,
-            winner = sortedPoll.getWinner(),
+            poll = poll,
+            winner = poll.options.first(),
         ),
     )
 }
@@ -347,15 +342,11 @@ private fun PollResultsContentPreview() {
 @Composable
 internal fun PollResultsContent() {
     val poll = PreviewPollData.poll1
-    val sortedOptions = poll.options.sortedByDescending { option ->
-        poll.voteCountsByOption[option.id] ?: 0
-    }
-    val sortedPoll = poll.copy(options = sortedOptions)
     Content(
         state = PollResultsViewState(
             isLoading = false,
-            poll = sortedPoll,
-            winner = sortedPoll.getWinner(),
+            poll = poll,
+            winner = poll.options.first(),
         ),
     )
 }
@@ -371,40 +362,12 @@ private fun PollResultsLoadingMorePreview() {
 @Composable
 internal fun PollResultsLoadingMore() {
     val poll = PreviewPollData.poll1
-    val sortedOptions = poll.options.sortedByDescending { option ->
-        poll.voteCountsByOption[option.id] ?: 0
-    }
-    val sortedPoll = poll.copy(options = sortedOptions)
     Content(
         state = PollResultsViewState(
             isLoading = false,
-            poll = sortedPoll,
-            winner = sortedPoll.getWinner(),
+            poll = poll,
+            winner = poll.options.first(),
             isLoadingMore = true,
-        ),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PollResultsErrorPreview() {
-    ChatTheme {
-        PollResultsError()
-    }
-}
-
-@Composable
-internal fun PollResultsError() {
-    val poll = PreviewPollData.poll1
-    val sortedOptions = poll.options.sortedByDescending { option ->
-        poll.voteCountsByOption[option.id] ?: 0
-    }
-    val sortedPoll = poll.copy(options = sortedOptions)
-    Content(
-        state = PollResultsViewState(
-            isLoading = false,
-            poll = sortedPoll,
-            winner = sortedPoll.getWinner(),
         ),
     )
 }
