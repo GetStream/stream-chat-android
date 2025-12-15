@@ -74,10 +74,10 @@ public class PollResultsViewController(
     private val _state = MutableStateFlow<PollResultsViewState>(
         if (poll.votingVisibility == VotingVisibility.ANONYMOUS) {
             // For anonymous polls, use the original poll immediately
-            PollResultsViewState.Content(poll = poll, canLoadMore = false)
+            PollResultsViewState(isLoading = false, poll = poll, canLoadMore = false)
         } else {
             // For non-anonymous polls, start with loading state
-            PollResultsViewState.Loading(poll = poll)
+            PollResultsViewState(isLoading = true, poll = poll)
         },
     )
 
@@ -134,13 +134,14 @@ public class PollResultsViewController(
         val votes = result.votes
         logger.d { "[onSuccessResult] Fetched ${votes.size} votes, next: $nextPage" }
         _state.update { currentState ->
-            val currentItems = if (currentState is PollResultsViewState.Content) {
+            val currentItems = if (!currentState.isLoading) {
                 currentState.poll.votes
             } else {
                 emptyList()
             }
             val updatedPoll = poll.copy(votes = currentItems + votes)
-            PollResultsViewState.Content(
+            currentState.copy(
+                isLoading = false,
                 poll = updatedPoll,
                 canLoadMore = nextPage != null,
                 isLoadingMore = false,
@@ -150,47 +151,36 @@ public class PollResultsViewController(
 
     private fun onFailureResult(error: Error) {
         logger.e { "[onFailureResult] error: ${error.message}" }
+        _events.tryEmit(PollResultsViewEvent.LoadError(error))
         _state.update { currentState ->
-            when (currentState) {
-                is PollResultsViewState.Loading -> {
-                    _events.tryEmit(PollResultsViewEvent.LoadError(error))
-                    PollResultsViewState.Error(poll = poll, message = error.message)
-                }
-                is PollResultsViewState.Content -> {
-                    _events.tryEmit(PollResultsViewEvent.LoadError(error))
-                    currentState.copy(isLoadingMore = false)
-                }
-                is PollResultsViewState.Error -> {
-                    _events.tryEmit(PollResultsViewEvent.LoadError(error))
-                    currentState.copy(message = error.message)
-                }
-            }
+            currentState.copy(
+                isLoading = false,
+                isLoadingMore = false,
+            )
         }
     }
 
     private fun loadMore() {
-        when (val currentState = state.value) {
-            is PollResultsViewState.Content -> {
-                if (!currentState.canLoadMore) {
-                    logger.d { "[loadMore] no more votes to load" }
-                    return
-                }
-
-                if (currentState.isLoadingMore) {
-                    logger.d { "[loadMore] already loading more votes" }
-                    return
-                }
-
-                logger.d { "[loadMore] loading more votes" }
-                _state.value = currentState.copy(isLoadingMore = true)
-                loadRequests.tryEmit(Unit)
-            }
-
-            else -> {
-                logger.d { "[loadMore] current state is not Content, cannot load more votes" }
-            }
+        val currentState = state.value
+        if (currentState.isLoading) {
+            logger.d { "[loadMore] still loading initial votes, cannot load more" }
+            return
         }
+
+        if (!currentState.canLoadMore) {
+            logger.d { "[loadMore] no more votes to load" }
+            return
+        }
+
+        if (currentState.isLoadingMore) {
+            logger.d { "[loadMore] already loading more votes" }
+            return
+        }
+
+        logger.d { "[loadMore] loading more votes" }
+        _state.value = currentState.copy(isLoadingMore = true)
+        loadRequests.tryEmit(Unit)
     }
 }
 
-private const val QUERY_LIMIT = 10
+private const val QUERY_LIMIT = 25
