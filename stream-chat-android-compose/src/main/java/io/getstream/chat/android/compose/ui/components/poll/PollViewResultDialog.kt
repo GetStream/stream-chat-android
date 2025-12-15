@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,11 +42,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,9 +71,11 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.initials
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * A dialog that should be shown if a user taps the seeing result of the votes.
@@ -86,6 +91,7 @@ public fun PollViewResultDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
@@ -104,6 +110,17 @@ public fun PollViewResultDialog(
                 onLoadMoreRequested = { viewModel.onViewAction(PollResultsViewAction.LoadMoreRequested) },
                 onBackPressed = onBackPressed,
             )
+
+            LaunchedEffect(viewModel) {
+                viewModel.events.collectLatest { event ->
+                    when (event) {
+                        is PollResultsViewEvent.LoadError -> {
+                            val errorMessage = context.getString(R.string.stream_compose_poll_view_results_error)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
     }
 }
