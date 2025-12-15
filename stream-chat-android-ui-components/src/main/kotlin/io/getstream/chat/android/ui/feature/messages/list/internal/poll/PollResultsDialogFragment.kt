@@ -20,29 +20,46 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.extensions.internal.getWinner
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.viewmodel.messages.PollResultsViewModel
+import io.getstream.chat.android.ui.widgets.NestedScrollViewPaginationHelper
+import io.getstream.log.taggedLogger
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
  */
 public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
+    private val logger by taggedLogger("Chat:PollResultsDialogFragment")
+
     private var _binding: StreamUiFragmentPollResultsBinding? = null
     private val binding get() = _binding!!
+
+    private var paginationHelper: NestedScrollViewPaginationHelper? = null
+
+    private val viewModel: PollResultsViewModel by viewModels {
+        val poll = polls[arguments?.getString(ARG_POLL)]
+            ?: throw IllegalStateException("Poll not found in arguments")
+        PollResultsViewModel.Factory(poll)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,18 +74,16 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (polls[arguments?.getString(ARG_POLL)])?.let {
-            setupDialog(it)
-        } ?: dismiss()
-    }
+        val poll = polls[arguments?.getString(ARG_POLL)]
+        if (poll == null) {
+            dismiss()
+            return
+        }
 
-    /**
-     * Initializes the dialog.
-     */
-    private fun setupDialog(poll: Poll) {
         setupToolbar(binding.toolbar)
-        binding.question.text = poll.name
-        binding.optionList.adapter = ResultsAdapter(poll)
+        setupPagination()
+        observeState()
+        observeEvents()
     }
 
     private fun setupToolbar(toolbar: Toolbar) {
@@ -79,13 +94,57 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         toolbar.setTitle(getString(R.string.stream_ui_poll_results_title))
     }
 
+    private fun setupPagination() {
+        paginationHelper = NestedScrollViewPaginationHelper(
+            loadMoreThresholdDp = 200,
+            loadMoreListener = {
+                logger.d { "[setupPagination] LoadMoreRequested triggered" }
+                viewModel.onViewAction(PollResultsViewAction.LoadMoreRequested)
+            },
+            resources = resources,
+        ).also { helper ->
+            helper.attachTo(binding.nestedScrollView)
+        }
+    }
+
+    private fun observeState() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            val poll = state.poll
+            binding.question.text = poll.name
+            binding.optionList.adapter = ResultsAdapter(poll = poll, winner = state.winner)
+            binding.loadingContainer.isVisible = state.isLoading || state.isLoadingMore
+
+            val shouldEnable = !state.isLoading && state.canLoadMore && !state.isLoadingMore
+            if (shouldEnable) {
+                paginationHelper?.enablePagination()
+            } else {
+                paginationHelper?.disablePagination()
+            }
+        }
+    }
+
+    private fun observeEvents() {
+        viewModel.events.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is PollResultsViewEvent.LoadError -> {
+                    val errorMessage = getString(R.string.stream_ui_poll_view_results_error)
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+
+                    paginationHelper?.disablePagination()
+                }
+            }
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        paginationHelper?.detachFrom(binding.nestedScrollView)
+        paginationHelper = null
         _binding = null
     }
 
     public companion object {
-        public const val TAG: String = "create_poll_dialog_fragment"
+        public const val TAG: String = "PollResultsDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
         private val polls = mutableMapOf<String, Poll>()
 
@@ -102,18 +161,17 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private class ResultsAdapter(
         private val poll: Poll,
+        private val winner: Option?,
     ) : RecyclerView.Adapter<ResultsAdapter.ResultViewHolder>() {
-
-        private val winner = poll.getWinner()
 
         val results: List<ResultItem> = poll.options.map { option ->
             ResultItem(
                 option = option.text,
                 votes = poll.voteCountsByOption[option.id] ?: 0,
-                users = poll.votes.filter { it.optionId == option.id }.filter { it.user != null },
+                users = poll.votes.filter { it.optionId == option.id && it.user != null },
                 isWinner = winner == option,
             )
-        }.sortedByDescending { it.votes }
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder =
             ResultViewHolder(StreamUiItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -164,10 +222,9 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(vote: Vote) {
-                vote.user?.let { user ->
-                    binding.name.text = user.name
-                    binding.userAvatarView.setUser(user)
-                }
+                val user = vote.user ?: return
+                binding.name.text = user.name
+                binding.userAvatarView.setUser(user)
                 binding.date.text = ChatUI.dateFormatter.formatRelativeDate(vote.createdAt)
                 binding.time.text = ChatUI.dateFormatter.formatTime(vote.createdAt)
             }

@@ -5163,6 +5163,19 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public final fun userLookupHandlerCompat (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 }
 
+public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getState ()Landroidx/lifecycle/LiveData;
+	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction;)V
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel$Factory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Lio/getstream/chat/android/models/Poll;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/pinned/PinnedMessageListController;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
