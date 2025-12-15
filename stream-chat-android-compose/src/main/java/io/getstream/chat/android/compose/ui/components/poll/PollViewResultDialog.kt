@@ -49,7 +49,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -124,24 +123,26 @@ private fun Content(
         loadMore = onLoadMoreRequested,
     )
 
-    LazyColumn(
-        modifier = Modifier
-            .systemBarsPadding()
-            .fillMaxSize(),
-        state = listState,
+    Box(
+        modifier = Modifier.systemBarsPadding(),
     ) {
-        item {
-            PollDialogHeader(
-                title = stringResource(id = R.string.stream_compose_poll_results),
-                onBackPressed = onBackPressed,
-            )
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+        ) {
+            item {
+                PollDialogHeader(
+                    title = stringResource(id = R.string.stream_compose_poll_results),
+                    onBackPressed = onBackPressed,
+                )
+            }
+
+            pollResultsContent(state = state)
         }
 
-        pollResultsContent(state = state)
-    }
-
-    if ((state as? PollResultsViewState.Content)?.isLoadingMore == true) {
-        LoadingIndicator(modifier = Modifier.fillMaxSize())
+        if (state.isLoading || state.isLoadingMore) {
+            LoadingIndicator(modifier = Modifier.fillMaxSize())
+        }
     }
 }
 
@@ -155,31 +156,7 @@ private fun LazyListScope.pollResultsContent(state: PollResultsViewState) {
         )
     }
 
-    when (state) {
-        is PollResultsViewState.Loading -> {
-            item { LoadingIndicator(modifier = Modifier.fillMaxSize()) }
-        }
-
-        is PollResultsViewState.Content -> {
-            pollViewResultOptionsContent(poll = poll)
-        }
-
-        is PollResultsViewState.Error -> {
-            item {
-                Text(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        .fillMaxWidth(),
-                    text = state.message,
-                    color = ChatTheme.colors.errorAccent,
-                    style = ChatTheme.typography.body,
-                    textAlign = TextAlign.Center,
-                )
-            }
-
-            pollViewResultOptionsContent(poll = poll)
-        }
-    }
+    pollViewResultOptionsContent(poll = poll)
 
     item { Spacer(modifier = Modifier.height(16.dp)) }
 }
@@ -334,7 +311,8 @@ private fun PollResultsLoadingPreview() {
 @Composable
 internal fun PollResultsLoading() {
     Content(
-        state = PollResultsViewState.Loading(
+        state = PollResultsViewState(
+            isLoading = true,
             poll = PreviewPollData.poll1,
         ),
     )
@@ -351,7 +329,8 @@ private fun PollResultsContentPreview() {
 @Composable
 internal fun PollResultsContent() {
     Content(
-        state = PollResultsViewState.Content(
+        state = PollResultsViewState(
+            isLoading = false,
             poll = PreviewPollData.poll1,
         ),
     )
@@ -368,7 +347,8 @@ private fun PollResultsLoadingMorePreview() {
 @Composable
 internal fun PollResultsLoadingMore() {
     Content(
-        state = PollResultsViewState.Content(
+        state = PollResultsViewState(
+            isLoading = false,
             poll = PreviewPollData.poll1,
             isLoadingMore = true,
         ),
@@ -386,9 +366,9 @@ private fun PollResultsErrorPreview() {
 @Composable
 internal fun PollResultsError() {
     Content(
-        state = PollResultsViewState.Error(
+        state = PollResultsViewState(
+            isLoading = false,
             poll = PreviewPollData.poll1,
-            message = "Something went wrong",
         ),
     )
 }

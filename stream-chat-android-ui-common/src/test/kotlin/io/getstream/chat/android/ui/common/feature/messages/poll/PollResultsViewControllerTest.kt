@@ -26,7 +26,6 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
@@ -49,7 +48,8 @@ internal class PollResultsViewControllerTest {
             .get(backgroundScope)
 
         sut.state.value.let { state ->
-            assertInstanceOf<PollResultsViewState.Loading>(state)
+            assertTrue(state.isLoading)
+            assertEquals(poll, state.poll)
         }
     }
 
@@ -61,7 +61,7 @@ internal class PollResultsViewControllerTest {
             .get(backgroundScope)
 
         sut.state.value.let { state ->
-            assertInstanceOf<PollResultsViewState.Content>(state)
+            assertFalse(state.isLoading)
             assertEquals(poll, state.poll)
             assertFalse(state.canLoadMore)
             assertFalse(state.isLoadingMore)
@@ -90,7 +90,7 @@ internal class PollResultsViewControllerTest {
             skipItems(1) // Skip initial state
             val viewState = awaitItem()
 
-            assertInstanceOf<PollResultsViewState.Content>(viewState)
+            assertFalse(viewState.isLoading)
             val expectedVotes = listOf(vote1, vote2)
             assertEquals(expectedVotes, viewState.poll.votes)
             assertTrue(viewState.canLoadMore)
@@ -99,7 +99,7 @@ internal class PollResultsViewControllerTest {
     }
 
     @Test
-    fun `when initial load fails, should update state with error`() = runTest {
+    fun `when initial load fails, should emit error event and update state`() = runTest {
         val poll = randomPoll(votingVisibility = VotingVisibility.PUBLIC)
         val error = Error.GenericError("error")
         val sut = Fixture()
@@ -107,13 +107,18 @@ internal class PollResultsViewControllerTest {
             .givenQueryPollVotesResult(error = error)
             .get(backgroundScope)
 
-        sut.state.test {
-            skipItems(1) // Skip initial state
-            val viewState = awaitItem()
+        sut.events.test {
+            sut.state.test {
+                skipItems(1) // Skip initial state
+                val viewState = awaitItem()
 
-            assertInstanceOf<PollResultsViewState.Error>(viewState)
-            assertEquals("error", viewState.message)
-            assertEquals(poll, viewState.poll)
+                assertFalse(viewState.isLoading)
+                assertEquals(poll, viewState.poll)
+            }
+
+            val event = awaitItem()
+            assertInstanceOf<PollResultsViewEvent.LoadError>(event)
+            assertEquals(error, event.error)
         }
     }
 
@@ -142,21 +147,21 @@ internal class PollResultsViewControllerTest {
 
             val expectedFirstPageVotes = listOf(vote1)
             val firstPageViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(firstPageViewState)
+            assertFalse(firstPageViewState.isLoading)
             assertEquals(expectedFirstPageVotes, firstPageViewState.poll.votes)
             assertTrue(firstPageViewState.canLoadMore)
 
             sut.onViewAction(PollResultsViewAction.LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(loadingMoreViewState)
+            assertFalse(loadingMoreViewState.isLoading)
             assertEquals(expectedFirstPageVotes, loadingMoreViewState.poll.votes)
             assertTrue(loadingMoreViewState.canLoadMore)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
             val expectedAccumulatedVotes = expectedFirstPageVotes + listOf(vote2)
             val finalViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(finalViewState)
+            assertFalse(finalViewState.isLoading)
             assertEquals(expectedAccumulatedVotes, finalViewState.poll.votes)
             assertFalse(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
@@ -183,13 +188,13 @@ internal class PollResultsViewControllerTest {
             skipItems(1) // Skip initial state
 
             val firstPageViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(firstPageViewState)
+            assertFalse(firstPageViewState.isLoading)
             assertFalse(firstPageViewState.isLoadingMore)
 
             sut.onViewAction(PollResultsViewAction.LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(loadingMoreViewState)
+            assertFalse(loadingMoreViewState.isLoading)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
             sut.events.test {
@@ -200,7 +205,7 @@ internal class PollResultsViewControllerTest {
 
             val expectedFinalVotes = listOf(vote1)
             val finalViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(finalViewState)
+            assertFalse(finalViewState.isLoading)
             assertEquals(expectedFinalVotes, finalViewState.poll.votes)
             assertTrue(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
@@ -219,7 +224,7 @@ internal class PollResultsViewControllerTest {
             skipItems(1) // Skip initial state
 
             val viewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(viewState)
+            assertFalse(viewState.isLoading)
             assertFalse(viewState.canLoadMore)
             assertFalse(viewState.isLoadingMore)
 
@@ -241,13 +246,13 @@ internal class PollResultsViewControllerTest {
             skipItems(1) // Skip initial state
 
             val viewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(viewState)
+            assertFalse(viewState.isLoading)
             assertFalse(viewState.isLoadingMore)
 
             sut.onViewAction(PollResultsViewAction.LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
-            assertInstanceOf<PollResultsViewState.Content>(loadingMoreViewState)
+            assertFalse(loadingMoreViewState.isLoading)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
             sut.onViewAction(PollResultsViewAction.LoadMoreRequested)
@@ -291,7 +296,7 @@ private class Fixture {
             chatClient.queryPollVotes(
                 pollId = poll.id,
                 filter = null,
-                limit = 10,
+                limit = 25,
                 next = next,
                 sort = QuerySortByField.descByName("created_at"),
             ),
