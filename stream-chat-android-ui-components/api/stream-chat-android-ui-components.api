@@ -3450,6 +3450,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroyView ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+	public final fun setPoll (Lio/getstream/chat/android/models/Poll;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment$Companion {
