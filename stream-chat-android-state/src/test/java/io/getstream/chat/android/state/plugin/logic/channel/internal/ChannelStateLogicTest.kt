@@ -48,7 +48,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
@@ -137,7 +137,7 @@ internal class ChannelStateLogicTest {
     private val _muted = MutableStateFlow(false)
 
     @Suppress("UNCHECKED_CAST")
-    private val mutableState: ChannelMutableState = mock { mock ->
+    private val mutableState: ChannelStateLegacyImpl = mock { mock ->
         on(mock.unreadCount) doReturn _unreadCount
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()

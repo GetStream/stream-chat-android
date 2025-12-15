@@ -32,7 +32,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -57,7 +57,7 @@ internal class ChannelLogicLegacyImpl(
     private val getCurrentUserId: () -> String?,
 ) : ChannelLogic {
 
-    private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
+    private val mutableState: ChannelStateLegacyImpl = channelStateLogic.writeChannelState()
     private val eventHandler = ChannelEventHandler(cid, channelStateLogic, getCurrentUserId)
     private val logger by taggedLogger("Chat:ChannelLogicDB")
 

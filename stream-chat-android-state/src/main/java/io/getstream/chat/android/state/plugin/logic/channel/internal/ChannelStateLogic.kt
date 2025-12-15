@@ -43,7 +43,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateUpdates
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
@@ -59,13 +59,13 @@ import java.util.Date
  * update the state of the channel in the SDK.
  *
  * @property clientState [ClientState]
- * @property mutableState [ChannelMutableState]
+ * @property mutableState [ChannelStateLegacyImpl]
  * @property globalMutableState [MutableGlobalState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogic(
     private val clientState: ClientState,
-    private val mutableState: ChannelMutableState,
+    private val mutableState: ChannelStateLegacyImpl,
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
@@ -107,7 +107,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    fun writeChannelState(): ChannelMutableState = mutableState
+    fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
     /**
      * Updates the channel data of the state of the SDK.
@@ -297,9 +297,9 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Updates the typing events inside [ChannelMutableState] and [MutableGlobalState].
+     * Updates the typing events inside [ChannelStateLegacyImpl] and [MutableGlobalState].
      *
-     * @param rawTypingEvents A map of typing events used to update [ChannelMutableState].
+     * @param rawTypingEvents A map of typing events used to update [ChannelStateLegacyImpl].
      * @param typingEvent A [TypingEvent] object used to update [MutableGlobalState].
      */
     private fun updateTypingStates(

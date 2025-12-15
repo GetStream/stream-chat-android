@@ -40,7 +40,7 @@ import io.getstream.chat.android.state.message.attachments.internal.AttachmentUr
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicLegacyImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,7 +73,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
     private lateinit var channelLogic: ChannelLogic
-    private val channelMutableState: ChannelMutableState = ChannelMutableState(
+    private val channelMutableState: ChannelStateLegacyImpl = ChannelStateLegacyImpl(
         channelType = "type1",
         channelId = channelId,
         userFlow = userFlow,
@@ -92,6 +92,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             val message = invocation.arguments[0] as Message
             channelMutableState.upsertMessage(message)
         }
+        on(it.visibleMessages) doReturn MutableStateFlow(emptyMap())
     }
 
     @BeforeEach
@@ -112,27 +113,31 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // User watching event
     @Test
-    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() = runTest {
-        val user = User()
-        val newDate = Date(Long.MAX_VALUE)
+    fun `when user watching event arrives, last message should upsert messages, increment count and appear`() =
+        runTest {
+            val user = User()
+            val newDate = Date(Long.MAX_VALUE)
 
-        val newMessage = randomMessage(
-            id = "thisId",
-            createdAt = newDate,
-            silent = false,
-            showInChannel = true,
-        )
+            val newMessage = randomMessage(
+                id = "thisId",
+                createdAt = newDate,
+                silent = false,
+                showInChannel = true,
+            )
 
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
+            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
 
-        val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
+            val userStartWatchingEvent = randomNewMessageEvent(user = user, createdAt = newDate, message = newMessage)
 
-        channelLogic.handleEvent(userStartWatchingEvent)
+            channelLogic.handleEvent(userStartWatchingEvent)
 
-        verify(channelStateLogic).upsertMessage(newMessage)
-        verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
-        verify(channelStateLogic).setHidden(false)
-    }
+            verify(channelStateLogic).upsertMessage(newMessage)
+            verify(channelStateLogic).updateCurrentUserRead(
+                userStartWatchingEvent.createdAt,
+                userStartWatchingEvent.message,
+            )
+            verify(channelStateLogic).setHidden(false)
+        }
 
     // Message update
     @Test
@@ -144,6 +149,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true,
         )
+        whenever(channelStateLogic.getMessageById(message.id)).thenReturn(message)
+        whenever(channelStateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
         channelLogic.upsertMessage(message)
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
@@ -155,31 +162,30 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     }
 
     @Test
-    fun `when message update event arrives without poll but original message has poll, poll should be preserved`() = runTest {
-        val poll = randomPoll()
-        val originalMessage = randomMessage(
-            id = randomString(),
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true,
-            poll = poll,
-        )
-        channelMutableState.setMessages(listOf(originalMessage))
+    fun `when message update event arrives without poll but original message has poll, poll should be preserved`() =
+        runTest {
+            val poll = randomPoll()
+            val originalMessage = randomMessage(
+                id = randomString(),
+                user = User(id = "otherUserId"),
+                silent = false,
+                showInChannel = true,
+                poll = poll,
+            )
+            whenever(channelStateLogic.getMessageById(originalMessage.id)).thenReturn(originalMessage)
+            whenever(channelStateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
+            channelMutableState.setMessages(listOf(originalMessage))
 
-        val updatedMessageWithoutPoll = originalMessage.copy(
-            text = "Updated text",
-            poll = null,
-        )
-        val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessageWithoutPoll)
+            val updatedMessageWithoutPoll = originalMessage.copy(
+                text = "Updated text",
+                poll = null,
+            )
+            val messageUpdateEvent = randomMessageUpdateEvent(message = updatedMessageWithoutPoll)
 
-        channelLogic.handleEvent(messageUpdateEvent)
+            channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).updateMessage(
-            org.mockito.kotlin.argThat { message ->
-                message.poll == poll && message.text == "Updated text"
-            },
-        )
-    }
+            verify(channelStateLogic).updateMessage(updatedMessageWithoutPoll.copy(poll = poll))
+        }
 
     @Test
     fun `when message update event arrives with poll, event poll should be used`() = runTest {
@@ -191,6 +197,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             showInChannel = true,
             poll = originalPoll,
         )
+        whenever(channelStateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
         channelMutableState.setMessages(listOf(originalMessage))
 
         val eventPoll = randomPoll(id = "poll2")
@@ -261,20 +268,21 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     // Reaction event
     @Test
-    fun `when reaction event arrives, if message is in the list, the message of the event should be upsert`(): Unit = runTest {
-        val message = randomMessage(
-            showInChannel = true,
-            silent = false,
-        )
-        channelStateLogic.upsertMessages(listOf(message))
-        val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
-        whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
+    fun `when reaction event arrives, if message is in the list, the message of the event should be upsert`(): Unit =
+        runTest {
+            val message = randomMessage(
+                showInChannel = true,
+                silent = false,
+            )
+            channelStateLogic.upsertMessages(listOf(message))
+            val reactionEvent = randomReactionNewEvent(user = randomUser(), message = message)
+            whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(message)
 
-        channelLogic.handleEvent(reactionEvent)
+            channelLogic.handleEvent(reactionEvent)
 
-        // Message is propagated
-        verify(channelStateLogic).upsertMessages(listOf(reactionEvent.message))
-    }
+            // Message is propagated
+            verify(channelStateLogic).upsertMessages(listOf(reactionEvent.message))
+        }
 
     // Channel deleted event
     @Test
@@ -312,6 +320,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true,
         )
+        whenever(channelStateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
         channelMutableState.setMessages(listOf(originalMessage))
 
         // Then receive a new message event for the same message without createdLocallyAt

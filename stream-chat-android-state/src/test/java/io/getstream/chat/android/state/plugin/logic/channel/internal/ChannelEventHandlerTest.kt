@@ -83,13 +83,11 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -103,19 +101,12 @@ internal class ChannelEventHandlerTest {
     private val currentUserId = randomString()
     private lateinit var stateLogic: ChannelStateLogic
     private lateinit var getCurrentUserId: () -> String?
-    private lateinit var mutableState: ChannelMutableState
     private lateinit var handler: ChannelEventHandler
 
     @BeforeEach
     fun setUp() {
         stateLogic = mock()
         getCurrentUserId = { currentUserId }
-        mutableState = mock {
-            on(it.cid) doReturn cid
-            on(it.insideSearch) doReturn MutableStateFlow(false)
-            on(it.visibleMessages) doReturn MutableStateFlow(emptyMap())
-        }
-        whenever(stateLogic.writeChannelState()).thenReturn(mutableState)
         handler = ChannelEventHandler(cid, stateLogic, getCurrentUserId)
     }
 
@@ -125,8 +116,8 @@ internal class ChannelEventHandlerTest {
         val createdLocallyAt = Date(1000L)
         val message = randomMessage(id = randomString(), user = randomUser(id = currentUserId))
         val existingMessage = message.copy(createdLocallyAt = createdLocallyAt)
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to existingMessage)))
-        whenever(mutableState.getMessageById(message.id)).thenReturn(existingMessage)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to existingMessage)))
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(existingMessage)
         val event = randomNewMessageEvent(cid = cid, message = message, user = randomUser(id = currentUserId))
 
         handler.handle(event)
@@ -140,6 +131,7 @@ internal class ChannelEventHandlerTest {
     fun `When NewMessageEvent from other user is handled, Then message is upserted without preserving createdLocallyAt`() {
         val message = randomMessage(user = randomUser(id = randomString()))
         val event = randomNewMessageEvent(cid = cid, message = message, user = randomUser())
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -152,6 +144,7 @@ internal class ChannelEventHandlerTest {
     fun `When NewMessageEvent with non-shadowed message is handled, Then channel is unhidden`() {
         val message = randomMessage(shadowed = false)
         val event = randomNewMessageEvent(cid = cid, message = message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -162,6 +155,7 @@ internal class ChannelEventHandlerTest {
     fun `When NewMessageEvent with shadowed message is handled, Then channel is not unhidden`() {
         val message = randomMessage(shadowed = true)
         val event = randomNewMessageEvent(cid = cid, message = message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -172,6 +166,7 @@ internal class ChannelEventHandlerTest {
     fun `When NewMessageEvent with channel message count is handled, Then message count is updated`() {
         val messageCount = positiveRandomInt()
         val event = randomNewMessageEvent(cid = cid, channelMessageCount = messageCount)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -185,9 +180,9 @@ internal class ChannelEventHandlerTest {
         val replyToMessage = randomMessage()
         val originalMessage = randomMessage(poll = poll, replyMessageId = replyToMessage.id)
         val updatedMessage = originalMessage.copy(text = "Updated")
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
-        whenever(mutableState.getMessageById(originalMessage.id)).thenReturn(originalMessage)
-        whenever(mutableState.getMessageById(replyToMessage.id)).thenReturn(replyToMessage)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
+        whenever(stateLogic.getMessageById(originalMessage.id)).thenReturn(originalMessage)
+        whenever(stateLogic.getMessageById(replyToMessage.id)).thenReturn(replyToMessage)
         val event = randomMessageUpdateEvent(cid = cid, message = updatedMessage)
 
         handler.handle(event)
@@ -201,8 +196,8 @@ internal class ChannelEventHandlerTest {
         val originalPoll = randomPoll()
         val originalMessage = randomMessage(poll = originalPoll)
         val updatedMessage = originalMessage.copy(poll = null, text = "Updated")
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
-        whenever(mutableState.getMessageById(originalMessage.id)).thenReturn(originalMessage)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(originalMessage.id to originalMessage)))
+        whenever(stateLogic.getMessageById(originalMessage.id)).thenReturn(originalMessage)
         val event = randomMessageUpdateEvent(cid = cid, message = updatedMessage)
 
         handler.handle(event)
@@ -214,8 +209,8 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When MessageUpdatedEvent is handled for non-existing message, Then message is not updated`() {
         val message = randomMessage()
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
-        whenever(mutableState.getMessageById(message.id)).thenReturn(null)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(null)
         val event = randomMessageUpdateEvent(cid = cid, message = message)
 
         handler.handle(event)
@@ -250,7 +245,7 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When MessageDeletedEvent with soft delete is handled, Then message is updated`() {
         val message = randomMessage()
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
         val event = MessageDeletedEvent(
             type = EventType.MESSAGE_DELETED,
             createdAt = randomDate(),
@@ -287,6 +282,7 @@ internal class ChannelEventHandlerTest {
             channelMessageCount = messageCount,
             deletedForMe = false,
         )
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -295,10 +291,10 @@ internal class ChannelEventHandlerTest {
 
     // NotificationMessageNewEvent tests
     @Test
-    fun `When NotificationMessageNewEvent is handled and not inside search, Then message is upserted`() {
+    fun `When NotificationMessageNewEvent is handled, Then message is upserted`() {
         val message = randomMessage()
-        whenever(mutableState.insideSearch).thenReturn(MutableStateFlow(false))
         val event = randomNotificationMessageNewEvent(cid = cid, message = message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -307,23 +303,10 @@ internal class ChannelEventHandlerTest {
         verify(stateLogic).setHidden(false)
     }
 
-    @Test
-    fun `When NotificationMessageNewEvent is handled and inside search, Then message is not upserted`() {
-        val message = randomMessage()
-        whenever(mutableState.insideSearch).thenReturn(MutableStateFlow(true))
-        val event = randomNotificationMessageNewEvent(cid = cid, message = message)
-
-        handler.handle(event)
-
-        verify(stateLogic, never()).upsertMessage(message)
-        verify(stateLogic).updateCurrentUserRead(event.createdAt, message)
-        verify(stateLogic).setHidden(false)
-    }
-
     // NotificationThreadMessageNewEvent tests
     @Test
     fun `When NotificationThreadMessageNewEvent with showInChannel is handled, Then message is upserted`() {
-        val message = randomMessage(showInChannel = true)
+        val message = randomMessage(parentId = randomString(), showInChannel = true)
         val event = NotificationThreadMessageNewEvent(
             type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
             createdAt = randomDate(),
@@ -336,6 +319,7 @@ internal class ChannelEventHandlerTest {
             unreadThreads = positiveRandomInt(),
             unreadThreadMessages = positiveRandomInt(),
         )
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -367,7 +351,7 @@ internal class ChannelEventHandlerTest {
 
     @Test
     fun `When NotificationThreadMessageNewEvent with shadowed message is handled, Then channel is not unhidden`() {
-        val message = randomMessage(showInChannel = true, shadowed = true)
+        val message = randomMessage(parentId = randomString(), showInChannel = true, shadowed = true)
         val event = NotificationThreadMessageNewEvent(
             type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
             createdAt = randomDate(),
@@ -380,6 +364,7 @@ internal class ChannelEventHandlerTest {
             unreadThreads = positiveRandomInt(),
             unreadThreadMessages = positiveRandomInt(),
         )
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
 
         handler.handle(event)
 
@@ -391,7 +376,7 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When ReactionNewEvent is handled, Then message is updated`() {
         val message = randomMessage()
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
         val event = randomReactionNewEvent(cid = cid, message = message)
 
         handler.handle(event)
@@ -402,7 +387,7 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When ReactionNewEvent is handled for non-existing message, Then message is not updated`() {
         val message = randomMessage()
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(emptyMap()))
         val event = randomReactionNewEvent(cid = cid, message = message)
 
         handler.handle(event)
@@ -413,7 +398,7 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When ReactionUpdateEvent is handled, Then message is updated`() {
         val message = randomMessage(latestReactions = listOf(randomReaction()))
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
         val event = ReactionUpdateEvent(
             type = EventType.REACTION_UPDATED,
             createdAt = randomDate(),
@@ -434,7 +419,7 @@ internal class ChannelEventHandlerTest {
     @Test
     fun `When ReactionDeletedEvent is handled, Then message is updated`() {
         val message = randomMessage(latestReactions = listOf(randomReaction()))
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
         val event = ReactionDeletedEvent(
             type = EventType.REACTION_DELETED,
             createdAt = randomDate(),
@@ -940,8 +925,8 @@ internal class ChannelEventHandlerTest {
         val message = randomMessage()
         val reminder = randomMessageReminder(message = message)
         val event = randomReminderCreatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(mutableState.getMessageById(message.id)).thenReturn(message)
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
 
         handler.handle(event)
 
@@ -953,7 +938,7 @@ internal class ChannelEventHandlerTest {
         val message = randomMessage()
         val reminder = randomMessageReminder(message = message)
         val event = randomReminderCreatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(mutableState.getMessageById(message.id)).thenReturn(null)
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(null)
 
         handler.handle(event)
 
@@ -965,8 +950,8 @@ internal class ChannelEventHandlerTest {
         val message = randomMessage()
         val reminder = randomMessageReminder(message = message)
         val event = randomReminderUpdatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(mutableState.getMessageById(message.id)).thenReturn(message)
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
 
         handler.handle(event)
 
@@ -977,8 +962,8 @@ internal class ChannelEventHandlerTest {
     fun `When ReminderDeletedEvent is handled, Then message reminder is removed`() {
         val message = randomMessage()
         val event = randomReminderDeletedEvent(cid = cid, messageId = message.id)
-        whenever(mutableState.getMessageById(message.id)).thenReturn(message)
-        whenever(mutableState.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(message)
+        whenever(stateLogic.visibleMessages).thenReturn(MutableStateFlow(mapOf(message.id to message)))
 
         handler.handle(event)
 
@@ -989,7 +974,7 @@ internal class ChannelEventHandlerTest {
     fun `When ReminderDeletedEvent is handled for non-existing message, Then message is not updated`() {
         val message = randomMessage()
         val event = randomReminderDeletedEvent(cid = cid, messageId = message.id)
-        whenever(mutableState.getMessageById(message.id)).thenReturn(null)
+        whenever(stateLogic.getMessageById(message.id)).thenReturn(null)
 
         handler.handle(event)
 

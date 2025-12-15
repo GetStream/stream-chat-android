@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -67,7 +67,7 @@ public class StateRegistry(
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelStateLegacyImpl> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
@@ -97,19 +97,19 @@ public class StateRegistry(
     public fun channel(channelType: String, channelId: String): ChannelState = mutableChannel(channelType, channelId)
 
     /**
-     * Returns [ChannelMutableState] that represents a state of particular channel.
+     * Returns [ChannelStateLegacyImpl] that represents a state of particular channel.
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
      *
      * @return [ChannelState] object.
      */
-    internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
+    internal fun mutableChannel(channelType: String, channelId: String): ChannelStateLegacyImpl {
         return channels.getOrPut(channelType to channelId) {
             val baseMessageLimit = messageLimitConfig.channelMessageLimits
                 .find { it.channelType == channelType }
                 ?.baseLimit
-            ChannelMutableState(
+            ChannelStateLegacyImpl(
                 channelType = channelType,
                 channelId = channelId,
                 userFlow = userStateFlow,

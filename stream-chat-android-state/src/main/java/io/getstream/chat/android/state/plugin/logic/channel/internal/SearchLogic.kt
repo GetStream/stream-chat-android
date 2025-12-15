@@ -17,9 +17,9 @@
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 
-internal class SearchLogic(private val mutableState: ChannelMutableState) {
+internal class SearchLogic(private val mutableState: ChannelStateLegacyImpl) {
 
     private var isInsideSearch = false
 

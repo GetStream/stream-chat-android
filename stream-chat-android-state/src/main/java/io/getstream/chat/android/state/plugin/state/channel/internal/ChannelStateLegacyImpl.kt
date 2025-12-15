@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
@@ -53,15 +54,15 @@ import java.util.concurrent.atomic.AtomicInteger
  * @property latestUsers Flow holding the latest updated users.
  * @property activeLiveLocations Flow holding the latest live locations.
  * @property baseMessageLimit The initial limit specifying how many of the latest messages should be kept in memory. If
- * provided, the [ChannelMutableState] will try to keep the number of messages in memory below this limit. Inserting new
- * messages in the channel (ex. from `message.new` event) will remove the oldest messages if the limit is exceeded. When
- * older messages are loaded (ex. by scrolling upwards), the limit is increased by a factor of [LIMIT_MULTIPLIER] if the
- * number of messages in the channel exceeds the limit. This ensures that the channel limit is not exceeded when loading
- * older messages. However, this means that the [baseMessageLimit] is not guaranteed to be the maximum number of
+ * provided, the [ChannelStateLegacyImpl] will try to keep the number of messages in memory below this limit. Inserting
+ * new messages in the channel (ex. from `message.new` event) will remove the oldest messages if the limit is exceeded.
+ * When older messages are loaded (ex. by scrolling upwards), the limit is increased by a factor of [LIMIT_MULTIPLIER]
+ * if the number of messages in the channel exceeds the limit. This ensures that the channel limit is not exceeded when
+ * loading older messages. However, this means that the [baseMessageLimit] is not guaranteed to be the maximum number of
  * messages in the channel.
  * @property now Function providing the current time in milliseconds. Used to determine if a message is pinned or not.
  */
-internal class ChannelMutableState(
+internal class ChannelStateLegacyImpl(
     override val channelType: String,
     override val channelId: String,
     private val userFlow: StateFlow<User?>,

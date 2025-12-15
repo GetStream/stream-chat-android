@@ -35,7 +35,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.result.Error
@@ -92,7 +92,7 @@ internal class UploadAttachmentsIntegrationTests {
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        val channelState: ChannelMutableState = mock {
+        val channelState: ChannelStateLegacyImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
         val channelLogic: ChannelStateLogic = mock {

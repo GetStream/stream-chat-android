@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.result.Error
 import io.getstream.result.Result
 import java.util.Date
@@ -76,7 +76,7 @@ internal class TypingEventListenerState(
      *
      * @param channelState State of the channel.
      */
-    private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
+    private fun onTypingStopPrecondition(channelState: ChannelStateLegacyImpl): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled) {
             Result.Failure(Error.GenericError("Typing events are not enabled"))
         } else if (channelState.lastStartTypingEvent == null) {
@@ -100,7 +100,7 @@ internal class TypingEventListenerState(
      * @param channelState State of the channel.
      * @param eventTime Time of this event.
      */
-    private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
+    private fun onTypingStartPrecondition(channelState: ChannelStateLegacyImpl, eventTime: Date): Result<Unit> {
         return if (!channelState.channelConfig.value.typingEventsEnabled) {
             Result.Failure(Error.GenericError("Typing events are not enabled"))
         } else if (channelState.lastStartTypingEvent != null &&
