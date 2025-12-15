@@ -49,7 +49,6 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
-import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials.API_KEY
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
