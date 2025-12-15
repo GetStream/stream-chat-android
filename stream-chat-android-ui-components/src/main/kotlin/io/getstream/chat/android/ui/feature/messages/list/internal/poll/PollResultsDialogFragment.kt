@@ -55,10 +55,21 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private var paginationHelper: NestedScrollViewPaginationHelper? = null
 
+    private val pollId: String
+        get() = requireArguments().getString(ARG_POLL)
+            ?: throw IllegalStateException("Poll ID not found in arguments")
+
+    private val poll: Poll by lazy {
+        polls[pollId] ?: throw IllegalStateException("Poll not found for ID: $pollId")
+    }
+
     private val viewModel: PollResultsViewModel by viewModels {
-        val poll = polls[arguments?.getString(ARG_POLL)]
-            ?: throw IllegalStateException("Poll not found in arguments")
         PollResultsViewModel.Factory(poll)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        incrementPollReference(pollId)
     }
 
     override fun onCreateView(
@@ -74,12 +85,6 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val poll = polls[arguments?.getString(ARG_POLL)]
-        if (poll == null) {
-            dismiss()
-            return
-        }
-
         setupToolbar(binding.toolbar)
         setupPagination()
         observeState()
@@ -143,19 +148,45 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         _binding = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        decrementPollReference(pollId)
+    }
+
     public companion object {
         public const val TAG: String = "PollResultsDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
+
+        // Store polls temporarily to handle configuration changes
+        // Use reference counting to handle multiple fragments or configuration changes
         private val polls = mutableMapOf<String, Poll>()
+        private val pollReferenceCounts = mutableMapOf<String, Int>()
 
         /**
          * Creates a new instance of [PollResultsDialogFragment].
          *
+         * @param poll The poll to display results for.
          * @return A new instance of [PollResultsDialogFragment].
          */
-        public fun newInstance(poll: Poll): PollResultsDialogFragment = PollResultsDialogFragment().apply {
-            polls[poll.id] = poll
-            this.arguments = bundleOf(ARG_POLL to poll.id)
+        public fun newInstance(poll: Poll): PollResultsDialogFragment =
+            PollResultsDialogFragment().apply {
+                polls[poll.id] = poll
+                incrementPollReference(poll.id)
+                arguments = bundleOf(ARG_POLL to poll.id)
+            }
+
+        private fun incrementPollReference(pollId: String) {
+            pollReferenceCounts[pollId] = pollReferenceCounts.getOrDefault(pollId, 0) + 1
+        }
+
+        private fun decrementPollReference(pollId: String) {
+            val count = pollReferenceCounts.getOrDefault(pollId, 0) - 1
+            if (count <= 0) {
+                polls.remove(pollId)
+                pollReferenceCounts.remove(pollId)
+            } else {
+                pollReferenceCounts[pollId] = count
+            }
         }
     }
 
