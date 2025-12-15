@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.poll
 
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 
 /**
@@ -23,12 +24,14 @@ import io.getstream.chat.android.models.Poll
  *
  * @param isLoading True if the initial load is in progress. Defaults to true.
  * @param poll The poll with votes fetched so far.
+ * @param winner The winning option (option with the most votes).
  * @param canLoadMore True if there are more votes to be loaded. Defaults to true.
  * @param isLoadingMore True if the loading of the next page is in progress. Defaults to false.
  */
 public data class PollResultsViewState(
     val isLoading: Boolean = true,
     val poll: Poll,
+    val winner: Option?,
     val canLoadMore: Boolean = true,
     val isLoadingMore: Boolean = false,
 )

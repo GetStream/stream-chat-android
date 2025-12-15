@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.messages.poll
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.QueryPollVotesResult
@@ -74,10 +75,19 @@ public class PollResultsViewController(
     private val _state = MutableStateFlow<PollResultsViewState>(
         if (poll.votingVisibility == VotingVisibility.ANONYMOUS) {
             // For anonymous polls, use the original poll immediately
-            PollResultsViewState(isLoading = false, poll = poll, canLoadMore = false)
+            PollResultsViewState(
+                isLoading = false,
+                poll = poll.withSortedOptions(),
+                winner = poll.getWinner(),
+                canLoadMore = false,
+            )
         } else {
             // For non-anonymous polls, start with loading state
-            PollResultsViewState(isLoading = true, poll = poll)
+            PollResultsViewState(
+                isLoading = true,
+                poll = poll.withSortedOptions(),
+                winner = poll.getWinner(),
+            )
         },
     )
 
@@ -142,7 +152,7 @@ public class PollResultsViewController(
             val updatedPoll = poll.copy(votes = currentItems + votes)
             currentState.copy(
                 isLoading = false,
-                poll = updatedPoll,
+                poll = updatedPoll.withSortedOptions(),
                 canLoadMore = nextPage != null,
                 isLoadingMore = false,
             )
@@ -184,3 +194,13 @@ public class PollResultsViewController(
 }
 
 private const val QUERY_LIMIT = 25
+
+/**
+ * Sorts poll options by vote count in descending order.
+ */
+private fun Poll.withSortedOptions(): Poll {
+    val sortedOptions = options.sortedByDescending { option ->
+        voteCountsByOption[option.id] ?: 0
+    }
+    return copy(options = sortedOptions)
+}

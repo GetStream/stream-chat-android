@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.messages.poll
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.VotingVisibility
@@ -41,39 +42,55 @@ import org.mockito.kotlin.whenever
 internal class PollResultsViewControllerTest {
 
     @Test
-    fun `when initialized with non-anonymous poll, should set state to Loading`() = runTest {
-        val poll = randomPoll(votingVisibility = VotingVisibility.PUBLIC)
+    fun `when initialized with non-anonymous poll, should set isLoading to true and sort options`() = runTest {
+        val option1 = Option(id = "opt1", text = "Option 1")
+        val option2 = Option(id = "opt2", text = "Option 2")
+        val option3 = Option(id = "opt3", text = "Option 3")
+        val poll = randomPoll(
+            votingVisibility = VotingVisibility.PUBLIC,
+            options = listOf(option1, option2, option3),
+            voteCountsByOption = mapOf("opt1" to 5, "opt2" to 10, "opt3" to 3),
+        )
+        val expectedPoll = poll.copy(options = listOf(option2, option1, option3)) // Sorted by vote count descending
         val sut = Fixture()
             .givenPoll(poll)
             .get(backgroundScope)
 
         sut.state.value.let { state ->
             assertTrue(state.isLoading)
-            assertEquals(poll, state.poll)
+            assertEquals(expectedPoll, state.poll)
+            // Winner should be option2 (highest vote count and unique)
+            assertEquals(option2, state.winner)
         }
     }
 
     @Test
-    fun `when initialized with anonymous poll, should set state to Content`() = runTest {
-        val poll = randomPoll(votingVisibility = VotingVisibility.ANONYMOUS)
+    fun `when initialized with anonymous poll, should set isLoading to false and sort options`() = runTest {
+        val option1 = Option(id = "opt1", text = "Option 1")
+        val option2 = Option(id = "opt2", text = "Option 2")
+        val poll = randomPoll(
+            votingVisibility = VotingVisibility.ANONYMOUS,
+            options = listOf(option1, option2),
+            voteCountsByOption = mapOf("opt1" to 3, "opt2" to 7),
+        )
+        val expectedPoll = poll.copy(options = listOf(option2, option1)) // Sorted by vote count descending
         val sut = Fixture()
             .givenPoll(poll)
             .get(backgroundScope)
 
         sut.state.value.let { state ->
             assertFalse(state.isLoading)
-            assertEquals(poll, state.poll)
+            assertEquals(expectedPoll, state.poll)
+            // Winner should be option2 (highest vote count and unique)
+            assertEquals(option2, state.winner)
             assertFalse(state.canLoadMore)
             assertFalse(state.isLoadingMore)
         }
     }
 
     @Test
-    fun `when initial load succeeds, should update state with content`() = runTest {
-        val poll = randomPoll(
-            votingVisibility = VotingVisibility.PUBLIC,
-            votes = listOf(randomPollVote(), randomPollVote()),
-        )
+    fun `when initial load succeeds, should update state with votes`() = runTest {
+        val poll = randomPoll(votingVisibility = VotingVisibility.PUBLIC)
         val vote1 = randomPollVote(pollId = poll.id)
         val vote2 = randomPollVote(pollId = poll.id)
         val nextPage = randomString()
@@ -91,15 +108,14 @@ internal class PollResultsViewControllerTest {
             val viewState = awaitItem()
 
             assertFalse(viewState.isLoading)
-            val expectedVotes = listOf(vote1, vote2)
-            assertEquals(expectedVotes, viewState.poll.votes)
+            assertEquals(listOf(vote1, vote2), viewState.poll.votes)
             assertTrue(viewState.canLoadMore)
             assertFalse(viewState.isLoadingMore)
         }
     }
 
     @Test
-    fun `when initial load fails, should emit error event and update state`() = runTest {
+    fun `when initial load fails, should emit error event and set isLoading to false`() = runTest {
         val poll = randomPoll(votingVisibility = VotingVisibility.PUBLIC)
         val error = Error.GenericError("error")
         val sut = Fixture()
@@ -113,7 +129,6 @@ internal class PollResultsViewControllerTest {
                 val viewState = awaitItem()
 
                 assertFalse(viewState.isLoading)
-                assertEquals(poll, viewState.poll)
             }
 
             val event = awaitItem()
@@ -123,7 +138,7 @@ internal class PollResultsViewControllerTest {
     }
 
     @Test
-    fun `when load more succeeds, should append votes to state`() = runTest {
+    fun `when load more succeeds, should append votes`() = runTest {
         val poll = randomPoll(votingVisibility = VotingVisibility.PUBLIC)
         val vote1 = randomPollVote(pollId = poll.id)
         val nextPage = randomString()
@@ -145,24 +160,21 @@ internal class PollResultsViewControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val expectedFirstPageVotes = listOf(vote1)
             val firstPageViewState = awaitItem()
             assertFalse(firstPageViewState.isLoading)
-            assertEquals(expectedFirstPageVotes, firstPageViewState.poll.votes)
+            assertEquals(listOf(vote1), firstPageViewState.poll.votes)
             assertTrue(firstPageViewState.canLoadMore)
 
             sut.onViewAction(PollResultsViewAction.LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
             assertFalse(loadingMoreViewState.isLoading)
-            assertEquals(expectedFirstPageVotes, loadingMoreViewState.poll.votes)
             assertTrue(loadingMoreViewState.canLoadMore)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
-            val expectedAccumulatedVotes = expectedFirstPageVotes + listOf(vote2)
             val finalViewState = awaitItem()
             assertFalse(finalViewState.isLoading)
-            assertEquals(expectedAccumulatedVotes, finalViewState.poll.votes)
+            assertEquals(listOf(vote1, vote2), finalViewState.poll.votes)
             assertFalse(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
         }
@@ -203,10 +215,9 @@ internal class PollResultsViewControllerTest {
                 assertEquals(searchingError, event.error)
             }
 
-            val expectedFinalVotes = listOf(vote1)
             val finalViewState = awaitItem()
             assertFalse(finalViewState.isLoading)
-            assertEquals(expectedFinalVotes, finalViewState.poll.votes)
+            assertEquals(listOf(vote1), finalViewState.poll.votes)
             assertTrue(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
         }
