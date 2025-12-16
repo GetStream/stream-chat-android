@@ -46,6 +46,7 @@ public class RetryRule(private val count: Int) : TestRule {
         return object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
+                val testName = description.displayName
                 val retryAnnotation: Retry? = description.getAnnotation(Retry::class.java)
                 val retryCount = retryAnnotation?.count ?: count
                 val databaseOperations = DatabaseOperations()
@@ -55,15 +56,15 @@ public class RetryRule(private val count: Int) : TestRule {
 
                 for (i in 0 until retryCount) {
                     try {
-                        System.err.println("${description.displayName}: run #${i + 1} started.")
+                        System.err.println("$testName: run #${i + 1} started.")
                         device.executeShellCommand("logcat -c")
-                        videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/${description.methodName}.mp4"
+                        videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/$testName.mp4"
                         recordingThread = startVideoRecording(videoFilePath)
                         base.evaluate()
                         stopVideoRecording(videoFilePath, recordingThread)
                         return
                     } catch (t: Throwable) {
-                        System.err.println("${description.displayName}: run #${i + 1} failed.")
+                        System.err.println("$testName: run #${i + 1} failed.")
                         caughtThrowable = t
                         databaseOperations.clearDatabases()
                         stopVideoRecording(videoFilePath, recordingThread)
@@ -113,6 +114,7 @@ public class RetryRule(private val count: Int) : TestRule {
         return size > 0 && size == size2
     }
 
+    @Suppress("TooGenericExceptionThrown")
     private fun waitUntil(timeoutMs: Long = 5000, condition: () -> Boolean) {
         val start = System.currentTimeMillis()
         while (!condition()) {
