@@ -17,13 +17,9 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewController
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -37,7 +33,6 @@ public class PollResultsViewModel(
     controllerProvider: ViewModel.() -> PollResultsViewController = {
         PollResultsViewController(
             poll = poll,
-            scope = viewModelScope,
         )
     },
 ) : ViewModel() {
@@ -48,16 +43,4 @@ public class PollResultsViewModel(
      * @see [PollResultsViewController.state]
      */
     public val state: StateFlow<PollResultsViewState> = controller.state
-
-    /**
-     * @see [PollResultsViewController.events]
-     */
-    public val events: SharedFlow<PollResultsViewEvent> = controller.events
-
-    /**
-     * @see [PollResultsViewController.onViewAction]
-     */
-    public fun onViewAction(action: PollResultsViewAction) {
-        controller.onViewAction(action)
-    }
 }
