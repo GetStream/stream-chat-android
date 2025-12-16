@@ -19,7 +19,6 @@ before_all do |lane|
 end
 
 lane :start_mock_server do |options|
-  options[:branch] = 'feature/update-mock-server' # TODO: Remove this line after testing
   mock_server_repo = 'stream-chat-test-mock-server'
   stop_mock_server if is_localhost
 
