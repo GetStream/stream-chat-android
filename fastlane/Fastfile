@@ -91,6 +91,7 @@ lane :run_e2e_test do |options|
 
   start_mock_server(local_server: options[:local_server], branch: options[:mock_server_branch])
   install_test_services
+  update_emulator_settings
   upload_attachments
 
   stream_apk_folder_path = options[:apk_folder_path] || '..'
@@ -164,6 +165,11 @@ private_lane :install_test_services do
   install(tool: :test_orchestrator, api_level: device_api_level)
   install(tool: :test_services, api_level: device_api_level)
   install(tool: :allurectl, chmod: true) if is_ci
+end
+
+private_lane :update_emulator_settings do
+  sh('adb shell settings put system show_touches 1')
+  sh('adb shell settings put system pointer_location 1')
 end
 
 desc 'Run fastlane linting'

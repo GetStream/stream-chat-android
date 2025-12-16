@@ -389,6 +389,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5893")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message_InThread() {
         step("GIVEN user opens the channel") {
