@@ -17,8 +17,10 @@
 package io.getstream.chat.android.e2e.test.rules
 
 import android.database.sqlite.SQLiteDatabase
+import android.os.Environment
 import androidx.test.platform.app.InstrumentationRegistry
 import io.getstream.chat.android.compose.uiautomator.allureLogcat
+import io.getstream.chat.android.compose.uiautomator.allureScreenrecord
 import io.getstream.chat.android.compose.uiautomator.allureScreenshot
 import io.getstream.chat.android.compose.uiautomator.allureWindowHierarchy
 import io.getstream.chat.android.compose.uiautomator.device
@@ -44,29 +46,82 @@ public class RetryRule(private val count: Int) : TestRule {
         return object : Statement() {
             @Throws(Throwable::class)
             override fun evaluate() {
+                val testName = description.displayName
                 val retryAnnotation: Retry? = description.getAnnotation(Retry::class.java)
                 val retryCount = retryAnnotation?.count ?: count
                 val databaseOperations = DatabaseOperations()
                 var caughtThrowable: Throwable? = null
+                lateinit var videoFilePath: String
+                lateinit var recordingThread: Thread
 
                 for (i in 0 until retryCount) {
                     try {
-                        System.err.println("${description.displayName}: run #${i + 1} started.")
+                        System.err.println("$testName: run #${i + 1} started.")
                         device.executeShellCommand("logcat -c")
+                        videoFilePath = "${Environment.getExternalStorageDirectory().absolutePath}/$testName.mp4"
+                        recordingThread = startVideoRecording(videoFilePath)
                         base.evaluate()
+                        stopVideoRecording(videoFilePath, recordingThread)
                         return
                     } catch (t: Throwable) {
-                        System.err.println("${description.displayName}: run #${i + 1} failed.")
-                        databaseOperations.clearDatabases()
+                        System.err.println("$testName: run #${i + 1} failed.")
                         caughtThrowable = t
+                        databaseOperations.clearDatabases()
+                        stopVideoRecording(videoFilePath, recordingThread)
                         device.allureLogcat(name = "logcat_${i + 1}")
                         device.allureScreenshot(name = "screenshot_${i + 1}")
                         device.allureWindowHierarchy(name = "hierarchy_${i + 1}")
+                        device.allureScreenrecord(
+                            name = "record_${i + 1}",
+                            file = File(videoFilePath),
+                        )
+                    } finally {
+                        device.executeShellCommand("rm $videoFilePath")
                     }
                 }
 
                 throw caughtThrowable ?: IllegalStateException()
             }
+        }
+    }
+
+    private fun startVideoRecording(remoteVideoPath: String): Thread {
+        return Thread {
+            device.executeShellCommand(
+                "screenrecord --bit-rate 8000000 --time-limit 180 $remoteVideoPath",
+            )
+        }.also { it.start() }
+    }
+
+    private fun stopVideoRecording(remoteVideoPath: String, thread: Thread) {
+        device.executeShellCommand("pkill -INT screenrecord")
+        thread.join(5000)
+        waitUntil { !isScreenrecordRunning() }
+        waitUntil { isFileStable(remoteVideoPath) }
+    }
+
+    private fun isScreenrecordRunning(): Boolean {
+        val ps = device.executeShellCommand("ps | grep screenrecord || true")
+        return ps.contains("screenrecord")
+    }
+
+    private fun isFileStable(path: String): Boolean {
+        val output = device.executeShellCommand("ls -l $path")
+        val size = output.trim().split(Regex("\\s+")).getOrNull(4)?.toLongOrNull() ?: 0L
+        Thread.sleep(200)
+        val output2 = device.executeShellCommand("ls -l $path")
+        val size2 = output2.trim().split(Regex("\\s+")).getOrNull(4)?.toLongOrNull() ?: 0L
+        return size > 0 && size == size2
+    }
+
+    @Suppress("TooGenericExceptionThrown")
+    private fun waitUntil(timeoutMs: Long = 5000, condition: () -> Boolean) {
+        val start = System.currentTimeMillis()
+        while (!condition()) {
+            if (System.currentTimeMillis() - start > timeoutMs) {
+                throw RuntimeException("Timeout waiting for video recording to finish")
+            }
+            Thread.sleep(200)
         }
     }
 }
