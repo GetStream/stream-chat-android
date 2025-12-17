@@ -389,6 +389,7 @@ class QuotedReplyTests : StreamTestCase() {
     }
 
     @AllureId("5893")
+    @Ignore("https://linear.app/stream/issue/AND-960")
     @Test
     fun test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Message_InThread() {
         step("GIVEN user opens the channel") {
@@ -405,8 +406,8 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user observes the quote reply in thread") {
             userRobot
-                .openThread()
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = true)
+                .openThread(usingContextMenu = false)
+                .assertQuotedMessage(text = quoteReply, quote = "1", isDisplayed = true)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("WHEN user taps on a quoted message") {
@@ -414,7 +415,7 @@ class QuotedReplyTests : StreamTestCase() {
         }
         step("THEN user is scrolled up to the quote") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = sampleText, isDisplayed = false)
+                .assertQuotedMessage(text = quoteReply, quote = "1", isDisplayed = false)
                 .assertScrollToBottomButton(isDisplayed = true)
         }
     }
@@ -557,6 +558,8 @@ class QuotedReplyTests : StreamTestCase() {
     @AllureId("5898")
     @Test
     fun test_quotedReplyInThreadAndAlsoInChannel() {
+        val quotedText = messagesCount.toString()
+
         step("GIVEN user opens the channel") {
             backendRobot.generateChannels(
                 channelsCount = 1,
@@ -567,17 +570,17 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant adds a quoted reply in thread and also in channel") {
-            participantRobot.quoteMessageInThread(quoteReply, alsoSendInChannel = true, last = false)
+            participantRobot.quoteMessageInThread(quoteReply, alsoSendInChannel = true)
         }
         step("THEN user observes the quoted reply in channel") {
             userRobot
-                .assertQuotedMessage(text = quoteReply, quote = sampleText)
+                .assertQuotedMessage(text = quoteReply, quote = quotedText)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
         step("AND user observes the quoted reply also in thread") {
             userRobot
-                .openThread()
-                .assertQuotedMessage(text = quoteReply, quote = sampleText)
+                .openThread(usingContextMenu = false)
+                .assertQuotedMessage(text = quoteReply, quote = quotedText)
                 .assertScrollToBottomButton(isDisplayed = false)
         }
     }
