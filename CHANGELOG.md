@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
 
 ### ⬆️ Improved
 
@@ -67,6 +68,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
 
 ### ⬆️ Improved
 

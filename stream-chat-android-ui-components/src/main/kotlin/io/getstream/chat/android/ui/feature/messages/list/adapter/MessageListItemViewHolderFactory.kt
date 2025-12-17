@@ -345,7 +345,7 @@ public open class MessageListItemViewHolderFactory {
     private fun createMessageDeletedViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
-        return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, style)
+        return MessageDeletedViewHolder(parentView, decoratorProvider.decorators, listeners, style)
     }
 
     /**
