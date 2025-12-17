@@ -1,87 +1,24 @@
 name: Pull request CI checks
 
-on: [pull_request]
-
-env:
-  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+on: [ pull_request ]
 
 concurrency:
   group: ${{ github.head_ref }}
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: ktlint
+  base-android-ci:
+    uses: GetStream/stream-build-conventions-android/.github/workflows/android-ci.yml@v0.6.0
+    secrets: inherit
+
+  detekt:
+    name: Detekt
     runs-on: ubuntu-22.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3.1.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-lint
-      - name: spotless
-        run: ./gradlew spotlessCheck --scan
+      - uses: actions/checkout@v4.2.2
+      - uses: GetStream/stream-build-conventions-android/.github/actions/setup-gradle@main
       - name: Detekt
-        if: always()
         run: ./gradlew detekt
-
-  api_check:
-    name: API check
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3.1.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-APICheck
-      - name: API check
-        run: ./gradlew apiCheck --scan
-
-  debug_build:
-    name: Debug build
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3.1.0
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-build
-      - name: Build
-        run: ./gradlew assembleDebug --scan
-
-  test:
-    name: Unit tests
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # fetch all history for sonar analysis
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-test
-      - name: Unit tests
-        run: ./scripts/ci-unit-tests.sh
-      - name: Upload test results
-        uses: actions/upload-artifact@v4.4.3
-        if: failure()
-        with:
-          name: testResults
-          path: ./**/build/reports/tests/**
-      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - name: Sonar
-        run: bundle exec fastlane run_sonar_analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   rubocop:
     name: Rubocop
