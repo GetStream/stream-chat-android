@@ -63,6 +63,17 @@
 
     </LinearLayout>
 
+    <Space
+        android:id="@+id/threadGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/messageContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
     <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="wrap_content"
