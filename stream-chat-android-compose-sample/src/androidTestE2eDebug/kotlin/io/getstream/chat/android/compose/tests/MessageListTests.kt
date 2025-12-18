@@ -752,7 +752,6 @@ class MessageListTests : StreamTestCase() {
     }
 
     @AllureId("6784")
-    @Ignore("https://linear.app/stream/issue/AND-273")
     @Test
     fun test_threadIsNotLocked_afterParentMessageDeletedByUser() {
         step("GIVEN user opens the channel") {
@@ -773,7 +772,6 @@ class MessageListTests : StreamTestCase() {
     }
 
     @AllureId("6785")
-    @Ignore("https://linear.app/stream/issue/AND-273")
     @Test
     fun test_threadIsNotLocked_afterParentMessageDeletedByParticipant() {
         step("GIVEN user opens the channel") {
