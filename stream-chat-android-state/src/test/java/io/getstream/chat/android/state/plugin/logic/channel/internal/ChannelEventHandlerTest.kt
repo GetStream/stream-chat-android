@@ -175,7 +175,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).udpateMessageCount(messageCount)
+        verify(stateLogic).updateMessageCount(messageCount)
     }
 
     // MessageUpdatedEvent tests
@@ -290,7 +290,7 @@ internal class ChannelEventHandlerTest {
 
         handler.handle(event)
 
-        verify(stateLogic).udpateMessageCount(messageCount)
+        verify(stateLogic).updateMessageCount(messageCount)
     }
 
     // NotificationMessageNewEvent tests

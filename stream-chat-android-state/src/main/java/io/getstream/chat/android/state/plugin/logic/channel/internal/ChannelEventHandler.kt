@@ -131,7 +131,7 @@ internal class ChannelEventHandler(
                     stateLogic.setHidden(false)
                 }
                 // Update message count
-                event.channelMessageCount?.let(stateLogic::udpateMessageCount)
+                event.channelMessageCount?.let(stateLogic::updateMessageCount)
             }
 
             is NotificationMessageNewEvent -> {
@@ -168,7 +168,7 @@ internal class ChannelEventHandler(
                     updateMessage(event.message)
                 }
                 // Update message count
-                event.channelMessageCount?.let(stateLogic::udpateMessageCount)
+                event.channelMessageCount?.let(stateLogic::updateMessageCount)
             }
 
             is NotificationThreadMessageNewEvent -> {

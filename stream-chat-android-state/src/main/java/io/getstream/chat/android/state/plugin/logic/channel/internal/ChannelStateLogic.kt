@@ -934,7 +934,7 @@ internal class ChannelStateLogic(
     }
 
     fun getPoll(pollId: String): Poll? = polls[pollId]
-    fun udpateMessageCount(channelMessageCount: Int) {
+    fun updateMessageCount(channelMessageCount: Int) {
         updateChannelData { it?.copy(messageCount = channelMessageCount) }
     }
 
