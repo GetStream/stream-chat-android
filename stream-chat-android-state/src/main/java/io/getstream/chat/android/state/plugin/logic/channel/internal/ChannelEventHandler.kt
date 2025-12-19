@@ -159,6 +159,8 @@ internal class ChannelEventHandler(
                     replyTo = replyTo,
                 )
                 updateMessage(enrichedMessage)
+                // Update the pinned messages state if the pinned status changed
+                stateLogic.delsertPinnedMessage(enrichedMessage)
             }
 
             is MessageDeletedEvent -> {

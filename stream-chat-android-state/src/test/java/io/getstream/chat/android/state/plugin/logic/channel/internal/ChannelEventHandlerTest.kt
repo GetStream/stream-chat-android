@@ -194,6 +194,7 @@ internal class ChannelEventHandlerTest {
 
         val expectedMessage = updatedMessage.copy(replyTo = replyToMessage, ownReactions = originalMessage.ownReactions)
         verify(stateLogic).updateMessage(expectedMessage)
+        verify(stateLogic).delsertPinnedMessage(expectedMessage)
     }
 
     @Test
@@ -209,6 +210,7 @@ internal class ChannelEventHandlerTest {
 
         val expectedMessage = updatedMessage.copy(poll = originalPoll, ownReactions = originalMessage.ownReactions)
         verify(stateLogic).updateMessage(expectedMessage)
+        verify(stateLogic).delsertPinnedMessage(expectedMessage)
     }
 
     @Test
@@ -221,6 +223,7 @@ internal class ChannelEventHandlerTest {
         handler.handle(event)
 
         verify(stateLogic, never()).updateMessage(any())
+        verify(stateLogic).delsertPinnedMessage(event.message)
     }
 
     // MessageDeletedEvent tests
