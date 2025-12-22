@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix issue causing gaps in the message list due to messages inserted out of order. [#6055](https://github.com/GetStream/stream-chat-android/pull/6055)
 
 ### ⬆️ Improved
 
