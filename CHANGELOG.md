@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix default notification channel created even if SDK notifications are disabled. [#6054](https://github.com/GetStream/stream-chat-android/pull/6054)
 
 ### ⬆️ Improved
 
