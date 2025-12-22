@@ -69,16 +69,18 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
-    private val factory: MessagingStyleNotificationFactory = MessagingStyleNotificationFactory(
-        context = context,
-        notificationManager = notificationManager,
-        notificationChannelId = getNotificationChannelId(),
-        userIconBuilder = userIconBuilder,
-        newMessageIntent = newMessageIntent,
-        notificationTextFormatter = notificationTextFormatter,
-        actionsProvider = actionsProvider,
-        notificationBuilderTransformer = notificationBuilderTransformer,
-    )
+    private val factory: MessagingStyleNotificationFactory by lazy {
+        MessagingStyleNotificationFactory(
+            context = context,
+            notificationManager = notificationManager,
+            notificationChannelId = getNotificationChannelId(),
+            userIconBuilder = userIconBuilder,
+            newMessageIntent = newMessageIntent,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
+        )
+    }
 
     override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
         when (status) {
