@@ -5000,10 +5000,7 @@ internal constructor(
                     clientScope = clientScope,
                     userScope = userScope,
                     config = config,
-                    notificationsHandler = notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(
-                        context = appContext,
-                        notificationConfig = notificationConfig,
-                    ),
+                    notificationsHandler = notificationsHandler,
                     apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
                     fileUploader = fileUploader,
