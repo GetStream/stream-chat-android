@@ -189,15 +189,6 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Updates a message in the channel (if it exists).
-     *
-     * @param message The message to be updated.
-     */
-    fun updateMessage(message: Message) {
-        mutableState.updateMessage(message)
-    }
-
-    /**
      * Updates the read information of this channel.
      *
      * @param reads the information about the read.
