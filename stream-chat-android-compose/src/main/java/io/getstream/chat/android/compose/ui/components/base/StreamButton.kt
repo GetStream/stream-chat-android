@@ -36,59 +36,78 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-// TODO [G.] do we need both style & colors?
-public data class StreamButtonColors(
-    val containerColor: Color,
-    val contentColor: Color,
-    val disabledContainerColor: Color,
-    val disabledContentColor: Color,
-)
-
 @Stable
-internal fun StreamButtonColors.contentColor(enabled: Boolean) =
+internal fun StreamButtonStyle.contentColor(enabled: Boolean) =
     if (enabled) contentColor else disabledContentColor
 
 @Stable
-internal fun StreamButtonColors.containerColor(enabled: Boolean) =
+internal fun StreamButtonStyle.containerColor(enabled: Boolean) =
     if (enabled) containerColor else disabledContainerColor
 
+@Stable
+internal fun StreamButtonStyle.border(enabled: Boolean) =
+    if (enabled) border else disabledBorder
+
 public data class StreamButtonStyle(
-    public val colors: StreamButtonColors,
-    // TODO [G.] move into colors? move colors here?
+    public val containerColor: Color,
+    public val contentColor: Color,
+    public val disabledContainerColor: Color,
+    public val disabledContentColor: Color,
     public val border: BorderStroke?,
+    public val disabledBorder: BorderStroke?,
 )
 
 public object StreamButtonStyleDefaults {
     public val primarySolid: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            colors = StreamButtonColorDefaults.primarySolid,
-            border = BorderStroke(1.dp, Colors.buttonPrimaryBorder) // TODO [G.]
+            containerColor = Colors.buttonPrimaryBackground,
+            contentColor = Colors.buttonPrimaryText,
+            disabledContainerColor = Colors.stateBackgroundDisabled,
+            disabledContentColor = Colors.stateTextDisabled,
+            border = BorderStroke(1.dp, Colors.buttonPrimaryBorder),
+            disabledBorder = null,
         )
     public val primaryGhost: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            colors = StreamButtonColorDefaults.primaryGhost,
+            containerColor = Colors.buttonGhostBackground,
+            contentColor = Colors.buttonGhostText,
+            disabledContainerColor = Colors.buttonGhostBackground,
+            disabledContentColor = Colors.stateTextDisabled,
             border = null,
+            disabledBorder = null,
         )
     public val secondaryOutline: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            colors = StreamButtonColorDefaults.secondaryOutline,
+            containerColor = Colors.buttonOutlineBackground,
+            contentColor = Colors.buttonSecondaryText,
+            disabledContainerColor = Colors.buttonOutlineBackground,
+            disabledContentColor = Colors.stateTextDisabled,
             border = BorderStroke(1.dp, Colors.buttonOutlineBorder),
+            disabledBorder = BorderStroke(1.dp, Colors.buttonOutlineBorder),
         )
     public val secondaryGhost: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            colors = StreamButtonColorDefaults.secondaryGhost,
+            containerColor = Colors.buttonGhostBackground,
+            contentColor = Colors.buttonSecondaryText,
+            disabledContainerColor = Colors.buttonGhostBackground,
+            disabledContentColor = Colors.stateTextDisabled,
             border = null,
+            disabledBorder = null,
         )
 
     public val destructiveSolid: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            colors = StreamButtonColorDefaults.destructiveSolid,
+            containerColor = Colors.buttonDestructiveBackground,
+            contentColor = Colors.buttonDestructiveText,
+            disabledContainerColor = Colors.stateBackgroundDisabled,
+            disabledContentColor = Colors.stateTextDisabled,
             border = null,
+            disabledBorder = null,
         )
 }
 
@@ -114,53 +133,6 @@ private object Colors {
     val todo = Color.Green
 }
 
-public object StreamButtonColorDefaults {
-    public val primarySolid: StreamButtonColors
-        @Composable
-        get() = StreamButtonColors(
-            containerColor = Colors.buttonPrimaryBackground,
-            contentColor = Colors.buttonPrimaryText,
-            disabledContainerColor = Colors.stateBackgroundDisabled,
-            disabledContentColor = Colors.stateTextDisabled,
-        )
-
-    public val primaryGhost: StreamButtonColors
-        @Composable
-        get() = StreamButtonColors(
-            containerColor = Colors.buttonGhostBackground,
-            contentColor = Colors.buttonGhostText,
-            disabledContainerColor = Colors.buttonGhostBackground,
-            disabledContentColor = Colors.stateTextDisabled,
-        )
-
-    public val secondaryOutline: StreamButtonColors
-        @Composable
-        get() = StreamButtonColors(
-            containerColor = Colors.buttonOutlineBackground,
-            contentColor = Colors.buttonSecondaryText,
-            disabledContainerColor = Colors.buttonOutlineBackground,
-            disabledContentColor = Colors.stateTextDisabled,
-        )
-
-    public val secondaryGhost: StreamButtonColors
-        @Composable
-        get() = StreamButtonColors(
-            containerColor = Colors.buttonGhostBackground,
-            contentColor = Colors.buttonSecondaryText,
-            disabledContainerColor = Colors.buttonGhostBackground,
-            disabledContentColor = Colors.stateTextDisabled,
-        )
-
-    public val destructiveSolid: StreamButtonColors
-        @Composable
-        get() = StreamButtonColors(
-            containerColor = Colors.buttonDestructiveBackground,
-            contentColor = Colors.buttonDestructiveText,
-            disabledContainerColor = Colors.stateBackgroundDisabled,
-            disabledContentColor = Colors.stateTextDisabled,
-        )
-}
-
 private enum class StreamButtonSize(val minimumSize: Dp) {
     Small(32.dp), Medium(40.dp), Large(48.dp)
 }
@@ -175,16 +147,14 @@ private fun StreamButton(
     size: StreamButtonSize = StreamButtonSize.Medium,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val containerColor = style.colors.containerColor(enabled)
-    val contentColor = style.colors.contentColor(enabled)
     Surface(
         onClick = onClick,
         modifier = modifier.semantics { role = Role.Button },
         enabled = enabled,
         shape = RoundedCornerShape(50),
-        color = containerColor,
-        contentColor = contentColor,
-        border = style.border,
+        color = style.containerColor(enabled),
+        contentColor = style.contentColor(enabled),
+        border = style.border(enabled),
         interactionSource = remember(::MutableInteractionSource)
     ) {
         Row(
@@ -203,7 +173,6 @@ private fun StreamIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    // TODO [G.] material has a separate class for icon button colors, should we do the same? for both styles and colors
     style: StreamButtonStyle = StreamButtonStyleDefaults.primarySolid,
     size: StreamButtonSize = StreamButtonSize.Medium,
     content: @Composable () -> Unit,
@@ -213,8 +182,8 @@ private fun StreamIconButton(
             modifier
                 .defaultMinSize(size.minimumSize, size.minimumSize)
                 .clip(CircleShape)
-                .background(color = style.colors.containerColor(enabled))
-                .run { style.border?.let { border(it, CircleShape) } ?: this }
+                .background(color = style.containerColor(enabled))
+                .run { style.border(enabled)?.let { border(it, CircleShape) } ?: this }
                 .clickable(
                     onClick = onClick,
                     enabled = enabled,
@@ -224,7 +193,7 @@ private fun StreamIconButton(
                 ),
         contentAlignment = Alignment.Center
     ) {
-        val contentColor = style.colors.contentColor(enabled)
+        val contentColor = style.contentColor(enabled)
         CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
 }
