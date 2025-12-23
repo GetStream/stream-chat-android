@@ -863,29 +863,54 @@ internal class ChannelStateLogic(
      * @param message The message that was received.
      */
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
+        // Skip update if the message was already processed
+        val isProcessed = processedMessageIds[message.id] == true
+        if (isProcessed) {
+            return
+        }
+        // Skip update if the channel is muted
         val isMuted = mutableState.muted.value
         if (isMuted) {
-            // Skip update to the unread count if the channel is muted
             processedMessageIds.put(message.id, true)
             return
         }
-        mutableState.read.value
-            ?.takeUnless { it.lastReceivedEventDate.after(eventReceivedDate) }
-            ?.takeUnless { processedMessageIds[message.id] == true }
-            ?.takeUnless {
-                message.user.id == clientState.user.value?.id ||
-                    message.parentId?.takeIf { message.showInChannel } != null
-            }
-            ?.takeUnless { message.shadowed }
-            ?.takeUnless { message.silent }
-            ?.let {
-                updateRead(
-                    it.copy(
-                        lastReceivedEventDate = eventReceivedDate,
-                        unreadMessages = it.unreadMessages.inc(),
-                    ),
-                )
-            }
+        // Skip update for thread replies not shown in channel
+        val isThreadReplyNotInChannel = message.parentId != null && !message.showInChannel
+        if (isThreadReplyNotInChannel) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update for messages from current user
+        val isFromCurrentUser = message.user.id == clientState.user.value?.id
+        if (isFromCurrentUser) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update for messages from shadow banned users
+        if (message.shadowed) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update for silent messages
+        if (message.silent) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update if the event is outdated
+        val currentRead = mutableState.read.value
+        if (currentRead != null && currentRead.lastReceivedEventDate.after(eventReceivedDate)) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Update the unread count
+        currentRead?.let {
+            updateRead(
+                it.copy(
+                    lastReceivedEventDate = eventReceivedDate,
+                    unreadMessages = it.unreadMessages.inc(),
+                ),
+            )
+        }
         processedMessageIds.put(message.id, true)
     }
 
