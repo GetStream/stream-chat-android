@@ -57,7 +57,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
 
 ### ⬆️ Improved
 
@@ -69,7 +68,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
 
 ### ⬆️ Improved
 
@@ -89,6 +87,23 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 22th, 2025 - 6.30.1
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix default notification channel created even if SDK notifications are disabled. [#6054](https://github.com/GetStream/stream-chat-android/pull/6054)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix issue causing gaps in the message list due to messages inserted out of order. [#6055](https://github.com/GetStream/stream-chat-android/pull/6055)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
 
 # December 12th, 2025 - 6.30.0
 ## stream-chat-android-client
