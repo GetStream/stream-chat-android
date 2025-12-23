@@ -536,21 +536,6 @@ internal class ChannelMutableState(
     fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
-
-    /**
-     * Updates a message in the channel (if it exists).
-     *
-     * @param message message to be updated.
-     */
-    fun updateMessage(message: Message) {
-        val exists = _messages?.value?.containsKey(message.id) == true
-        if (exists) {
-            upsertMessage(message)
-        } else {
-            logger.d { "[updateMessage] message.id: ${message.id} does not exist. Skipping update." }
-        }
-    }
-
     fun upsertUserPresence(user: User) {
         logger.d { "[upsertUserPresence] user.id: ${user.id}" }
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }

@@ -118,23 +118,23 @@ internal class ChannelLogicImpl(
     }
 
     override suspend fun loadAfter(messageId: String, limit: Int): Result<Channel> {
-        logger.i { "[loadNewerMessages] messageId: $messageId, limit: $limit" }
+        logger.i { "[loadAfter] messageId: $messageId, limit: $limit" }
         channelStateLogic.loadingNewerMessages()
-        return runChannelQuery("loadNewerMessages", newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+        return runChannelQuery("loadAfter", newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
-        logger.i { "[loadOlderMessages] messageId: $messageId, limit: $limit" }
+        logger.i { "[loadBefore] messageId: $messageId, limit: $limit" }
         channelStateLogic.loadingOlderMessages()
         return runChannelQuery(
-            "loadOlderMessages",
+            "loadBefore",
             olderWatchChannelRequest(limit = limit, baseMessageId = messageId),
         )
     }
 
     override suspend fun loadAround(messageId: String): Result<Channel> {
-        logger.i { "[loadMessagesAroundId] messageId: $messageId" }
-        return runChannelQuery("loadMessagesAroundId", aroundIdWatchChannelRequest(messageId))
+        logger.i { "[loadAround] messageId: $messageId" }
+        return runChannelQuery("loadAround", aroundIdWatchChannelRequest(messageId))
     }
 
     override fun getMessage(messageId: String): Message? {
