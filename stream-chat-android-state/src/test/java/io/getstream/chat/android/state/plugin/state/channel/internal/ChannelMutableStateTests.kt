@@ -734,6 +734,95 @@ internal class ChannelMutableStateTests {
         assertEquals(delivered, userRead)
     }
 
+    @Test
+    fun `updateMessage should not add new message if it does not exist`() = runTest {
+        // given
+        val existingMessage = randomMessage(
+            id = "msg1",
+            cid = CID,
+            text = "Text 1",
+            createdAt = Date(currentTime()),
+            shadowed = false,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        channelState.setMessages(listOf(existingMessage))
+
+        val newMessage = randomMessage(
+            id = "msg2",
+            cid = CID,
+            text = "New message",
+            createdAt = Date(currentTime() + 1000),
+            shadowed = false,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+
+        // when
+        channelState.updateMessage(newMessage)
+
+        // then - message count should not change
+        assertEquals(1, channelState.messages.value.size)
+        assertEquals("msg1", channelState.messages.value.first().id)
+        // New message should not be present
+        assertEquals(false, channelState.messages.value.any { it.id == "msg2" })
+    }
+
+    @Test
+    fun `updateMessage should update existing message`() = runTest {
+        // given
+        val now = currentTime()
+        val message1 = randomMessage(
+            id = "msg1",
+            cid = CID,
+            text = "Text 1",
+            createdAt = Date(now),
+            shadowed = false,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val message2 = randomMessage(
+            id = "msg2",
+            cid = CID,
+            text = "Text 2",
+            createdAt = Date(now + 1000),
+            shadowed = false,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+        val message3 = randomMessage(
+            id = "msg3",
+            cid = CID,
+            text = "Text 3",
+            createdAt = Date(now + 2000),
+            shadowed = false,
+            parentId = null,
+            deletedAt = null,
+            deletedForMe = false,
+        )
+
+        channelState.setMessages(listOf(message1, message2, message3))
+
+        val updatedMessage2 = message2.copy(text = "Updated text 2")
+
+        // when
+        channelState.updateMessage(updatedMessage2)
+
+        // then
+        assertEquals(3, channelState.messages.value.size)
+        val messages = channelState.messages.value
+        // Message 1 should be unchanged
+        assertEquals("Text 1", messages.first { it.id == "msg1" }.text)
+        // Message 2 should be updated
+        assertEquals("Updated text 2", messages.first { it.id == "msg2" }.text)
+        // Message 3 should be unchanged
+        assertEquals("Text 3", messages.first { it.id == "msg3" }.text)
+    }
+
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
         require(pinnedMessages.value.size == size) {
             "pinnedMessages should have $size items, but was ${pinnedMessages.value.size}"

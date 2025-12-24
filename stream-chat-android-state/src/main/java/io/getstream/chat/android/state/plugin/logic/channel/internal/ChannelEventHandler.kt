@@ -158,24 +158,35 @@ internal class ChannelEventHandler(
                     poll = poll,
                     replyTo = replyTo,
                 )
-                upsertMessage(enrichedMessage)
+                updateMessage(enrichedMessage)
+                // Update the pinned messages state if the pinned status changed
+                stateLogic.delsertPinnedMessage(enrichedMessage)
             }
 
             is MessageDeletedEvent -> {
                 if (event.hardDelete) {
                     stateLogic.deleteMessage(event.message)
                 } else {
-                    upsertMessage(event.message)
+                    updateMessage(event.message)
                 }
                 // Update message count
                 event.channelMessageCount?.let(stateLogic::updateMessageCount)
             }
 
-            is NotificationThreadMessageNewEvent -> upsertMessage(event.message)
+            is NotificationThreadMessageNewEvent -> {
+                // Handle only if thread reply was sent to channel as well
+                if (event.message.showInChannel) {
+                    upsertMessage(event.message)
+                    // Update hidden state if the message is not shadowed
+                    if (!event.message.shadowed) {
+                        stateLogic.setHidden(false)
+                    }
+                }
+            }
             // Reaction events
-            is ReactionNewEvent -> upsertMessage(event.message)
-            is ReactionUpdateEvent -> upsertMessage(event.message)
-            is ReactionDeletedEvent -> upsertMessage(event.message)
+            is ReactionNewEvent -> updateMessage(event.message)
+            is ReactionUpdateEvent -> updateMessage(event.message)
+            is ReactionDeletedEvent -> updateMessage(event.message)
             // Member events
             is MemberAddedEvent -> {
                 stateLogic.addMember(event.member)
@@ -288,6 +299,21 @@ internal class ChannelEventHandler(
         }
     }
 
+    private fun getMessage(id: String): Message? {
+        return mutableState.visibleMessages.value[id]?.copy()
+    }
+
+    private fun updateReminder(messageId: String, reminder: MessageReminder) {
+        // Update reminder only if message exists
+        val message = mutableState.getMessageById(messageId) ?: return
+        updateMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+    }
+
+    private fun deleteReminder(messageId: String) {
+        val message = mutableState.getMessageById(messageId) ?: return
+        updateMessage(message.copy(reminder = null))
+    }
+
     private fun upsertMessage(
         message: Message,
         preserveCreatedLocallyAt: Boolean = false,
@@ -304,18 +330,10 @@ internal class ChannelEventHandler(
         stateLogic.delsertPinnedMessage(updatedMessage)
     }
 
-    private fun getMessage(id: String): Message? {
-        return mutableState.visibleMessages.value[id]?.copy()
-    }
-
-    private fun updateReminder(messageId: String, reminder: MessageReminder) {
-        // Update reminder only if message exists
-        val message = mutableState.getMessageById(messageId) ?: return
-        upsertMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
-    }
-
-    private fun deleteReminder(messageId: String) {
-        val message = mutableState.getMessageById(messageId) ?: return
-        upsertMessage(message.copy(reminder = null))
+    private fun updateMessage(message: Message) {
+        val oldMessage = getMessage(message.id) ?: return
+        val ownReactions = oldMessage.ownReactions
+        val enrichedMessage = message.copy(ownReactions = ownReactions)
+        stateLogic.updateMessage(enrichedMessage)
     }
 }

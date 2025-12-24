@@ -1062,6 +1062,16 @@ internal class ChannelStateLogicTest {
         verify(mutableState).setLoadingNewerMessages(false)
     }
 
+    @Test
+    fun `When updateMessage is called, Then mutable state updateMessage is called`() {
+        // given
+        val message = randomMessage()
+        // when
+        channelStateLogic.updateMessage(message)
+        // then
+        verify(mutableState).updateMessage(eq(message))
+    }
+
     companion object {
 
         @JvmField
