@@ -25,9 +25,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
-import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
-import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
@@ -59,7 +57,7 @@ internal class ChannelLogicImpl(
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
     private val eventHandler = ChannelEventHandler(cid, channelStateLogic, getCurrentUserId)
-    private val logger by taggedLogger("Chat:ChannelLogicDB")
+    private val logger by taggedLogger("Chat:ChannelLogicImpl")
 
     override val cid: String
         get() = mutableState.cid
@@ -75,10 +73,9 @@ internal class ChannelLogicImpl(
         if (query.isNotificationUpdate) return
         channelStateLogic.syncMuteState()
 
-        /* It is not possible to guarantee that the next page of newer messages is the same of backend,
-         * so we force the backend usage */
-        if (!query.isFilteringNewerMessages()) {
-            runChannelQueryOffline(query)
+        // Fetch channel from local storage if the request is for the latest channel data
+        if (query.isLoadingLatestMessages) {
+            runQueryOffline(query)
         }
     }
 
@@ -187,17 +184,11 @@ internal class ChannelLogicImpl(
         request: WatchChannelRequest,
     ): Result<Channel> {
         logger.d { "[runChannelQuery] #$src; request: $request" }
-        val loadedMessages = mutableState.messageList.value
-        val offlineChannel = runChannelQueryOffline(request)
-
-        val onlineResult = runChannelQueryOnline(request)
-            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
-
-        return when {
-            onlineResult is Result.Success -> onlineResult
-            offlineChannel != null -> Result.Success(offlineChannel)
-            else -> onlineResult
-        }
+        return runChannelQueryOnline(request)
+            .onSuccess {
+                val loadedMessages = mutableState.messageList.value
+                fillTheGap(request.messagesLimit(), loadedMessages, it.messages)
+            }
     }
 
     /**
@@ -262,43 +253,34 @@ internal class ChannelLogicImpl(
         }
     }
 
-    private suspend fun runChannelQueryOffline(request: QueryChannelRequest): Channel? {
-        /* It is not possible to guarantee that the next page of newer messages or the page surrounding a certain
-         * message is the same as the one on backend, so we force the backend usage */
-        if (request.isFilteringNewerMessages() || request.isFilteringAroundIdMessages()) return null
-
-        return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
-            logger.v {
-                "[runChannelQueryOffline] completed; channel.cid: ${channel.cid}, " +
-                    "channel.messages.size: ${channel.messages.size}"
-            }
-            if (request.filteringOlderMessages()) {
-                updateOldMessagesFromLocalChannel(channel)
-            } else {
-                updateDataFromLocalChannel(
-                    localChannel = channel,
-                    isNotificationUpdate = request.isNotificationUpdate,
-                    messageLimit = request.messagesLimit(),
-                    scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
-                    shouldRefreshMessages = request.shouldRefresh,
-                    isChannelsStateUpdate = true,
-                )
-            }
-        }
+    private suspend fun runQueryOffline(query: QueryChannelRequest) {
+        val channel = fetchOfflineChannel(cid, query) ?: return
+        updateWithOfflineChannel(
+            localChannel = channel,
+            isNotificationUpdate = query.isNotificationUpdate,
+            messageLimit = query.messagesLimit(),
+            shouldRefreshMessages = query.shouldRefresh,
+        )
     }
 
-    private fun updateDataFromLocalChannel(
+    private suspend fun fetchOfflineChannel(cid: String, request: QueryChannelRequest): Channel? {
+        // Fetch channel data from DB
+        val channel = repos.selectChannel(cid) ?: return null
+        // Fetch messages for the channel
+        val messages = repos.selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
+        // Enrich the channel with messages
+        return channel.copy(messages = messages)
+    }
+
+    private fun updateWithOfflineChannel(
         localChannel: Channel,
         isNotificationUpdate: Boolean,
         messageLimit: Int,
-        scrollUpdate: Boolean,
         shouldRefreshMessages: Boolean,
-        isChannelsStateUpdate: Boolean = false,
     ) {
         logger.v {
             "[updateDataFromLocalChannel] localChannel.cid: ${localChannel.cid}, messageLimit: $messageLimit, " +
-                "scrollUpdate: $scrollUpdate, shouldRefreshMessages: $shouldRefreshMessages, " +
-                "isChannelsStateUpdate: $isChannelsStateUpdate"
+                "shouldRefreshMessages: $shouldRefreshMessages"
         }
         localChannel.hidden?.let(channelStateLogic::setHidden)
         localChannel.hiddenMessagesBefore?.let(channelStateLogic::hideMessagesBefore)
@@ -306,27 +288,11 @@ internal class ChannelLogicImpl(
             localChannel,
             messageLimit = messageLimit,
             shouldRefreshMessages = shouldRefreshMessages,
-            scrollUpdate = scrollUpdate,
+            scrollUpdate = false,
             isNotificationUpdate = isNotificationUpdate,
-            isChannelsStateUpdate = isChannelsStateUpdate,
+            isChannelsStateUpdate = true,
         )
     }
-
-    private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
-        logger.v { "[updateOldMessagesFromLocalChannel] localChannel.cid: ${localChannel.cid}" }
-        localChannel.hidden?.let(channelStateLogic::setHidden)
-        channelStateLogic.updateOldMessagesFromChannel(localChannel)
-    }
-
-    private suspend fun selectAndEnrichChannel(
-        channelId: String,
-        pagination: QueryChannelRequest,
-    ): Channel? = selectAndEnrichChannels(listOf(channelId), pagination.toAnyChannelPaginationRequest()).getOrNull(0)
-
-    private suspend fun selectAndEnrichChannels(
-        channelIds: List<String>,
-        pagination: AnyChannelPaginationRequest,
-    ): List<Channel> = repos.selectChannels(channelIds, pagination).applyPagination(pagination)
 
     /**
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
@@ -395,4 +361,7 @@ internal class ChannelLogicImpl(
             -> messages.first()
         }
     }
+
+    private val QueryChannelRequest.isLoadingLatestMessages
+        get() = !this.isFilteringMessages()
 }
