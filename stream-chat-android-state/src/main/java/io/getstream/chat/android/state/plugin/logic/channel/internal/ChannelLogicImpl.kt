@@ -29,7 +29,9 @@ import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
@@ -167,6 +169,26 @@ internal class ChannelLogicImpl(
             isNotificationUpdate,
             isChannelsStateUpdate = isChannelsStateUpdate,
         )
+    }
+
+    override fun upsertMembers(members: List<Member>) {
+        channelStateLogic.upsertMembers(members)
+    }
+
+    override fun setHidden(hidden: Boolean) {
+        channelStateLogic.setHidden(hidden)
+    }
+
+    override fun hideMessagesBefore(date: Date) {
+        channelStateLogic.hideMessagesBefore(date)
+    }
+
+    override fun removeMessagesBefore(date: Date) {
+        channelStateLogic.removeMessagesBefore(date)
+    }
+
+    override fun setPushPreference(preference: PushPreference) {
+        channelStateLogic.setPushPreference(preference)
     }
 
     override fun handleEvents(events: List<ChatEvent>) {

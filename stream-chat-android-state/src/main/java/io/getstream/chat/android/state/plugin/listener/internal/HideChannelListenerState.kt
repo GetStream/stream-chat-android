@@ -54,7 +54,7 @@ internal class HideChannelListenerState(private val logic: LogicRegistry) : Hide
      * @param clearHistory Boolean, if you want to clear the history of this channel or not.
      */
     override suspend fun onHideChannelRequest(channelType: String, channelId: String, clearHistory: Boolean) {
-        logic.channel(channelType, channelId).stateLogic.setHidden(true)
+        logic.channel(channelType, channelId).setHidden(true)
     }
 
     /**
@@ -71,18 +71,18 @@ internal class HideChannelListenerState(private val logic: LogicRegistry) : Hide
         channelId: String,
         clearHistory: Boolean,
     ) {
-        val channelStateLogic = logic.channel(channelType, channelId).stateLogic
+        val channelLogic = logic.channel(channelType, channelId)
         when (result) {
             is Result.Success -> {
                 if (clearHistory) {
                     val now = Date()
-                    channelStateLogic.run {
+                    channelLogic.run {
                         hideMessagesBefore(now)
                         removeMessagesBefore(now)
                     }
                 }
             }
-            is Result.Failure -> channelStateLogic.setHidden(false)
+            is Result.Failure -> channelLogic.setHidden(false)
         }
     }
 }

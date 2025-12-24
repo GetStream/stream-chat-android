@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
-import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -37,10 +35,7 @@ import java.util.Date
 
 internal class PushPreferencesListenerStateTest {
 
-    private val channelStateLogic: ChannelStateLogic = mock()
-    private val channelLogic: ChannelLogic = mock {
-        on(it.stateLogic) doReturn channelStateLogic
-    }
+    private val channelLogic: ChannelLogic = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
     }
@@ -52,13 +47,13 @@ internal class PushPreferencesListenerStateTest {
         val cid = "messaging:channel123"
         val level = PushPreferenceLevel.all
         val preference = PushPreference(level = level, disabledUntil = null)
-        doNothing().whenever(channelStateLogic).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        doNothing().whenever(channelLogic).setPushPreference(preference)
 
         // When
         sut.onChannelPushPreferenceSet(cid, level, Result.Success(preference))
 
         // Then
-        verify(channelStateLogic, times(1)).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        verify(channelLogic, times(1)).setPushPreference(preference)
     }
 
     @Test
@@ -71,7 +66,7 @@ internal class PushPreferencesListenerStateTest {
         sut.onChannelPushPreferenceSet(cid, level, Result.Failure(Error.GenericError("error")))
 
         // Then
-        verify(channelStateLogic, times(0)).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        verify(channelLogic, times(0)).setPushPreference(any())
     }
 
     @Test
@@ -80,13 +75,13 @@ internal class PushPreferencesListenerStateTest {
         val cid = "messaging:channel456"
         val until = Date()
         val preference = PushPreference(level = PushPreferenceLevel.none, disabledUntil = until)
-        doNothing().whenever(channelStateLogic).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        doNothing().whenever(channelLogic).setPushPreference(preference)
 
         // When
         sut.onChannelPushNotificationsSnoozed(cid, until, Result.Success(preference))
 
         // Then
-        verify(channelStateLogic, times(1)).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        verify(channelLogic, times(1)).setPushPreference(preference)
     }
 
     @Test
@@ -99,6 +94,6 @@ internal class PushPreferencesListenerStateTest {
         sut.onChannelPushNotificationsSnoozed(cid, until, Result.Failure(Error.GenericError("error")))
 
         // Then
-        verify(channelStateLogic, times(0)).updateChannelData(any<(ChannelData?) -> ChannelData?>())
+        verify(channelLogic, times(0)).setPushPreference(any())
     }
 }

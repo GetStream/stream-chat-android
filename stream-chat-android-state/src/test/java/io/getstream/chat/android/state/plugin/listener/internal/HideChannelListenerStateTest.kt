@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.plugin.listener.internal
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -35,10 +34,7 @@ import org.mockito.kotlin.verify
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class HideChannelListenerStateTest {
 
-    private val stateLogic: ChannelStateLogic = mock()
-    private val channelLogic: ChannelLogic = mock {
-        on(it.stateLogic) doReturn stateLogic
-    }
+    private val channelLogic: ChannelLogic = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
     }
@@ -48,7 +44,7 @@ internal class HideChannelListenerStateTest {
     fun `before the request is made, the channel should be set to hidden`() = runTest {
         hideChannelListenerState.onHideChannelRequest(randomString(), randomString(), randomBoolean())
 
-        verify(stateLogic).setHidden(true)
+        verify(channelLogic).setHidden(true)
     }
 
     @Test
@@ -60,7 +56,7 @@ internal class HideChannelListenerStateTest {
             randomBoolean(),
         )
 
-        verify(stateLogic).setHidden(false)
+        verify(channelLogic).setHidden(false)
     }
 
     @Test
@@ -72,10 +68,10 @@ internal class HideChannelListenerStateTest {
             clearHistory = true,
         )
 
-        verify(stateLogic, never()).setHidden(false)
-        verify(stateLogic).run {
+        verify(channelLogic, never()).setHidden(false)
+        verify(channelLogic).run {
             hideMessagesBefore(any())
-            removeMessagesBefore(any(), any())
+            removeMessagesBefore(any())
         }
     }
 }

@@ -20,8 +20,11 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushPreference
 import io.getstream.result.Result
+import java.util.Date
 
 /**
  * Defines the contract for interacting with a channel.
@@ -120,6 +123,41 @@ internal interface ChannelLogic {
      * @param message The [Message] to delete.
      */
     fun deleteMessage(message: Message)
+
+    /**
+     * Inserts or updates the given list of members in the channel's state.
+     *
+     * @param members The list of [Member]s to upsert.
+     */
+    fun upsertMembers(members: List<Member>)
+
+    /**
+     * Sets the hidden status of the channel.
+     *
+     * @param hidden True to hide the channel, false to unhide it.
+     */
+    fun setHidden(hidden: Boolean)
+
+    /**
+     * Hides messages in the channel that were created before the specified [date].
+     *
+     * @param date The [Date] before which messages should be hidden.
+     */
+    fun hideMessagesBefore(date: Date)
+
+    /**
+     * Removes messages in the channel that were created before the specified [date].
+     *
+     * @param date The [Date] before which messages should be removed.
+     */
+    fun removeMessagesBefore(date: Date)
+
+    /**
+     * Sets the push notification preference for the channel.
+     *
+     * @param preference The new [PushPreference].
+     */
+    fun setPushPreference(preference: PushPreference)
 
     /**
      * Updates the channel's data based on the provided [channel] information.

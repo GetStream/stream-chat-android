@@ -131,10 +131,6 @@ internal class LogicRegistry internal constructor(
         channels.remove(channelType to channelId)
     }
 
-    fun channelState(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic
-    }
-
     fun channelFromMessageId(messageId: String): ChannelLogic? {
         return channels.values.find { channelLogic ->
             channelLogic.getMessage(messageId) != null

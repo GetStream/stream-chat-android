@@ -61,7 +61,7 @@ internal class QueryChannelsStateLogicTest {
     }
     private val stateRegistry: StateRegistry = mock()
     private val logicRegistry: LogicRegistry = mock {
-        on(it.channelState(any(), any())) doReturn mock()
+        on(it.channel(any(), any())) doReturn mock()
     }
 
     private val queryChannelsStateLogic =

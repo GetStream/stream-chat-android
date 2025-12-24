@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -444,6 +445,15 @@ internal class ChannelStateLogic(
     fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
         mutableState.removeMessagesBefore(date)
         systemMessage?.let(mutableState::upsertMessage)
+    }
+
+    /**
+     * Sets the [PushPreference] for the channel.
+     */
+    fun setPushPreference(preference: PushPreference) {
+        updateChannelData { data ->
+            data?.copy(pushPreference = preference)
+        }
     }
 
     fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
