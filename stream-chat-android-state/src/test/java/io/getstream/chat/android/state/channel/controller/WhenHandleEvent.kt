@@ -151,7 +151,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(messageUpdateEvent)
 
         verify(channelStateLogic, times(1)).upsertMessage(message)
-        verify(channelStateLogic, times(1)).upsertMessage(messageUpdateEvent.message)
+        verify(channelStateLogic, times(1)).updateMessage(messageUpdateEvent.message)
     }
 
     @Test
@@ -174,7 +174,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelStateLogic).updateMessage(
             org.mockito.kotlin.argThat { message ->
                 message.poll == poll && message.text == "Updated text"
             },
@@ -202,7 +202,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelStateLogic).updateMessage(
             org.mockito.kotlin.argThat { message ->
                 message.poll == eventPoll && message.text == "Updated text"
             },

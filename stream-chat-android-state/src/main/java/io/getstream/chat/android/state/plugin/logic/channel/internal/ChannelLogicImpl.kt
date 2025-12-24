@@ -186,7 +186,12 @@ internal class ChannelLogicImpl(
         logger.d { "[runChannelQuery] #$src; request: $request" }
         val loadedMessages = mutableState.messageList.value
         return runChannelQueryOnline(request)
-            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
+            .onSuccess {
+                // Fill the missing messages gap only if loading around ID
+                if (request.isFilteringAroundIdMessages()) {
+                    fillTheGap(request.messagesLimit(), loadedMessages, it.messages)
+                }
+            }
     }
 
     /**
