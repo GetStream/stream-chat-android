@@ -51,7 +51,7 @@ import java.util.Date
  * @property channelStateLogic [ChannelStateLogic]
  */
 @Suppress("TooManyFunctions", "LargeClass")
-internal class ChannelLogicImpl(
+internal class ChannelLogicLegacyImpl(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
