@@ -22,7 +22,6 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -40,10 +39,7 @@ import org.mockito.kotlin.whenever
 
 internal class DeleteMessageListenerStateTest {
 
-    private val channelStateLogic: ChannelStateLogic = mock()
-    private val channelLogic: ChannelLogic = mock {
-        on(it.stateLogic) doReturn channelStateLogic
-    }
+    private val channelLogic: ChannelLogic = mock()
     private val threadsLogic: QueryThreadsLogic = mock()
     private val activeThreadsLogic = listOf(threadsLogic)
 
