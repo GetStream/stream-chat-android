@@ -184,11 +184,9 @@ internal class ChannelLogicImpl(
         request: WatchChannelRequest,
     ): Result<Channel> {
         logger.d { "[runChannelQuery] #$src; request: $request" }
+        val loadedMessages = mutableState.messageList.value
         return runChannelQueryOnline(request)
-            .onSuccess {
-                val loadedMessages = mutableState.messageList.value
-                fillTheGap(request.messagesLimit(), loadedMessages, it.messages)
-            }
+            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
     }
 
     /**
