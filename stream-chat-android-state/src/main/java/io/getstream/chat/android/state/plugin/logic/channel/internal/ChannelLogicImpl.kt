@@ -287,8 +287,8 @@ internal class ChannelLogicImpl(
         }
         localChannel.hidden?.let(channelStateLogic::setHidden)
         localChannel.hiddenMessagesBefore?.let(channelStateLogic::hideMessagesBefore)
-        updateDataForChannel(
-            localChannel,
+        channelStateLogic.updateDataForChannel(
+            channel = localChannel,
             messageLimit = messageLimit,
             shouldRefreshMessages = shouldRefreshMessages,
             scrollUpdate = false,

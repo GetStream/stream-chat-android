@@ -744,7 +744,8 @@ internal class ChannelStateLogic(
 
         updateDataForChannel(
             channel = channel,
-            shouldRefreshMessages = request.shouldRefresh,
+            // Refresh messages if explicit refresh, or if the latest message are requested
+            shouldRefreshMessages = request.shouldRefresh || !request.isFilteringMessages(),
             scrollUpdate = request.isFilteringMessages(),
             isNotificationUpdate = request.isNotificationUpdate,
             messageLimit = request.messagesLimit(),
