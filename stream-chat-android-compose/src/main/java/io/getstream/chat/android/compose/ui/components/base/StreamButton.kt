@@ -61,40 +61,40 @@ public object StreamButtonStyleDefaults {
     public val primarySolid: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            containerColor = Colors.buttonPrimaryBackground,
-            contentColor = Colors.buttonPrimaryText,
-            disabledContainerColor = Colors.stateBackgroundDisabled,
-            disabledContentColor = Colors.stateTextDisabled,
-            border = BorderStroke(1.dp, Colors.buttonPrimaryBorder),
+            containerColor = StreamColors.buttonPrimaryBackground,
+            contentColor = StreamColors.buttonPrimaryText,
+            disabledContainerColor = StreamColors.stateBackgroundDisabled,
+            disabledContentColor = StreamColors.stateTextDisabled,
+            border = BorderStroke(1.dp, StreamColors.buttonPrimaryBorder),
             disabledBorder = null,
         )
     public val primaryGhost: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            containerColor = Colors.buttonGhostBackground,
-            contentColor = Colors.buttonGhostText,
-            disabledContainerColor = Colors.buttonGhostBackground,
-            disabledContentColor = Colors.stateTextDisabled,
+            containerColor = StreamColors.buttonGhostBackground,
+            contentColor = StreamColors.buttonGhostText,
+            disabledContainerColor = StreamColors.buttonGhostBackground,
+            disabledContentColor = StreamColors.stateTextDisabled,
             border = null,
             disabledBorder = null,
         )
     public val secondaryOutline: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            containerColor = Colors.buttonOutlineBackground,
-            contentColor = Colors.buttonSecondaryText,
-            disabledContainerColor = Colors.buttonOutlineBackground,
-            disabledContentColor = Colors.stateTextDisabled,
-            border = BorderStroke(1.dp, Colors.buttonOutlineBorder),
-            disabledBorder = BorderStroke(1.dp, Colors.buttonOutlineBorder),
+            containerColor = StreamColors.buttonOutlineBackground,
+            contentColor = StreamColors.buttonSecondaryText,
+            disabledContainerColor = StreamColors.buttonOutlineBackground,
+            disabledContentColor = StreamColors.stateTextDisabled,
+            border = BorderStroke(1.dp, StreamColors.buttonOutlineBorder),
+            disabledBorder = BorderStroke(1.dp, StreamColors.buttonOutlineBorder),
         )
     public val secondaryGhost: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            containerColor = Colors.buttonGhostBackground,
-            contentColor = Colors.buttonSecondaryText,
-            disabledContainerColor = Colors.buttonGhostBackground,
-            disabledContentColor = Colors.stateTextDisabled,
+            containerColor = StreamColors.buttonGhostBackground,
+            contentColor = StreamColors.buttonSecondaryText,
+            disabledContainerColor = StreamColors.buttonGhostBackground,
+            disabledContentColor = StreamColors.stateTextDisabled,
             border = null,
             disabledBorder = null,
         )
@@ -102,16 +102,19 @@ public object StreamButtonStyleDefaults {
     public val destructiveSolid: StreamButtonStyle
         @Composable
         get() = StreamButtonStyle(
-            containerColor = Colors.buttonDestructiveBackground,
-            contentColor = Colors.buttonDestructiveText,
-            disabledContainerColor = Colors.stateBackgroundDisabled,
-            disabledContentColor = Colors.stateTextDisabled,
+            containerColor = StreamColors.buttonDestructiveBackground,
+            contentColor = StreamColors.buttonDestructiveText,
+            disabledContainerColor = StreamColors.stateBackgroundDisabled,
+            disabledContentColor = StreamColors.stateTextDisabled,
             border = null,
             disabledBorder = null,
         )
 }
 
-private object Colors {
+internal object StreamColors {
+    val textPrimary = Color(0xFF384047)
+    val accentError = Color(0xFFD92F26)
+
     val buttonPrimaryBackground = Color(0xFF005FFF)
     val buttonPrimaryBorder = Color(0xFF0052CE)
     val buttonPrimaryText = Color.White
@@ -124,13 +127,11 @@ private object Colors {
 
     val buttonSecondaryText = Color(0xFF384047)
 
-    val buttonDestructiveBackground = Color(0xFFD92F26)
+    val buttonDestructiveBackground =accentError
     val buttonDestructiveText = Color.White
 
     val stateBackgroundDisabled = Color(0xFFE2E6EA)
     val stateTextDisabled = Color(0xFFB8BEC4)
-
-    val todo = Color.Green
 }
 
 private enum class StreamButtonSize(val minimumSize: Dp) {
