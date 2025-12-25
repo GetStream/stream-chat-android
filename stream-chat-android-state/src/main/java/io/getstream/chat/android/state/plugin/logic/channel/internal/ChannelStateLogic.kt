@@ -591,8 +591,17 @@ internal class ChannelStateLogic(
      *
      * @param repliedMessage The message that contains the reply.
      */
-    override fun replyMessage(repliedMessage: Message?) {
+    override fun setRepliedMessage(repliedMessage: Message?) {
         mutableState.setRepliedMessage(repliedMessage)
+    }
+
+    /**
+     * Marks channel as read locally.
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markRead(): Boolean {
+        return mutableState.markChannelAsRead()
     }
 
     /**

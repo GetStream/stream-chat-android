@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -61,13 +62,15 @@ public class StateRegistry(
     private val now: () -> Long,
     private val scope: CoroutineScope,
     private val messageLimitConfig: MessageLimitConfig,
+    private val useLegacyChannelState: Boolean = true,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
-    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val legacyChannels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+    private val channels: ConcurrentHashMap<Pair<String, String>, ChannelStateImpl> = ConcurrentHashMap()
     private val queryThreads: ConcurrentHashMap<Pair<FilterObject?, QuerySorter<Thread>>, QueryThreadsMutableState> =
         ConcurrentHashMap()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
@@ -94,7 +97,11 @@ public class StateRegistry(
      *
      * @return [ChannelState] object.
      */
-    public fun channel(channelType: String, channelId: String): ChannelState = mutableChannel(channelType, channelId)
+    public fun channel(channelType: String, channelId: String): ChannelState = if (useLegacyChannelState) {
+        mutableChannel(channelType, channelId)
+    } else {
+        channelState(channelType, channelId)
+    }
 
     /**
      * Returns [ChannelMutableState] that represents a state of particular channel.
@@ -105,7 +112,7 @@ public class StateRegistry(
      * @return [ChannelState] object.
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
-        return channels.getOrPut(channelType to channelId) {
+        return legacyChannels.getOrPut(channelType to channelId) {
             val baseMessageLimit = messageLimitConfig.channelMessageLimits
                 .find { it.channelType == channelType }
                 ?.baseLimit
@@ -121,8 +128,21 @@ public class StateRegistry(
         }
     }
 
-    internal fun markChannelAsRead(channelType: String, channelId: String): Boolean =
-        mutableChannel(channelType = channelType, channelId = channelId).markChannelAsRead()
+    internal fun channelState(channelType: String, channelId: String): ChannelStateImpl {
+        return channels.getOrPut(channelType to channelId) {
+            ChannelStateImpl(
+                channelType = channelType,
+                channelId = channelId,
+                currentUser = userStateFlow.value!!,
+                latestUsers = latestUsers,
+                liveLocations = activeLiveLocations,
+                mutableGlobalState = ,
+                now = now,
+                coroutineScope = scope,
+                // TODO; Add message limit config
+            )
+        }
+    }
 
     /**
      * Checks if the channel is already present in the state.
@@ -134,7 +154,11 @@ public class StateRegistry(
      * @return true if the channel is active.
      */
     internal fun isActiveChannel(channelType: String, channelId: String): Boolean {
-        return channels.containsKey(channelType to channelId)
+        return if (useLegacyChannelState) {
+            legacyChannels.containsKey(channelType to channelId)
+        } else {
+            channels.containsKey(channelType to channelId)
+        }
     }
 
     /**
@@ -181,7 +205,13 @@ public class StateRegistry(
         ThreadMutableState(messageId, scope)
     }
 
-    internal fun getActiveChannelStates(): List<ChannelState> = channels.values.toList()
+    internal fun getActiveChannelStates(): List<ChannelState> {
+        return if (useLegacyChannelState) {
+            legacyChannels.values.toList()
+        } else {
+            channels.values.toList()
+        }
+    }
 
     /**
      * Clear state of all state objects.
@@ -190,7 +220,9 @@ public class StateRegistry(
         job.cancelChildren()
         queryChannels.forEach { it.value.destroy() }
         queryChannels.clear()
-        channels.forEach { it.value.destroy() }
+        legacyChannels.forEach { it.value.destroy() }
+        legacyChannels.clear()
+        // channels.forEach { it.value.destroy() } // TODO: Implement this
         channels.clear()
         queryThreads.forEach { it.value.destroy() }
         queryThreads.clear()
@@ -215,7 +247,7 @@ public class StateRegistry(
     }
 
     private fun removeChanel(channelType: String, channelId: String) {
-        val removed = channels.remove(channelType to channelId)?.also {
+        val removed = legacyChannels.remove(channelType to channelId)?.also {
             it.destroy()
         }
         logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }

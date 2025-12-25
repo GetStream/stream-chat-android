@@ -191,6 +191,14 @@ internal class ChannelLogicLegacyImpl(
         channelStateLogic.setPushPreference(preference)
     }
 
+    override fun setRepliedMessage(message: Message?) {
+        channelStateLogic.setRepliedMessage(message)
+    }
+
+    override fun markRead(): Boolean {
+        return channelStateLogic.markRead()
+    }
+
     override fun handleEvents(events: List<ChatEvent>) {
         for (event in events) {
             handleEvent(event)

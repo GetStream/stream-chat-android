@@ -88,7 +88,7 @@ internal class PrepareMessageLogicImpl(
             }
             .also { preparedMessage ->
                 if (preparedMessage.replyMessageId != null) {
-                    channel?.replyMessage(null)
+                    channel?.setRepliedMessage(null)
                 }
             }
     }

@@ -36,5 +36,5 @@ public interface ChannelMessagesUpdateLogic {
 
     public fun listenForChannelState(): ChannelState
 
-    public fun replyMessage(repliedMessage: Message?)
+    public fun setRepliedMessage(repliedMessage: Message?)
 }

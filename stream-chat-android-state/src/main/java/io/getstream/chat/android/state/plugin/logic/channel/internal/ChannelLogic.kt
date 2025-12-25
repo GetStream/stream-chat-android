@@ -160,6 +160,21 @@ internal interface ChannelLogic {
     fun setPushPreference(preference: PushPreference)
 
     /**
+     * Sets the currently quoted(replied) message in the channel's state.
+     * Pass null to clear the replied message.
+     *
+     * @param message The [Message] to be replied.
+     */
+    fun setRepliedMessage(message: Message?)
+
+    /**
+     * Marks channel as read locally.
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markRead(): Boolean
+
+    /**
      * Updates the channel's data based on the provided [channel] information.
      *
      * @param channel The [Channel] object containing updated channel information.
