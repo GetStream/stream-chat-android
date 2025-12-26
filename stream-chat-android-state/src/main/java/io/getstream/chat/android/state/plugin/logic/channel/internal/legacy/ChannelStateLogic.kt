@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.state.plugin.logic.channel.internal.legacy
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -44,7 +44,8 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.logic.channel.internal.TypingEventPruner
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
@@ -57,14 +58,14 @@ import java.util.Date
  * The logic of the state of a channel. This class contains the logic of how to
  * update the state of the channel in the SDK.
  *
- * @property clientState [ClientState]
- * @property mutableState [ChannelMutableState]
- * @property globalMutableState [MutableGlobalState]
- * @property attachmentUrlValidator [AttachmentUrlValidator]
+ * @property clientState [io.getstream.chat.android.client.setup.state.ClientState]
+ * @property mutableState [io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl]
+ * @property globalMutableState [io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState]
+ * @property attachmentUrlValidator [io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator]
  */
 internal class ChannelStateLogic(
     private val clientState: ClientState,
-    private val mutableState: ChannelMutableState,
+    private val mutableState: ChannelStateLegacyImpl,
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
@@ -95,10 +96,10 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Return [ChannelState] representing the state of the channel. Use this when you would like to
-     * keep track of the state without changing it.
+     * Return [io.getstream.chat.android.client.channel.state.ChannelState] representing the state of the channel.
+     * Use this when you would like to keep track of the state without changing it.
      */
-    override fun listenForChannelState(): ChannelState {
+    override fun channelState(): ChannelState {
         return mutableState
     }
 
@@ -106,12 +107,12 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    fun writeChannelState(): ChannelMutableState = mutableState
+    fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
     /**
      * Updates the channel data of the state of the SDK.
      *
-     * @param channel the data of [Channel] to be updated.
+     * @param channel the data of [io.getstream.chat.android.models.Channel] to be updated.
      */
     @Deprecated(
         message = "This method will become private in the future. " +
@@ -287,10 +288,10 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Updates the typing events inside [ChannelMutableState] and [MutableGlobalState].
+     * Updates the typing events inside [ChannelStateLegacyImpl] and [MutableGlobalState].
      *
-     * @param rawTypingEvents A map of typing events used to update [ChannelMutableState].
-     * @param typingEvent A [TypingEvent] object used to update [MutableGlobalState].
+     * @param rawTypingEvents A map of typing events used to update [ChannelStateLegacyImpl].
+     * @param typingEvent A [io.getstream.chat.android.models.TypingEvent] object used to update [MutableGlobalState].
      */
     private fun updateTypingStates(
         rawTypingEvents: Map<String, TypingStartEvent>,
@@ -303,7 +304,7 @@ internal class ChannelStateLogic(
     /**
      * Sets the watchers of the channel.
      *
-     * @param watchers the list of [User] to be added or updated
+     * @param watchers the list of [io.getstream.chat.android.models.User] to be added or updated
      */
     private fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
         mutableState.upsertWatchers(watchers, watchersCount)
@@ -332,7 +333,7 @@ internal class ChannelStateLogic(
         }
     }
 
-    override fun delsertPinnedMessage(message: Message) {
+    fun delsertPinnedMessage(message: Message) {
         logger.d {
             "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
                 ", deleted: ${message.isDeleted()}" +
@@ -352,7 +353,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
@@ -382,7 +383,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
@@ -448,7 +449,7 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Sets the [PushPreference] for the channel.
+     * Sets the [io.getstream.chat.android.models.PushPreference] for the channel.
      */
     fun setPushPreference(preference: PushPreference) {
         updateChannelData { data ->
@@ -562,7 +563,7 @@ internal class ChannelStateLogic(
     /**
      * Upsert watcher.
      *
-     * @param event [UserStartWatchingEvent]
+     * @param event [io.getstream.chat.android.client.events.UserStartWatchingEvent]
      */
     fun upsertWatcher(event: UserStartWatchingEvent) {
         upsertWatchers(listOf(event.user), event.watcherCount)
@@ -571,7 +572,7 @@ internal class ChannelStateLogic(
     /**
      * Removes watcher.
      *
-     * @param event [UserStopWatchingEvent]
+     * @param event [io.getstream.chat.android.client.events.UserStopWatchingEvent]
      */
     fun deleteWatcher(event: UserStopWatchingEvent) {
         mutableState.deleteWatcher(event.user, event.watcherCount)
@@ -591,8 +592,17 @@ internal class ChannelStateLogic(
      *
      * @param repliedMessage The message that contains the reply.
      */
-    override fun replyMessage(repliedMessage: Message?) {
+    override fun setRepliedMessage(repliedMessage: Message?) {
         mutableState.setRepliedMessage(repliedMessage)
+    }
+
+    /**
+     * Marks channel as read locally.
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markRead(): Boolean {
+        return mutableState.markChannelAsRead()
     }
 
     /**
@@ -729,7 +739,7 @@ internal class ChannelStateLogic(
      * Propagates the channel query. The data of the channel will be propagated to the SDK.
      *
      * @param channel [Channel]
-     * @param request [QueryChannelRequest]
+     * @param request [io.getstream.chat.android.client.api.models.QueryChannelRequest]
      */
     fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
         logger.d { "[propagateChannelQuery] cid: ${channel.cid}, request: $request" }
@@ -780,7 +790,7 @@ internal class ChannelStateLogic(
     /**
      * Propagates the error in a query.
      *
-     * @param error [Error]
+     * @param error [io.getstream.result.Error]
      */
     fun propagateQueryError(error: Error) {
         if (error.isPermanent()) {

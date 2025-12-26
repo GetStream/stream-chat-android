@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 
-internal class SearchLogic(private val mutableState: ChannelMutableState) {
+internal class SearchLogic(private val mutableState: ChannelStateLegacyImpl) {
 
     private var isInsideSearch = false
 

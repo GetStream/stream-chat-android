@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -47,7 +47,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
@@ -133,7 +133,7 @@ internal class ChannelStateLogicTest {
     private val _muted = MutableStateFlow(false)
 
     @Suppress("UNCHECKED_CAST")
-    private val mutableState: ChannelMutableState = mock { mock ->
+    private val mutableState: ChannelStateLegacyImpl = mock { mock ->
         on(mock.unreadCount) doReturn _unreadCount
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()
@@ -326,7 +326,12 @@ internal class ChannelStateLogicTest {
     fun `Given ChannelUserBannedEvent updates the channel state`() {
         /* Given */
         val originMembers = randomMembers(size = 2) { idx ->
-            randomMember(user = randomUser(id = "user_${idx + 1}"), banned = false, banExpires = null, shadowBanned = false)
+            randomMember(
+                user = randomUser(id = "user_${idx + 1}"),
+                banned = false,
+                banExpires = null,
+                shadowBanned = false,
+            )
         }
         _members.value = originMembers
         _membersCount.value = originMembers.size

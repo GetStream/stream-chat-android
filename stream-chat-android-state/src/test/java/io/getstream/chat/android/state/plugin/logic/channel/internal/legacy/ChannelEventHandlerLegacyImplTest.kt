@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -83,7 +83,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -97,14 +97,14 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
-internal class ChannelEventHandlerTest {
+internal class ChannelEventHandlerLegacyImplTest {
 
     private val cid = randomCID()
     private val currentUserId = randomString()
     private lateinit var stateLogic: ChannelStateLogic
     private lateinit var getCurrentUserId: () -> String?
-    private lateinit var mutableState: ChannelMutableState
-    private lateinit var handler: ChannelEventHandler
+    private lateinit var mutableState: ChannelStateLegacyImpl
+    private lateinit var handler: ChannelEventHandlerLegacyImpl
 
     @BeforeEach
     fun setUp() {
@@ -116,7 +116,7 @@ internal class ChannelEventHandlerTest {
             on(it.visibleMessages) doReturn MutableStateFlow(emptyMap())
         }
         whenever(stateLogic.writeChannelState()).thenReturn(mutableState)
-        handler = ChannelEventHandler(cid, stateLogic, getCurrentUserId)
+        handler = ChannelEventHandlerLegacyImpl(cid, stateLogic, getCurrentUserId)
     }
 
     // NewMessageEvent tests

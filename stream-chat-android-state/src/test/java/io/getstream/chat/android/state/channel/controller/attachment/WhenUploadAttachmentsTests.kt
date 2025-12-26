@@ -28,8 +28,8 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.logic.channel.internal.legacy.ChannelStateLogic
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -295,12 +295,12 @@ internal class WhenUploadAttachmentsTests {
         private val channelId = "channelId"
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
-        private val channelMutableState: ChannelMutableState = mock()
+        private val channelMutableState: ChannelStateLegacyImpl = mock()
 
         private val channelStateLogic: ChannelStateLogic =
             mock {
                 on(it.writeChannelState()) doReturn channelMutableState
-                on(it.listenForChannelState()) doReturn channelMutableState
+                on(it.channelState()) doReturn channelMutableState
             }
 
         private val chatClient = mock<ChatClient> {

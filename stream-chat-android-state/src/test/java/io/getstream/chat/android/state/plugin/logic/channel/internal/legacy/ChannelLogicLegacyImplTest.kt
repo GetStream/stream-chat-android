@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
@@ -25,7 +25,8 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,7 +46,7 @@ internal class ChannelLogicLegacyImplTest {
     fun setUp() {
         // Channel mutable state
         val cid = randomCID()
-        val mutableState = mock<ChannelMutableState>()
+        val mutableState = mock<ChannelStateLegacyImpl>()
         whenever(mutableState.cid).doReturn(cid)
         // Channel state logic
         channelStateLogic = mock()
@@ -54,7 +55,7 @@ internal class ChannelLogicLegacyImplTest {
         sut = ChannelLogicLegacyImpl(
             repos = mock(),
             userPresence = false,
-            channelStateLogic = channelStateLogic,
+            stateLogic = channelStateLogic,
             coroutineScope = TestScope(),
             getCurrentUserId = { currentUserId },
         )

@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
@@ -38,14 +38,9 @@ internal interface ChannelLogic {
     val cid: String
 
     /**
-     * Exposes the current state of the channel.
-     */
-    val state: ChannelState
-
-    /**
      * Exposes the logic for managing the channel's state.
      */
-    val stateLogic: ChannelStateLogic
+    val messagesUpdateLogic: ChannelMessagesUpdateLogic
 
     /**
      * Loads data in the channel previously stored in the database, respecting the given [query] parameters.
@@ -158,6 +153,49 @@ internal interface ChannelLogic {
      * @param preference The new [PushPreference].
      */
     fun setPushPreference(preference: PushPreference)
+
+    /**
+     * Sets the currently quoted(replied) message in the channel's state.
+     * Pass null to clear the replied message.
+     *
+     * @param message The [Message] to be replied.
+     */
+    fun setRepliedMessage(message: Message?)
+
+    /**
+     * Marks channel as read locally.
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markRead(): Boolean
+
+    /**
+     * Checks if typing events are enabled for the channel.
+     *
+     * @return True if typing events are enabled, false otherwise.
+     */
+    fun typingEventsEnabled(): Boolean
+
+    /**
+     * Retrieves the timestamp of the last sent typing start event.
+     *
+     * @return The [Date] of the last typing start event, or null if none exists.
+     */
+    fun getLastStartTypingEvent(): Date?
+
+    /**
+     * Sets the timestamp of the last sent typing start event.
+     *
+     * @param date The [Date] to set as the last typing start event, or null to clear it.
+     */
+    fun setLastStartTypingEvent(date: Date?)
+
+    /**
+     * Sets the parent message ID for keystroke events.
+     *
+     * @param messageId The ID of the parent message, or null to clear it.
+     */
+    fun setKeystrokeParentMessageId(messageId: String?)
 
     /**
      * Updates the channel's data based on the provided [channel] information.

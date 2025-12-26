@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -81,14 +81,14 @@ internal class PrepareMessageLogicImpl(
             }
             .let { copiedMessage ->
                 channel
-                    ?.listenForChannelState()
+                    ?.channelState()
                     ?.toChannel()
                     ?.let(copiedMessage::populateMentions)
                     ?: copiedMessage
             }
             .also { preparedMessage ->
                 if (preparedMessage.replyMessageId != null) {
-                    channel?.replyMessage(null)
+                    channel?.setRepliedMessage(null)
                 }
             }
     }

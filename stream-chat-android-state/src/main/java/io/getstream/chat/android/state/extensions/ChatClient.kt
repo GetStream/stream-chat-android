@@ -266,9 +266,8 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                state.mutableChannel(channelType = channelType, channelId = channelId).run {
-                    setRepliedMessage(message)
-                }
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .setRepliedMessage(message)
                 Result.Success(Unit)
             }
             is Result.Failure -> cidValidationResult
