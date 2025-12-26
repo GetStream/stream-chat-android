@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.models.Channel
@@ -45,7 +46,7 @@ internal interface ChannelLogic {
     /**
      * Exposes the logic for managing the channel's state.
      */
-    val stateLogic: ChannelStateLogic
+    val messagesUpdateLogic: ChannelMessagesUpdateLogic
 
     /**
      * Loads data in the channel previously stored in the database, respecting the given [query] parameters.

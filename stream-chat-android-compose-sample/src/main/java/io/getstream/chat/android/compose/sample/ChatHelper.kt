@@ -88,6 +88,7 @@ object ChatHelper {
             config = StatePluginConfig(
                 backgroundSyncEnabled = false,
                 userPresence = true,
+                useLegacyChannelLogic = false,
             ),
             appContext = context,
         )

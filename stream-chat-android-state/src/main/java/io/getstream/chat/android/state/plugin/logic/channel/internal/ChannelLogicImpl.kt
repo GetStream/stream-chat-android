@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
+import android.util.Log
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -35,12 +37,12 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import java.util.Date
 
 internal class ChannelLogicImpl(
     override val cid: String,
-    @Deprecated("Don't use")
-    override val stateLogic: ChannelStateLogic, // TODO: See if we can remove the intermediate ChannelStateLogic
+    override val messagesUpdateLogic: ChannelMessagesUpdateLogic,
     private val stateImpl: ChannelStateImpl,
     private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
@@ -145,6 +147,7 @@ internal class ChannelLogicImpl(
 
     override suspend fun loadAfter(messageId: String, limit: Int): Result<Channel> {
         stateImpl.setLoadingNewerMessages(true)
+        delay(1000) // Artificial delay to better see loading state in UI tests
         val request = QueryChannelPaginationRequest(limit)
             .apply {
                 messageFilterValue = messageId
@@ -156,6 +159,7 @@ internal class ChannelLogicImpl(
 
     override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
         stateImpl.setLoadingOlderMessages(true)
+        delay(1000) // Artificial delay to better see loading state in UI tests
         val messageId = messageId ?: getOldestMessage()?.id
         val request = QueryChannelPaginationRequest(limit)
             .apply {
@@ -327,6 +331,10 @@ internal class ChannelLogicImpl(
             query.isFilteringNewerMessages() -> {
                 // Loading newer messages - upsert
                 stateImpl.upsertMessages(channel.messages)
+                val endReached = query.messagesLimit() > channel.messages.size
+                if (endReached) {
+                    stateImpl.setInsideSearch(false)
+                }
                 // TODO: If end is reached, we might want to setInsideSearch(false) here
             }
 

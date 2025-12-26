@@ -42,12 +42,10 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.chat.android.state.utils.internal.upsertSorted
 import io.getstream.log.taggedLogger
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -64,8 +62,6 @@ import kotlin.math.max
  * @property latestUsers A [StateFlow] providing the latest users map. Used to enrich the members/watcher data with the
  * latest user info retrieved from different, unrelated operations.
  * @property liveLocations A [StateFlow] providing the active live locations.
- * @property coroutineScope The [CoroutineScope] for launching coroutines.
- * @property mutableGlobalState The mutable global state of the chat client. TODO: Revisit this, I don't like accessing global state from here
  * @property now A function that returns the current time in milliseconds.
  */
 internal class ChannelStateImpl(
@@ -74,9 +70,7 @@ internal class ChannelStateImpl(
     private val currentUser: User, // TODO: Check if we can rely on user being always up to date (ex. switchUser)
     private val latestUsers: StateFlow<Map<String, User>>,
     private val liveLocations: StateFlow<List<Location>>,
-    private val mutableGlobalState: MutableGlobalState,
     private val now: () -> Long = { System.currentTimeMillis() },
-    coroutineScope: CoroutineScope,
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"

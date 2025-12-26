@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.plugin.logic.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -31,6 +32,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogicLegacyImpl
+import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelMessagesUpdateLogicImpl
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
@@ -186,8 +188,8 @@ internal class LogicRegistry internal constructor(
      * @param channelType String
      * @param channelId String
      */
-    override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic
+    override fun channelStateLogic(channelType: String, channelId: String): ChannelMessagesUpdateLogic {
+        return channel(channelType, channelId).messagesUpdateLogic
     }
 
     /** Returns [QueryThreadsLogic] for the given [QueryThreadsRequest]. */
@@ -287,20 +289,20 @@ internal class LogicRegistry internal constructor(
             ChannelLogicLegacyImpl(
                 repos = repos,
                 userPresence = userPresence,
-                channelStateLogic = stateLogic,
+                stateLogic = stateLogic,
                 coroutineScope = coroutineScope,
-            ) {
-                clientState.user.value?.id
-            }
+                getCurrentUserId = { clientState.user.value?.id },
+            )
         }
     }
 
     private fun channelLogic(type: String, id: String): ChannelLogic {
         return channels.getOrPut(type to id) {
             val state = stateRegistry.channelState(type, id)
+            val messagesUpdateLogic = ChannelMessagesUpdateLogicImpl(state, now)
             ChannelLogicImpl(
                 cid = "$type:$id",
-                stateLogic = ,
+                messagesUpdateLogic = messagesUpdateLogic,
                 stateImpl = state,
                 mutableGlobalState = mutableGlobalState,
                 userPresence = userPresence,

@@ -332,7 +332,7 @@ internal class ChannelStateLogic(
         }
     }
 
-    override fun delsertPinnedMessage(message: Message) {
+    fun delsertPinnedMessage(message: Message) {
         logger.d {
             "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
                 ", deleted: ${message.isDeleted()}" +
@@ -352,7 +352,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
@@ -382,7 +382,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {

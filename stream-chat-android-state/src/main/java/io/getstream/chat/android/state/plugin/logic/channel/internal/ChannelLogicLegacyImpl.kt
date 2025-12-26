@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
@@ -48,19 +49,21 @@ import java.util.Date
  * @property repos [RepositoryFacade] that interact with data sources. The this object should be used only
  * to read data and never update data as the state module should never change the database.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
- * @property channelStateLogic [ChannelStateLogic]
+ * @property stateLogic The [ChannelStateLogic] used to manipulate the channel state.
+ * @property coroutineScope The [CoroutineScope] to run background operations.
+ * @property getCurrentUserId Function to get the current user id.
  */
 @Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogicLegacyImpl(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
-    private val channelStateLogic: ChannelStateLogic,
+    private val stateLogic: ChannelStateLogic,
     private val coroutineScope: CoroutineScope,
     private val getCurrentUserId: () -> String?,
 ) : ChannelLogic {
 
-    private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val eventHandler = ChannelEventHandler(cid, channelStateLogic, getCurrentUserId)
+    private val mutableState: ChannelMutableState = stateLogic.writeChannelState()
+    private val eventHandler = ChannelEventHandler(cid, stateLogic, getCurrentUserId)
     private val logger by taggedLogger("Chat:ChannelLogicDB")
 
     override val cid: String
@@ -69,13 +72,13 @@ internal class ChannelLogicLegacyImpl(
     override val state: ChannelState
         get() = mutableState
 
-    override val stateLogic: ChannelStateLogic
-        get() = channelStateLogic
+    override val messagesUpdateLogic: ChannelMessagesUpdateLogic
+        get() = stateLogic
 
     override suspend fun updateStateFromDatabase(query: QueryChannelRequest) {
         logger.d { "[updateStateFromDatabase] request: $query" }
         if (query.isNotificationUpdate) return
-        channelStateLogic.syncMuteState()
+        stateLogic.syncMuteState()
 
         /* It is not possible to guarantee that the next page of newer messages is the same of backend,
          * so we force the backend usage */
@@ -86,16 +89,16 @@ internal class ChannelLogicLegacyImpl(
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
         when {
-            query.filteringOlderMessages() -> channelStateLogic.loadingOlderMessages()
-            query.isFilteringNewerMessages() -> channelStateLogic.loadingNewerMessages()
-            !query.isFilteringMessages() -> channelStateLogic.loadingNewestMessages()
+            query.filteringOlderMessages() -> stateLogic.loadingOlderMessages()
+            query.isFilteringNewerMessages() -> stateLogic.loadingNewerMessages()
+            !query.isFilteringMessages() -> stateLogic.loadingNewestMessages()
         }
     }
 
     override fun onQueryChannelResult(query: QueryChannelRequest, result: Result<Channel>) {
         when (result) {
-            is Result.Success -> channelStateLogic.propagateChannelQuery(result.value, query)
-            is Result.Failure -> channelStateLogic.propagateQueryError(result.value)
+            is Result.Success -> stateLogic.propagateChannelQuery(result.value, query)
+            is Result.Failure -> stateLogic.propagateQueryError(result.value)
         }
     }
 
@@ -110,7 +113,7 @@ internal class ChannelLogicLegacyImpl(
                 ),
             )
         }
-        channelStateLogic.loadingNewestMessages()
+        stateLogic.loadingNewestMessages()
         return runChannelQuery(
             "watch",
             QueryChannelPaginationRequest(limit).toWatchChannelRequest(userPresence).apply {
@@ -121,13 +124,13 @@ internal class ChannelLogicLegacyImpl(
 
     override suspend fun loadAfter(messageId: String, limit: Int): Result<Channel> {
         logger.i { "[loadAfter] messageId: $messageId, limit: $limit" }
-        channelStateLogic.loadingNewerMessages()
+        stateLogic.loadingNewerMessages()
         return runChannelQuery("loadAfter", newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
         logger.i { "[loadBefore] messageId: $messageId, limit: $limit" }
-        channelStateLogic.loadingOlderMessages()
+        stateLogic.loadingOlderMessages()
         return runChannelQuery(
             "loadBefore",
             olderWatchChannelRequest(limit = limit, baseMessageId = messageId),
@@ -145,12 +148,12 @@ internal class ChannelLogicLegacyImpl(
 
     override fun upsertMessage(message: Message) {
         logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
-        channelStateLogic.upsertMessage(message)
+        stateLogic.upsertMessage(message)
     }
 
     override fun deleteMessage(message: Message) {
         logger.d { "[deleteMessage] message.id: ${message.id}, message.text: ${message.text}" }
-        channelStateLogic.deleteMessage(message)
+        stateLogic.deleteMessage(message)
     }
 
     override fun updateDataForChannel(
@@ -161,7 +164,7 @@ internal class ChannelLogicLegacyImpl(
         isNotificationUpdate: Boolean,
         isChannelsStateUpdate: Boolean,
     ) {
-        channelStateLogic.updateDataForChannel(
+        stateLogic.updateDataForChannel(
             channel,
             messageLimit,
             shouldRefreshMessages,
@@ -172,31 +175,31 @@ internal class ChannelLogicLegacyImpl(
     }
 
     override fun upsertMembers(members: List<Member>) {
-        channelStateLogic.upsertMembers(members)
+        stateLogic.upsertMembers(members)
     }
 
     override fun setHidden(hidden: Boolean) {
-        channelStateLogic.setHidden(hidden)
+        stateLogic.setHidden(hidden)
     }
 
     override fun hideMessagesBefore(date: Date) {
-        channelStateLogic.hideMessagesBefore(date)
+        stateLogic.hideMessagesBefore(date)
     }
 
     override fun removeMessagesBefore(date: Date) {
-        channelStateLogic.removeMessagesBefore(date)
+        stateLogic.removeMessagesBefore(date)
     }
 
     override fun setPushPreference(preference: PushPreference) {
-        channelStateLogic.setPushPreference(preference)
+        stateLogic.setPushPreference(preference)
     }
 
     override fun setRepliedMessage(message: Message?) {
-        channelStateLogic.setRepliedMessage(message)
+        stateLogic.setRepliedMessage(message)
     }
 
     override fun markRead(): Boolean {
-        return channelStateLogic.markRead()
+        return stateLogic.markRead()
     }
 
     override fun handleEvents(events: List<ChatEvent>) {
@@ -330,8 +333,8 @@ internal class ChannelLogicLegacyImpl(
                 "scrollUpdate: $scrollUpdate, shouldRefreshMessages: $shouldRefreshMessages, " +
                 "isChannelsStateUpdate: $isChannelsStateUpdate"
         }
-        localChannel.hidden?.let(channelStateLogic::setHidden)
-        localChannel.hiddenMessagesBefore?.let(channelStateLogic::hideMessagesBefore)
+        localChannel.hidden?.let(stateLogic::setHidden)
+        localChannel.hiddenMessagesBefore?.let(stateLogic::hideMessagesBefore)
         updateDataForChannel(
             localChannel,
             messageLimit = messageLimit,
@@ -344,8 +347,8 @@ internal class ChannelLogicLegacyImpl(
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
         logger.v { "[updateOldMessagesFromLocalChannel] localChannel.cid: ${localChannel.cid}" }
-        localChannel.hidden?.let(channelStateLogic::setHidden)
-        channelStateLogic.updateOldMessagesFromChannel(localChannel)
+        localChannel.hidden?.let(stateLogic::setHidden)
+        stateLogic.updateOldMessagesFromChannel(localChannel)
     }
 
     private suspend fun selectAndEnrichChannel(
@@ -417,12 +420,12 @@ internal class ChannelLogicLegacyImpl(
         return when (direction) {
             Pagination.GREATER_THAN_OR_EQUAL,
             Pagination.GREATER_THAN,
-            -> messages.last()
+                -> messages.last()
 
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
             Pagination.AROUND_ID,
-            -> messages.first()
+                -> messages.first()
         }
     }
 }

@@ -136,9 +136,7 @@ public class StateRegistry(
                 currentUser = userStateFlow.value!!,
                 latestUsers = latestUsers,
                 liveLocations = activeLiveLocations,
-                mutableGlobalState = ,
                 now = now,
-                coroutineScope = scope,
                 // TODO; Add message limit config
             )
         }
