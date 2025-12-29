@@ -49,10 +49,11 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ github.event.inputs.record == 'true' }}
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "Update screenshots"
           title: "Update screenshots"
           delete-branch: true
           reviewers: GetStream/android-developers-ui
           branch: update-screenshots
+          token: ${{ secrets.GITHUB_TOKEN }}
