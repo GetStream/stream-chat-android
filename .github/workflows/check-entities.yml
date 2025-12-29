@@ -25,9 +25,9 @@ jobs:
           output="${output//'%'/'%25'}"
           output="${output//$'\n'/'%0A'}"
           output="${output//$'\r'/'%0D'}"
-          echo $output
-          echo ::set-output name=touchedEntities::$output
-          exit $status
+          echo "$output"
+          echo "touchedEntities=$output" >> "$GITHUB_OUTPUT"
+          exit "$status"
       - name: Find Comment
         uses: peter-evans/find-comment@v2
         id: fc

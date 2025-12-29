@@ -236,10 +236,10 @@ class ChatsActivity : ComponentActivity() {
         listContentMode: ChatListContentMode,
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
-        val globalStateFlow = ChatClient.instance().globalStateFlow
-        val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
+        val globalStateFlow = remember { ChatClient.instance().globalStateFlow }
+        val unreadChannelsCount by remember { globalStateFlow.flatMapLatest { it.channelUnreadCount } }
             .collectAsStateWithLifecycle(0)
-        val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+        val unreadThreadsCount by remember { globalStateFlow.flatMapLatest { it.unreadThreadsCount } }
             .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS

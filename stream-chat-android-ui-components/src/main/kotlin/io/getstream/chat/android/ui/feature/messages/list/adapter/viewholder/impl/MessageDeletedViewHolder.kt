@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessageDeletedBindin
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -31,6 +32,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 public class MessageDeletedViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
+    private val listeners: MessageListListeners?,
     public val style: MessageListItemStyle,
     public val binding: StreamUiItemMessageDeletedBinding = StreamUiItemMessageDeletedBinding.inflate(
         parent.streamThemeInflater,
@@ -38,6 +40,19 @@ public class MessageDeletedViewHolder internal constructor(
         false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
+
+    init {
+        binding.run {
+            listeners?.let { container ->
+                messageContainer.setOnClickListener {
+                    container.messageClickListener.onMessageClick(data.message)
+                }
+                footnote.setOnThreadClickListener {
+                    container.threadClickListener.onThreadClick(data.message)
+                }
+            }
+        }
+    }
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)

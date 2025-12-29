@@ -232,9 +232,13 @@ internal class FootnoteDecorator(
     override fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
-    ) {
-        setupSimpleFootnote(viewHolder.binding.footnote, data)
-    }
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
 
     private fun setupFootnote(
         footnoteView: FootnoteView,

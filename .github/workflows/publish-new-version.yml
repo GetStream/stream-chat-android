@@ -52,9 +52,11 @@ jobs:
         id: update_release_notes
         run: |
           ./gradlew generate-release
-          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
-          cat build/tmp/CHANGELOG_PARSED.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "release_notes<<EOF"
+            cat build/tmp/CHANGELOG_PARSED.md
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
   publish:
     needs: generate_release_notes

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
+import android.annotation.SuppressLint
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -26,6 +27,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
         return oldItem.getStableId() == newItem.getStableId()
     }
 
+    @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
         return when (oldItem) {
             is MessageListItem.MessageItem ->

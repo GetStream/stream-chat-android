@@ -242,21 +242,17 @@ public fun MessageItem(
     val focusState = messageItem.focusState
     val haptic = LocalHapticFeedback.current
 
-    val clickModifier = if (message.isDeleted()) {
-        Modifier
-    } else {
-        Modifier.combinedClickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { if (message.belongsToThread()) onThreadClick(message) },
-            onLongClick = {
-                if (!message.isUploading()) {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    onLongItemClick(message)
-                }
-            },
-        )
-    }
+    val clickModifier = Modifier.combinedClickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = { if (message.belongsToThread()) onThreadClick(message) },
+        onLongClick = {
+            if (!message.isDeleted() && !message.isUploading()) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongItemClick(message)
+            }
+        },
+    )
 
     val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
         true -> ChatTheme.colors.highlight

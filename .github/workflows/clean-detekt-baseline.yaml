@@ -23,7 +23,7 @@ jobs:
       - name: Run Detekt Baseline
         run: ./gradlew detektBaseline
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "AUTOMATION: Clean Detekt Baseline Files"
           title: "AUTOMATION: Clean Detekt Baseline Files"

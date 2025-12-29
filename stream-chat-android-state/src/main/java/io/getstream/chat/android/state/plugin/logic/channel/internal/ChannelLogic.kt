@@ -237,12 +237,7 @@ internal class ChannelLogic(
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult = runChannelQueryOnline(request)
-            .onSuccess {
-                // Fill the missing messages gap only if loading around ID
-                if (request.isFilteringAroundIdMessages()) {
-                    fillTheGap(request.messagesLimit(), loadedMessages, it.messages)
-                }
-            }
+            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
 
         return when {
             onlineResult is Result.Success -> onlineResult

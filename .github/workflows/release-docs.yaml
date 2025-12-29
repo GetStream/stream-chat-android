@@ -8,7 +8,10 @@ on:
 jobs:
   publish_dokka:
     name: Dokka docs
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
@@ -18,7 +21,7 @@ jobs:
       - name: Generate Dokka HTML docs
         run: ./gradlew dokkaHtmlMultimodule
       - name: Deploy to GitHub pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4.0.0
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           publish_dir: ./build/dokka/htmlMultiModule

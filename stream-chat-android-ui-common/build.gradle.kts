@@ -21,6 +21,10 @@ android {
 
     resourcePrefix = "stream_"
 
+    lint {
+        disable += "MissingTranslation"
+    }
+
     sourceSets {
         all {
             java.srcDir("src/$name/kotlin")

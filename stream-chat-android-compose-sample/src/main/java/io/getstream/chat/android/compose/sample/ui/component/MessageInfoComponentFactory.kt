@@ -122,7 +122,7 @@ class MessageInfoComponentFactory : ChatComponentFactory {
                 containerColor = ChatTheme.colors.appBackground,
             ) {
                 val coroutineScope = rememberCoroutineScope()
-                val state by readsOf(message, coroutineScope).collectAsState(null)
+                val state by remember(message) { readsOf(message, coroutineScope) }.collectAsState(null)
                 state?.let {
                     val (reads, deliveredReads) = it
                     MessageInfoContent(
@@ -144,7 +144,6 @@ class MessageInfoComponentFactory : ChatComponentFactory {
         }
     }
 
-    @Composable
     private fun readsOf(
         message: Message,
         coroutineScope: CoroutineScope,

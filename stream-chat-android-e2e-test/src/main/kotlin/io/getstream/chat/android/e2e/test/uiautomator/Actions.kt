@@ -27,6 +27,7 @@ import androidx.test.uiautomator.UiObject2
 import io.qameta.allure.kotlin.Allure
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 public fun UiDevice.stopApp() {
     executeShellCommand("pm clear $packageName")
@@ -153,6 +154,15 @@ public fun UiDevice.allureScreenshot(name: String) {
             content = ByteArrayInputStream(outputStream.toByteArray()),
         )
     }
+}
+
+public fun UiDevice.allureScreenrecord(name: String, file: File) {
+    Allure.attachment(
+        name = "$name.mp4",
+        type = "video/mp4",
+        fileExtension = ".mp4",
+        content = file.inputStream(),
+    )
 }
 
 public fun UiDevice.allureLogcat(name: String) {
