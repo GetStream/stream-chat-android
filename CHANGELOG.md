@@ -71,6 +71,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Address some Lint findings [#6058](https://github.com/GetStream/stream-chat-android/pull/6058)
 
 ### ✅ Added
 
