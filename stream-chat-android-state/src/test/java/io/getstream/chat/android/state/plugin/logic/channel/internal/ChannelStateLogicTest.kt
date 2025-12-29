@@ -562,6 +562,40 @@ internal class ChannelStateLogicTest {
     }
 
     @Test
+    fun `Given message is from muted user, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val mutedUserId = "mutedUserId"
+        val mutedUser = randomUser(id = mutedUserId)
+        val mute = io.getstream.chat.android.randomMute(target = mutedUser)
+        spyMutableGlobalState.setMutedUsers(listOf(mute))
+
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = mutedUser,
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
     fun `Given message is shadowed, When updateCurrentUserRead is called, Then unread count is not updated`() {
         // given
         val initialUnreadCount = 5
