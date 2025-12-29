@@ -886,6 +886,12 @@ internal class ChannelStateLogic(
             processedMessageIds.put(message.id, true)
             return
         }
+        // Skip update for messages from muted users
+        val isFromMutedUser = globalMutableState.muted.value.any { it.target?.id == message.user.id }
+        if (isFromMutedUser) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
         // Skip update for messages from shadow banned users
         if (message.shadowed) {
             processedMessageIds.put(message.id, true)
