@@ -11,6 +11,9 @@ jobs:
   localazy-download:
     name: Download strings from Localazy
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
