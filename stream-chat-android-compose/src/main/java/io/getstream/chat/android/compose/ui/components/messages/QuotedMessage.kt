@@ -17,24 +17,32 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
+import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -46,12 +54,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param modifier Modifier for styling.
  * @param replyMessage The message that contains the reply.
- * @param leadingContent The content shown at the start of the quoted message. By default we provide
- * [DefaultQuotedMessageLeadingContent] which shows the sender avatar in case the sender is not the current user.
- * @param centerContent The content shown at the center of the quoted message. By default we provide
- * [DefaultQuotedMessageCenterContent] which shows single attachment preview and message text inside a bubble.
- * @param trailingContent The content shown at the end of the quoted message. By default we provide
- * [DefaultQuotedMessageTrailingContent] which shows the sender avatar in case the sender is the current user.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -62,26 +64,23 @@ public fun QuotedMessage(
     onQuotedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    leadingContent: @Composable (Message) -> Unit = {
-        DefaultQuotedMessageLeadingContent(
-            message = it,
-            currentUser = currentUser,
-        )
-    },
-    centerContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultQuotedMessageCenterContent(
-            message = it,
-            replyMessage = replyMessage,
-            currentUser = currentUser,
-        )
-    },
-    trailingContent: @Composable (Message) -> Unit = {
-        DefaultQuotedMessageTrailingContent(
-            message = it,
-            currentUser = currentUser,
-        )
-    },
 ) {
+    // We base the "own message" check on:
+    // - `replyMessage` if not null, i.e. we're composing a reply
+    // - `message` otherwise, i.e. we're rendering an already-sent message
+    val style =
+        if ((replyMessage ?: message).isMine(currentUser)) {
+            ChatTheme.ownMessageTheme.quoted
+        } else {
+            ChatTheme.otherMessageTheme.quoted
+        }
+    val backgroundColor =
+        if (replyMessage == null) {
+            style.backgroundColorInComposer
+        } else {
+            style.backgroundColor
+        }
+
     Row(
         modifier = modifier
             .combinedClickable(
@@ -89,100 +88,73 @@ public fun QuotedMessage(
                 indication = null,
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },
-            ),
-        verticalAlignment = Alignment.Bottom,
+            )
+            .background(backgroundColor, style.backgroundShape)
+            .padding(style.contentPadding)
+            .height(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        leadingContent(message)
-
-        centerContent(message)
-
-        trailingContent(message)
-    }
-}
-
-/**
- * Represents the default content show at the start of the quoted message.
- *
- * By default we show the user avatar if the message doesn't belong to the current user.
- *
- * @param message The quoted message.
- */
-@Composable
-internal fun DefaultQuotedMessageLeadingContent(
-    message: Message,
-    currentUser: User?,
-) {
-    if (!message.isMine(currentUser)) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier
-                .testTag("Stream_QuotedMessageAuthorAvatar")
-                .padding(start = 2.dp)
-                .size(24.dp),
-            imageUrl = message.user.image,
-            initials = message.user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = message.user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
+        VerticalDivider(
+            modifier = Modifier.fillMaxHeight(),
+            thickness = 2.dp,
+            color = style.indicatorColor,
         )
 
-        Spacer(modifier = Modifier.size(8.dp))
+        Column(
+            Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1f),
+        ) {
+            // TODO [G.] Apply correct text styles
+            // TODO [G.] Move to resources
+            val userName = if (message.isMine(currentUser)) {
+                "You"
+            } else if (replyMessage == null) {
+                "Reply to ${message.user.name}"
+            } else {
+                message.user.name
+            }
+
+            Text(userName, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.SemiBold)
+
+            message.text.takeUnless(String::isBlank)?.let { text ->
+                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+
+            message.attachments
+                .firstOrNull()
+                ?.let { it.titleLink ?: it.ogUrl }
+                ?.let { text ->
+                    Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                }
+        }
+
+        if (message.attachments.isNotEmpty()) {
+            QuotedMessageAttachmentContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = {},
+            )
+        }
     }
 }
 
-/**
- * Represents the default content show at the end of the quoted message.
- *
- * By default we show the user avatar if the message belongs to the current user.
- *
- * @param message The quoted message.
- */
+// TODO [G.] public?
 @Composable
-internal fun DefaultQuotedMessageTrailingContent(
+public fun MessageComposerQuotedMessage(
     message: Message,
     currentUser: User?,
+    modifier: Modifier = Modifier,
+    onCancelClick: () -> Unit,
 ) {
-    if (message.isMine(currentUser)) {
-        Spacer(modifier = Modifier.size(8.dp))
+    Box {
+        QuotedMessage(message, currentUser, {}, {})
 
-        ChatTheme.componentFactory.Avatar(
+        CancelIcon(
             modifier = Modifier
-                .testTag("Stream_QuotedMessageAuthorAvatar")
-                .padding(start = 2.dp)
-                .size(24.dp),
-            imageUrl = message.user.image,
-            initials = message.user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = message.user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
+                .align(Alignment.TopEnd)
+                .offset(4.dp, (-4).dp),
+            onClick = onCancelClick,
         )
     }
-}
-
-/**
- * Represents the default content shown in the center of the quoted message wrapped inside a message bubble.
- *
- * @param message The quoted message.
- * @param currentUser The currently logged in user.
- * @param replyMessage The message that contains the reply.
- */
-@Composable
-public fun RowScope.DefaultQuotedMessageCenterContent(
-    message: Message,
-    currentUser: User?,
-    replyMessage: Message? = null,
-) {
-    QuotedMessageContent(
-        message = message,
-        replyMessage = replyMessage,
-        modifier = Modifier.weight(1f, fill = false),
-        currentUser = currentUser,
-    )
 }

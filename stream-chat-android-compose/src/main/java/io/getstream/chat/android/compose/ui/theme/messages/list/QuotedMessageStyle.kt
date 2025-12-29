@@ -17,10 +17,12 @@
 package io.getstream.chat.android.compose.ui.theme.messages.list
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -35,11 +37,16 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * @param backgroundBorder The border for the quoted message background.
  * @param contentPadding The padding for the quoted message content.
  */
+// TODO [G.] do we really need this style? What do other SDKs do
+//  Also, in designs this is consistent with the link preview, does it make sense to have different classes?
 public data class QuotedMessageStyle(
     val textStyle: TextStyle,
     val backgroundColor: Color,
+    // TODO [G.] better name, assuming we keep it
+    val backgroundColorInComposer: Color,
     val backgroundShape: Shape,
     val backgroundBorder: BorderStroke?,
+    val indicatorColor: Color,
     val contentPadding: ComponentPadding,
 ) {
 
@@ -107,6 +114,7 @@ public data class QuotedMessageStyle(
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
         ): QuotedMessageStyle {
+            // TODO [G.] consider lifting the if(own) check outside, to do it only once
             return QuotedMessageStyle(
                 textStyle = typography.bodyBold.copy(
                     color = when (own) {
@@ -115,16 +123,30 @@ public data class QuotedMessageStyle(
                     },
                 ),
                 backgroundColor = when (own) {
-                    true -> colors.ownMessageQuotedBackground
-                    else -> colors.otherMessageQuotedBackground
+                    true -> attachmentBackgroundColorOutgoing
+                    else -> attachmentBackgroundColorIncoming
                 },
-                backgroundShape = when (own) {
-                    true -> shapes.myMessageBubble
-                    else -> shapes.otherMessageBubble
+                backgroundColorInComposer = when (own) {
+                    true -> backgroundColorOutgoing
+                    false -> backgroundColorIncoming
                 },
+                backgroundShape = shape,
                 backgroundBorder = null,
-                contentPadding = ComponentPadding.Zero,
+                indicatorColor = when (own) {
+                    true -> indicatorColorOutgoing
+                    false -> indicatorColorIncoming
+                },
+                contentPadding = ComponentPadding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
             )
         }
     }
 }
+
+// TODO [G.]
+private val indicatorColorIncoming = Color(0xFFB8BEC4)
+private val indicatorColorOutgoing = Color(0xFF4E8BFF)
+private val backgroundColorIncoming = Color(0xFFF2F4F6)
+private val backgroundColorOutgoing = Color(0xFFD2E3FF)
+private val attachmentBackgroundColorIncoming = Color(0xFFE2E6EA)
+private val attachmentBackgroundColorOutgoing = Color(0xFFA6C4FF)
+private val shape = RoundedCornerShape(12.dp)

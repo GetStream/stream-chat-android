@@ -216,14 +216,7 @@ public data class MessageTheme(
                     textDecoration = TextDecoration.Underline,
                 ),
                 linkBackgroundColor = colors.linkBackground,
-            ).let { theme ->
-                theme.copy(
-                    quoted = theme.quoted.copy(
-                        textStyle = theme.quotedTextStyle,
-                        backgroundColor = theme.quotedBackgroundColor,
-                    ),
-                )
-            }
+            )
         }
     }
 }

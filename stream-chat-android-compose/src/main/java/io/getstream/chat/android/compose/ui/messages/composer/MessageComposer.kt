@@ -177,6 +177,7 @@ public fun MessageComposer(
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
+                onCancel = onCancelAction,
             )
         }
     },
@@ -323,6 +324,7 @@ public fun MessageComposer(
                 state = it,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
+                onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
             )
@@ -578,6 +580,7 @@ internal fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
+    onCancelAction: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     label: @Composable (MessageComposerState) -> Unit,
 ) {
@@ -595,6 +598,7 @@ internal fun RowScope.DefaultComposerInputContent(
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,
         onAttachmentRemoved = onAttachmentRemoved,
+        onCancelAction = onCancelAction,
         onLinkPreviewClick = onLinkPreviewClick,
     )
 }

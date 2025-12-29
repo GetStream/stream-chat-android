@@ -88,12 +88,12 @@ public fun MediaAttachmentQuotedContent(
 
     Box(
         modifier = modifier
-            .padding(
-                start = ChatTheme.dimens.quotedMessageAttachmentStartPadding,
-                top = ChatTheme.dimens.quotedMessageAttachmentTopPadding,
-                bottom = ChatTheme.dimens.quotedMessageAttachmentBottomPadding,
-                end = ChatTheme.dimens.quotedMessageAttachmentEndPadding,
-            )
+            // .padding(
+            //     start = ChatTheme.dimens.quotedMessageAttachmentStartPadding,
+            //     top = ChatTheme.dimens.quotedMessageAttachmentTopPadding,
+            //     bottom = ChatTheme.dimens.quotedMessageAttachmentBottomPadding,
+            //     end = ChatTheme.dimens.quotedMessageAttachmentEndPadding,
+            // )
             .size(ChatTheme.dimens.quotedMessageAttachmentPreviewSize)
             .clip(ChatTheme.shapes.quotedAttachment),
         contentAlignment = Alignment.Center,

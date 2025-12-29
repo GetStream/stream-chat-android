@@ -123,6 +123,7 @@ import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOpt
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
@@ -1487,6 +1488,7 @@ public interface ChatComponentFactory {
      * @param onLinkPreviewClick The action to perform when the link preview is clicked.
      */
     @Composable
+    // TODO [G.] probably to remove. I think only for the edit action we don't know that it will be removed from here
     public fun ColumnScope.MessageComposerHeaderContent(
         state: MessageComposerState,
         onCancel: () -> Unit,
@@ -1768,6 +1770,7 @@ public interface ChatComponentFactory {
         state: MessageComposerState,
         onInputChanged: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
+        onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         label: @Composable (MessageComposerState) -> Unit,
     ) {
@@ -1776,6 +1779,7 @@ public interface ChatComponentFactory {
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
+            onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
             label = label,
         )
@@ -1796,14 +1800,13 @@ public interface ChatComponentFactory {
         modifier: Modifier,
         state: MessageComposerState,
         quotedMessage: Message,
+        onCancelClick: () -> Unit,
     ) {
-        QuotedMessage(
+        MessageComposerQuotedMessage(
             modifier = modifier,
             message = quotedMessage,
             currentUser = state.currentUser,
-            replyMessage = null,
-            onLongItemClick = {},
-            onQuotedMessageClick = {},
+            onCancelClick = onCancelClick,
         )
     }
 

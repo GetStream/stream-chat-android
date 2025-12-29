@@ -391,6 +391,8 @@ class MessagesActivity : ComponentActivity() {
                     messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                    // TODO [G.]
+                    onCancelAction = {},
                     onLinkPreviewClick = null,
                     label = {
                         Row(

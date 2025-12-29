@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -41,19 +42,21 @@ public fun QuotedMessageAttachmentContent(
     modifier: Modifier = Modifier,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
-    val attachments = message.attachments
+    val firstAttachment = message.attachments.firstOrNull()
+
+    val quotedAttachmentFactories = ChatTheme.quotedAttachmentFactories
+    val attachmentFactories = ChatTheme.attachmentFactories
 
     /**
      * Looks for quoted message attachment factory and if none can handle it looks for a standard attachment factory
      * that can handle the attachmentContent.
      */
-    val quoteAttachmentFactory = if (attachments.isNotEmpty()) {
-        val quotedFactory = ChatTheme.quotedAttachmentFactories.firstOrNull {
-            it.canHandle(message.attachments.take(1))
+    val quoteAttachmentFactory = remember(firstAttachment) {
+        firstAttachment?.let { attachment ->
+            val firstAttachmentList = listOf(attachment)
+            quotedAttachmentFactories.firstOrNull { it.canHandle(firstAttachmentList) }
+                ?: attachmentFactories.firstOrNull { it.canHandle(firstAttachmentList) }
         }
-        quotedFactory ?: ChatTheme.attachmentFactories.firstOrNull { it.canHandle(message.attachments.take(1)) }
-    } else {
-        null
     }
 
     val attachmentState = AttachmentState(
