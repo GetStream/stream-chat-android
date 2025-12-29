@@ -336,12 +336,20 @@ internal class ChannelLogicImpl(
 
             query.isFilteringAroundIdMessages() -> {
                 // Loading messages around a specific message:
-                // 1. Cache the current messages (for access to latest messages)
+                // 1. Cache the current messages (for access to latest messages) (unless already inside search)
                 // 2. Replace the active messages with the loaded ones
-                stateImpl.cacheLatestMessages()
                 // TODO: Consider merging with existing messages if an intersection is found
-                stateImpl.setMessages(channel.messages)
-                stateImpl.setInsideSearch(true)
+                if (stateImpl.insideSearch.value) {
+                    // We are currently around a message, don't cache the latest messages, just replace the active set
+                    // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the
+                    // latest messages
+                    stateImpl.setMessages(channel.messages)
+                } else {
+                    // We are currently showing the latest messages, cache them first, then replace the active set
+                    stateImpl.cacheLatestMessages()
+                    stateImpl.setMessages(channel.messages)
+                    stateImpl.setInsideSearch(true)
+                }
             }
 
             query.isFilteringNewerMessages() -> {
