@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
-import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -64,7 +63,6 @@ import kotlin.math.max
  * latest user info retrieved from different, unrelated operations.
  * @property mutedUsers A [StateFlow] providing the list of muted users.
  * @property liveLocations A [StateFlow] providing the active live locations.
- * @property now A function that returns the current time in milliseconds.
  */
 @Suppress("LargeClass", "TooManyFunctions")
 internal class ChannelStateImpl(
@@ -74,7 +72,6 @@ internal class ChannelStateImpl(
     private val latestUsers: StateFlow<Map<String, User>>,
     private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
-    private val now: () -> Long = { System.currentTimeMillis() },
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"
@@ -83,6 +80,12 @@ internal class ChannelStateImpl(
     private val _repliedMessage = MutableStateFlow<Message?>(null)
     private val _quotedMessagesMap = MutableStateFlow<Map<String, Set<String>>>(emptyMap())
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
+
+    /**
+     * Keeps track of the latest messages in the channel, if `Jump to message` was called, and a different, non-latest
+     * message set was loaded.
+     */
+    private val _cachedLatestMessages = MutableStateFlow<List<Message>>(emptyList())
     private val _pinnedMessages = MutableStateFlow<List<Message>>(emptyList())
     private val _oldMessages = MutableStateFlow<List<Message>>(emptyList())
 
@@ -234,7 +237,7 @@ internal class ChannelStateImpl(
         return channelData.value
             .toChannel(
                 messages = messages.value,
-                cachedLatestMessages = messages.value,
+                cachedLatestMessages = _cachedLatestMessages.value,
                 members = members.value,
                 reads = reads.value,
                 watchers = watchers.value,
@@ -250,8 +253,9 @@ internal class ChannelStateImpl(
     }
 
     override fun getMessageById(id: String): Message? {
-        // TODO: Check the frequency of this call and consider optimizing with a map if needed
+        // TODO: Can we optimize the usages of this lookup, by doing the lookup + update in one pass?
         return _messages.value.find { it.id == id }
+            ?: _cachedLatestMessages.value.find { it.id == id }
             ?: _pinnedMessages.value.find { it.id == id }
     }
 
@@ -283,20 +287,9 @@ internal class ChannelStateImpl(
      */
     fun upsertMessages(messages: List<Message>) {
         for (message in messages) {
-            // Skip messages from other shadow banned users
-            val isFromCurrentUser = message.user.id == currentUser.id
-            val isFromShadowBannedUser = message.shadowed
-            if (!isFromCurrentUser && isFromShadowBannedUser) {
-                return
-            }
-
-            // Skip thread replies that are not shown in channel
-            // Note: If we add `threads` handling directly in the channel state,
-            // we would need to handle them separately
-            val isThreadReply = message.parentId != null
-            val isShownInChannel = message.showInChannel
-            if (isThreadReply && !isShownInChannel) {
-                return
+            // Check if the message should be ignored for upsertion
+            if (shouldIgnoreUpsertion(message)) {
+                continue
             }
 
             // Store QuotedMessage reference (if available)
@@ -323,6 +316,39 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Upserts a single message into the cached latest messages state.
+     *
+     * @param message The message to upsert.
+     */
+    fun upsertCachedMessage(message: Message) {
+        // Check if the message should be ignored for upsertion
+        if (shouldIgnoreUpsertion(message)) {
+            return
+        }
+
+        // Store QuotedMessage reference (if available)
+        val quotedMessage = message.replyTo
+        if (quotedMessage != null) {
+            addQuotedMessage(quotedMessage.id, message.id)
+        }
+
+        // Link message with poll (if available)
+        val poll = message.poll
+        if (poll != null) {
+            registerPollForMessage(poll, message.id)
+        }
+
+        // Insert or update the message in the sorted list
+        _cachedLatestMessages.update { current ->
+            current.upsertSorted(
+                element = message,
+                idSelector = Message::id,
+                comparator = compareBy { it.getCreatedAtOrNull() },
+            )
+        }
+    }
+
+    /**
      * Updates a message in the current state. Does nothing if the message does not exist.
      *
      * @param message The message to update.
@@ -334,6 +360,15 @@ internal class ChannelStateImpl(
             _messages.update { current ->
                 val mutableList = current.toMutableList()
                 mutableList[index] = message
+                mutableList.toList()
+            }
+        }
+        // Update cached latest messages list
+        val cachedIndex = _cachedLatestMessages.value.indexOfFirst { it.id == message.id }
+        if (cachedIndex >= 0) {
+            _cachedLatestMessages.update { current ->
+                val mutableList = current.toMutableList()
+                mutableList[cachedIndex] = message
                 mutableList.toList()
             }
         }
@@ -368,6 +403,11 @@ internal class ChannelStateImpl(
                 message.wasCreatedAfter(date)
             }
         }
+        _cachedLatestMessages.update { current ->
+            current.filter { message ->
+                message.wasCreatedAfter(date)
+            }
+        }
         _pinnedMessages.update { current ->
             current.filter { message ->
                 message.wasCreatedAfter(date)
@@ -384,7 +424,10 @@ internal class ChannelStateImpl(
      * @param deletedAt The timestamp to set for soft-deleted messages.
      */
     fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
-        val messagesFromUser = _messages.value.filter { it.user.id == userId }
+        // TODO: Optimize this logic by running the query once per message set
+        val messagesFromUser = _messages.value.filter { it.user.id == userId } +
+            _cachedLatestMessages.value.filter { it.user.id == userId } +
+            _pinnedMessages.value.filter { it.user.id == userId }
         if (messagesFromUser.isEmpty()) return
         if (hard) {
             // Delete messages from state
@@ -438,6 +481,15 @@ internal class ChannelStateImpl(
                 }
             }
         }
+        _cachedLatestMessages.update { current ->
+            current.map { message ->
+                if (message.replyTo?.id == quotedMessage.id || message.replyMessageId == quotedMessage.id) {
+                    message.copy(replyTo = quotedMessage)
+                } else {
+                    message
+                }
+            }
+        }
         _pinnedMessages.update { current ->
             current.map { message ->
                 if (message.replyTo?.id == quotedMessage.id || message.replyMessageId == quotedMessage.id) {
@@ -456,6 +508,15 @@ internal class ChannelStateImpl(
      */
     fun deleteQuotedMessageReferences(quotedMessageId: String) {
         _messages.update { current ->
+            current.map { message ->
+                if (message.replyTo?.id == quotedMessageId || message.replyMessageId == quotedMessageId) {
+                    message.copy(replyTo = null)
+                } else {
+                    message
+                }
+            }
+        }
+        _cachedLatestMessages.update { current ->
             current.map { message ->
                 if (message.replyTo?.id == quotedMessageId || message.replyMessageId == quotedMessageId) {
                     message.copy(replyTo = null)
@@ -526,19 +587,6 @@ internal class ChannelStateImpl(
     fun deletePinnedMessage(messageId: String) {
         _pinnedMessages.update { current ->
             current.filterNot { it.id == messageId }
-        }
-    }
-
-    /**
-     * Deletes or inserts a pinned message in the current pinned messages list based on its pinned status.
-     *
-     * @param message The message to delsert.
-     */
-    fun delsertPinnedMessage(message: Message) {
-        if (message.isPinned(now)) {
-            addPinnedMessages(listOf(message))
-        } else {
-            deletePinnedMessage(message.id)
         }
     }
 
@@ -1158,14 +1206,55 @@ internal class ChannelStateImpl(
         _insideSearch.value = insideSearch
     }
 
+    /**
+     * Caches the latest messages for the channel.
+     * Call when calling `Jump to message` to preserve the current latest messages.
+     */
+    fun cacheLatestMessages() {
+        _cachedLatestMessages.value = _messages.value
+    }
+
+    /**
+     * Clears the cached latest messages for the channel.
+     * Call when loading the latest messages again.
+     */
+    fun clearCachedLatestMessages() {
+        _cachedLatestMessages.value = emptyList()
+    }
+
     // endregion
 
     fun hideMessagesBefore(date: Date) {
         TODO("Not yet implemented")
     }
 
+    private fun shouldIgnoreUpsertion(message: Message): Boolean {
+        // Skip messages from other shadow banned users
+        val isFromCurrentUser = message.user.id == currentUser.id
+        val isFromShadowBannedUser = message.shadowed
+        if (!isFromCurrentUser && isFromShadowBannedUser) {
+            return true
+        }
+
+        // Skip thread replies that are not shown in channel
+        // Note: If we add `threads` handling directly in the channel state,
+        // we would need to handle them separately
+        val isThreadReply = message.parentId != null
+        val isShownInChannel = message.showInChannel
+        if (isThreadReply && !isShownInChannel) {
+            return true
+        }
+        return false
+    }
+
     private fun deleteMessages(ids: Set<String>) {
         _messages.update { current ->
+            current.filterNot { ids.contains(it.id) }
+        }
+        _cachedLatestMessages.update { current ->
+            current.filterNot { ids.contains(it.id) }
+        }
+        _pinnedMessages.update { current ->
             current.filterNot { ids.contains(it.id) }
         }
     }

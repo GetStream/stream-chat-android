@@ -326,13 +326,20 @@ internal class ChannelLogicImpl(
     private fun updateMessages(query: QueryChannelRequest, channel: Channel) {
         when {
             !query.isFilteringMessages() -> {
-                // Loading newest messages (no pagination) - always refresh
+                // Loading newest messages (no pagination):
+                // 1. Clear any cached latest messages (we are replacing the whole list)
+                // 2. Replace the active messages with the loaded ones
+                stateImpl.clearCachedLatestMessages()
                 stateImpl.setMessages(channel.messages)
                 stateImpl.setInsideSearch(false)
             }
 
             query.isFilteringAroundIdMessages() -> {
-                // Loading messages around a specific message - always refresh
+                // Loading messages around a specific message:
+                // 1. Cache the current messages (for access to latest messages)
+                // 2. Replace the active messages with the loaded ones
+                stateImpl.cacheLatestMessages()
+                // TODO: Consider merging with existing messages if an intersection is found
                 stateImpl.setMessages(channel.messages)
                 stateImpl.setInsideSearch(true)
             }
@@ -342,6 +349,7 @@ internal class ChannelLogicImpl(
                 stateImpl.upsertMessages(channel.messages)
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
+                    stateImpl.clearCachedLatestMessages()
                     stateImpl.setInsideSearch(false)
                 }
             }

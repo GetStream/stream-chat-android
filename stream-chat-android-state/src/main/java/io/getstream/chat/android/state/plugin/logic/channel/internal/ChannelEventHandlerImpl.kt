@@ -77,11 +77,16 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import kotlinx.coroutines.CoroutineScope
 
 /**
- * Class responsible for updating the local database based on channel-related events.
+ * Implementation of [ChannelEventHandler] responsible for processing channel-related events
+ * and updating the local [ChannelStateImpl] accordingly.
  *
- * @param cid The channel identifier.
- * @param state The [ChannelStateImpl] to update.
- * @param getCurrentUserId Returns the currently logged in user ID.
+ * @param cid The channel identifier in the format "type:id".
+ * @param state The [ChannelStateImpl] instance to update based on incoming events.
+ * @param globalState The [MutableGlobalState] for emitting global state changes (e.g., typing events).
+ * @param coroutineScope The [CoroutineScope] used for managing typing event pruning coroutines.
+ * @param getCurrentUserId A function that returns the currently logged-in user's ID, or null if not logged in.
+ * @param now A function that returns the current time in milliseconds. Defaults to [System.currentTimeMillis].
+ *            Used for determining pinned message validity.
  */
 internal class ChannelEventHandlerImpl(
     private val cid: String,
@@ -135,24 +140,48 @@ internal class ChannelEventHandlerImpl(
                 // Preserve createdLocallyAt only for messages created by current user, to ensure they are
                 // sorted properly
                 val preserveCreatedLocallyAt = event.message.user.id == getCurrentUserId()
-                upsertMessage(event.message, preserveCreatedLocallyAt)
+                val enrichedMessage = if (preserveCreatedLocallyAt) {
+                    val oldMessage = state.getMessageById(event.message.id)
+                    event.message.copy(createdLocallyAt = oldMessage?.createdLocallyAt)
+                } else {
+                    event.message
+                }
+                // Update channel read state for the current user
+                state.updateCurrentUserRead(event.createdAt, enrichedMessage)
+                // Update hidden state if the message is not shadowed
+                if (!enrichedMessage.shadowed) {
+                    state.setHidden(false)
+                }
+                // Update message count
+                event.channelMessageCount?.let(state::setMessageCount)
+                // Insert the message into the appropriate message list
+                if (state.insideSearch.value) {
+                    state.upsertCachedMessage(enrichedMessage)
+                } else {
+                    state.upsertMessage(enrichedMessage)
+                }
+                // Insert pinned message if needed
+                if (enrichedMessage.isPinned(now)) {
+                    state.addPinnedMessage(enrichedMessage)
+                }
+            }
+
+            is NotificationMessageNewEvent -> {
                 // Update channel read state
                 state.updateCurrentUserRead(event.createdAt, event.message)
                 // Update hidden state if the message is not shadowed
                 if (!event.message.shadowed) {
                     state.setHidden(false)
                 }
-                // Update message count
-                event.channelMessageCount?.let(state::setMessageCount)
-            }
-
-            is NotificationMessageNewEvent -> {
-                upsertMessage(event.message)
-                // Update channel read state
-                state.updateCurrentUserRead(event.createdAt, event.message)
-                // Update hidden state if the message is not shadowed
-                if (!event.message.shadowed) {
-                    state.setHidden(false)
+                // Insert the message into the appropriate message list
+                if (state.insideSearch.value) {
+                    state.upsertCachedMessage(event.message)
+                } else {
+                    state.upsertMessage(event.message)
+                }
+                // Insert pinned message if needed
+                if (event.message.isPinned(now)) {
+                    state.addPinnedMessage(event.message)
                 }
             }
 
@@ -169,7 +198,7 @@ internal class ChannelEventHandlerImpl(
                 state.updateQuotedMessageReferences(enrichedMessage)
                 // 5. Handle Pinned status
                 if (event.message.isPinned(now)) {
-                    state.addPinnedMessage(event.message)
+                    state.addPinnedMessage(enrichedMessage)
                 } else {
                     state.deletePinnedMessage(event.message.id)
                 }
@@ -195,10 +224,15 @@ internal class ChannelEventHandlerImpl(
             is NotificationThreadMessageNewEvent -> {
                 // Handle only if thread reply was sent to channel as well
                 if (event.message.showInChannel) {
-                    upsertMessage(event.message)
                     // Update hidden state if the message is not shadowed
                     if (!event.message.shadowed) {
                         state.setHidden(false)
+                    }
+                    // Insert the message into the appropriate message list
+                    if (state.insideSearch.value) {
+                        state.upsertCachedMessage(event.message)
+                    } else {
+                        state.upsertMessage(event.message)
                     }
                 }
             }
@@ -263,8 +297,17 @@ internal class ChannelEventHandlerImpl(
             is ChannelTruncatedEvent -> state.removeMessagesBefore(event.createdAt, event.message)
             is NotificationChannelTruncatedEvent -> state.removeMessagesBefore(event.createdAt)
             // Typing events
-            is TypingStartEvent -> typingEventPruner.processEvent(event.user.id, event)
-            is TypingStopEvent -> typingEventPruner.processEvent(event.user.id, null)
+            is TypingStartEvent -> {
+                if (event.user.id != getCurrentUserId()) {
+                    typingEventPruner.processEvent(event.user.id, event)
+                }
+            }
+
+            is TypingStopEvent -> {
+                if (event.user.id != getCurrentUserId()) {
+                    typingEventPruner.processEvent(event.user.id, null)
+                }
+            }
             // Read/delivery receipt events
             is MessageReadEvent -> {
                 if (event.thread == null) {
@@ -277,6 +320,7 @@ internal class ChannelEventHandlerImpl(
                     state.updateRead(event.toChannelUserRead())
                 }
             }
+
             is NotificationMarkUnreadEvent -> state.updateRead(event.toChannelUserRead())
             is MessageDeliveredEvent -> state.updateDelivered(event.toChannelUserRead())
             // Invitation events
@@ -333,22 +377,6 @@ internal class ChannelEventHandlerImpl(
         val message = state.getMessageById(messageId) ?: return
         val updatedMessage = message.copy(reminder = null)
         state.updateMessage(updatedMessage)
-    }
-
-    private fun upsertMessage(
-        message: Message,
-        preserveCreatedLocallyAt: Boolean = false,
-    ) {
-        val oldMessage = state.getMessageById(message.id)
-        val createdLocallyAt = if (preserveCreatedLocallyAt) {
-            oldMessage?.createdLocallyAt
-        } else {
-            message.createdLocallyAt
-        }
-        val ownReactions = oldMessage?.ownReactions ?: message.ownReactions
-        val updatedMessage = message.copy(createdLocallyAt = createdLocallyAt, ownReactions = ownReactions)
-        state.upsertMessage(updatedMessage)
-        state.delsertPinnedMessage(updatedMessage)
     }
 
     private fun updateMessage(message: Message) {

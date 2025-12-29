@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.plugin.state
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -46,6 +47,7 @@ internal class StateRegistryTest {
     private lateinit var stateRegistry: StateRegistry
     private lateinit var userStateFlow: StateFlow<User?>
     private lateinit var latestUsers: StateFlow<Map<String, User>>
+    private lateinit var mutedUsers: StateFlow<List<Mute>>
     private lateinit var activeLiveLocations: StateFlow<List<Location>>
     private lateinit var job: Job
     private lateinit var scope: TestScope
@@ -55,6 +57,7 @@ internal class StateRegistryTest {
     fun setUp() {
         userStateFlow = MutableStateFlow(null)
         latestUsers = MutableStateFlow(emptyMap())
+        mutedUsers = MutableStateFlow(emptyList())
         activeLiveLocations = MutableStateFlow(emptyList())
         job = Job()
         scope = testCoroutines.scope
@@ -63,6 +66,7 @@ internal class StateRegistryTest {
         stateRegistry = StateRegistry(
             userStateFlow = userStateFlow,
             latestUsers = latestUsers,
+            mutedUsers = mutedUsers,
             activeLiveLocations = activeLiveLocations,
             job = job,
             now = { System.currentTimeMillis() },

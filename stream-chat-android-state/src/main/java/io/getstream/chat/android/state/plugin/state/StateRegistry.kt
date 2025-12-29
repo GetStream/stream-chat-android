@@ -141,7 +141,6 @@ public class StateRegistry(
                 latestUsers = latestUsers,
                 mutedUsers = mutedUsers,
                 liveLocations = activeLiveLocations,
-                now = now,
                 // TODO; Add message limit config
             )
         }
