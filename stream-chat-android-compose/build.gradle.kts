@@ -25,6 +25,11 @@ android {
 
     resourcePrefix = "stream_compose_"
 
+    lint {
+        disable += "MissingTranslation"
+        disable += "ExtraTranslation"
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
