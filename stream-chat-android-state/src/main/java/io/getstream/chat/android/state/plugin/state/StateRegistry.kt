@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -48,6 +49,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @param userStateFlow The state flow that provides the user once it is set.
  * @param latestUsers Latest users of the SDK.
+ * @param mutedUsers The current list of muted user.
  * @param activeLiveLocations Latest live locations of the SDK.
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
@@ -58,6 +60,7 @@ import java.util.concurrent.ConcurrentHashMap
 public class StateRegistry(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
+    private val mutedUsers: StateFlow<List<Mute>>,
     private val activeLiveLocations: StateFlow<List<Location>>,
     private val job: Job,
     private val now: () -> Long,
@@ -136,6 +139,7 @@ public class StateRegistry(
                 channelId = channelId,
                 currentUser = userStateFlow.value!!,
                 latestUsers = latestUsers,
+                mutedUsers = mutedUsers,
                 liveLocations = activeLiveLocations,
                 now = now,
                 // TODO; Add message limit config

@@ -102,6 +102,7 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry(
             userStateFlow = clientState.user,
             latestUsers = repositoryFacade.observeLatestUsers(),
+            mutedUsers = mutableGlobalState.muted,
             activeLiveLocations = mutableGlobalState.activeLiveLocations,
             job = scope.coroutineContext.job,
             now = config.now,

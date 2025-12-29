@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.TypingEvent
@@ -61,6 +62,7 @@ import kotlin.math.max
  * @property currentUser The currently logged in user.
  * @property latestUsers A [StateFlow] providing the latest users map. Used to enrich the members/watcher data with the
  * latest user info retrieved from different, unrelated operations.
+ * @property mutedUsers A [StateFlow] providing the list of muted users.
  * @property liveLocations A [StateFlow] providing the active live locations.
  * @property now A function that returns the current time in milliseconds.
  */
@@ -70,6 +72,7 @@ internal class ChannelStateImpl(
     override val channelId: String,
     private val currentUser: User, // TODO: Check if we can rely on user being always up to date (ex. switchUser)
     private val latestUsers: StateFlow<Map<String, User>>,
+    private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : ChannelState {
@@ -818,6 +821,12 @@ internal class ChannelStateImpl(
         // Skip update for messages from current user
         val isFromCurrentUser = message.user.id == currentUser.id
         if (isFromCurrentUser) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update for messages from muted users
+        val isFromMutedUser = mutedUsers.value.any { it.target?.id == message.user.id }
+        if (isFromMutedUser) {
             processedMessageIds.put(message.id, true)
             return
         }
