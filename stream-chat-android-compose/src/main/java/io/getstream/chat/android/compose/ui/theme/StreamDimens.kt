@@ -207,7 +207,7 @@ public data class StreamDimens(
             attachmentsSystemPickerHeight = 220.dp,
             attachmentsContentImageMaxHeight = 600.dp,
             attachmentsContentVideoMaxHeight = 400.dp,
-            attachmentsContentMediaGridSpacing = 2.dp,
+            attachmentsContentMediaGridSpacing = 4.dp,
             attachmentsContentVideoWidth = 250.dp,
             attachmentsContentGroupPreviewWidth = 250.dp,
             attachmentsContentGroupPreviewHeight = 250.dp,
