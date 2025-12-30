@@ -44,6 +44,8 @@ public data class StreamShapes(
     public val myMessageBubble: Shape,
     public val otherMessageBubble: Shape,
     public val inputField: Shape,
+    // TODO [G.] for media this single shape only works for single attachments, because when we have multiple, the
+    //  inner corners are different from the outer ones
     public val attachment: Shape,
     public val imageThumbnail: Shape,
     public val bottomSheet: Shape,

@@ -244,7 +244,6 @@ public fun MediaAttachmentContent(
         } else {
             MultipleMediaAttachments(
                 attachments = attachments,
-                attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 message = message,
@@ -348,7 +347,6 @@ internal fun SingleMediaAttachment(
 @Composable
 internal fun RowScope.MultipleMediaAttachments(
     attachments: List<Attachment>,
-    attachmentCount: Int,
     gridSpacing: Dp,
     maximumNumberOfPreviewedItems: Int = 4,
     message: Message,
@@ -367,7 +365,7 @@ internal fun RowScope.MultipleMediaAttachments(
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachmentCount) {
+            if (attachmentIndex < attachments.size) {
                 MediaAttachmentContentItem(
                     attachment = attachments[attachmentIndex],
                     modifier = Modifier.weight(1f),
@@ -391,12 +389,12 @@ internal fun RowScope.MultipleMediaAttachments(
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachmentCount) {
+            if (attachmentIndex < attachments.size) {
                 val attachment = attachments[attachmentIndex]
                 val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
                 val lastItemInColumnIndex = (maximumNumberOfPreviewedItems - 1) - (maximumNumberOfPreviewedItems % 2)
 
-                if (attachmentIndex == lastItemInColumnIndex && attachmentCount > maximumNumberOfPreviewedItems) {
+                if (attachmentIndex == lastItemInColumnIndex && attachments.size > maximumNumberOfPreviewedItems) {
                     Box(modifier = Modifier.weight(1f)) {
                         MediaAttachmentContentItem(
                             attachment = attachment,
@@ -411,7 +409,7 @@ internal fun RowScope.MultipleMediaAttachments(
 
                         if (!isUploading) {
                             MediaAttachmentShowMoreOverlay(
-                                mediaCount = attachmentCount,
+                                mediaCount = attachments.size,
                                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                                 modifier = Modifier.align(Alignment.Center),
                             )
