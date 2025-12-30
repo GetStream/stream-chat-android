@@ -47,7 +47,6 @@ streamProject {
             "stream-chat-android-compose",
             "stream-chat-android-core",
             "stream-chat-android-markdown-transformer",
-            "stream-chat-android-offline",
             "stream-chat-android-state",
             "stream-chat-android-ui-common",
             "stream-chat-android-ui-utils",

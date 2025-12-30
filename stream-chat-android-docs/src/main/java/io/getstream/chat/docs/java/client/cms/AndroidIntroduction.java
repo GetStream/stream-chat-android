@@ -24,7 +24,6 @@ import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.models.User;
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 import io.getstream.chat.android.state.extensions.ChatClientExtensions;
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
@@ -38,19 +37,17 @@ public class AndroidIntroduction {
     public void chatClient(Context applicationContext) {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
-        // Step 1 - Set up the OfflinePlugin for offline storage
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(applicationContext);
-
+        // Step 1 - Set up the StatePlugin for state management
         StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
                 new StatePluginConfig(true, true),
                 applicationContext
         );
 
-        // Step 2 - Set up the client, together with offline plugin, for API calls
+        // Step 2 - Set up the client, together with the state plugin, for API calls
         ChatClient client = new ChatClient.Builder(apiKey, applicationContext)
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
-                .withPlugins(offlinePluginFactory, streamStatePluginFactory)
+                .withPlugins(streamStatePluginFactory)
                 .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
                 .build();
 

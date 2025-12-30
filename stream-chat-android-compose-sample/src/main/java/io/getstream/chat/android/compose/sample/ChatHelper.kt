@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.result.Error
@@ -82,8 +81,6 @@ object ChatHelper {
             },
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(context)
-
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
                 backgroundSyncEnabled = false,
@@ -96,7 +93,7 @@ object ChatHelper {
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .withPlugins(statePluginFactory)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .appName("Chat Sample Compose")

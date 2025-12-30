@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_S
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.OfflineConfig
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -165,6 +166,7 @@ import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.core.utils.date.max
+import io.getstream.chat.android.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -4657,6 +4659,8 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var pluginFactories: List<PluginFactory> = emptyList()
+        private var offlineConfig: OfflineConfig = OfflineConfig()
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -4891,7 +4895,16 @@ internal constructor(
          * @param pluginFactories The factories to be added.
          */
         public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
-            this.pluginFactories.addAll(pluginFactories)
+            this.pluginFactories = pluginFactories.toList()
+        }
+
+        /**
+         * Configures the offline support for the ChatClient.
+         *
+         * @param offlineConfig The offline configuration to be used.
+         */
+        public fun offlineConfig(offlineConfig: OfflineConfig): Builder = apply {
+            this.offlineConfig = offlineConfig
         }
 
         /**
@@ -5034,6 +5047,19 @@ internal constructor(
             val database = ChatClientDatabase.build(appContext)
             val repository = ChatClientRepository.from(database)
 
+            // Mandatory plugins
+            val allPluginFactories = mutableListOf(
+                ThrottlingPluginFactory,
+                MessageDeliveredPluginFactory,
+            )
+            // Optional plugins from the user
+            allPluginFactories.addAll(pluginFactories)
+            // Optional offline plugin (configured via OfflineConfig)
+            if (offlineConfig.enabled) {
+                val offlinePluginFactory = StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes)
+                allPluginFactories.add(offlinePluginFactory)
+            }
+
             return ChatClient(
                 config = config,
                 api = api,
@@ -5048,9 +5074,9 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
-                pluginFactories = pluginFactories,
+                pluginFactories = allPluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
-                    ?: pluginFactories
+                    ?: allPluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
@@ -5107,16 +5133,6 @@ internal constructor(
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
-        /**
-         * Factories of plugins that will be added to the SDK.
-         *
-         * @see [Plugin]
-         * @see [PluginFactory]
-         */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(
-            ThrottlingPluginFactory,
-            MessageDeliveredPluginFactory,
-        )
 
         /**
          * Create a [ChatClient] instance based on the current configuration
