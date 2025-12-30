@@ -179,6 +179,7 @@ public fun MediaAttachmentContent(
 public fun MediaAttachmentContent(
     state: AttachmentState,
     modifier: Modifier = Modifier,
+    // TODO [G.] is this something we want to continue supporting?
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
     onItemClick: (MediaAttachmentClickData) -> Unit = {
@@ -356,6 +357,9 @@ internal fun RowScope.MultipleMediaAttachments(
     onContentItemClick: (MediaAttachmentClickData) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
+    val totalPreviewCount = attachments.size.coerceAtMost(maximumNumberOfPreviewedItems)
+    val splitIndex = totalPreviewCount / 2
+
     Column(
         modifier = Modifier
             .weight(1f, fill = false)
@@ -364,20 +368,18 @@ internal fun RowScope.MultipleMediaAttachments(
             .testTag("Stream_MultipleMediaAttachmentsColumn"),
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
-        for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachments.size) {
-                MediaAttachmentContentItem(
-                    attachment = attachments[attachmentIndex],
-                    modifier = Modifier.weight(1f),
-                    message = message,
-                    skipEnrichUrl = skipEnrichUrl,
-                    attachmentPosition = attachmentIndex,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onLongItemClick = onLongItemClick,
-                    onItemClick = onContentItemClick,
-                    overlayContent = itemOverlayContent,
-                )
-            }
+        for (attachmentIndex in 0 until splitIndex) {
+            MediaAttachmentContentItem(
+                attachment = attachments[attachmentIndex],
+                modifier = Modifier.weight(1f),
+                message = message,
+                skipEnrichUrl = skipEnrichUrl,
+                attachmentPosition = attachmentIndex,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onLongItemClick = onLongItemClick,
+                onItemClick = onContentItemClick,
+                overlayContent = itemOverlayContent,
+            )
         }
     }
 
@@ -388,37 +390,17 @@ internal fun RowScope.MultipleMediaAttachments(
             .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
-        for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachments.size) {
-                val attachment = attachments[attachmentIndex]
-                val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
-                val lastItemInColumnIndex = (maximumNumberOfPreviewedItems - 1) - (maximumNumberOfPreviewedItems % 2)
+        for (attachmentIndex in splitIndex until totalPreviewCount) {
+            val attachment = attachments[attachmentIndex]
+            val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
 
-                if (attachmentIndex == lastItemInColumnIndex && attachments.size > maximumNumberOfPreviewedItems) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        MediaAttachmentContentItem(
-                            attachment = attachment,
-                            message = message,
-                            skipEnrichUrl = skipEnrichUrl,
-                            attachmentPosition = attachmentIndex,
-                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                            onLongItemClick = onLongItemClick,
-                            onItemClick = onContentItemClick,
-                            overlayContent = itemOverlayContent,
-                        )
+            val isLastVisibleSlot = attachmentIndex == maximumNumberOfPreviewedItems - 1
+            val hasHiddenItems = attachments.size > maximumNumberOfPreviewedItems
 
-                        if (!isUploading) {
-                            MediaAttachmentShowMoreOverlay(
-                                mediaCount = attachments.size,
-                                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                                modifier = Modifier.align(Alignment.Center),
-                            )
-                        }
-                    }
-                } else {
+            if (isLastVisibleSlot && hasHiddenItems) {
+                Box(modifier = Modifier.weight(1f)) {
                     MediaAttachmentContentItem(
                         attachment = attachment,
-                        modifier = Modifier.weight(1f),
                         message = message,
                         skipEnrichUrl = skipEnrichUrl,
                         attachmentPosition = attachmentIndex,
@@ -427,7 +409,27 @@ internal fun RowScope.MultipleMediaAttachments(
                         onItemClick = onContentItemClick,
                         overlayContent = itemOverlayContent,
                     )
+
+                    if (!isUploading) {
+                        MediaAttachmentShowMoreOverlay(
+                            mediaCount = attachments.size,
+                            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+                            modifier = Modifier.align(Alignment.Center),
+                        )
+                    }
                 }
+            } else {
+                MediaAttachmentContentItem(
+                    attachment = attachment,
+                    modifier = Modifier.weight(1f),
+                    message = message,
+                    skipEnrichUrl = skipEnrichUrl,
+                    attachmentPosition = attachmentIndex,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onLongItemClick = onLongItemClick,
+                    onItemClick = onContentItemClick,
+                    overlayContent = itemOverlayContent,
+                )
             }
         }
     }
