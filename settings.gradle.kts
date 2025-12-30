@@ -54,7 +54,6 @@ include (
 		":stream-chat-android-ui-components-sample",
 		":stream-chat-android-ui-guides",
 		":stream-chat-android-state",
-		":stream-chat-android-offline", // TODO: remove
 		":stream-chat-android-client",
 		":stream-chat-android-client-test",
 		":stream-chat-android-core",
