@@ -16,14 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
-- Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
-- Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
-- Add `ChannelClient.markThreadUnread(String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ⚠️ Changed
-- Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
-- Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
 
 ### ❌ Removed
 
@@ -40,6 +34,9 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix thread replies updating channel unread count. [#6056](https://github.com/GetStream/stream-chat-android/pull/6056)
+- Fix messages from muted users increasing channel unread count. [#6061](https://github.com/GetStream/stream-chat-android/pull/6061)
+- Fix showing channels loading state when querying offline and no matching channels are found in the DB. [#6051](https://github.com/GetStream/stream-chat-android/pull/6051)
 
 ### ⬆️ Improved
 
@@ -75,6 +72,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Address some Lint findings [#6058](https://github.com/GetStream/stream-chat-android/pull/6058)
 
 ### ✅ Added
 
@@ -92,6 +90,45 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 22th, 2025 - 6.30.1
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix default notification channel created even if SDK notifications are disabled. [#6054](https://github.com/GetStream/stream-chat-android/pull/6054)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix issue causing gaps in the message list due to messages inserted out of order. [#6055](https://github.com/GetStream/stream-chat-android/pull/6055)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix unable to open threads whose root message was deleted. [#6046](https://github.com/GetStream/stream-chat-android/pull/6046)
+
+# December 12th, 2025 - 6.30.0
+## stream-chat-android-client
+### ✅ Added
+- Add `ChatClient.queryReactions(String, FilterObject?, Int?, String?, QuerySorter<Reaction>?)` operation for querying reactions with filtering, sorting, and pagination support. [#6040](https://github.com/GetStream/stream-chat-android/pull/6040)
+- Add `ChatClient.markUnread(String, String, Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChatClient.markThreadUnread(String, String, String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markUnread(Date)` for marking a channel as unread from a given timestamp. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `ChannelClient.markThreadUnread(String)` for marking a thread as unread. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Add `NotificationActionsFactory` for building and customizing the default notification actions. [#6037](https://github.com/GetStream/stream-chat-android/pull/6037)
+
+### ⚠️ Changed
+- Deprecate `ChatClient.markThreadUnread(String, String, String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.markThreadUnread(String, String)` because marking a thread as unread from a given message is currently not supported. [#6027](https://github.com/GetStream/stream-chat-android/pull/6027)
+- Deprecate `ChannelClient.getReactions(messageId: String, firstReactionId: String, limit: Int)` because it is no longer supported. [#6039](https://github.com/GetStream/stream-chat-android/pull/6039)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Ensure `isAppInForegroundAsState` lifecycle observer removal occurs on the main thread. [#6033](https://github.com/GetStream/stream-chat-android/pull/6033)
+
+### ⬆️ Improved
+- Fix `StrictMode` violations in the `AttachmentsPicker`. [#6029](https://github.com/GetStream/stream-chat-android/pull/6029)
 
 # November 28th, 2025 - 6.29.0
 ## stream-chat-android-client

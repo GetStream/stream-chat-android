@@ -21,6 +21,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
@@ -55,7 +56,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             }
 
-        private fun createReplyPendingIntent(
+        internal fun createReplyPendingIntent(
             context: Context,
             notificationId: Int,
             channel: Channel,
@@ -67,7 +68,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
                 MUTABLE_PENDING_INTENT_FLAGS,
             )
 
-        private fun createReadPendingIntent(
+        internal fun createMarkReadPendingIntent(
             context: Context,
             notificationId: Int,
             channel: Channel,
@@ -92,33 +93,32 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             IMMUTABLE_PENDING_INTENT_FLAGS,
         )
 
-        internal fun createReadAction(
+        internal fun createMarkReadAction(
             context: Context,
             notificationId: Int,
             channel: Channel,
             message: Message,
+            @DrawableRes icon: Int = android.R.drawable.ic_menu_view,
+            title: String = context.getString(R.string.stream_chat_notification_read),
+            pendingIntent: PendingIntent = createMarkReadPendingIntent(context, notificationId, channel, message),
         ): NotificationCompat.Action {
-            return NotificationCompat.Action.Builder(
-                android.R.drawable.ic_menu_view,
-                context.getString(R.string.stream_chat_notification_read),
-                createReadPendingIntent(context, notificationId, channel, message),
-            ).build()
+            return NotificationCompat.Action.Builder(icon, title, pendingIntent).build()
         }
 
         internal fun createReplyAction(
             context: Context,
             notificationId: Int,
             channel: Channel,
+            @DrawableRes icon: Int = android.R.drawable.ic_menu_send,
+            title: String = context.getString(R.string.stream_chat_notification_reply),
+            hint: String = context.getString(R.string.stream_chat_notification_type_hint),
+            pendingIntent: PendingIntent = createReplyPendingIntent(context, notificationId, channel),
         ): NotificationCompat.Action {
             val remoteInput =
                 RemoteInput.Builder(KEY_TEXT_REPLY)
-                    .setLabel(context.getString(R.string.stream_chat_notification_type_hint))
+                    .setLabel(hint)
                     .build()
-            return NotificationCompat.Action.Builder(
-                android.R.drawable.ic_menu_send,
-                context.getString(R.string.stream_chat_notification_reply),
-                createReplyPendingIntent(context, notificationId, channel),
-            )
+            return NotificationCompat.Action.Builder(icon, title, pendingIntent)
                 .addRemoteInput(remoteInput)
                 .setAllowGeneratedReplies(true)
                 .build()

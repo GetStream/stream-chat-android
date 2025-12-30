@@ -20,6 +20,12 @@ android {
 
     resourcePrefix = "stream_ui_"
 
+    lint {
+        disable += "MissingTranslation"
+        disable += "ExtraTranslation"
+        baseline = file("lint-baseline.xml")
+    }
+
     buildFeatures {
         viewBinding = true
     }

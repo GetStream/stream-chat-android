@@ -67,6 +67,7 @@ import io.getstream.chat.android.client.notifications.ChatNotificationsImpl
 import io.getstream.chat.android.client.notifications.NoOpChatNotifications
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
@@ -124,7 +125,7 @@ constructor(
     private val clientScope: ClientScope,
     private val userScope: UserScope,
     private val config: ChatClientConfig,
-    private val notificationsHandler: NotificationHandler,
+    private val notificationsHandler: NotificationHandler?,
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader?,
@@ -164,7 +165,7 @@ constructor(
     }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager, headersUtil) }
 
-    private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
+    private val defaultNotifications by lazy { buildChatNotifications(notificationsHandler, config.notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
     internal val chatSocket: ChatSocket by lazy { buildChatSocket(config) }
     private val defaultFileUploader by lazy {
@@ -203,14 +204,25 @@ constructor(
 
     //endregion
 
-    private fun buildNotification(
-        handler: NotificationHandler,
+    private fun buildChatNotifications(
+        handler: NotificationHandler?,
         notificationConfig: NotificationConfig,
     ): ChatNotifications = if (notificationConfig.pushNotificationsEnabled) {
-        ChatNotificationsImpl(handler, notificationConfig, appContext, defaultApi)
+        ChatNotificationsImpl(
+            handler = handler ?: defaultNotificationHandler(notificationConfig),
+            notificationConfig = notificationConfig,
+            context = appContext,
+            api = defaultApi,
+        )
     } else {
         NoOpChatNotifications
     }
+
+    private fun defaultNotificationHandler(notificationConfig: NotificationConfig): NotificationHandler =
+        NotificationHandlerFactory.createNotificationHandler(
+            context = appContext,
+            notificationConfig = notificationConfig,
+        )
 
     private fun buildRetrofit(
         endpoint: String,

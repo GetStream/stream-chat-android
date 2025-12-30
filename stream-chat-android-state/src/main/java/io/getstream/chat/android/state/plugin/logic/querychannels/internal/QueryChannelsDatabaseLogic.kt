@@ -39,20 +39,27 @@ internal class QueryChannelsDatabaseLogic(
     }
 
     /**
-     * Fetch channels from database
+     * Fetch channels from database.
      *
      * @param pagination [AnyChannelPaginationRequest]
      * @param queryChannelsSpec [QueryChannelsSpec]
+     * @return null if the spec is not found in the database, list of channels otherwise (can be empty, if the online
+     * query returned 0 results).
      */
     internal suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsSpec: QueryChannelsSpec?,
-    ): List<Channel> {
-        val query = queryChannelsSpec?.run {
-            queryChannelsRepository.selectBy(queryChannelsSpec.filter, queryChannelsSpec.querySort)
-        } ?: return emptyList()
-
-        return repositoryFacade.selectChannels(query.cids.toList(), pagination).applyPagination(pagination)
+    ): List<Channel>? {
+        val cachedSpec = queryChannelsSpec?.let {
+            queryChannelsRepository.selectBy(it.filter, it.querySort)
+        }
+        return if (cachedSpec != null) {
+            // Spec is present in DB, fetch channels according to it
+            repositoryFacade.selectChannels(cachedSpec.cids.toList(), pagination).applyPagination(pagination)
+        } else {
+            // Spec is not present in DB, can't fetch channels
+            null
+        }
     }
 
     /**

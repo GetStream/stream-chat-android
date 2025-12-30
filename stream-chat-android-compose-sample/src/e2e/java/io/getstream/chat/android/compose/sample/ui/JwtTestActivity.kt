@@ -49,7 +49,6 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
-import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials.API_KEY
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -184,7 +183,7 @@ class JwtTestActivity : AppCompatActivity() {
 
     private suspend fun fetchJwtToken(baseUrl: String, userId: String): String {
         return withContext(Dispatchers.IO) {
-            val endpoint = "$baseUrl/jwt/get?api_key=$API_KEY&user_id=$userId"
+            val endpoint = "$baseUrl/jwt/get?platform=android"
             val request = Request.Builder().url(endpoint).build()
 
             OkHttpClient().newCall(request).execute().use { response ->
