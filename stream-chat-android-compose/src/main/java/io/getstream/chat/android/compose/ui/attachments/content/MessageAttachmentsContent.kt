@@ -68,12 +68,7 @@ public fun MessageAttachmentsContent(
         )
 
         if (attachmentFactory != null) {
-            attachmentFactory.content(
-                Modifier.padding(
-                    2.dp.takeIf { message.text.isEmpty() } ?: 8.dp,
-                ),
-                attachmentState,
-            )
+            attachmentFactory.content(Modifier, attachmentState)
         } else if (linkFactory != null) {
             linkFactory.content(Modifier.padding(8.dp), attachmentState)
         }
