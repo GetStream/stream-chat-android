@@ -417,6 +417,17 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Hides all messages created before the specified date.
+     * This is an alias for [removeMessagesBefore].
+     * TODO: Verify is this is required.
+     *
+     * @param date The cutoff date; messages created before this date will be hidden.
+     */
+    fun hideMessagesBefore(date: Date) {
+        removeMessagesBefore(date)
+    }
+
+    /**
      * Deletes all messages from a specific user.
      *
      * @param userId The ID of the user whose messages should be deleted.
@@ -1223,10 +1234,6 @@ internal class ChannelStateImpl(
     }
 
     // endregion
-
-    fun hideMessagesBefore(date: Date) {
-        TODO("Not yet implemented")
-    }
 
     private fun shouldIgnoreUpsertion(message: Message): Boolean {
         // Skip messages from other shadow banned users
