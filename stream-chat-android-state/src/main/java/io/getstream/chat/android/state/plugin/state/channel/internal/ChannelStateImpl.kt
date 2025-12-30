@@ -658,11 +658,14 @@ internal class ChannelStateImpl(
      * @param member The member to add.
      */
     fun addMember(member: Member) {
-        val increaseCount = _members.value.none { it.getUserId() == member.getUserId() }
-        if (increaseCount) {
-            setMemberCount(_memberCount.value + 1)
+        _members.update { current ->
+            if (current.any { it.getUserId() == member.getUserId() }) {
+                current
+            } else {
+                current + member
+            }
         }
-        upsertMember(member)
+        _memberCount.update { it + 1 }
     }
 
     /**
@@ -691,15 +694,10 @@ internal class ChannelStateImpl(
      * @param id The ID of the member to delete.
      */
     fun deleteMember(id: String) {
-        val removed = _members.value.filter { it.getUserId() != id }
-        if (_members.value.size > removed.size) {
-            // Update only if a member was actually removed
-            _members.value = removed
-            _memberCount.update { count -> max(0, count - 1) }
+        _members.update { current ->
+            current.filter { it.getUserId() != id }
         }
-        // Delete watcher as well
-        val watcherCount = _watcherCount.value - _watchers.value.count { it.id == id }
-        deleteWatcher(id, watcherCount)
+        _memberCount.update { max(0, it - 1) }
     }
 
     // endregion
