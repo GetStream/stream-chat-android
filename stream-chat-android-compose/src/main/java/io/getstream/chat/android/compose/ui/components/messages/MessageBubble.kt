@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isErrorOrFailed
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
@@ -48,7 +47,7 @@ public fun MessageBubble(
     color: Color,
     shape: Shape,
     modifier: Modifier = Modifier,
-    border: BorderStroke? = BorderStroke(1.dp, ChatTheme.colors.borders),
+    border: BorderStroke? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable () -> Unit,
 ) {
