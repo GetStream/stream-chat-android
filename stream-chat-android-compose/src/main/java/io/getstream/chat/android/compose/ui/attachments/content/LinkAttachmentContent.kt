@@ -26,7 +26,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -45,23 +43,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
@@ -204,62 +197,34 @@ public fun LinkAttachmentContent(
 
 @Composable
 private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) {
-    val data = attachment.imagePreviewUrl
-    var maxWidth by remember { mutableStateOf(0.dp) }
+    val contentScale = ContentScale.FillWidth
+    StreamAsyncImage(
+        modifier = Modifier
+            .heightIn(max = 250.dp)
+            // TODO [G.]
+            .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+            .border(1.dp, Color.Black.copy(alpha = .1f), RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+            .testTag("Stream_LinkAttachmentPreview"),
+        data = attachment.imagePreviewUrl,
+        contentScale = contentScale,
+    ) { state ->
+        val painter = state.painter
 
-    Box(
-        modifier = Modifier.onSizeChanged { size -> maxWidth = size.width.dp },
-    ) {
-        val contentScale = ContentScale.FillWidth
-        StreamAsyncImage(
-            modifier = Modifier
-                .heightIn(max = 250.dp)
-                // TODO [G.]
-                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .border(1.dp, Color.Black.copy(alpha = .1f), RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                .testTag("Stream_LinkAttachmentPreview"),
-            data = data,
-            contentScale = contentScale,
-        ) { state ->
-            val painter = state.painter
+        if (painter == null) {
+            ShimmerProgressIndicator(
+                modifier = Modifier.fillMaxSize(),
+            )
+        } else {
+            val intrinsicSize = painter.intrinsicSize
+            val aspectRatio = intrinsicSize.width / intrinsicSize.height
 
-            if (painter == null) {
-                ShimmerProgressIndicator(
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                val intrinsicSize = painter.intrinsicSize
-                val aspectRatio = intrinsicSize.width / intrinsicSize.height
-
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(aspectRatio),
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = contentScale,
-                )
-            }
-        }
-
-        val authorName = attachment.authorName
-
-        if (authorName != null) {
-            Text(
-                text = authorName,
-                color = ChatTheme.colors.primaryAccent,
-                maxLines = 1,
-                style = ChatTheme.typography.bodyBold,
-                fontSize = 16.sp,
-                overflow = TextOverflow.Ellipsis,
+            Image(
                 modifier = Modifier
-                    .widthIn(max = maxWidth / 2)
-                    .background(
-                        color = getLinkBackgroundColor(isMine),
-                        shape = ChatTheme.shapes.attachmentSiteLabel,
-                    )
-                    .padding(vertical = 6.dp, horizontal = 12.dp)
-                    .align(Alignment.BottomStart),
+                    .fillMaxWidth()
+                    .aspectRatio(aspectRatio),
+                painter = painter,
+                contentDescription = null,
+                contentScale = contentScale,
             )
         }
     }
