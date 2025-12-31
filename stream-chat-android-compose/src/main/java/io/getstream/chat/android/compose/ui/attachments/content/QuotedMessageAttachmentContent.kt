@@ -51,6 +51,8 @@ public fun QuotedMessageAttachmentContent(
      * Looks for quoted message attachment factory and if none can handle it looks for a standard attachment factory
      * that can handle the attachmentContent.
      */
+    // TODO [G.] we have to add handling for static/live location, which doesn't fit with the current attachment factory
+    //  abstraction, as it's technically not an attachment
     val quoteAttachmentFactory = remember(firstAttachment) {
         firstAttachment?.let { attachment ->
             val firstAttachmentList = listOf(attachment)

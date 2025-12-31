@@ -121,6 +121,10 @@ public fun QuotedMessage(
                 Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
 
+            // TODO [G.] atm QuotedMessageText renders either something related to the attachment/location/whatever or
+            //  the message text. What I understand from new designs is that we want to always show the message text if
+            //  is there, and then whatever contextual text (link url, filename, "live location") as a different line
+            QuotedMessageText(message, currentUser, replyMessage = replyMessage)
             message.attachments
                 .firstOrNull()
                 ?.let { it.titleLink ?: it.ogUrl }

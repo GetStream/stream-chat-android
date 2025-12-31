@@ -149,8 +149,8 @@
 
     <!-- Channel List -->
 
-    <string name="stream_ui_location_static_message_text">📍Location</string>
-    <string name="stream_ui_location_live_message_text">📍Live location</string>
+    <string name="stream_ui_location_static_message_text">Location</string>
+    <string name="stream_ui_location_live_message_text">Live location</string>
 
     <!-- Polls -->
 
