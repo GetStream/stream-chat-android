@@ -30,6 +30,8 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioReco
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
 import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageStyle
+import io.getstream.chat.android.compose.ui.theme.messages.list.attachmentBackgroundColorIncoming
+import io.getstream.chat.android.compose.ui.theme.messages.list.attachmentBackgroundColorOutgoing
 
 /**
  * Represents message theming.
@@ -215,7 +217,10 @@ public data class MessageTheme(
                     color = colors.primaryAccent,
                     textDecoration = TextDecoration.Underline,
                 ),
-                linkBackgroundColor = colors.linkBackground,
+                linkBackgroundColor = when (own) {
+                    true -> attachmentBackgroundColorOutgoing
+                    false -> attachmentBackgroundColorIncoming
+                },
             )
         }
     }

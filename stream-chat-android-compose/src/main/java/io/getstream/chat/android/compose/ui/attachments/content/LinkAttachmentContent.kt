@@ -23,16 +23,25 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -49,7 +58,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -138,13 +146,10 @@ public fun LinkAttachmentContent(
     }
 
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
-    val urlWithScheme = previewUrl?.addSchemeToUrlIfNeeded()
-
     checkNotNull(previewUrl) {
         "Missing preview URL."
     }
-
-    val errorMessage = stringResource(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
+    val urlWithScheme = previewUrl.addSchemeToUrlIfNeeded()
 
     Column(
         modifier = modifier
@@ -155,22 +160,17 @@ public fun LinkAttachmentContent(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     try {
-                        if (urlWithScheme != null) {
-                            onItemClick(
-                                LinkAttachmentClickData(
-                                    context = context,
-                                    url = urlWithScheme,
-                                    attachment = attachment,
-                                    message = message,
-                                ),
-                            )
-                        } else {
-                            Toast
-                                .makeText(context, errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
+                        onItemClick(
+                            LinkAttachmentClickData(
+                                context = context,
+                                url = urlWithScheme,
+                                attachment = attachment,
+                                message = message,
+                            ),
+                        )
+                    } catch (_: ActivityNotFoundException) {
+                        val errorMessage =
+                            context.getString(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
                         Toast
                             .makeText(context, errorMessage, Toast.LENGTH_LONG)
                             .show()
@@ -184,6 +184,8 @@ public fun LinkAttachmentContent(
             LinkAttachmentImagePreview(attachment, isMine)
         }
 
+        Spacer(Modifier.height(12.dp))
+
         val title = attachment.title
         if (title != null) {
             LinkAttachmentTitle(title)
@@ -193,6 +195,10 @@ public fun LinkAttachmentContent(
         if (description != null) {
             LinkAttachmentDescription(description, linkDescriptionMaxLines)
         }
+
+        AttachmentLink(previewUrl)
+
+        Spacer(Modifier.height(12.dp))
     }
 }
 
@@ -208,7 +214,9 @@ private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) 
         StreamAsyncImage(
             modifier = Modifier
                 .heightIn(max = 250.dp)
-                .clip(ChatTheme.shapes.attachment)
+                // TODO [G.]
+                .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
+                .border(1.dp, Color.Black.copy(alpha = .1f), RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
                 .testTag("Stream_LinkAttachmentPreview"),
             data = data,
             contentScale = contentScale,
@@ -261,7 +269,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) 
 private fun LinkAttachmentTitle(text: String) {
     Text(
         modifier = Modifier
-            .padding(start = 8.dp, end = 8.dp)
+            .padding(start = 12.dp, end = 12.dp)
             .testTag("Stream_LinkAttachmentTitle"),
         text = text,
         style = ChatTheme.typography.bodyBold,
@@ -274,10 +282,9 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
     Text(
         modifier = Modifier
             .padding(
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 4.dp,
-                top = 2.dp,
+                start = 12.dp,
+                end = 12.dp,
+                top = 4.dp,
             )
             .testTag("Stream_LinkAttachmentDescription"),
         text = description,
@@ -286,6 +293,24 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
         maxLines = linkDescriptionMaxLines,
         overflow = TextOverflow.Ellipsis,
     )
+}
+
+@Composable
+private fun AttachmentLink(link: String) {
+    Row(
+        modifier = Modifier.padding(start = 12.dp, end = 12.dp, top = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // TODO [G.] icon
+        Icon(Icons.Default.Info, contentDescription = null, Modifier.size(12.dp))
+        // TODO [G.] style
+        Text(
+            text = link,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = 4.dp)
+        )
+    }
 }
 
 @Composable
@@ -338,7 +363,7 @@ internal fun LinkAttachmentContent() {
             state = AttachmentState(
                 message = Message(attachments = listOf(attachment)),
             ),
-            linkDescriptionMaxLines = 5,
+            linkDescriptionMaxLines = 2,
         )
     }
 }

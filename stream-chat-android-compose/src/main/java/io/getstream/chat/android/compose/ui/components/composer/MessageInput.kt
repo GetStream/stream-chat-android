@@ -121,6 +121,10 @@ public fun MessageInput(
                 }
 
                 if (attachments.isNotEmpty() && activeAction !is Edit) {
+                    // TODO [G.] This doesn't work if we want to have different previews for different item types in the
+                    //  list e.g. atm if we have mixed media & files we render all as files. Well, we could extend the
+                    //  FileAttachmentFactory to handle the mixed case, but then why do we have different factories in
+                    //  the first place? Do we need this abstraction?
                     val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
 
                     previewFactory?.previewContent?.invoke(
