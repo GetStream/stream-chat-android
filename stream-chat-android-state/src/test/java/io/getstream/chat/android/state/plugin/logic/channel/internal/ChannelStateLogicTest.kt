@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -548,6 +548,40 @@ internal class ChannelStateLogicTest {
         val eventDate = Date(20L)
         val newMessage = randomMessage(
             user = user, // Message from current user
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is from muted user, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val mutedUserId = "mutedUserId"
+        val mutedUser = randomUser(id = mutedUserId)
+        val mute = io.getstream.chat.android.randomMute(target = mutedUser)
+        spyMutableGlobalState.setMutedUsers(listOf(mute))
+
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = mutedUser,
             createdAt = eventDate,
             silent = false,
             shadowed = false,

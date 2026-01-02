@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Message
@@ -36,10 +37,11 @@ import kotlinx.coroutines.flow.map
  */
 @Composable
 public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolean> {
-    return MessageOriginalTranslationsStore.forChannel(cid)
-        .originalTextMessageIds
-        .map { it.contains(messageId) }
-        .collectAsStateWithLifecycle(false)
+    return remember(cid, messageId) {
+        MessageOriginalTranslationsStore.forChannel(cid)
+            .originalTextMessageIds
+            .map { it.contains(messageId) }
+    }.collectAsStateWithLifecycle(false)
 }
 
 /**
