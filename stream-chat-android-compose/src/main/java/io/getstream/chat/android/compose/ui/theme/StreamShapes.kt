@@ -64,7 +64,7 @@ public data class StreamShapes(
             myMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp),
             otherMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp),
             inputField = RoundedCornerShape(24.dp),
-            attachment = RoundedCornerShape(16.dp),
+            attachment = RoundedCornerShape(12.dp),
             imageThumbnail = RoundedCornerShape(8.dp),
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             suggestionList = RoundedCornerShape(16.dp),

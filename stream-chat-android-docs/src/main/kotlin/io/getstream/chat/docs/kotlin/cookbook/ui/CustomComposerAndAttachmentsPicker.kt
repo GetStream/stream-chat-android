@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.ui.components.OnlineIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
@@ -143,6 +144,7 @@ private fun CustomMessageComposer(
                 messageComposerState = composerState,
                 onValueChange = { composerViewModel.setMessageInput(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                onLinkPreviewClick = null,
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .align(Alignment.CenterVertically),

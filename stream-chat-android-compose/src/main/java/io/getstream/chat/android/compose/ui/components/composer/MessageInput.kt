@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -69,6 +70,7 @@ public fun MessageInput(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     modifier: Modifier = Modifier,
     maxLines: Int = DefaultMessageInputMaxLines,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
@@ -107,6 +109,14 @@ public fun MessageInput(
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))
+                }
+
+                if (ChatTheme.isComposerLinkPreviewEnabled && messageComposerState.linkPreviews.isNotEmpty()) {
+                    ChatTheme.componentFactory.MessageComposerLinkPreview(
+                        modifier = Modifier,
+                        linkPreview = messageComposerState.linkPreviews.first(),
+                        onClick = onLinkPreviewClick,
+                    )
                 }
 
                 if (attachments.isNotEmpty() && activeAction !is Edit) {

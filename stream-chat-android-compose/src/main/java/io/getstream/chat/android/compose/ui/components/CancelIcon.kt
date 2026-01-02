@@ -17,10 +17,15 @@
 package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -36,18 +41,36 @@ public fun CancelIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    val style = ChatTheme.messageComposerTheme.attachmentCancelIcon
     Icon(
         modifier = modifier
-            .background(
-                shape = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundShape,
-                color = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundColor,
+            .then(
+                if (style.border != null) {
+                    Modifier.border(style.border, style.backgroundShape)
+                } else {
+                    Modifier
+                },
             )
+            .padding(2.dp)
+            .background(
+                shape = style.backgroundShape,
+                color = style.backgroundColor,
+            )
+            .size(20.dp)
             .clickable(
                 bounded = false,
                 onClick = onClick,
             ),
-        painter = ChatTheme.messageComposerTheme.attachmentCancelIcon.painter,
+        painter = style.painter,
         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = ChatTheme.messageComposerTheme.attachmentCancelIcon.tint,
+        tint = style.tint,
     )
+}
+
+@Preview
+@Composable
+private fun CancelIconPreview() {
+    ChatTheme {
+        CancelIcon {}
+    }
 }
