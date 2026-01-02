@@ -14,7 +14,6 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import kotlinx.coroutines.CoroutineScope
@@ -28,10 +27,7 @@ class AndroidIntroduction {
     fun chatClient(applicationContext: Context) {
         val apiKey = "{{ api_key }}"
         val token = "{{ chat_user_token }}"
-        // Step 1 - Set up the OfflinePlugin for offline storage
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            appContext = applicationContext,
-        )
+        // Step 1 - Set up the StatePlugin factory for state management
 
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
@@ -41,11 +37,11 @@ class AndroidIntroduction {
             appContext = applicationContext
         )
 
-        // Step 2 - Set up the client, together with offline plugin, for API calls
+        // Step 2 - Set up the client, together with the state plugin, for API calls
         val client = ChatClient.Builder(apiKey, applicationContext)
             // Change log level
             .logLevel(ChatLogLevel.ALL)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .withPlugins(statePluginFactory)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 

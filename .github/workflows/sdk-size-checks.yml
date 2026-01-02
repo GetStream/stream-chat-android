@@ -11,7 +11,7 @@ jobs:
   compare-sdk-sizes:
     uses: GetStream/android-ci-actions/.github/workflows/sdk-size-checks.yml@main
     with:
-      modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+      modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
     secrets:
       BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
