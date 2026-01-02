@@ -295,7 +295,7 @@ internal class ChannelStateLogic(
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
     ) {
-        mutableState.updateTypingEvents(eventsMap = rawTypingEvents, typingEvent = typingEvent)
+        mutableState.updateTypingEvent(typingEvent = typingEvent)
         globalMutableState.tryEmitTypingEvent(cid = mutableState.cid, typingEvent = typingEvent)
     }
 
@@ -570,9 +570,9 @@ internal class ChannelStateLogic(
     /**
      * Sets channel as hidden.
      *
-     * @param hidden Boolean.
+     * @param hidden Whether the channel is hidden.
      */
-    fun toggleHidden(hidden: Boolean) {
+    fun setHidden(hidden: Boolean) {
         mutableState.setHidden(hidden)
     }
 
@@ -956,7 +956,7 @@ internal class ChannelStateLogic(
     }
 
     fun getPoll(pollId: String): Poll? = polls[pollId]
-    fun udpateMessageCount(channelMessageCount: Int) {
+    fun updateMessageCount(channelMessageCount: Int) {
         updateChannelData { it?.copy(messageCount = channelMessageCount) }
     }
 

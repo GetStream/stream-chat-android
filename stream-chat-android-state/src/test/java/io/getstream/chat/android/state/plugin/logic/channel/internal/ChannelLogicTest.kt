@@ -51,7 +51,7 @@ internal class ChannelLogicTest {
         channelStateLogic = mock()
         whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
         // Channel logic
-        sut = ChannelLogic(
+        sut = ChannelLogicImpl(
             repos = mock(),
             userPresence = false,
             channelStateLogic = channelStateLogic,
