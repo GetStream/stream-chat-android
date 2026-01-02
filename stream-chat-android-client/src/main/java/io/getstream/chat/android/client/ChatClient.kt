@@ -108,6 +108,7 @@ import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
+import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -166,7 +167,6 @@ import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.core.utils.date.max
-import io.getstream.chat.android.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
