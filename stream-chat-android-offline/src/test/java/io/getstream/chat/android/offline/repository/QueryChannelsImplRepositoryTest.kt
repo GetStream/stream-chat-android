@@ -52,7 +52,7 @@ internal class QueryChannelsImplRepositoryTest {
     @BeforeEach
     fun before() {
         dao = mock()
-        sut = DatabaseQueryChannelsRepository(dao)
+        sut = DatabaseQueryChannelsRepository(testCoroutines.scope, dao)
     }
 
     @Test
