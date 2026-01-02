@@ -170,11 +170,6 @@ class MessagesActivity : ComponentActivity() {
             allowUIAutomationTest = true,
             messageComposerTheme = messageComposerTheme.let {
                 it.copy(
-                    attachmentCancelIcon = it.attachmentCancelIcon.copy(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_clear),
-                        tint = colors.overlayDark,
-                        backgroundColor = colors.appBackground,
-                    ),
                     audioRecording = it.audioRecording.copy(
                         enabled = true,
                         showRecordButtonOverSend = false,
@@ -396,6 +391,7 @@ class MessagesActivity : ComponentActivity() {
                     messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                    onLinkPreviewClick = null,
                     label = {
                         Row(
                             Modifier.wrapContentWidth(),

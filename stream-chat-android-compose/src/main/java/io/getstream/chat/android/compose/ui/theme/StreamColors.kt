@@ -114,6 +114,15 @@ public data class StreamColors(
     public val ownMessageQuotedText: Color = textHighEmphasis,
     @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
     public val otherMessageQuotedText: Color = textHighEmphasis,
+
+    // Design System semantic colors
+    public val borderCoreOnDark: Color,
+    public val borderCoreImage: Color,
+    public val chatBgIncoming: Color,
+    public val chatBgOutgoing: Color,
+    public val controlRemoveBg: Color,
+    public val controlRemoveBorder: Color = borderCoreOnDark,
+    public val controlRemoveIcon: Color,
 ) {
 
     public companion object {
@@ -155,6 +164,13 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
+            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
+            chatBgIncoming = StreamPrimitiveColors.slate100,
+            chatBgOutgoing = StreamPrimitiveColors.blue100,
+            controlRemoveBg = StreamPrimitiveColors.slate900,
+            controlRemoveBorder = StreamPrimitiveColors.baseWhite,
+            controlRemoveIcon = StreamPrimitiveColors.baseWhite,
         )
 
         /**
@@ -195,6 +211,23 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
+            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
+            chatBgIncoming = StreamPrimitiveColors.neutral800,
+            chatBgOutgoing = StreamPrimitiveColors.blue800,
+            controlRemoveBg = StreamPrimitiveColors.neutral800,
+            controlRemoveIcon = StreamPrimitiveColors.baseWhite,
         )
     }
+}
+
+@Suppress("MagicNumber")
+internal object StreamPrimitiveColors {
+    val baseBlack = Color(0xFF000000)
+    val baseWhite = Color(0xFFFFFFFF)
+    val blue100 = Color(0xFFD2E3FF)
+    val blue800 = Color(0xFF003179)
+    val neutral800 = Color(0xFF383838)
+    val slate100 = Color(0xFFF2F4F6)
+    val slate900 = Color(0xFF1E252B)
 }
