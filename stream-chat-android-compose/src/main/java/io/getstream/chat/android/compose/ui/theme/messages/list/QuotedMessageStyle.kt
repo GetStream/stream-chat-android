@@ -116,7 +116,7 @@ public data class QuotedMessageStyle(
         ): QuotedMessageStyle {
             // TODO [G.] consider lifting the if(own) check outside, to do it only once
             return QuotedMessageStyle(
-                textStyle = typography.bodyBold.copy(
+                textStyle = typography.body.copy(
                     color = when (own) {
                         true -> colors.ownMessageQuotedText
                         else -> colors.otherMessageQuotedText

@@ -16,11 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -59,17 +57,8 @@ public fun QuotedMessageText(
 
     val styledText = ChatTheme.quotedMessageTextFormatter.format(message, replyMessage, currentUser)
 
-    val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
-    val verticalPadding = ChatTheme.dimens.quotedMessageTextVerticalPadding
-
     Text(
-        modifier = modifier
-            .padding(
-                horizontal = horizontalPadding,
-                vertical = verticalPadding,
-            )
-            .clipToBounds()
-            .testTag("Stream_QuotedMessage"),
+        modifier = modifier.testTag("Stream_QuotedMessage"),
         text = styledText,
         style = style,
         maxLines = quoteMaxLines,
