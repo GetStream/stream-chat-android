@@ -1768,6 +1768,7 @@ public interface ChatComponentFactory {
         state: MessageComposerState,
         onInputChanged: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
+        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         label: @Composable (MessageComposerState) -> Unit,
     ) {
         DefaultComposerInputContent(
@@ -1775,6 +1776,7 @@ public interface ChatComponentFactory {
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
             label = label,
         )
     }

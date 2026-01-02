@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -73,7 +74,7 @@ public data class MessageComposerTheme(
         ): MessageComposerTheme {
             return MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
-                linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
+                linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, shapes, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
                 audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
@@ -88,11 +89,14 @@ public data class MessageComposerTheme(
  *
  * @param backgroundShape The shape of the background for the cancel icon.
  * @param backgroundColor The background color for the cancel icon.
+ * @param border The border for the cancel icon.
+ * @param painter The painter for the cancel icon.
  * @param tint The tint color for the cancel icon.
  */
 public data class ComposerCancelIconStyle(
     val backgroundShape: Shape,
     val backgroundColor: Color,
+    val border: BorderStroke?,
     val painter: Painter,
     val tint: Color,
 ) {
@@ -112,9 +116,10 @@ public data class ComposerCancelIconStyle(
         ): ComposerCancelIconStyle {
             return ComposerCancelIconStyle(
                 backgroundShape = CircleShape,
-                backgroundColor = colors.overlayDark,
-                painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                tint = colors.appBackground,
+                backgroundColor = colors.controlRemoveBg,
+                border = BorderStroke(width = 2.dp, color = colors.controlRemoveBorder),
+                painter = painterResource(R.drawable.stream_compose_ic_cross),
+                tint = colors.controlRemoveIcon,
             )
         }
     }
@@ -123,54 +128,64 @@ public data class ComposerCancelIconStyle(
 /**
  * Represents the theming for the link preview in the message composer.
  *
+ * @param background The background color for the link preview.
+ * @param shape The shape of the link preview.
  * @param imageSize The size of the image in the link preview.
- * @param imagePadding The padding for the image in the link preview.
  * @param imageShape The shape of the image in the link preview.
- * @param separatorSize The size of the separator in the link preview.
- * @param separatorMarginStart The start margin for the separator in the link preview.
- * @param separatorMarginEnd The end margin for the separator in the link preview.
+ * @param imageBorder The border for the image in the link preview.
+ * @param imagePadding The padding for the image in the link preview.
  * @param title The theming for the title in the link preview.
  * @param titleToSubtitle The vertical space between the title and the subtitle in the link preview.
  * @param subtitle The theming for the subtitle in the link preview.
+ * @param url The theming for the URL in the link preview.
  * @param cancelIcon The theming for the cancel icon in the link preview.
  */
 public data class ComposerLinkPreviewTheme(
+    val background: Color,
+    val shape: Shape,
     val imageSize: ComponentSize,
     val imageShape: Shape,
+    val imageBorder: BorderStroke,
     val imagePadding: Dp,
-    val separatorSize: ComponentSize,
-    val separatorMarginStart: Dp,
-    val separatorMarginEnd: Dp,
     val title: TextComponentStyle,
     val titleToSubtitle: Dp,
     val subtitle: TextComponentStyle,
+    val url: TextComponentStyle,
     val cancelIcon: ComposerCancelIconStyle,
 ) {
     public companion object {
 
+        @Suppress("DEPRECATION_ERROR")
         @Composable
         public fun defaultTheme(
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
         ): ComposerLinkPreviewTheme {
             return ComposerLinkPreviewTheme(
-                imageSize = ComponentSize(width = 48.dp, height = 48.dp),
-                imageShape = RectangleShape,
+                background = colors.chatBgOutgoing,
+                shape = shapes.attachment,
+                imageSize = ComponentSize(width = 40.dp, height = 40.dp),
+                imageShape = RoundedCornerShape(8.dp),
+                imageBorder = BorderStroke(1.dp, colors.borderCoreImage),
                 imagePadding = 4.dp,
-                separatorSize = ComponentSize(width = 2.dp, height = 48.dp),
-                separatorMarginStart = 4.dp,
-                separatorMarginEnd = 8.dp,
                 title = TextComponentStyle(
                     color = colors.textHighEmphasis,
-                    style = typography.bodyBold,
+                    style = typography.footnoteBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 ),
-                titleToSubtitle = 4.dp,
+                titleToSubtitle = 0.dp,
                 subtitle = TextComponentStyle(
+                    color = colors.textHighEmphasis,
+                    style = typography.footnote,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                ),
+                url = TextComponentStyle(
                     color = colors.textHighEmphasis,
                     style = typography.footnote,
                     maxLines = 1,
