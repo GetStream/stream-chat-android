@@ -5047,18 +5047,10 @@ internal constructor(
             val database = ChatClientDatabase.build(appContext)
             val repository = ChatClientRepository.from(database)
 
-            // Mandatory plugins
-            val allPluginFactories = mutableListOf(
-                ThrottlingPluginFactory,
-                MessageDeliveredPluginFactory,
+            val allPluginFactories = setupPluginFactories(
+                userProvided = pluginFactories,
+                offlineConfig = offlineConfig,
             )
-            // Optional plugins from the user
-            allPluginFactories.addAll(pluginFactories)
-            // Optional offline plugin (configured via OfflineConfig)
-            if (offlineConfig.enabled) {
-                val offlinePluginFactory = StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes)
-                allPluginFactories.add(offlinePluginFactory)
-            }
 
             return ChatClient(
                 config = config,
@@ -5102,6 +5094,23 @@ internal constructor(
                     clientState = clientState,
                     scope = clientScope,
                 )
+            }
+        }
+
+        private fun setupPluginFactories(
+            userProvided: List<PluginFactory>,
+            offlineConfig: OfflineConfig,
+        ): List<PluginFactory> {
+            return buildList {
+                // Mandatory plugins first
+                add(ThrottlingPluginFactory)
+                add(MessageDeliveredPluginFactory)
+                // Then user provided plugins
+                addAll(userProvided)
+                // Finally offline plugin if enabled
+                if (offlineConfig.enabled) {
+                    add(StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes))
+                }
             }
         }
 
