@@ -1,0 +1,34 @@
+name: App Distribute CI v7
+
+# Temporary workflow to publish the v7 sample as a separate app in Firebase. When v7 is released in
+# production, we can remove this workflow and update the main `app-distribute.yml` instead
+
+on:
+  push:
+    branches:
+      - v7
+  workflow_dispatch:
+
+jobs:
+  build_compose_sample_app:
+    name: Build and Distribute Compose Sample App
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - name: Prepare environment
+        run: |
+          git fetch --unshallow
+          echo "${{ secrets.RELEASE_KEYSTORE }}" > .sign/release.keystore.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/release.keystore.asc > .sign/release.keystore
+          echo "${{ secrets.RELEASE_KEYSTORE_PROPERTIES }}" > .sign/keystore.properties.asc
+          gpg -d --passphrase "${{ secrets.PASSPHRASE }}" --batch .sign/keystore.properties.asc > .sign/keystore.properties
+      - name: Assemble
+        run: ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
+      - name: Upload artifact to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        with:
+          appId: "1:17048947178:android:07dc1e8e56b65c1f40ca93" # V7 demo app id
+          serviceCredentialsFileContent: ${{ secrets.STREAM_ANDROID_FIREBASE_CREDENTIALS_APP_CONTENT }}
+          groups: stream-testers
+          file: stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk
