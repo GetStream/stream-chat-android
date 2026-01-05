@@ -23,14 +23,14 @@ import io.getstream.result.Result
 
 /**
  * [SendGiphyListener] implementation for [StatePlugin].
- * Handles removing ephemeral message from the state.
+ * Handles upserting Giphy message to the state.
  *
  * @param logic [LogicRegistry]
  */
 internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGiphyListener {
 
     /**
-     * Removes ephemeral message from the state if the request was successful.
+     * Upserts Giphy message to the state if the request was successful.
      *
      * @param cid The full channel id, i.e. "messaging:123".
      * @param result The API call result.
@@ -38,9 +38,9 @@ internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGi
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result is Result.Success) {
             val message = result.value
-            logic.channelFromMessage(message)?.stateLogic()?.deleteMessage(message)
-            logic.getActiveQueryThreadsLogic().forEach { it.deleteMessage(message) }
-            logic.threadFromMessage(message)?.stateLogic()?.deleteMessage(message)
+            logic.channelFromMessage(message)?.stateLogic()?.upsertMessage(message)
+            logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
+            logic.threadFromMessage(message)?.stateLogic()?.upsertMessage(message)
         }
     }
 }
