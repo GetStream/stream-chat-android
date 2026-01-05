@@ -59,7 +59,6 @@ kotest = "5.9.1"
 kotlin = "2.0.21"
 kotlinBinaryValidator = "0.16.3"
 ksp = "2.0.21-1.0.28"
-landscapist = "2.4.7"
 leakCanary = "2.4"
 macroBenchmark = "1.2.3"
 markwon = "4.6.2"
@@ -204,8 +203,6 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer"}
 shimmer-compose = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "shimmerCompose"}
 skydoves-compose-stable-marker = { module = "com.github.skydoves:compose-stable-marker", version.ref = "composeStableMarker"}
-skydoves-landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist"}
-skydoves-landscapist-placeholder = { module = "com.github.skydoves:landscapist-placeholder", version.ref = "landscapist"}
 stream-android-push = { module = "io.getstream:stream-android-push", version.ref = "streamPush"}
 stream-push-delegate = { module = "io.getstream:stream-android-push-delegate", version.ref = "streamPush"}
 stream-push-firebase = { module = "io.getstream:stream-android-push-firebase", version.ref = "streamPush"}
