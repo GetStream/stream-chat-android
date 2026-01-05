@@ -37,7 +37,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
  * @param onClick Handler when the user clicks on the icon.
  */
 @Composable
-public fun CancelIcon(
+public fun ComposerCancelIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -69,8 +69,8 @@ public fun CancelIcon(
 
 @Preview
 @Composable
-private fun CancelIconPreview() {
+private fun ComposerCancelIconPreview() {
     ChatTheme {
-        CancelIcon {}
+        ComposerCancelIcon {}
     }
 }

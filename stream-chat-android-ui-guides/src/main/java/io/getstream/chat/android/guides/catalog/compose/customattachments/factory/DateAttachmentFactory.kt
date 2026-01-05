@@ -36,7 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
@@ -97,7 +97,7 @@ fun DateAttachmentPreviewContent(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        CancelIcon(
+        ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(4.dp),

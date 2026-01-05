@@ -57,7 +57,7 @@ import androidx.core.net.toUri
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.TextComponentStyle
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
@@ -134,7 +134,7 @@ public fun ComposerLinkPreview(
                 )
             }
         }
-        CancelIcon(
+        ComposerCancelIcon(
             Modifier
                 .align(Alignment.TopEnd)
                 .offset(x = 4.dp, y = (-4).dp),
