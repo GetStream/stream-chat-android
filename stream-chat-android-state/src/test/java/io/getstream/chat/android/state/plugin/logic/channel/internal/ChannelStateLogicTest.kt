@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
-import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
@@ -58,9 +57,6 @@ import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -71,9 +67,9 @@ import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.mockito.verification.VerificationMode
 import java.util.Date
 
+@Suppress("LargeClass")
 internal class ChannelStateLogicTest {
 
     @BeforeEach
@@ -444,29 +440,46 @@ internal class ChannelStateLogicTest {
         verify(mutableState, times(0)).deleteMessages(any())
     }
 
-    @ParameterizedTest
-    @MethodSource("updateCurrentUserReadArguments")
-    fun `Given a new message from the current user is added, the current user reads does not need to be updated`(
-        initialChannelUserRead: ChannelUserRead,
-        eventDate: Date,
-        newMessage: Message,
-        verificationMode: VerificationMode,
-        expectedChannelUserRead: ChannelUserRead,
-    ) {
-        _read.value = initialChannelUserRead
-
-        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
-
-        verify(mutableState, mode = verificationMode).upsertReads(eq(listOf(expectedChannelUserRead)))
-    }
-
     @Test
-    fun `Given channel is muted, When updateCurrentUserRead is called, Then upsertReads is not called`() {
+    fun `Given message is already processed, When updateCurrentUserRead is called, Then unread count is not updated`() {
         // given
+        val initialUnreadCount = 5
         val initialChannelUserRead = randomChannelUserRead(
             user = user,
             lastReceivedEventDate = Date(10L),
-            unreadMessages = 0,
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // Process the message once
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // when - process the same message again
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then - should only be called once (from the first call)
+        verify(mutableState, times(1)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given channel is muted, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
             lastRead = Date(10L),
             lastReadMessageId = randomString(),
         )
@@ -486,6 +499,276 @@ internal class ChannelStateLogicTest {
         channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
 
         // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is a thread reply not shown in channel, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            parentId = randomString(), // Has parent ID
+            showInChannel = false, // Not shown in channel
+            silent = false,
+            shadowed = false,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is from current user, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = user, // Message from current user
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is from muted user, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val mutedUserId = "mutedUserId"
+        val mutedUser = randomUser(id = mutedUserId)
+        val mute = io.getstream.chat.android.randomMute(target = mutedUser)
+        spyMutableGlobalState.setMutedUsers(listOf(mute))
+
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = mutedUser,
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is shadowed, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            shadowed = true, // Shadow banned message
+            silent = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given message is silent, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = true, // Silent message
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given event is outdated, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(100L), // Current read state is at 100L
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(50L) // Event is older than current read state
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState, times(0)).upsertReads(any())
+    }
+
+    @Test
+    fun `Given regular message from another user, When updateCurrentUserRead is called, Then unread count is incremented`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        val expectedChannelUserRead = initialChannelUserRead.copy(
+            unreadMessages = initialUnreadCount + 1,
+            lastReceivedEventDate = eventDate,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState).upsertReads(eq(listOf(expectedChannelUserRead)))
+    }
+
+    @Test
+    fun `Given thread reply shown in channel from another user, When updateCurrentUserRead is called, Then unread count is incremented`() {
+        // given
+        val initialUnreadCount = 5
+        val initialChannelUserRead = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = initialUnreadCount,
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        )
+        _read.value = initialChannelUserRead
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            parentId = randomString(), // Has parent ID
+            showInChannel = true, // Shown in channel
+            silent = false,
+            shadowed = false,
+        )
+
+        val expectedChannelUserRead = initialChannelUserRead.copy(
+            unreadMessages = initialUnreadCount + 1,
+            lastReceivedEventDate = eventDate,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then
+        verify(mutableState).upsertReads(eq(listOf(expectedChannelUserRead)))
+    }
+
+    @Test
+    fun `Given no current read state exists, When updateCurrentUserRead is called, Then unread count is not updated`() {
+        // given - no current read state
+        _read.value = null
+
+        val eventDate = Date(20L)
+        val newMessage = randomMessage(
+            user = randomUser(id = "anotherUserId"),
+            createdAt = eventDate,
+            silent = false,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        // then - should not crash and should not call upsertReads
         verify(mutableState, times(0)).upsertReads(any())
     }
 
@@ -820,105 +1103,5 @@ internal class ChannelStateLogicTest {
         val testCoroutines = TestCoroutineExtension()
 
         private val user = randomUser()
-
-        @JvmStatic
-        @Suppress("LongMethod")
-        fun updateCurrentUserReadArguments() = randomChannelUserRead(
-            user = user,
-            lastReceivedEventDate = Date(10L),
-            unreadMessages = positiveRandomInt(),
-            lastRead = Date(10L),
-            lastReadMessageId = randomString(),
-        ).let { initialChannelUserRead ->
-            listOf(
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(5L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                    ),
-                    times(0),
-                    initialChannelUserRead,
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = user,
-                        createdAt = Date(20L),
-                    ),
-                    times(0),
-                    initialChannelUserRead,
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                        shadowed = true,
-                    ),
-                    times(0),
-                    initialChannelUserRead,
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                        silent = true,
-                    ),
-                    times(0),
-                    initialChannelUserRead,
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                        parentId = randomString(),
-                        showInChannel = false,
-                    ),
-                    times(0),
-                    initialChannelUserRead,
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                        parentId = randomString(),
-                        showInChannel = true,
-                        shadowed = false,
-                        silent = false,
-                    ),
-                    times(0),
-                    initialChannelUserRead.copy(
-                        unreadMessages = initialChannelUserRead.unreadMessages + 1,
-                        lastReceivedEventDate = Date(20L),
-                    ),
-                ),
-                Arguments.of(
-                    initialChannelUserRead,
-                    Date(20L),
-                    randomMessage(
-                        user = randomUser(id = "anotherUserId"),
-                        createdAt = Date(20L),
-                        silent = false,
-                        shadowed = false,
-                        parentId = null,
-                    ),
-                    times(1),
-                    initialChannelUserRead.copy(
-                        unreadMessages = initialChannelUserRead.unreadMessages + 1,
-                        lastReceivedEventDate = Date(20L),
-                    ),
-                ),
-            )
-        }
     }
 }

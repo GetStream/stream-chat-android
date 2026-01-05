@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ val customMediaAttachmentFactory = MediaAttachmentFactory(
                     .widthIn(10.dp)
                     .padding(2.dp)
                     .background(
-                        color = Color(red = 256, blue = 256, green = 256, alpha = 220),
+                        color = Color(red = 255, blue = 255, green = 255, alpha = 220),
                         shape = RoundedCornerShape(8.dp),
                     )
                     .fillMaxWidth(0.3f)
@@ -55,7 +55,7 @@ val customMediaAttachmentFactory = MediaAttachmentFactory(
                 modifier = Modifier
                     .padding(2.dp)
                     .background(
-                        color = Color(red = 256, blue = 256, green = 256, alpha = 220),
+                        color = Color(red = 255, blue = 255, green = 255, alpha = 220),
                         shape = RoundedCornerShape(8.dp),
                     )
                     .fillMaxWidth(0.35f)
