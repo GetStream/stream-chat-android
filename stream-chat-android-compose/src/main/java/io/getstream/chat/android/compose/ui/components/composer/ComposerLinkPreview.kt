@@ -20,6 +20,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -173,10 +174,12 @@ private fun ComposerLinkPreviewText(text: String?, style: TextComponentStyle, te
 /**
  * Handles clicks on link attachment content.
  *
+ * @param onClick Optional custom click handler.
  * @param context Context needed to start the Activity.
  * @param preview The preview of the link attachment being clicked.
  */
-private fun handleLinkPreviewClick(
+@VisibleForTesting
+internal fun handleLinkPreviewClick(
     onClick: ((linkPreview: LinkPreview) -> Unit)?,
     context: Context,
     preview: LinkPreview,
