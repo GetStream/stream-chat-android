@@ -27,14 +27,13 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupAddUsersDialogFragmentBinding
 import io.getstream.chat.ui.sample.feature.chat.ChatViewModelFactory
-import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment.LoadMoreListener
 
 class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
 

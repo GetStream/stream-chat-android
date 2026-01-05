@@ -109,11 +109,14 @@ dependencies {
     testImplementation(project(":stream-chat-android-client-test"))
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(libs.stream.result)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
     testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.moshi.kotlin)
     testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
@@ -128,6 +131,7 @@ dependencies {
 
     // Instrumentation tests
     androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.junit)
 

@@ -7,8 +7,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.extensions.loadOlderMessages
-import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.client.api.state.loadOlderMessages
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

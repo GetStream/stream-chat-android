@@ -19,8 +19,8 @@ package io.getstream.chat.android.ui.viewmodel.pinned
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import io.getstream.chat.android.client.api.state.Event
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.feature.pinned.PinnedMessageListController
 import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
 import kotlinx.coroutines.flow.map

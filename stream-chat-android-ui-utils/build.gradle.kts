@@ -38,7 +38,6 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
     implementation(project(":stream-chat-android-client"))
-    implementation(project(":stream-chat-android-state"))
 
     implementation(libs.androidx.annotation)
     implementation(libs.kotlinx.coroutines.core)

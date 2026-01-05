@@ -19,10 +19,10 @@ package io.getstream.chat.android.ui.common.feature.threads
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.state.QueryThreadsState
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
-import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

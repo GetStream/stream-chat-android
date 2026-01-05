@@ -136,7 +136,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.android.material)
-    implementation(libs.stream.push.firebase)
     implementation(libs.stream.log)
 
     // Compose
@@ -153,11 +152,14 @@ dependencies {
     implementation(libs.google.accompanist.permissions)
     implementation(libs.coil.compose)
 
-    // Firebase
+    implementation(libs.play.services.location)
+
+    // Firebase - both flavors need it for compilation
+    // demo: real Firebase with actual push notifications
+    // e2e: fake google-services.json, Firebase present but not actively used
+    implementation(libs.stream.push.firebase)
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
-
-    implementation(libs.play.services.location)
 
     // Instrumentation tests
     "e2eImplementation"(libs.okhttp)
