@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.listener.internal
+package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
-import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
-import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
