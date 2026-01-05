@@ -4889,7 +4889,7 @@ internal constructor(
         }
 
         /**
-         * Adds plugins factory to be used by the client.
+         * Sets the plugin factories to be used by the client, in addition to the default ones.
          * @see [PluginFactory]
          *
          * @param pluginFactories The factories to be added.
