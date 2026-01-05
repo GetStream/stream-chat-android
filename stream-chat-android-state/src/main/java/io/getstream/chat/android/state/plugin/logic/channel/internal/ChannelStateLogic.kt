@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -883,6 +883,12 @@ internal class ChannelStateLogic(
         // Skip update for messages from current user
         val isFromCurrentUser = message.user.id == clientState.user.value?.id
         if (isFromCurrentUser) {
+            processedMessageIds.put(message.id, true)
+            return
+        }
+        // Skip update for messages from muted users
+        val isFromMutedUser = globalMutableState.muted.value.any { it.target?.id == message.user.id }
+        if (isFromMutedUser) {
             processedMessageIds.put(message.id, true)
             return
         }

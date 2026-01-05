@@ -42,6 +42,7 @@ android {
 
     lint {
         xmlReport = false
+        disable += "MissingTranslation"
     }
 
     testOptions.unitTests {

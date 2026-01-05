@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -139,6 +139,10 @@ class ChannelsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val globalStateFlow = ChatClient.instance().globalStateFlow
+        val unreadChannelsCountFlow = globalStateFlow.flatMapLatest { it.channelUnreadCount }
+        val unreadThreadsCountFlow = globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+
         /**
          * To use the Compose SDK/Components, simply call [setContent] to provide a Compose UI
          * definition, in which you gain access to all the UI component functions.
@@ -148,11 +152,8 @@ class ChannelsActivity : ComponentActivity() {
          */
         setContent {
             var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
-            val globalStateFlow = ChatClient.instance().globalStateFlow
-            val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
-                .collectAsStateWithLifecycle(0)
-            val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
-                .collectAsStateWithLifecycle(0)
+            val unreadChannelsCount by unreadChannelsCountFlow.collectAsStateWithLifecycle(0)
+            val unreadThreadsCount by unreadThreadsCountFlow.collectAsStateWithLifecycle(0)
 
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
@@ -219,6 +220,7 @@ class ChannelsActivity : ComponentActivity() {
                                             }
                                         },
                                     )
+
                                     AppBottomBarOption.MENTIONS -> MentionsContent()
                                     AppBottomBarOption.THREADS -> ThreadsContent()
                                 }

@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   update-sdk-sizes:
-    uses: GetStream/android-ci-actions/.github/workflows/sdk-size-updates.yml@main
+    uses: GetStream/stream-build-conventions-android/.github/workflows/sdk-size-updates.yml@v0.6.1
     with:
       modules: "stream-chat-android-client stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
