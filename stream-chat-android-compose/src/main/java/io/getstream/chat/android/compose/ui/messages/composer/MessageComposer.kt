@@ -572,6 +572,7 @@ internal fun DefaultComposerLabel(state: MessageComposerState) {
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun RowScope.DefaultComposerInputContent(
     modifier: Modifier,

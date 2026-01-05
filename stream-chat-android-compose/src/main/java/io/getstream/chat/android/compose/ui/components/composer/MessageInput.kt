@@ -48,6 +48,7 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 
@@ -119,19 +120,7 @@ public fun MessageInput(
                     )
                 }
 
-                if (attachments.isNotEmpty() && activeAction !is Edit) {
-                    val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
-
-                    previewFactory?.previewContent?.invoke(
-                        Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        attachments,
-                        onAttachmentRemoved,
-                    )
-
-                    Spacer(modifier = Modifier.size(16.dp))
-                }
+                AttachmentPreview(attachments, activeAction, onAttachmentRemoved)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -152,6 +141,27 @@ public fun MessageInput(
             }
         },
     )
+}
+
+@Composable
+private fun AttachmentPreview(
+    attachments: List<Attachment>,
+    activeAction: MessageAction?,
+    onAttachmentRemoved: (Attachment) -> Unit,
+) {
+    if (attachments.isNotEmpty() && activeAction !is Edit) {
+        val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
+
+        previewFactory?.previewContent?.invoke(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            attachments,
+            onAttachmentRemoved,
+        )
+
+        Spacer(modifier = Modifier.size(16.dp))
+    }
 }
 
 /**
