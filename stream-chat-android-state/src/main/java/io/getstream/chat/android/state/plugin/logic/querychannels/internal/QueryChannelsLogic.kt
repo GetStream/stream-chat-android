@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -57,14 +57,16 @@ internal class QueryChannelsLogic(
         val hasOffset = pagination.channelOffset > 0
         loadingPerPage(true, hasOffset)
 
-        queryChannelsDatabaseLogic.let { dbLogic ->
-            fetchChannelsFromCache(pagination, dbLogic)
-                .also { channels ->
-                    if (channels.isNotEmpty()) {
-                        addChannels(channels)
-                        loadingPerPage(false, hasOffset)
-                    }
-                }
+        val offlineChannels = fetchChannelsFromCache(pagination, queryChannelsDatabaseLogic)
+        when {
+            offlineChannels == null -> {
+                // No cached spec found, rely on online data. Don't reset loading state here, and await online data.
+            }
+            else -> {
+                // Channels for the spec found (0 or more). Optimistic update and reset loading state.
+                addChannels(offlineChannels)
+                loadingPerPage(false, hasOffset)
+            }
         }
     }
 
@@ -89,11 +91,19 @@ internal class QueryChannelsLogic(
     private suspend fun fetchChannelsFromCache(
         pagination: AnyChannelPaginationRequest,
         queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
-    ): List<Channel> {
+    ): List<Channel>? {
         val queryChannelsSpec = queryChannelsStateLogic.getQuerySpecs()
 
-        return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec)
-            .also { logger.i { "[fetchChannelsFromCache] found ${it.size} channels in offline storage" } }
+        return queryChannelsDatabaseLogic.fetchChannelsFromCache(pagination, queryChannelsSpec).also {
+            logger.i {
+                val message = if (it == null) {
+                    "no channels found in the local storage"
+                } else {
+                    "${it.size} channels found in the local storage"
+                }
+                "[fetchChannelsFromCache] $message"
+            }
+        }
     }
 
     /**
@@ -119,9 +129,6 @@ internal class QueryChannelsLogic(
     }
 
     private suspend fun addChannels(channels: List<Channel>) {
-        var cids = queryChannelsStateLogic.getQuerySpecs().cids
-        cids += channels.map { it.cid }
-
         queryChannelsStateLogic.addChannelsState(channels)
         queryChannelsStateLogic.getQuerySpecs().let { specs ->
             queryChannelsDatabaseLogic.insertQueryChannels(specs)
@@ -294,16 +301,6 @@ internal class QueryChannelsLogic(
      */
     internal fun refreshAllChannelsState() {
         queryChannelsStateLogic.getQuerySpecs().cids.let(::refreshChannelsState)
-    }
-
-    internal suspend fun parseChatEventResult(chatEvent: ChatEvent): EventHandlingResult {
-        val cachedChannel = if (chatEvent is CidEvent) {
-            queryChannelsDatabaseLogic.selectChannel(chatEvent.cid)
-        } else {
-            null
-        }
-
-        return queryChannelsStateLogic.handleChatEvent(chatEvent, cachedChannel)
     }
 
     internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {
