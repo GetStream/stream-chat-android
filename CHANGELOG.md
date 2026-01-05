@@ -34,9 +34,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix thread replies updating channel unread count. [#6056](https://github.com/GetStream/stream-chat-android/pull/6056)
-- Fix messages from muted users increasing channel unread count. [#6061](https://github.com/GetStream/stream-chat-android/pull/6061)
-- Fix showing channels loading state when querying offline and no matching channels are found in the DB. [#6051](https://github.com/GetStream/stream-chat-android/pull/6051)
 
 ### ⬆️ Improved
 
@@ -72,7 +69,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Address some Lint findings [#6058](https://github.com/GetStream/stream-chat-android/pull/6058)
 
 ### ✅ Added
 
@@ -90,6 +86,18 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 02th, 2026 - 6.30.2
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix thread replies updating channel unread count. [#6056](https://github.com/GetStream/stream-chat-android/pull/6056)
+- Fix messages from muted users increasing channel unread count. [#6061](https://github.com/GetStream/stream-chat-android/pull/6061)
+- Fix showing channels loading state when querying offline and no matching channels are found in the DB. [#6051](https://github.com/GetStream/stream-chat-android/pull/6051)
+- Fix Giphy message not appearing in channel after sending it. [#6065](https://github.com/GetStream/stream-chat-android/pull/6065)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Address some Lint findings [#6058](https://github.com/GetStream/stream-chat-android/pull/6058)
 
 # December 22th, 2025 - 6.30.1
 ## stream-chat-android-client
