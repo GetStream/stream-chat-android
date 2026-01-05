@@ -29,9 +29,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.RemoteUserLookupHandler

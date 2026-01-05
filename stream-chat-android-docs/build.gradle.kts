@@ -78,7 +78,6 @@ repositories {
 
 dependencies {
     implementation(project(":stream-chat-android-offline"))
-    implementation(project(":stream-chat-android-state"))
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-compose"))
     implementation(project(":stream-chat-android-markdown-transformer"))

@@ -13,7 +13,6 @@ stream-chat-android-offline                 @GetStream/android-developers
 stream-chat-android-pushprovider-firebase   @GetStream/android-developers
 stream-chat-android-pushprovider-huawei     @GetStream/android-developers
 stream-chat-android-pushprovider-xiaomi     @GetStream/android-developers
-stream-chat-android-state                   @GetStream/android-developers
 stream-chat-android-test                    @GetStream/android-developers
 
 # UI

@@ -31,9 +31,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView

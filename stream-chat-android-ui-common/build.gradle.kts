@@ -54,7 +54,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    api(project(":stream-chat-android-state"))
+    api(project(":stream-chat-android-client"))
     implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.stream.log)
