@@ -265,7 +265,7 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
-                state.mutableChannel(channelType = channelType, channelId = channelId).run {
+                logic.channel(channelType = channelType, channelId = channelId).run {
                     setRepliedMessage(message)
                 }
                 Result.Success(Unit)
@@ -334,7 +334,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId)
-                    .loadOlderMessages(messageLimit = messageLimit)
+                    .loadBefore(messageId = null, limit = messageLimit)
             }
             is Result.Failure -> cidValidationResult
         }
@@ -355,7 +355,7 @@ public fun ChatClient.loadNewerMessages(
             is Result.Success -> {
                 val (channelType, channelId) = channelCid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId)
-                    .loadNewerMessages(messageId = baseMessageId, limit = messageLimit)
+                    .loadAfter(messageId = baseMessageId, limit = messageLimit)
             }
             is Result.Failure -> cidValidationResult
         }
@@ -380,7 +380,7 @@ public fun ChatClient.loadMessagesAroundId(
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId)
-                    .loadMessagesAroundId(messageId)
+                    .loadAround(messageId)
             }
             is Result.Failure -> cidValidationResult
         }
@@ -475,7 +475,7 @@ private suspend fun ChatClient.loadMessageByIdInternal(
 
     val (channelType, channelId) = cid.cidToTypeAndId()
     val result = logic.channel(channelType = channelType, channelId = channelId)
-        .loadMessagesAroundId(messageId)
+        .loadAround(messageId)
 
     return when (result) {
         is Result.Success -> {

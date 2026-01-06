@@ -45,7 +45,7 @@ internal class EditMessageListenerState(
         val isOnline = clientState.isNetworkAvailable
         val messageToEdit = message.updateMessageOnlineState(isOnline)
 
-        logic.channelFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
+        logic.channelFromMessage(messageToEdit)?.upsertMessage(messageToEdit)
         logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(messageToEdit) }
         logic.threadFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
     }
@@ -62,7 +62,7 @@ internal class EditMessageListenerState(
             is Result.Failure -> originalMessage.updateFailedMessage(result.value)
         }
 
-        logic.channelFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
+        logic.channelFromMessage(parsedMessage)?.upsertMessage(parsedMessage)
         logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(parsedMessage) }
         logic.threadFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
     }

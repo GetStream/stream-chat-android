@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
@@ -295,12 +295,12 @@ internal class WhenUploadAttachmentsTests {
         private val channelId = "channelId"
         private var uploader: AttachmentUploader = mock()
         private var messageRepository: MessageRepository = mock()
-        private val channelMutableState: ChannelMutableState = mock()
+        private val channelStateLegacyImpl: ChannelStateLegacyImpl = mock()
 
         private val channelStateLogic: ChannelStateLogic =
             mock {
-                on(it.writeChannelState()) doReturn channelMutableState
-                on(it.listenForChannelState()) doReturn channelMutableState
+                on(it.writeChannelState()) doReturn channelStateLegacyImpl
+                on(it.channelState()) doReturn channelStateLegacyImpl
             }
 
         private val chatClient = mock<ChatClient> {

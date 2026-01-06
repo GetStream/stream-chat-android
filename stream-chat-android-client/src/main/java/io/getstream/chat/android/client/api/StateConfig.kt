@@ -75,6 +75,11 @@ import io.getstream.chat.android.models.TimeDuration
  * exceeds the configured limit (plus a buffer), older messages are automatically trimmed from the in-memory state.
  * By default, no limits are applied, meaning all messages are kept in memory. See [MessageLimitConfig] and
  * [ChannelMessageLimit] for configuration details.
+ *
+ * @param useLegacyChannelLogic When set to true, the SDK uses the legacy channel state management logic for
+ * handling channel updates and events. This may be necessary for compatibility with existing implementations.
+ * When set to false, the SDK employs the new channel state management logic, which includes optimizations and
+ * performance improvements. Default is true.
  */
 public data class StateConfig @JvmOverloads constructor(
     @Deprecated(
@@ -89,6 +94,7 @@ public data class StateConfig @JvmOverloads constructor(
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(hours = 12),
     public val now: () -> Long = { System.currentTimeMillis() },
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
+    public val useLegacyChannelLogic: Boolean = true,
 )
 
 /**

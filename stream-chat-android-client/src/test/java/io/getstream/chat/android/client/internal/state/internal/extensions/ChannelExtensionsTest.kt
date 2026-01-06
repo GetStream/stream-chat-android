@@ -88,6 +88,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val secondChannel = randomChannel(
             messages = listOf(
@@ -97,6 +98,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val thirdChannel = randomChannel(
             messages = listOf(
@@ -106,6 +108,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val sort = QuerySortByField.descByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
@@ -136,6 +139,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val secondChannel = randomChannel(
             messages = listOf(
@@ -145,6 +149,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val thirdChannel = randomChannel(
             messages = listOf(
@@ -154,6 +159,7 @@ internal class ChannelExtensionsTest {
                     parentId = null,
                 ),
             ),
+            isInsideSearch = false,
         )
         val sort = QuerySortByField.ascByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(

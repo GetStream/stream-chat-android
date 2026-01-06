@@ -40,15 +40,15 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @ExperimentalCoroutinesApi
-internal class ChannelMutableStateTests {
+internal class ChannelStateLegacyImplTest {
 
     private val userFlow = MutableStateFlow(currentUser)
 
-    private lateinit var channelState: ChannelMutableState
+    private lateinit var channelState: ChannelStateLegacyImpl
 
     @BeforeEach
     fun setUp() {
-        channelState = ChannelMutableState(
+        channelState = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
@@ -59,7 +59,7 @@ internal class ChannelMutableStateTests {
                 emptyList(),
             ),
             baseMessageLimit = null,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
     }
 
@@ -135,14 +135,14 @@ internal class ChannelMutableStateTests {
     @Test
     fun `setLoadingOlderMessages when messageLimit is null should not change the limit`() = runTest {
         // given
-        val channelStateWithoutLimit = ChannelMutableState(
+        val channelStateWithoutLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = null,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
         val initialMessages = createMessages(10)
         channelStateWithoutLimit.setMessages(initialMessages)
@@ -164,14 +164,14 @@ internal class ChannelMutableStateTests {
         runTest {
             // given
             val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
+            val channelStateWithLimit = ChannelStateLegacyImpl(
                 channelType = CHANNEL_TYPE,
                 channelId = CHANNEL_ID,
                 userFlow = userFlow,
                 latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
                 activeLiveLocations = MutableStateFlow(emptyList()),
                 baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
+                now = ChannelStateLegacyImplTest::currentTime,
             )
             // Set messages count below limit + TRIM_BUFFER (100 + 30 = 130)
             val initialMessages = createMessages(50)
@@ -197,14 +197,14 @@ internal class ChannelMutableStateTests {
         runTest {
             // given
             val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
+            val channelStateWithLimit = ChannelStateLegacyImpl(
                 channelType = CHANNEL_TYPE,
                 channelId = CHANNEL_ID,
                 userFlow = userFlow,
                 latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
                 activeLiveLocations = MutableStateFlow(emptyList()),
                 baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
+                now = ChannelStateLegacyImplTest::currentTime,
             )
             // Set messages count at limit + TRIM_BUFFER (100 + 30 = 130)
             val initialMessages = createMessages(130)
@@ -229,14 +229,14 @@ internal class ChannelMutableStateTests {
     fun `setLoadingOlderMessages when isLoading is false should not affect message limit`() = runTest {
         // given
         val baseLimit = 100
-        val channelStateWithLimit = ChannelMutableState(
+        val channelStateWithLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = baseLimit,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
         val initialMessages = createMessages(130) // At limit + buffer
         channelStateWithLimit.setMessages(initialMessages)
@@ -256,14 +256,14 @@ internal class ChannelMutableStateTests {
     @Test
     fun `applyMessageLimitIfNeeded when messageLimit is null should return all messages`() = runTest {
         // given
-        val channelStateWithoutLimit = ChannelMutableState(
+        val channelStateWithoutLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = null,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
         val messages = createMessages(200)
 
@@ -278,14 +278,14 @@ internal class ChannelMutableStateTests {
     fun `applyMessageLimitIfNeeded when loading older messages should return all messages`() = runTest {
         // given
         val baseLimit = 50
-        val channelStateWithLimit = ChannelMutableState(
+        val channelStateWithLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = baseLimit,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
         val messages = createMessages(100) // More than limit
 
@@ -303,14 +303,14 @@ internal class ChannelMutableStateTests {
         runTest {
             // given
             val baseLimit = 100
-            val channelStateWithLimit = ChannelMutableState(
+            val channelStateWithLimit = ChannelStateLegacyImpl(
                 channelType = CHANNEL_TYPE,
                 channelId = CHANNEL_ID,
                 userFlow = userFlow,
                 latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
                 activeLiveLocations = MutableStateFlow(emptyList()),
                 baseMessageLimit = baseLimit,
-                now = ChannelMutableStateTests::currentTime,
+                now = ChannelStateLegacyImplTest::currentTime,
             )
             // Create messages below limit + TRIM_BUFFER (100 + 30 = 130)
             val messages = createMessages(120)
@@ -326,14 +326,14 @@ internal class ChannelMutableStateTests {
     fun `applyMessageLimitIfNeeded when message count exceeds limit plus buffer should trim messages`() = runTest {
         // given
         val baseLimit = 50
-        val channelStateWithLimit = ChannelMutableState(
+        val channelStateWithLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = baseLimit,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
         // Create messages exceeding limit + TRIM_BUFFER (50 + 30 = 80)
         val messages = createMessages(100)
@@ -358,14 +358,14 @@ internal class ChannelMutableStateTests {
     fun `applyMessageLimitIfNeeded should keep most recent messages when trimming`() = runTest {
         // given
         val baseLimit = 30
-        val channelStateWithLimit = ChannelMutableState(
+        val channelStateWithLimit = ChannelStateLegacyImpl(
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             userFlow = userFlow,
             latestUsers = MutableStateFlow(mapOf(currentUser.id to currentUser)),
             activeLiveLocations = MutableStateFlow(emptyList()),
             baseMessageLimit = baseLimit,
-            now = ChannelMutableStateTests::currentTime,
+            now = ChannelStateLegacyImplTest::currentTime,
         )
 
         // Create messages with different timestamps to verify correct ordering
@@ -734,7 +734,7 @@ internal class ChannelMutableStateTests {
         assertEquals(delivered, userRead)
     }
 
-    private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
+    private fun ChannelStateLegacyImpl.assertPinnedMessagesSizeEqualsTo(size: Int) {
         require(pinnedMessages.value.size == size) {
             "pinnedMessages should have $size items, but was ${pinnedMessages.value.size}"
         }
@@ -771,7 +771,7 @@ internal class ChannelMutableStateTests {
         }
     }
 
-    companion object {
+    companion object Companion {
         @JvmField
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()

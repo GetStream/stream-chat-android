@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.channel
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
 
-import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.client.events.ChatEvent
 
-@InternalStreamChatApi
-public interface ChannelMessagesUpdateLogic {
+/**
+ * Handles channel-related events.
+ */
+internal interface ChannelEventHandler {
 
-    public fun upsertMessage(message: Message)
-
-    public fun channelState(): ChannelState
-
-    public fun setRepliedMessage(repliedMessage: Message?)
+    /**
+     * Handles the given [event].
+     */
+    fun handle(event: ChatEvent)
 }

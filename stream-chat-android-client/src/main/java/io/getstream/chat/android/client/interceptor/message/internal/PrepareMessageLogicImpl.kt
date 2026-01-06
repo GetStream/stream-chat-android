@@ -81,14 +81,14 @@ internal class PrepareMessageLogicImpl(
             }
             .let { copiedMessage ->
                 channel
-                    ?.listenForChannelState()
+                    ?.channelState()
                     ?.toChannel()
                     ?.let(copiedMessage::populateMentions)
                     ?: copiedMessage
             }
             .also { preparedMessage ->
                 if (preparedMessage.replyMessageId != null) {
-                    channel?.replyMessage(null)
+                    channel?.setRepliedMessage(null)
                 }
             }
     }

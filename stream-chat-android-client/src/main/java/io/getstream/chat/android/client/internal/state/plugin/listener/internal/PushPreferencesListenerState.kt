@@ -49,10 +49,6 @@ internal class PushPreferencesListenerState(private val logic: LogicRegistry) : 
 
     private fun updateChannelPushPreference(cid: String, pushPreference: PushPreference) {
         val (type, id) = cid.cidToTypeAndId()
-        logic.channel(type, id)
-            .stateLogic()
-            .updateChannelData { data ->
-                data?.copy(pushPreference = pushPreference)
-            }
+        logic.channel(type, id).setPushPreference(pushPreference)
     }
 }

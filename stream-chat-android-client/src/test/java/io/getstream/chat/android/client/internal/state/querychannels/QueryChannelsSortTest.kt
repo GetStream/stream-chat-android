@@ -77,6 +77,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -92,6 +93,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -107,6 +109,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -122,10 +125,12 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
         )
 
+        @Suppress("LongMethod")
         @JvmStatic
         fun lastMessageAtSortArguments() = listOf(
             sortArguments(
@@ -140,6 +145,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -154,6 +160,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -168,6 +175,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -182,6 +190,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
         )
@@ -202,6 +211,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -217,6 +227,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -232,6 +243,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -247,6 +259,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
         )
@@ -267,6 +280,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -282,6 +296,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -297,6 +312,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
             sortArguments(
@@ -312,6 +328,7 @@ internal class QueryChannelsSortTest {
                             parentId = null,
                         ),
                     ),
+                    isInsideSearch = false,
                 )
             },
         )
