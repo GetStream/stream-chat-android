@@ -2522,7 +2522,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val messageWithId = message.ensureId(getCurrentUser() ?: getStoredUser())
+        val messageWithId = message.ensureId()
         return CoroutineCall(userScope) {
             messageWithId.ensureCreatedLocallyAt(cid = "$channelType:$channelId")
                 .let { messageWithLocalDate ->
@@ -2573,7 +2573,7 @@ internal constructor(
         channelId: String,
         message: DraftMessage,
     ): Call<DraftMessage> {
-        return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
+        return message.ensureId().let { processedDraftMessage ->
             api.createDraftMessage(channelType, channelId, processedDraftMessage)
                 .retry(userScope, retryPolicy)
                 .doOnResult(userScope) { result ->
