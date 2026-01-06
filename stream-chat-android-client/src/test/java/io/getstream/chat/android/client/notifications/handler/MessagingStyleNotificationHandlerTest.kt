@@ -113,6 +113,7 @@ internal class MessagingStyleNotificationHandlerTest {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             onNewPushMessage = mockOnPushMessage,
+            notificationIdFactory = null,
         )
     }
 

@@ -54,6 +54,7 @@ internal class MessagingStyleNotificationHandler(
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
     private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
+    private val notificationIdFactory: NotificationIdFactory?,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -79,6 +80,7 @@ internal class MessagingStyleNotificationHandler(
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
+            notificationIdFactory = notificationIdFactory,
         )
     }
 

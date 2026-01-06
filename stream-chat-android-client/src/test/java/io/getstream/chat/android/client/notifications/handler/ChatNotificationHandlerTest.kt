@@ -41,6 +41,7 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
@@ -103,6 +104,7 @@ internal class ChatNotificationHandlerTest {
             notificationBuilderTransformer = notificationBuilderTransformer,
             currentUserProvider = currentUserProvider,
             onNewPushMessage = mockOnPushMessage,
+            notificationIdFactory = null,
         )
     }
 
@@ -192,5 +194,76 @@ internal class ChatNotificationHandlerTest {
 
         // Then
         assertEquals(handled, actual)
+    }
+
+    @Test
+    fun `createNotificationId should use default logic when factory is null`() {
+        // Given
+        val notification = ChatNotification.MessageNew(testChannel, testMessage)
+
+        // When
+        chatNotificationHandler.showNotification(notification)
+
+        // Then
+        // Verify that NotificationManager.notify was called (with default-generated ID)
+        // We can't verify the exact ID since it's time-based, but we can verify it was called
+        verify(mockNotificationManager, times(2)).notify(any<Int>(), any<Notification>())
+    }
+
+    @Test
+    fun `createNotificationId should use default logic when factory returns null`() {
+        // Given
+        val factoryReturningNull = NotificationIdFactory { _ -> null }
+        val handlerWithNullFactory = ChatNotificationHandler(
+            context = spy(context) {
+                on { getSharedPreferences(any(), any()) } doReturn mockSharedPreferences
+                on { getSystemService(Context.NOTIFICATION_SERVICE) } doReturn mockNotificationManager
+            },
+            newMessageIntent = newMessageIntent,
+            notificationChannel = notificationChannel,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
+            currentUserProvider = currentUserProvider,
+            onNewPushMessage = mockOnPushMessage,
+            notificationIdFactory = factoryReturningNull,
+        )
+        val notification = ChatNotification.MessageNew(testChannel, testMessage)
+
+        // When
+        handlerWithNullFactory.showNotification(notification)
+
+        // Then
+        // Verify that NotificationManager.notify was called (with default-generated ID)
+        verify(mockNotificationManager, times(2)).notify(any<Int>(), any<Notification>())
+    }
+
+    @Test
+    fun `createNotificationId should use custom factory when provided and returns non-null`() {
+        // Given
+        val customNotificationId = 12345
+        val customFactory = NotificationIdFactory { _ -> customNotificationId }
+        val handlerWithFactory = ChatNotificationHandler(
+            context = spy(context) {
+                on { getSharedPreferences(any(), any()) } doReturn mockSharedPreferences
+                on { getSystemService(Context.NOTIFICATION_SERVICE) } doReturn mockNotificationManager
+            },
+            newMessageIntent = newMessageIntent,
+            notificationChannel = notificationChannel,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
+            currentUserProvider = currentUserProvider,
+            onNewPushMessage = mockOnPushMessage,
+            notificationIdFactory = customFactory,
+        )
+        val notification = ChatNotification.MessageNew(testChannel, testMessage)
+
+        // When
+        handlerWithFactory.showNotification(notification)
+
+        // Then
+        // Verify that the notification was shown with the custom ID
+        verify(mockNotificationManager).notify(eq(customNotificationId), any<Notification>())
     }
 }

@@ -71,6 +71,7 @@ internal class MessagingStyleNotificationFactoryTest {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             currentUserProvider = currentUserProvider,
+            notificationIdFactory = null,
         )
     }
 
@@ -210,4 +211,75 @@ internal class MessagingStyleNotificationFactoryTest {
             // Then
             assertNotNull(result)
         }
+
+    @Test
+    fun `createNotificationId should use default logic when factory is null`() {
+        // Given
+        val channel = randomChannel(type = "messaging", id = "channel123")
+        val message = randomMessage()
+        val notification = ChatNotification.MessageNew(channel, message)
+
+        // When
+        val notificationId = factory.createNotificationId(notification)
+
+        // Then
+        val expectedId = "messaging:channel123".hashCode()
+        assertEquals(expectedId, notificationId)
+    }
+
+    @Test
+    fun `createNotificationId should use default logic when factory returns null`() {
+        // Given
+        val factoryReturningNull = NotificationIdFactory { _ -> null }
+        val factoryWithNullFactory = MessagingStyleNotificationFactory(
+            context = context,
+            notificationManager = notificationManager,
+            notificationChannelId = notificationChannelId,
+            userIconBuilder = userIconBuilder,
+            newMessageIntent = newMessageIntent,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
+            notificationIdFactory = factoryReturningNull,
+            currentUserProvider = currentUserProvider,
+        )
+        val channel = randomChannel(type = "messaging", id = "channel123")
+        val message = randomMessage()
+        val notification = ChatNotification.MessageNew(channel, message)
+
+        // When
+        val notificationId = factoryWithNullFactory.createNotificationId(notification)
+
+        // Then
+        val expectedId = "messaging:channel123".hashCode()
+        assertEquals(expectedId, notificationId)
+    }
+
+    @Test
+    fun `createNotificationId should use custom factory when provided and returns non-null`() {
+        // Given
+        val customNotificationId = 54321
+        val customFactory = NotificationIdFactory { _ -> customNotificationId }
+        val factoryWithCustomId = MessagingStyleNotificationFactory(
+            context = context,
+            notificationManager = notificationManager,
+            notificationChannelId = notificationChannelId,
+            userIconBuilder = userIconBuilder,
+            newMessageIntent = newMessageIntent,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
+            notificationIdFactory = customFactory,
+            currentUserProvider = currentUserProvider,
+        )
+        val channel = randomChannel(type = "messaging", id = "channel123")
+        val message = randomMessage()
+        val notification = ChatNotification.MessageNew(channel, message)
+
+        // When
+        val notificationId = factoryWithCustomId.createNotificationId(notification)
+
+        // Then
+        assertEquals(customNotificationId, notificationId)
+    }
 }
