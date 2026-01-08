@@ -537,7 +537,6 @@ internal class ChannelStateLegacyImpl(
     fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
-
     fun upsertUserPresence(user: User) {
         logger.d { "[upsertUserPresence] user.id: ${user.id}" }
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }

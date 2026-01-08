@@ -36,6 +36,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -554,33 +555,35 @@ internal class MessageUtilsTest {
     fun `ensureId should return message with existing id`() {
         val messageId = randomString()
         val message = randomMessage(id = messageId)
-        val result = message.ensureId(randomUser())
-        result.id shouldBeEqualTo messageId
+        val messageWithId = message.ensureId()
+        Assertions.assertEquals(messageId, messageWithId.id)
     }
 
     @Test
     fun `ensureId should generate id for message without id`() {
-        val userId = randomString()
-        val user = randomUser(id = userId)
         val message = randomMessage(id = "")
-        val result = message.ensureId(user)
-        result.id.startsWith(userId) shouldBeEqualTo true
+        val messageWithId = message.ensureId()
+        Assertions.assertTrue(UuidRegex.matches(messageWithId.id))
     }
 
     @Test
     fun `ensureId should return draft message with existing id`() {
         val draftId = randomString()
-        val draftMessage = randomDraftMessage(id = draftId)
-        val result = draftMessage.ensureId(null)
-        result.id shouldBeEqualTo draftId
+        val draft = randomDraftMessage(id = draftId)
+        val draftWithId = draft.ensureId()
+        Assertions.assertEquals(draftId, draftWithId.id)
     }
 
     @Test
     fun `ensureId should generate id for draft message without id`() {
-        val userId = randomString()
-        val user = User(id = userId)
-        val draftMessage = randomDraftMessage(id = "")
-        val result = draftMessage.ensureId(user)
-        result.id.startsWith(userId) shouldBeEqualTo true
+        val draft = randomDraftMessage(id = "")
+        val draftWithId = draft.ensureId()
+        Assertions.assertTrue(UuidRegex.matches(draftWithId.id))
+    }
+
+    private companion object {
+
+        // Regex matching lowercase UUID format
+        private val UuidRegex = "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$".toRegex()
     }
 }

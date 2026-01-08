@@ -29,7 +29,6 @@ import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import java.util.UUID
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
@@ -207,23 +206,21 @@ public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(c
 
 /**
  * Ensures the message has an id.
- * If the message doesn't have an id, a unique message id is generated.
+ * If the message doesn't have an id, a unique message id is generated (lowercase UUID).
  * @return the message with an id.
  */
-internal fun Message.ensureId(currentUser: User?): Message =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun Message.ensureId(): Message =
+    copy(id = id.takeIf { it.isNotBlank() } ?: fallbackMessageId())
 
 /**
  * Ensures the draft message has an id.
- * If the draft message doesn't have an id, a unique message id is generated.
+ * If the draft message doesn't have an id, a unique message id is generated (lowercase UUID).
  * @return the draft message with an id.
  */
-internal fun DraftMessage.ensureId(currentUser: User?): DraftMessage =
-    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+internal fun DraftMessage.ensureId(): DraftMessage =
+    copy(id = id.takeIf { it.isNotBlank() } ?: fallbackMessageId())
 
 /**
- * Returns a unique message id prefixed with user id.
+ * Generates a fallback message id (lowercase UUID).
  */
-private fun generateMessageId(user: User?): String {
-    return "${user?.id}-${UUID.randomUUID()}"
-}
+internal fun fallbackMessageId(): String = UUID.randomUUID().toString().lowercase()

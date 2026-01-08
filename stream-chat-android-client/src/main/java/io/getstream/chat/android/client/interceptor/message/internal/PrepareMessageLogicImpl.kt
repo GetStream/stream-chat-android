@@ -63,7 +63,7 @@ internal class PrepareMessageLogicImpl(
                 )
             }
         }
-        return message.ensureId(user).copy(
+        return message.ensureId().copy(
             user = user,
             attachments = attachments,
             type = getMessageType(message),

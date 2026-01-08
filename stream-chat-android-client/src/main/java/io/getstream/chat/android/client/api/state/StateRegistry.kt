@@ -54,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param useLegacyChannelState Whether to use the legacy channel state implementation.
  */
 @Suppress("LongParameterList")
-public class StateRegistry constructor(
+public class StateRegistry(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
     private val mutedUsers: StateFlow<List<Mute>>,
