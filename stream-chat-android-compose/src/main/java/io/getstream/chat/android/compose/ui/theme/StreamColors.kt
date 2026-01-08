@@ -114,6 +114,32 @@ public data class StreamColors(
     public val ownMessageQuotedText: Color = textHighEmphasis,
     @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
     public val otherMessageQuotedText: Color = textHighEmphasis,
+
+    public val accentError: Color,
+    public val accentPrimary: Color,
+    public val borderCoreSurfaceSubtle: Color,
+    public val borderCorePrimary: Color,
+    public val textPrimary: Color,
+    public val stateBgDisabled: Color,
+    public val stateTextDisabled: Color,
+
+    public val buttonStyleGhostBg: Color,
+    public val buttonStyleGhostBorder: Color,
+    public val buttonStyleGhostTextPrimary: Color = accentPrimary,
+    public val buttonStyleGhostTextSecondary: Color = textPrimary,
+    public val buttonStyleOutlineBg: Color,
+    public val buttonStyleOutlineBorder: Color = borderCoreSurfaceSubtle,
+    public val buttonStyleOutlineText: Color = textPrimary,
+    public val buttonTypeDestructiveBg: Color = accentError,
+    public val buttonTypeDestructiveBorder: Color = accentError,
+    public val buttonTypeDestructiveText: Color,
+    public val buttonTypeDestructiveTextInverse: Color = accentError,
+    public val buttonTypePrimaryBg: Color = accentPrimary,
+    public val buttonTypePrimaryBgDisabled: Color = stateBgDisabled,
+    public val buttonTypePrimaryBorder: Color = borderCorePrimary,
+    public val buttonTypePrimaryText: Color,
+    public val buttonTypePrimaryTextDisabled: Color = stateTextDisabled,
+    public val buttonTypeSecondaryTextDisabled: Color = stateTextDisabled,
 ) {
 
     public companion object {
@@ -155,6 +181,19 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
+
+            accentError = StreamPrimitiveColors.red500,
+            accentPrimary = StreamPrimitiveColors.blue500,
+            borderCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
+            borderCorePrimary = StreamPrimitiveColors.blue600,
+            textPrimary = StreamPrimitiveColors.slate900,
+            stateBgDisabled = StreamPrimitiveColors.slate200,
+            stateTextDisabled = StreamPrimitiveColors.slate400,
+            buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
+            buttonStyleGhostBorder = StreamPrimitiveColors.baseTransparent,
+            buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
+            buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
+            buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
         )
 
         /**
@@ -195,6 +234,46 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
+
+            accentError = StreamPrimitiveColors.red400,
+            accentPrimary = StreamPrimitiveColors.blue400,
+            borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral700,
+            borderCorePrimary = StreamPrimitiveColors.blue300,
+            textPrimary = StreamPrimitiveColors.neutral50,
+            stateBgDisabled = StreamPrimitiveColors.slate800,
+            stateTextDisabled = StreamPrimitiveColors.slate600,
+            buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
+            buttonStyleGhostBorder = StreamPrimitiveColors.baseTransparent,
+            buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
+            buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
+            buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
         )
     }
+}
+
+@Suppress("MagicNumber")
+internal object StreamPrimitiveColors {
+    val baseBlack = Color(0xFF000000)
+    val baseWhite = Color(0xFFFFFFFF)
+    val baseTransparent = Color(0x00000000)
+    val blue100 = Color(0xFFD2E3FF)
+    val blue200 = Color(0xFFA6C4FF)
+    val blue300 = Color(0xFF7AA7FF)
+    val blue400 = Color(0xFF4E8BFF)
+    val blue500 = Color(0xFF005FFF)
+    val blue600 = Color(0xFF0052CE)
+    val blue700 = Color(0xFF0042A3)
+    val blue800 = Color(0xFF003179)
+    val neutral50 = Color(0xFFF7F7F7)
+    val neutral500 = Color(0xFF7F7F7F)
+    val neutral700 = Color(0xFF4A4A4A)
+    val neutral800 = Color(0xFF383838)
+    val red400 = Color(0xFFE6756C)
+    val red500 = Color(0xFFD92F26)
+    val slate100 = Color(0xFFF2F4F6)
+    val slate200 = Color(0xFFE2E6EA)
+    val slate400 = Color(0xFFB8BEC4)
+    val slate600 = Color(0xFF838990)
+    val slate800 = Color(0xFF50565D)
+    val slate900 = Color(0xFF1E252B)
 }
