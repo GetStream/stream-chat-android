@@ -20,9 +20,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,29 +43,18 @@ public fun ComposerCancelIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val style = ChatTheme.messageComposerTheme.attachmentCancelIcon
+    val colors = ChatTheme.colors
+
     Icon(
         modifier = modifier
-            .then(
-                if (style.border != null) {
-                    Modifier.border(style.border, style.backgroundShape)
-                } else {
-                    Modifier
-                },
-            )
+            .border(2.dp, colors.controlRemoveBorder, CircleShape)
             .padding(2.dp)
-            .background(
-                shape = style.backgroundShape,
-                color = style.backgroundColor,
-            )
+            .background(color = colors.controlRemoveBg, shape = CircleShape)
             .size(20.dp)
-            .clickable(
-                bounded = false,
-                onClick = onClick,
-            ),
-        painter = style.painter,
-        contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = style.tint,
+            .clickable(bounded = false, onClick = onClick),
+        painter = painterResource(R.drawable.stream_compose_ic_cross),
+        contentDescription = stringResource(R.string.stream_compose_cancel),
+        tint = colors.controlRemoveIcon,
     )
 }
 

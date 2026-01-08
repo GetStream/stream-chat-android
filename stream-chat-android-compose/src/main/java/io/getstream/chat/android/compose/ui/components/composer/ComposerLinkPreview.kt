@@ -30,11 +30,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -51,6 +50,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -59,7 +60,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.TextComponentStyle
+import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
@@ -95,7 +96,9 @@ public fun ComposerLinkPreview(
 
     val context = LocalContext.current
     val attachment = linkPreview.attachment
-    val theme = ChatTheme.messageComposerTheme.linkPreview
+    val colors = ChatTheme.colors
+    val typography = ChatTheme.typography
+    val textColor = colors.textHighEmphasis
 
     Box {
         Row(
@@ -105,11 +108,12 @@ public fun ComposerLinkPreview(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = { handleLinkPreviewClick(onClick, context, linkPreview) },
                 )
-                .background(theme.background, theme.shape)
+                .background(colors.chatBgOutgoing, ChatTheme.shapes.attachment)
+                // TODO [G.] point to spacings
                 .padding(start = 8.dp, end = 16.dp, top = 8.dp, bottom = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            ComposerLinkImagePreview(attachment)
+            ComposerLinkImagePreview(attachment, colors)
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -117,19 +121,17 @@ public fun ComposerLinkPreview(
             ) {
                 ComposerLinkPreviewText(
                     text = attachment.title,
-                    style = theme.title,
+                    style = typography.footnoteBold.copy(color = textColor),
                     testTag = "Stream_LinkPreviewTitle",
                 )
-                Spacer(modifier = Modifier.height(theme.titleToSubtitle))
-
                 ComposerLinkPreviewText(
                     text = attachment.text,
-                    style = theme.subtitle,
+                    style = typography.footnote.copy(color = textColor),
                     testTag = "Stream_LinkPreviewDescription",
                 )
                 ComposerLinkPreviewText(
                     text = linkPreview.resolveUrl(),
-                    style = theme.url,
+                    style = typography.footnote.copy(color = textColor),
                     testTag = "Stream_LinkPreviewUrl",
                 )
             }
@@ -143,15 +145,16 @@ public fun ComposerLinkPreview(
 }
 
 @Composable
-private fun ComposerLinkImagePreview(attachment: Attachment) {
+private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamColors) {
     val imagePreviewUrl = attachment.imagePreviewUrl ?: return
-    val theme = ChatTheme.messageComposerTheme.linkPreview
+    // TODO [G.] point to radii
+    val shape = RoundedCornerShape(8.dp)
     StreamAsyncImage(
         data = imagePreviewUrl,
         modifier = Modifier
-            .size(width = theme.imageSize.width, height = theme.imageSize.height)
-            .clip(theme.imageShape)
-            .border(theme.imageBorder, theme.imageShape)
+            .size(width = 40.dp, height = 40.dp)
+            .clip(shape)
+            .border(1.dp, colors.borderCoreImage, shape)
             .testTag("Stream_LinkPreviewImage"),
         contentDescription = null,
         contentScale = ContentScale.Crop,
@@ -159,15 +162,14 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
 }
 
 @Composable
-private fun ComposerLinkPreviewText(text: String?, style: TextComponentStyle, testTag: String) {
+private fun ComposerLinkPreviewText(text: String?, style: TextStyle, testTag: String) {
     text ?: return
     Text(
         modifier = Modifier.testTag(testTag),
         text = text,
-        style = style.style,
-        color = style.color,
-        maxLines = style.maxLines,
-        overflow = style.overflow,
+        style = style,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
