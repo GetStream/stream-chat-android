@@ -93,8 +93,8 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-    implementation(libs.skydoves.landscapist.coil)
     implementation(libs.coil.gif)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.coil.video)
 
     // Media3
