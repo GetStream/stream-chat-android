@@ -35,9 +35,6 @@ public object AttachmentType {
     /** Audio attachment type. */
     public const val AUDIO: String = "audio"
 
-    /** Product attachment type. */
-    public const val PRODUCT: String = "product"
-
     /** File attachment type. */
     public const val FILE: String = "file"
 
