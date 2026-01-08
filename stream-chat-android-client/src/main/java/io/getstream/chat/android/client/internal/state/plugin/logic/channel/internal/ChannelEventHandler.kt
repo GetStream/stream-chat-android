@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
@@ -67,10 +67,10 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
-import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 
 /**
  * Class responsible for updating the local database based on channel-related events.

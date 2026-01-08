@@ -32,6 +32,10 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
+import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelEventHandler
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.client.test.randomAnswerCastedEvent
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelHiddenEvent
@@ -82,8 +86,6 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

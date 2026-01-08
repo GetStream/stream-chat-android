@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.Pagination
@@ -26,13 +26,13 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result

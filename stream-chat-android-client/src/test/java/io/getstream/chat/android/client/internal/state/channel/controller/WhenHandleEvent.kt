@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.internal.state.channel.controller
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade

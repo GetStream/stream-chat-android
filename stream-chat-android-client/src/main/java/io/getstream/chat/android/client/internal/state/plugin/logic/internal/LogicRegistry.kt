@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogicImpl
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
