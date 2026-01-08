@@ -85,7 +85,7 @@ internal fun ContextualMenuItem(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         val (textColor, iconColor) = when {
-            !enabled -> colors.stateTextDisabled to colors.stateTextDisabled
+            !enabled -> colors.textDisabled to colors.textDisabled
             destructive -> colors.accentError to colors.accentError
             else -> colors.textPrimary to colors.textSecondary
         }
