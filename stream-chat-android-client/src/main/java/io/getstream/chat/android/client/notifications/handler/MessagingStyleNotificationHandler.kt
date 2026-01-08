@@ -105,12 +105,20 @@ internal class MessagingStyleNotificationHandler(
     }
 
     override fun dismissChannelNotifications(channelType: String, channelId: String) {
-        val notificationId = factory.createChannelNotificationId(channelType, channelId)
-        dismissNotification(notificationId)
+        // Dismiss all tracked notifications for the channel
+        dismissTrackedChannelNotifications(channelType, channelId)
+        clearTrackedChannelNotificationIds(channelType, channelId)
     }
 
     override fun dismissAllNotifications() {
-        getShownNotifications().forEach(::dismissNotification)
+        // Dismiss all globally tracked notifications
+        getShownNotifications().forEach { id ->
+            notificationManager.cancel(id)
+            removeNotificationId(id)
+        }
+        // Dismiss all channel tracked notifications
+        dismissAllTrackedChannelNotifications()
+        clearAllTrackedChannelNotificationIds()
     }
 
     override fun onPushMessage(message: PushMessage): Boolean = onNewPushMessage(message)
@@ -120,7 +128,12 @@ internal class MessagingStyleNotificationHandler(
             val notificationId = factory.createNotificationId(chatNotification)
             val notification = factory.createNotification(chatNotification)
             if (notification != null) {
-                addNotificationId(notificationId)
+                if (chatNotification is ChatNotification.MessageNew) {
+                    val channel = chatNotification.channel
+                    trackChannelNotificationId(channel.type, channel.id, notificationId)
+                } else {
+                    trackNotificationId(notificationId)
+                }
                 notificationManager.notify(notificationId, notification)
             } else {
                 logger.w { "[showNotificationInternal] Failed to create notification for: $chatNotification" }
@@ -128,12 +141,7 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
-    private fun dismissNotification(notificationId: Int) {
-        removeNotificationId(notificationId)
-        notificationManager.cancel(notificationId)
-    }
-
-    private fun addNotificationId(notificationId: Int) {
+    private fun trackNotificationId(notificationId: Int) {
         sharedPreferences.edit {
             putStringSet(KEY_NOTIFICATIONS_SHOWN, (getShownNotifications() + notificationId).map(Int::toString).toSet())
         }
@@ -156,8 +164,60 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
+    private fun getChannelNotificationsKey(channelType: String, channelId: String): String =
+        "$KEY_PREFIX_CHANNEL_NOTIFICATIONS$channelType:$channelId"
+
+    private fun trackChannelNotificationId(channelType: String, channelId: String, notificationId: Int) {
+        val key = getChannelNotificationsKey(channelType, channelId)
+        sharedPreferences.edit {
+            putStringSet(
+                key,
+                (getChannelNotificationIds(channelType, channelId) + notificationId).map(Int::toString).toSet(),
+            )
+        }
+    }
+
+    private fun getChannelNotificationIds(channelType: String, channelId: String): Set<Int> {
+        val key = getChannelNotificationsKey(channelType, channelId)
+        return sharedPreferences.getStringSet(key, null).orEmpty().mapNotNull { it.toIntOrNull() }.toSet()
+    }
+
+    private fun dismissTrackedChannelNotifications(channelType: String, channelId: String) {
+        val notificationIds = getChannelNotificationIds(channelType, channelId)
+        notificationIds.forEach { id ->
+            notificationManager.cancel(id)
+        }
+    }
+
+    private fun clearTrackedChannelNotificationIds(channelType: String, channelId: String) {
+        val key = getChannelNotificationsKey(channelType, channelId)
+        sharedPreferences.edit { remove(key) }
+    }
+
+    private fun dismissAllTrackedChannelNotifications() {
+        val ids = sharedPreferences.all.keys
+            .filter { it.startsWith(KEY_PREFIX_CHANNEL_NOTIFICATIONS) }
+            .flatMap {
+                sharedPreferences.getStringSet(it, emptySet<String>())
+                    .orEmpty()
+                    .mapNotNull { idString -> idString.toIntOrNull() }
+            }
+        ids.forEach { id ->
+            notificationManager.cancel(id)
+        }
+    }
+
+    private fun clearAllTrackedChannelNotificationIds() {
+        sharedPreferences.edit {
+            sharedPreferences.all.keys
+                .filter { it.startsWith(KEY_PREFIX_CHANNEL_NOTIFICATIONS) }
+                .forEach { remove(it) }
+        }
+    }
+
     private companion object {
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"
+        private const val KEY_PREFIX_CHANNEL_NOTIFICATIONS = "KEY_CHANNEL_NOTIFICATIONS_"
     }
 }

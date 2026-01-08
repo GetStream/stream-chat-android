@@ -138,27 +138,58 @@ internal class MessagingStyleNotificationHandlerTest {
     }
 
     @Test
-    fun `dismissChannelNotifications should dismiss notification`() {
+    fun `dismissChannelNotifications should dismiss all tracked channel notifications and clear storage`() {
         val channelType = randomString()
         val channelId = randomString()
-        val notificationId = "$channelType:$channelId".hashCode()
-        whenever(mockSharedPreferences.getStringSet(any(), anyOrNull())) doReturn
-            setOf(notificationId.toString())
+        val channelKey = "KEY_CHANNEL_NOTIFICATIONS_$channelType:$channelId"
+        val notificationId1 = 100
+        val notificationId2 = 200
+        whenever(mockSharedPreferences.getStringSet(channelKey, null)) doReturn
+            setOf(notificationId1.toString(), notificationId2.toString())
+        whenever(mockSharedPreferencesEditor.remove(any())) doReturn mockSharedPreferencesEditor
 
         handler.dismissChannelNotifications(channelType, channelId)
 
-        verify(mockNotificationManager).cancel(notificationId)
+        // Verify all channel notifications are dismissed
+        verify(mockNotificationManager).cancel(notificationId1)
+        verify(mockNotificationManager).cancel(notificationId2)
+        // Verify the channel notification storage is cleared
+        verify(mockSharedPreferencesEditor).remove(channelKey)
     }
 
     @Test
-    fun `dismissAllNotifications should dismiss all notifications`() {
-        whenever(mockSharedPreferences.getStringSet(any(), anyOrNull())) doReturn
-            setOf("1", "2")
+    fun `dismissAllNotifications should dismiss global and channel notifications and clear all storage`() {
+        val globalKey = "KEY_NOTIFICATIONS_SHOWN"
+        val channelKey1 = "KEY_CHANNEL_NOTIFICATIONS_messaging:channel1"
+        val channelKey2 = "KEY_CHANNEL_NOTIFICATIONS_livestream:channel2"
+
+        // Mock global notifications
+        whenever(mockSharedPreferences.getStringSet(globalKey, null)) doReturn setOf("1")
+        // Mock channel notifications
+        whenever(mockSharedPreferences.getStringSet(channelKey1, null)) doReturn setOf("10")
+        whenever(mockSharedPreferences.getStringSet(channelKey1, emptySet())) doReturn setOf("10")
+        whenever(mockSharedPreferences.getStringSet(channelKey2, null)) doReturn setOf("20")
+        whenever(mockSharedPreferences.getStringSet(channelKey2, emptySet())) doReturn setOf("20")
+        // Mock all keys for iteration
+        whenever(mockSharedPreferences.all) doReturn mapOf(
+            globalKey to setOf("1"),
+            channelKey1 to setOf("10"),
+            channelKey2 to setOf("20"),
+        )
+        whenever(mockSharedPreferencesEditor.remove(any())) doReturn mockSharedPreferencesEditor
 
         handler.dismissAllNotifications()
 
+        // Verify global notifications are dismissed
         verify(mockNotificationManager).cancel(1)
-        verify(mockNotificationManager).cancel(2)
+        // Verify channel notifications are dismissed
+        verify(mockNotificationManager).cancel(10)
+        verify(mockNotificationManager).cancel(20)
+        // Verify global notification storage is cleared (via putStringSet with remaining IDs)
+        verify(mockSharedPreferencesEditor).putStringSet(globalKey, emptySet())
+        // Verify channel notification storage is cleared
+        verify(mockSharedPreferencesEditor).remove(channelKey1)
+        verify(mockSharedPreferencesEditor).remove(channelKey2)
     }
 
     @Test
