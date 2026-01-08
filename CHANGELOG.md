@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `NotificationIdFactory` for customizing the default notification IDs. [#6072](https://github.com/GetStream/stream-chat-android/pull/6072)
 
 ### ⚠️ Changed
 
