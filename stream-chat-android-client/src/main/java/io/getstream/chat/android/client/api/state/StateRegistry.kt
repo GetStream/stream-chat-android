@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param messageLimitConfig Configuration for message limits.
  */
 @Suppress("LongParameterList")
-public class StateRegistry constructor(
+public class StateRegistry(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
     private val activeLiveLocations: StateFlow<List<Location>>,

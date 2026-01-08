@@ -115,7 +115,7 @@ internal class LogicRegistry internal constructor(
                 coroutineScope = coroutineScope,
             )
 
-            ChannelLogic(
+            ChannelLogicImpl(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
@@ -131,7 +131,7 @@ internal class LogicRegistry internal constructor(
     }
 
     fun channelState(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
+        return channel(channelType, channelId).stateLogic
     }
 
     fun channelFromMessageId(messageId: String): ChannelLogic? {
@@ -203,7 +203,7 @@ internal class LogicRegistry internal constructor(
      * @param channelId String
      */
     override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
-        return channel(channelType, channelId).stateLogic()
+        return channel(channelType, channelId).stateLogic
     }
 
     /** Returns [QueryThreadsLogic] for the given [QueryThreadsRequest]. */

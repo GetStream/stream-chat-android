@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
@@ -83,7 +82,6 @@ internal class ChannelMutableState(
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _typing: MutableStateFlow<TypingEvent>? = MutableStateFlow(TypingEvent(channelId, emptyList()))
-    private var _typingChatEvents: MutableStateFlow<Map<String, TypingStartEvent>>? = MutableStateFlow(emptyMap())
     private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
     private var rawReads: StateFlow<Map<String, ChannelUserRead>> = _rawReads!!
     private var _members: MutableStateFlow<Map<String, Member>>? = MutableStateFlow(emptyMap())
@@ -213,6 +211,7 @@ internal class ChannelMutableState(
 
     override val pinnedMessages: StateFlow<List<Message>> = sortedVisiblePinnedMessages
 
+    @Deprecated("This property is not used anymore and will be removed in future versions.")
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages!!.mapState { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount!!
 
@@ -427,8 +426,7 @@ internal class ChannelMutableState(
     /**
      * Updates StateFlows related to typing updates.
      */
-    fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent) {
-        _typingChatEvents?.value = eventsMap
+    fun updateTypingEvent(typingEvent: TypingEvent) {
         _typing?.value = typingEvent
     }
 
@@ -539,7 +537,6 @@ internal class ChannelMutableState(
     fun upsertMessage(message: Message) {
         upsertMessages(listOf(message))
     }
-
     fun upsertUserPresence(user: User) {
         logger.d { "[upsertUserPresence] user.id: ${user.id}" }
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }
@@ -700,7 +697,6 @@ internal class ChannelMutableState(
         _messages = null
         _pinnedMessages = null
         _typing = null
-        _typingChatEvents = null
         _rawReads = null
         _members = null
         _oldMessages = null

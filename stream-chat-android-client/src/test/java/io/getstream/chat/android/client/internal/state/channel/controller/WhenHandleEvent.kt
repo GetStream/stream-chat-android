@@ -87,6 +87,10 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private val channelStateLogic: ChannelStateLogic = mock {
         on(it.writeChannelState()) doReturn channelMutableState
+        on(it.upsertMessage(any())) doAnswer { invocation ->
+            val message = invocation.arguments[0] as Message
+            channelMutableState.upsertMessage(message)
+        }
     }
 
     @BeforeEach
@@ -97,7 +101,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelLogic = ChannelLogic(
+        channelLogic = ChannelLogicImpl(
             repos,
             false,
             channelStateLogic,
@@ -126,7 +130,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).upsertMessage(newMessage)
         verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
-        verify(channelStateLogic).toggleHidden(false)
+        verify(channelStateLogic).setHidden(false)
     }
 
     // Message update
@@ -141,28 +145,12 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         )
         channelLogic.upsertMessage(message)
 
-        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
+        val messageUpdateEvent = randomMessageUpdateEvent(message = message.copy(text = "updated text"))
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic, times(2)).upsertMessage(messageUpdateEvent.message)
-    }
-
-    @Test
-    fun `when message update event arrives, channel should be toggled to not hidden`() = runTest {
-        val message = randomMessage(
-            id = randomString(),
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true,
-        )
-        channelMutableState.setMessages(listOf(message))
-
-        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
-
-        channelLogic.handleEvent(messageUpdateEvent)
-
-        verify(channelStateLogic).toggleHidden(false)
+        verify(channelStateLogic, times(1)).upsertMessage(message)
+        verify(channelStateLogic, times(1)).upsertMessage(messageUpdateEvent.message)
     }
 
     @Test
@@ -253,7 +241,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     // Read event
     @Test
     fun `when read notification event arrives, it should be correctly propagated`() = runTest {
-        val readEvent = randomNotificationMarkReadEvent(user = currentUser)
+        val readEvent = randomNotificationMarkReadEvent(user = currentUser, thread = null)
 
         channelLogic.handleEvent(readEvent)
 

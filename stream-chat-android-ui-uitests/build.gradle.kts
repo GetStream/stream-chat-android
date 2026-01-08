@@ -74,7 +74,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
-    implementation(libs.skydoves.landscapist.coil)
 
     // Coil
     androidTestImplementation(libs.coil)

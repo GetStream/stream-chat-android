@@ -45,7 +45,7 @@ internal class SendGiphyListenerStateTest {
         runTest {
             val channelStateLogic: ChannelStateLogic = mock()
             val channelLogic: ChannelLogic = mock {
-                on(it.stateLogic()) doReturn channelStateLogic
+                on(it.stateLogic) doReturn channelStateLogic
             }
 
             val threadsLogic: QueryThreadsLogic = mock()
@@ -73,7 +73,7 @@ internal class SendGiphyListenerStateTest {
     fun `when sending giphy and request fails, nothing should be upserted`() = runTest {
         val channelStateLogic: ChannelStateLogic = mock()
         val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic()) doReturn channelStateLogic
+            on(it.stateLogic) doReturn channelStateLogic
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
