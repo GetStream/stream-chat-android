@@ -70,6 +70,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
 
 ### ✅ Added
 
