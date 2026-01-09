@@ -106,12 +106,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         // Save playback position and release player to free wake lock.
         savedPlaybackPosition = player?.currentPosition ?: 0L
         autoPlay = false
-        player?.release()
-        player = null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        binding.playerView.player = null
         player?.release()
         player = null
     }

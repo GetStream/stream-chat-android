@@ -98,6 +98,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         super.onStop()
         // Save playback position and release player to free wake lock.
         savedPlaybackPosition = player?.currentPosition ?: 0L
+        binding.playerView.player = null
         player?.release()
         player = null
     }
@@ -133,8 +134,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        player?.release()
-        player = null
     }
 
     private fun setupVideoThumbnail() {
