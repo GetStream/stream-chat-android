@@ -102,6 +102,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         player?.pause()
     }
 
+    @OptIn(UnstableApi::class)
     override fun onStop() {
         super.onStop()
         if (!::binding.isInitialized) return
