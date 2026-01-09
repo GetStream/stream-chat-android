@@ -67,6 +67,22 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private var player: Player? = null
 
     /**
+     * Saved playback position for restoration after app resume.
+     */
+    private var savedPlaybackPosition: Long = 0L
+
+    override fun onStart() {
+        super.onStart()
+        // (Re)create player when returning to foreground.
+        player = createPlayer()
+            .apply {
+                setMediaItem(MediaItem.fromUri(Uri.parse(assetUrl)), savedPlaybackPosition)
+                prepare()
+            }
+            .also(::setupPlayerView)
+    }
+
+    /**
      * Resets the state and hides the controller.
      *
      * Important for resetting state when paging through
@@ -76,6 +92,14 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         super.onPause()
         player?.pause()
         resetState()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Save playback position and release player to free wake lock.
+        savedPlaybackPosition = player?.currentPosition ?: 0L
+        player?.release()
+        player = null
     }
 
     /**
@@ -104,12 +128,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupVideoThumbnail()
         setupPlayButton()
-        player = createPlayer()
-            .apply {
-                setMediaItem(MediaItem.fromUri(Uri.parse(assetUrl)))
-                prepare()
-            }
-            .also(::setupPlayerView)
     }
 
     override fun onDestroyView() {
