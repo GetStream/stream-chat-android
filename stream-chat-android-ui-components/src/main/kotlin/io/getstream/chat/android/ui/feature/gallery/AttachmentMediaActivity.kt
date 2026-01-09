@@ -86,6 +86,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        if (!::binding.isInitialized) return
         // (Re)create player when returning to foreground.
         player = createPlayer()
             .apply {
@@ -103,10 +104,12 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
+        if (!::binding.isInitialized) return
         // Save playback position and release player to free wake lock.
         savedPlaybackPosition = player?.currentPosition ?: 0L
         autoPlay = false
         binding.playerView.player = null
+        binding.controls.player = null
         player?.release()
         player = null
     }
