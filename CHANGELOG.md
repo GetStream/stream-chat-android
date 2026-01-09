@@ -59,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 
 ### ✅ Added
 
@@ -70,6 +71,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 
 ### ✅ Added
 
