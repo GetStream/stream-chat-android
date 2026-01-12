@@ -20,9 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewController
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
@@ -39,7 +37,6 @@ public class PollResultsViewModel(
     controllerProvider: ViewModel.() -> PollResultsViewController = {
         PollResultsViewController(
             poll = poll,
-            scope = viewModelScope,
         )
     },
 ) : ViewModel() {
@@ -55,13 +52,6 @@ public class PollResultsViewModel(
      * @see [PollResultsViewController.events]
      */
     public val events: LiveData<PollResultsViewEvent> = controller.events.asSingleLiveEvent()
-
-    /**
-     * @see [PollResultsViewController.onViewAction]
-     */
-    public fun onViewAction(action: PollResultsViewAction) {
-        controller.onViewAction(action)
-    }
 
     /**
      * Factory for creating [PollResultsViewModel] instances.

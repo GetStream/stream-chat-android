@@ -5170,7 +5170,6 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsVi
 	public synthetic fun <init> (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
-	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction;)V
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel$Factory : androidx/lifecycle/ViewModelProvider$Factory {
