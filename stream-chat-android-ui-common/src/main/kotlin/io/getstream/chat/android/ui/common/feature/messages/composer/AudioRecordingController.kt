@@ -222,7 +222,8 @@ internal class AudioRecordingController(
     fun lockRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            // Recording not started yet, set pending flag to lock when it does start
+            // Set pending flag if state is Idle, to handle the case where this method is called while the async
+            // method mediaRecorder.startAudioRecording is executing
             logger.i { "[lockRecording] state is Idle, setting pending lock" }
             pendingLock.set(true)
             return
@@ -238,7 +239,7 @@ internal class AudioRecordingController(
     fun cancelRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            // Set pending flag if state is Idle, to handle case where this method is called while the async
+            // Set pending flag if state is Idle, to handle the case where this method is called while the async
             // method mediaRecorder.startAudioRecording is executing
             logger.i { "[cancelRecording] state is Idle, setting pending cancel" }
             pendingCancel.set(true)
