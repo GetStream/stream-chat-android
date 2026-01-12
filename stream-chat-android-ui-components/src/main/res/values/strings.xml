@@ -201,6 +201,8 @@
     <string name="stream_ui_poll_end_vote">End Vote</string>
     <string name="stream_ui_poll_view_results">View Results</string>
     <string name="stream_ui_poll_view_results_error">An error occurred while loading the poll results. Please try again later.</string>
+    <string name="stream_ui_poll_show_all_votes">Show All</string>
+    <string name="stream_ui_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
     <!-- Header Title -->
     <string name="stream_ui_message_list_header_thread_title">Thread Reply</string>
     <string name="stream_ui_message_list_header_untitled_channel">Channel without name</string>
