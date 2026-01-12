@@ -55,6 +55,7 @@ internal class ChatNotificationHandler(
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
     private val onNewPushMessage: (pushMessage: PushMessage) -> Boolean,
+    private val notificationIdFactory: NotificationIdFactory?,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -103,7 +104,7 @@ internal class ChatNotificationHandler(
 
     private fun showMessageNewNotification(notification: ChatNotification.MessageNew) {
         val (channel, message) = notification
-        val notificationId: Int = System.nanoTime().toInt()
+        val notificationId: Int = createNotificationId(notification)
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
         val notification = notificationBuilderTransformer(
@@ -117,7 +118,7 @@ internal class ChatNotificationHandler(
     private fun showMessageUpdatedNotification(notification: ChatNotification.MessageUpdated) {
         // Note: Handled the same as MessageNew - perhaps in future we want to differentiate them
         val (channel, message) = notification
-        val notificationId: Int = System.nanoTime().toInt()
+        val notificationId: Int = createNotificationId(notification)
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
         val notification = notificationBuilderTransformer(
@@ -129,7 +130,7 @@ internal class ChatNotificationHandler(
     }
 
     private fun showReactionNewNotification(notification: ChatNotification.ReactionNew) {
-        val notificationId = "${notification.message.id}:${notification.reactionUserId}:${notification.type}".hashCode()
+        val notificationId = createNotificationId(notification)
         addNotificationIdWithoutSummary(notificationId)
         val notification = notificationBuilderTransformer(
             buildReactionNewNotification(notification),
@@ -140,13 +141,25 @@ internal class ChatNotificationHandler(
 
     private fun showReminderDueNotification(chatNotification: ChatNotification.NotificationReminderDue) {
         val (channel, message) = chatNotification
-        val notificationId = "${channel.type}:${channel.id}:${message.id}".hashCode()
+        val notificationId = createNotificationId(chatNotification)
         addNotificationIdWithoutSummary(notificationId)
         val notification = notificationBuilderTransformer(
             buildReminderDueNotification(channel, message),
             chatNotification,
         ).build()
         showNotification(notificationId, notification)
+    }
+
+    private fun createNotificationId(notification: ChatNotification): Int =
+        notificationIdFactory?.getNotificationId(notification) ?: createDefaultNotificationId(notification)
+
+    private fun createDefaultNotificationId(notification: ChatNotification): Int = when (notification) {
+        is ChatNotification.MessageNew -> System.nanoTime().toInt()
+        is ChatNotification.MessageUpdated -> System.nanoTime().toInt()
+        is ChatNotification.ReactionNew ->
+            "${notification.message.id}:${notification.reactionUserId}:${notification.type}".hashCode()
+        is ChatNotification.NotificationReminderDue ->
+            "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
     }
 
     private fun buildNotification(
