@@ -39,7 +39,7 @@ internal class PushPreferencesListenerStateTest {
 
     private val channelStateLogic: ChannelStateLogic = mock()
     private val channelLogic: ChannelLogic = mock {
-        on(it.stateLogic()) doReturn channelStateLogic
+        on(it.stateLogic) doReturn channelStateLogic
     }
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
