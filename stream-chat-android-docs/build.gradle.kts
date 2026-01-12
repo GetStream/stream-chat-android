@@ -111,6 +111,5 @@ dependencies {
     implementation(libs.huawei.push)
     compileOnly(files("../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar"))
     implementation(libs.coil)
-    implementation(libs.skydoves.landscapist.coil)
-    implementation(libs.skydoves.landscapist.placeholder)
+    implementation(libs.coil.compose)
 }

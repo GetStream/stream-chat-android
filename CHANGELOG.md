@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix `message.updated` and `message.deleted` events unhiding the channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
 
 ### ⬆️ Improved
 
