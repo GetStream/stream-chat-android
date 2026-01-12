@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -102,7 +102,8 @@ public fun PollViewResultDialog(
         var showAllOptionResults by rememberSaveable { mutableStateOf<Option?>(null) }
 
         ViewModelStore {
-            AnimatedContent(
+            Crossfade(
+                modifier = Modifier.fillMaxSize(),
                 targetState = showAllOptionResults,
             ) { showAll ->
                 when (showAll) {

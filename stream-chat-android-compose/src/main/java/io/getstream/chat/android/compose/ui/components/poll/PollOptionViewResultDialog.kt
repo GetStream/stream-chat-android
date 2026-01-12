@@ -146,7 +146,9 @@ private fun Content(
     )
 
     Column(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .fillMaxSize(),
     ) {
         PollDialogHeader(
             title = state.option.text,
