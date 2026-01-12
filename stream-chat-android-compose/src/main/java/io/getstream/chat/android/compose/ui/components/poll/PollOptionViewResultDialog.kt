@@ -130,6 +130,7 @@ internal fun PollOptionViewResultDialog(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun Content(
     state: PollOptionResultsViewState,
