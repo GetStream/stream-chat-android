@@ -58,9 +58,13 @@ public object NotificationHandlerFactory {
      * before building the notification.
      * @param onPushMessage Lambda expression called when a new push message is received. Return true if the
      * push message was handled and no further processing is required.
+     * @param notificationIdFactory Custom factory for generating notification IDs based on [ChatNotification].
+     * If null or if [NotificationIdFactory.getNotificationId] returns null, the SDK will use its default
+     * notification ID generation logic. Use this to customize how notifications are grouped.
      *
      * @return A [NotificationHandler] instance.
      * @see NotificationHandler
+     * @see NotificationIdFactory
      */
     @SuppressLint("NewApi")
     @JvmOverloads
@@ -79,6 +83,7 @@ public object NotificationHandlerFactory {
         notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
             { builder, _ -> builder },
         onPushMessage: (pushMessage: PushMessage) -> Boolean = { false },
+        notificationIdFactory: NotificationIdFactory? = null,
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
@@ -90,6 +95,7 @@ public object NotificationHandlerFactory {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             onNewPushMessage = onPushMessage,
+            notificationIdFactory = notificationIdFactory,
         )
     } else {
         ChatNotificationHandler(
@@ -100,6 +106,7 @@ public object NotificationHandlerFactory {
             actionsProvider = actionsProvider,
             notificationBuilderTransformer = notificationBuilderTransformer,
             onNewPushMessage = onPushMessage,
+            notificationIdFactory = notificationIdFactory,
         )
     }
 

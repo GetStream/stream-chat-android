@@ -46,6 +46,8 @@ import java.util.Date
  * @param notificationTextFormatter Function to format the text of the notification.
  * @param actionsProvider Function to provide actions for the notification.
  * @param notificationBuilderTransformer Function to transform the notification builder before building.
+ * @param notificationIdFactory Custom factory for generating notification IDs. If null or returns null,
+ * default IDs are generated based on the notification type.
  * @param currentUserProvider Function to get the current user, defaults to fetching from ChatClient. Override for
  * testing to avoid mocking the [ChatClient].
  */
@@ -61,6 +63,7 @@ internal class MessagingStyleNotificationFactory(
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     private val notificationBuilderTransformer:
     (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    private val notificationIdFactory: NotificationIdFactory?,
     private val currentUserProvider: () -> User? = {
         ChatClient.instance().getCurrentUser() ?: ChatClient.instance().getStoredUser()
     },
@@ -68,10 +71,15 @@ internal class MessagingStyleNotificationFactory(
 
     /**
      * Creates a unique notification ID based on the provided [ChatNotification].
+     * If a custom [NotificationIdFactory] is provided and returns a non-null value, that value is used.
+     * Otherwise, the default notification ID generation logic is used.
      */
-    internal fun createNotificationId(notification: ChatNotification): Int = when (notification) {
+    internal fun createNotificationId(notification: ChatNotification): Int =
+        notificationIdFactory?.getNotificationId(notification) ?: createDefaultNotificationId(notification)
+
+    private fun createDefaultNotificationId(notification: ChatNotification): Int = when (notification) {
         is ChatNotification.MessageNew ->
-            createChannelNotificationId(notification.channel.type, notification.channel.id)
+            "${notification.channel.type}:${notification.channel.id}".hashCode()
         is ChatNotification.MessageUpdated ->
             "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
         is ChatNotification.ReactionNew ->
@@ -79,16 +87,6 @@ internal class MessagingStyleNotificationFactory(
         is ChatNotification.NotificationReminderDue ->
             "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
     }
-
-    /**
-     * Creates a unique notification ID for a channel based on its type and ID.
-     *
-     * @param channelType The type of the channel.
-     * @param channelId The ID of the channel.
-     * @return A unique notification ID for the channel.
-     */
-    internal fun createChannelNotificationId(channelType: String, channelId: String): Int =
-        "$channelType:$channelId".hashCode()
 
     /**
      * Creates a notification based on the provided [ChatNotification].
@@ -107,7 +105,7 @@ internal class MessagingStyleNotificationFactory(
             is ChatNotification.MessageNew -> {
                 val channel = notification.channel
                 val message = notification.message
-                val style = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
+                val style = restoreMessagingStyle(notification) ?: createMessagingStyle(currentUser, channel)
                 builder
                     .setContentIntent(createContentIntent(notificationId, channel, message))
                     .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
@@ -118,7 +116,7 @@ internal class MessagingStyleNotificationFactory(
                 // Note: Handled the same as MessageNew - perhaps in future we want to differentiate them
                 val channel = notification.channel
                 val message = notification.message
-                val style = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
+                val style = restoreMessagingStyle(notification) ?: createMessagingStyle(currentUser, channel)
                 builder
                     .setContentIntent(createContentIntent(notificationId, channel, message))
                     .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
@@ -152,9 +150,9 @@ internal class MessagingStyleNotificationFactory(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-    private fun restoreMessagingStyle(channel: Channel): NotificationCompat.MessagingStyle? =
+    private fun restoreMessagingStyle(notification: ChatNotification): NotificationCompat.MessagingStyle? =
         notificationManager.activeNotifications
-            .firstOrNull { it.id == createChannelNotificationId(channel.type, channel.id) }
+            .firstOrNull { it.id == createNotificationId(notification) }
             ?.notification
             ?.let(NotificationCompat.MessagingStyle::extractMessagingStyleFromNotification)
 
