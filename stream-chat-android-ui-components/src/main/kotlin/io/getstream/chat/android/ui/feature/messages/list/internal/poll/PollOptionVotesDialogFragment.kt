@@ -192,11 +192,11 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         }
 
         private fun incrementPollReference(pollId: String) {
-            pollReferenceCounts[pollId] = pollReferenceCounts.getOrDefault(pollId, 0) + 1
+            pollReferenceCounts[pollId] = (pollReferenceCounts[pollId] ?: 0) + 1
         }
 
         private fun decrementPollReference(pollId: String) {
-            val count = pollReferenceCounts.getOrDefault(pollId, 0) - 1
+            val count = (pollReferenceCounts[pollId] ?: 0) - 1
             if (count <= 0) {
                 polls.remove(pollId)
                 pollReferenceCounts.remove(pollId)
@@ -206,11 +206,11 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         }
 
         private fun incrementOptionReference(optionId: String) {
-            optionReferenceCounts[optionId] = optionReferenceCounts.getOrDefault(optionId, 0) + 1
+            optionReferenceCounts[optionId] = (optionReferenceCounts[optionId] ?: 0) + 1
         }
 
         private fun decrementOptionReference(optionId: String) {
-            val count = optionReferenceCounts.getOrDefault(optionId, 0) - 1
+            val count = (optionReferenceCounts[optionId] ?: 0) - 1
             if (count <= 0) {
                 options.remove(optionId)
                 optionReferenceCounts.remove(optionId)

@@ -114,7 +114,7 @@ public class PollOptionVotesViewController(
      */
     public fun onViewAction(action: PollOptionVotesViewAction) {
         when (action) {
-            PollOptionVotesViewAction.LoadMoreRequested -> loadMore()
+            LoadMoreRequested -> loadMore()
         }
     }
 
