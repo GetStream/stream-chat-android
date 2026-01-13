@@ -3447,7 +3447,6 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 	public static final field TAG Ljava/lang/String;
 	public fun <init> ()V
 	public fun getTheme ()I
-	public fun onCreate (Landroid/os/Bundle;)V
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
 	public fun onDestroy ()V
 	public fun onDestroyView ()V

@@ -78,11 +78,6 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        incrementReferenceCounts(pollId = pollId, optionId = optionId)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -153,7 +148,10 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        decrementReferenceCounts(pollId = pollId, optionId = optionId)
+        if (!requireActivity().isChangingConfigurations) {
+            polls.remove(pollId)
+            options.remove(optionId)
+        }
     }
 
     companion object {
@@ -165,59 +163,17 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         private const val VIEW_TYPE_VOTE = 1
 
         private val polls = mutableMapOf<String, Poll>()
-        private val pollReferenceCounts = mutableMapOf<String, Int>()
         private val options = mutableMapOf<String, Option>()
-        private val optionReferenceCounts = mutableMapOf<String, Int>()
 
         fun newInstance(poll: Poll, option: Option): PollOptionVotesDialogFragment =
             PollOptionVotesDialogFragment().apply {
                 polls[poll.id] = poll
-                incrementPollReference(poll.id)
                 options[option.id] = option
-                incrementOptionReference(option.id)
                 arguments = bundleOf(
                     ARG_POLL to poll.id,
                     ARG_OPTION to option.id,
                 )
             }
-
-        private fun incrementReferenceCounts(pollId: String, optionId: String) {
-            incrementPollReference(pollId)
-            incrementOptionReference(optionId)
-        }
-
-        private fun decrementReferenceCounts(pollId: String, optionId: String) {
-            decrementPollReference(pollId)
-            decrementOptionReference(optionId)
-        }
-
-        private fun incrementPollReference(pollId: String) {
-            pollReferenceCounts[pollId] = (pollReferenceCounts[pollId] ?: 0) + 1
-        }
-
-        private fun decrementPollReference(pollId: String) {
-            val count = (pollReferenceCounts[pollId] ?: 0) - 1
-            if (count <= 0) {
-                polls.remove(pollId)
-                pollReferenceCounts.remove(pollId)
-            } else {
-                pollReferenceCounts[pollId] = count
-            }
-        }
-
-        private fun incrementOptionReference(optionId: String) {
-            optionReferenceCounts[optionId] = (optionReferenceCounts[optionId] ?: 0) + 1
-        }
-
-        private fun decrementOptionReference(optionId: String) {
-            val count = (optionReferenceCounts[optionId] ?: 0) - 1
-            if (count <= 0) {
-                options.remove(optionId)
-                optionReferenceCounts.remove(optionId)
-            } else {
-                optionReferenceCounts[optionId] = count
-            }
-        }
     }
 
     private sealed interface PollOptionResultListItem {

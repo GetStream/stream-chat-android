@@ -64,11 +64,6 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private val resultsAdapter = ResultsAdapter(::onShowAllVotesClick)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        incrementPollReference(pollId)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -127,7 +122,9 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        decrementPollReference(pollId)
+        if (!requireActivity().isChangingConfigurations) {
+            polls.remove(pollId)
+        }
     }
 
     public companion object {
@@ -135,9 +132,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         private const val ARG_POLL: String = "arg_poll"
 
         // Store polls temporarily to handle configuration changes
-        // Use reference counting to handle multiple fragments or configuration changes
         private val polls = mutableMapOf<String, Poll>()
-        private val pollReferenceCounts = mutableMapOf<String, Int>()
 
         /**
          * Creates a new instance of [PollResultsDialogFragment].
@@ -148,23 +143,8 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         public fun newInstance(poll: Poll): PollResultsDialogFragment =
             PollResultsDialogFragment().apply {
                 polls[poll.id] = poll
-                incrementPollReference(poll.id)
                 arguments = bundleOf(ARG_POLL to poll.id)
             }
-
-        private fun incrementPollReference(pollId: String) {
-            pollReferenceCounts[pollId] = (pollReferenceCounts[pollId] ?: 0) + 1
-        }
-
-        private fun decrementPollReference(pollId: String) {
-            val count = (pollReferenceCounts[pollId] ?: 0) - 1
-            if (count <= 0) {
-                polls.remove(pollId)
-                pollReferenceCounts.remove(pollId)
-            } else {
-                pollReferenceCounts[pollId] = count
-            }
-        }
     }
 
     private class ResultsAdapter(
