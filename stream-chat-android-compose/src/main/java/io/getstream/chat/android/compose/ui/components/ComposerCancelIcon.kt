@@ -17,10 +17,17 @@
 package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -32,22 +39,29 @@ import io.getstream.chat.android.compose.ui.util.clickable
  * @param onClick Handler when the user clicks on the icon.
  */
 @Composable
-public fun CancelIcon(
+public fun ComposerCancelIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    val colors = ChatTheme.colors
+
     Icon(
         modifier = modifier
-            .background(
-                shape = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundShape,
-                color = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundColor,
-            )
-            .clickable(
-                bounded = false,
-                onClick = onClick,
-            ),
-        painter = ChatTheme.messageComposerTheme.attachmentCancelIcon.painter,
-        contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = ChatTheme.messageComposerTheme.attachmentCancelIcon.tint,
+            .border(2.dp, colors.controlRemoveBorder, CircleShape)
+            .padding(2.dp)
+            .background(color = colors.controlRemoveBg, shape = CircleShape)
+            .size(20.dp)
+            .clickable(bounded = false, onClick = onClick),
+        painter = painterResource(R.drawable.stream_compose_ic_cross),
+        contentDescription = stringResource(R.string.stream_compose_cancel),
+        tint = colors.controlRemoveIcon,
     )
+}
+
+@Preview
+@Composable
+private fun ComposerCancelIconPreview() {
+    ChatTheme {
+        ComposerCancelIcon {}
+    }
 }

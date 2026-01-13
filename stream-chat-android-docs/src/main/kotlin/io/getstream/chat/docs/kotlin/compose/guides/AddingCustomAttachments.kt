@@ -35,7 +35,7 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -247,7 +247,7 @@ private object AddingCustomAttachmentsSnippet {
                 color = ChatTheme.colors.textHighEmphasis
             )
 
-            CancelIcon(
+            ComposerCancelIcon(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(4.dp),
