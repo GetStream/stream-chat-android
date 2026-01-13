@@ -69,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix audio recording race conditions. [#6077](https://github.com/GetStream/stream-chat-android/pull/6077)
 
 ### ⬆️ Improved
 - Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
