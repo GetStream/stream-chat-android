@@ -161,6 +161,7 @@ private fun Content(
             isEmpty = state.results.isEmpty(),
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopCenter,
+            loadingIndicator = { LoadingIndicator(modifier = Modifier.fillMaxSize()) },
         ) {
             LazyColumn(
                 modifier = Modifier
