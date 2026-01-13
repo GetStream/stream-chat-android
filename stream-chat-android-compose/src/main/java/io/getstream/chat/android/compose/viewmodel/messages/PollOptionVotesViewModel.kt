@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
  * @param option The option for which the votes are displayed.
  * @param controllerProvider The provider for [PollOptionVotesViewController].
  */
-public class PollOptionVotesViewModel(
+internal class PollOptionVotesViewModel(
     poll: Poll,
     option: Option,
     controllerProvider: ViewModel.() -> PollOptionVotesViewController = {
@@ -51,17 +51,17 @@ public class PollOptionVotesViewModel(
     /**
      * @see [PollOptionVotesViewController.state]
      */
-    public val state: StateFlow<PollOptionVotesViewState> = controller.state
+    val state: StateFlow<PollOptionVotesViewState> = controller.state
 
     /**
      * @see [PollOptionVotesViewController.events]
      */
-    public val events: SharedFlow<PollOptionVotesViewEvent> = controller.events
+    val events: SharedFlow<PollOptionVotesViewEvent> = controller.events
 
     /**
      * @see [PollOptionVotesViewController.onViewAction]
      */
-    public fun onViewAction(action: PollOptionVotesViewAction) {
+    fun onViewAction(action: PollOptionVotesViewAction) {
         controller.onViewAction(action)
     }
 }
