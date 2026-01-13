@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
@@ -45,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -99,14 +101,14 @@ public fun PollViewResultDialog(
         dragHandle = {},
         containerColor = ChatTheme.colors.barsBackground,
     ) {
-        var showAllOptionVotes by rememberSaveable { mutableStateOf<Option?>(null) }
+        var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
 
         ViewModelStore {
             Crossfade(
                 modifier = Modifier.fillMaxSize(),
                 targetState = showAllOptionVotes,
-            ) { showAll ->
-                when (showAll) {
+            ) { option ->
+                when (option) {
                     null -> {
                         val viewModel = viewModel { PollResultsViewModel(selectedPoll.poll) }
                         val state by viewModel.state.collectAsState()
@@ -120,7 +122,7 @@ public fun PollViewResultDialog(
                     else -> {
                         PollOptionVotesDialog(
                             poll = selectedPoll.poll,
-                            option = showAll,
+                            option = option,
                             onDismissRequest = { showAllOptionVotes = null },
                             onBackPressed = { showAllOptionVotes = null },
                         )
@@ -298,6 +300,22 @@ private fun PollViewResultTitle(
         )
     }
 }
+
+private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
+    save = { option ->
+        option?.let {
+            Bundle().apply {
+                putString("id", it.id)
+                putString("text", it.text)
+            }
+        }
+    },
+    restore = { bundle ->
+        val id = bundle.getString("id") ?: return@Saver null
+        val text = bundle.getString("text") ?: return@Saver null
+        Option(id = id, text = text)
+    },
+)
 
 @Preview(showBackground = true)
 @Composable
