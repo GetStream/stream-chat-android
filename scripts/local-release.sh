@@ -117,7 +117,6 @@ fi
 cd ..
 # Define the modules to release locally
 modules=(
-  "stream-chat-android-ai-assistant"
   "stream-chat-android-client"
   "stream-chat-android-compose"
   "stream-chat-android-core"
