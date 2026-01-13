@@ -24,11 +24,11 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
-import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Default drawer of background of message items.

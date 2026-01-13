@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.getOrDefault
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.BackgroundDecorator
 import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
@@ -44,7 +45,6 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.horizontalChainInParent
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.utils.extensions.verticalChainInParent
-import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.log.taggedLogger
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {

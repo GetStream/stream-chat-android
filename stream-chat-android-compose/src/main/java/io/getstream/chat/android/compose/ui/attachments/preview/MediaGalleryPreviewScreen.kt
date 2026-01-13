@@ -90,7 +90,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import kotlinx.coroutines.launch
 import java.util.Date
 

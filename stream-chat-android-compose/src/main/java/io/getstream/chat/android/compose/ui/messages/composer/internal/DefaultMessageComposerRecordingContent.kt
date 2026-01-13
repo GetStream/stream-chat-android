@@ -87,7 +87,7 @@ import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.uiutils.util.openSystemSettings
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 

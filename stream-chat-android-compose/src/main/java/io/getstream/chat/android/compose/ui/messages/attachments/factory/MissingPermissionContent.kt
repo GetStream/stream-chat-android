@@ -35,7 +35,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.util.openSystemSettings
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 /**
  * Shows the UI if we're missing permissions to fetch data for attachments.

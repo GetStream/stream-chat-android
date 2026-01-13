@@ -47,9 +47,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting

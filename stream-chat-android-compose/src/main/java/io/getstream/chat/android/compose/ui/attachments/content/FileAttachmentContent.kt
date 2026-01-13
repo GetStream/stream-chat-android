@@ -58,9 +58,9 @@ import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
-import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Builds a file attachment message which shows a list of files.

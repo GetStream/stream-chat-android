@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extension
+package io.getstream.chat.android.ui.common.utils.extensions
 
 import android.content.Context
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
@@ -27,15 +26,11 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.ui.utils.R
-import io.getstream.chat.android.uiutils.extension.ChannelKtTest.Companion.arguments
+import io.getstream.chat.android.ui.common.R
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.kotlin.doAnswer
@@ -45,7 +40,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-internal class ChannelKtTest {
+internal class ChannelExtensionsTests {
+
+    private val context: Context = mock()
+    private val fallbackResource: Int = positiveRandomInt()
+    private val fallbackText: String = randomString()
+    private val currentUser = randomUser()
+
     @BeforeEach
     fun setup() {
         whenever(context.getString(fallbackResource)) doReturn fallbackText
@@ -59,26 +60,6 @@ internal class ChannelKtTest {
             val users = it.arguments[1] as String
             val count = it.arguments[2] as Int
             "$users +$count more"
-        }
-    }
-
-    /**
-     * Test that the channel name is correctly generated for a channel.
-     * This method use [arguments] as a source of arguments.
-     */
-    @ParameterizedTest
-    @MethodSource("arguments")
-    fun `Should return proper channel name`(
-        argSetNum: Int,
-        channel: Channel,
-        maxMembers: Int,
-        expectedName: String,
-    ) {
-        try {
-            channel.getDisplayName(context, currentUser, fallbackResource, maxMembers) `should be equal to` expectedName
-        } catch (e: Throwable) {
-            System.err.println("Failed on test #$argSetNum")
-            throw e
         }
     }
 
@@ -264,80 +245,96 @@ internal class ChannelKtTest {
         Assertions.assertNull(previewMessage)
     }
 
-    companion object {
+    @Test
+    fun `Should return channel name when name is set`() {
+        // Given
+        val channel = randomChannel()
+        val maxMembers = positiveRandomInt()
 
-        private const val ARG_SET_1 = 1
-        private const val ARG_SET_2 = 2
-        private const val ARG_SET_3 = 3
-        private const val ARG_SET_4 = 4
-        private const val ARG_SET_5 = 5
-        private const val ARG_SET_6 = 6
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
 
-        private val context: Context = mock()
-        private val fallbackResource: Int = positiveRandomInt()
-        private val fallbackText: String = randomString()
-        private val currentUser = randomUser()
+        // Then
+        displayName `should be equal to` channel.name
+    }
 
-        @JvmStatic
-        fun arguments() = listOf(
-            randomChannel().let {
-                Arguments.of(
-                    ARG_SET_1,
-                    it,
-                    positiveRandomInt(),
-                    it.name,
-                )
-            },
-            randomUser().let {
-                Arguments.of(
-                    ARG_SET_2,
-                    randomChannel(name = "", members = listOf(randomMember(user = it))),
-                    positiveRandomInt(),
-                    it.name,
-                )
-            },
-            List(positiveRandomInt(4)) { randomUser() }.let {
-                Arguments.of(
-                    ARG_SET_3,
-                    randomChannel(name = "", members = it.map { user -> randomMember(user = user) }),
-                    4,
-                    it.sortedBy(User::name)
-                        .joinToString(", ") { user -> user.name },
-                )
-            },
-            List(5) { randomUser() }.let {
-                val maxMembers = positiveRandomInt(4)
-                Arguments.of(
-                    ARG_SET_4,
-                    randomChannel(name = "", members = it.map { user -> randomMember(user = user) }),
-                    maxMembers,
-                    "${
-                        it.sortedBy(User::name)
-                            .take(maxMembers)
-                            .joinToString(separator = ", ") { user -> user.name }
-                    } +${it.size - maxMembers} more",
-                )
-            },
-            Arguments.of(
-                ARG_SET_5,
-                randomChannel(
-                    name = "",
-                    members = listOf(
-                        randomMember(user = currentUser),
-                    ),
-                ),
-                randomInt(),
-                currentUser.name,
-            ),
-            Arguments.of(
-                ARG_SET_6,
-                randomChannel(
-                    name = "",
-                    members = emptyList(),
-                ),
-                positiveRandomInt(),
-                fallbackText,
-            ),
+    @Test
+    fun `Should return member name when channel has no name and single other member`() {
+        // Given
+        val otherUser = randomUser()
+        val channel = randomChannel(name = "", members = listOf(randomMember(user = otherUser)))
+        val maxMembers = positiveRandomInt()
+
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
+
+        // Then
+        displayName `should be equal to` otherUser.name
+    }
+
+    @Test
+    fun `Should return comma-separated member names when channel has no name and members within limit`() {
+        // Given
+        val members = List(positiveRandomInt(4)) { randomUser() }
+        val channel = randomChannel(name = "", members = members.map { user -> randomMember(user = user) })
+        val maxMembers = 4
+        val expectedName = members.sortedBy(User::name).joinToString(", ") { user -> user.name }
+
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
+
+        // Then
+        displayName `should be equal to` expectedName
+    }
+
+    @Test
+    fun `Should return truncated member names with more indicator when channel has no name and members exceed limit`() {
+        // Given
+        val members = List(5) { randomUser() }
+        val maxMembers = positiveRandomInt(4)
+        val channel = randomChannel(name = "", members = members.map { user -> randomMember(user = user) })
+        val expectedName = "${
+            members.sortedBy(User::name)
+                .take(maxMembers)
+                .joinToString(separator = ", ") { user -> user.name }
+        } +${members.size - maxMembers} more"
+
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
+
+        // Then
+        displayName `should be equal to` expectedName
+    }
+
+    @Test
+    fun `Should return current user name when channel has no name and only current user is member`() {
+        // Given
+        val channel = randomChannel(
+            name = "",
+            members = listOf(randomMember(user = currentUser)),
         )
+        val maxMembers = randomInt()
+
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
+
+        // Then
+        displayName `should be equal to` currentUser.name
+    }
+
+    @Test
+    fun `Should return fallback text when channel has no name and no members`() {
+        // Given
+        val channel = randomChannel(
+            name = "",
+            members = emptyList(),
+        )
+        val maxMembers = positiveRandomInt()
+
+        // When
+        val displayName = channel.getDisplayName(context, currentUser, fallbackResource, maxMembers)
+
+        // Then
+        displayName `should be equal to` fallbackText
     }
 }

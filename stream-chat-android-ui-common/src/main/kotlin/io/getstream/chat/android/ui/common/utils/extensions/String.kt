@@ -16,9 +16,34 @@
 
 package io.getstream.chat.android.ui.common.utils.extensions
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 internal fun String.initials(): String {
     return trim()
         .split("\\s+".toRegex())
         .take(2)
         .joinToString(separator = "") { it.take(1).uppercase() }
+}
+
+/**
+ * Checks if a message contains a link using a
+ * regular expression.
+ */
+internal fun String.containsLinks(): Boolean {
+    val regex = """(^|\s)((http|https|ftp)://)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(/[a-zA-Z0-9- ;,./?%&=]*)?"""
+        .toRegex(RegexOption.IGNORE_CASE)
+    return this.contains(regex = regex)
+}
+
+/**
+ * Small extension function designed to add a
+ * scheme to URLs that do not have one so that
+ * they can be opened using [android.content.Intent.ACTION_VIEW]
+ */
+@InternalStreamChatApi
+public fun String.addSchemeToUrlIfNeeded(): String = when {
+    this.startsWith("mailto:") -> this
+    this.startsWith("http://") -> this
+    this.startsWith("https://") -> this
+    else -> "http://$this"
 }

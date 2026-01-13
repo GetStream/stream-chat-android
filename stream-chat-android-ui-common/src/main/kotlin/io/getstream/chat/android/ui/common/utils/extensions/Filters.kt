@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extension
+package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters

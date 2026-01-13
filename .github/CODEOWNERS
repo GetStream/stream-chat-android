@@ -24,7 +24,6 @@ stream-chat-android-compose                 @GetStream/android-developers
 stream-chat-android-compose-sample          @GetStream/android-developers
 stream-chat-android-ui-guides               @GetStream/android-developers
 stream-chat-android-ui-uitests              @GetStream/android-developers
-stream-chat-android-ui-utils                @GetStream/android-developers
 
 # Libraries
 libraries/external                           @GetStream/android-developers

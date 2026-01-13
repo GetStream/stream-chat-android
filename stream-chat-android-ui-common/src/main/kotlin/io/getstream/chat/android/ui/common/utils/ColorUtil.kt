@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.util
+package io.getstream.chat.android.ui.common.utils
 
 import android.graphics.Color
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.math.roundToInt
 
 /**
@@ -26,6 +27,7 @@ import kotlin.math.roundToInt
  * @param factor The factor by which we adjust the color.
  * @return [Int] ARGB value of the color after adjustment.
  */
+@InternalStreamChatApi
 public fun adjustColorBrightness(color: Int, factor: Float): Int {
     val a = Color.alpha(color)
     val r = (Color.red(color) * factor).roundToInt()

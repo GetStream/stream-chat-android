@@ -22,8 +22,8 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.model.UserPresence
-import io.getstream.chat.android.uiutils.extension.getMembersStatusText
-import io.getstream.chat.android.uiutils.extension.getPreviewMessage
+import io.getstream.chat.android.ui.common.utils.extensions.getMembersStatusText
+import io.getstream.chat.android.ui.common.utils.extensions.getPreviewMessage
 import java.util.Date
 
 /**
