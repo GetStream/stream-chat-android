@@ -99,12 +99,12 @@ public fun PollViewResultDialog(
         dragHandle = {},
         containerColor = ChatTheme.colors.barsBackground,
     ) {
-        var showAllOptionResults by rememberSaveable { mutableStateOf<Option?>(null) }
+        var showAllOptionVotes by rememberSaveable { mutableStateOf<Option?>(null) }
 
         ViewModelStore {
             Crossfade(
                 modifier = Modifier.fillMaxSize(),
-                targetState = showAllOptionResults,
+                targetState = showAllOptionVotes,
             ) { showAll ->
                 when (showAll) {
                     null -> {
@@ -113,7 +113,7 @@ public fun PollViewResultDialog(
                         Content(
                             state = state,
                             onBackPressed = onBackPressed,
-                            onShowAllClick = { option -> showAllOptionResults = option },
+                            onShowAllClick = { option -> showAllOptionVotes = option },
                         )
                     }
 
@@ -121,8 +121,8 @@ public fun PollViewResultDialog(
                         PollOptionVotesDialog(
                             poll = selectedPoll.poll,
                             option = showAll,
-                            onDismissRequest = { showAllOptionResults = null },
-                            onBackPressed = { showAllOptionResults = null },
+                            onDismissRequest = { showAllOptionVotes = null },
+                            onBackPressed = { showAllOptionVotes = null },
                         )
                     }
                 }

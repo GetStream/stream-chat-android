@@ -37,7 +37,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
-import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollOptionResultsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollOptionVotesBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollOptionHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -49,7 +49,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     private val logger by taggedLogger("Chat:PollOptionVotesDialogFragment")
 
-    private var _binding: StreamUiFragmentPollOptionResultsBinding? = null
+    private var _binding: StreamUiFragmentPollOptionVotesBinding? = null
     private val binding get() = _binding!!
 
     private val pollId: String
@@ -83,7 +83,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = StreamUiFragmentPollOptionResultsBinding
+        _binding = StreamUiFragmentPollOptionVotesBinding
             .inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
@@ -117,8 +117,8 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
             binding.loadingContainer.isVisible = state.isLoading
             binding.loadingMoreProgress.isVisible = state.isLoadingMore && !state.isLoading
             val items = buildList {
-                add(PollOptionResultListItem.Header(isWinner = state.isWinner, voteCount = state.voteCount))
-                addAll(state.results.map(PollOptionResultListItem::VoteItem))
+                add(PollOptionVotesListItem.Header(isWinner = state.isWinner, voteCount = state.voteCount))
+                addAll(state.results.map(PollOptionVotesListItem::VoteItem))
             }
             votesAdapter.submitList(items)
             if (!state.isLoading && !state.isLoadingMore && state.canLoadMore) {
@@ -176,18 +176,18 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
             }
     }
 
-    private sealed interface PollOptionResultListItem {
-        data class Header(val isWinner: Boolean, val voteCount: Int) : PollOptionResultListItem
-        data class VoteItem(val vote: Vote) : PollOptionResultListItem
+    private sealed interface PollOptionVotesListItem {
+        data class Header(val isWinner: Boolean, val voteCount: Int) : PollOptionVotesListItem
+        data class VoteItem(val vote: Vote) : PollOptionVotesListItem
     }
 
     private class UserVoteAdapter :
-        ListAdapter<PollOptionResultListItem, RecyclerView.ViewHolder>(UserVoteDiffCallback) {
+        ListAdapter<PollOptionVotesListItem, RecyclerView.ViewHolder>(UserVoteDiffCallback) {
 
         override fun getItemViewType(position: Int): Int =
             when (getItem(position)) {
-                is PollOptionResultListItem.Header -> VIEW_TYPE_HEADER
-                is PollOptionResultListItem.VoteItem -> VIEW_TYPE_VOTE
+                is PollOptionVotesListItem.Header -> VIEW_TYPE_HEADER
+                is PollOptionVotesListItem.VoteItem -> VIEW_TYPE_VOTE
             }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
@@ -203,8 +203,8 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             when (val item = getItem(position)) {
-                is PollOptionResultListItem.Header -> (holder as HeaderViewHolder).bind(item)
-                is PollOptionResultListItem.VoteItem -> (holder as UserVoteViewHolder).bind(item.vote)
+                is PollOptionVotesListItem.Header -> (holder as HeaderViewHolder).bind(item)
+                is PollOptionVotesListItem.VoteItem -> (holder as UserVoteViewHolder).bind(item.vote)
             }
         }
 
@@ -212,7 +212,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
             private val binding: StreamUiItemPollOptionHeaderBinding,
         ) : RecyclerView.ViewHolder(binding.root) {
 
-            fun bind(item: PollOptionResultListItem.Header) {
+            fun bind(item: PollOptionVotesListItem.Header) {
                 binding.award.isVisible = item.isWinner
                 binding.voteCount.text = binding.root.context.getString(
                     R.string.stream_ui_poll_vote_counts,
@@ -234,22 +234,22 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
             }
         }
 
-        private object UserVoteDiffCallback : DiffUtil.ItemCallback<PollOptionResultListItem>() {
+        private object UserVoteDiffCallback : DiffUtil.ItemCallback<PollOptionVotesListItem>() {
             override fun areItemsTheSame(
-                oldItem: PollOptionResultListItem,
-                newItem: PollOptionResultListItem,
+                oldItem: PollOptionVotesListItem,
+                newItem: PollOptionVotesListItem,
             ): Boolean = when {
-                oldItem is PollOptionResultListItem.Header && newItem is PollOptionResultListItem.Header ->
+                oldItem is PollOptionVotesListItem.Header && newItem is PollOptionVotesListItem.Header ->
                     true
-                oldItem is PollOptionResultListItem.VoteItem && newItem is PollOptionResultListItem.VoteItem ->
+                oldItem is PollOptionVotesListItem.VoteItem && newItem is PollOptionVotesListItem.VoteItem ->
                     oldItem.vote.id == newItem.vote.id
 
                 else -> false
             }
 
             override fun areContentsTheSame(
-                oldItem: PollOptionResultListItem,
-                newItem: PollOptionResultListItem,
+                oldItem: PollOptionVotesListItem,
+                newItem: PollOptionVotesListItem,
             ): Boolean = oldItem == newItem
         }
     }
