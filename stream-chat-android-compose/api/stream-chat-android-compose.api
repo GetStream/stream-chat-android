@@ -1945,19 +1945,21 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionViewResultDialogKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionViewResultDialogKt;
+public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionVotesDialogKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionVotesDialogKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function3;
-	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function3;
 	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public static field lambda-5 Lkotlin/jvm/functions/Function2;
+	public static field lambda-6 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollViewResultDialogKt {
@@ -5135,13 +5137,13 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Messages
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
-public final class io/getstream/chat/android/compose/viewmodel/messages/PollOptionResultsViewModel : androidx/lifecycle/ViewModel {
+public final class io/getstream/chat/android/compose/viewmodel/messages/PollOptionVotesViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Option;Lkotlin/jvm/functions/Function1;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Option;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewAction;)V
+	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewAction;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/PollResultsViewModel : androidx/lifecycle/ViewModel {

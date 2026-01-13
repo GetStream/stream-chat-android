@@ -22,7 +22,7 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollOptionViewResultDialogTest : PaparazziComposeTest {
+internal class PollOptionVotesDialogTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi: Paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
@@ -30,42 +30,42 @@ internal class PollOptionViewResultDialogTest : PaparazziComposeTest {
     @Test
     fun `loading in light mode`() {
         snapshot(isInDarkMode = false) {
-            PollOptionResultsLoading()
+            PollOptionVotesLoading()
         }
     }
 
     @Test
     fun `loading in dark mode`() {
         snapshot(isInDarkMode = true) {
-            PollOptionResultsLoading()
+            PollOptionVotesLoading()
         }
     }
 
     @Test
     fun `content in light mode`() {
         snapshot(isInDarkMode = false) {
-            PollOptionResultsContent()
+            PollOptionVotesContent()
         }
     }
 
     @Test
     fun `content in dark mode`() {
         snapshot(isInDarkMode = true) {
-            PollOptionResultsContent()
+            PollOptionVotesContent()
         }
     }
 
     @Test
     fun `loading more in light mode`() {
         snapshot(isInDarkMode = false) {
-            PollOptionResultsLoadingMore()
+            PollOptionVotesLoadingMore()
         }
     }
 
     @Test
     fun `loading more in dark mode`() {
         snapshot(isInDarkMode = true) {
-            PollOptionResultsLoadingMore()
+            PollOptionVotesLoadingMore()
         }
     }
 }

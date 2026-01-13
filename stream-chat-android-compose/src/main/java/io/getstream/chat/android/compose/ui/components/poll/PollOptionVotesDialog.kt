@@ -59,14 +59,14 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
-import io.getstream.chat.android.compose.viewmodel.messages.PollOptionResultsViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewPollData
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionResultsViewAction
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionResultsViewEvent
-import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionResultsViewState
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
+import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionVotesViewState
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.flow.collectLatest
 
@@ -84,7 +84,7 @@ import kotlinx.coroutines.flow.collectLatest
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PollOptionViewResultDialog(
+internal fun PollOptionVotesDialog(
     poll: Poll,
     option: Option,
     onDismissRequest: () -> Unit,
@@ -103,7 +103,7 @@ internal fun PollOptionViewResultDialog(
     ) {
         ViewModelStore {
             val viewModel = viewModel {
-                PollOptionResultsViewModel(
+                PollOptionVotesViewModel(
                     poll = poll,
                     option = option,
                 )
@@ -112,14 +112,14 @@ internal fun PollOptionViewResultDialog(
 
             Content(
                 state = state,
-                onLoadMoreRequested = { viewModel.onViewAction(PollOptionResultsViewAction.LoadMoreRequested) },
+                onLoadMoreRequested = { viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested) },
                 onBackPressed = onBackPressed,
             )
 
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is PollOptionResultsViewEvent.LoadError -> {
+                        is PollOptionVotesViewEvent.LoadError -> {
                             val errorMessage = context.getString(R.string.stream_compose_poll_option_results_error)
                             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                         }
@@ -133,7 +133,7 @@ internal fun PollOptionViewResultDialog(
 @Suppress("LongMethod")
 @Composable
 private fun Content(
-    state: PollOptionResultsViewState,
+    state: PollOptionVotesViewState,
     onLoadMoreRequested: () -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -263,18 +263,18 @@ private fun PollVoteItem(vote: Vote) {
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionResultsLoadingPreview() {
+private fun PollOptionVotesLoadingPreview() {
     ChatTheme {
-        PollOptionResultsLoading()
+        PollOptionVotesLoading()
     }
 }
 
 @Composable
-internal fun PollOptionResultsLoading() {
+internal fun PollOptionVotesLoading() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
     Content(
-        state = PollOptionResultsViewState(
+        state = PollOptionVotesViewState(
             option = option,
             voteCount = poll.voteCountsByOption[option.id] ?: 0,
             isWinner = true,
@@ -285,18 +285,18 @@ internal fun PollOptionResultsLoading() {
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionResultsContentPreview() {
+private fun PollOptionVotesContentPreview() {
     ChatTheme {
-        PollOptionResultsContent()
+        PollOptionVotesContent()
     }
 }
 
 @Composable
-internal fun PollOptionResultsContent() {
+internal fun PollOptionVotesContent() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
     Content(
-        state = PollOptionResultsViewState(
+        state = PollOptionVotesViewState(
             option = option,
             voteCount = poll.voteCountsByOption[option.id] ?: 0,
             isWinner = true,
@@ -308,18 +308,18 @@ internal fun PollOptionResultsContent() {
 
 @Preview(showBackground = true)
 @Composable
-private fun PollOptionResultsLoadingMorePreview() {
+private fun PollOptionVotesLoadingMorePreview() {
     ChatTheme {
-        PollOptionResultsLoadingMore()
+        PollOptionVotesLoadingMore()
     }
 }
 
 @Composable
-internal fun PollOptionResultsLoadingMore() {
+internal fun PollOptionVotesLoadingMore() {
     val poll = PreviewPollData.poll1
     val option = poll.options.first()
     Content(
-        state = PollOptionResultsViewState(
+        state = PollOptionVotesViewState(
             option = option,
             voteCount = poll.voteCountsByOption[option.id] ?: 0,
             isWinner = true,

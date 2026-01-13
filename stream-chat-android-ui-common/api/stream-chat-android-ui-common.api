@@ -1027,20 +1027,20 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler$Companion {
 }
 
-public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewAction$LoadMoreRequested : io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewAction {
+public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewAction$LoadMoreRequested : io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewAction {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewAction$LoadMoreRequested;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewAction$LoadMoreRequested;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewEvent$LoadError : io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewEvent {
+public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewEvent$LoadError : io/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewEvent {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/result/Error;)V
 	public final fun component1 ()Lio/getstream/result/Error;
-	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewEvent$LoadError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewEvent$LoadError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionResultsViewEvent$LoadError;
+	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewEvent$LoadError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewEvent$LoadError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollOptionVotesViewEvent$LoadError;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getError ()Lio/getstream/result/Error;
 	public fun hashCode ()I

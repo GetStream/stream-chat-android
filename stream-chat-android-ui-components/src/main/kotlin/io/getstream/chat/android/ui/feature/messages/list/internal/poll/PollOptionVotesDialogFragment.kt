@@ -35,19 +35,19 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionResultsViewAction
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionResultsViewEvent
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollOptionResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollOptionHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.viewmodel.messages.PollOptionResultsViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.log.taggedLogger
 
-internal class PollOptionResultsDialogFragment : AppCompatDialogFragment() {
+internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
-    private val logger by taggedLogger("Chat:PollOptionResultsDialogFragment")
+    private val logger by taggedLogger("Chat:PollOptionVotesDialogFragment")
 
     private var _binding: StreamUiFragmentPollOptionResultsBinding? = null
     private val binding get() = _binding!!
@@ -68,14 +68,14 @@ internal class PollOptionResultsDialogFragment : AppCompatDialogFragment() {
         options[optionId] ?: throw IllegalStateException("Option not found for ID: $optionId")
     }
 
-    private val viewModel: PollOptionResultsViewModel by viewModels {
-        PollOptionResultsViewModel.Factory(poll = poll, option = option)
+    private val viewModel: PollOptionVotesViewModel by viewModels {
+        PollOptionVotesViewModel.Factory(poll = poll, option = option)
     }
 
     private val votesAdapter = UserVoteAdapter()
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
-        viewModel.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+        viewModel.onViewAction(PollOptionVotesViewAction.LoadMoreRequested)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,7 +137,7 @@ internal class PollOptionResultsDialogFragment : AppCompatDialogFragment() {
     private fun observeEvents() {
         viewModel.events.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is PollOptionResultsViewEvent.LoadError -> {
+                is PollOptionVotesViewEvent.LoadError -> {
                     logger.e { "[observeEvents] error loading poll option results: ${event.error}" }
                     val errorMessage = getString(R.string.stream_ui_poll_option_results_error)
                     Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
@@ -157,7 +157,7 @@ internal class PollOptionResultsDialogFragment : AppCompatDialogFragment() {
     }
 
     companion object {
-        const val TAG: String = "PollOptionResultsDialogFragment"
+        const val TAG: String = "PollOptionVotesDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
         private const val ARG_OPTION: String = "arg_option"
         private const val LOAD_MORE_THRESHOLD = 3
@@ -169,8 +169,8 @@ internal class PollOptionResultsDialogFragment : AppCompatDialogFragment() {
         private val options = mutableMapOf<String, Option>()
         private val optionReferenceCounts = mutableMapOf<String, Int>()
 
-        fun newInstance(poll: Poll, option: Option): PollOptionResultsDialogFragment =
-            PollOptionResultsDialogFragment().apply {
+        fun newInstance(poll: Poll, option: Option): PollOptionVotesDialogFragment =
+            PollOptionVotesDialogFragment().apply {
                 polls[poll.id] = poll
                 incrementPollReference(poll.id)
                 options[option.id] = option

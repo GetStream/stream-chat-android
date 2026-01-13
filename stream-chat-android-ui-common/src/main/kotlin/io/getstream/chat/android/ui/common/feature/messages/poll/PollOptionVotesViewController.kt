@@ -24,7 +24,8 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.QueryPollVotesResult
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionResultsViewState
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction.LoadMoreRequested
+import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionVotesViewState
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -44,28 +45,28 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 
 /**
- * Controller responsible for managing the state and events related to poll option results.
+ * Controller responsible for managing the state and events related to poll option votes.
  *
  * This controller handles fetching votes for a specific poll option from the API with pagination
  * support. It automatically loads the first page on initialization and supports loading additional
- * pages when [PollOptionResultsViewAction.LoadMoreRequested] is triggered. The controller emits
+ * pages when [PollOptionVotesViewAction.LoadMoreRequested] is triggered. The controller emits
  * state updates and error events for the UI to react to.
  *
- * @param poll The poll containing the option for which results are displayed.
+ * @param poll The poll containing the option for which votes are displayed.
  * @param option The specific poll option for which vote results are fetched.
  * @param chatClient The [ChatClient] instance used for querying poll votes from the API.
  * @param scope The [CoroutineScope] used for launching coroutines.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
-public class PollOptionResultsViewController(
+public class PollOptionVotesViewController(
     private val poll: Poll,
     private val option: Option,
     private val chatClient: ChatClient = ChatClient.instance(),
     scope: CoroutineScope,
 ) {
 
-    private val logger by taggedLogger("Chat:PollOptionResultsViewController")
+    private val logger by taggedLogger("Chat:PollOptionVotesViewController")
 
     /**
      * This flow is used to trigger the loading of votes when needed.
@@ -78,7 +79,7 @@ public class PollOptionResultsViewController(
     private var nextPage: String? = null
 
     private val _state = MutableStateFlow(
-        PollOptionResultsViewState(
+        PollOptionVotesViewState(
             option = option,
             voteCount = poll.voteCountsByOption[option.id] ?: 0,
             isWinner = poll.getWinner() == option,
@@ -86,16 +87,16 @@ public class PollOptionResultsViewController(
     )
 
     /**
-     * The current state of the poll option results view.
+     * The current state of the poll option votes view.
      */
-    public val state: StateFlow<PollOptionResultsViewState> = _state.asStateFlow()
+    public val state: StateFlow<PollOptionVotesViewState> = _state.asStateFlow()
 
-    private val _events = MutableSharedFlow<PollOptionResultsViewEvent>(extraBufferCapacity = 1)
+    private val _events = MutableSharedFlow<PollOptionVotesViewEvent>(extraBufferCapacity = 1)
 
     /**
      * One shot events triggered by the controller.
      */
-    public val events: SharedFlow<PollOptionResultsViewEvent> = _events.asSharedFlow()
+    public val events: SharedFlow<PollOptionVotesViewEvent> = _events.asSharedFlow()
 
     init {
         loadRequests.onStart { emit(Unit) } // Triggers the initial load
@@ -109,11 +110,11 @@ public class PollOptionResultsViewController(
     }
 
     /**
-     * Handles an [PollOptionResultsViewAction] coming from the View layer.
+     * Handles an [PollOptionVotesViewAction] coming from the View layer.
      */
-    public fun onViewAction(action: PollOptionResultsViewAction) {
+    public fun onViewAction(action: PollOptionVotesViewAction) {
         when (action) {
-            PollOptionResultsViewAction.LoadMoreRequested -> loadMore()
+            PollOptionVotesViewAction.LoadMoreRequested -> loadMore()
         }
     }
 
@@ -152,7 +153,7 @@ public class PollOptionResultsViewController(
 
     private fun onFailureResult(error: Error) {
         logger.e { "[onFailureResult] error: ${error.message}" }
-        _events.tryEmit(PollOptionResultsViewEvent.LoadError(error))
+        _events.tryEmit(PollOptionVotesViewEvent.LoadError(error))
         _state.update { currentState ->
             currentState.copy(
                 isLoading = false,

@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Vote
 
 /**
- * Represents the state of the poll option results view for a specific poll option.
+ * Represents the state of the poll option votes view for a specific poll option.
  *
  * This state is used when displaying all votes for a single poll option in a paginated list.
  * It tracks loading states, pagination status, and the list of votes fetched so far.
@@ -35,7 +35,7 @@ import io.getstream.chat.android.models.Vote
  * @param isLoadingMore True if a pagination request is currently in progress. Defaults to false.
  */
 @InternalStreamChatApi
-public data class PollOptionResultsViewState(
+public data class PollOptionVotesViewState(
     val option: Option,
     val voteCount: Int,
     val isWinner: Boolean,

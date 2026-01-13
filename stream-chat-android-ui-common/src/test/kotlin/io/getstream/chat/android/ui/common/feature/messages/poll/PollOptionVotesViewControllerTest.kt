@@ -27,6 +27,8 @@ import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction.LoadMoreRequested
+import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent.LoadError
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
@@ -39,7 +41,7 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-internal class PollOptionResultsViewControllerTest {
+internal class PollOptionVotesViewControllerTest {
 
     @Test
     fun `when initialized, should set initial state with option and vote count`() = runTest {
@@ -161,7 +163,7 @@ internal class PollOptionResultsViewControllerTest {
             }
 
             val event = awaitItem()
-            assertInstanceOf<PollOptionResultsViewEvent.LoadError>(event)
+            assertInstanceOf<PollOptionVotesViewEvent.LoadError>(event)
             assertEquals(error, event.error)
         }
     }
@@ -200,7 +202,7 @@ internal class PollOptionResultsViewControllerTest {
             assertTrue(firstPageViewState.canLoadMore)
             assertFalse(firstPageViewState.isLoadingMore)
 
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
             assertFalse(loadingMoreViewState.isLoading)
@@ -243,7 +245,7 @@ internal class PollOptionResultsViewControllerTest {
             assertFalse(firstPageViewState.isLoading)
             assertFalse(firstPageViewState.isLoadingMore)
 
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
             assertFalse(loadingMoreViewState.isLoading)
@@ -251,7 +253,7 @@ internal class PollOptionResultsViewControllerTest {
 
             sut.events.test {
                 val event = awaitItem()
-                assertInstanceOf<PollOptionResultsViewEvent.LoadError>(event)
+                assertInstanceOf<PollOptionVotesViewEvent.LoadError>(event)
                 assertEquals(searchingError, event.error)
             }
 
@@ -289,7 +291,7 @@ internal class PollOptionResultsViewControllerTest {
             assertFalse(viewState.canLoadMore)
             assertFalse(viewState.isLoadingMore)
 
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             expectNoEvents()
         }
@@ -321,13 +323,13 @@ internal class PollOptionResultsViewControllerTest {
             assertFalse(viewState.isLoading)
             assertFalse(viewState.isLoadingMore)
 
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem()
             assertFalse(loadingMoreViewState.isLoading)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             expectNoEvents()
         }
@@ -349,7 +351,7 @@ internal class PollOptionResultsViewControllerTest {
         sut.state.test {
             val viewState = awaitItem() // initial loading state
             assertTrue(viewState.isLoading)
-            sut.onViewAction(PollOptionResultsViewAction.LoadMoreRequested)
+            sut.onViewAction(LoadMoreRequested)
 
             expectNoEvents()
         }
@@ -414,7 +416,7 @@ private class Fixture {
         ) doAnswer { result?.asCall() ?: error?.asCall() }
     }
 
-    fun get(scope: CoroutineScope) = PollOptionResultsViewController(
+    fun get(scope: CoroutineScope) = PollOptionVotesViewController(
         poll = poll,
         option = option,
         chatClient = chatClient,

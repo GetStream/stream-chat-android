@@ -116,8 +116,8 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
     }
 
     private fun onShowAllVotesClick(option: Option) {
-        PollOptionResultsDialogFragment.newInstance(poll = poll, option = option)
-            .show(parentFragmentManager, PollOptionResultsDialogFragment.TAG)
+        PollOptionVotesDialogFragment.newInstance(poll = poll, option = option)
+            .show(parentFragmentManager, PollOptionVotesDialogFragment.TAG)
     }
 
     override fun onDestroyView() {

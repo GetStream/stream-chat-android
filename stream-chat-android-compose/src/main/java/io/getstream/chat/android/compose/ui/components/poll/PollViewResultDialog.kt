@@ -75,7 +75,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.initials
  * A dialog that displays poll results for all options in a poll.
  *
  * Shows each poll option with its vote count, winner indicator (if applicable), and a preview
- * of voters. Users can tap "Show All" on any option to navigate to [PollOptionViewResultDialog]
+ * of voters. Users can tap "Show All" on any option to navigate to [PollOptionVotesDialog]
  * to see the complete list of votes for that option.
  *
  * @param selectedPoll The poll for which results are displayed, containing all poll state.
@@ -118,7 +118,7 @@ public fun PollViewResultDialog(
                     }
 
                     else -> {
-                        PollOptionViewResultDialog(
+                        PollOptionVotesDialog(
                             poll = selectedPoll.poll,
                             option = showAll,
                             onDismissRequest = { showAllOptionResults = null },

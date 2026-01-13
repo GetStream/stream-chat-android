@@ -17,15 +17,17 @@
 package io.getstream.chat.android.ui.common.feature.messages.poll
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.result.Error
 
 /**
- * Represents actions that can be performed from the poll option results view.
+ * The different types of events that can occur in the poll option votes view.
  */
 @InternalStreamChatApi
-public sealed interface PollOptionResultsViewAction {
-
+public sealed interface PollOptionVotesViewEvent {
     /**
-     * Represents the action to load more votes.
+     * The error event that occurred while loading votes.
+     *
+     * @param error The error that occurred during the loading process.
      */
-    public data object LoadMoreRequested : PollOptionResultsViewAction
+    public data class LoadError(val error: Error) : PollOptionVotesViewEvent
 }
