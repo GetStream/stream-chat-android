@@ -1047,32 +1047,6 @@ public final class io/getstream/chat/android/ui/common/feature/messages/poll/Pol
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction {
-}
-
-public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction$LoadMoreRequested : io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewAction$LoadMoreRequested;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent {
-}
-
-public final class io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent$LoadError : io/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/result/Error;)V
-	public final fun component1 ()Lio/getstream/result/Error;
-	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent$LoadError;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent$LoadError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/poll/PollResultsViewEvent$LoadError;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Lio/getstream/result/Error;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore$Companion;
