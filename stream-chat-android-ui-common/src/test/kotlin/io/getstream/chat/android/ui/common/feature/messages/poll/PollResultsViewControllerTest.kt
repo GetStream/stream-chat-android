@@ -73,7 +73,7 @@ internal class PollResultsViewControllerTest {
     }
 
     @Test
-    fun `when multiple options have same vote count, should mark all as winners`() = runTest {
+    fun `when multiple options have same vote count, should not mark any as winner`() = runTest {
         val option1 = Option(id = "opt1", text = "Option 1")
         val option2 = Option(id = "opt2", text = "Option 2")
         val poll = randomPoll(
