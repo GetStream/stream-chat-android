@@ -41,6 +41,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
 /**
  * An interface that allows to format the quoted message text.
  */
+// TODO [G.] do we really need this
 public fun interface QuotedMessageTextFormatter {
 
     /**
@@ -160,8 +161,8 @@ public fun interface QuotedMessageTextFormatter {
         private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle {
             return { isMine ->
                 when (isMine) {
-                    true -> ownTheme.quoted.textStyle
-                    else -> otherTheme.quoted.textStyle
+                    true -> ownTheme.textStyle
+                    else -> otherTheme.textStyle
                 }
             }
         }
@@ -203,7 +204,7 @@ private class CompositeQuotedMessageTextFormatter(
 }
 
 /**
- * Default implementation of [MessageTextFormatter].
+ * Default implementation of [QuotedMessageTextFormatter].
  *
  * The default implementation automatically supports the [ChatTheme.autoTranslationEnabled] feature.
  * It also uses the [ChatTheme] to style the text including links highlighting.
@@ -237,10 +238,6 @@ internal class DefaultQuotedMessageTextFormatter(
             displayedText.isNotBlank() -> displayedText
             attachment != null -> attachment.getMessageText() ?: displayedText
             else -> displayedText
-        }
-
-        checkNotNull(quotedMessageText) {
-            "quotedMessageText is null. Cannot display invalid message title."
         }
 
         val isMine = message.isMine(currentUser)

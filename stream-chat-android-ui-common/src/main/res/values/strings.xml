@@ -149,8 +149,8 @@
 
     <!-- Channel List -->
     <string name="stream_ui_channel_list_untitled_channel_plus_more">%1$s +%2$d more</string>
-    <string name="stream_ui_location_static_message_text">📍Location</string>
-    <string name="stream_ui_location_live_message_text">📍Live location</string>
+    <string name="stream_ui_location_static_message_text">Location</string>
+    <string name="stream_ui_location_live_message_text">Live location</string>
 
     <!-- Polls -->
 

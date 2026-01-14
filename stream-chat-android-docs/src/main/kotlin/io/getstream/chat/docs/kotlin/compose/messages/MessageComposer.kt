@@ -202,6 +202,7 @@ private object MessageComposerCustomizationSnippet {
                         messageComposerState = inputState,
                         onValueChange = { composerViewModel.setMessageInput(it) },
                         onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                        onCancelAction = { composerViewModel.dismissMessageActions() },
                         onLinkPreviewClick = null,
                         label = { // create a custom label with an icon
                             Row(

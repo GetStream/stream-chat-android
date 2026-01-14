@@ -61,10 +61,6 @@ import io.getstream.chat.android.compose.R
  * given it contains more than can be displayed in the message list media attachment preview.
  * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
  * given it contains more than can be displayed in the message list media attachment preview.
- * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
- * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
- * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
- * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  */
 @Suppress("DEPRECATION_ERROR")
 @Immutable
@@ -106,20 +102,18 @@ public data class StreamColors(
     public val videoBackgroundMediaGalleryPicker: Color,
     public val showMoreOverlay: Color,
     public val showMoreCountText: Color,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
-    public val ownMessageQuotedBackground: Color = otherMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
-    public val otherMessageQuotedBackground: Color = ownMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
-    public val ownMessageQuotedText: Color = textHighEmphasis,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
-    public val otherMessageQuotedText: Color = textHighEmphasis,
 
     // Design System semantic colors
     public val borderCoreOnDark: Color,
     public val borderCoreImage: Color,
+    public val textPrimary: Color,
     public val chatBgIncoming: Color,
     public val chatBgOutgoing: Color,
+    public val chatBgAttachmentIncoming: Color,
+    public val chatBgAttachmentOutgoing: Color,
+    public val chatReplyIndicatorIncoming: Color,
+    public val chatReplyIndicatorOutgoing: Color,
+    public val chatTextMessage: Color = textPrimary,
     public val controlRemoveBg: Color,
     public val controlRemoveBorder: Color = borderCoreOnDark,
     public val controlRemoveIcon: Color,
@@ -166,8 +160,13 @@ public data class StreamColors(
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
             borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
+            textPrimary = StreamPrimitiveColors.slate900,
             chatBgIncoming = StreamPrimitiveColors.slate100,
             chatBgOutgoing = StreamPrimitiveColors.blue100,
+            chatBgAttachmentIncoming = StreamPrimitiveColors.slate200,
+            chatBgAttachmentOutgoing = StreamPrimitiveColors.blue200,
+            chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
+            chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
             controlRemoveBg = StreamPrimitiveColors.slate900,
             controlRemoveBorder = StreamPrimitiveColors.baseWhite,
             controlRemoveIcon = StreamPrimitiveColors.baseWhite,
@@ -213,8 +212,13 @@ public data class StreamColors(
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
             borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
+            textPrimary = StreamPrimitiveColors.neutral50,
             chatBgIncoming = StreamPrimitiveColors.neutral800,
             chatBgOutgoing = StreamPrimitiveColors.blue800,
+            chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
+            chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
+            chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
+            chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue300,
             controlRemoveBg = StreamPrimitiveColors.neutral800,
             controlRemoveIcon = StreamPrimitiveColors.baseWhite,
         )
@@ -226,8 +230,17 @@ internal object StreamPrimitiveColors {
     val baseBlack = Color(0xFF000000)
     val baseWhite = Color(0xFFFFFFFF)
     val blue100 = Color(0xFFD2E3FF)
+    val blue200 = Color(0xFFA6C4FF)
+    val blue300 = Color(0xFF7AA7FF)
+    val blue400 = Color(0xFF4E8BFF)
+    val blue700 = Color(0xFF0042A3)
     val blue800 = Color(0xFF003179)
+    val neutral50 = Color(0xFFF7F7F7)
+    val neutral500 = Color(0xFF7F7F7F)
+    val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)
     val slate100 = Color(0xFFF2F4F6)
+    val slate200 = Color(0xFFE2E6EA)
+    val slate400 = Color(0xFFB8BEC4)
     val slate900 = Color(0xFF1E252B)
 }
