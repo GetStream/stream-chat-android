@@ -51,6 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add poll results + poll option votes state/controllers to support pagination and error handling.
 
 ### ⚠️ Changed
 
@@ -58,10 +59,13 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix poll results sheet cutting off the last option items.
+- Fix poll dialogs layout on edge-to-edge devices by applying system bar insets.
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add XML poll option votes dialog with pagination support.
 
 ### ⚠️ Changed
 
@@ -69,11 +73,13 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix poll results sheet cutting off the last option items.
 
 ### ⬆️ Improved
 - Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
 
 ### ✅ Added
+- Add Compose poll option votes dialog with pagination support.
 
 ### ⚠️ Changed
 
