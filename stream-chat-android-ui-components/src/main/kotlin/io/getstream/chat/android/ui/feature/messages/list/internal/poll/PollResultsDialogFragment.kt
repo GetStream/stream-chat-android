@@ -25,9 +25,11 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -149,7 +151,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private class ResultsAdapter(
         private val onShowAllVotesClick: (Option) -> Unit,
-    ) : androidx.recyclerview.widget.ListAdapter<PollResultsViewState.ResultItem, ResultsAdapter.ResultViewHolder>(
+    ) : ListAdapter<PollResultsViewState.ResultItem, ResultsAdapter.ResultViewHolder>(
         object : DiffUtil.ItemCallback<PollResultsViewState.ResultItem>() {
             override fun areItemsTheSame(
                 oldItem: PollResultsViewState.ResultItem,
@@ -165,7 +167,10 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder =
             ResultViewHolder(
-                StreamUiItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+                StreamUiItemResultBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false).apply {
+                        optionList.adapter = UserVoteAdapter()
+                    },
                 onShowAllVotesClick,
             )
 
@@ -184,10 +189,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
                     R.string.stream_ui_poll_vote_counts,
                     result.voteCount,
                 )
-                val adapter = (binding.optionList.adapter as? UserVoteAdapter) ?: UserVoteAdapter().also {
-                    binding.optionList.adapter = it
-                }
-                adapter.submitList(result.votes)
+                (binding.optionList.adapter as? UserVoteAdapter)?.submitList(result.votes)
                 binding.award.isVisible = result.isWinner
                 binding.showAll.isVisible = result.showAllButton
                 binding.showAll.setOnClickListener { onShowAllVotesClick(result.option) }
@@ -195,8 +197,7 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         }
     }
 
-    private class UserVoteAdapter :
-        androidx.recyclerview.widget.ListAdapter<Vote, UserVoteAdapter.UserVoteViewHolder>(UserVoteDiffCallback) {
+    private class UserVoteAdapter : ListAdapter<Vote, UserVoteAdapter.UserVoteViewHolder>(UserVoteDiffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVoteViewHolder =
             UserVoteViewHolder(
@@ -212,9 +213,14 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(vote: Vote) {
-                val user = vote.user ?: return
-                binding.name.text = user.name
-                binding.userAvatarView.setUser(user)
+                vote.user?.let { user ->
+                    binding.name.text = user.name
+                    binding.userAvatarView.setUser(user)
+                    binding.userAvatarView.isVisible = true
+                } ?: {
+                    binding.name.text = ""
+                    binding.userAvatarView.isInvisible = true
+                }
                 binding.date.text = ChatUI.dateFormatter.formatRelativeDate(vote.createdAt)
                 binding.time.text = ChatUI.dateFormatter.formatTime(vote.createdAt)
             }
