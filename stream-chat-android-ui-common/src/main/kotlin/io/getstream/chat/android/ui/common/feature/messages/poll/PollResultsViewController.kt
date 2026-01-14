@@ -46,8 +46,6 @@ public class PollResultsViewController(
     private val poll: Poll,
 ) {
 
-    private val logger by taggedLogger("Chat:PollResultsViewController")
-
     private val _state = MutableStateFlow(
         run {
             val options = poll.options.sortedByDescending { option ->

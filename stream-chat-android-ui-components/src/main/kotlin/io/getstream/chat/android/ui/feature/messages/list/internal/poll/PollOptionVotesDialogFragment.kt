@@ -148,7 +148,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!requireActivity().isChangingConfigurations) {
+        if (activity?.isChangingConfigurations != true) {
             polls.remove(pollId)
             options.remove(optionId)
         }
