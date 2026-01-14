@@ -69,4 +69,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/option"
         />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/showAll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:background="@android:color/transparent"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_small"
+        android:text="@string/stream_ui_poll_show_all_votes"
+        android:textAllCaps="false"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
+        android:textColor="@color/stream_ui_accent_blue"
+        android:visibility="gone"
+        style="?attr/borderlessButtonStyle"
+        app:layout_constraintTop_toBottomOf="@id/optionList"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
