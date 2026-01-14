@@ -1254,6 +1254,39 @@ public final class io/getstream/chat/android/ui/common/model/MessageResult {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/model/MimeType {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/model/MimeType;
+	public static final field MIME_TYPE_7Z Ljava/lang/String;
+	public static final field MIME_TYPE_AAC Ljava/lang/String;
+	public static final field MIME_TYPE_AUDIO_MP4 Ljava/lang/String;
+	public static final field MIME_TYPE_CSV Ljava/lang/String;
+	public static final field MIME_TYPE_DOC Ljava/lang/String;
+	public static final field MIME_TYPE_DOCX Ljava/lang/String;
+	public static final field MIME_TYPE_GIF Ljava/lang/String;
+	public static final field MIME_TYPE_HTML Ljava/lang/String;
+	public static final field MIME_TYPE_M4A Ljava/lang/String;
+	public static final field MIME_TYPE_MD Ljava/lang/String;
+	public static final field MIME_TYPE_MOV Ljava/lang/String;
+	public static final field MIME_TYPE_MP3 Ljava/lang/String;
+	public static final field MIME_TYPE_MP4 Ljava/lang/String;
+	public static final field MIME_TYPE_ODT Ljava/lang/String;
+	public static final field MIME_TYPE_PDF Ljava/lang/String;
+	public static final field MIME_TYPE_PPT Ljava/lang/String;
+	public static final field MIME_TYPE_PPTX Ljava/lang/String;
+	public static final field MIME_TYPE_QUICKTIME Ljava/lang/String;
+	public static final field MIME_TYPE_RAR Ljava/lang/String;
+	public static final field MIME_TYPE_RTF Ljava/lang/String;
+	public static final field MIME_TYPE_TAR Ljava/lang/String;
+	public static final field MIME_TYPE_TXT Ljava/lang/String;
+	public static final field MIME_TYPE_VIDEO_MP4 Ljava/lang/String;
+	public static final field MIME_TYPE_VIDEO_QUICKTIME Ljava/lang/String;
+	public static final field MIME_TYPE_VND Ljava/lang/String;
+	public static final field MIME_TYPE_XLS Ljava/lang/String;
+	public static final field MIME_TYPE_XLSX Ljava/lang/String;
+	public static final field MIME_TYPE_ZIP Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/model/UserPresence {
 	public static final field $stable I
 	public fun <init> ()V
@@ -2902,6 +2935,14 @@ public final class io/getstream/chat/android/ui/common/utils/ChannelNameFormatte
 	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion;Landroid/content/Context;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 }
 
+public final class io/getstream/chat/android/ui/common/utils/EmojiUtil {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/EmojiUtil;
+	public final fun getEmojiCount (Lio/getstream/chat/android/models/Message;)I
+	public final fun isEmojiOnly (Lio/getstream/chat/android/models/Message;)Z
+	public final fun isSingleEmoji (Lio/getstream/chat/android/models/Message;)Z
+}
+
 public final class io/getstream/chat/android/ui/common/utils/ExpandableList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
 	public static final field $stable I
 	public fun <init> (Ljava/util/List;IZ)V
@@ -3011,16 +3052,29 @@ public class io/getstream/chat/android/ui/common/utils/Utils {
 public final class io/getstream/chat/android/ui/common/utils/extensions/AttachmentKt {
 	public static final fun getDisplayableName (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
+	public static final fun hasLink (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isAnyFileType (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isFailed (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isUploading (Lio/getstream/chat/android/models/Attachment;)Z
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/ChannelKt {
+	public static final fun getDisplayName (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;II)Ljava/lang/String;
+	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;IIILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getInitials (Lio/getstream/chat/android/models/Channel;)Ljava/lang/String;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;ZZIIIII)Ljava/lang/String;
+	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;ZZIIIIIILjava/lang/Object;)Ljava/lang/String;
+	public static final fun getPreviewMessage (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 	public static final fun isDirectMessaging (Lio/getstream/chat/android/models/Channel;)Z
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/ContextKt {
 	public static final fun onPermissionRequested (Landroid/content/Context;Ljava/lang/String;)V
 	public static final fun wasPermissionRequested (Landroid/content/Context;Ljava/lang/String;)Z
+}
+
+public final class io/getstream/chat/android/ui/common/utils/extensions/FiltersKt {
+	public static final fun defaultChannelListFilter (Lio/getstream/chat/android/models/Filters;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/FilterObject;
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/FlowKt {
@@ -3033,6 +3087,7 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/MessageK
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/UserKt {
 	public static final fun getInitials (Lio/getstream/chat/android/models/User;)Ljava/lang/String;
+	public static final fun getLastSeenText (Lio/getstream/chat/android/models/User;Landroid/content/Context;III)Ljava/lang/String;
 	public static final fun getUserByNameOrId (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/models/User;
 }
 

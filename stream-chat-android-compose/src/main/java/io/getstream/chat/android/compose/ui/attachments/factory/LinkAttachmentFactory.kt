@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentCo
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * An [AttachmentFactory] that validates attachments as images and uses [LinkAttachmentContent] to

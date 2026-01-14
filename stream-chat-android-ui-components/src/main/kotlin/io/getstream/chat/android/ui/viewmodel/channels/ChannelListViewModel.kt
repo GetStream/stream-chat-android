@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
 import io.getstream.chat.android.ui.utils.extensions.isMuted
-import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error

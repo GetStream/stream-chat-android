@@ -56,7 +56,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.toNetworkHeaders
-import io.getstream.chat.android.uiutils.util.adjustColorBrightness
+import io.getstream.chat.android.ui.common.utils.adjustColorBrightness
 import java.net.SocketTimeoutException
 import kotlin.math.abs
 

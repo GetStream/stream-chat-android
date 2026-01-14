@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 private fun Message.isMessageFailed(): Boolean = syncStatus == SyncStatus.FAILED_PERMANENTLY
 private fun Message.isSynced(): Boolean = syncStatus == SyncStatus.COMPLETED

@@ -74,6 +74,7 @@ import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
@@ -113,7 +114,6 @@ import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.showToast
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.use
-import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call

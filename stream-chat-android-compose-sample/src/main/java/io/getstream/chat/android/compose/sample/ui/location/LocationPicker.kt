@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.sample.ui.location
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -68,7 +71,6 @@ import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.util.openSystemSettings
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
@@ -220,10 +222,11 @@ private fun LocationContent(
             longitude = location!!.longitude,
         )
     } else if (showLocationPermissionRequired) {
+        val context = LocalContext.current
         LocationPermissionRequired(
             modifier = modifier,
             onClick = {
-                context.openSystemSettings()
+                openSystemSettings(context)
                 onDismiss()
             },
         )
@@ -351,6 +354,15 @@ private suspend fun Context.isLocationEnabled(priority: Int): Boolean {
     } catch (e: Exception) {
         false
     }
+}
+
+private fun openSystemSettings(context: Context) {
+    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+        val uri: Uri = Uri.fromParts("package", context.packageName, null)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        data = uri
+    }
+    context.startActivity(intent)
 }
 
 @Preview(showBackground = true)

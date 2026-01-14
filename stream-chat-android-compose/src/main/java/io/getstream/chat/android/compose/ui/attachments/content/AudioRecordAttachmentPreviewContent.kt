@@ -34,7 +34,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
@@ -114,7 +114,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
         tailContent = {
-            CancelIcon(
+            ComposerCancelIcon(
                 modifier = Modifier
                     .padding(4.dp),
                 onClick = { onAttachmentRemoved(currentAttachment) },

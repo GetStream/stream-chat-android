@@ -73,7 +73,6 @@ tasks.withType<KotlinCompile> {
 dependencies {
     api(project(":stream-chat-android-ui-common"))
     implementation(project(":stream-chat-android-previewdata"))
-    implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.stream.log)

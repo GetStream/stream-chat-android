@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.compose.LocalAsyncImagePreviewHandler
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
@@ -90,7 +90,7 @@ private fun ImageAttachmentPreviewContentItem(
             contentScale = ContentScale.Crop,
         )
 
-        CancelIcon(
+        ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(4.dp),

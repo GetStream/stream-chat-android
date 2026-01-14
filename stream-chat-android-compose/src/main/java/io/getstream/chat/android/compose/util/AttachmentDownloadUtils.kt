@@ -42,7 +42,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
 import io.getstream.chat.android.ui.common.utils.extensions.wasPermissionRequested
-import io.getstream.chat.android.uiutils.util.openSystemSettings
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
