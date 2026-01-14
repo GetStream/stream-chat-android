@@ -20,12 +20,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentContainerBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 
 /**
  * An Activity representing a self-contained channel list screen. This Activity
@@ -68,11 +67,7 @@ public open class ChannelListActivity : AppCompatActivity() {
     }
 
     private fun setupEdgeToEdge() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { root, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            root.updatePadding(left = insets.left, top = insets.top, right = insets.right, bottom = insets.bottom)
-            WindowInsetsCompat.CONSUMED
-        }
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     public companion object {

@@ -25,10 +25,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -38,6 +36,7 @@ import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -113,12 +112,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             statusBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
             navigationBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
         )
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(top = insets.top, left = insets.left, right = insets.right, bottom = insets.bottom)
-
-            WindowInsetsCompat.CONSUMED
-        }
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     private fun createPlayer(): Player {
