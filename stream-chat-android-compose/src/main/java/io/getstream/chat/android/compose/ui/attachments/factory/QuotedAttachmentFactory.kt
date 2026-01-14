@@ -26,7 +26,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the

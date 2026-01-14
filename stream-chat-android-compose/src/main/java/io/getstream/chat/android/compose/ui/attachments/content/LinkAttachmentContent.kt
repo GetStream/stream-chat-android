@@ -67,9 +67,9 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
-import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link

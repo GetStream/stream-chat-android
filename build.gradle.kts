@@ -50,7 +50,6 @@ streamProject {
             "stream-chat-android-offline",
             "stream-chat-android-state",
             "stream-chat-android-ui-common",
-            "stream-chat-android-ui-utils",
         )
     }
 }

@@ -126,7 +126,6 @@ modules=(
   "stream-chat-android-state"
   "stream-chat-android-ui-common"
   "stream-chat-android-ui-components"
-  "stream-chat-android-ui-utils"
 )
 
 # Function to restore the modified fields in the config file and the gradle file

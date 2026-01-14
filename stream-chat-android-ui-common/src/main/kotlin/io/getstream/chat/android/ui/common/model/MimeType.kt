@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.model
+package io.getstream.chat.android.ui.common.model
 
 /**
- * Represents MIME types of attachments.
+ * Defines the possible MIME types for file attachments.
  */
 public object MimeType {
     public const val MIME_TYPE_VND: String = "application/vnd"

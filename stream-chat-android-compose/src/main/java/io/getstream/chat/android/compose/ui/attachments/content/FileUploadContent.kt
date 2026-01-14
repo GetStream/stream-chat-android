@@ -46,7 +46,7 @@ import io.getstream.chat.android.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.models.Attachment.UploadState.InProgress
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.uiutils.extension.isUploading
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Represents the content when files are being uploaded.

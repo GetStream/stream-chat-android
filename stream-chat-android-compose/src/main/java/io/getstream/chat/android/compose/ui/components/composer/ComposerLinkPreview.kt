@@ -67,8 +67,8 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.log.StreamLog
 
 private const val TAG = "ComposerLinkPreview"

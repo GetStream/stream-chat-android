@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.uiutils.extension
+package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.randomString
-import org.amshove.kluent.`should be`
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class StringKtTest {
+internal class StringExtensionsTests {
 
     @ParameterizedTest
     @MethodSource("containsLinksData")
     fun `containsLinks returns expected result`(input: String, expected: Boolean) {
-        input.containsLinks() `should be` expected
+        Assertions.assertEquals(expected, input.containsLinks())
+    }
+
+    @ParameterizedTest
+    @MethodSource("addSchemeToUrlIfNeededData")
+    fun `addSchemeToUrlIfNeeded returns expected result`(input: String, expected: String) {
+        Assertions.assertEquals(expected, input.addSchemeToUrlIfNeeded())
     }
 
     companion object {
@@ -36,6 +42,40 @@ internal class StringKtTest {
         fun containsLinksData() =
             stringsWithoutLink().map { Arguments.of(it, false) } +
                 stringsWithLink().map { Arguments.of(it, true) }
+
+        @JvmStatic
+        fun addSchemeToUrlIfNeededData() = listOf(
+            // URLs that already have http:// scheme should remain unchanged
+            Arguments.of("http://example.com", "http://example.com"),
+            Arguments.of("http://www.example.com", "http://www.example.com"),
+            Arguments.of("http://example.com/path", "http://example.com/path"),
+            Arguments.of("http://example.com/path?query=value", "http://example.com/path?query=value"),
+            Arguments.of("http://example.com:8080", "http://example.com:8080"),
+            // URLs that already have https:// scheme should remain unchanged
+            Arguments.of("https://example.com", "https://example.com"),
+            Arguments.of("https://www.example.com", "https://www.example.com"),
+            Arguments.of("https://example.com/path", "https://example.com/path"),
+            Arguments.of("https://example.com/path?query=value", "https://example.com/path?query=value"),
+            Arguments.of("https://example.com:443", "https://example.com:443"),
+            // mailto: URLs should remain unchanged
+            Arguments.of("mailto:user@example.com", "mailto:user@example.com"),
+            Arguments.of("mailto:test@test.com", "mailto:test@test.com"),
+            Arguments.of("mailto:contact@company.org?subject=Hello", "mailto:contact@company.org?subject=Hello"),
+            // URLs without scheme should get http:// prepended
+            Arguments.of("example.com", "http://example.com"),
+            Arguments.of("www.example.com", "http://www.example.com"),
+            Arguments.of("example.com/path", "http://example.com/path"),
+            Arguments.of("www.example.com/path/to/page", "http://www.example.com/path/to/page"),
+            Arguments.of("example.com?query=value", "http://example.com?query=value"),
+            Arguments.of("subdomain.example.com", "http://subdomain.example.com"),
+            Arguments.of("example.co.uk", "http://example.co.uk"),
+            Arguments.of("192.168.1.1", "http://192.168.1.1"),
+            Arguments.of("localhost:8080", "http://localhost:8080"),
+
+            // Edge cases
+            Arguments.of("ftp://example.com", "http://ftp://example.com"), // ftp is not handled, gets http://
+            Arguments.of("", "http://"),
+        )
 
         private fun stringsWithoutLink() = listOf(
             randomString(),
@@ -46,6 +86,7 @@ internal class StringKtTest {
             "http://.com",
             "http://..com",
         )
+
         private fun stringsWithLink() = listOf(
             "https://www.example.com",
             "http://example.com",

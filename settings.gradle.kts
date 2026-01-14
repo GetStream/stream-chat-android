@@ -48,8 +48,7 @@ plugins {
 	id("com.gradle.enterprise") version "3.7"
 }
 include (
-		":stream-chat-android-ui-utils",
-		":stream-chat-android-ui-common",
+    ":stream-chat-android-ui-common",
 		":stream-chat-android-ui-components",
 		":stream-chat-android-ui-components-sample",
 		":stream-chat-android-ui-guides",

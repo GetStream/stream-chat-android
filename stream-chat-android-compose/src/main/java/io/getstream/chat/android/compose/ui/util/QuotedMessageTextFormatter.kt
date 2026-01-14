@@ -35,8 +35,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.isAnyFileType
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
-import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * An interface that allows to format the quoted message text.

@@ -55,7 +55,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.uiutils.util.openSystemSettings
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.flow.collectLatest
 
 /**
