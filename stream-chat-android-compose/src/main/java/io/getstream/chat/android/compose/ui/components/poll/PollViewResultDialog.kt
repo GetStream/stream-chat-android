@@ -20,7 +20,6 @@ import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +29,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -57,7 +55,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -67,11 +64,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * A dialog that displays poll results for all options in a poll.
@@ -216,7 +211,12 @@ private fun PollViewResultItem(
         Spacer(modifier = Modifier.height(16.dp))
 
         item.votes.forEach { vote ->
-            PollVoteItem(vote = vote)
+            PollVoteItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                vote = vote,
+            )
         }
 
         if (item.showAllButton) {
@@ -227,51 +227,6 @@ private fun PollViewResultItem(
                 Text(text = stringResource(R.string.stream_compose_poll_show_all_votes))
             }
         }
-    }
-}
-
-@Composable
-private fun PollVoteItem(vote: Vote) {
-    val user = vote.user ?: return
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier.size(20.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
-        )
-
-        Text(
-            modifier = Modifier.weight(1f),
-            text = user.name,
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.bodyBold,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
-        )
     }
 }
 

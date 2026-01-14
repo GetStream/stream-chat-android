@@ -49,7 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,12 +61,10 @@ import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollOptionVotesViewState
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.flow.collectLatest
 
 /**
@@ -197,7 +194,12 @@ private fun Content(
                     items = state.results,
                     key = { item -> item.id },
                 ) { item ->
-                    PollVoteItem(item)
+                    PollVoteItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        vote = item,
+                    )
                 }
 
                 if (state.isLoadingMore) {
@@ -215,49 +217,6 @@ private fun Content(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun PollVoteItem(vote: Vote) {
-    val user = vote.user ?: return
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier.size(20.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
-        )
-
-        Text(
-            modifier = Modifier.weight(1f),
-            text = user.name,
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.bodyBold,
-        )
-
-        Text(
-            text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
-        )
     }
 }
 
