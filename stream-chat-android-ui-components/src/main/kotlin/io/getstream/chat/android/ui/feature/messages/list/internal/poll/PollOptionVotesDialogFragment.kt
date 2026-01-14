@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -41,6 +42,7 @@ import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotes
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollOptionVotesBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollOptionHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
@@ -93,10 +95,15 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupEdgeToEdge()
         setupToolbar(binding.toolbar)
         setupVotesList()
         observeState()
         observeEvents()
+    }
+
+    private fun setupEdgeToEdge() {
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     private fun setupToolbar(toolbar: Toolbar) {

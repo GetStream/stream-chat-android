@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -39,6 +40,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewSt
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.viewmodel.messages.PollResultsViewModel
 
@@ -77,9 +79,14 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupEdgeToEdge()
         setupToolbar(binding.toolbar)
         binding.optionList.adapter = resultsAdapter
         observeState()
+    }
+
+    private fun setupEdgeToEdge() {
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     private fun setupToolbar(toolbar: Toolbar) {
