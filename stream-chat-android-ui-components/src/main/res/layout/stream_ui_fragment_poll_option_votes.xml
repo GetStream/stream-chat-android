@@ -36,7 +36,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/voteList"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_medium"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
         android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
@@ -46,7 +46,6 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/loadingMoreProgress"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         />
 

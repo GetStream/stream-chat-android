@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DiffUtil
@@ -114,6 +115,7 @@ internal class PollOptionVotesDialogFragment : AppCompatDialogFragment() {
     private fun observeState() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             binding.toolbar.title = state.option.text
+            binding.voteList.isInvisible = state.isLoading
             binding.loadingContainer.isVisible = state.isLoading
             binding.loadingMoreProgress.isVisible = state.isLoadingMore && !state.isLoading
             val items = buildList {
