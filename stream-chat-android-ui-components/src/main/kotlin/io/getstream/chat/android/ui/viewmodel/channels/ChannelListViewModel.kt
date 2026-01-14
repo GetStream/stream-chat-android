@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
 import io.getstream.chat.android.ui.utils.extensions.addFlow
