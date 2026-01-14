@@ -22,9 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewController
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
-import io.getstream.chat.android.ui.utils.asSingleLiveEvent
 
 /**
  * ViewModel for managing poll results state in XML UI components.
@@ -47,11 +45,6 @@ public class PollResultsViewModel(
      * @see [PollResultsViewController.state]
      */
     public val state: LiveData<PollResultsViewState> = controller.state.asLiveData()
-
-    /**
-     * @see [PollResultsViewController.events]
-     */
-    public val events: LiveData<PollResultsViewEvent> = controller.events.asSingleLiveEvent()
 
     /**
      * Factory for creating [PollResultsViewModel] instances.

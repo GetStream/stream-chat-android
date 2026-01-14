@@ -257,14 +257,4 @@ internal class PollResultsViewControllerTest {
             assertEquals(pollName, state.pollName)
         }
     }
-
-    @Test
-    fun `when events are accessed, should not emit any events`() = runTest {
-        val poll = randomPoll()
-        val sut = PollResultsViewController(poll)
-
-        sut.events.test {
-            expectNoEvents()
-        }
-    }
 }

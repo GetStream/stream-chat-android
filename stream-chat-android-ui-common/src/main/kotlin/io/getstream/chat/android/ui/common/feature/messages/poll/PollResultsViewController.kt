@@ -21,13 +21,9 @@ import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
-import io.getstream.log.taggedLogger
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
@@ -74,16 +70,6 @@ public class PollResultsViewController(
      * The current state of the poll results view.
      */
     public val state: StateFlow<PollResultsViewState> = _state.asStateFlow()
-
-    private val _events = MutableSharedFlow<PollResultsViewEvent>(extraBufferCapacity = 1)
-
-    /**
-     * One shot events triggered by the controller.
-     *
-     * Note: Currently, this controller does not emit events as it processes votes
-     * directly from the poll object without API calls that could fail.
-     */
-    public val events: SharedFlow<PollResultsViewEvent> = _events.asSharedFlow()
 }
 
 private const val MAX_VOTES_TO_SHOW = 5

@@ -20,7 +20,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -36,7 +35,6 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollResultsViewEvent
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
@@ -82,7 +80,6 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         setupToolbar(binding.toolbar)
         binding.optionList.adapter = resultsAdapter
         observeState()
-        observeEvents()
     }
 
     private fun setupToolbar(toolbar: Toolbar) {
@@ -98,17 +95,6 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
             binding.question.text = state.pollName
             resultsAdapter.submitList(state.results)
             binding.loadingContainer.isVisible = false
-        }
-    }
-
-    private fun observeEvents() {
-        viewModel.events.observe(viewLifecycleOwner) { event ->
-            when (event) {
-                is PollResultsViewEvent.LoadError -> {
-                    val errorMessage = getString(R.string.stream_ui_poll_view_results_error)
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 
