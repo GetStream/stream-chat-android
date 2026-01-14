@@ -11,20 +11,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
-import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
@@ -200,15 +197,6 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             }
         }
 
-        val quotedFormatter = object : QuotedMessageTextFormatter {
-            override fun format(message: Message, replyMessage: Message?, currentUser: User?): AnnotatedString {
-                return buildAnnotatedString {
-                    append(message.text)
-                    // add your custom styling here
-                }
-            }
-        }
-
         val previewFormatter = object : MessagePreviewFormatter {
             override fun formatMessageTitle(message: Message): AnnotatedString {
                 return buildAnnotatedString {
@@ -289,113 +277,6 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     @Composable
     private fun blueLettersMessageTextFormatter(): MessageTextFormatter {
         return MessageTextFormatter { message, currentUser ->
-            buildAnnotatedString {
-                append(message.text)
-                addStyle(
-                    SpanStyle(
-                        color = Color.Blue,
-                    ),
-                    start = 0,
-                    end = minOf(3, message.text.length),
-                )
-            }
-        }
-    }
-}
-
-private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCustomization() {
-
-    override val content: @Composable () -> Unit get() = {
-        val isInDarkMode: Boolean = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
-        ChatTheme(
-            colors = colors,
-            typography = typography,
-            quotedMessageTextFormatter = defaultQuotedTextFormatter
-        ) {
-            MessagesScreen(
-                viewModelFactory = viewModelFactory,
-                onBackPressed = { finish() },
-            )
-        }
-    }
-
-    /**
-     * Builds default [QuotedMessageTextFormatter] with extended functionality, which
-     * adds a blue color to the first 3 letters of the quoted message text.
-     */
-    @Composable
-    private fun buildQuotedMessageTextFormatter(
-        isInDarkMode: Boolean,
-        typography: StreamTypography,
-        colors: StreamColors,
-    ): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled = autoTranslationEnabled,
-            context = LocalContext.current,
-            isInDarkMode = isInDarkMode,
-            typography = typography,
-            colors = colors,
-            ownMessageTheme = MessageTheme.defaultOwnTheme(),
-            otherMessageTheme = MessageTheme.defaultOtherTheme(),
-        ) { message, replyMessage, currentUser ->
-            addStyle(
-                SpanStyle(
-                    color = Color.Blue,
-                ),
-                start = 0,
-                end = minOf(3, length),
-            )
-        }
-    }
-}
-
-private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
-    override val content: @Composable () -> Unit get() = {
-        val isInDarkMode = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        ChatTheme(
-            colors = colors,
-            typography = typography,
-            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
-        ) {
-            MessagesScreen(
-                viewModelFactory = viewModelFactory,
-                onBackPressed = { finish() },
-            )
-        }
-    }
-
-
-    @Composable
-    private fun buildQuotedMessageTextFormatter(
-        isInDarkMode: Boolean,
-        typography: StreamTypography,
-        colors: StreamColors,
-    ): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter.composite(
-            QuotedMessageTextFormatter.defaultFormatter(
-                autoTranslationEnabled = autoTranslationEnabled,
-                context = LocalContext.current,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-                ownMessageTheme = MessageTheme.defaultOwnTheme(),
-                otherMessageTheme = MessageTheme.defaultOtherTheme(),
-            ),
-            blueLettersQuotedMessageTextFormatter()
-        )
-    }
-
-    /**
-     * Builds a [QuotedMessageTextFormatter] that adds a blue color to the first 3 letters of the quoted message text.
-     */
-    @Composable
-    private fun blueLettersQuotedMessageTextFormatter(): QuotedMessageTextFormatter {
-        return QuotedMessageTextFormatter { message, replyMessage, currentUser ->
             buildAnnotatedString {
                 append(message.text)
                 addStyle(

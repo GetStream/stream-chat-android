@@ -47,6 +47,9 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -55,7 +58,6 @@ import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
-import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
@@ -153,9 +155,6 @@ private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewForm
 }
 private val LocalMessageTextFormatter = compositionLocalOf<MessageTextFormatter> {
     error("No MessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTextFormatter> {
-    error("No QuotedMessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -412,15 +411,6 @@ public fun ChatTheme(
         ownMessageTheme = ownMessageTheme,
         otherMessageTheme = otherMessageTheme,
     ),
-    quotedMessageTextFormatter: QuotedMessageTextFormatter = QuotedMessageTextFormatter.defaultFormatter(
-        autoTranslationEnabled = autoTranslationEnabled,
-        context = LocalContext.current,
-        typography = typography,
-        shapes = shapes,
-        colors = colors,
-        ownMessageTheme = ownMessageTheme,
-        otherMessageTheme = otherMessageTheme,
-    ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
@@ -455,7 +445,6 @@ public fun ChatTheme(
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
-        LocalQuotedMessageTextFormatter provides quotedMessageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
@@ -675,14 +664,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageTextFormatter.current
-
-    /**
-     * Retrieves the current [QuotedMessageTextFormatter] at the call site's position in the hierarchy.
-     */
-    public val quotedMessageTextFormatter: QuotedMessageTextFormatter
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalQuotedMessageTextFormatter.current
 
     /**
      * Retrieves the current [SearchResultNameFormatter] at the call site's position in the hierarchy.
