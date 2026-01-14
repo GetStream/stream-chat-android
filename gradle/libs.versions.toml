@@ -56,16 +56,16 @@ junit5 = "5.11.3"
 keyboardVisibilityEvent = "2.3.0"
 kluent = "1.73"
 kotest = "5.9.1"
-kotlin = "2.0.21"
+kotlin = "2.2.0"
 kotlinBinaryValidator = "0.16.3"
-ksp = "2.0.21-1.0.28"
+ksp = "2.2.0-2.0.2"
 leakCanary = "2.4"
 macroBenchmark = "1.2.3"
 markwon = "4.6.2"
 materialComponents = "1.12.0"
 mockitoKotlin = "5.4.0"
 mockito = "5.14.2"
-moshi = "1.15.1"
+moshi = "1.15.2"
 ok2curl = "0.8.0"
 okhttp = "4.12.0"
 paparazzi = "1.3.5"
@@ -74,11 +74,12 @@ photoview = "1.0.2"
 reorderable = "2.4.0"
 retrofit = "2.11.0"
 robolectric = "4.10.3"
-room = "2.6.1"
+room = "2.7.2"
 shimmer = "0.5.0"
 shimmerCompose = "1.3.1"
 shot = "6.1.0"
 streamConventions = "0.4.0"
+streamCore = "3.0.0"
 streamLog = "1.3.2"
 streamPush = "1.3.1"
 streamResult = "1.3.2"
@@ -203,6 +204,8 @@ robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectr
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer"}
 shimmer-compose = { module = "com.valentinilk.shimmer:compose-shimmer", version.ref = "shimmerCompose"}
 skydoves-compose-stable-marker = { module = "com.github.skydoves:compose-stable-marker", version.ref = "composeStableMarker"}
+stream-android-annotations = { module = "io.getstream:stream-android-core-annotations", version.ref = "streamCore" }
+stream-android-core = { module = "io.getstream:stream-android-core", version.ref = "streamCore" }
 stream-android-push = { module = "io.getstream:stream-android-push", version.ref = "streamPush"}
 stream-push-delegate = { module = "io.getstream:stream-android-push-delegate", version.ref = "streamPush"}
 stream-push-firebase = { module = "io.getstream:stream-android-push-firebase", version.ref = "streamPush"}
