@@ -43,6 +43,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.isFailed
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemRecordingAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
@@ -53,8 +55,6 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
-import io.getstream.chat.android.uiutils.extension.hasLink
-import io.getstream.chat.android.uiutils.extension.isFailed
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel

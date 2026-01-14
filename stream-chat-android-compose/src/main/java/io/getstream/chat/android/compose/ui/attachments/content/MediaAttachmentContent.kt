@@ -62,6 +62,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import coil3.ColorImage
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalAsyncImagePreviewHandler
 import coil3.request.ImageRequest
@@ -86,7 +87,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -736,6 +737,7 @@ private fun SingleMediaAttachmentContentPreview() {
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun SingleMediaAttachmentContent() {
     val previewHandler = AsyncImagePreviewHandler {
@@ -765,6 +767,7 @@ private fun MultipleMediaAttachmentContentPreview() {
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun MultipleMediaAttachmentContent() {
     val previewHandler = AsyncImagePreviewHandler {

@@ -25,7 +25,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadCont
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.uiutils.extension.isUploading
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * An [AttachmentFactory] that validates and shows uploading attachments using [FileUploadContent].

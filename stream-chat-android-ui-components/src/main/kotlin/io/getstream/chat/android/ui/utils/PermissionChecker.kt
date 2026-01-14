@@ -31,9 +31,9 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
-import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 private const val SNACKBAR_ELEVATION_IN_DP = 20
 

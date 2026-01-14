@@ -20,10 +20,6 @@
         "file": "strings-ui-components.xml"
       },
       {
-        "pattern": "stream-chat-android-ui-utils/src/main/res/values/strings.xml",
-        "file": "strings-ui-utils.xml"
-      },
-      {
         "group": "client-all",
         "pattern": "stream-chat-android-client/src/main/res/values-*/strings.xml",
         "lang": "${autodetectLang}",
@@ -46,12 +42,6 @@
         "pattern": "stream-chat-android-ui-components/src/main/res/values-*/strings.xml",
         "lang": "${autodetectLang}",
         "file": "strings-ui-components.xml"
-      },
-      {
-        "group": "ui-utils-all",
-        "pattern": "stream-chat-android-ui-utils/src/main/res/values-*/strings.xml",
-        "lang": "${autodetectLang}",
-        "file": "strings-ui-utils.xml"
       }
     ]
   },
@@ -76,11 +66,6 @@
         "stop": true,
         "conditions": "equals: ${file}, strings-ui-components.xml",
         "output": "stream-chat-android-ui-components/src/main/res/values-${langAndroidRes}/strings.xml"
-      },
-      {
-        "stop": true,
-        "conditions": "equals: ${file}, strings-ui-utils.xml",
-        "output": "stream-chat-android-ui-utils/src/main/res/values-${langAndroidRes}/strings.xml"
       }
     ]
   }

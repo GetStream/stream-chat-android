@@ -117,7 +117,6 @@ fi
 cd ..
 # Define the modules to release locally
 modules=(
-  "stream-chat-android-ai-assistant"
   "stream-chat-android-client"
   "stream-chat-android-compose"
   "stream-chat-android-core"
@@ -126,7 +125,6 @@ modules=(
   "stream-chat-android-state"
   "stream-chat-android-ui-common"
   "stream-chat-android-ui-components"
-  "stream-chat-android-ui-utils"
 )
 
 # Function to restore the modified fields in the config file and the gradle file
