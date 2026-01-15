@@ -218,14 +218,14 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
-        ) {
+        ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
 
             MessageList(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
-                    .fillMaxSize()
-                    .padding(it),
+                    .fillMaxSize(),
+                contentPadding = contentPadding,
                 viewModel = listViewModel,
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),

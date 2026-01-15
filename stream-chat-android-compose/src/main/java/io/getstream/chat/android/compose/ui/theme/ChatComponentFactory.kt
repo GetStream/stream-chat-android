@@ -811,11 +811,13 @@ public interface ChatComponentFactory {
     public fun BoxScope.MessageListHelperContent(
         messageListState: MessageListState,
         messagesLazyListState: MessagesLazyListState,
+        contentPadding: PaddingValues,
         onScrollToBottomClick: (() -> Unit) -> Unit,
     ) {
         DefaultMessagesHelperContent(
             messagesState = messageListState,
             messagesLazyListState = messagesLazyListState,
+            contentPadding = contentPadding,
             scrollToBottom = onScrollToBottomClick,
         )
     }

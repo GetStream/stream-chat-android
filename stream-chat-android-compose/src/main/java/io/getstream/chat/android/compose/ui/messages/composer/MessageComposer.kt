@@ -40,6 +40,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,6 +61,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.LocalMessageComposerFloatingStyleEnabled
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
@@ -375,7 +377,10 @@ public fun MessageComposer(
         )
     },
 ) {
-    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val activeAction = messageComposerState.action
+    val validationErrors = messageComposerState.validationErrors
+    val mentionSuggestions = messageComposerState.mentionSuggestions
+    val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = remember { SnackbarHostState() }
 
     val isRecording = messageComposerState.recording !is RecordingState.Idle
@@ -385,10 +390,9 @@ public fun MessageComposer(
         snackbarHostState = snackbarHostState,
     )
 
-    Surface(
+    MessageComposerSurface(
         modifier = modifier,
-        shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
-        color = ChatTheme.colors.barsBackground,
+        floatingStyleEnabled = ChatTheme.messageComposerFloatingStyleEnabled,
     ) {
         Column(Modifier.padding(vertical = 4.dp)) {
             headerContent(messageComposerState)
@@ -428,6 +432,28 @@ public fun MessageComposer(
         if (commandSuggestions.isNotEmpty()) {
             commandPopupContent(commandSuggestions)
         }
+    }
+}
+
+@Composable
+private fun MessageComposerSurface(
+    modifier: Modifier,
+    floatingStyleEnabled: Boolean,
+    content: @Composable () -> Unit,
+) {
+    if (floatingStyleEnabled) {
+        Box(
+            modifier = modifier,
+        ) {
+            content()
+        }
+    } else {
+        Surface(
+            modifier = modifier,
+            shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
+            color = ChatTheme.colors.barsBackground,
+            content = content,
+        )
     }
 }
 
@@ -922,4 +948,69 @@ internal fun MessageComposerFilled() {
         ),
         onSendMessage = { _, _ -> },
     )
+}
+
+@Preview
+@Composable
+private fun MessageComposerOverflowPreview() {
+    ChatTheme {
+        MessageComposerOverflow()
+    }
+}
+
+@Composable
+internal fun MessageComposerOverflow() {
+    MessageComposer(
+        messageComposerState = MessageComposerState(
+            inputValue = "I’ve been thinking about our plan for the next few weeks, " +
+                "and I wanted to check in with you about it. There are a few things I’d like to get aligned on, " +
+                "especially how we want to divide the work and what the priorities should be. " +
+                "I feel like we’ve made good progress so far, " +
+                "but there are still a couple of details that keep popping up, " +
+                "and it would be nice to sort them out before they turn into bigger issues. " +
+                "Let me know when you have a moment so we can go through everything together",
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerSlowModePreview() {
+    ChatTheme {
+        MessageComposerSlowMode()
+    }
+}
+
+@Composable
+internal fun MessageComposerSlowMode() {
+    MessageComposer(
+        messageComposerState = MessageComposerState(
+            inputValue = "Slow mode, wait 9s",
+            coolDownTime = 9,
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerFloatingPreview() {
+    ChatTheme {
+        MessageComposerFloating()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloating() {
+    CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
+        MessageComposer(
+            messageComposerState = MessageComposerState(
+                ownCapabilities = ChannelCapabilities.toSet(),
+            ),
+            onSendMessage = { _, _ -> },
+        )
+    }
 }

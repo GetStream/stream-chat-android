@@ -97,7 +97,9 @@ public fun MessageInput(
         )
     },
 ) {
-    val (value, attachments, activeAction) = messageComposerState
+    val value = messageComposerState.inputValue
+    val attachments = messageComposerState.attachments
+    val activeAction = messageComposerState.action
     val canSendMessage = messageComposerState.canSendMessage()
 
     val visualTransformation = MessageInputVisualTransformation(

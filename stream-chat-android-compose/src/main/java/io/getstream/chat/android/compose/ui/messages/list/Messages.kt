@@ -116,6 +116,7 @@ public fun Messages(
             MessageListHelperContent(
                 messageListState = messagesState,
                 messagesLazyListState = messagesLazyListState,
+                contentPadding = contentPadding,
                 onScrollToBottomClick = onScrollToBottom,
             )
         }
@@ -280,6 +281,7 @@ private fun MessageListState.getVerticalArrangement(
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
+    contentPadding: PaddingValues,
     scrollToBottom: (() -> Unit) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
@@ -337,9 +339,12 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         firstVisibleItemIndex,
         areNewestMessagesLoaded,
     )
+
     with(ChatTheme.componentFactory) {
         ScrollToBottomButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(contentPadding),
             visible = scrollToBottomButtonVisible,
             count = messagesState.unreadCount,
             onClick = {
