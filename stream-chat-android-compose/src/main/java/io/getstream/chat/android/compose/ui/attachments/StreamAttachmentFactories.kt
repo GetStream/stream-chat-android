@@ -36,7 +36,6 @@ import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFa
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
@@ -220,13 +219,4 @@ public object StreamAttachmentFactories {
         ),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
-
-    /**
-     * Default quoted attachment factories we provide, which can transform image, file and link attachments.
-     *
-     * @return a [List] of various [AttachmentFactory] instances that provide different quoted attachments support.
-     */
-    public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
-        QuotedAttachmentFactory,
-    )
 }

@@ -117,9 +117,6 @@ private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
-    error("No quoted attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -278,7 +275,6 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
- * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param reactionPushEmojiFactory Used to create an emoji code for a given reaction type (used for push notifications).
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
@@ -339,7 +335,6 @@ public fun ChatTheme(
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
-    quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
@@ -432,7 +427,6 @@ public fun ChatTheme(
         LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
-        LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalMessageContentFactory provides messageContentFactory,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalReactionPushEmojiFactory provides reactionPushEmojiFactory,
@@ -560,14 +554,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentPreviewHandlers.current
-
-    /**
-     * Retrieves the current list of quoted [AttachmentFactory] at the call site's position in the hierarchy.
-     */
-    public val quotedAttachmentFactories: List<AttachmentFactory>
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalQuotedAttachmentFactories.current
 
     /**
      * Retrieves the current list of quoted [MessageContentFactory] at the call site's position in the hierarchy.
