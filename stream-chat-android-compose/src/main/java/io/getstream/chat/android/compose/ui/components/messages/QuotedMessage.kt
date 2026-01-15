@@ -221,7 +221,7 @@ private fun QuotedMessageText(body: QuotedMessageBody) {
     }
 }
 
-private val attachmentPreviewModifier = Modifier
+private val mediaPreviewModifier = Modifier
     .size(40.dp)
     .clip(RoundedCornerShape(StreamRadii.md))
 
@@ -230,7 +230,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
     when {
         body.imagePreviewData != null -> {
             StreamAsyncImage(
-                modifier = attachmentPreviewModifier,
+                modifier = mediaPreviewModifier,
                 data = body.imagePreviewData,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -240,7 +240,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
         body.videoPreviewData != null -> {
             Box(contentAlignment = Alignment.Center) {
                 StreamAsyncImage(
-                    modifier = attachmentPreviewModifier,
+                    modifier = mediaPreviewModifier,
                     data = body.videoPreviewData,
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -251,7 +251,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
 
         body.previewIcon != null -> {
             Image(
-                modifier = attachmentPreviewModifier,
+                modifier = Modifier.height(40.dp),
                 painter = painterResource(body.previewIcon),
                 contentDescription = null,
             )
