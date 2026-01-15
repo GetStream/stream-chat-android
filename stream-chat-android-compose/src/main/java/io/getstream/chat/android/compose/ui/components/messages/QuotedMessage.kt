@@ -129,7 +129,7 @@ public fun QuotedMessage(
         )
 
         val bodyBuilder = rememberBodyBuilder()
-        val body = remember(message, currentUser) { bodyBuilder.build(message, currentUser) }
+        val body = remember(bodyBuilder, message, currentUser) { bodyBuilder.build(message, currentUser) }
 
         Column(
             modifier = Modifier
@@ -153,7 +153,7 @@ internal fun MessageComposerQuotedMessage(
     modifier: Modifier = Modifier,
     onCancelClick: () -> Unit,
 ) {
-    Box {
+    Box(modifier) {
         QuotedMessage(
             message = message,
             currentUser = currentUser,

@@ -259,7 +259,7 @@ internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
 
-    return remember(resources, autoTranslationEnabled, durationFormatter) {
+    return remember(resources, autoTranslationEnabled, durationFormatter, streamCdnImageResizing) {
         QuotedMessageBodyBuilder(
             resources = resources,
             autoTranslationEnabled = autoTranslationEnabled,

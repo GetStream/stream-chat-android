@@ -104,7 +104,7 @@
         <item quantity="other">%d photos</item>
     </plurals>
     <plurals name="stream_compose_quoted_message_videos">
-        <item quantity="one">%d video</item>
+        <item quantity="one">Video</item>
         <item quantity="other">%d videos</item>
     </plurals>
 
