@@ -164,7 +164,7 @@ public data class AudioRecordingAttachmentTheme(
                 ),
                 contentTypeIcon = IconStyle(
                     size = ComponentSize(height = 40.dp, width = 34.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_file_aac),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_file_audio),
                     tint = Color.Unspecified,
                 ),
             )

@@ -15,38 +15,25 @@
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="34dp"
-    android:height="40dp"
-    android:viewportWidth="34"
-    android:viewportHeight="40">
+    android:width="40dp"
+    android:height="48dp"
+    android:viewportWidth="40"
+    android:viewportHeight="48">
   <path
-      android:pathData="M0,3C0,1.3432 1.3432,0 3,0H23L34,11V37C34,38.6569 32.6569,40 31,40H3C1.3432,40 0,38.6569 0,37V3Z">
-    <aapt:attr name="android:fillColor">
-      <gradient 
-          android:startY="0"
-          android:startX="0"
-          android:endY="40"
-          android:endX="0"
-          android:type="linear">
-        <item android:offset="0" android:color="#FFFFFFFF"/>
-        <item android:offset="1" android:color="#FFDBDBDB"/>
-      </gradient>
-    </aapt:attr>
-  </path>
+      android:pathData="M0,4C0,1.791 1.791,0 4,0H28L40,12V44C40,46.209 38.209,48 36,48H4C1.791,48 0,46.209 0,44V4Z"
+      android:fillColor="#888888"/>
   <path
-      android:pathData="M34,11L26,11C24.3431,11 23,9.6568 23,8V0L34,11Z"
-      android:fillColor="#DBDBDB"/>
+      android:pathData="M40,12L31,12C29.343,12 28,10.657 28,9V0L40,12Z"
+      android:strokeAlpha="0.5"
+      android:fillColor="#ffffff"
+      android:fillAlpha="0.5"/>
   <path
-      android:pathData="M8,13H23V15H8V13Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
+      android:pathData="M11.9,16.6L26.3,16.6A0.9,0.9 0,0 1,27.2 17.5L27.2,17.5A0.9,0.9 0,0 1,26.3 18.4L11.9,18.4A0.9,0.9 0,0 1,11 17.5L11,17.5A0.9,0.9 0,0 1,11.9 16.6z"
+      android:fillColor="#ffffff"/>
   <path
-      android:pathData="M8,17H18V19H8V17Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
+      android:pathData="M11.9,25.6L26.3,25.6A0.9,0.9 0,0 1,27.2 26.5L27.2,26.5A0.9,0.9 0,0 1,26.3 27.4L11.9,27.4A0.9,0.9 0,0 1,11 26.5L11,26.5A0.9,0.9 0,0 1,11.9 25.6z"
+      android:fillColor="#ffffff"/>
   <path
-      android:pathData="M8,21H23V23H8V21Z"
-      android:fillColor="#CFCFCF"
-      android:fillType="evenOdd"/>
+      android:pathData="M11.9,21.1L20.9,21.1A0.9,0.9 0,0 1,21.8 22L21.8,22A0.9,0.9 0,0 1,20.9 22.9L11.9,22.9A0.9,0.9 0,0 1,11 22L11,22A0.9,0.9 0,0 1,11.9 21.1z"
+      android:fillColor="#ffffff"/>
 </vector>
