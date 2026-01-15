@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -56,7 +56,9 @@ import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.uiutils.util.openSystemSettings
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -109,28 +111,21 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     ) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
-        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
-        )
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-                // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                    Toast.makeText(
-                        context,
-                        R.string.stream_compose_message_composer_file_not_supported,
-                        Toast.LENGTH_SHORT,
-                    ).show()
+        val scope = rememberCoroutineScope()
+        val storageHelper = remember { StorageHelperWrapper(context.applicationContext) }
+
+        val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
+            if (value != FilesAccess.DENIED) {
+                scope.launch {
+                    val metaData = withContext(Dispatchers.IO) {
+                        storageHelper.getFiles()
+                    }
+                    val items = metaData.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(items)
                 }
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
             }
         }
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.filesMetadata.collectLatest { metaData ->
-                val items = metaData.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(items)
-            }
-        }
+
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
         val permissionLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -138,11 +133,6 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     showPermanentlyDeniedSnackBar = true
                 }
             }
-        val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
-            if (value != FilesAccess.DENIED) {
-                processingViewModel.getFilesAsync()
-            }
-        }
 
         // Content
         FilesAccessContent(
@@ -155,7 +145,20 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     onBrowseFilesResult = { uris ->
-                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                        scope.launch {
+                            val metadata = withContext(Dispatchers.IO) {
+                                storageHelper.getAttachmentsMetadataFromUris(uris)
+                            }
+                            // Check if some of the files were filtered out due to upload config
+                            if (uris.size != metadata.size) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.stream_compose_message_composer_file_not_supported,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+                            onAttachmentsSubmitted(metadata)
+                        }
                     },
                 )
             },

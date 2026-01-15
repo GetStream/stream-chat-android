@@ -49,6 +49,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +62,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
@@ -82,7 +82,9 @@ import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerCo
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -210,33 +212,43 @@ public class AttachmentsPickerSystemTabFactory(
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         val context = LocalContext.current
+        val scope = rememberCoroutineScope()
+        val storageHelper = remember { StorageHelperWrapper(context.applicationContext) }
 
-        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
-        )
-
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+        val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            scope.launch {
+                val uris = listOf(uri)
+                val metadata = withContext(Dispatchers.IO) {
+                    storageHelper.getAttachmentsMetadataFromUris(uris)
+                }
                 // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                if (uris.size != metadata.size) {
                     Toast.makeText(
                         context,
                         R.string.stream_compose_message_composer_file_not_supported,
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                onAttachmentsSubmitted(metadata)
             }
-        }
-
-        val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            val uris = listOf(uri)
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
         }
 
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                scope.launch {
+                    val metadata = withContext(Dispatchers.IO) {
+                        storageHelper.getAttachmentsMetadataFromUris(uris)
+                    }
+                    // Check if some of the files were filtered out due to upload config
+                    if (uris.size != metadata.size) {
+                        Toast.makeText(
+                            context,
+                            R.string.stream_compose_message_composer_file_not_supported,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                    onAttachmentsSubmitted(metadata)
+                }
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(
