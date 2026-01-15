@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 internal object StreamTokens {
+    val borderStrokeSubtle = 1.2.dp
+
     val radius2xs = CornerSize(2.dp)
     val radiusXs = CornerSize(4.dp)
     val radiusSm = CornerSize(6.dp)
