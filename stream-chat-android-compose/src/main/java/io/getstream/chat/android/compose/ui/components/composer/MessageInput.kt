@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
@@ -58,12 +59,15 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param messageComposerState The state of the input.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
+ * @param onLinkPreviewClick Handler when a link preview is clicked.
+ * @param onSendClick Handler when the send button is clicked.
+ * @param recordingActions The [AudioRecordingActions] to be applied to the input.
  * @param modifier Modifier for styling.
  * @param maxLines The number of lines that are allowed in the input.
  * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
  * @param label Composable that represents the label UI, when there's no input.
- * @param innerLeadingContent Composable that represents the persistent inner leading content.
- * @param innerTrailingContent Composable that represents the persistent inner trailing content.
+ * @param leadingContent The content to be displayed at the start of the input.
+ * @param trailingContent The content to be displayed at the end of the input.
  */
 @Composable
 public fun MessageInput(
@@ -72,14 +76,26 @@ public fun MessageInput(
     onAttachmentRemoved: (Attachment) -> Unit,
     onCancelAction: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+    onSendClick: (String, List<Attachment>) -> Unit,
+    recordingActions: AudioRecordingActions,
     modifier: Modifier = Modifier,
     maxLines: Int = DefaultMessageInputMaxLines,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     label: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
-    innerLeadingContent: @Composable RowScope.() -> Unit = {},
-    innerTrailingContent: @Composable RowScope.() -> Unit = {},
+    leadingContent: @Composable RowScope.() -> Unit = {
+        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+            state = messageComposerState,
+        )
+    },
+    trailingContent: @Composable RowScope.() -> Unit = {
+        ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+            state = messageComposerState,
+            onSendClick = onSendClick,
+            recordingActions = recordingActions,
+        )
+    },
 ) {
     val (value, attachments, activeAction) = messageComposerState
     val canSendMessage = messageComposerState.canSendMessage()
@@ -127,9 +143,12 @@ public fun MessageInput(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    innerLeadingContent()
+                    leadingContent()
 
-                    Box(modifier = Modifier.weight(1f)) {
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterStart,
+                    ) {
                         innerTextField()
 
                         if (value.isEmpty()) {
@@ -137,7 +156,7 @@ public fun MessageInput(
                         }
                     }
 
-                    innerTrailingContent()
+                    trailingContent()
                 }
             }
         },

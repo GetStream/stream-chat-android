@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
@@ -63,6 +64,7 @@ import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvide
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
+import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -169,15 +171,35 @@ public fun MessageComposer(
     label: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
-    input: @Composable RowScope.(MessageComposerState) -> Unit = {
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
-                state = it,
+                state = state,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
                 onCancel = onCancelAction,
+                onSendClick = { input, attachments ->
+                    val message = viewModel.buildNewMessage(input, attachments)
+                    onSendMessage(message)
+                },
+                recordingActions = recordingActions,
+                leadingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                        state = state,
+                    )
+                },
+                trailingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                        state = state,
+                        onSendClick = { input, attachments ->
+                            val message = viewModel.buildNewMessage(input, attachments)
+                            onSendMessage(message)
+                        },
+                        recordingActions = recordingActions,
+                    )
+                },
             )
         }
     },
@@ -192,11 +214,6 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
-            onSendClick = { input, attachments ->
-                val message = viewModel.buildNewMessage(input, attachments)
-                onSendMessage(message)
-            },
-            recordingActions = recordingActions,
         )
     },
 ) {
@@ -318,15 +335,29 @@ public fun MessageComposer(
     label: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
-    input: @Composable RowScope.(MessageComposerState) -> Unit = {
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
-                state = it,
+                state = state,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
+                onSendClick = onSendMessage,
+                recordingActions = recordingActions,
+                leadingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                        state = state,
+                    )
+                },
+                trailingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                        state = state,
+                        onSendClick = onSendMessage,
+                        recordingActions = recordingActions,
+                    )
+                },
             )
         }
     },
@@ -341,8 +372,6 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
-            onSendClick = onSendMessage,
-            recordingActions = recordingActions,
         )
     },
 ) {
@@ -566,17 +595,8 @@ internal fun DefaultComposerLabel(state: MessageComposerState) {
     )
 }
 
-/**
- * Represents the default input content of the Composer.
- *
- * @param label Customizable composable that represents the input field label (hint).
- * @param messageComposerState The state of the message input.
- * @param onValueChange Handler when the input field value changes.
- * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
- */
-@Suppress("LongParameterList")
 @Composable
-internal fun RowScope.DefaultComposerInputContent(
+internal fun RowScope.DefaultMessageComposerInput(
     modifier: Modifier,
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
@@ -584,6 +604,20 @@ internal fun RowScope.DefaultComposerInputContent(
     onCancelAction: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     label: @Composable (MessageComposerState) -> Unit,
+    onSendClick: (String, List<Attachment>) -> Unit,
+    recordingActions: AudioRecordingActions,
+    leadingContent: @Composable RowScope.() -> Unit = {
+        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+            state = messageComposerState,
+        )
+    },
+    trailingContent: @Composable RowScope.() -> Unit = {
+        ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+            state = messageComposerState,
+            onSendClick = onSendClick,
+            recordingActions = recordingActions,
+        )
+    },
 ) {
     val isRecording = messageComposerState.recording !is RecordingState.Idle
     MessageInput(
@@ -591,7 +625,6 @@ internal fun RowScope.DefaultComposerInputContent(
             modifier.size(0.dp)
         } else {
             modifier
-                .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .weight(1f)
         },
@@ -601,6 +634,10 @@ internal fun RowScope.DefaultComposerInputContent(
         onAttachmentRemoved = onAttachmentRemoved,
         onCancelAction = onCancelAction,
         onLinkPreviewClick = onLinkPreviewClick,
+        onSendClick = onSendClick,
+        recordingActions = recordingActions,
+        leadingContent = leadingContent,
+        trailingContent = trailingContent,
     )
 }
 
@@ -849,3 +886,40 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
  * Used to ensure that container before the composer has the same min height as the container after the composer.
  */
 private val ComposerActionContainerMinHeight = 44.dp
+
+@Preview
+@Composable
+private fun MessageComposerPlaceholderPreview() {
+    ChatTheme {
+        MessageComposerPlaceholder()
+    }
+}
+
+@Composable
+internal fun MessageComposerPlaceholder() {
+    MessageComposer(
+        messageComposerState = MessageComposerState(
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerFilledPreview() {
+    ChatTheme {
+        MessageComposerFilled()
+    }
+}
+
+@Composable
+internal fun MessageComposerFilled() {
+    MessageComposer(
+        messageComposerState = MessageComposerState(
+            inputValue = "Hello word",
+            ownCapabilities = ChannelCapabilities.toSet(),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}

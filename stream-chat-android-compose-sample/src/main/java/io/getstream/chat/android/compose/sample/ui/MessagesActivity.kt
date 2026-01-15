@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -79,6 +80,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
@@ -225,7 +227,11 @@ class MessagesActivity : ComponentActivity() {
         val user by listViewModel.user.collectAsState()
         val lazyListState = rememberMessageListState()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+                .fillMaxSize(),
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
@@ -396,6 +402,11 @@ class MessagesActivity : ComponentActivity() {
                         composerViewModel.dismissMessageActions()
                     },
                     onLinkPreviewClick = null,
+                    onSendClick = { input, attachments ->
+                        val message = composerViewModel.buildNewMessage(input, attachments)
+                        composerViewModel.sendMessage(message)
+                    },
+                    recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                     label = {
                         Row(
                             Modifier.wrapContentWidth(),
@@ -404,6 +415,7 @@ class MessagesActivity : ComponentActivity() {
                             Icon(
                                 painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                                 contentDescription = null,
+                                tint = ChatTheme.colors.textLowEmphasis,
                             )
 
                             Text(
@@ -413,7 +425,7 @@ class MessagesActivity : ComponentActivity() {
                             )
                         }
                     },
-                    innerTrailingContent = { ComposerTrailingIcon() },
+                    trailingContent = { ComposerTrailingIcon() },
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
