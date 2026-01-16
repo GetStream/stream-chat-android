@@ -224,4 +224,4 @@ private class MessageInputVisualTransformation(
  * The default number of lines allowed in the input. The message input will become scrollable after
  * this threshold is exceeded.
  */
-private const val DefaultMessageInputMaxLines = 6
+private const val DefaultMessageInputMaxLines = 5
