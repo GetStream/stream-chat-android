@@ -25,6 +25,8 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StringRes
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.FragmentActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.helper.ViewPadding
@@ -82,4 +84,29 @@ internal fun View.setPaddingCompat(padding: ViewPadding) {
         padding.end,
         padding.bottom,
     )
+}
+
+/**
+ * Applies window inset padding for edge-to-edge layouts.
+ *
+ * This overwrites the view's padding with the requested insets.
+ * Use on root containers where the base padding should be fully replaced by insets.
+ *
+ * @param typeMask A bitmask from [WindowInsetsCompat.Type] (for example:
+ * `WindowInsetsCompat.Type.systemBars()` or `WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime()`).
+ */
+internal fun View.applyEdgeToEdgePadding(
+    typeMask: Int,
+) {
+    ViewCompat.setOnApplyWindowInsetsListener(this) { view, windowInsets ->
+        val insets = windowInsets.getInsets(typeMask)
+        view.updatePadding(
+            left = insets.left,
+            top = insets.top,
+            right = insets.right,
+            bottom = insets.bottom,
+        )
+        WindowInsetsCompat.CONSUMED
+    }
+    ViewCompat.requestApplyInsets(this)
 }
