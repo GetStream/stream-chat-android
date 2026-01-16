@@ -56,8 +56,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
-import io.getstream.chat.android.compose.ui.theme.StreamRadii
-import io.getstream.chat.android.compose.ui.theme.StreamSpacings
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -115,10 +114,10 @@ public fun QuotedMessage(
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },
             )
-            .background(backgroundColor, RoundedCornerShape(StreamRadii.lg))
-            .padding(StreamSpacings.xs)
+            .background(backgroundColor, RoundedCornerShape(StreamTokens.radiusLg))
+            .padding(StreamTokens.spacingXs)
             .height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(StreamSpacings.xs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         VerticalDivider(
             modifier = Modifier
@@ -165,7 +164,7 @@ internal fun MessageComposerQuotedMessage(
         ComposerCancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .offset(StreamSpacings._2xs, -StreamSpacings._2xs),
+                .offset(StreamTokens.spacing2xs, -StreamTokens.spacing2xs),
             onClick = onCancelClick,
         )
     }
@@ -199,7 +198,7 @@ private fun QuotedMessageText(body: QuotedMessageBody) {
     val color = ChatTheme.colors.chatTextMessage
 
     Row(
-        horizontalArrangement = Arrangement.spacedBy(StreamSpacings._2xs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         body.iconId?.let { iconId ->
@@ -223,7 +222,7 @@ private fun QuotedMessageText(body: QuotedMessageBody) {
 
 private val mediaPreviewModifier = Modifier
     .size(40.dp)
-    .clip(RoundedCornerShape(StreamRadii.md))
+    .clip(RoundedCornerShape(StreamTokens.radiusMd))
 
 @Composable
 private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
