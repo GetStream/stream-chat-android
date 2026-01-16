@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.Manifest
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -107,9 +106,7 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param integrations A view that represents custom integrations. By default, we provide
- * [DefaultComposerIntegrations], which show Attachments & Commands, but users can override this with
- * their own integrations, which they need to hook up to their own data providers and UI.
+ * @param leadingContent The content shown at the start of the message composer.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
@@ -161,12 +158,11 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected,
         )
     },
-    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageComposerIntegrations(
+            MessageComposerLeadingContent(
                 state = it,
                 onAttachmentsClick = onAttachmentsClick,
-                onCommandsClick = onCommandsClick,
             )
         }
     },
@@ -236,7 +232,7 @@ public fun MessageComposer(
         footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
-        integrations = integrations,
+        leadingContent = leadingContent,
         input = input,
         audioRecordingContent = audioRecordingContent,
         trailingContent = trailingContent,
@@ -271,9 +267,7 @@ public fun MessageComposer(
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param integrations A view that represents custom integrations. By default, we provide
- * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
- * their own integrations, which they need to hook up to their own data providers and UI.
+ * @param leadingContent The content shown at the start of the message composer.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
@@ -325,12 +319,11 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected,
         )
     },
-    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageComposerIntegrations(
+            MessageComposerLeadingContent(
                 state = it,
                 onAttachmentsClick = onAttachmentsClick,
-                onCommandsClick = onCommandsClick,
             )
         }
     },
@@ -404,7 +397,7 @@ public fun MessageComposer(
                 verticalAlignment = Bottom,
             ) {
                 if (activeAction !is Edit) {
-                    integrations(messageComposerState)
+                    leadingContent(messageComposerState)
                 } else {
                     Spacer(
                         modifier = Modifier.size(16.dp),
@@ -540,23 +533,10 @@ internal fun DefaultMessageComposerFooterInThreadMode(
     }
 }
 
-/**
- * Composable that represents the message composer integrations (special actions).
- *
- * Currently just shows the Attachment picker action.
- *
- * @param messageInputState The state of the input.
- * @param onAttachmentsClick Handler when the user selects attachments.
- * @param onCommandsClick Handler when the user selects commands.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
- */
 @Composable
-internal fun DefaultComposerIntegrations(
+internal fun DefaultMessageComposerLeadingContent(
     messageInputState: MessageComposerState,
     onAttachmentsClick: () -> Unit,
-    onCommandsClick: () -> Unit,
-    ownCapabilities: Set<String>,
 ) {
     val hasTextInput = messageInputState.inputValue.isNotEmpty()
     val hasAttachments = messageInputState.attachments.isNotEmpty()
@@ -587,19 +567,7 @@ internal fun DefaultComposerIntegrations(
                     )
                 }
             }
-
-            AnimatedVisibility(visible = messageInputState.hasCommands) {
-                with(ChatTheme.componentFactory) {
-                    MessageComposerCommandsButton(
-                        hasCommandSuggestions = hasCommandSuggestions,
-                        enabled = isCommandsButtonEnabled,
-                        onClick = onCommandsClick,
-                    )
-                }
-            }
         }
-    } else {
-        Spacer(modifier = Modifier.width(12.dp))
     }
 }
 
@@ -669,15 +637,8 @@ internal fun RowScope.DefaultMessageComposerInput(
     )
 }
 
-/**
- * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
- *
- * @param messageComposerState The state of the message input.
- * @param onSendMessage Handler when the user wants to send a message.
- * @param recordingActions The actions that can be performed on an audio recording.
- */
 @Composable
-internal fun DefaultMessageComposerTrailingContent(
+internal fun DefaultMessageComposerInputTrailingContent(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     recordingActions: AudioRecordingActions,
@@ -926,9 +887,7 @@ private fun MessageComposerPlaceholderPreview() {
 @Composable
 internal fun MessageComposerPlaceholder() {
     MessageComposer(
-        messageComposerState = MessageComposerState(
-            ownCapabilities = ChannelCapabilities.toSet(),
-        ),
+        messageComposerState = PreviewMessageComposerState,
         onSendMessage = { _, _ -> },
     )
 }
@@ -944,9 +903,8 @@ private fun MessageComposerFilledPreview() {
 @Composable
 internal fun MessageComposerFilled() {
     MessageComposer(
-        messageComposerState = MessageComposerState(
+        messageComposerState = PreviewMessageComposerState.copy(
             inputValue = "Hello word",
-            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         onSendMessage = { _, _ -> },
     )
@@ -963,7 +921,7 @@ private fun MessageComposerOverflowPreview() {
 @Composable
 internal fun MessageComposerOverflow() {
     MessageComposer(
-        messageComposerState = MessageComposerState(
+        messageComposerState = PreviewMessageComposerState.copy(
             inputValue = "I’ve been thinking about our plan for the next few weeks, " +
                 "and I wanted to check in with you about it. There are a few things I’d like to get aligned on, " +
                 "especially how we want to divide the work and what the priorities should be. " +
@@ -971,7 +929,6 @@ internal fun MessageComposerOverflow() {
                 "but there are still a couple of details that keep popping up, " +
                 "and it would be nice to sort them out before they turn into bigger issues. " +
                 "Let me know when you have a moment so we can go through everything together",
-            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         onSendMessage = { _, _ -> },
     )
@@ -988,10 +945,9 @@ private fun MessageComposerSlowModePreview() {
 @Composable
 internal fun MessageComposerSlowMode() {
     MessageComposer(
-        messageComposerState = MessageComposerState(
+        messageComposerState = PreviewMessageComposerState.copy(
             inputValue = "Slow mode, wait 9s",
             coolDownTime = 9,
-            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         onSendMessage = { _, _ -> },
     )
@@ -1009,10 +965,13 @@ private fun MessageComposerFloatingPreview() {
 internal fun MessageComposerFloating() {
     CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
         MessageComposer(
-            messageComposerState = MessageComposerState(
-                ownCapabilities = ChannelCapabilities.toSet(),
-            ),
+            messageComposerState = PreviewMessageComposerState,
             onSendMessage = { _, _ -> },
         )
     }
 }
+
+private val PreviewMessageComposerState = MessageComposerState(
+    ownCapabilities = ChannelCapabilities.toSet(),
+    hasCommands = true,
+)

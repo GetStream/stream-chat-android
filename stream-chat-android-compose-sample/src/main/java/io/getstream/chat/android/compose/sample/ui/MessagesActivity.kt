@@ -387,7 +387,7 @@ class MessagesActivity : ComponentActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = composerViewModel,
-            integrations = {},
+            leadingContent = {},
             input = { inputState ->
                 MessageInput(
                     modifier = Modifier

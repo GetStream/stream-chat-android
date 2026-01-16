@@ -152,12 +152,12 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.AttachmentsButton
 import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerInput
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerInputTrailingContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.SendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
@@ -1440,7 +1440,7 @@ public interface ChatComponentFactory {
         footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
-        integrations: @Composable RowScope.(MessageComposerState) -> Unit,
+        leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         label: @Composable (MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
@@ -1464,7 +1464,7 @@ public interface ChatComponentFactory {
             footerContent = footerContent,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
-            integrations = integrations,
+            leadingContent = leadingContent,
             label = label,
             input = input,
             audioRecordingContent = audioRecordingContent,
@@ -1688,26 +1688,26 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default integrations of the message composer.
-     * Provides the "Attachments" and "Commands" buttons shown before the composer.
+     * The default trailing content of the message composer, which includes an add attachment button by default.
      *
      * @param state The current state of the message composer.
-     * @param onAttachmentsClick The action to perform when the "Attachments" button is clicked.
-     * @param onCommandsClick The action to perform when the "Commands" button is clicked.
+     * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
-    public fun RowScope.MessageComposerIntegrations(
+    public fun RowScope.MessageComposerLeadingContent(
         state: MessageComposerState,
         onAttachmentsClick: () -> Unit,
-        onCommandsClick: () -> Unit,
     ) {
-        DefaultComposerIntegrations(state, onAttachmentsClick, onCommandsClick, state.ownCapabilities)
+        DefaultMessageComposerLeadingContent(
+            messageInputState = state,
+            onAttachmentsClick = onAttachmentsClick,
+        )
     }
 
     /**
      * The default attachments button of the message composer.
      *
-     * Used as part of [MessageComposerIntegrations].
+     * Used as part of [MessageComposerLeadingContent].
      *
      * @param enabled Whether the button is enabled.
      * @param onClick The action to perform when the button is clicked.
@@ -1723,7 +1723,7 @@ public interface ChatComponentFactory {
     /**
      * The default commands button of the message composer.
      *
-     * Used as part of [MessageComposerIntegrations].
+     * Used as part of [MessageComposerLeadingContent].
      *
      * @param hasCommandSuggestions Whether there are command suggestions available.
      * @param enabled Whether the button is enabled.
@@ -1846,7 +1846,7 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
     ) {
-        DefaultMessageComposerTrailingContent(state, onSendClick, recordingActions)
+        DefaultMessageComposerInputTrailingContent(state, onSendClick, recordingActions)
     }
 
     /**

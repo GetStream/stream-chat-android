@@ -182,7 +182,7 @@ class MessagesActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            integrations = {
+            leadingContent = {
                 IconButton(
                     modifier = Modifier
                         .size(48.dp)
