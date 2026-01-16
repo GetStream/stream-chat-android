@@ -31,11 +31,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.docs.R
 
 /**
@@ -192,8 +194,16 @@ private object MessageComposerCustomizationSnippet {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
-                integrations = {},
+                leadingContent = {},
                 input = { inputState ->
+                    val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
+                        composerViewModel.sendMessage(
+                            message = composerViewModel.buildNewMessage(
+                                message = text,
+                                attachments = attachments
+                            )
+                        )
+                    }
                     MessageInput(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -204,6 +214,8 @@ private object MessageComposerCustomizationSnippet {
                         onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                         onCancelAction = { composerViewModel.dismissMessageActions() },
                         onLinkPreviewClick = null,
+                        onSendClick = onSendClick,
+                        recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                         label = { // create a custom label with an icon
                             Row(
                                 Modifier.wrapContentWidth(),
@@ -221,7 +233,7 @@ private object MessageComposerCustomizationSnippet {
                                 )
                             }
                         },
-                        innerTrailingContent = { // add a send button inside the input
+                        trailingContent = { // add a send button inside the input
                             Icon(
                                 modifier = Modifier
                                     .size(24.dp)
@@ -230,13 +242,7 @@ private object MessageComposerCustomizationSnippet {
                                         indication = ripple()
                                     ) {
                                         val state = composerViewModel.messageComposerState.value
-
-                                        composerViewModel.sendMessage(
-                                            composerViewModel.buildNewMessage(
-                                                state.inputValue,
-                                                state.attachments
-                                            )
-                                        )
+                                        onSendClick(state.inputValue, state.attachments)
                                     },
                                 painter = painterResource(id = R.drawable.stream_compose_ic_send),
                                 tint = ChatTheme.colors.primaryAccent,

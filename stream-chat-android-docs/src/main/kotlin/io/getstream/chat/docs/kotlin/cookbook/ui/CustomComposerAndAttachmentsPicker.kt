@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -139,12 +140,22 @@ private fun CustomMessageComposer(
             .fillMaxWidth()
             .wrapContentHeight(),
         input = { composerState ->
+            val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
+                composerViewModel.sendMessage(
+                    message = composerViewModel.buildNewMessage(
+                        message = text,
+                        attachments = attachments
+                    )
+                )
+            }
             MessageInput(
                 messageComposerState = composerState,
                 onValueChange = { composerViewModel.setMessageInput(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                 onCancelAction = { composerViewModel.dismissMessageActions() },
                 onLinkPreviewClick = null,
+                onSendClick = onSendClick,
+                recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .align(Alignment.CenterVertically),
@@ -155,7 +166,7 @@ private fun CustomMessageComposer(
                         color = ChatTheme.colors.textLowEmphasis
                     )
                 },
-                innerTrailingContent = {
+                trailingContent = {
                     Row {
                         IconButton(
                             modifier = Modifier.size(24.dp),
@@ -173,14 +184,7 @@ private fun CustomMessageComposer(
                         Spacer(modifier = Modifier.width(20.dp))
                         IconButton(
                             modifier = Modifier.size(24.dp),
-                            onClick = {
-                                composerViewModel.sendMessage(
-                                    composerViewModel.buildNewMessage(
-                                        composerState.inputValue,
-                                        composerState.attachments
-                                    )
-                                )
-                            },
+                            onClick = { onSendClick(composerState.inputValue, composerState.attachments) },
                             content = {
                                 Icon(
                                     imageVector = Icons.Outlined.Send,
@@ -194,7 +198,7 @@ private fun CustomMessageComposer(
             )
         },
         onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = true) },
-        integrations = {}
+        leadingContent = {}
     )
 }
 
