@@ -19,10 +19,24 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 internal fun String.initials(): String {
-    return trim()
-        .split("\\s+".toRegex())
-        .take(2)
-        .joinToString(separator = "") { it.take(1).uppercase() }
+    val result = StringBuilder(2)
+    var isInsideWord = false
+    var i = 0
+
+    while (result.length < 2 && i < length) {
+        val char = this[i]
+
+        if (char.isWhitespace()) {
+            isInsideWord = false
+        } else if (!isInsideWord) {
+            result.append(char.uppercaseChar())
+            isInsideWord = true
+        }
+
+        i++
+    }
+
+    return result.toString()
 }
 
 /**
