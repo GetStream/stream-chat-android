@@ -24,17 +24,25 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.extensions.internal.getWinner
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemResultUserBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.ui.viewmodel.messages.PollResultsViewModel
 
 /**
  * Represent the bottom sheet dialog that allows users to pick attachments.
@@ -43,6 +51,20 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private var _binding: StreamUiFragmentPollResultsBinding? = null
     private val binding get() = _binding!!
+
+    private val pollId: String
+        get() = requireArguments().getString(ARG_POLL)
+            ?: throw IllegalStateException("Poll ID not found in arguments")
+
+    private val poll: Poll by lazy {
+        polls[pollId] ?: throw IllegalStateException("Poll not found for ID: $pollId")
+    }
+
+    private val viewModel: PollResultsViewModel by viewModels {
+        PollResultsViewModel.Factory(poll)
+    }
+
+    private val resultsAdapter = ResultsAdapter(::onShowAllVotesClick)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,18 +79,14 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (polls[arguments?.getString(ARG_POLL)])?.let {
-            setupDialog(it)
-        } ?: dismiss()
+        setupEdgeToEdge()
+        setupToolbar(binding.toolbar)
+        binding.optionList.adapter = resultsAdapter
+        observeState()
     }
 
-    /**
-     * Initializes the dialog.
-     */
-    private fun setupDialog(poll: Poll) {
-        setupToolbar(binding.toolbar)
-        binding.question.text = poll.name
-        binding.optionList.adapter = ResultsAdapter(poll)
+    private fun setupEdgeToEdge() {
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     private fun setupToolbar(toolbar: Toolbar) {
@@ -79,84 +97,108 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         toolbar.setTitle(getString(R.string.stream_ui_poll_results_title))
     }
 
+    private fun observeState() {
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            binding.question.text = state.pollName
+            resultsAdapter.submitList(state.results)
+            binding.loadingContainer.isVisible = false
+        }
+    }
+
+    private fun onShowAllVotesClick(option: Option) {
+        PollOptionVotesDialogFragment.newInstance(poll = poll, option = option)
+            .show(parentFragmentManager, PollOptionVotesDialogFragment.TAG)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (activity?.isChangingConfigurations != true) {
+            polls.remove(pollId)
+        }
+    }
+
     public companion object {
-        public const val TAG: String = "create_poll_dialog_fragment"
+        public const val TAG: String = "PollResultsDialogFragment"
         private const val ARG_POLL: String = "arg_poll"
+
+        // Store polls temporarily to handle configuration changes
         private val polls = mutableMapOf<String, Poll>()
 
         /**
          * Creates a new instance of [PollResultsDialogFragment].
          *
+         * @param poll The poll to display results for.
          * @return A new instance of [PollResultsDialogFragment].
          */
-        public fun newInstance(poll: Poll): PollResultsDialogFragment = PollResultsDialogFragment().apply {
-            polls[poll.id] = poll
-            this.arguments = bundleOf(ARG_POLL to poll.id)
-        }
+        public fun newInstance(poll: Poll): PollResultsDialogFragment =
+            PollResultsDialogFragment().apply {
+                polls[poll.id] = poll
+                arguments = bundleOf(ARG_POLL to poll.id)
+            }
     }
 
     private class ResultsAdapter(
-        private val poll: Poll,
-    ) : RecyclerView.Adapter<ResultsAdapter.ResultViewHolder>() {
+        private val onShowAllVotesClick: (Option) -> Unit,
+    ) : ListAdapter<PollResultsViewState.ResultItem, ResultsAdapter.ResultViewHolder>(
+        object : DiffUtil.ItemCallback<PollResultsViewState.ResultItem>() {
+            override fun areItemsTheSame(
+                oldItem: PollResultsViewState.ResultItem,
+                newItem: PollResultsViewState.ResultItem,
+            ): Boolean = oldItem.option.id == newItem.option.id
 
-        private val winner = poll.getWinner()
-
-        val results: List<ResultItem> = poll.options.map { option ->
-            ResultItem(
-                option = option.text,
-                votes = poll.voteCountsByOption[option.id] ?: 0,
-                users = poll.votes.filter { it.optionId == option.id }.filter { it.user != null },
-                isWinner = winner == option,
-            )
-        }.sortedByDescending { it.votes }
+            override fun areContentsTheSame(
+                oldItem: PollResultsViewState.ResultItem,
+                newItem: PollResultsViewState.ResultItem,
+            ): Boolean = oldItem == newItem
+        },
+    ) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResultViewHolder =
-            ResultViewHolder(StreamUiItemResultBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-
-        override fun getItemCount(): Int = results.size
+            ResultViewHolder(
+                StreamUiItemResultBinding
+                    .inflate(LayoutInflater.from(parent.context), parent, false).apply {
+                        optionList.adapter = UserVoteAdapter()
+                    },
+                onShowAllVotesClick,
+            )
 
         override fun onBindViewHolder(holder: ResultViewHolder, position: Int) {
-            holder.bind(results[position])
+            holder.bind(getItem(position))
         }
-
-        private data class ResultItem(
-            val option: String,
-            val votes: Int,
-            val users: List<Vote>,
-            val isWinner: Boolean,
-        )
 
         private class ResultViewHolder(
             private val binding: StreamUiItemResultBinding,
+            private val onShowAllVotesClick: (Option) -> Unit,
         ) : RecyclerView.ViewHolder(binding.root) {
 
-            fun bind(result: ResultItem) {
-                binding.option.text = result.option
-                binding.votes.text = binding.root.resources.getString(R.string.stream_ui_poll_vote_counts, result.votes)
-                binding.optionList.adapter = UserVoteAdapter(result.users)
+            fun bind(result: PollResultsViewState.ResultItem) {
+                binding.option.text = result.option.text
+                binding.votes.text = binding.root.resources.getString(
+                    R.string.stream_ui_poll_vote_counts,
+                    result.voteCount,
+                )
+                (binding.optionList.adapter as? UserVoteAdapter)?.submitList(result.votes)
                 binding.award.isVisible = result.isWinner
+                binding.showAll.isVisible = result.showAllButton
+                binding.showAll.setOnClickListener { onShowAllVotesClick(result.option) }
             }
         }
     }
 
-    private class UserVoteAdapter(
-        private val votes: List<Vote>,
-    ) : RecyclerView.Adapter<UserVoteAdapter.UserVoteViewHolder>() {
+    private class UserVoteAdapter : ListAdapter<Vote, UserVoteAdapter.UserVoteViewHolder>(UserVoteDiffCallback) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserVoteViewHolder =
             UserVoteViewHolder(
                 StreamUiItemResultUserBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             )
 
-        override fun getItemCount(): Int = votes.size
-
         override fun onBindViewHolder(holder: UserVoteViewHolder, position: Int) {
-            holder.bind(votes[position])
+            holder.bind(getItem(position))
         }
 
         private class UserVoteViewHolder(
@@ -167,10 +209,19 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
                 vote.user?.let { user ->
                     binding.name.text = user.name
                     binding.userAvatarView.setUser(user)
+                    binding.userAvatarView.isVisible = true
+                } ?: {
+                    binding.name.text = ""
+                    binding.userAvatarView.isInvisible = true
                 }
                 binding.date.text = ChatUI.dateFormatter.formatRelativeDate(vote.createdAt)
                 binding.time.text = ChatUI.dateFormatter.formatTime(vote.createdAt)
             }
+        }
+
+        private object UserVoteDiffCallback : DiffUtil.ItemCallback<Vote>() {
+            override fun areItemsTheSame(oldItem: Vote, newItem: Vote): Boolean = oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Vote, newItem: Vote): Boolean = oldItem == newItem
         }
     }
 }

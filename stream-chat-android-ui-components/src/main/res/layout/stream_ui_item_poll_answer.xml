@@ -65,6 +65,7 @@
         android:layout_marginEnd="@dimen/stream_ui_spacing_tiny"
         app:layout_constraintTop_toTopOf="@+id/check"
         app:layout_constraintEnd_toStartOf="@+id/votes"
+        app:streamUiAvatarBorderWidth="0dp"
         />
 
     <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
@@ -74,6 +75,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="@+id/check"
         app:layout_constraintEnd_toEndOf="@+id/avatarFirstVote"
+        app:streamUiAvatarBorderWidth="0dp"
         />
 
     <androidx.constraintlayout.widget.Barrier

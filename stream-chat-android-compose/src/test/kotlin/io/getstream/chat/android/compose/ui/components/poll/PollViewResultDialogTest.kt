@@ -30,14 +30,14 @@ internal class PollViewResultDialogTest : PaparazziComposeTest {
     @Test
     fun `light mode`() {
         snapshot(isInDarkMode = false) {
-            PollViewResultDialog()
+            PollResultsContent()
         }
     }
 
     @Test
     fun `dark mode`() {
         snapshot(isInDarkMode = true) {
-            PollViewResultDialog()
+            PollResultsContent()
         }
     }
 }
