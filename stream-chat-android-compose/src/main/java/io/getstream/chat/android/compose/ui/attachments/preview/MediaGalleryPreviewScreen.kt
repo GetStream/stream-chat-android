@@ -71,6 +71,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -90,7 +91,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Constants
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -551,43 +552,60 @@ internal fun MediaGalleryPager(
     // Create a single instance of the player for the pager,
     // so it can be reused across pages,
     // improving performance and preventing issues when switching between pages.
-    val player = remember {
-        // Player should not be created in preview mode to prevent exceptions.
-        if (!previewMode) {
-            createPlayer(
-                context = context,
-                onBuffering = { isBuffering -> showBuffering = isBuffering },
-                onPlaybackError = onPlaybackError,
-            )
-        } else {
-            null
-        }
-    }
+    var player by remember { mutableStateOf<Player?>(null) }
+    // Saved playback state (pageIndex to position) for restoration after app resume.
+    var savedPlaybackState by remember { mutableStateOf<Pair<Int, Long>?>(null) }
     val currentPage = pagerState.currentPage
-    LaunchedEffect(currentPage) {
-        player?.pause() // Pause the player when the page changes
-        val attachment = attachments[currentPage]
-        // Prepare the player with the media item if it's a video.
-        if (attachment.isVideo()) {
-            attachment.assetUrl?.let { assetUrl ->
-                player?.setMediaItem(MediaItem.fromUri(assetUrl))
-                player?.prepare()
+    LaunchedEffect(currentPage, player) {
+        player?.let { activePlayer ->
+            activePlayer.pause() // Pause the player when the page changes
+            val attachment = attachments[currentPage]
+            // Prepare the player with the media item if it's a video.
+            if (attachment.isVideo()) {
+                attachment.assetUrl?.let { assetUrl ->
+                    // Restore playback position if returning to the same page after app resume.
+                    val startPosition = savedPlaybackState
+                        ?.takeIf { (savedPage, _) -> savedPage == currentPage }
+                        ?.second
+                        ?: 0L
+                    savedPlaybackState = null
+                    activePlayer.setMediaItem(MediaItem.fromUri(assetUrl), startPosition)
+                    activePlayer.prepare()
+                }
             }
         }
     }
     val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        // Pause the player when the lifecycle owner is paused,
-        // preventing it from playing videos in the background.
+    DisposableEffect(lifecycleOwner, previewMode) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_PAUSE) {
-                player?.pause()
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    // Player should not be created in preview mode to prevent exceptions.
+                    if (!previewMode && player == null) {
+                        player = createPlayer(
+                            context = context,
+                            onBuffering = { isBuffering -> showBuffering = isBuffering },
+                            onPlaybackError = onPlaybackError,
+                        )
+                    }
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    player?.pause()
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    // Save playback position before releasing the player.
+                    savedPlaybackState = pagerState.currentPage to (player?.currentPosition ?: 0L)
+                    player?.release()
+                    player = null
+                }
+                else -> Unit
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
             player?.release()
+            player = null
         }
     }
     HorizontalPager(
@@ -604,14 +622,16 @@ internal fun MediaGalleryPager(
                 )
             }
 
-            attachment.isVideo() && player != null -> {
-                MediaGalleryVideoPage(
-                    modifier = Modifier.fillMaxSize(),
-                    player = player,
-                    thumbnailUrl = attachment.thumbUrl,
-                    showBuffering = showBuffering,
-                    onPlaybackError = onPlaybackError,
-                )
+            attachment.isVideo() -> {
+                player?.let {
+                    MediaGalleryVideoPage(
+                        modifier = Modifier.fillMaxSize(),
+                        player = it,
+                        thumbnailUrl = attachment.thumbUrl,
+                        showBuffering = showBuffering,
+                        onPlaybackError = onPlaybackError,
+                    )
+                }
             }
         }
     }

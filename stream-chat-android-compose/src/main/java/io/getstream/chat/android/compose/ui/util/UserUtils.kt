@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.uiutils.extension.getLastSeenText
+import io.getstream.chat.android.ui.common.utils.extensions.getLastSeenText
 
 /**
  * Returns a string describing the elapsed time since the user was online (was watching the channel).

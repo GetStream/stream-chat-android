@@ -3,13 +3,13 @@ import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    alias(libs.plugins.paparazzi)
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
-    alias(libs.plugins.paparazzi)
     alias(libs.plugins.maven.publish)
 }
 
@@ -73,7 +73,6 @@ tasks.withType<KotlinCompile> {
 dependencies {
     api(project(":stream-chat-android-ui-common"))
     implementation(project(":stream-chat-android-previewdata"))
-    implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.androidx.appcompat)
     implementation(libs.stream.log)

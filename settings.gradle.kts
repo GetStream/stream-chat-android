@@ -48,8 +48,7 @@ plugins {
 	id("com.gradle.enterprise") version "3.7"
 }
 include (
-        ":stream-chat-android-ui-utils",
-		":stream-chat-android-ui-common",
+        ":stream-chat-android-ui-common",
 		":stream-chat-android-ui-components",
 		":stream-chat-android-ui-components-sample",
 		":stream-chat-android-ui-guides",
@@ -66,7 +65,6 @@ include (
 		":stream-chat-android-markdown-transformer",
 		":stream-chat-android-ui-uitests",
 		":stream-chat-android-benchmark",
-		":stream-chat-android-ai-assistant",
 		":metrics:stream-chat-android-metrics",
 )
 

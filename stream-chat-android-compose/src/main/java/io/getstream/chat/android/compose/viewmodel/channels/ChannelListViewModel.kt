@@ -51,7 +51,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
-import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
+import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -770,7 +770,7 @@ public class ChannelListViewModel(
         /**
          * Debounce time for search queries.
          */
-        private const val SEARCH_DEBOUNCE_MS = 200L
+        private const val SEARCH_DEBOUNCE_MS = 300L
 
         /**
          * Minimum length of the search query to start searching for channels.

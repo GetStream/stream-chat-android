@@ -36,6 +36,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.pow
@@ -81,6 +82,18 @@ internal class AudioRecordingController(
     private val waveform = arrayListOf<Float>()
     private val waveformBuffer = IntArray(drawPollingInterval / realPollingInterval)
     private var waveformBufferCount = 0
+
+    /**
+     * Thread-safe flag to track if cancelRecording() was called before startRecording() completed.
+     * This handles the race condition when the user taps quickly (not holding long enough).
+     */
+    private val pendingCancel: AtomicBoolean = AtomicBoolean(false)
+
+    /**
+     * Thread-safe flag to track if lockRecording() was called before startRecording() completed.
+     * This handles the race condition when both are called in quick succession.
+     */
+    private val pendingLock: AtomicBoolean = AtomicBoolean(false)
 
     init {
         if (drawPollingInterval < realPollingInterval) {
@@ -168,9 +181,26 @@ internal class AudioRecordingController(
         }
         logger.i { "[startRecording] state: $state" }
         val recordingName = "audio_recording_${Date()}.aac"
+        // Reset pending flags before async work - we only want to detect
+        // cancellations/locks that happen during the mediaRecorder.startAudioRecording() call
+        pendingCancel.set(false)
+        pendingLock.set(false)
         // Call on Dispatchers.IO because it accesses file system
         withContext(DispatcherProvider.IO) {
             mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
+        }
+        // Check if cancelRecording() was called during the mediaRecorder.startAudioRecording
+        if (pendingCancel.getAndSet(false)) {
+            logger.i { "[startRecording] applying pending cancel" }
+            mediaRecorder.release()
+            clearData()
+            return
+        }
+        // Check if lockRecording() was called during the mediaRecorder.startAudioRecording
+        if (pendingLock.getAndSet(false)) {
+            logger.i { "[startRecording] applying pending lock" }
+            setState(RecordingState.Locked(0, emptyList()))
+            return
         }
         setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
     }
@@ -191,6 +221,13 @@ internal class AudioRecordingController(
 
     fun lockRecording() {
         val state = this.recordingState.value
+        if (state is RecordingState.Idle) {
+            // Set pending flag if state is Idle, to handle the case where this method is called while the async
+            // method mediaRecorder.startAudioRecording is executing
+            logger.i { "[lockRecording] state is Idle, setting pending lock" }
+            pendingLock.set(true)
+            return
+        }
         if (state !is RecordingState.Hold) {
             logger.w { "[lockRecording] rejected (state is not Hold): $state" }
             return
@@ -202,7 +239,10 @@ internal class AudioRecordingController(
     fun cancelRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            logger.w { "[cancelRecording] rejected (state is Idle)" }
+            // Set pending flag if state is Idle, to handle the case where this method is called while the async
+            // method mediaRecorder.startAudioRecording is executing
+            logger.i { "[cancelRecording] state is Idle, setting pending cancel" }
+            pendingCancel.set(true)
             return
         }
         logger.i { "[cancelRecording] state: $state" }
@@ -450,6 +490,8 @@ internal class AudioRecordingController(
         samples.clear()
         samplesBuffer.clear()
         samplesBufferLimit = 1
+        pendingCancel.set(false)
+        pendingLock.set(false)
         setState(RecordingState.Idle)
     }
 

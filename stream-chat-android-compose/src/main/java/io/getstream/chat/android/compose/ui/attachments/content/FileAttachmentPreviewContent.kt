@@ -35,7 +35,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
@@ -111,7 +111,7 @@ public fun FileAttachmentPreviewContent(
                         }
                     }
 
-                    CancelIcon(
+                    ComposerCancelIcon(
                         modifier = Modifier.padding(4.dp).testTag("Stream_AttachmentCancelIcon"),
                         onClick = { onAttachmentRemoved(attachment) },
                     )

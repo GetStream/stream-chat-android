@@ -175,6 +175,7 @@ public fun MessageComposer(
                 state = it,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
+                onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
             )
         }
@@ -322,6 +323,7 @@ public fun MessageComposer(
                 state = it,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
+                onLinkPreviewClick = onLinkPreviewClick,
                 label = label,
             )
         }
@@ -420,13 +422,6 @@ public fun DefaultMessageComposerHeaderContent(
                 .padding(start = 12.dp),
             activeAction = activeAction,
             onCancel = onCancelAction,
-        )
-    }
-    if (ChatTheme.isComposerLinkPreviewEnabled && messageComposerState.linkPreviews.isNotEmpty()) {
-        ChatTheme.componentFactory.MessageComposerLinkPreview(
-            modifier = Modifier,
-            linkPreview = messageComposerState.linkPreviews.first(),
-            onClick = onLinkPreviewClick,
         )
     }
 }
@@ -577,12 +572,14 @@ internal fun DefaultComposerLabel(state: MessageComposerState) {
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun RowScope.DefaultComposerInputContent(
     modifier: Modifier,
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     label: @Composable (MessageComposerState) -> Unit,
 ) {
     val isRecording = messageComposerState.recording !is RecordingState.Idle
@@ -599,6 +596,7 @@ internal fun RowScope.DefaultComposerInputContent(
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,
         onAttachmentRemoved = onAttachmentRemoved,
+        onLinkPreviewClick = onLinkPreviewClick,
     )
 }
 

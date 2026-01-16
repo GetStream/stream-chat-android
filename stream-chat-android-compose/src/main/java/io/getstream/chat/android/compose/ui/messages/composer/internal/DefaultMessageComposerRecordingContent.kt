@@ -48,6 +48,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
@@ -87,7 +88,7 @@ import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.uiutils.util.openSystemSettings
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
@@ -152,6 +153,7 @@ public fun DefaultAudioRecordButton(
     val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
     val isRecording = state !is RecordingState.Idle
     val interactionSource = remember { MutableInteractionSource() }
+    val currentState by rememberUpdatedState(state)
 
     val density = LocalDensity.current
     val cancelThresholdX = with(density) {
@@ -194,14 +196,24 @@ public fun DefaultAudioRecordButton(
 
                         // Await drag events
                         while (true) {
+                            // If the recording is already locked, exit the drag loop
+                            if (currentState is RecordingState.Locked) {
+                                break
+                            }
+
                             val dragEvent = awaitDragOrCancellation(downEvent.id)
                             if (dragEvent == null || !dragEvent.pressed) {
-                                val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
-                                if (holdElapsedTime < holdToRecordThreshold) {
-                                    recordingActions.onCancelRecording()
-                                    showDurationWarning = true
-                                } else {
-                                    recordingActions.onSendRecording()
+                                // On release, only perform actions if not already locked.
+                                // The currentState can change during awaitDragOrCancellation, so this check is needed.
+                                @Suppress("KotlinConstantConditions")
+                                if (currentState !is RecordingState.Locked) {
+                                    val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
+                                    if (holdElapsedTime < holdToRecordThreshold) {
+                                        recordingActions.onCancelRecording()
+                                        showDurationWarning = true
+                                    } else {
+                                        recordingActions.onSendRecording()
+                                    }
                                 }
                                 break
                             }

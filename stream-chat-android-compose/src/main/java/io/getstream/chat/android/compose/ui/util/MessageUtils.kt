@@ -25,8 +25,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
-import io.getstream.chat.android.uiutils.extension.isUploading
-import io.getstream.chat.android.uiutils.util.EmojiUtil
+import io.getstream.chat.android.ui.common.utils.EmojiUtil
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 import kotlinx.coroutines.flow.map
 
 /**

@@ -254,6 +254,9 @@ internal class ChannelMediaAttachmentsPreviewViewModelTest {
         val attachment = randomAttachment(
             // Less than 10MB
             fileSize = positiveRandomInt(maxInt = (10 * 1024 * 1024) - 1),
+            assetUrl = null,
+            imageUrl = null,
+            thumbUrl = null,
         )
         val shareError = Error.GenericError(message = randomString())
         val sut = Fixture()

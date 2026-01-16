@@ -23,7 +23,7 @@ import android.net.Uri
 import android.widget.Toast
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
+import io.getstream.chat.android.ui.common.utils.extensions.addSchemeToUrlIfNeeded
 
 @InternalStreamChatApi
 public class WebLinkDestination(context: Context, private val url: String) : ChatDestination(context) {
@@ -32,7 +32,7 @@ public class WebLinkDestination(context: Context, private val url: String) : Cha
         try {
             val urlWithSchema = url.addSchemeToUrlIfNeeded()
             start(Intent(Intent.ACTION_VIEW, Uri.parse(urlWithSchema)))
-        } catch (e: ActivityNotFoundException) {
+        } catch (_: ActivityNotFoundException) {
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_error_cannot_open_link, url),

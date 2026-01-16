@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.uiutils.model.MimeType
+import io.getstream.chat.android.ui.common.model.MimeType
 
 /**
  * Builds a file attachment quoted message which shows a single file in the attachments list.
