@@ -63,6 +63,7 @@
 - Fix poll dialogs layout on edge-to-edge devices by applying system bar insets.
 
 ### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 
 ### ✅ Added
 - Add XML poll option votes dialog with pagination support.
@@ -76,6 +77,7 @@
 - Fix poll results sheet cutting off the last option items.
 
 ### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 - Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
 
 ### ✅ Added

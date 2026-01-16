@@ -54,6 +54,12 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
     private var player: Player? = null
 
+    /**
+     * Saved playback position for restoration after app resume.
+     */
+    private var savedPlaybackPosition: Long = 0L
+    private var autoPlay: Boolean = true
+
     private val logger by taggedLogger("Chat:AttachmentMediaActivity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,11 +81,17 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
         setupEdgeToEdge()
         setupViews()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!::binding.isInitialized) return
+        // (Re)create player when returning to foreground.
         player = createPlayer()
             .apply {
-                setMediaItem(MediaItem.fromUri(Uri.parse(url)))
+                setMediaItem(MediaItem.fromUri(Uri.parse(url)), savedPlaybackPosition)
                 prepare()
-                playWhenReady = true
+                playWhenReady = autoPlay
             }
             .also(::setupPlayerView)
     }
@@ -89,8 +101,15 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         player?.pause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    @OptIn(UnstableApi::class)
+    override fun onStop() {
+        super.onStop()
+        if (!::binding.isInitialized) return
+        // Save playback position and release player to free wake lock.
+        savedPlaybackPosition = player?.currentPosition ?: 0L
+        autoPlay = false
+        binding.playerView.player = null
+        binding.controls.player = null
         player?.release()
         player = null
     }
