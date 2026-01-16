@@ -51,7 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add poll results + poll option votes state/controllers to support pagination and error handling.
+- Add poll results + poll option votes state/controllers to support pagination and error handling. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
@@ -59,14 +59,14 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix poll results sheet cutting off the last option items.
-- Fix poll dialogs layout on edge-to-edge devices by applying system bar insets.
+- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+- Fix poll dialogs layout on edge-to-edge devices by applying system bar insets. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⬆️ Improved
 - Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 
 ### ✅ Added
-- Add XML poll option votes dialog with pagination support.
+- Add XML poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
@@ -75,14 +75,14 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording race conditions. [#6077](https://github.com/GetStream/stream-chat-android/pull/6077)
-- Fix poll results sheet cutting off the last option items.
+- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⬆️ Improved
 - Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 - Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
 
 ### ✅ Added
-- Add Compose poll option votes dialog with pagination support.
+- Add Compose poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
