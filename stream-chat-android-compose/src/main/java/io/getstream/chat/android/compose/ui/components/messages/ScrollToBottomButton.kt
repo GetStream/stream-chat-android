@@ -55,14 +55,13 @@ internal fun ScrollToBottomButton(
 ) {
     Box(
         modifier = modifier
-            .semantics { role = Role.Button }
-            .padding(16.dp),
+            .semantics { role = Role.Button },
         contentAlignment = Alignment.Center,
     ) {
         Surface(
             onClick = onClick,
             modifier = Modifier
-                .padding(top = 12.dp)
+                .padding(8.dp)
                 .size(48.dp)
                 .testTag("Stream_ScrollToBottomButton"),
             shape = CircleShape,

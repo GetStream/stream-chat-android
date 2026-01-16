@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -145,6 +146,7 @@ public fun Messages(
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
+                .graphicsLayer { clip = false }
                 .testTag("Stream_Messages")
                 .fillMaxSize()
                 .onSizeChanged {
@@ -344,7 +346,14 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         ScrollToBottomButton(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(contentPadding),
+                .padding(contentPadding)
+                .then(
+                    if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                        Modifier.padding(horizontal = 16.dp)
+                    } else {
+                        Modifier.padding(16.dp)
+                    },
+                ),
             visible = scrollToBottomButtonVisible,
             count = messagesState.unreadCount,
             onClick = {

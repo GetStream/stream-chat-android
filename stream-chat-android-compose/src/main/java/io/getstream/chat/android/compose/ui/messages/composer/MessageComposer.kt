@@ -398,7 +398,9 @@ public fun MessageComposer(
             headerContent(messageComposerState)
 
             Row(
-                Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
                 verticalAlignment = Bottom,
             ) {
                 if (activeAction !is Edit) {
