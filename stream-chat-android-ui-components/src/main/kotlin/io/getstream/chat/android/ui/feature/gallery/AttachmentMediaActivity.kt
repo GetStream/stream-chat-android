@@ -25,10 +25,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -38,6 +36,7 @@ import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -54,6 +53,12 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private val mimeType: String? by lazy { intent.getStringExtra(KEY_MIME_TYPE) }
 
     private var player: Player? = null
+
+    /**
+     * Saved playback position for restoration after app resume.
+     */
+    private var savedPlaybackPosition: Long = 0L
+    private var autoPlay: Boolean = true
 
     private val logger by taggedLogger("Chat:AttachmentMediaActivity")
 
@@ -76,11 +81,17 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
         setupEdgeToEdge()
         setupViews()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (!::binding.isInitialized) return
+        // (Re)create player when returning to foreground.
         player = createPlayer()
             .apply {
-                setMediaItem(MediaItem.fromUri(Uri.parse(url)))
+                setMediaItem(MediaItem.fromUri(Uri.parse(url)), savedPlaybackPosition)
                 prepare()
-                playWhenReady = true
+                playWhenReady = autoPlay
             }
             .also(::setupPlayerView)
     }
@@ -90,8 +101,15 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         player?.pause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    @OptIn(UnstableApi::class)
+    override fun onStop() {
+        super.onStop()
+        if (!::binding.isInitialized) return
+        // Save playback position and release player to free wake lock.
+        savedPlaybackPosition = player?.currentPosition ?: 0L
+        autoPlay = false
+        binding.playerView.player = null
+        binding.controls.player = null
         player?.release()
         player = null
     }
@@ -113,12 +131,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             statusBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
             navigationBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
         )
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(top = insets.top, left = insets.left, right = insets.right, bottom = insets.bottom)
-
-            WindowInsetsCompat.CONSUMED
-        }
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
     }
 
     private fun createPlayer(): Player {

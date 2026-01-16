@@ -33,48 +33,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrollView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/voteList"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/stream_ui_spacing_medium"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:layout_marginBottom="@dimen/stream_ui_spacing_medium"
+        android:background="@drawable/stream_ui_poll_input_bg"
+        android:clipToPadding="false"
+        android:padding="@dimen/stream_ui_spacing_medium"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
+
+    <ProgressBar
+        android:id="@+id/loadingMoreProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/stream_ui_spacing_small"
+        android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+        android:indeterminateDuration="1000"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/stream_ui_spacing_medium"
-            >
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/question"
-                android:layout_width="0dp"
-                android:layout_height="56dp"
-                android:layout_marginVertical="@dimen/stream_ui_spacing_small"
-                android:padding="@dimen/stream_ui_spacing_medium"
-                android:gravity="center_vertical"
-                android:textAppearance="@style/StreamUiTextAppearance.Headline"
-                android:background="@drawable/stream_ui_poll_input_bg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/optionList"
-                android:layout_width="0dp"
-                android:layout_marginTop="@dimen/stream_ui_spacing_medium"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/question"
-                />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
 
     <FrameLayout
         android:id="@+id/loadingContainer"
@@ -96,4 +82,5 @@
             />
 
     </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
