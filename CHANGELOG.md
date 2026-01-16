@@ -1,61 +1,15 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# January 16th, 2026 - 6.31.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduce `NotificationIdFactory` for customizing the default notification IDs. [#6072](https://github.com/GetStream/stream-chat-android/pull/6072)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix `message.updated` and `message.deleted` events unhiding the channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add poll results + poll option votes state/controllers to support pagination and error handling. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -68,10 +22,6 @@
 ### ✅ Added
 - Add XML poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording race conditions. [#6077](https://github.com/GetStream/stream-chat-android/pull/6077)
@@ -83,21 +33,6 @@
 
 ### ✅ Added
 - Add Compose poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # January 02th, 2026 - 6.30.2
 ## stream-chat-android-state
