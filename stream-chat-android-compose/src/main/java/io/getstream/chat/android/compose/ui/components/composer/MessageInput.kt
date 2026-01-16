@@ -115,7 +115,7 @@ public fun MessageInput(
         maxLines = maxLines,
         onValueChange = onValueChange,
         enabled = canSendMessage,
-        innerPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        innerPadding = PaddingValues(),
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
@@ -143,12 +143,17 @@ public fun MessageInput(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
                     leadingContent()
 
                     Box(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                start = 16.dp,
+                                bottom = 16.dp,
+                            ),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         innerTextField()

@@ -17,10 +17,13 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -163,12 +166,12 @@ public data class ComposerActionsTheme(
         @Composable
         public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
             val attachmentsButton = IconContainerStyle(
-                size = ComponentSize(width = 32.dp, height = 32.dp),
+                size = ComponentSize(width = 48.dp, height = 48.dp),
                 padding = ComponentPadding(0.dp),
                 icon = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                    painter = rememberVectorPainter(Icons.Outlined.Add),
                     tint = colors.textLowEmphasis,
-                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                    size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
             val commandsButton = IconContainerStyle(
@@ -182,11 +185,11 @@ public data class ComposerActionsTheme(
             )
             val sendButton = IconContainerStyle(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(0.dp),
+                padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
                     tint = colors.textLowEmphasis,
-                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                    size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
             return ComposerActionsTheme(

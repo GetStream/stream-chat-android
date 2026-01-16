@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -373,15 +372,20 @@ public fun MessageComposer(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+                    .padding(
+                        start = 24.dp,
+                        end = 24.dp,
+                        top = if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                            0.dp
+                        } else {
+                            24.dp
+                        },
+                        bottom = 32.dp,
+                    ),
                 verticalAlignment = Bottom,
             ) {
                 if (activeAction !is Edit) {
                     leadingContent(messageComposerState)
-                } else {
-                    Spacer(
-                        modifier = Modifier.size(16.dp),
-                    )
                 }
 
                 input(messageComposerState)
@@ -583,7 +587,7 @@ internal fun MessageComposerSlowMode() {
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingPreview() {
     ChatTheme {

@@ -151,7 +151,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.AttachmentsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
@@ -1702,22 +1701,6 @@ public interface ChatComponentFactory {
             messageInputState = state,
             onAttachmentsClick = onAttachmentsClick,
         )
-    }
-
-    /**
-     * The default attachments button of the message composer.
-     *
-     * Used as part of [MessageComposerLeadingContent].
-     *
-     * @param enabled Whether the button is enabled.
-     * @param onClick The action to perform when the button is clicked.
-     */
-    @Composable
-    public fun RowScope.MessageComposerAttachmentsButton(
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
-        AttachmentsButton(enabled, onClick)
     }
 
     /**
