@@ -1687,7 +1687,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default trailing content of the message composer, which includes an add attachment button by default.
+     * The default leading content of the message composer, which includes an add attachment button by default.
      *
      * @param state The current state of the message composer.
      * @param onAttachmentsClick The action to perform when the attachments button is clicked.
@@ -1705,8 +1705,6 @@ public interface ChatComponentFactory {
 
     /**
      * The default commands button of the message composer.
-     *
-     * Used as part of [MessageComposerLeadingContent].
      *
      * @param hasCommandSuggestions Whether there are command suggestions available.
      * @param enabled Whether the button is enabled.
@@ -1829,7 +1827,11 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
     ) {
-        DefaultMessageComposerInputTrailingContent(state, onSendClick, recordingActions)
+        DefaultMessageComposerInputTrailingContent(
+            messageComposerState = state,
+            onSendMessage = onSendClick,
+            recordingActions = recordingActions,
+        )
     }
 
     /**
@@ -1868,17 +1870,13 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param enabled Whether the button is enabled.
-     * @param isInputValid Whether the current input in the message composer is valid.
      * @param onClick The action to perform when the button is clicked.
      */
     @Composable
     public fun MessageComposerSendButton(
-        enabled: Boolean,
-        isInputValid: Boolean,
         onClick: () -> Unit,
     ) {
-        SendButton(enabled, isInputValid, onClick)
+        SendButton(onClick = onClick)
     }
 
     /**

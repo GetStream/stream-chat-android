@@ -17,13 +17,12 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -61,12 +60,6 @@ import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-
-/**
- * Defines the minimum height for the MessageComposer action containers.
- * Used to ensure that container before the composer has the same min height as the container after the composer.
- */
-private val ComposerActionContainerMinHeight = 44.dp
 
 @Composable
 internal fun DefaultMessageComposerHeaderContent(
@@ -237,58 +230,42 @@ internal fun DefaultMessageComposerInputTrailingContent(
     onSendMessage: (String, List<Attachment>) -> Unit,
     recordingActions: AudioRecordingActions,
 ) {
-    val value = messageComposerState.inputValue
+    val inputText = messageComposerState.inputValue
     val coolDownTime = messageComposerState.coolDownTime
     val validationErrors = messageComposerState.validationErrors
     val attachments = messageComposerState.attachments
     val isInEditMode = messageComposerState.action is Edit
 
-    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
-    val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
-
-    val canSendMessage = messageComposerState.canSendMessage()
-    val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
-
+    // Show cooldown indicator if applicable
     if (coolDownTime > 0 && !isInEditMode) {
         ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
-            modifier = Modifier.Companion,
+            modifier = Modifier,
             coolDownTime = coolDownTime,
         )
-    } else {
-        val isRecording = messageComposerState.recording !is RecordingState.Idle
+        return
+    }
 
-        val sendButtonEnabled = canSendMessage && isInputValid
-        val sendButtonVisible = when {
-            !isRecordingEnabled -> true
-            isRecording -> false
-            showRecordOverSend -> sendButtonEnabled
-            else -> true
-        }
-        if (sendButtonVisible) {
-            Box(
-                modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
-                contentAlignment = Alignment.Center,
-            ) {
-                ChatTheme.componentFactory.MessageComposerSendButton(
-                    enabled = sendButtonEnabled,
-                    isInputValid = isInputValid,
-                    onClick = {
-                        if (isInputValid) {
-                            onSendMessage(value, attachments)
-                        }
-                    },
-                )
-            }
-        }
+    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
+    val canSendMessage = messageComposerState.canSendMessage()
+    val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
+    val isRecording = messageComposerState.recording !is RecordingState.Idle
 
-        val recordButtonVisible = when {
-            !canSendMessage || !isRecordingEnabled -> false
-            showRecordOverSend -> !sendButtonEnabled
-            else -> true
-        }
-        if (recordButtonVisible) {
-            ChatTheme.componentFactory.MessageComposerAudioRecordButton(
+    val shouldShowSendButton = canSendMessage && isInputValid && !isRecording
+    val shouldShowRecordButton = isRecordingEnabled && !shouldShowSendButton
+
+    val actionButton = when {
+        shouldShowSendButton -> "send"
+        shouldShowRecordButton -> "record"
+        else -> null
+    }
+
+    Crossfade(targetState = actionButton) { button ->
+        when (button) {
+            "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
+                onClick = { onSendMessage(inputText, attachments) },
+            )
+            "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
                 state = messageComposerState.recording,
                 recordingActions = recordingActions,
             )
@@ -336,8 +313,6 @@ internal fun CommandsButton(
  */
 @Composable
 internal fun SendButton(
-    enabled: Boolean,
-    isInputValid: Boolean,
     onClick: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
@@ -347,7 +322,6 @@ internal fun SendButton(
             .size(sendButtonStyle.size)
             .padding(sendButtonStyle.padding)
             .testTag("Stream_ComposerSendButton"),
-        enabled = enabled,
         content = {
             Icon(
                 modifier = Modifier
@@ -359,7 +333,7 @@ internal fun SendButton(
         },
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.primaryAccent,
-            contentColor = if (isInputValid) Color.White else sendButtonStyle.icon.tint,
+            contentColor = Color.White,
         ),
         onClick = onClick,
     )
