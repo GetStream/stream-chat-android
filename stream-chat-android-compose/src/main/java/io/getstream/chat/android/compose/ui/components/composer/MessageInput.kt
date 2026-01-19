@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.composer
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,18 +28,33 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
@@ -109,8 +127,12 @@ public fun MessageInput(
         mentions = messageComposerState.selectedMentions,
     )
 
-    InputField(
-        modifier = modifier,
+    val description = stringResource(id = R.string.stream_compose_cd_message_input)
+
+    TextField(
+        modifier = modifier
+            .semantics { contentDescription = description }
+            .testTag("Stream_ComposerInputField"),
         value = value,
         maxLines = maxLines,
         onValueChange = onValueChange,
@@ -167,6 +189,59 @@ public fun MessageInput(
                 }
             }
         },
+    )
+}
+
+@Composable
+private fun TextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
+    innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+    visualTransformation: VisualTransformation,
+    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
+) {
+    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
+
+    if (textState.text != value) {
+        // Workaround to move cursor to the end after selecting a suggestion
+        LaunchedEffect(value) {
+            if (textState.text != value) {
+                textState = textState.copy(
+                    text = value,
+                    selection = TextRange(value.length),
+                )
+            }
+        }
+    }
+
+    val theme = ChatTheme.messageComposerTheme.inputField
+
+    BasicTextField(
+        modifier = modifier
+            .border(border = border, shape = theme.borderShape)
+            .clip(shape = theme.borderShape)
+            .background(theme.backgroundColor)
+            .padding(innerPadding),
+        value = textState,
+        onValueChange = {
+            textState = it
+            if (value != it.text) {
+                onValueChange(it.text)
+            }
+        },
+        visualTransformation = visualTransformation,
+        textStyle = theme.textStyle,
+        cursorBrush = SolidColor(theme.cursorBrushColor),
+        decorationBox = { innerTextField -> decorationBox(innerTextField) },
+        maxLines = maxLines,
+        singleLine = maxLines == 1,
+        enabled = enabled,
+        keyboardOptions = keyboardOptions,
     )
 }
 
