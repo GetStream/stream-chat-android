@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Checkbox
@@ -135,7 +134,6 @@ internal fun DefaultMessageComposerLeadingContent(
             enabled = isAddButtonEnabled,
             modifier = Modifier
                 .padding(end = 8.dp)
-                .size(attachmentsButtonStyle.size)
                 .border(
                     width = 1.dp,
                     color = ChatTheme.colors.borders,
@@ -148,6 +146,7 @@ internal fun DefaultMessageComposerLeadingContent(
                         Modifier
                     },
                 )
+                .size(attachmentsButtonStyle.size)
                 .padding(attachmentsButtonStyle.padding)
                 .testTag("Stream_ComposerAttachmentsButton"),
             colors = IconButtonDefaults.filledIconButtonColors(
@@ -184,7 +183,6 @@ internal fun DefaultComposerLabel(state: MessageComposerState) {
 
 @Composable
 internal fun RowScope.DefaultMessageComposerInput(
-    modifier: Modifier,
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
@@ -206,22 +204,20 @@ internal fun RowScope.DefaultMessageComposerInput(
     },
 ) {
     val isRecording = messageComposerState.recording !is RecordingState.Idle
-    MessageInput(
-        modifier = if (isRecording) {
-            modifier.size(0.dp)
-        } else {
-            modifier.weight(1f)
-        },
-        label = label,
-        messageComposerState = messageComposerState,
-        onValueChange = onValueChange,
-        onAttachmentRemoved = onAttachmentRemoved,
-        onLinkPreviewClick = onLinkPreviewClick,
-        onSendClick = onSendClick,
-        recordingActions = recordingActions,
-        leadingContent = leadingContent,
-        trailingContent = trailingContent,
-    )
+    if (!isRecording) {
+        MessageInput(
+            modifier = Modifier.weight(1f),
+            label = label,
+            messageComposerState = messageComposerState,
+            onValueChange = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onSendClick = onSendClick,
+            recordingActions = recordingActions,
+            leadingContent = leadingContent,
+            trailingContent = trailingContent,
+        )
+    }
 }
 
 @Composable

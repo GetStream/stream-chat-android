@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -61,6 +62,7 @@ public fun ImageAttachmentPreviewContent(
         modifier = modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+        contentPadding = PaddingValues(12.dp),
     ) {
         items(attachments) { attachment ->
             ImageAttachmentPreviewContentItem(

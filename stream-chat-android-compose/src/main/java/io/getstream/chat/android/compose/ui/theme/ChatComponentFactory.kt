@@ -1758,7 +1758,6 @@ public interface ChatComponentFactory {
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         DefaultMessageComposerInput(
-            modifier = Modifier.animateContentSize(),
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
