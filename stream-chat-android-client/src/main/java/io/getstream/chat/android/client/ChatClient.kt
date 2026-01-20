@@ -1506,8 +1506,14 @@ internal constructor(
             logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
             // Clear all cache directories
             val cacheResult = fileManager.clearAllCache(context)
-            // Clear external (temporary) storage files
-            cacheResult.flatMap { fileManager.clearExternalStorage(context) }
+            // Clear external (temporary) storage files - always run regardless of cache result
+            val externalStorageResult = fileManager.clearExternalStorage(context)
+            // Return the first failure if any, otherwise success
+            when {
+                cacheResult is Result.Failure -> cacheResult
+                externalStorageResult is Result.Failure -> externalStorageResult
+                else -> Result.Success(Unit)
+            }
         }
 
     /**
