@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewIt
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamSpacings
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
@@ -73,8 +74,8 @@ public fun MediaAttachmentPreviewContent(
             .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewContent"),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-        contentPadding = PaddingValues(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamSpacings._2xs, Alignment.Start),
+        contentPadding = PaddingValues(horizontal = StreamSpacings.sm),
     ) {
         items(attachments) { image ->
             MediaAttachmentPreviewItem(

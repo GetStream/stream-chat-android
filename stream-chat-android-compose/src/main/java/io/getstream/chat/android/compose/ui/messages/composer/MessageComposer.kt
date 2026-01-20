@@ -55,7 +55,6 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -512,139 +511,36 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
 
 @Preview
 @Composable
-private fun MessageComposerPlaceholderPreview() {
+private fun MessageComposerDefaultStylePreview() {
     ChatTheme {
-        MessageComposerPlaceholder()
+        MessageComposerDefaultStyle()
     }
 }
 
 @Composable
-internal fun MessageComposerPlaceholder() {
+internal fun MessageComposerDefaultStyle() {
     MessageComposer(
         messageComposerState = PreviewMessageComposerState,
         onSendMessage = { _, _ -> },
     )
 }
 
-@Preview
-@Composable
-private fun MessageComposerFilledPreview() {
-    ChatTheme {
-        MessageComposerFilled()
-    }
-}
-
-@Composable
-internal fun MessageComposerFilled() {
-    MessageComposer(
-        messageComposerState = PreviewMessageComposerState.copy(
-            inputValue = "Hello word",
-        ),
-        onSendMessage = { _, _ -> },
-    )
-}
-
-@Preview
-@Composable
-private fun MessageComposerOverflowPreview() {
-    ChatTheme {
-        MessageComposerOverflow()
-    }
-}
-
-@Composable
-internal fun MessageComposerOverflow() {
-    MessageComposer(
-        messageComposerState = PreviewMessageComposerState.copy(
-            inputValue = "I’ve been thinking about our plan for the next few weeks, " +
-                "and I wanted to check in with you about it. There are a few things I’d like to get aligned on, " +
-                "especially how we want to divide the work and what the priorities should be. " +
-                "I feel like we’ve made good progress so far, " +
-                "but there are still a couple of details that keep popping up, " +
-                "and it would be nice to sort them out before they turn into bigger issues. " +
-                "Let me know when you have a moment so we can go through everything together",
-        ),
-        onSendMessage = { _, _ -> },
-    )
-}
-
-@Preview
-@Composable
-private fun MessageComposerSlowModePreview() {
-    ChatTheme {
-        MessageComposerSlowMode()
-    }
-}
-
-@Composable
-internal fun MessageComposerSlowMode() {
-    MessageComposer(
-        messageComposerState = PreviewMessageComposerState.copy(
-            inputValue = "Slow mode, wait 9s",
-            coolDownTime = 9,
-        ),
-        onSendMessage = { _, _ -> },
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
-private fun MessageComposerFloatingPreview() {
+private fun MessageComposerFloatingStylePreview() {
     ChatTheme {
-        MessageComposerFloating()
+        MessageComposerFloatingStyle()
     }
 }
 
 @Composable
-internal fun MessageComposerFloating() {
+internal fun MessageComposerFloatingStyle() {
     CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             onSendMessage = { _, _ -> },
         )
     }
-}
-
-@Preview
-@Composable
-private fun MessageComposerAttachmentSinglePreview() {
-    ChatTheme {
-        MessageComposerAttachmentSingle()
-    }
-}
-
-@Composable
-internal fun MessageComposerAttachmentSingle() {
-    MessageComposer(
-        messageComposerState = PreviewMessageComposerState.copy(
-            attachments = listOf(PreviewAttachmentData.attachmentImage1),
-        ),
-        onSendMessage = { _, _ -> },
-    )
-}
-
-@Preview
-@Composable
-private fun MessageComposerAttachmentMultiplePreview() {
-    ChatTheme {
-        MessageComposerAttachmentMultiple()
-    }
-}
-
-@Composable
-internal fun MessageComposerAttachmentMultiple() {
-    MessageComposer(
-        messageComposerState = PreviewMessageComposerState.copy(
-            attachments = listOf(
-                PreviewAttachmentData.attachmentImage1,
-                PreviewAttachmentData.attachmentImage2,
-                PreviewAttachmentData.attachmentImage3,
-                PreviewAttachmentData.attachmentVideo1,
-                PreviewAttachmentData.attachmentVideo2,
-            ),
-        ),
-        onSendMessage = { _, _ -> },
-    )
 }
 
 private val PreviewMessageComposerState = MessageComposerState(

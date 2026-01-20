@@ -101,9 +101,11 @@ public fun ComposerLinkPreview(
     val typography = ChatTheme.typography
     val textColor = colors.textHighEmphasis
 
-    Box {
+    Box(
+        modifier = modifier,
+    ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .combinedClickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },

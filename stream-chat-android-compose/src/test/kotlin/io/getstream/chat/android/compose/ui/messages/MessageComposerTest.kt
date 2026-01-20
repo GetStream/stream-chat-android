@@ -20,13 +20,8 @@ import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerAttachmentMultiple
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerAttachmentSingle
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFilled
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloating
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerOverflow
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerPlaceholder
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerSlowMode
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerDefaultStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyle
 import org.junit.Rule
 import org.junit.Test
 
@@ -36,51 +31,16 @@ internal class MessageComposerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun placeholder() {
+    fun `default style`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerPlaceholder()
-        }
-    }
-
-    @Test
-    fun filled() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerFilled()
-        }
-    }
-
-    @Test
-    fun overflow() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerOverflow()
-        }
-    }
-
-    @Test
-    fun `slow mode`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerSlowMode()
+            MessageComposerDefaultStyle()
         }
     }
 
     @Test
     fun `floating style`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerFloating()
-        }
-    }
-
-    @Test
-    fun `attachment single`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerAttachmentSingle()
-        }
-    }
-
-    @Test
-    fun `attachment multiple`() {
-        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerAttachmentMultiple()
+            MessageComposerFloatingStyle()
         }
     }
 }
