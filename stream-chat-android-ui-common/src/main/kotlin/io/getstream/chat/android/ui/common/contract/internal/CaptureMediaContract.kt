@@ -26,7 +26,7 @@ import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -79,10 +79,7 @@ public class CaptureMediaContract(private val mode: Mode) :
         action: String,
         destinationFile: File,
     ): List<Intent> {
-        val destinationUri = StreamFileUtil.getUriForFile(
-            context,
-            destinationFile,
-        )
+        val destinationUri = ShareableUriProvider().getUriForFile(context, destinationFile)
         val actionIntent = Intent(action)
         return context.packageManager.queryIntentActivities(
             actionIntent,
