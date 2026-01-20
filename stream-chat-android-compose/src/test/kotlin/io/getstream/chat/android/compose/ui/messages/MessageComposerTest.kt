@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerAttachmentMultiple
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerAttachmentSingle
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFilled
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloating
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerOverflow
@@ -65,6 +67,20 @@ internal class MessageComposerTest : PaparazziComposeTest {
     fun `floating style`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerFloating()
+        }
+    }
+
+    @Test
+    fun `attachment single`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerAttachmentSingle()
+        }
+    }
+
+    @Test
+    fun `attachment multiple`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerAttachmentMultiple()
         }
     }
 }

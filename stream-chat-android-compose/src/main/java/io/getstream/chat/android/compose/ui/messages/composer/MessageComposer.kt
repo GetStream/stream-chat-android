@@ -55,6 +55,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -602,6 +603,48 @@ internal fun MessageComposerFloating() {
             onSendMessage = { _, _ -> },
         )
     }
+}
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentSinglePreview() {
+    ChatTheme {
+        MessageComposerAttachmentSingle()
+    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentSingle() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            attachments = listOf(PreviewAttachmentData.attachmentImage1),
+        ),
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview
+@Composable
+private fun MessageComposerAttachmentMultiplePreview() {
+    ChatTheme {
+        MessageComposerAttachmentMultiple()
+    }
+}
+
+@Composable
+internal fun MessageComposerAttachmentMultiple() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState.copy(
+            attachments = listOf(
+                PreviewAttachmentData.attachmentImage1,
+                PreviewAttachmentData.attachmentImage2,
+                PreviewAttachmentData.attachmentImage3,
+                PreviewAttachmentData.attachmentVideo1,
+                PreviewAttachmentData.attachmentVideo2,
+            ),
+        ),
+        onSendMessage = { _, _ -> },
+    )
 }
 
 private val PreviewMessageComposerState = MessageComposerState(
