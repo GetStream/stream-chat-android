@@ -218,9 +218,12 @@ public class StreamFileManager {
     public fun createPhotoInExternalDir(context: Context): Result<File> {
         return try {
             val dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-                ?: getStreamCacheDir(context)
-            val filename = createMediaFilename(PHOTO_PREFIX, PHOTO_EXTENSION)
-            Result.Success(File(dir, filename))
+                ?.let { Result.Success(it) }
+                ?: getOrCreateCacheDir(context)
+            dir.flatMap {
+                val filename = createMediaFilename(PHOTO_PREFIX, PHOTO_EXTENSION)
+                Result.Success(File(it, filename))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not create photo file.", e))
         }
@@ -242,9 +245,12 @@ public class StreamFileManager {
     public fun createVideoInExternalDir(context: Context): Result<File> {
         return try {
             val dir = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
-                ?: getStreamCacheDir(context)
-            val filename = createMediaFilename(VIDEO_PREFIX, VIDEO_EXTENSION)
-            Result.Success(File(dir, filename))
+                ?.let { Result.Success(it) }
+                ?: getOrCreateCacheDir(context)
+            dir.flatMap {
+                val filename = createMediaFilename(VIDEO_PREFIX, VIDEO_EXTENSION)
+                Result.Success(File(it, filename))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not create video file.", e))
         }
