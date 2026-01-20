@@ -174,7 +174,9 @@ public class StreamFileManager {
     public fun clearCache(context: Context): Result<Unit> {
         return try {
             val directory = getStreamCacheDir(context)
-            if (directory.deleteRecursively()) {
+            if (!directory.exists()) {
+                Result.Success(Unit)
+            } else if (directory.deleteRecursively()) {
                 Result.Success(Unit)
             } else {
                 Result.Failure(Error.GenericError("Could not clear Stream cache directory."))
@@ -335,7 +337,9 @@ public class StreamFileManager {
     private fun clearImageCache(context: Context): Result<Unit> {
         return try {
             val directory = getImageCache(context)
-            if (directory.deleteRecursively()) {
+            if (!directory.exists()) {
+                Result.Success(Unit)
+            } else if (directory.deleteRecursively()) {
                 Result.Success(Unit)
             } else {
                 Result.Failure(Error.GenericError("Could not clear image cache directory."))
@@ -354,7 +358,7 @@ public class StreamFileManager {
             } ?: emptyArray()
 
             val allDeleted = timestampedFolders.all { folder ->
-                folder.deleteRecursively()
+                !folder.exists() || folder.deleteRecursively()
             }
 
             if (allDeleted) {

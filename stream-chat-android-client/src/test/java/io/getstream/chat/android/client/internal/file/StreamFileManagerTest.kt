@@ -184,6 +184,17 @@ internal class StreamFileManagerTest {
     }
 
     @Test
+    fun `clearCache should handle already empty cache gracefully`() = runTest {
+        // Ensure cache is clear
+        streamFileManager.clearCache(context)
+
+        // Attempt to clear again
+        val result = streamFileManager.clearCache(context)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
     fun `clearAllCache should clear stream cache, image cache, and timestamped folders`() = runTest {
         // Create file in stream cache
         val streamFileName = "stream_${randomString()}.txt"
