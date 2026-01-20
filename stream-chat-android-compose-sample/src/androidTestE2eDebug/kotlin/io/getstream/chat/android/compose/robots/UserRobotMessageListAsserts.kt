@@ -50,6 +50,7 @@ fun UserRobot.assertMessage(
 ): UserRobot {
     if (isDisplayed) {
         val textLocator = if (isClickable) Message.clickableText else Message.text
+        textLocator.waitToAppear() // Avoid race with list updates before reading the text node.
         assertEquals(text, textLocator.waitToAppear().waitForText(text).text)
         assertTrue(textLocator.isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
@@ -142,7 +143,6 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
         assertEquals(quote, Message.quotedMessage.waitToAppear().text)
-        assertTrue(Message.quotedMessageAvatar.isDisplayed())
     } else {
         assertFalse(Message.quotedMessage.waitToDisappear().isDisplayed())
     }

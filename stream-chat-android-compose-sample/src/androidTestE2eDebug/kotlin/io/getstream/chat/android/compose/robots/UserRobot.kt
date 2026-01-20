@@ -99,7 +99,7 @@ class UserRobot {
     }
 
     fun tapOnSendButton(): UserRobot {
-        Composer.sendButton.findObject().click()
+        Composer.sendButton.waitToAppear().click()
         return this
     }
 

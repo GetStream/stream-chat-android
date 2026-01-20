@@ -22,7 +22,6 @@ import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class HyperLinksTests : StreamTestCase() {
