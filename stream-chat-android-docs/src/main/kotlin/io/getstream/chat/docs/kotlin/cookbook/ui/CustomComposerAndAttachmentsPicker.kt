@@ -143,6 +143,7 @@ private fun CustomMessageComposer(
                 messageComposerState = composerState,
                 onValueChange = { composerViewModel.setMessageInput(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                onCancelAction = { composerViewModel.dismissMessageActions() },
                 onLinkPreviewClick = null,
                 modifier = Modifier
                     .padding(horizontal = 10.dp)

@@ -61,8 +61,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamRadii
-import io.getstream.chat.android.compose.ui.theme.StreamSpacings
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
@@ -112,12 +111,12 @@ public fun ComposerLinkPreview(
                 )
                 .background(colors.chatBgOutgoing, ChatTheme.shapes.attachment)
                 .padding(
-                    start = StreamSpacings.xs,
-                    end = StreamSpacings.md,
-                    top = StreamSpacings.xs,
-                    bottom = StreamSpacings.xs,
+                    start = StreamTokens.spacingXs,
+                    end = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingXs,
+                    bottom = StreamTokens.spacingXs,
                 ),
-            horizontalArrangement = Arrangement.spacedBy(StreamSpacings.xs),
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             ComposerLinkImagePreview(attachment, colors)
             Column(
@@ -145,7 +144,7 @@ public fun ComposerLinkPreview(
         ComposerCancelIcon(
             Modifier
                 .align(Alignment.TopEnd)
-                .offset(x = StreamSpacings._2xs, y = -StreamSpacings._2xs),
+                .offset(x = StreamTokens.spacing2xs, y = -StreamTokens.spacing2xs),
         ) { previewClosed = true }
     }
 }
@@ -153,7 +152,7 @@ public fun ComposerLinkPreview(
 @Composable
 private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamColors) {
     val imagePreviewUrl = attachment.imagePreviewUrl ?: return
-    val shape = RoundedCornerShape(StreamRadii.md)
+    val shape = RoundedCornerShape(StreamTokens.radiusMd)
     StreamAsyncImage(
         data = imagePreviewUrl,
         modifier = Modifier

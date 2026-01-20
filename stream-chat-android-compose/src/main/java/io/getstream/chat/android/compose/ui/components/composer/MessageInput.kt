@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.KeyboardOptions
@@ -71,6 +70,7 @@ public fun MessageInput(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
+    onCancelAction: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     modifier: Modifier = Modifier,
     maxLines: Int = DefaultMessageInputMaxLines,
@@ -104,9 +104,10 @@ public fun MessageInput(
             Column {
                 if (activeAction is Reply) {
                     ChatTheme.componentFactory.MessageComposerQuotedMessage(
-                        modifier = Modifier.padding(horizontal = 4.dp),
+                        modifier = Modifier,
                         state = messageComposerState,
                         quotedMessage = activeAction.message,
+                        onCancelClick = onCancelAction,
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))

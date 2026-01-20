@@ -47,6 +47,9 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -55,7 +58,6 @@ import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
-import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
@@ -115,9 +117,6 @@ private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
-    error("No quoted attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -153,9 +152,6 @@ private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewForm
 }
 private val LocalMessageTextFormatter = compositionLocalOf<MessageTextFormatter> {
     error("No MessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTextFormatter> {
-    error("No QuotedMessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -279,7 +275,6 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
- * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param reactionPushEmojiFactory Used to create an emoji code for a given reaction type (used for push notifications).
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
@@ -340,7 +335,6 @@ public fun ChatTheme(
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
-    quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
@@ -412,15 +406,6 @@ public fun ChatTheme(
         ownMessageTheme = ownMessageTheme,
         otherMessageTheme = otherMessageTheme,
     ),
-    quotedMessageTextFormatter: QuotedMessageTextFormatter = QuotedMessageTextFormatter.defaultFormatter(
-        autoTranslationEnabled = autoTranslationEnabled,
-        context = LocalContext.current,
-        typography = typography,
-        shapes = shapes,
-        colors = colors,
-        ownMessageTheme = ownMessageTheme,
-        otherMessageTheme = otherMessageTheme,
-    ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
@@ -442,7 +427,6 @@ public fun ChatTheme(
         LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
-        LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalMessageContentFactory provides messageContentFactory,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalReactionPushEmojiFactory provides reactionPushEmojiFactory,
@@ -455,7 +439,6 @@ public fun ChatTheme(
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
-        LocalQuotedMessageTextFormatter provides quotedMessageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
@@ -573,14 +556,6 @@ public object ChatTheme {
         get() = LocalAttachmentPreviewHandlers.current
 
     /**
-     * Retrieves the current list of quoted [AttachmentFactory] at the call site's position in the hierarchy.
-     */
-    public val quotedAttachmentFactories: List<AttachmentFactory>
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalQuotedAttachmentFactories.current
-
-    /**
      * Retrieves the current list of quoted [MessageContentFactory] at the call site's position in the hierarchy.
      */
     public val messageContentFactory: MessageContentFactory
@@ -675,14 +650,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageTextFormatter.current
-
-    /**
-     * Retrieves the current [QuotedMessageTextFormatter] at the call site's position in the hierarchy.
-     */
-    public val quotedMessageTextFormatter: QuotedMessageTextFormatter
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalQuotedMessageTextFormatter.current
 
     /**
      * Retrieves the current [SearchResultNameFormatter] at the call site's position in the hierarchy.

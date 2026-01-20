@@ -19,16 +19,23 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.ui.unit.dp
 
-@Suppress("ObjectPropertyNaming")
-internal object StreamRadii {
-    val none = CornerSize(0.dp)
-    val _2xs = CornerSize(2.dp)
-    val xs = CornerSize(4.dp)
-    val sm = CornerSize(6.dp)
-    val md = CornerSize(8.dp)
-    val lg = CornerSize(12.dp)
-    val xl = CornerSize(16.dp)
-    val _2xl = CornerSize(20.dp)
-    val _3xl = CornerSize(24.dp)
-    val _4xl = CornerSize(32.dp)
+internal object StreamTokens {
+    val radius2xs = CornerSize(2.dp)
+    val radiusXs = CornerSize(4.dp)
+    val radiusSm = CornerSize(6.dp)
+    val radiusMd = CornerSize(8.dp)
+    val radiusLg = CornerSize(12.dp)
+    val radiusXl = CornerSize(16.dp)
+    val radius2xl = CornerSize(20.dp)
+    val radius3xl = CornerSize(24.dp)
+    val radius4xl = CornerSize(32.dp)
+
+    val spacing2xs = 4.dp
+    val spacingXs = 8.dp
+    val spacingSm = 12.dp
+    val spacingMd = 16.dp
+    val spacingLg = 20.dp
+    val spacingXl = 24.dp
+    val spacing2xl = 32.dp
+    val spacing3xl = 40.dp
 }

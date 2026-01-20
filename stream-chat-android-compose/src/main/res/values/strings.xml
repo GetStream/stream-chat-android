@@ -89,10 +89,24 @@
     <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
-    <string name="stream_compose_quoted_message_image_tag">Picture</string>
+    <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
-    <string name="stream_compose_quoted_message_file_tag">File</string>
-    <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
+    <string name="stream_compose_quoted_message_media">%d media</string>
+    <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
+    <string name="stream_compose_quoted_message_you">You</string>
+
+    <plurals name="stream_compose_quoted_message_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_images">
+        <item quantity="one">Photo</item>
+        <item quantity="other">%d photos</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_videos">
+        <item quantity="one">Video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>

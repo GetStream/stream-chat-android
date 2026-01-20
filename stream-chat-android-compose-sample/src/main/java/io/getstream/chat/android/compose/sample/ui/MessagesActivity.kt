@@ -391,6 +391,10 @@ class MessagesActivity : ComponentActivity() {
                     messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
+                    onCancelAction = {
+                        listViewModel.dismissAllMessageActions()
+                        composerViewModel.dismissMessageActions()
+                    },
                     onLinkPreviewClick = null,
                     label = {
                         Row(
@@ -409,31 +413,34 @@ class MessagesActivity : ComponentActivity() {
                             )
                         }
                     },
-                    innerTrailingContent = {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(),
-                                ) {
-                                    val state = composerViewModel.messageComposerState.value
-
-                                    composerViewModel.sendMessage(
-                                        composerViewModel.buildNewMessage(
-                                            state.inputValue,
-                                            state.attachments,
-                                        ),
-                                    )
-                                },
-                            painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                            tint = ChatTheme.colors.primaryAccent,
-                            contentDescription = null,
-                        )
-                    },
+                    innerTrailingContent = { ComposerTrailingIcon() },
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
+        )
+    }
+
+    @Composable
+    private fun ComposerTrailingIcon() {
+        Icon(
+            modifier = Modifier
+                .size(24.dp)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ripple(),
+                ) {
+                    val state = composerViewModel.messageComposerState.value
+
+                    composerViewModel.sendMessage(
+                        composerViewModel.buildNewMessage(
+                            state.inputValue,
+                            state.attachments,
+                        ),
+                    )
+                },
+            painter = painterResource(id = R.drawable.stream_compose_ic_send),
+            tint = ChatTheme.colors.primaryAccent,
+            contentDescription = null,
         )
     }
 
