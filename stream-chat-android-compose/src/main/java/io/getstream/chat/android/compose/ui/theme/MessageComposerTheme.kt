@@ -17,13 +17,10 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -169,7 +166,7 @@ public data class ComposerActionsTheme(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
                 padding = ComponentPadding(0.dp),
                 icon = IconStyle(
-                    painter = rememberVectorPainter(Icons.Outlined.Add),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
                     tint = colors.textLowEmphasis,
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
