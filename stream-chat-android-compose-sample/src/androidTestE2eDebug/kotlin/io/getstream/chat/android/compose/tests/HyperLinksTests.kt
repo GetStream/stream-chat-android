@@ -55,7 +55,6 @@ class HyperLinksTests : StreamTestCase() {
     }
 
     @AllureId("6830")
-    @Ignore("https://linear.app/stream/issue/AND-309")
     @Test
     fun test_unsplashLinkWithoutPreview() {
         step("GIVEN user opens the channel") {
@@ -65,7 +64,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.typeText(unsplashImageLink)
         }
         step("AND user cancels the link preview") {
-            userRobot.tapOnAttachmentCancelIcon()
+            userRobot.tapOnLinkPreviewCancelButton()
         }
         step("THEN link preview disappears") {
             userRobot.assertLinkPreviewInComposer(isDisplayed = false)
@@ -112,7 +111,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.typeText(youtubeVideoLink)
         }
         step("AND user cancels the link preview") {
-            userRobot.tapOnAttachmentCancelIcon()
+            userRobot.tapOnLinkPreviewCancelButton()
         }
         step("THEN link preview disappears") {
             userRobot.assertLinkPreviewInComposer(isDisplayed = false)
@@ -159,7 +158,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.typeText(giphyGifLink)
         }
         step("AND user cancels the link preview") {
-            userRobot.tapOnAttachmentCancelIcon()
+            userRobot.tapOnLinkPreviewCancelButton()
         }
         step("THEN link preview disappears") {
             userRobot.assertLinkPreviewInComposer(isDisplayed = false)
@@ -181,7 +180,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends an unsplash url") {
-            participandRobot.sendMessage(unsplashImageLink)
+            participantRobot.sendMessage(unsplashImageLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot
@@ -197,7 +196,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends a youtube url") {
-            participandRobot.sendMessage(youtubeVideoLink)
+            participantRobot.sendMessage(youtubeVideoLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot
@@ -213,7 +212,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends a giphy url") {
-            participandRobot.sendMessage(giphyGifLink)
+            participantRobot.sendMessage(giphyGifLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot

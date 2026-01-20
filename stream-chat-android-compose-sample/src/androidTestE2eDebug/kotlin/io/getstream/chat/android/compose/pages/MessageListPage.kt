@@ -82,6 +82,7 @@ open class MessageListPage {
             val linkPreviewImage = By.res("Stream_LinkPreviewImage")
             val linkPreviewTitle = By.res("Stream_LinkPreviewTitle")
             val linkPreviewDescription = By.res("Stream_LinkPreviewDescription")
+            val linkPreviewCancelButton = By.res("Stream_LinkPreviewCancelButton")
         }
     }
 

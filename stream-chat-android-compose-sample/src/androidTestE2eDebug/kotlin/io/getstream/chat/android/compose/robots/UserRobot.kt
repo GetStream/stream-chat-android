@@ -103,8 +103,8 @@ class UserRobot {
         return this
     }
 
-    fun tapOnAttachmentCancelIcon(): UserRobot {
-        Composer.attachmentCancelIcon.waitToAppear().click()
+    fun tapOnLinkPreviewCancelButton(): UserRobot {
+        Composer.linkPreviewCancelButton.waitToAppear().click()
         return this
     }
 

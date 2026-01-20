@@ -139,7 +139,8 @@ public fun ComposerLinkPreview(
             ComposerCancelIcon(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = StreamTokens.spacing2xs, y = -StreamTokens.spacing2xs),
+                    .offset(x = StreamTokens.spacing2xs, y = -StreamTokens.spacing2xs)
+                    .testTag("Stream_LinkPreviewCancelButton"),
                 onClick = onClick,
             )
         }
