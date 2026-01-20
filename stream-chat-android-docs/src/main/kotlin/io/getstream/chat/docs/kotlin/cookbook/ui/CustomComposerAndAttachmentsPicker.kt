@@ -153,7 +153,6 @@ private fun CustomMessageComposer(
                 onValueChange = { composerViewModel.setMessageInput(it) },
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                 onCancelAction = { composerViewModel.dismissMessageActions() },
-                onLinkPreviewClick = null,
                 onSendClick = onSendClick,
                 recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                 modifier = Modifier

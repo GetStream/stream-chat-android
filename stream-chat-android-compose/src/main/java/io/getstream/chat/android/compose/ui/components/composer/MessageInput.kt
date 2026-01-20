@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.ui.components.composer
 
 import androidx.compose.animation.animateContentSize
@@ -86,6 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param onLinkPreviewClick Handler when a link preview is clicked.
+ * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
  * @param modifier Modifier for styling.
@@ -102,6 +105,7 @@ public fun MessageInput(
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelReplyClick: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = {},
+    onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     modifier: Modifier = Modifier,
@@ -156,6 +160,7 @@ public fun MessageInput(
                     onAttachmentRemoved = onAttachmentRemoved,
                     onLinkPreviewClick = onLinkPreviewClick,
                     onCancelReplyClick = onCancelReplyClick,
+                    onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 )
 
                 Row(
@@ -193,6 +198,7 @@ private fun MessageInputHeader(
     onAttachmentRemoved: (Attachment) -> Unit,
     onCancelReplyClick: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+    onCancelLinkPreviewClick: (() -> Unit)?,
 ) {
     val activeAction = messageComposerState.action
     val attachments = messageComposerState.attachments
@@ -234,7 +240,8 @@ private fun MessageInputHeader(
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
                     modifier = Modifier.padding(horizontal = StreamSpacings.sm),
                     linkPreview = linkPreviews.first(),
-                    onClick = onLinkPreviewClick,
+                    onContentClick = onLinkPreviewClick,
+                    onCancelClick = onCancelLinkPreviewClick,
                 )
             }
         }

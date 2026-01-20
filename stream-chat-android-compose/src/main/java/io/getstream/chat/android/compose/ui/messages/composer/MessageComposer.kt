@@ -76,6 +76,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
+ * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
@@ -103,6 +104,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
@@ -154,6 +156,7 @@ public fun MessageComposer(
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 label = label,
                 onCancel = onCancelAction,
                 onSendClick = { input, attachments ->
@@ -237,6 +240,8 @@ public fun MessageComposer(
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onLinkPreviewClick Handler when the user taps on a link preview.
+ * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
@@ -264,6 +269,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: (() -> Unit)? = null,
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -316,6 +322,7 @@ public fun MessageComposer(
                 onAttachmentRemoved = onAttachmentRemoved,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 label = label,
                 onSendClick = onSendMessage,
                 recordingActions = recordingActions,

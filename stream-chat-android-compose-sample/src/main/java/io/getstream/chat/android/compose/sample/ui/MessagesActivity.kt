@@ -401,7 +401,6 @@ class MessagesActivity : ComponentActivity() {
                         listViewModel.dismissAllMessageActions()
                         composerViewModel.dismissMessageActions()
                     },
-                    onLinkPreviewClick = null,
                     onSendClick = { input, attachments ->
                         val message = composerViewModel.buildNewMessage(input, attachments)
                         composerViewModel.sendMessage(message)

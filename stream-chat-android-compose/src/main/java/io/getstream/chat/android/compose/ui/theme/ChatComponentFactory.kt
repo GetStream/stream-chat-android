@@ -1520,15 +1520,22 @@ public interface ChatComponentFactory {
      *
      * @param modifier The modifier to apply to the composable.
      * @param linkPreview The link preview to show.
-     * @param onClick The action to perform when the link preview is clicked.
+     * @param onContentClick The handler called when the content is clicked.
+     * @param onCancelClick The handler called when the cancel button is clicked.
      */
     @Composable
     public fun MessageComposerLinkPreview(
         modifier: Modifier,
         linkPreview: LinkPreview,
-        onClick: ((LinkPreview) -> Unit)?,
+        onContentClick: ((LinkPreview) -> Unit)?,
+        onCancelClick: (() -> Unit)?,
     ) {
-        ComposerLinkPreview(modifier, linkPreview, onClick)
+        ComposerLinkPreview(
+            modifier = modifier,
+            linkPreview = linkPreview,
+            onContentClick = onContentClick,
+            onCancelClick = onCancelClick,
+        )
     }
 
     /**
@@ -1738,6 +1745,7 @@ public interface ChatComponentFactory {
      * @param onInputChanged The action to perform when the input is changed.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
      * @param onLinkPreviewClick The action to perform when a link preview is clicked.
+     * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
      * @param label The label of the message composer.
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
@@ -1751,6 +1759,7 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+        onCancelLinkPreviewClick: (() -> Unit)?,
         label: @Composable (MessageComposerState) -> Unit,
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
@@ -1763,6 +1772,7 @@ public interface ChatComponentFactory {
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             label = label,
             onSendClick = onSendClick,
             recordingActions = recordingActions,
