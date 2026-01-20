@@ -174,8 +174,11 @@ public class StreamFileManager {
     public fun clearCache(context: Context): Result<Unit> {
         return try {
             val directory = getStreamCacheDir(context)
-            directory.deleteRecursively()
-            Result.Success(Unit)
+            if (directory.deleteRecursively()) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not clear Stream cache directory."))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not clear Stream cache directory.", e))
         }
@@ -264,21 +267,31 @@ public class StreamFileManager {
             val picturesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
             val moviesDir = context.getExternalFilesDir(Environment.DIRECTORY_MOVIES)
 
+            var allDeleted = true
+
             // Clear Stream photos from Pictures directory
             picturesDir?.listFiles { file ->
                 file.isFile && file.name.startsWith(PHOTO_PREFIX)
             }?.forEach { file ->
-                file.delete()
+                if (!file.delete()) {
+                    allDeleted = false
+                }
             }
 
             // Clear Stream videos from Movies directory
             moviesDir?.listFiles { file ->
                 file.isFile && file.name.startsWith(VIDEO_PREFIX)
             }?.forEach { file ->
-                file.delete()
+                if (!file.delete()) {
+                    allDeleted = false
+                }
             }
 
-            Result.Success(Unit)
+            if (allDeleted) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not delete all external storage files."))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not clear external storage.", e))
         }
@@ -322,8 +335,11 @@ public class StreamFileManager {
     private fun clearImageCache(context: Context): Result<Unit> {
         return try {
             val directory = getImageCache(context)
-            directory.deleteRecursively()
-            Result.Success(Unit)
+            if (directory.deleteRecursively()) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not clear image cache directory."))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not clear image cache directory.", e))
         }
@@ -337,10 +353,15 @@ public class StreamFileManager {
                 file.isDirectory && file.name.startsWith(TIMESTAMPED_DIR_PREFIX)
             } ?: emptyArray()
 
-            timestampedFolders.forEach { folder ->
+            val allDeleted = timestampedFolders.all { folder ->
                 folder.deleteRecursively()
             }
-            Result.Success(Unit)
+
+            if (allDeleted) {
+                Result.Success(Unit)
+            } else {
+                Result.Failure(Error.GenericError("Could not clear all timestamped cache folders."))
+            }
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError("Could not clear timestamped cache folders.", e))
         }

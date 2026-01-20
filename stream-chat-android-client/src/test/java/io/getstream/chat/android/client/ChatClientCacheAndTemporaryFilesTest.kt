@@ -21,7 +21,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.randomString
-import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -29,7 +28,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.io.File
@@ -40,12 +38,6 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [33])
 internal class ChatClientCacheAndTemporaryFilesTest {
-
-    private companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
-    }
 
     private lateinit var context: Context
     private lateinit var chatClient: ChatClient
