@@ -265,4 +265,165 @@ internal class StreamFileManagerTest {
         // InputStream should be closed (available should return 0)
         assertEquals(0, inputStream.available())
     }
+
+    @Test
+    fun `createPhotoInExternalDir should create file reference in external pictures directory`() {
+        val result = streamFileManager.createPhotoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        assertTrue(file.name.startsWith("STREAM_IMG_"))
+        assertTrue(file.name.endsWith(".jpg"))
+        assertTrue(file.parentFile?.name == "Pictures")
+    }
+
+    @Test
+    fun `createPhotoInExternalDir should create unique filenames for each call`() {
+        val result1 = streamFileManager.createPhotoInExternalDir(context)
+        Thread.sleep(1000) // Wait 1 second to ensure different timestamp
+        val result2 = streamFileManager.createPhotoInExternalDir(context)
+
+        assertTrue(result1 is Result.Success)
+        assertTrue(result2 is Result.Success)
+        val file1 = (result1 as Result.Success).value
+        val file2 = (result2 as Result.Success).value
+        assertNotEquals(file1.name, file2.name)
+    }
+
+    @Test
+    fun `createPhotoInExternalDir should return file reference without creating physical file`() {
+        val result = streamFileManager.createPhotoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        assertFalse(file.exists()) // File reference exists but physical file not created
+    }
+
+    @Test
+    fun `createVideoInExternalDir should create file reference in external movies directory`() {
+        val result = streamFileManager.createVideoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        assertTrue(file.name.startsWith("STREAM_VID_"))
+        assertTrue(file.name.endsWith(".mp4"))
+        assertTrue(file.parentFile?.name == "Movies")
+    }
+
+    @Test
+    fun `createVideoInExternalDir should create unique filenames for each call`() {
+        val result1 = streamFileManager.createVideoInExternalDir(context)
+        Thread.sleep(1000) // Wait 1 second to ensure different timestamp
+        val result2 = streamFileManager.createVideoInExternalDir(context)
+
+        assertTrue(result1 is Result.Success)
+        assertTrue(result2 is Result.Success)
+        val file1 = (result1 as Result.Success).value
+        val file2 = (result2 as Result.Success).value
+        assertNotEquals(file1.name, file2.name)
+    }
+
+    @Test
+    fun `createVideoInExternalDir should return file reference without creating physical file`() {
+        val result = streamFileManager.createVideoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        assertFalse(file.exists()) // File reference exists but physical file not created
+    }
+
+    @Test
+    fun `createPhotoInExternalDir filename should include timestamp`() {
+        val result = streamFileManager.createPhotoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        // Filename format: STREAM_IMG_yyyyMMdd_HHmmss.jpg
+        // Should match pattern: STREAM_IMG_20XXXXXX_XXXXXX.jpg
+        assertTrue(file.name.matches(Regex("STREAM_IMG_\\d{8}_\\d{6}\\.jpg")))
+    }
+
+    @Test
+    fun `createVideoInExternalDir filename should include timestamp`() {
+        val result = streamFileManager.createVideoInExternalDir(context)
+
+        assertTrue(result is Result.Success)
+        val file = (result as Result.Success).value
+        // Filename format: STREAM_VID_yyyyMMdd_HHmmss.mp4
+        // Should match pattern: STREAM_VID_20XXXXXX_XXXXXX.mp4
+        assertTrue(file.name.matches(Regex("STREAM_VID_\\d{8}_\\d{6}\\.mp4")))
+    }
+
+    @Test
+    fun `clearExternalStorage should delete both photos and videos`() {
+        // Create photo and video files
+        val photo = streamFileManager.createPhotoInExternalDir(context)
+        val video = streamFileManager.createVideoInExternalDir(context)
+
+        assertTrue(photo is Result.Success)
+        assertTrue(video is Result.Success)
+
+        val photoFile = (photo as Result.Success).value
+        val videoFile = (video as Result.Success).value
+
+        // Write content to the files
+        photoFile.writeText("photo")
+        videoFile.writeText("video")
+
+        assertTrue(photoFile.exists())
+        assertTrue(videoFile.exists())
+
+        // Clear external storage
+        val clearResult = streamFileManager.clearExternalStorage(context)
+
+        assertTrue(clearResult is Result.Success)
+        assertFalse(photoFile.exists())
+        assertFalse(videoFile.exists())
+    }
+
+    @Test
+    fun `clearExternalStorage should not delete non-Stream files`() {
+        // Create a Stream photo file
+        val streamPhoto = streamFileManager.createPhotoInExternalDir(context)
+        assertTrue(streamPhoto is Result.Success)
+        val streamPhotoFile = (streamPhoto as Result.Success).value
+        streamPhotoFile.writeText("stream photo")
+
+        // Create a non-Stream file in the same directory
+        val otherFile = File(streamPhotoFile.parentFile, "other_photo.jpg")
+        otherFile.writeText("other photo")
+
+        assertTrue(streamPhotoFile.exists())
+        assertTrue(otherFile.exists())
+
+        // Clear external storage
+        val clearResult = streamFileManager.clearExternalStorage(context)
+
+        assertTrue(clearResult is Result.Success)
+        assertFalse(streamPhotoFile.exists())
+        assertTrue(otherFile.exists()) // Non-Stream file should remain
+
+        // Cleanup
+        otherFile.delete()
+    }
+
+    @Test
+    fun `clearExternalStorage should not delete directories, only files`() {
+        // Create a Stream photo file
+        val photo = streamFileManager.createPhotoInExternalDir(context)
+        assertTrue(photo is Result.Success)
+        val photoFile = (photo as Result.Success).value
+        photoFile.writeText("photo")
+
+        val picturesDir = photoFile.parentFile
+        assertTrue(picturesDir?.exists() == true)
+
+        // Clear external storage
+        streamFileManager.clearExternalStorage(context)
+
+        // Directory should still exist
+        assertTrue(picturesDir?.exists() == true)
+        // But the file should be gone
+        assertFalse(photoFile.exists())
+    }
 }
