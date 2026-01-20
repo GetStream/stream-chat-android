@@ -25,8 +25,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,19 +36,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -383,16 +378,12 @@ class MessagesActivity : ComponentActivity() {
     @Composable
     fun MyCustomComposer() {
         MessageComposer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
             viewModel = composerViewModel,
             leadingContent = {},
             input = { inputState ->
                 MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(7f)
                         .padding(start = 8.dp),
                     messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
@@ -407,16 +398,12 @@ class MessagesActivity : ComponentActivity() {
                     },
                     recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                     label = {
-                        Row(
-                            Modifier.wrapContentWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                                 contentDescription = null,
                                 tint = ChatTheme.colors.textLowEmphasis,
                             )
-
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Type something",
@@ -433,26 +420,23 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     private fun ComposerTrailingIcon() {
-        Icon(
-            modifier = Modifier
-                .size(24.dp)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = ripple(),
-                ) {
-                    val state = composerViewModel.messageComposerState.value
-
-                    composerViewModel.sendMessage(
-                        composerViewModel.buildNewMessage(
-                            state.inputValue,
-                            state.attachments,
-                        ),
-                    )
-                },
-            painter = painterResource(id = R.drawable.stream_compose_ic_send),
-            tint = ChatTheme.colors.primaryAccent,
-            contentDescription = null,
-        )
+        IconButton(
+            onClick = {
+                val state = composerViewModel.messageComposerState.value
+                composerViewModel.sendMessage(
+                    composerViewModel.buildNewMessage(
+                        state.inputValue,
+                        state.attachments,
+                    ),
+                )
+            },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                tint = ChatTheme.colors.primaryAccent,
+                contentDescription = null,
+            )
+        }
     }
 
     companion object {
