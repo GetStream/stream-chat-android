@@ -32,15 +32,14 @@ import java.util.Locale
 
 /**
  * Manages file operations for the Stream Chat SDK, providing utilities for caching,
- * retrieving, and managing files in various cache directories.
+ * retrieving, and managing files in various cache directories and external storage.
  *
  * This class handles:
  * - Image caching in a dedicated directory
  * - General file caching in the Stream cache directory
  * - Timestamped cache folders for isolated file storage
  * - Cache cleanup operations
- *
- * All file operations use the application's cache directory as the root location.
+ * - External storage management for photos and videos captured using the SDK
  */
 @InternalStreamChatApi
 public class StreamFileManager {
