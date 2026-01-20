@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachments
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputAttachmentsAndLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputFilled
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputOverflow
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputPlaceholder
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReply
@@ -73,7 +74,7 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     @Test
     fun link() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerInputReply()
+            MessageComposerInputLink()
         }
     }
 

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 
 @InternalStreamChatApi
@@ -24,6 +25,12 @@ public object PreviewLinkData {
 
     public val link1: LinkPreview = LinkPreview(
         originUrl = "https://www.getstream.io",
-        attachment = PreviewAttachmentData.attachmentImage1,
+        attachment = Attachment(
+            title = "Lorem ipsum dolor sit amet",
+            text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+            type = "image",
+            mimeType = "image/jpeg",
+            imageUrl = "https://example.com/image1.jpg",
+        ),
     )
 }

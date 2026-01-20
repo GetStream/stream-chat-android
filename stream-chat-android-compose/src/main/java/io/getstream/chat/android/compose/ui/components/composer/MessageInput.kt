@@ -29,12 +29,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,8 +63,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
+import io.getstream.chat.android.compose.ui.theme.LocalComposerLinkPreviewEnabled
 import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamSpacings
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -87,6 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param messageComposerState The state of the input.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
+ * @param onCancelAction Handler when the cancel action is clicked.
  * @param onLinkPreviewClick Handler when a link preview is clicked.
  * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
@@ -103,7 +105,7 @@ public fun MessageInput(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
-    onCancelReplyClick: () -> Unit,
+    onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = {},
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
@@ -159,7 +161,7 @@ public fun MessageInput(
                     messageComposerState = messageComposerState,
                     onAttachmentRemoved = onAttachmentRemoved,
                     onLinkPreviewClick = onLinkPreviewClick,
-                    onCancelReplyClick = onCancelReplyClick,
+                    onCancelActionClick = onCancelAction,
                     onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 )
 
@@ -173,8 +175,8 @@ public fun MessageInput(
                         modifier = Modifier
                             .weight(1f)
                             .padding(
-                                start = StreamSpacings.md,
-                                bottom = StreamSpacings.md,
+                                start = StreamTokens.spacingMd,
+                                bottom = StreamTokens.spacingMd,
                             ),
                         contentAlignment = Alignment.CenterStart,
                     ) {
@@ -196,35 +198,35 @@ public fun MessageInput(
 private fun MessageInputHeader(
     messageComposerState: MessageComposerState,
     onAttachmentRemoved: (Attachment) -> Unit,
-    onCancelReplyClick: () -> Unit,
+    onCancelActionClick: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     onCancelLinkPreviewClick: (() -> Unit)?,
 ) {
     val activeAction = messageComposerState.action
     val attachments = messageComposerState.attachments
     val linkPreviews = messageComposerState.linkPreviews
-    val showReply = activeAction is Reply
+    val showQuoted = activeAction is Reply
     val showAttachments = attachments.isNotEmpty() && activeAction !is Edit
     val showLinkPreview = ChatTheme.isComposerLinkPreviewEnabled && linkPreviews.isNotEmpty()
 
-    if (showReply || showAttachments || showLinkPreview) {
+    if (showQuoted || showAttachments || showLinkPreview) {
         Column(
             modifier = Modifier.padding(
-                top = StreamSpacings.sm,
-                bottom = StreamSpacings._2xs,
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacing2xs,
             ),
-            verticalArrangement = Arrangement.spacedBy(StreamSpacings.xs),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
-            if (activeAction is Reply) {
+            if (showQuoted) {
                 ChatTheme.componentFactory.MessageComposerQuotedMessage(
-                    modifier = Modifier.padding(horizontal = StreamSpacings.sm),
+                    modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
                     state = messageComposerState,
                     quotedMessage = activeAction.message,
-                    onCancelClick = onCancelReplyClick,
+                    onCancelClick = onCancelActionClick,
                 )
             }
 
-            if (attachments.isNotEmpty() && activeAction !is Edit) {
+            if (showAttachments) {
                 val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
 
                 previewFactory?.previewContent?.invoke(
@@ -236,9 +238,9 @@ private fun MessageInputHeader(
                 )
             }
 
-            if (ChatTheme.isComposerLinkPreviewEnabled && linkPreviews.isNotEmpty()) {
+            if (showLinkPreview) {
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
-                    modifier = Modifier.padding(horizontal = StreamSpacings.sm),
+                    modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
                     linkPreview = linkPreviews.first(),
                     onContentClick = onLinkPreviewClick,
                     onCancelClick = onCancelLinkPreviewClick,
@@ -447,28 +449,27 @@ internal fun MessageComposerInputAttachments() {
 @Preview
 @Composable
 private fun MessageComposerInputLinkPreview() {
-    ChatTheme(
-        isComposerLinkPreviewEnabled = true,
-    ) {
+    ChatTheme {
         MessageComposerInputLink()
     }
 }
 
 @Composable
 internal fun MessageComposerInputLink() {
-    MessageInput(
-        messageComposerState = PreviewMessageComposerState.copy(
-            linkPreviews = listOf(PreviewLinkData.link1),
-        ),
-    )
+    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                linkPreviews = listOf(PreviewLinkData.link1),
+            ),
+            onCancelLinkPreviewClick = {},
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun MessageComposerInputReplyPreview() {
-    ChatTheme(
-        isComposerLinkPreviewEnabled = true,
-    ) {
+    ChatTheme {
         MessageComposerInputReply()
     }
 }

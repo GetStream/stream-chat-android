@@ -1790,6 +1790,7 @@ public interface ChatComponentFactory {
      * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param quotedMessage The message that is being quoted (replied to).
+     * @param onCancelClick The action to perform when the cancel button is clicked.
      */
     @Composable
     public fun MessageComposerQuotedMessage(

@@ -243,7 +243,11 @@ private val LocalShowOriginalTranslationEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
-private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
+
+/**
+ * The local composition containing the current "Composer Link Preview Enabled" flag.
+ */
+public val LocalComposerLinkPreviewEnabled: ProvidableCompositionLocal<Boolean> = compositionLocalOf {
     error(
         "No ComposerLinkPreviewEnabled Boolean provided! " +
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
