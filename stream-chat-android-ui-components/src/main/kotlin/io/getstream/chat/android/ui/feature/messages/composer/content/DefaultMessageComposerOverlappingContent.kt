@@ -450,7 +450,11 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
             logger.w { "[onTouchEvent] rejected ACTION_DOWN (state is not Idle): $state" }
             return false
         }
-        if (action != MotionEvent.ACTION_DOWN && state !is RecordingState.Hold) {
+        // For other actions, require Hold state OR allow gesture-end actions during transition window
+        val isGestureEndAction = action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
+        val isInRecordingTransition = (micPopup != null || lockPopup != null) && _state is RecordingState.Idle
+        val shouldAllowTransitionWindow = isGestureEndAction && isInRecordingTransition
+        if (action != MotionEvent.ACTION_DOWN && state !is RecordingState.Hold && !shouldAllowTransitionWindow) {
             logger.w { "[onTouchEvent] rejected ${actionToString(action)} (state is not Hold): $state" }
             return false
         }
@@ -536,6 +540,9 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
 
             MotionEvent.ACTION_CANCEL -> {
                 logger.d { "[onTouchEvent] ACTION_CANCEL" }
+                if (isInRecordingTransition) {
+                    resetUI()
+                }
                 recordButtonCancelListener?.invoke()
                 return true
             }
@@ -547,6 +554,9 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
                 if (duration > HOLD_TIMEOUT_MS) {
                     recordButtonReleaseListener?.invoke()
                 } else {
+                    if (isInRecordingTransition) {
+                        resetUI()
+                    }
                     showHoldPopup()
                     recordButtonCancelListener?.invoke()
                 }

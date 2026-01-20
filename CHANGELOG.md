@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix audio recording content stuck in 'held' state. [#6078](https://github.com/GetStream/stream-chat-android/pull/6078)
 
 ### ⬆️ Improved
 
