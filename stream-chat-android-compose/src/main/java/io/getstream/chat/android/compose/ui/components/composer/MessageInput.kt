@@ -154,7 +154,7 @@ public fun MessageInput(
         visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
             Column(
-                modifier = Modifier.animateContentSize(),
+                modifier = Modifier.animateContentSize(alignment = Alignment.BottomStart),
                 verticalArrangement = Arrangement.Bottom,
             ) {
                 MessageInputHeader(
@@ -254,11 +254,11 @@ private fun MessageInputHeader(
 private fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+    modifier: Modifier,
+    enabled: Boolean,
+    maxLines: Int,
+    innerPadding: PaddingValues,
+    keyboardOptions: KeyboardOptions,
     visualTransformation: VisualTransformation,
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
