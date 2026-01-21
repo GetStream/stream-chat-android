@@ -351,7 +351,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                 .padding(contentPadding)
                 .then(
                     if (ChatTheme.messageComposerFloatingStyleEnabled) {
-                        Modifier.padding(StreamTokens.spacingMd)
+                        Modifier.padding(horizontal = StreamTokens.spacingMd)
                     } else {
                         Modifier.padding(StreamTokens.spacingMd)
                     },
