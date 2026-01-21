@@ -22,6 +22,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,7 +58,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.initials
 @Composable
 internal fun Avatar(
     imageUrl: String?,
-    size: AvatarSize,
     fallback: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
@@ -67,7 +68,6 @@ internal fun Avatar(
     StreamAsyncImage(
         data = data,
         modifier = modifier
-            .size(size.value)
             .clip(CircleShape)
             .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) },
         contentScale = ContentScale.Crop,
@@ -90,31 +90,30 @@ internal fun Avatar(
     )
 }
 
-internal enum class AvatarSize(val value: Dp) {
-    Xs(20.dp),
-    Sm(24.dp),
-    Md(32.dp),
-    Lg(40.dp),
+public object AvatarSize {
+    public val ExtraSmall: Dp = 20.dp
+    public val Small: Dp = 24.dp
+    public val Medium: Dp = 32.dp
+    public val Large: Dp = 40.dp
 }
 
 @Composable
 internal fun UserAvatar(
     user: User,
-    size: AvatarSize,
     modifier: Modifier = Modifier,
     showOnlineIndicator: Boolean = false,
     showBorder: Boolean = false,
 ) {
-    Box(modifier) {
+    BoxWithConstraints(modifier) {
         Avatar(
             imageUrl = user.image,
-            size = size,
-            fallback = { UserAvatarPlaceholder(user, size) },
+            fallback = { UserAvatarPlaceholder(user, maxWidth) },
             showBorder = showBorder,
+            modifier = Modifier.size(maxWidth),
         )
 
         if (showOnlineIndicator) {
-            val indicatorSize = size.toIndicatorSize()
+            val indicatorSize = resolveIndicatorSize()
             OnlineIndicator(
                 isOnline = user.online,
                 size = indicatorSize,
@@ -129,20 +128,23 @@ internal fun UserAvatar(
     }
 }
 
+private fun BoxWithConstraintsScope.resolveIndicatorSize(): OnlineIndicatorSize = when {
+    maxWidth >= AvatarSize.Large -> OnlineIndicatorSize.Large
+    maxWidth >= AvatarSize.Medium -> OnlineIndicatorSize.Medium
+    else -> OnlineIndicatorSize.Small
+}
+
 @Composable
 internal fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
-    size: AvatarSize,
     modifier: Modifier = Modifier,
     showOnlineIndicator: Boolean = false,
     showBorder: Boolean = false,
 ) {
     if (channel.image.isNotEmpty()) {
-        Avatar(
-            imageUrl = channel.image,
-            size = size,
-            fallback = { ChannelAvatarPlaceholder(channel, size) },
+        GroupAvatar(
+            channel = channel,
             showBorder = showBorder,
             modifier = modifier,
         )
@@ -150,7 +152,6 @@ internal fun ChannelAvatar(
         UserAvatar(
             modifier = modifier,
             user = channel.members.first().user,
-            size = size,
             showOnlineIndicator = showOnlineIndicator,
             showBorder = showBorder,
         )
@@ -161,19 +162,31 @@ internal fun ChannelAvatar(
             UserAvatar(
                 modifier = modifier,
                 user = directMessageRecipient,
-                size = size,
                 showOnlineIndicator = showOnlineIndicator,
                 showBorder = showBorder,
             )
         } else {
-            Avatar(
-                imageUrl = channel.image,
-                size = size,
-                fallback = { ChannelAvatarPlaceholder(channel, size) },
+            GroupAvatar(
+                channel = channel,
                 showBorder = showBorder,
                 modifier = modifier,
             )
         }
+    }
+}
+
+@Composable
+private fun GroupAvatar(
+    channel: Channel,
+    showBorder: Boolean,
+    modifier: Modifier,
+) {
+    BoxWithConstraints(modifier) {
+        Avatar(
+            imageUrl = channel.image,
+            fallback = { ChannelAvatarPlaceholder(channel, size = this.maxWidth) },
+            showBorder = showBorder,
+        )
     }
 }
 
@@ -191,22 +204,15 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
     }
 }
 
-internal fun AvatarSize.toIndicatorSize() = when (this) {
-    AvatarSize.Xs -> OnlineIndicatorSize.Sm
-    AvatarSize.Sm -> OnlineIndicatorSize.Sm
-    AvatarSize.Md -> OnlineIndicatorSize.Md
-    AvatarSize.Lg -> OnlineIndicatorSize.Lg
-}
-
 @Composable
-internal fun UserAvatarPlaceholder(user: User, size: AvatarSize, modifier: Modifier = Modifier) {
+internal fun UserAvatarPlaceholder(user: User, size: Dp, modifier: Modifier = Modifier) {
     val (background, foreground) = rememberAvatarPlaceholderColors(user.id)
     val initials = rememberPlaceholderInitials(user, size)
 
     Box(
         modifier
             .background(background)
-            .size(size.value),
+            .size(size),
         contentAlignment = Alignment.Center,
     ) {
         if (initials.isNotEmpty()) {
@@ -229,13 +235,13 @@ internal fun UserAvatarPlaceholder(user: User, size: AvatarSize, modifier: Modif
 }
 
 @Composable
-internal fun ChannelAvatarPlaceholder(channel: Channel, size: AvatarSize, modifier: Modifier = Modifier) {
+internal fun ChannelAvatarPlaceholder(channel: Channel, size: Dp, modifier: Modifier = Modifier) {
     val (background, foreground) = rememberAvatarPlaceholderColors(channel.cid)
 
     Box(
         modifier
             .background(background)
-            .size(size.value),
+            .size(size),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -250,33 +256,31 @@ internal fun ChannelAvatarPlaceholder(channel: Channel, size: AvatarSize, modifi
 }
 
 @Composable
-private fun rememberPlaceholderInitials(user: User, size: AvatarSize): String = remember(user.name, size) {
+private fun rememberPlaceholderInitials(user: User, availableWidth: Dp): String = remember(user.name, availableWidth) {
     val initials = user.initials
-    when (size) {
-        AvatarSize.Xs,
-        AvatarSize.Sm,
-        -> initials.take(1)
-
-        AvatarSize.Md,
-        AvatarSize.Lg,
-        -> initials
+    if (availableWidth >= AvatarSize.Medium) {
+        initials
+    } else {
+        initials.take(1)
     }
 }
 
 @Preview
 @Composable
 private fun StreamAvatarPreview() {
+    val sizes = listOf(AvatarSize.Large, AvatarSize.Medium, AvatarSize.Small, AvatarSize.ExtraSmall)
+
     ChatTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AvatarSize.entries.asReversed().forEach { size ->
+                sizes.forEach { size ->
                     UserAvatar(
                         user = PreviewUserData.userWithOnlineStatus,
-                        size = size,
                         showOnlineIndicator = true,
+                        modifier = Modifier.size(size),
                     )
                 }
             }
@@ -285,11 +289,11 @@ private fun StreamAvatarPreview() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AvatarSize.entries.asReversed().forEach { size ->
+                sizes.forEach { size ->
                     UserAvatar(
                         user = PreviewUserData.userWithoutImage,
-                        size = size,
                         showOnlineIndicator = true,
+                        modifier = Modifier.size(size),
                     )
                 }
             }
@@ -298,8 +302,12 @@ private fun StreamAvatarPreview() {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                AvatarSize.entries.asReversed().forEach { size ->
-                    ChannelAvatar(PreviewChannelData.channelWithMessages, currentUser = null, size = size)
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        PreviewChannelData.channelWithMessages,
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
                 }
             }
         }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -40,20 +41,20 @@ internal fun rememberAvatarPlaceholderColors(identifier: Any): Pair<Color, Color
     }
 }
 
-internal fun AvatarSize.toPlaceholderIconSize() = when (this) {
-    AvatarSize.Xs -> 10.dp
-    AvatarSize.Sm -> 12.dp
-    AvatarSize.Md -> 16.dp
-    AvatarSize.Lg -> 20.dp
+internal fun Dp.toPlaceholderIconSize() = when {
+    this >= AvatarSize.Large -> 20.dp
+    this >= AvatarSize.Medium -> 16.dp
+    this >= AvatarSize.Small -> 12.dp
+    else -> 10.dp
 }
 
 @Composable
-internal fun AvatarSize.toPlaceholderTextStyle(): TextStyle {
+internal fun Dp.toPlaceholderTextStyle(): TextStyle {
     val typography = ChatTheme.typography
-    return when (this) {
-        AvatarSize.Xs -> typography.metadataEmphasis
-        AvatarSize.Sm -> typography.captionEmphasis
-        AvatarSize.Md -> typography.captionEmphasis
-        AvatarSize.Lg -> typography.bodyEmphasis
+    return when {
+        this >= AvatarSize.Large -> typography.bodyEmphasis
+        this >= AvatarSize.Medium -> typography.captionEmphasis
+        this >= AvatarSize.Small -> typography.captionEmphasis
+        else -> typography.metadataEmphasis
     }
 }

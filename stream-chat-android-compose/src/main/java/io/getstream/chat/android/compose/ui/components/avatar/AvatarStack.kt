@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.avatar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,16 +42,15 @@ internal inline fun AvatarStack(
 internal fun UserAvatarStack(
     overlap: Dp,
     users: List<User>,
-    size: AvatarSize,
+    avatarSize: Dp,
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
 ) {
     AvatarStack(overlap, modifier) {
         for (user in users) {
             UserAvatar(
-                modifier = Modifier,
+                modifier = Modifier.size(avatarSize),
                 user = user,
-                size = size,
                 showBorder = showBorder,
                 showOnlineIndicator = false,
             )
@@ -64,6 +64,6 @@ private fun AvatarStackPreview() {
     val users = List(size = 5) { PreviewUserData.userWithoutImage.copy(name = "User $it", id = "$it") }
 
     ChatTheme {
-        UserAvatarStack(overlap = 16.dp, users = users, size = AvatarSize.Md)
+        UserAvatarStack(overlap = 16.dp, users = users, avatarSize = AvatarSize.Medium)
     }
 }

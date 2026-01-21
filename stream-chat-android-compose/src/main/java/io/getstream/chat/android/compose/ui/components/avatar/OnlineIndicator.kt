@@ -51,7 +51,7 @@ internal fun OnlineIndicator(
 }
 
 internal enum class OnlineIndicatorSize(val indicatorSize: Dp, val borderWidth: Dp) {
-    Sm(8.dp, 1.dp),
-    Md(12.dp, 2.dp),
-    Lg(14.dp, 2.dp),
+    Small(8.dp, 1.dp),
+    Medium(12.dp, 2.dp),
+    Large(14.dp, 2.dp),
 }

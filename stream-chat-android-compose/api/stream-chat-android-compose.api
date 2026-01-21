@@ -1467,19 +1467,21 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 	public static final fun Avatar-MQwOVTQ (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarSize {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/AvatarSize;
+	public final fun getExtraSmall-D9Ej5fM ()F
+	public final fun getLarge-D9Ej5fM ()F
+	public final fun getMedium-D9Ej5fM ()F
+	public final fun getSmall-D9Ej5fM ()F
+}
+
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/ComposableSingletons$GroupAvatarKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/ComposableSingletons$GroupAvatarKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-}
-
-public final class io/getstream/chat/android/compose/ui/components/avatar/ComposableSingletons$StreamAvatarKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/ComposableSingletons$StreamAvatarKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
