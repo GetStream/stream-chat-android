@@ -71,6 +71,7 @@ internal fun ScrollToBottomButton(
             shape = CircleShape,
             colors = IconButtonDefaults.filledIconButtonColors(
                 containerColor = ChatTheme.colors.barsBackground,
+                contentColor = ChatTheme.colors.textHighEmphasis,
             ),
         ) {
             Icon(

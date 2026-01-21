@@ -167,7 +167,7 @@ public data class ComposerActionsTheme(
                 padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                    tint = colors.textLowEmphasis,
+                    tint = colors.textHighEmphasis,
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
@@ -185,7 +185,7 @@ public data class ComposerActionsTheme(
                 padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    tint = colors.textLowEmphasis,
+                    tint = colors.textHighEmphasis,
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
