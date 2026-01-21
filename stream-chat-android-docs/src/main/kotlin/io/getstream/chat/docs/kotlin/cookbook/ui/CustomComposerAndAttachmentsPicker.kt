@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.docs.R
 
 @Composable
@@ -183,6 +184,7 @@ private fun CustomMessageComposer(
                         Spacer(modifier = Modifier.width(20.dp))
                         IconButton(
                             modifier = Modifier.size(24.dp),
+                            enabled = composerState.canSendMessage(),
                             onClick = { onSendClick(composerState.inputValue, composerState.attachments) },
                             content = {
                                 Icon(

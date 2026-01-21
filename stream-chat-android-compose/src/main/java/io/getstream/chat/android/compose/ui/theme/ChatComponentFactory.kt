@@ -1750,7 +1750,7 @@ public interface ChatComponentFactory {
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.
-     * @param trailingContent The trailing content of the message composer.     *
+     * @param trailingContent The trailing content of the message composer.
      */
     @Composable
     public fun RowScope.MessageComposerInput(

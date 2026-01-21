@@ -27,6 +27,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageComposerI
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputOverflow
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputPlaceholder
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReply
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputReplyAttachmentsAndLink
 import io.getstream.chat.android.compose.ui.components.composer.MessageComposerInputSlowMode
 import org.junit.Rule
 import org.junit.Test
@@ -95,7 +96,7 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     @Test
     fun `reply, attachments, and link`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
-            MessageComposerInputAttachmentsAndLink()
+            MessageComposerInputReplyAttachmentsAndLink()
         }
     }
 }
