@@ -280,6 +280,7 @@ private fun MessageListState.getVerticalArrangement(
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessageListState,

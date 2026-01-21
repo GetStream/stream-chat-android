@@ -181,6 +181,7 @@ internal fun DefaultComposerLabel(state: MessageComposerState) {
     )
 }
 
+@Suppress("LongParameterList")
 @Composable
 internal fun RowScope.DefaultMessageComposerInput(
     messageComposerState: MessageComposerState,

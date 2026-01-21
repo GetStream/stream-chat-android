@@ -250,6 +250,7 @@ private fun MessageInputHeader(
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun TextField(
     value: String,
