@@ -487,48 +487,48 @@ internal fun MessageComposerInputReply() {
 @Preview
 @Composable
 private fun MessageComposerInputAttachmentsAndLinkPreview() {
-    ChatTheme(
-        isComposerLinkPreviewEnabled = true,
-    ) {
+    ChatTheme {
         MessageComposerInputAttachmentsAndLink()
     }
 }
 
 @Composable
 internal fun MessageComposerInputAttachmentsAndLink() {
-    MessageInput(
-        messageComposerState = PreviewMessageComposerState.copy(
-            attachments = listOf(
-                PreviewAttachmentData.attachmentImage1,
-                PreviewAttachmentData.attachmentVideo1,
+    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreviews = listOf(PreviewLinkData.link1),
             ),
-            linkPreviews = listOf(PreviewLinkData.link1),
-        ),
-    )
+        )
+    }
 }
 
 @Preview
 @Composable
 private fun MessageComposerInputReplyAttachmentsAndLinkPreview() {
-    ChatTheme(
-        isComposerLinkPreviewEnabled = true,
-    ) {
+    ChatTheme {
         MessageComposerInputReplyAttachmentsAndLink()
     }
 }
 
 @Composable
 internal fun MessageComposerInputReplyAttachmentsAndLink() {
-    MessageInput(
-        messageComposerState = PreviewMessageComposerState.copy(
-            action = Reply(PreviewMessageData.message1),
-            attachments = listOf(
-                PreviewAttachmentData.attachmentImage1,
-                PreviewAttachmentData.attachmentVideo1,
+    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                action = Reply(PreviewMessageData.message1),
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreviews = listOf(PreviewLinkData.link1),
             ),
-            linkPreviews = listOf(PreviewLinkData.link1),
-        ),
-    )
+        )
+    }
 }
 
 private val PreviewMessageComposerState = MessageComposerState(
