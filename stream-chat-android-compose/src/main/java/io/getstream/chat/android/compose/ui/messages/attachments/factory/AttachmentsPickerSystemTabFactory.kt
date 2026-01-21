@@ -82,6 +82,7 @@ import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerCo
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -167,6 +168,8 @@ public class AttachmentsPickerSystemTabFactory(
 
     private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
 
+    private val logger by taggedLogger("AttachmentsPickerSystemTabFactory")
+
     /**
      * The attachment picker mode that this factory handles.
      */
@@ -216,11 +219,14 @@ public class AttachmentsPickerSystemTabFactory(
         val storageHelper = remember { StorageHelperWrapper(context.applicationContext) }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            logger.d { "Received result from FilePickerLauncher" }
             scope.launch {
                 val uris = listOf(uri)
+                logger.d { "Calling storageHelper.getAttachmentsMetadataFromUris on IO (FilePicker)" }
                 val metadata = withContext(Dispatchers.IO) {
                     storageHelper.getAttachmentsMetadataFromUris(uris)
                 }
+                logger.d { "storageHelper.getAttachmentsMetadataFromUris done (FilePicker)" }
                 // Check if some of the files were filtered out due to upload config
                 if (uris.size != metadata.size) {
                     Toast.makeText(
@@ -229,16 +235,20 @@ public class AttachmentsPickerSystemTabFactory(
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
+                logger.d { "onAttachmentsSubmitted called (FilePicker)" }
                 onAttachmentsSubmitted(metadata)
             }
         }
 
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
+                logger.d { "Received result from ImagePickerLauncher" }
                 scope.launch {
+                    logger.d { "Calling storageHelper.getAttachmentsMetadataFromUris on IO (ImagePicker)" }
                     val metadata = withContext(Dispatchers.IO) {
                         storageHelper.getAttachmentsMetadataFromUris(uris)
                     }
+                    logger.d { "storageHelper.getAttachmentsMetadataFromUris done (ImagePicker)" }
                     // Check if some of the files were filtered out due to upload config
                     if (uris.size != metadata.size) {
                         Toast.makeText(
@@ -247,6 +257,7 @@ public class AttachmentsPickerSystemTabFactory(
                             Toast.LENGTH_SHORT,
                         ).show()
                     }
+                    logger.d { "onAttachmentsSubmitted called (ImagePicker)" }
                     onAttachmentsSubmitted(metadata)
                 }
             }

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -35,10 +36,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,10 +60,12 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
@@ -92,16 +95,19 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
-    // Listen for attachments to be ready for upload
-    LaunchedEffect(attachmentsPickerViewModel) {
-        attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
-            onAttachmentsSelected(it)
-        }
-    }
+    val scope = rememberCoroutineScope()
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
-            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+            Log.d("AttachmentsPicker", "Saving attachments on dismiss")
+            scope.launch {
+                Log.d("AttachmentsPicker", "Getting selected attachments on IO")
+                val attachments = withContext(DispatcherProvider.IO) {
+                    attachmentsPickerViewModel.getSelectedAttachments()
+                }
+                Log.d("AttachmentsPicker", "Invoking onAttachmentsSelected with ${attachments.size} attachments")
+                onAttachmentsSelected(attachments)
+            }
         }
         onDismiss()
     }
@@ -152,7 +158,18 @@ public fun AttachmentsPicker(
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
-                            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+                            Log.d("AttachmentsPicker", "Send attachments clicked")
+                            scope.launch {
+                                Log.d("AttachmentsPicker", "Getting selected attachments on IO")
+                                val attachments = withContext(DispatcherProvider.IO) {
+                                    attachmentsPickerViewModel.getSelectedAttachments()
+                                }
+                                Log.d(
+                                    "AttachmentsPicker",
+                                    "Invoking onAttachmentsSelected with ${attachments.size} attachments",
+                                )
+                                onAttachmentsSelected(attachments)
+                            }
                         },
                     )
                 }
@@ -178,8 +195,22 @@ public fun AttachmentsPicker(
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                                onAttachmentsSubmitted = {
-                                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(it)
+                                onAttachmentsSubmitted = { metadata ->
+                                    Log.d(
+                                        "AttachmentsPicker",
+                                        "Submitting attachments from metadata with ${metadata.size} items",
+                                    )
+                                    scope.launch {
+                                        Log.d("AttachmentsPicker", "Getting attachments from metadata on IO")
+                                        val attachments = withContext(DispatcherProvider.IO) {
+                                            attachmentsPickerViewModel.getAttachmentsFromMetaData(metadata)
+                                        }
+                                        Log.d(
+                                            "AttachmentsPicker",
+                                            "Invoking onAttachmentsSelected with ${attachments.size} attachments",
+                                        )
+                                        onAttachmentsSelected(attachments)
+                                    }
                                 },
                             )
                     }

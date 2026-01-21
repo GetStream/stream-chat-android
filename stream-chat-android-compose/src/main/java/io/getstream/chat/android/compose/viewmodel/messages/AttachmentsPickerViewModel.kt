@@ -242,7 +242,7 @@ public class AttachmentsPickerViewModel(
 
     /**
      * Transforms the selected meta data into a list of [Attachment]s we can upload.
-     * Runs the [getAttachmentsFromMetadataAsync] method on [DispatcherProvider.IO] and emits the result
+     * Runs the [getAttachmentsFromMetaData] method on [DispatcherProvider.IO] and emits the result
      * via the [_attachmentsForUpload] flow.
      *
      * @param metadata List of attachment meta data items.
