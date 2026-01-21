@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -349,9 +350,9 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                 .padding(contentPadding)
                 .then(
                     if (ChatTheme.messageComposerFloatingStyleEnabled) {
-                        Modifier.padding(horizontal = 16.dp)
+                        Modifier.padding(StreamTokens.spacingMd)
                     } else {
-                        Modifier.padding(16.dp)
+                        Modifier.padding(StreamTokens.spacingMd)
                     },
                 ),
             visible = scrollToBottomButtonVisible,

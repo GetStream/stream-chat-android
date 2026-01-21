@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.LocalMessageComposerFloatingStyleEnabled
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -379,14 +380,14 @@ public fun MessageComposer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = 24.dp,
-                        end = 24.dp,
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
                         top = if (ChatTheme.messageComposerFloatingStyleEnabled) {
                             0.dp
                         } else {
-                            24.dp
+                            StreamTokens.spacingMd
                         },
-                        bottom = 32.dp,
+                        bottom = StreamTokens.spacing2xl,
                     ),
                 verticalAlignment = Bottom,
             ) {
