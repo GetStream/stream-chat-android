@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -66,7 +67,8 @@ internal fun ScrollToBottomButton(
         FilledIconButton(
             modifier = Modifier
                 .shadow(StreamTokens.spacing2xs, shape = CircleShape)
-                .size(40.dp),
+                .size(40.dp)
+                .testTag("Stream_ScrollToBottomButton"),
             onClick = onClick,
             shape = CircleShape,
             colors = IconButtonDefaults.filledIconButtonColors(
