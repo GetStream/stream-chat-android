@@ -50,7 +50,7 @@ abstract class StreamTestCase {
     var testName: TestName = TestName()
 
     @get:Rule
-    val retryRule = RetryRule(3)
+    val retryRule = RetryRule(1)
 
     @Before
     fun setUp() {

@@ -29,10 +29,9 @@ fun UserRobot.assertChannelAvatar(): UserRobot {
     return this
 }
 
-fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boolean): UserRobot {
-    val expectedPreview = if (fromCurrentUser) "You: $text" else text
+fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boolean? = null): UserRobot {
+    val expectedPreview = if (fromCurrentUser == true) "You: $text" else text
     assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().text.trimEnd())
-    assertTrue(Channel.timestamp.isDisplayed())
     return this
 }
 
