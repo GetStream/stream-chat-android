@@ -16,203 +16,108 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.previewdata.PreviewChannelData
-import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.utils.extensions.initials
-import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
-/**
- * Represents the [Channel] avatar that's shown when browsing channels or when you open the Messages screen.
- *
- * Based on the state of the [Channel] and the number of members, it shows different types of images.
- *
- * @param channel The channel whose data we need to show.
- * @param currentUser The current user, used to determine avatar data.
- * @param modifier Modifier for styling.
- * @param shape The shape of the avatar.
- * @param textStyle The [TextStyle] that will be used for the initials.
- * @param groupAvatarTextStyle The [TextStyle] that will be used for the initials in sectioned avatar.
- * @param showOnlineIndicator If we show online indicator or not.
- * @param onlineIndicatorAlignment The alignment of online indicator.
- * @param onlineIndicator Custom composable that allows to replace the default online indicator.
- * @param contentDescription The description to use for the avatar.
- * @param onClick The handler when the user clicks on the avatar.
- */
 @Composable
 public fun ChannelAvatar(
     channel: Channel,
     currentUser: User?,
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.avatar,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
-    groupAvatarTextStyle: TextStyle = ChatTheme.typography.captionBold,
-    showOnlineIndicator: Boolean = true,
-    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
-    onlineIndicator: @Composable BoxScope.() -> Unit = {
-        DefaultOnlineIndicator(onlineIndicatorAlignment)
-    },
-    contentDescription: String? = null,
-    onClick: (() -> Unit)? = null,
+    showIndicator: Boolean = false,
+    showBorder: Boolean = false,
 ) {
-    val members = channel.members
-    val memberCount = members.size
+    if (channel.image.isNotEmpty()) {
+        GroupAvatar(
+            channel = channel,
+            showBorder = showBorder,
+            modifier = modifier,
+        )
+    } else if (channel.members.size == 1) {
+        UserAvatar(
+            modifier = modifier,
+            user = channel.members.first().user,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
+        )
+    } else {
+        val directMessageRecipient = directMessageRecipient(channel, currentUser)
 
-    when {
-        /**
-         * If the channel has an image we load that as a priority.
-         */
-        channel.image.isNotEmpty() -> {
-            ChatTheme.componentFactory.Avatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                imageUrl = channel.image,
-                initials = channel.initials,
-                textStyle = textStyle,
-                shape = shape,
-                placeholderPainter = null,
-                errorPlaceholderPainter = null,
-                contentDescription = contentDescription ?: channel.name,
-                initialsAvatarOffset = DpOffset.Zero,
-                onClick = onClick,
+        if (directMessageRecipient != null) {
+            UserAvatar(
+                modifier = modifier,
+                user = directMessageRecipient,
+                showIndicator = showIndicator,
+                showBorder = showBorder,
             )
-        }
-
-        /**
-         * If the channel has one member we show the member's image or initials.
-         */
-        memberCount == 1 -> {
-            val user = members.first().user
-
-            ChatTheme.componentFactory.UserAvatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                user = user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
-                ),
-                onlineIndicator = onlineIndicator,
-                onClick = onClick,
-            )
-        }
-        /**
-         * If the channel has two members and one of the is the current user - we show the other
-         * member's image or initials.
-         */
-        memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
-            val user = members.first { it.user.id != currentUser?.id }.user
-
-            ChatTheme.componentFactory.UserAvatar(
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                user = user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
-                    userPresence = ChatTheme.userPresence,
-                    currentUser = currentUser,
-                ),
-                onlineIndicator = onlineIndicator,
-                onClick = onClick,
-            )
-        }
-        /**
-         * If the channel has more than two members - we load a matrix of their images or initials.
-         */
-        else -> {
-            val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
-
-            ChatTheme.componentFactory.GroupAvatar(
-                users = users,
-                modifier = modifier.testTag("Stream_ChannelAvatar"),
-                shape = shape,
-                textStyle = groupAvatarTextStyle,
-                onClick = onClick,
+        } else {
+            GroupAvatar(
+                channel = channel,
+                showBorder = showBorder,
+                modifier = modifier,
             )
         }
     }
 }
 
-/**
- * Preview of [ChannelAvatar] for a channel with an avatar image.
- *
- * Should show a channel image.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (With image)")
 @Composable
-private fun ChannelWithImageAvatarPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithImage)
-}
-
-/**
- * Preview of [ChannelAvatar] for a direct conversation with an online user.
- *
- * Should show a user avatar with an online indicator.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Online user)")
-@Composable
-private fun ChannelAvatarForDirectChannelWithOnlineUserPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithOnlineUser)
-}
-
-/**
- * Preview of [ChannelAvatar] for a direct conversation with only one user.
- *
- * Should show a user avatar with an online indicator.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Only one user)")
-@Composable
-private fun ChannelAvatarForDirectChannelWithOneUserPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithOneUser)
-}
-
-/**
- * Preview of [ChannelAvatar] for a channel without image and with few members.
- *
- * Should show an avatar with 2 sections that represent the avatars of the first
- * 2 members of the channel.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Few members)")
-@Composable
-private fun ChannelAvatarForChannelWithFewMembersPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithFewMembers)
-}
-
-/**
- * Preview of [ChannelAvatar] for a channel without image and with many members.
- *
- * Should show an avatar with 4 sections that represent the avatars of the first
- * 4 members of the channel.
- */
-@Preview(showBackground = true, name = "ChannelAvatar Preview (Many members)")
-@Composable
-private fun ChannelAvatarForChannelWithManyMembersPreview() {
-    ChannelAvatarPreview(PreviewChannelData.channelWithManyMembers)
-}
-
-/**
- * Shows [ChannelAvatar] preview for the provided parameters.
- *
- * @param channel The channel used to show the preview.
- */
-@Composable
-private fun ChannelAvatarPreview(channel: Channel) {
-    ChatTheme {
-        ChannelAvatar(
-            channel = channel,
-            currentUser = PreviewUserData.user1,
-            modifier = Modifier.size(36.dp),
+private fun GroupAvatar(
+    channel: Channel,
+    showBorder: Boolean,
+    modifier: Modifier,
+) {
+    BoxWithConstraints(modifier) {
+        Avatar(
+            imageUrl = channel.image,
+            fallback = { ChannelAvatarPlaceholder(channel, size = this.maxWidth) },
+            showBorder = showBorder,
         )
+    }
+}
+
+@Composable
+internal fun ChannelAvatarPlaceholder(channel: Channel, size: Dp, modifier: Modifier = Modifier) {
+    val (background, foreground) = rememberAvatarPlaceholderColors(channel.cid)
+
+    Box(
+        modifier
+            .background(background)
+            .size(size),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_team),
+            contentDescription = null,
+            tint = foreground,
+            modifier = modifier
+                .background(background)
+                .size(size.toPlaceholderIconSize()),
+        )
+    }
+}
+
+/** Returns the other participant if this is a 1-to-1 direct message involving the current user. */
+@Composable
+private fun directMessageRecipient(channel: Channel, currentUser: User?): User? {
+    val currentUserId = currentUser?.id ?: return null
+
+    return remember(channel, currentUserId) {
+        if (channel.memberCount == 2 && channel.members.any { it.user.id == currentUserId }) {
+            channel.members.first { it.user.id != currentUserId }.user
+        } else {
+            null
+        }
     }
 }

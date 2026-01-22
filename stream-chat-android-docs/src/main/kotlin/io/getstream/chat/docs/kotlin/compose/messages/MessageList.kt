@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-list/#usage)
@@ -173,10 +172,9 @@ private object MessageListCustomizationSnippet {
                                         .widthIn(max = 300.dp)
                                 ) {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Avatar(
+                                        UserAvatar(
                                             modifier = Modifier.size(36.dp),
-                                            imageUrl = message.user.image,
-                                            initials = message.user.initials
+                                            user = message.user,
                                         )
 
                                         Text(

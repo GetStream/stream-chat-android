@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.SearchUsersV
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserResultsContent
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserTextField
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
@@ -362,7 +363,7 @@ private fun GroupChannelUserPreviewItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         UserAvatar(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(AvatarSize.Large),
             user = user,
         )
         Text(

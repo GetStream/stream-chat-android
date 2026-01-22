@@ -19,7 +19,6 @@ package io.getstream.chat.android.uitests.snapshot.compose.components
 import androidx.compose.foundation.layout.size
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
@@ -32,8 +31,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1().copy(image = ""),
-            showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+            showIndicator = false,
         )
     }
 
@@ -42,8 +40,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
-            showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+            showIndicator = false,
         )
     }
 
@@ -52,8 +49,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
-            showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
+            showIndicator = true,
         )
     }
 
@@ -62,8 +58,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
-            showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd,
+            showIndicator = true,
         )
     }
 
@@ -72,8 +67,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
-            showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart,
+            showIndicator = true,
         )
     }
 
@@ -82,8 +76,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
-            showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart,
+            showIndicator = true,
         )
     }
 }

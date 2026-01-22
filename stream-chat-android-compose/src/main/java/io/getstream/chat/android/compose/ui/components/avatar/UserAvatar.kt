@@ -16,132 +16,97 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
-import io.getstream.chat.android.compose.ui.components.OnlineIndicator
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
-/**
- * Represents the [User] avatar that's shown on the Messages screen or in headers of DMs.
- *
- * Based on the state within the [User], we either show an image or their initials.
- *
- * @param user The user whose avatar we want to show.
- * @param modifier Modifier for styling.
- * @param shape The shape of the avatar.
- * @param textStyle The [TextStyle] that will be used for the initials.
- * @param contentDescription The content description of the avatar.
- * @param showOnlineIndicator If we show online indicator or not.
- * @param onlineIndicatorAlignment The alignment of online indicator.
- * @param initialsAvatarOffset The initials offset to apply to the avatar.
- * @param onlineIndicator Custom composable that allows to replace the default online indicator.
- * @param onClick The handler when the user clicks on the avatar.
- */
 @Composable
 public fun UserAvatar(
     user: User,
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.avatar,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
-    contentDescription: String? = null,
-    showOnlineIndicator: Boolean = true,
-    placeholderPainter: Painter? = null,
-    errorPlaceholderPainter: Painter? = null,
-    onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
-    initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
-    onlineIndicator: @Composable BoxScope.() -> Unit = {
-        DefaultOnlineIndicator(onlineIndicatorAlignment)
-    },
-    onClick: (() -> Unit)? = null,
+    showIndicator: Boolean = false,
+    showBorder: Boolean = false,
 ) {
-    Box(modifier = modifier) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier.fillMaxSize(),
+    BoxWithConstraints(modifier) {
+        Avatar(
             imageUrl = user.image,
-            initials = user.initials,
-            shape = shape,
-            textStyle = textStyle,
-            placeholderPainter = placeholderPainter,
-            errorPlaceholderPainter = errorPlaceholderPainter,
-            contentDescription = contentDescription,
-            initialsAvatarOffset = initialsAvatarOffset,
-            onClick = onClick,
+            fallback = { UserAvatarPlaceholder(user, maxWidth) },
+            showBorder = showBorder,
+            modifier = Modifier.size(maxWidth),
         )
 
-        if (showOnlineIndicator && user.online) {
-            onlineIndicator()
+        if (showIndicator) {
+            val indicatorSize = resolveIndicatorSize()
+            OnlineIndicator(
+                isOnline = user.online,
+                size = indicatorSize,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(
+                        x = indicatorSize.borderWidth,
+                        y = -indicatorSize.borderWidth,
+                    ),
+            )
         }
     }
 }
 
-/**
- * The default online indicator for channel members.
- */
-@Composable
-internal fun BoxScope.DefaultOnlineIndicator(onlineIndicatorAlignment: OnlineIndicatorAlignment) {
-    OnlineIndicator(modifier = Modifier.align(onlineIndicatorAlignment.alignment))
+private fun BoxWithConstraintsScope.resolveIndicatorSize(): OnlineIndicatorSize = when {
+    maxWidth >= AvatarSize.Large -> OnlineIndicatorSize.Large
+    maxWidth >= AvatarSize.Medium -> OnlineIndicatorSize.Medium
+    else -> OnlineIndicatorSize.Small
 }
 
-/**
- * Preview of [UserAvatar] for a user with avatar image.
- *
- * Should show a placeholder that represents user avatar image.
- */
-@Preview(showBackground = true, name = "UserAvatar Preview (With avatar image)")
 @Composable
-private fun UserAvatarForUserWithImagePreview() {
-    UserAvatarPreview(PreviewUserData.userWithImage)
+internal fun UserAvatarPlaceholder(user: User, size: Dp, modifier: Modifier = Modifier) {
+    val (background, foreground) = rememberAvatarPlaceholderColors(user.id)
+    val initials = rememberPlaceholderInitials(user, size)
+
+    Box(
+        modifier
+            .background(background)
+            .size(size),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (initials.isNotEmpty()) {
+            Text(
+                text = initials,
+                style = size.toPlaceholderTextStyle(),
+                color = foreground,
+            )
+        } else {
+            Icon(
+                painter = painterResource(R.drawable.stream_compose_ic_user),
+                contentDescription = null,
+                tint = foreground,
+                modifier = modifier
+                    .background(background)
+                    .size(size.toPlaceholderIconSize()),
+            )
+        }
+    }
 }
 
-/**
- * Preview of [UserAvatar] for a user which is online.
- *
- * Should show an avatar with an online indicator in the upper right corner.
- */
-@Preview(showBackground = true, name = "UserAvatar Preview (With online status)")
 @Composable
-private fun UserAvatarForOnlineUserPreview() {
-    UserAvatarPreview(PreviewUserData.userWithOnlineStatus)
-}
-
-/**
- * Preview of [UserAvatar] for a user without avatar image.
- *
- * Should show background gradient and user initials.
- */
-@Preview(showBackground = true, name = "UserAvatar Preview (Without avatar image)")
-@Composable
-private fun UserAvatarForUserWithoutImagePreview() {
-    UserAvatarPreview(PreviewUserData.userWithoutImage)
-}
-
-/**
- * Shows [UserAvatar] preview for the provided parameters.
- *
- * @param user The user used to show the preview.
- */
-@Composable
-private fun UserAvatarPreview(user: User) {
-    ChatTheme {
-        UserAvatar(
-            modifier = Modifier.size(36.dp),
-            user = user,
-            showOnlineIndicator = true,
-            errorPlaceholderPainter = null,
-        )
+private fun rememberPlaceholderInitials(user: User, availableWidth: Dp): String = remember(user.name, availableWidth) {
+    val initials = user.initials
+    if (availableWidth >= AvatarSize.Medium) {
+        initials
+    } else {
+        initials.take(1)
     }
 }

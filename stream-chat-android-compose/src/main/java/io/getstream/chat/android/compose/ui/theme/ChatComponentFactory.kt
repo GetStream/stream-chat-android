@@ -62,7 +62,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -73,7 +72,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
@@ -112,7 +110,6 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
-import io.getstream.chat.android.compose.ui.components.avatar.InitialsAvatar
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -1920,125 +1917,79 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default avatar, which renders an image from the provided image URL.
-     * In case the image URL is empty or there is an error loading the image,
-     * it falls back to an image with initials.
+     * The default avatar component that displays an image from a URL or falls back to a placeholder.
+     * This component serves as the foundational UI for all avatar types.
+     *
+     * @param imageUrl The URL of the image to display.
+     * @param size The size class of the avatar.
+     * @param fallback The fallback content to be displayed if the [imageUrl] is null or fails to load.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun Avatar(
         modifier: Modifier,
-        imageUrl: String,
-        initials: String,
-        shape: Shape,
-        textStyle: TextStyle,
-        placeholderPainter: Painter?,
-        errorPlaceholderPainter: Painter?,
-        contentDescription: String?,
-        initialsAvatarOffset: DpOffset,
-        onClick: (() -> Unit)?,
+        imageUrl: String?,
+        fallback: @Composable () -> Unit,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.Avatar(
             modifier = modifier,
             imageUrl = imageUrl,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            placeholderPainter = placeholderPainter,
-            errorPlaceholderPainter = errorPlaceholderPainter,
-            contentDescription = contentDescription,
-            initialsAvatarOffset = initialsAvatarOffset,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default fallback avatar, which renders initials in a circle.
-     * It is used when the image URL is empty or there is an error loading the image.
-     */
-    @Composable
-    public fun FallbackAvatar(
-        imageUrl: String,
-        initials: String,
-        modifier: Modifier,
-        shape: Shape,
-        textStyle: TextStyle,
-        avatarOffset: DpOffset,
-        onClick: (() -> Unit)?,
-    ) {
-        InitialsAvatar(
-            modifier = modifier,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick,
-            avatarOffset = avatarOffset,
+            fallback = fallback,
+            showBorder = showBorder,
         )
     }
 
     /**
      * The default user avatar content.
-     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
-     * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
+     *
+     * This component displays the user's uploaded image or falls back to their initials if no
+     * image is available. It is commonly used in message lists, headers, and user profiles.
+     *
+     * @param user The user whose avatar will be displayed.
+     * @param size The size class of the avatar.
+     * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun UserAvatar(
         modifier: Modifier,
         user: User,
-        textStyle: TextStyle,
-        showOnlineIndicator: Boolean,
-        onlineIndicator: @Composable BoxScope.() -> Unit,
-        onClick: (() -> Unit)?,
+        showIndicator: Boolean,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
             modifier = modifier,
             user = user,
-            textStyle = textStyle,
-            contentDescription = user.name,
-            showOnlineIndicator = showOnlineIndicator,
-            onlineIndicator = onlineIndicator,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default group avatar, which renders a matrix of user images or initials.
-     */
-    @Composable
-    public fun GroupAvatar(
-        modifier: Modifier,
-        users: List<User>,
-        shape: Shape,
-        textStyle: TextStyle,
-        onClick: (() -> Unit)?,
-    ) {
-        io.getstream.chat.android.compose.ui.components.avatar.GroupAvatar(
-            modifier = modifier,
-            users = users,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
         )
     }
 
     /**
      * The default avatar for a channel.
-     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
-     * Based on the state of the [Channel] and the number of members,
-     * it might use [Avatar], [UserAvatar], or [GroupAvatar] to show different types of images.
+     *
+     * This component displays the channel image or a placeholder.
+     *
+     * @param channel The channel whose avatar will be displayed.
+     * @param size The size class of the avatar.
+     * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun ChannelAvatar(
         modifier: Modifier,
         channel: Channel,
         currentUser: User?,
-        onClick: (() -> Unit)?,
+        showIndicator: Boolean,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
             modifier = modifier,
             channel = channel,
             currentUser = currentUser,
-            contentDescription = channel.name,
-            onClick = onClick,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
         )
     }
 

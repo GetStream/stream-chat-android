@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -161,14 +160,10 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
                 .align(Alignment.BottomEnd)
                 .padding(8.dp)
                 .fillMaxSize(.25f)
-                .aspectRatio(1f)
-                .background(
-                    color = Color.White,
-                    shape = ChatTheme.shapes.avatar,
-                )
-                .padding(1.dp),
+                .aspectRatio(1f),
             user = item.message.user,
-            showOnlineIndicator = false,
+            showIndicator = false,
+            showBorder = true,
         )
 
         if (item.attachment.isVideo()) {
