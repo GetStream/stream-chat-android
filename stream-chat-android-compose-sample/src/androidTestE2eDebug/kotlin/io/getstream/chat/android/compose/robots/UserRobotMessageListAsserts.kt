@@ -49,10 +49,9 @@ fun UserRobot.assertMessage(
     isClickable: Boolean = false,
 ): UserRobot {
     if (isDisplayed) {
-        val textLocator = if (isClickable) Message.clickableText else Message.text
-        // textLocator.waitToAppear() // Avoid race with list updates before reading the text node.
-        assertEquals(text, textLocator.waitToAppear().waitForText(text).text)
-        assertTrue(textLocator.isDisplayed())
+        val textLocator = (if (isClickable) Message.clickableText else Message.text)
+            .text(text)
+        assertTrue(textLocator.waitToAppear().isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
         MessageListPage.MessageList.messages.findObjects().forEach {

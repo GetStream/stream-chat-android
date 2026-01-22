@@ -260,7 +260,7 @@ class QuotedReplyTests : StreamTestCase() {
             userRobot.quoteMessage(quoteReply)
         }
         step("WHEN user deletes a quoted message") {
-            userRobot.deleteMessage()
+            userRobot.deleteMessage(quoteReply)
         }
         step("THEN user observes Message deleted") {
             userRobot
@@ -273,14 +273,18 @@ class QuotedReplyTests : StreamTestCase() {
     @Test
     fun test_originalQuoteIsDeletedByUser_deletedMessageIsShown() {
         step("GIVEN user opens the channel") {
-            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1)
+            backendRobot.generateChannels(
+                channelsCount = 1,
+                messagesCount = 1,
+                messagesText = sampleText,
+            )
             userRobot.login().openChannel()
         }
         step("AND user adds a quoted reply") {
             userRobot.quoteMessage(quoteReply)
         }
         step("WHEN user deletes an original message") {
-            userRobot.deleteMessage(messageCellIndex = 1)
+            userRobot.deleteMessage(sampleText)
         }
         step("THEN deleted message is shown") {
             userRobot.assertDeletedMessage(quoteReply)
@@ -647,7 +651,7 @@ class QuotedReplyTests : StreamTestCase() {
                 .quoteMessage(quoteReply)
         }
         step("WHEN user deletes a quoted message") {
-            userRobot.deleteMessage()
+            userRobot.deleteMessage(quoteReply)
         }
         step("THEN deleted message is shown") {
             userRobot
@@ -670,7 +674,7 @@ class QuotedReplyTests : StreamTestCase() {
                 .quoteMessage(quoteReply)
         }
         step("WHEN user deletes an original message") {
-            userRobot.deleteMessage(messageCellIndex = 1)
+            userRobot.deleteMessage(sampleText)
         }
         step("THEN deleted message is shown") {
             userRobot.assertDeletedMessage(sampleText)

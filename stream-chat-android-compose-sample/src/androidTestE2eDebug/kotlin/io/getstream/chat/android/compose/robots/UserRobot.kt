@@ -83,6 +83,23 @@ class UserRobot {
         return this
     }
 
+    fun openContextMenu(messageText: String): UserRobot {
+        val messageTextSelector = Message.text
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+        val clickableTextSelector = Message.clickableText
+            .text(messageText)
+            .hasAncestor(MessageList.messages)
+
+        val target = when {
+            clickableTextSelector.isDisplayed() -> clickableTextSelector
+            else -> messageTextSelector
+        }
+
+        target.waitToAppear().longPress()
+        return this
+    }
+
     fun typeText(text: String): UserRobot {
         Composer.inputField.waitToAppear().typeText(text)
         return this
@@ -116,6 +133,13 @@ class UserRobot {
 
     fun deleteMessage(messageCellIndex: Int = 0, hard: Boolean = false): UserRobot {
         openContextMenu(messageCellIndex)
+        ContextMenu.delete.waitToAppear().click()
+        ContextMenu.ok.waitToAppear().click()
+        return this
+    }
+
+    fun deleteMessage(text: String): UserRobot {
+        openContextMenu(text)
         ContextMenu.delete.waitToAppear().click()
         ContextMenu.ok.waitToAppear().click()
         return this
