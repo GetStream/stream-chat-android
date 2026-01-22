@@ -5065,7 +5065,7 @@ internal constructor(
                 ),
                 messageReceiptManager = MessageReceiptManager(
                     now = ::Date,
-                    getRepositoryFacade = { instance().repositoryFacade },
+                    repositoryFacade = { instance().repositoryFacade },
                     messageReceiptRepository = repository,
                     api = api,
                 ),
