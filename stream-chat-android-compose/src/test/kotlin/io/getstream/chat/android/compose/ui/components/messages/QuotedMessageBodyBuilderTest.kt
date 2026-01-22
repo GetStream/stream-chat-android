@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.res.Resources
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -407,7 +408,7 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "document.pdf",
                     iconId = R.drawable.stream_compose_ic_file,
-                    previewIcon = R.drawable.stream_compose_ic_file_pdf,
+                    previewIcon = FileIconData.Pdf,
                 ),
             ),
             Arguments.of(
@@ -423,7 +424,7 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "report.docx",
                     iconId = R.drawable.stream_compose_ic_file,
-                    previewIcon = R.drawable.stream_compose_ic_file_generic,
+                    previewIcon = FileIconData.Generic,
                 ),
             ),
             Arguments.of(
@@ -439,7 +440,7 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "Files: 1",
                     iconId = R.drawable.stream_compose_ic_file,
-                    previewIcon = R.drawable.stream_compose_ic_file_generic,
+                    previewIcon = FileIconData.Generic,
                 ),
             ),
             Arguments.of(
@@ -489,7 +490,7 @@ internal class QuotedMessageBodyBuilderTest {
                 QuotedMessageBody(
                     text = "song.mp3",
                     iconId = R.drawable.stream_compose_ic_file,
-                    previewIcon = R.drawable.stream_compose_ic_file_generic,
+                    previewIcon = FileIconData.Generic,
                 ),
             ),
             Arguments.of(

@@ -54,6 +54,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -249,10 +251,9 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
         }
 
         body.previewIcon != null -> {
-            Image(
+            FileTypeIcon(
                 modifier = Modifier.height(40.dp),
-                painter = painterResource(body.previewIcon),
-                contentDescription = null,
+                data = body.previewIcon,
             )
         }
     }
@@ -281,6 +282,5 @@ internal data class QuotedMessageBody(
     val iconId: Int? = null,
     val imagePreviewData: Any? = null,
     val videoPreviewData: Any? = null,
-    @param:DrawableRes
-    val previewIcon: Int? = null,
+    val previewIcon: FileIconData? = null,
 )

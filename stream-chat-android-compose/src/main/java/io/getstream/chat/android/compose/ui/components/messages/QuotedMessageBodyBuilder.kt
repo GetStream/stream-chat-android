@@ -154,7 +154,7 @@ internal class QuotedMessageBodyBuilder(
                 QuotedMessageBody(
                     text = messageText.ifBlank { textForFile(summary.fileAttachment) },
                     iconId = R.drawable.stream_compose_ic_file,
-                    previewIcon = MimeTypeIconProvider.getIconRes(summary.fileAttachment.mimeType),
+                    previewIcon = MimeTypeIconProvider.getIcon(summary.fileAttachment.mimeType),
                 )
             }
 
