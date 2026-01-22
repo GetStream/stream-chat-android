@@ -279,7 +279,7 @@ public class StreamFileManager {
 
             // Clear Stream photos from Pictures directory
             picturesDir?.listFiles { file ->
-                file.isFile && file.name.startsWith(PHOTO_PREFIX)
+                file.isFile && matchesMediaFilenamePattern(file.name, PHOTO_PREFIX, PHOTO_EXTENSION)
             }?.forEach { file ->
                 if (!file.delete()) {
                     allDeleted = false
@@ -288,7 +288,7 @@ public class StreamFileManager {
 
             // Clear Stream videos from Movies directory
             moviesDir?.listFiles { file ->
-                file.isFile && file.name.startsWith(VIDEO_PREFIX)
+                file.isFile && matchesMediaFilenamePattern(file.name, VIDEO_PREFIX, VIDEO_EXTENSION)
             }?.forEach { file ->
                 if (!file.delete()) {
                     allDeleted = false
@@ -308,6 +308,24 @@ public class StreamFileManager {
     private fun createMediaFilename(prefix: String, extension: String): String {
         val dateFormat = SimpleDateFormat(EXTERNAL_DIR_TIMESTAMP_FORMAT, Locale.US)
         return "${prefix}_${dateFormat.format(Date().time)}.$extension"
+    }
+
+    /**
+     * Checks if a filename matches the pattern used by [createMediaFilename].
+     *
+     * The expected pattern is: `{prefix}_{yyyyMMdd_HHmmss}.{extension}`
+     * Example: `STREAM_IMG_20260122_143052.jpg`
+     *
+     * @param filename The filename to check
+     * @param prefix The expected prefix (e.g., "STREAM_IMG")
+     * @param extension The expected extension (e.g., "jpg")
+     * @return true if the filename matches the pattern, false otherwise
+     */
+    private fun matchesMediaFilenamePattern(filename: String, prefix: String, extension: String): Boolean {
+        // Pattern: PREFIX_YYYYMMDD_HHMMSS.extension
+        // Example: STREAM_IMG_20260122_143052.jpg
+        val pattern = Regex("^${Regex.escape(prefix)}_\\d{8}_\\d{6}\\.${Regex.escape(extension)}$")
+        return pattern.matches(filename)
     }
 
     @Suppress("TooGenericExceptionCaught")

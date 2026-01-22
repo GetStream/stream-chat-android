@@ -26,6 +26,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -436,5 +437,112 @@ internal class StreamFileManagerTest {
         assertTrue(picturesDir?.exists() == true)
         // But the file should be gone
         assertFalse(photoFile.exists())
+    }
+
+    @Test
+    fun `clearExternalStorage should only delete photos matching exact pattern`() {
+        // Create a valid Stream photo file
+        val validPhoto = streamFileManager.createPhotoInExternalDir(context)
+        assertTrue(validPhoto is Result.Success)
+        val validPhotoFile = (validPhoto as Result.Success).value
+        validPhotoFile.writeText("valid photo")
+
+        val picturesDir = validPhotoFile.parentFile
+        assertNotNull(picturesDir)
+
+        // Create files with similar but incorrect patterns that should NOT be deleted
+        val invalidFiles = listOf(
+            // Missing underscore separator
+            File(picturesDir, "STREAM_IMG20260122_143052.jpg"),
+            // Wrong date format (missing digits)
+            File(picturesDir, "STREAM_IMG_2026122_143052.jpg"),
+            // Wrong time format (extra digits)
+            File(picturesDir, "STREAM_IMG_20260122_1430520.jpg"),
+            // Missing timestamp entirely
+            File(picturesDir, "STREAM_IMG_.jpg"),
+            // Just prefix match
+            File(picturesDir, "STREAM_IMG_backup.jpg"),
+            // Prefix with different suffix
+            File(picturesDir, "STREAM_IMG_notes_20260122.jpg"),
+            // Wrong extension
+            File(picturesDir, "STREAM_IMG_20260122_143052.png"),
+            // Extra text after valid pattern
+            File(picturesDir, "STREAM_IMG_20260122_143052.jpg.bak"),
+        )
+
+        // Write content to all invalid files
+        invalidFiles.forEach { it.writeText("should not be deleted") }
+
+        // Verify all files exist before clearing
+        assertTrue(validPhotoFile.exists())
+        invalidFiles.forEach { assertTrue(it.exists()) }
+
+        // Clear external storage
+        val result = streamFileManager.clearExternalStorage(context)
+
+        // Verify clear succeeded
+        assertTrue(result is Result.Success)
+
+        // Valid file should be deleted
+        assertFalse(validPhotoFile.exists())
+
+        // All invalid pattern files should still exist
+        invalidFiles.forEach { file ->
+            assertTrue("File ${file.name} should not be deleted", file.exists())
+        }
+
+        // Cleanup
+        invalidFiles.forEach { it.delete() }
+    }
+
+    @Test
+    fun `clearExternalStorage should only delete videos matching exact pattern`() {
+        // Create a valid Stream video file
+        val validVideo = streamFileManager.createVideoInExternalDir(context)
+        assertTrue(validVideo is Result.Success)
+        val validVideoFile = (validVideo as Result.Success).value
+        validVideoFile.writeText("valid video")
+
+        val moviesDir = validVideoFile.parentFile
+        assertNotNull(moviesDir)
+
+        // Create videos with invalid patterns
+        val invalidVideos = listOf(
+            File(moviesDir, "STREAM_VID_backup.mp4"),
+            File(moviesDir, "STREAM_VID_2026.mp4"),
+            File(moviesDir, "STREAM_VID_20260122.mp4"), // Missing time
+            File(moviesDir, "STREAM_VID_143052.mp4"), // Missing date
+            File(moviesDir, "STREAM_VIDX_20260122_143052.mp4"), // Extra character in prefix
+        )
+
+        // Write content to all invalid files
+        invalidVideos.forEach { it.writeText("should not be deleted") }
+
+        // Verify all files exist
+        assertTrue(validVideoFile.exists())
+        invalidVideos.forEach { assertTrue(it.exists()) }
+
+        // Clear external storage
+        val result = streamFileManager.clearExternalStorage(context)
+
+        assertTrue(result is Result.Success)
+
+        // Valid file should be deleted
+        assertFalse(validVideoFile.exists())
+
+        // All invalid pattern files should still exist
+        invalidVideos.forEach { file ->
+            assertTrue("File ${file.name} should not be deleted", file.exists())
+        }
+
+        // Cleanup
+        invalidVideos.forEach { it.delete() }
+    }
+
+    @Test
+    fun `clearExternalStorage should succeed when directories are empty`() {
+        val result = streamFileManager.clearExternalStorage(context)
+
+        assertTrue(result is Result.Success)
     }
 }
