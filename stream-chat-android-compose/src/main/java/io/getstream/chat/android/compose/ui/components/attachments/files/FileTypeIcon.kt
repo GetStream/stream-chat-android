@@ -31,7 +31,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
-import io.getstream.chat.android.compose.ui.util.FileIconData
 
 @Composable
 internal fun FileTypeIcon(data: FileIconData, modifier: Modifier = Modifier) {

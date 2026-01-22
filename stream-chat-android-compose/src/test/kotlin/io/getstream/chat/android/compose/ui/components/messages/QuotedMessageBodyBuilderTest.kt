@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.res.Resources
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.util.FileIconData
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message

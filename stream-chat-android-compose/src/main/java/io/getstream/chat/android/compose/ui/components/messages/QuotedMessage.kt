@@ -54,11 +54,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.FileIconData
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
