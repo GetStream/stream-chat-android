@@ -24,7 +24,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
@@ -106,7 +105,7 @@ public fun MessageInput(
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
-    onLinkPreviewClick: ((LinkPreview) -> Unit)? = {},
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
@@ -149,7 +148,6 @@ public fun MessageInput(
         maxLines = maxLines,
         onValueChange = onValueChange,
         enabled = canSendMessage,
-        innerPadding = PaddingValues(),
         keyboardOptions = keyboardOptions,
         visualTransformation = visualTransformation,
         decorationBox = { innerTextField ->
@@ -258,7 +256,6 @@ private fun TextField(
     modifier: Modifier,
     enabled: Boolean,
     maxLines: Int,
-    innerPadding: PaddingValues,
     keyboardOptions: KeyboardOptions,
     visualTransformation: VisualTransformation,
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
@@ -291,8 +288,7 @@ private fun TextField(
                 },
             )
             .background(ChatTheme.colors.barsBackground)
-            .defaultMinSize(minHeight = 48.dp)
-            .padding(innerPadding),
+            .defaultMinSize(minHeight = 48.dp),
         value = textState,
         onValueChange = {
             textState = it
