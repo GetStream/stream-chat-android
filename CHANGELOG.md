@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `markDelivered` not working when switching users. [#6093](https://github.com/GetStream/stream-chat-android/pull/6093)
 
 ### ⬆️ Improved
 
