@@ -24,7 +24,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
@@ -118,28 +117,20 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
-            val textStyle = typography.bodyBold.copy(
-                color = when (own) {
-                    true -> colors.ownMessageText
-                    else -> colors.otherMessageText
-                },
-            )
+            val textStyle = typography.bodyDefault.copy(color = colors.chatTextMessage)
             val backgroundColor = when (own) {
-                true -> colors.ownMessagesBackground
-                else -> colors.otherMessagesBackground
+                true -> colors.chatBgOutgoing
+                else -> colors.chatBgIncoming
             }
             return MessageTheme(
                 textStyle = textStyle,
                 errorTextStyle = textStyle,
                 contentPadding = ComponentPadding.Zero,
                 backgroundColor = backgroundColor,
-                backgroundBorder = when (own) {
-                    true -> null
-                    else -> BorderStroke(1.dp, colors.borders)
-                },
+                backgroundBorder = null,
                 backgroundShapes = MessageBackgroundShapes(
-                    top = RoundedCornerShape(16.dp),
-                    middle = RoundedCornerShape(16.dp),
+                    top = RoundedCornerShape(20.dp),
+                    middle = RoundedCornerShape(20.dp),
                     bottom = when (own) {
                         true -> shapes.myMessageBubble
                         else -> shapes.otherMessageBubble
@@ -150,7 +141,7 @@ public data class MessageTheme(
                     },
                 ),
                 errorBackgroundColor = backgroundColor,
-                deletedBackgroundColor = colors.deletedMessagesBackground,
+                deletedBackgroundColor = backgroundColor,
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
                     own = own,
                     isInDarkMode = isInDarkMode,
@@ -169,11 +160,8 @@ public data class MessageTheme(
                     shapes = shapes,
                     colors = colors,
                 ),
-                mentionColor = colors.primaryAccent,
-                linkStyle = TextStyle(
-                    color = colors.primaryAccent,
-                    textDecoration = TextDecoration.Underline,
-                ),
+                mentionColor = colors.chatTextMention,
+                linkStyle = textStyle.copy(color = colors.chatTextLink),
                 linkBackgroundColor = colors.linkBackground,
             )
         }

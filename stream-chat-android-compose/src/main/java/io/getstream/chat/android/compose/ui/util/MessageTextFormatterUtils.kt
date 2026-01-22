@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Message
  * @param ownTheme The theme for messages from the current user.
  * @param otherTheme The theme for messages from the other users.
  */
+// TODO [G.] do we need these functions?
 @Composable
 internal fun defaultTextStyle(
     ownTheme: MessageTheme,

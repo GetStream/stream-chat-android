@@ -52,8 +52,8 @@ public data class PollMessageStyle(
         ): PollMessageStyle {
             return PollMessageStyle(
                 backgroundColor = when (own) {
-                    true -> colors.linkBackground
-                    else -> colors.otherMessagesBackground
+                    true -> colors.chatBgOutgoing
+                    else -> colors.chatBgIncoming
                 },
             )
         }

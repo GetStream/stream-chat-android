@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
@@ -36,13 +35,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
+import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
 import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
-import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
@@ -89,8 +88,6 @@ public fun MessageText(
         }
     }
 
-    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
-
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
@@ -101,18 +98,15 @@ public fun MessageText(
             ChatTheme.otherMessageTheme.textStyle
         }
     }
+
+    val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
     if (annotations.fastAny {
             it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
         }
     ) {
         ClickableText(
             modifier = modifier
-                .padding(
-                    start = 12.dp,
-                    end = 12.dp,
-                    top = 8.dp,
-                    bottom = 8.dp,
-                )
+                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs)
                 .testTag("Stream_MessageClickableText"),
             text = styledText,
             style = style,
@@ -124,23 +118,16 @@ public fun MessageText(
             } else {
                 val targetUrl = annotation?.item
                 if (!targetUrl.isNullOrEmpty()) {
-                    onLinkClick?.invoke(message, targetUrl) ?: run {
-                        context.startActivity(
-                            Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)),
-                        )
-                    }
+                    onLinkClick?.invoke(message, targetUrl) ?: context.startActivity(
+                        Intent(Intent.ACTION_VIEW, targetUrl.toUri()),
+                    )
                 }
             }
         }
     } else {
-        val horizontalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 12.dp
-        val verticalPadding = if (message.isEmojiOnlyWithoutBubble()) 0.dp else 8.dp
         Text(
             modifier = modifier
-                .padding(
-                    horizontal = horizontalPadding,
-                    vertical = verticalPadding,
-                )
+                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs)
                 .clipToBounds()
                 .testTag("Stream_MessageText"),
             text = styledText,
