@@ -36,16 +36,19 @@ import java.util.Date
  * for later reporting to the server.
  *
  * @param now Function to provide the current date.
- * @param repositoryFacade Function to provide the [RepositoryFacade] tied to the currently logged in user.
+ * @param getRepositoryFacade Function to provide the [RepositoryFacade] tied to the currently logged in user.
  * @param messageReceiptRepository The [MessageReceiptRepository] to store the created receipts.
  * @param api The [ChatApi] to fetch data if needed.
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
-    private val repositoryFacade: () -> RepositoryFacade,
+    private val getRepositoryFacade: () -> RepositoryFacade,
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
 ) {
+
+    private val repositoryFacade: RepositoryFacade
+        get() = getRepositoryFacade()
 
     private val logger by taggedLogger("Chat:MessageReceiptManager")
 
@@ -120,10 +123,10 @@ internal class MessageReceiptManager(
     }
 
     private suspend fun retrieveCurrentUser(): User? =
-        repositoryFacade().selectUser(userId = "me")
+        repositoryFacade.selectUser(userId = "me")
 
     private suspend fun retrieveChannel(cid: String): Channel? =
-        repositoryFacade().selectChannel(cid) ?: run {
+        repositoryFacade.selectChannel(cid) ?: run {
             val (channelType, channelId) = cid.cidToTypeAndId()
             val request = QueryChannelRequest()
             api.queryChannel(channelType, channelId, request)
@@ -131,7 +134,7 @@ internal class MessageReceiptManager(
         }
 
     private suspend fun retrieveMessage(id: String): Message? =
-        repositoryFacade().selectMessage(id) ?: run {
+        repositoryFacade.selectMessage(id) ?: run {
             api.getMessage(id)
                 .await().getOrNull()
         }
