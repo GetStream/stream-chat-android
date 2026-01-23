@@ -78,6 +78,10 @@ internal fun Avatar(
     )
 }
 
+/**
+ * Predefined set of avatar sizes. These are used in Stream designs, but also as threshold for scaling accessory
+ * components, like the online indicator, placeholder icon, and text style.
+ */
 public object AvatarSize {
     public val ExtraSmall: Dp = 20.dp
     public val Small: Dp = 24.dp

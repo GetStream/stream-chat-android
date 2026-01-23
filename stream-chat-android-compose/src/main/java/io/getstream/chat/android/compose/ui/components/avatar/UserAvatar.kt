@@ -34,6 +34,16 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
+/**
+ * The default user avatar content.
+ *
+ * This component displays the user's uploaded image or falls back to their initials if no
+ * image is available. It is commonly used in message lists, headers, and user profiles.
+ *
+ * @param user The user whose avatar will be displayed.
+ * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
+ * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+ */
 @Composable
 public fun UserAvatar(
     user: User,

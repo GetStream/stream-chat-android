@@ -31,6 +31,16 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 
+/**
+ * The default avatar for a channel.
+ *
+ * This component displays the channel image, the user avatar for direct messages, or a placeholder.
+ *
+ * @param channel The channel whose avatar will be displayed.
+ * @param currentUser The user currently logged in.
+ * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+ * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
+ */
 @Composable
 public fun ChannelAvatar(
     channel: Channel,

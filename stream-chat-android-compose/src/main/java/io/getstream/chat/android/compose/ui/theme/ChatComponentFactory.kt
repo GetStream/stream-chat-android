@@ -1921,7 +1921,6 @@ public interface ChatComponentFactory {
      * This component serves as the foundational UI for all avatar types.
      *
      * @param imageUrl The URL of the image to display.
-     * @param size The size class of the avatar.
      * @param fallback The fallback content to be displayed if the [imageUrl] is null or fails to load.
      * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
@@ -1947,7 +1946,6 @@ public interface ChatComponentFactory {
      * image is available. It is commonly used in message lists, headers, and user profiles.
      *
      * @param user The user whose avatar will be displayed.
-     * @param size The size class of the avatar.
      * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
      * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
@@ -1969,10 +1967,10 @@ public interface ChatComponentFactory {
     /**
      * The default avatar for a channel.
      *
-     * This component displays the channel image or a placeholder.
+     * This component displays the channel image, the user avatar for direct messages, or a placeholder.
      *
      * @param channel The channel whose avatar will be displayed.
-     * @param size The size class of the avatar.
+     * @param currentUser The user currently logged in.
      * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
      * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
