@@ -34,6 +34,11 @@ import java.util.Date
 /**
  * Manages message delivery receipts: creating and storing them in the repository
  * for later reporting to the server.
+ *
+ * @param now Function to provide the current date.
+ * @param getRepositoryFacade Function to provide the [RepositoryFacade] tied to the currently logged in user.
+ * @param messageReceiptRepository The [MessageReceiptRepository] to store the created receipts.
+ * @param api The [ChatApi] to fetch data if needed.
  */
 internal class MessageReceiptManager(
     private val now: () -> Date,
@@ -41,7 +46,9 @@ internal class MessageReceiptManager(
     private val messageReceiptRepository: MessageReceiptRepository,
     private val api: ChatApi,
 ) {
-    private val repositoryFacade by lazy { getRepositoryFacade() }
+
+    private val repositoryFacade: RepositoryFacade
+        get() = getRepositoryFacade()
 
     private val logger by taggedLogger("Chat:MessageReceiptManager")
 
