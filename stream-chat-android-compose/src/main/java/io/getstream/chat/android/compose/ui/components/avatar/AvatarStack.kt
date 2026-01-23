@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,24 +28,23 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 
+/**
+ * A composable that displays a stack of user avatars. The avatars can overlap.
+ *
+ * @param overlap The amount of overlap between avatars.
+ * @param users The list of users to display avatars for.
+ * @param avatarSize The size of each avatar.
+ * @param showBorder Whether to show a border around each avatar.
+ */
 @Composable
-internal inline fun AvatarStack(
-    overlap: Dp,
-    modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(-overlap), content = content)
-}
-
-@Composable
-internal fun UserAvatarStack(
+public fun UserAvatarStack(
     overlap: Dp,
     users: List<User>,
     avatarSize: Dp,
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
 ) {
-    AvatarStack(overlap, modifier) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(-overlap)) {
         for (user in users) {
             UserAvatar(
                 modifier = Modifier.size(avatarSize),
