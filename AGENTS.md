@@ -45,7 +45,7 @@ Prefer module-scoped tasks while iterating; PRs should pass `spotlessCheck`, `de
 
 ## Style & conventions
 - Spotless-enforced Kotlin style (4 spaces, no wildcard imports, licence headers). Run `./gradlew spotlessCheck` in CI parity.
-- Compose components follow noun-based naming (`MessageList`, `ChannelListHeader`); previews use `@StreamPreview` helpers.
+- Compose components follow noun-based naming (`MessageList`, `ChannelListHeader`).
 - Use `@OptIn` annotations explicitly; avoid suppressions unless documented.
 - Backtick test names (for example: ``fun `message list filters muted channels`()``) for readability; keep helper extensions private/internal.
 - Document public APIs with KDoc, including thread expectations and state notes.

@@ -1924,55 +1924,6 @@ public interface ChatComponentFactory {
      * In case the image URL is empty or there is an error loading the image,
      * it falls back to an image with initials.
      */
-    @Deprecated(
-        message = "Use the new Avatar function instead.",
-        level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(
-            expression = "Avatar(\n" +
-                "modifier = modifier,\n " +
-                "imageUrl = imageUrl,\n " +
-                "initials = initials,\n " +
-                "shape = shape,\n " +
-                "textStyle = textStyle,\n " +
-                "placeholderPainter = placeholderPainter,\n " +
-                "errorPlaceholderPainter = errorPlaceholderPainter,\n " +
-                "contentDescription = contentDescription,\n " +
-                "initialsAvatarOffset = initialsAvatarOffset,\n " +
-                "onClick = onClick,\n" +
-                ")",
-        ),
-    )
-    @Composable
-    public fun Avatar(
-        modifier: Modifier,
-        imageUrl: String,
-        initials: String,
-        shape: Shape,
-        textStyle: TextStyle,
-        placeholderPainter: Painter?,
-        contentDescription: String?,
-        initialsAvatarOffset: DpOffset,
-        onClick: (() -> Unit)?,
-    ) {
-        Avatar(
-            modifier = modifier,
-            imageUrl = imageUrl,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            placeholderPainter = placeholderPainter,
-            errorPlaceholderPainter = null,
-            contentDescription = contentDescription,
-            initialsAvatarOffset = initialsAvatarOffset,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default avatar, which renders an image from the provided image URL.
-     * In case the image URL is empty or there is an error loading the image,
-     * it falls back to an image with initials.
-     */
     @Composable
     public fun Avatar(
         modifier: Modifier,

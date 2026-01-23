@@ -1467,6 +1467,19 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 	public static final fun Avatar-MQwOVTQ (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarSize {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/avatar/AvatarSize;
+	public final fun getExtraSmall-D9Ej5fM ()F
+	public final fun getLarge-D9Ej5fM ()F
+	public final fun getMedium-D9Ej5fM ()F
+	public final fun getSmall-D9Ej5fM ()F
+}
+
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarStackKt {
+	public static final fun UserAvatarStack-nRywnlk (FLjava/util/List;FLandroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
 }
@@ -2793,7 +2806,6 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelOptionsThem
 
 public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
 	public abstract fun AttachmentsPickerSendButton (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun Avatar--oyy2HM (Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun Avatar-MQwOVTQ (Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public abstract fun ChannelAvatar (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelFilesAttachmentsEmptyContent (Landroidx/compose/foundation/layout/BoxScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
@@ -2976,7 +2988,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
 	public static fun AttachmentsPickerSendButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-	public static fun Avatar--oyy2HM (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun Avatar-MQwOVTQ (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static fun ChannelAvatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelFilesAttachmentsEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/BoxScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
@@ -3614,8 +3625,8 @@ public final class io/getstream/chat/android/compose/ui/theme/ReactionOptionsThe
 public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamColors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component10-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
@@ -3655,19 +3666,90 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun component42-0d7_KjU ()J
 	public final fun component43-0d7_KjU ()J
 	public final fun component44-0d7_KjU ()J
+	public final fun component45-0d7_KjU ()J
+	public final fun component46-0d7_KjU ()J
+	public final fun component47-0d7_KjU ()J
+	public final fun component48-0d7_KjU ()J
+	public final fun component49-0d7_KjU ()J
 	public final fun component5-0d7_KjU ()J
+	public final fun component50-0d7_KjU ()J
+	public final fun component51-0d7_KjU ()J
+	public final fun component52-0d7_KjU ()J
+	public final fun component53-0d7_KjU ()J
+	public final fun component54-0d7_KjU ()J
+	public final fun component55-0d7_KjU ()J
+	public final fun component56-0d7_KjU ()J
+	public final fun component57-0d7_KjU ()J
+	public final fun component58-0d7_KjU ()J
+	public final fun component59-0d7_KjU ()J
 	public final fun component6-0d7_KjU ()J
+	public final fun component60-0d7_KjU ()J
+	public final fun component61-0d7_KjU ()J
+	public final fun component62-0d7_KjU ()J
+	public final fun component63-0d7_KjU ()J
+	public final fun component64-0d7_KjU ()J
+	public final fun component65-0d7_KjU ()J
+	public final fun component66-0d7_KjU ()J
+	public final fun component67-0d7_KjU ()J
+	public final fun component68-0d7_KjU ()J
+	public final fun component69-0d7_KjU ()J
 	public final fun component7-0d7_KjU ()J
+	public final fun component70-0d7_KjU ()J
+	public final fun component71-0d7_KjU ()J
+	public final fun component72-0d7_KjU ()J
+	public final fun component73-0d7_KjU ()J
+	public final fun component74-0d7_KjU ()J
+	public final fun component75-0d7_KjU ()J
+	public final fun component76-0d7_KjU ()J
+	public final fun component77-0d7_KjU ()J
+	public final fun component78-0d7_KjU ()J
+	public final fun component79-0d7_KjU ()J
 	public final fun component8-0d7_KjU ()J
+	public final fun component80-0d7_KjU ()J
+	public final fun component81-0d7_KjU ()J
+	public final fun component82-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-wdjmYSg (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
-	public static synthetic fun copy-wdjmYSg$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public final fun copy-yKHj9xE (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public static synthetic fun copy-yKHj9xE$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAccentError-0d7_KjU ()J
+	public final fun getAccentNeutral-0d7_KjU ()J
+	public final fun getAccentPrimary-0d7_KjU ()J
+	public final fun getAccentSuccess-0d7_KjU ()J
 	public final fun getAppBackground-0d7_KjU ()J
+	public final fun getAvatarPaletteBg1-0d7_KjU ()J
+	public final fun getAvatarPaletteBg2-0d7_KjU ()J
+	public final fun getAvatarPaletteBg3-0d7_KjU ()J
+	public final fun getAvatarPaletteBg4-0d7_KjU ()J
+	public final fun getAvatarPaletteBg5-0d7_KjU ()J
+	public final fun getAvatarPaletteText1-0d7_KjU ()J
+	public final fun getAvatarPaletteText2-0d7_KjU ()J
+	public final fun getAvatarPaletteText3-0d7_KjU ()J
+	public final fun getAvatarPaletteText4-0d7_KjU ()J
+	public final fun getAvatarPaletteText5-0d7_KjU ()J
 	public final fun getBarsBackground-0d7_KjU ()J
 	public final fun getBorderCoreImage-0d7_KjU ()J
 	public final fun getBorderCoreOnDark-0d7_KjU ()J
+	public final fun getBorderCorePrimary-0d7_KjU ()J
+	public final fun getBorderCoreSurfaceSubtle-0d7_KjU ()J
 	public final fun getBorders-0d7_KjU ()J
+	public final fun getButtonStyleGhostBg-0d7_KjU ()J
+	public final fun getButtonStyleGhostBorder-0d7_KjU ()J
+	public final fun getButtonStyleGhostTextPrimary-0d7_KjU ()J
+	public final fun getButtonStyleGhostTextSecondary-0d7_KjU ()J
+	public final fun getButtonStyleOutlineBg-0d7_KjU ()J
+	public final fun getButtonStyleOutlineBorder-0d7_KjU ()J
+	public final fun getButtonStyleOutlineText-0d7_KjU ()J
+	public final fun getButtonTypeDestructiveBg-0d7_KjU ()J
+	public final fun getButtonTypeDestructiveBorder-0d7_KjU ()J
+	public final fun getButtonTypeDestructiveText-0d7_KjU ()J
+	public final fun getButtonTypeDestructiveTextInverse-0d7_KjU ()J
+	public final fun getButtonTypePrimaryBg-0d7_KjU ()J
+	public final fun getButtonTypePrimaryBgDisabled-0d7_KjU ()J
+	public final fun getButtonTypePrimaryBorder-0d7_KjU ()J
+	public final fun getButtonTypePrimaryText-0d7_KjU ()J
+	public final fun getButtonTypePrimaryTextDisabled-0d7_KjU ()J
+	public final fun getButtonTypeSecondaryTextDisabled-0d7_KjU ()J
 	public final fun getChatBgAttachmentIncoming-0d7_KjU ()J
 	public final fun getChatBgAttachmentOutgoing-0d7_KjU ()J
 	public final fun getChatBgIncoming-0d7_KjU ()J
@@ -3696,9 +3778,14 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun getOverlayDark-0d7_KjU ()J
 	public final fun getOwnMessageText-0d7_KjU ()J
 	public final fun getOwnMessagesBackground-0d7_KjU ()J
+	public final fun getPresenceBgOffline-0d7_KjU ()J
+	public final fun getPresenceBgOnline-0d7_KjU ()J
+	public final fun getPresenceBorder-0d7_KjU ()J
 	public final fun getPrimaryAccent-0d7_KjU ()J
 	public final fun getShowMoreCountText-0d7_KjU ()J
 	public final fun getShowMoreOverlay-0d7_KjU ()J
+	public final fun getStateBgDisabled-0d7_KjU ()J
+	public final fun getStateTextDisabled-0d7_KjU ()J
 	public final fun getTextHighEmphasis-0d7_KjU ()J
 	public final fun getTextHighEmphasisInverse-0d7_KjU ()J
 	public final fun getTextLowEmphasis-0d7_KjU ()J
@@ -3915,12 +4002,15 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamShapes$Compa
 public final class io/getstream/chat/android/compose/ui/theme/StreamTypography {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamTypography$Companion;
-	public fun <init> (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)V
+	public fun <init> (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)V
 	public final fun component1 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component10 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component11 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component12 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component13 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component14 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component15 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component16 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component3 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component4 ()Landroidx/compose/ui/text/TextStyle;
@@ -3929,17 +4019,20 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamTypography {
 	public final fun component7 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component8 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component9 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun copy (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
+	public final fun copy (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamTypography;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBody ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getBodyBold ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getBodyEmphasis ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getBodyItalic ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getCaptionBold ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getCaptionEmphasis ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getEmojiOnly ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFootnote ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFootnoteBold ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFootnoteItalic ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getMetadataEmphasis ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getSingleEmoji ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getTabBar ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getTitle1 ()Landroidx/compose/ui/text/TextStyle;

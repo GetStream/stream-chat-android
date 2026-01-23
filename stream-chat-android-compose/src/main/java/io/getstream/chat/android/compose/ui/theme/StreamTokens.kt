@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 internal object StreamTokens {
     val radius2xs = CornerSize(2.dp)
@@ -39,4 +41,11 @@ internal object StreamTokens {
     val spacingXl = 24.dp
     val spacing2xl = 32.dp
     val spacing3xl = 40.dp
+
+    val fontWeightSemiBold = FontWeight.SemiBold
+    val fontSizeXs = 12.sp
+    val fontSizeSm = 14.sp
+    val fontSizeMd = 16.sp
+    val lineHeightNormal = 20.sp
+    val lineHeightTight = 16.sp
 }
