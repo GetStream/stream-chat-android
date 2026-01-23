@@ -162,6 +162,7 @@ public data class StreamColors(
     public val borderCorePrimary: Color,
     public val textPrimary: Color,
     public val textSecondary: Color,
+    public val textTertiary: Color,
     public val stateBgDisabled: Color,
     public val stateTextDisabled: Color,
     public val appBackground: Color = backgroundElevationElevation0,
@@ -192,6 +193,7 @@ public data class StreamColors(
     public val chatTextMessage: Color = textPrimary,
     public val chatTextLink: Color = primaryAccent,
     public val chatTextMention: Color = chatTextLink,
+    public val chatTextTimestamp: Color = textTertiary,
     public val controlRemoveBg: Color,
     public val controlRemoveBorder: Color = borderCoreOnDark,
     public val controlRemoveIcon: Color,
@@ -247,6 +249,7 @@ public data class StreamColors(
             borderCorePrimary = StreamPrimitiveColors.blue600,
             textPrimary = StreamPrimitiveColors.slate900,
             textSecondary = StreamPrimitiveColors.slate700,
+            textTertiary = StreamPrimitiveColors.slate500,
             stateBgDisabled = StreamPrimitiveColors.slate200,
             stateTextDisabled = StreamPrimitiveColors.slate400,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -323,6 +326,7 @@ public data class StreamColors(
             borderCorePrimary = StreamPrimitiveColors.blue300,
             textPrimary = StreamPrimitiveColors.neutral50,
             textSecondary = StreamPrimitiveColors.neutral100,
+            textTertiary = StreamPrimitiveColors.neutral400,
             stateBgDisabled = StreamPrimitiveColors.slate800,
             stateTextDisabled = StreamPrimitiveColors.slate600,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -375,6 +379,7 @@ internal object StreamPrimitiveColors {
     val neutral50 = Color(0xFFF7F7F7)
     val neutral100 = Color(0xFFEFEFEF)
     val neutral300 = Color(0xFFC1C1C1)
+    val neutral400 = Color(0xFF8F8F8F)
     val neutral500 = Color(0xFF7F7F7F)
     val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)

@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageFooterStatusIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.Message
@@ -84,6 +85,7 @@ public fun MessageFooter(
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }
+            val textStyle = ChatTheme.typography.metadataDefault.copy(color = ChatTheme.colors.chatTextTimestamp)
             Row(
                 modifier = Modifier
                     .padding(top = 4.dp, bottom = 4.dp),
@@ -98,10 +100,9 @@ public fun MessageFooter(
                             .padding(end = 8.dp)
                             .weight(1f, fill = false),
                         text = message.user.name,
-                        style = ChatTheme.typography.footnote,
+                        style = textStyle,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        color = ChatTheme.colors.textLowEmphasis,
                     )
                 } else if (message.shouldShowMessageStatusIndicator()) {
                     ChatTheme.componentFactory.MessageFooterStatusIndicator(
@@ -114,22 +115,20 @@ public fun MessageFooter(
 
                 val date = message.getCreatedAtOrNull()
                 if (date != null) {
-                    Timestamp(date = date, formatType = DateFormatType.TIME)
+                    Timestamp(
+                        date = date,
+                        formatType = DateFormatType.TIME,
+                        textStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp)
+                    )
                 }
                 if (showEditLabel && !showEditInfo) {
                     Text(
-                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
-                        text = "·",
-                        style = ChatTheme.typography.footnote,
-                        color = ChatTheme.colors.textLowEmphasis,
-                    )
-                    Text(
                         modifier = Modifier
+                            .padding(start = StreamTokens.spacingXs)
                             .clickable { showEditInfo = !showEditInfo }
                             .testTag("Stream_MessageEditedLabel"),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
-                        style = ChatTheme.typography.footnote,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        style = textStyle,
                     )
                 }
             }
@@ -145,10 +144,9 @@ public fun MessageFooter(
                             .padding(end = 4.dp)
                             .weight(1f, fill = false),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
-                        style = ChatTheme.typography.footnote,
+                        style = textStyle,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 1,
-                        color = ChatTheme.colors.textLowEmphasis,
                     )
                     MessageEditedTimestamp(message = message)
                 }
@@ -174,5 +172,10 @@ internal fun MessageEditedTimestamp(
     formatType: DateFormatType = DateFormatType.RELATIVE,
 ) {
     val editedAt = message.messageTextUpdatedAt?.truncateFuture()
-    Timestamp(date = editedAt, modifier = modifier, formatType = formatType)
+    Timestamp(
+        date = editedAt,
+        modifier = modifier,
+        formatType = formatType,
+        textStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp)
+    )
 }
