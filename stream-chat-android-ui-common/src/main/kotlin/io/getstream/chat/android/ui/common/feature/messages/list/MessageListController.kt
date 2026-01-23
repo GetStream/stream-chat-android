@@ -940,8 +940,7 @@ public class MessageListController(
                 isInThread = isInThread,
             )
 
-            val isLastMessageInGroup =
-                position.contains(MessagePosition.BOTTOM) || position.contains(MessagePosition.NONE)
+            val isLastMessageInGroup = position == MessagePosition.BOTTOM || position == MessagePosition.NONE
 
             val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
                 message = message,
