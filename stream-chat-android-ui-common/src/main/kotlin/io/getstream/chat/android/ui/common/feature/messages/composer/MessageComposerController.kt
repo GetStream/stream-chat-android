@@ -588,14 +588,17 @@ public class MessageComposerController(
             is ThreadReply -> {
                 setMessageMode(MessageMode.MessageThread(messageAction.message))
             }
+
             is Reply -> {
                 messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
             }
+
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
+
             else -> {
                 // no op, custom user action
             }
@@ -718,7 +721,10 @@ public class MessageComposerController(
             chatClient.sendMessage(
                 channelType,
                 channelId,
-                message.copy(showInChannel = isInThread && alsoSendToChannel.value),
+                message.copy(
+                    showInChannel = isInThread && alsoSendToChannel.value,
+                    skipEnrichUrl = linkPreviews.value.isEmpty(),
+                ),
             ).doOnResult(scope) { result ->
                 result.onSuccessSuspend { resultMessage ->
                     if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
@@ -1131,5 +1137,12 @@ public class MessageComposerController(
     private fun MessageMode.emptyDraftMessage(): DraftMessage = when (this) {
         is MessageMode.MessageThread -> DraftMessage(cid = channelCid, parentId = parentMessage.id)
         else -> DraftMessage(cid = channelCid)
+    }
+
+    /**
+     * Cancels any link preview.
+     */
+    public fun cancelLinkPreview() {
+        linkPreviews.value = emptyList()
     }
 }

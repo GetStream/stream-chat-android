@@ -244,7 +244,6 @@ public fun DefaultAudioRecordButton(
                 .testTag("Stream_ComposerRecordAudioButton"),
             painter = style.icon.painter,
             contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-            tint = style.icon.tint,
         )
     }
 }

@@ -135,7 +135,7 @@ private object AddingCustomAttachmentsSnippet {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            integrations = { // here
+            leadingContent = { // here
                 IconButton(
                     modifier = Modifier
                         .size(48.dp)

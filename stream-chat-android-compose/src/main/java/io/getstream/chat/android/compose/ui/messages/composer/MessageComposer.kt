@@ -16,53 +16,39 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer
 
-import android.Manifest
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.LocalMessageComposerFloatingStyleEnabled
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
+import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -70,15 +56,11 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.Edit
-import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -95,6 +77,7 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
  * @param onLinkPreviewClick Handler when the user taps on a link preview.
+ * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
@@ -103,9 +86,7 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param integrations A view that represents custom integrations. By default, we provide
- * [DefaultComposerIntegrations], which show Attachments & Commands, but users can override this with
- * their own integrations, which they need to hook up to their own data providers and UI.
+ * @param leadingContent The content shown at the start of the message composer.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
@@ -124,6 +105,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: (() -> Unit)? = { viewModel.cancelLinkPreview() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
@@ -157,27 +139,47 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected,
         )
     },
-    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageComposerIntegrations(
+            MessageComposerLeadingContent(
                 state = it,
                 onAttachmentsClick = onAttachmentsClick,
-                onCommandsClick = onCommandsClick,
             )
         }
     },
     label: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
-    input: @Composable RowScope.(MessageComposerState) -> Unit = {
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
-                state = it,
+                state = state,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 label = label,
                 onCancel = onCancelAction,
+                onSendClick = { input, attachments ->
+                    val message = viewModel.buildNewMessage(input, attachments)
+                    onSendMessage(message)
+                },
+                recordingActions = recordingActions,
+                leadingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                        state = state,
+                    )
+                },
+                trailingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                        state = state,
+                        onSendClick = { input, attachments ->
+                            val message = viewModel.buildNewMessage(input, attachments)
+                            onSendMessage(message)
+                        },
+                        recordingActions = recordingActions,
+                    )
+                },
             )
         }
     },
@@ -192,11 +194,6 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
-            onSendClick = { input, attachments ->
-                val message = viewModel.buildNewMessage(input, attachments)
-                onSendMessage(message)
-            },
-            recordingActions = recordingActions,
         )
     },
 ) {
@@ -217,7 +214,7 @@ public fun MessageComposer(
         footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
         commandPopupContent = commandPopupContent,
-        integrations = integrations,
+        leadingContent = leadingContent,
         input = input,
         audioRecordingContent = audioRecordingContent,
         trailingContent = trailingContent,
@@ -244,6 +241,8 @@ public fun MessageComposer(
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onLinkPreviewClick Handler when the user taps on a link preview.
+ * @param onCancelLinkPreviewClick Handler when the user taps on the cancel link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
@@ -252,9 +251,7 @@ public fun MessageComposer(
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
- * @param integrations A view that represents custom integrations. By default, we provide
- * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
- * their own integrations, which they need to hook up to their own data providers and UI.
+ * @param leadingContent The content shown at the start of the message composer.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
@@ -273,6 +270,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: (() -> Unit)? = null,
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -306,27 +304,41 @@ public fun MessageComposer(
             onCommandSelected = onCommandSelected,
         )
     },
-    integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
+    leadingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageComposerIntegrations(
+            MessageComposerLeadingContent(
                 state = it,
                 onAttachmentsClick = onAttachmentsClick,
-                onCommandsClick = onCommandsClick,
             )
         }
     },
     label: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
-    input: @Composable RowScope.(MessageComposerState) -> Unit = {
+    input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
-                state = it,
+                state = state,
                 onInputChanged = onValueChange,
                 onAttachmentRemoved = onAttachmentRemoved,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
                 label = label,
+                onSendClick = onSendMessage,
+                recordingActions = recordingActions,
+                leadingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputLeadingContent(
+                        state = state,
+                    )
+                },
+                trailingContent = {
+                    ChatTheme.componentFactory.MessageComposerInputTrailingContent(
+                        state = state,
+                        onSendClick = onSendMessage,
+                        recordingActions = recordingActions,
+                    )
+                },
             )
         }
     },
@@ -341,12 +353,13 @@ public fun MessageComposer(
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
-            onSendClick = onSendMessage,
-            recordingActions = recordingActions,
         )
     },
 ) {
-    val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
+    val activeAction = messageComposerState.action
+    val validationErrors = messageComposerState.validationErrors
+    val mentionSuggestions = messageComposerState.mentionSuggestions
+    val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = remember { SnackbarHostState() }
 
     val isRecording = messageComposerState.recording !is RecordingState.Idle
@@ -356,24 +369,30 @@ public fun MessageComposer(
         snackbarHostState = snackbarHostState,
     )
 
-    Surface(
+    MessageComposerSurface(
         modifier = modifier,
-        shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
-        color = ChatTheme.colors.barsBackground,
+        floatingStyleEnabled = ChatTheme.messageComposerFloatingStyleEnabled,
     ) {
         Column(Modifier.padding(vertical = 4.dp)) {
             headerContent(messageComposerState)
 
             Row(
-                Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingMd,
+                        end = StreamTokens.spacingMd,
+                        top = if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                            0.dp
+                        } else {
+                            StreamTokens.spacingMd
+                        },
+                        bottom = StreamTokens.spacing2xl,
+                    ),
                 verticalAlignment = Bottom,
             ) {
                 if (activeAction !is Edit) {
-                    integrations(messageComposerState)
-                } else {
-                    Spacer(
-                        modifier = Modifier.size(16.dp),
-                    )
+                    leadingContent(messageComposerState)
                 }
 
                 input(messageComposerState)
@@ -402,372 +421,26 @@ public fun MessageComposer(
     }
 }
 
-/**
- * Represents the default content shown at the top of the message composer component.
- *
- * @param messageComposerState The state of the message composer.
- * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
- * @param onLinkPreviewClick Handler when the user taps on a link preview.
- */
 @Composable
-public fun DefaultMessageComposerHeaderContent(
-    messageComposerState: MessageComposerState,
-    onCancelAction: () -> Unit,
-    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
-) {
-    val activeAction = messageComposerState.action
-
-    if (activeAction != null) {
-        ChatTheme.componentFactory.MessageComposerMessageInputOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp),
-            activeAction = activeAction,
-            onCancel = onCancelAction,
-        )
-    }
-}
-
-/**
- * Represents the default content shown at the bottom of the message composer component.
- *
- * @param messageComposerState The state of the message composer.
- * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
- */
-@Deprecated(
-    message = "Use ChatComponentFactory.MessageComposerFooterContent to customize the footer content",
-    level = DeprecationLevel.WARNING,
-)
-@Composable
-public fun DefaultMessageComposerFooterContent(
-    messageComposerState: MessageComposerState,
-    onAlsoSendToChannelSelected: (Boolean) -> Unit,
-) {
-    if (messageComposerState.messageMode is MessageMode.MessageThread) {
-        DefaultMessageComposerFooterInThreadMode(
-            alsoSendToChannel = messageComposerState.alsoSendToChannel,
-            onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
-        )
-    }
-}
-
-@Composable
-internal fun DefaultMessageComposerFooterInThreadMode(
-    alsoSendToChannel: Boolean,
-    onAlsoSendToChannelChanged: (Boolean) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Checkbox(
-            modifier = Modifier.testTag("Stream_AlsoSendToChannel"),
-            checked = alsoSendToChannel,
-            onCheckedChange = onAlsoSendToChannelChanged,
-            colors = CheckboxDefaults.colors(
-                ChatTheme.colors.primaryAccent,
-                ChatTheme.colors.textLowEmphasis,
-            ),
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        Text(
-            text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-            color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center,
-            style = ChatTheme.typography.body,
-        )
-    }
-}
-
-/**
- * Composable that represents the message composer integrations (special actions).
- *
- * Currently just shows the Attachment picker action.
- *
- * @param messageInputState The state of the input.
- * @param onAttachmentsClick Handler when the user selects attachments.
- * @param onCommandsClick Handler when the user selects commands.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
- */
-@Composable
-internal fun DefaultComposerIntegrations(
-    messageInputState: MessageComposerState,
-    onAttachmentsClick: () -> Unit,
-    onCommandsClick: () -> Unit,
-    ownCapabilities: Set<String>,
-) {
-    val hasTextInput = messageInputState.inputValue.isNotEmpty()
-    val hasAttachments = messageInputState.attachments.isNotEmpty()
-    val hasCommandInput = messageInputState.inputValue.startsWith("/")
-    val hasCommandSuggestions = messageInputState.commandSuggestions.isNotEmpty()
-    val hasMentionSuggestions = messageInputState.mentionSuggestions.isNotEmpty()
-
-    val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
-    val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
-
-    val canSendMessage = messageInputState.canSendMessage()
-
-    val isRecording = messageInputState.recording !is RecordingState.Idle
-
-    if (canSendMessage && !isRecording) {
-        Row(
-            modifier = Modifier
-                .heightIn(min = ComposerActionContainerMinHeight)
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            val canUploadFile = messageInputState.canUploadFile()
-            if (canUploadFile) {
-                with(ChatTheme.componentFactory) {
-                    MessageComposerAttachmentsButton(
-                        enabled = isAttachmentsButtonEnabled,
-                        onClick = onAttachmentsClick,
-                    )
-                }
-            }
-
-            AnimatedVisibility(visible = messageInputState.hasCommands) {
-                with(ChatTheme.componentFactory) {
-                    MessageComposerCommandsButton(
-                        hasCommandSuggestions = hasCommandSuggestions,
-                        enabled = isCommandsButtonEnabled,
-                        onClick = onCommandsClick,
-                    )
-                }
-            }
-        }
-    } else {
-        Spacer(modifier = Modifier.width(12.dp))
-    }
-}
-
-/**
- * Default input field label that the user can override in [MessageComposer].
- *
- * @param state The state of the message input.
- */
-@Composable
-internal fun DefaultComposerLabel(state: MessageComposerState) {
-    val text = if (state.canSendMessage()) {
-        stringResource(id = R.string.stream_compose_message_label)
-    } else {
-        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
-    }
-
-    Text(
-        text = text,
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.messageComposerTheme.inputField.textStyle,
-    )
-}
-
-/**
- * Represents the default input content of the Composer.
- *
- * @param label Customizable composable that represents the input field label (hint).
- * @param messageComposerState The state of the message input.
- * @param onValueChange Handler when the input field value changes.
- * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
- */
-@Suppress("LongParameterList")
-@Composable
-internal fun RowScope.DefaultComposerInputContent(
+private fun MessageComposerSurface(
     modifier: Modifier,
-    messageComposerState: MessageComposerState,
-    onValueChange: (String) -> Unit,
-    onAttachmentRemoved: (Attachment) -> Unit,
-    onCancelAction: () -> Unit,
-    onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-    label: @Composable (MessageComposerState) -> Unit,
+    floatingStyleEnabled: Boolean,
+    content: @Composable () -> Unit,
 ) {
-    val isRecording = messageComposerState.recording !is RecordingState.Idle
-    MessageInput(
-        modifier = if (isRecording) {
-            modifier.size(0.dp)
-        } else {
-            modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .weight(1f)
-        },
-        label = label,
-        messageComposerState = messageComposerState,
-        onValueChange = onValueChange,
-        onAttachmentRemoved = onAttachmentRemoved,
-        onCancelAction = onCancelAction,
-        onLinkPreviewClick = onLinkPreviewClick,
-    )
-}
-
-/**
- * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
- *
- * @param messageComposerState The state of the message input.
- * @param onSendMessage Handler when the user wants to send a message.
- * @param recordingActions The actions that can be performed on an audio recording.
- */
-@Composable
-internal fun DefaultMessageComposerTrailingContent(
-    messageComposerState: MessageComposerState,
-    onSendMessage: (String, List<Attachment>) -> Unit,
-    recordingActions: AudioRecordingActions,
-) {
-    val value = messageComposerState.inputValue
-    val coolDownTime = messageComposerState.coolDownTime
-    val validationErrors = messageComposerState.validationErrors
-    val attachments = messageComposerState.attachments
-    val isInEditMode = messageComposerState.action is Edit
-
-    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
-    val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
-
-    val canSendMessage = messageComposerState.canSendMessage()
-    val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
-
-    if (coolDownTime > 0 && !isInEditMode) {
-        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(modifier = Modifier, coolDownTime = coolDownTime)
+    if (floatingStyleEnabled) {
+        Box(
+            modifier = modifier,
+        ) {
+            content()
+        }
     } else {
-        val isRecording = messageComposerState.recording !is RecordingState.Idle
-
-        val sendButtonEnabled = canSendMessage && isInputValid
-        val sendButtonVisible = when {
-            !isRecordingEnabled -> true
-            isRecording -> false
-            showRecordOverSend -> sendButtonEnabled
-            else -> true
-        }
-        if (sendButtonVisible) {
-            Box(
-                modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
-                contentAlignment = Center,
-            ) {
-                ChatTheme.componentFactory.MessageComposerSendButton(
-                    enabled = sendButtonEnabled,
-                    isInputValid = isInputValid,
-                    onClick = {
-                        if (isInputValid) {
-                            onSendMessage(value, attachments)
-                        }
-                    },
-                )
-            }
-        }
-
-        val recordButtonVisible = when {
-            !canSendMessage || !isRecordingEnabled -> false
-            showRecordOverSend -> !sendButtonEnabled
-            else -> true
-        }
-        if (recordButtonVisible) {
-            ChatTheme.componentFactory.MessageComposerAudioRecordButton(
-                state = messageComposerState.recording,
-                recordingActions = recordingActions,
-            )
-        }
+        Surface(
+            modifier = modifier,
+            shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
+            color = ChatTheme.colors.barsBackground,
+            content = content,
+        )
     }
-}
-
-/**
- * Default implementation of the "Attachments" button.
- */
-@Composable
-internal fun AttachmentsButton(
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val attachmentsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.attachmentsButton
-    IconButton(
-        enabled = enabled,
-        modifier = Modifier
-            .size(attachmentsButtonStyle.size)
-            .padding(attachmentsButtonStyle.padding)
-            .testTag("Stream_ComposerAttachmentsButton"),
-        content = {
-            Icon(
-                modifier = Modifier.size(attachmentsButtonStyle.icon.size),
-                painter = attachmentsButtonStyle.icon.painter,
-                contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                tint = if (enabled) {
-                    attachmentsButtonStyle.icon.tint
-                } else {
-                    ChatTheme.colors.disabled
-                },
-            )
-        },
-        onClick = onClick,
-    )
-}
-
-/**
- * Default implementation of the "Commands" button.
- */
-@Composable
-internal fun CommandsButton(
-    hasCommandSuggestions: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val commandsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.commandsButton
-    val tint = if (hasCommandSuggestions && enabled) {
-        ChatTheme.colors.primaryAccent
-    } else if (enabled) {
-        commandsButtonStyle.icon.tint
-    } else {
-        ChatTheme.colors.disabled
-    }
-    IconButton(
-        modifier = Modifier
-            .size(commandsButtonStyle.size)
-            .padding(commandsButtonStyle.padding)
-            .testTag("Stream_ComposerCommandsButton"),
-        enabled = enabled,
-        content = {
-            Icon(
-                modifier = Modifier.size(commandsButtonStyle.icon.size),
-                painter = commandsButtonStyle.icon.painter,
-                contentDescription = stringResource(R.string.stream_compose_message_composer_instant_commands),
-                tint = tint,
-            )
-        },
-        onClick = onClick,
-    )
-}
-
-/**
- * Default implementation of the "Send" button.
- */
-@Composable
-internal fun SendButton(
-    enabled: Boolean,
-    isInputValid: Boolean,
-    onClick: () -> Unit,
-) {
-    val layoutDirection = LocalLayoutDirection.current
-    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
-    IconButton(
-        modifier = Modifier
-            .size(sendButtonStyle.size)
-            .padding(sendButtonStyle.padding)
-            .testTag("Stream_ComposerSendButton"),
-        enabled = enabled,
-        content = {
-            Icon(
-                modifier = Modifier
-                    .size(sendButtonStyle.icon.size)
-                    .mirrorRtl(layoutDirection = layoutDirection),
-                painter = sendButtonStyle.icon.painter,
-                contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                tint = if (isInputValid) ChatTheme.colors.primaryAccent else sendButtonStyle.icon.tint,
-            )
-        },
-        onClick = onClick,
-    )
 }
 
 /**
@@ -844,8 +517,41 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
     }
 }
 
-/**
- * Defines the minimum height for the MessageComposer action containers.
- * Used to ensure that container before the composer has the same min height as the container after the composer.
- */
-private val ComposerActionContainerMinHeight = 44.dp
+@Preview
+@Composable
+private fun MessageComposerDefaultStylePreview() {
+    ChatTheme {
+        MessageComposerDefaultStyle()
+    }
+}
+
+@Composable
+internal fun MessageComposerDefaultStyle() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState,
+        onSendMessage = { _, _ -> },
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStylePreview() {
+    ChatTheme {
+        MessageComposerFloatingStyle()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyle() {
+    CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState,
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
+private val PreviewMessageComposerState = MessageComposerState(
+    ownCapabilities = ChannelCapabilities.toSet(),
+    hasCommands = true,
+)

@@ -25,29 +25,29 @@ open class MessageListPage {
     class Header {
 
         companion object {
-            val channelAvatar = By.res("Stream_ChannelAvatar")
-            val channelName = By.res("Stream_ChannelName")
-            val participantsInfo = By.res("Stream_ParticipantsInfo")
-            val backButton = By.res("Stream_BackButton")
+            val channelAvatar get() = By.res("Stream_ChannelAvatar")
+            val channelName get() = By.res("Stream_ChannelName")
+            val participantsInfo get() = By.res("Stream_ParticipantsInfo")
+            val backButton get() = By.res("Stream_BackButton")
         }
     }
 
     class MembersList {
 
         companion object {
-            val members = By.res("Stream_MembersList")
+            val members get() = By.res("Stream_MembersList")
         }
     }
 
     class AttachmentPicker {
 
         companion object {
-            val view = By.res("Stream_AttachmentsPicker")
-            val sendButton = By.res("Stream_AttachmentPickerSendButton")
-            val filesTab = By.res("Stream_AttachmentPickerFilesTab")
-            val mediaCaptureTab = By.res("Stream_AttachmentPickerMediaCaptureTab")
-            val pollsTab = By.res("Stream_AttachmentPickerPollsTab")
-            val findFilesButton = By.res("Stream_FindFilesButton")
+            val view get() = By.res("Stream_AttachmentsPicker")
+            val sendButton get() = By.res("Stream_AttachmentPickerSendButton")
+            val filesTab get() = By.res("Stream_AttachmentPickerFilesTab")
+            val mediaCaptureTab get() = By.res("Stream_AttachmentPickerMediaCaptureTab")
+            val pollsTab get() = By.res("Stream_AttachmentPickerPollsTab")
+            val findFilesButton get() = By.res("Stream_FindFilesButton")
             val rootsButton = By.descContains("Show roots")
             val downloadsView = By.text("Downloads")
             val image1 = By.text("file_1.png")
@@ -60,86 +60,85 @@ open class MessageListPage {
     class Composer {
 
         companion object {
-            val inputField = By.res("Stream_ComposerInputField")
-            val sendButton = By.res("Stream_ComposerSendButton")
-            val recordAudioButton = By.res("Stream_ComposerRecordAudioButton")
-            val commandsButton = By.res("Stream_ComposerCommandsButton")
-            val suggestionList = By.res("Stream_SuggestionList")
-            val suggestionListTitle = By.res("Stream_SuggestionListTitle")
-            val participantMentionSuggestion = By.res("Stream_MentionSuggestionItem")
-            val giphyButton = By.res("Stream_SuggestionListGiphyButton")
-            val attachmentsButton = By.res("Stream_ComposerAttachmentsButton")
-            val quotedMessage = By.res("Stream_QuotedMessage")
-            val quotedMessageAvatar = By.res("Stream_QuotedMessageAuthorAvatar")
-            val cancelButton = By.res("Stream_ComposerCancelButton")
-            val attachmentCancelIcon = By.res("Stream_AttachmentCancelIcon")
-            val columnWithMultipleFileAttachments = By.res("Stream_FileAttachmentPreviewContent")
-            val columnWithMultipleMediaAttachments = By.res("Stream_MediaAttachmentPreviewContent")
-            val mediaAttachment = By.res("Stream_MediaAttachmentPreviewItem")
-            val fileSize = By.res("Stream_FileSizeInPreview")
-            val fileName = By.res("Stream_FileNameInPreview")
+            val inputField get() = By.res("Stream_ComposerInputField")
+            val sendButton get() = By.res("Stream_ComposerSendButton")
+            val recordAudioButton get() = By.res("Stream_ComposerRecordAudioButton")
+            val commandsButton get() = By.res("Stream_ComposerCommandsButton")
+            val suggestionList get() = By.res("Stream_SuggestionList")
+            val suggestionListTitle get() = By.res("Stream_SuggestionListTitle")
+            val participantMentionSuggestion get() = By.res("Stream_MentionSuggestionItem")
+            val giphyButton get() = By.res("Stream_SuggestionListGiphyButton")
+            val attachmentsButton get() = By.res("Stream_ComposerAttachmentsButton")
+            val quotedMessage get() = By.res("Stream_QuotedMessage")
+            val cancelButton get() = By.res("Stream_ComposerCancelButton")
+            val attachmentCancelIcon get() = By.res("Stream_AttachmentCancelIcon")
+            val columnWithMultipleFileAttachments get() = By.res("Stream_FileAttachmentPreviewContent")
+            val columnWithMultipleMediaAttachments get() = By.res("Stream_MediaAttachmentPreviewContent")
+            val mediaAttachment get() = By.res("Stream_MediaAttachmentPreviewItem")
+            val fileSize get() = By.res("Stream_FileSizeInPreview")
+            val fileName get() = By.res("Stream_FileNameInPreview")
             val fileImage = MessageList.Message.fileImage
-            val linkPreviewImage = By.res("Stream_LinkPreviewImage")
-            val linkPreviewTitle = By.res("Stream_LinkPreviewTitle")
-            val linkPreviewDescription = By.res("Stream_LinkPreviewDescription")
+            val linkPreviewImage get() = By.res("Stream_LinkPreviewImage")
+            val linkPreviewTitle get() = By.res("Stream_LinkPreviewTitle")
+            val linkPreviewDescription get() = By.res("Stream_LinkPreviewDescription")
+            val linkPreviewCancelButton get() = By.res("Stream_LinkPreviewCancelButton")
         }
     }
 
     class MessageList {
 
         companion object {
-            val messageList = By.res("Stream_MessageList")
-            val messages = By.res("Stream_MessageCell")
-            val dateSeparator = By.res("Stream_MessageDateSeparator")
-            val unreadMessagesBadge = By.res("Stream_UnreadMessagesBadge")
-            val typingIndicator = By.res("Stream_MessageListTypingIndicator")
-            val scrollToBottomButton = By.res("Stream_ScrollToBottomButton")
-            val systemMessage = By.res("Stream_SystemMessage")
+            val messageList get() = By.res("Stream_MessageList")
+            val messages get() = By.res("Stream_MessageCell")
+            val dateSeparator get() = By.res("Stream_MessageDateSeparator")
+            val unreadMessagesBadge get() = By.res("Stream_UnreadMessagesBadge")
+            val typingIndicator get() = By.res("Stream_MessageListTypingIndicator")
+            val scrollToBottomButton get() = By.res("Stream_ScrollToBottomButton")
+            val systemMessage get() = By.res("Stream_SystemMessage")
         }
 
         class Message {
 
             companion object {
-                val avatar = By.res("Stream_UserAvatar")
-                val authorName = By.res("Stream_MessageAuthorName")
-                val text = By.res("Stream_MessageText")
-                val clickableText = By.res("Stream_MessageClickableText")
-                val deliveryStatusIsRead = By.res("Stream_MessageReadStatus_isRead")
-                val deliveryStatusIsPending = By.res("Stream_MessageReadStatus_isPending")
-                val deliveryStatusIsSent = By.res("Stream_MessageReadStatus_isSent")
-                val deliveryStatusIsFailed = By.res("Stream_MessageFailedIcon")
-                val readCount = By.res("Stream_MessageReadCount")
-                val timestamp = By.res("Stream_Timestamp")
-                val quotedMessage = By.res("Stream_QuotedMessage")
-                val quotedMessageAvatar = By.res("Stream_QuotedMessageAuthorAvatar")
-                val threadRepliesLabel = By.res("Stream_ThreadRepliesLabel")
-                val threadParticipantAvatar = By.res("Stream_ThreadParticipantAvatar")
-                val editedLabel = By.res("Stream_MessageEditedLabel")
-                val deletedMessage = By.res("Stream_MessageDeleted")
-                val messageHeaderLabel = By.res("Stream_MessageHeaderLabel") // e.g.: Pinned by you
-                val image = By.res("Stream_MediaContent_Image")
-                val video = By.res("Stream_MediaContent_Video")
-                val columnWithMultipleMediaAttachments = By.res("Stream_MultipleMediaAttachmentsColumn")
-                val fileImage = By.res("Stream_FileAttachmentImage")
-                val fileName = By.res("Stream_FileAttachmentName")
-                val fileSize = By.res("Stream_FileAttachmentSize")
-                val fileDownloadButton = By.res("Stream_FileAttachmentDownloadButton")
-                val columnWithMultipleFileAttachments = By.res("Stream_MultipleFileAttachmentsColumn")
-                val giphy = By.res("Stream_GiphyContent")
-                val linkPreviewImage = By.res("Stream_LinkAttachmentPreview")
-                val linkPreviewTitle = By.res("Stream_LinkAttachmentTitle")
-                val linkPreviewDescription = By.res("Stream_LinkAttachmentDescription")
+                val avatar get() = By.res("Stream_UserAvatar")
+                val authorName get() = By.res("Stream_MessageAuthorName")
+                val text get() = By.res("Stream_MessageText")
+                val clickableText get() = By.res("Stream_MessageClickableText")
+                val deliveryStatusIsRead get() = By.res("Stream_MessageReadStatus_isRead")
+                val deliveryStatusIsPending get() = By.res("Stream_MessageReadStatus_isPending")
+                val deliveryStatusIsSent get() = By.res("Stream_MessageReadStatus_isSent")
+                val deliveryStatusIsFailed get() = By.res("Stream_MessageFailedIcon")
+                val readCount get() = By.res("Stream_MessageReadCount")
+                val timestamp get() = By.res("Stream_Timestamp")
+                val quotedMessage get() = By.res("Stream_QuotedMessage")
+                val threadRepliesLabel get() = By.res("Stream_ThreadRepliesLabel")
+                val threadParticipantAvatar get() = By.res("Stream_ThreadParticipantAvatar")
+                val editedLabel get() = By.res("Stream_MessageEditedLabel")
+                val deletedMessage get() = By.res("Stream_MessageDeleted")
+                val messageHeaderLabel get() = By.res("Stream_MessageHeaderLabel") // e.g.: Pinned by you
+                val image get() = By.res("Stream_MediaContent_Image")
+                val video get() = By.res("Stream_MediaContent_Video")
+                val columnWithMultipleMediaAttachments get() = By.res("Stream_MultipleMediaAttachmentsColumn")
+                val fileImage get() = By.res("Stream_FileAttachmentImage")
+                val fileName get() = By.res("Stream_FileAttachmentName")
+                val fileSize get() = By.res("Stream_FileAttachmentSize")
+                val fileDownloadButton get() = By.res("Stream_FileAttachmentDownloadButton")
+                val columnWithMultipleFileAttachments get() = By.res("Stream_MultipleFileAttachmentsColumn")
+                val giphy get() = By.res("Stream_GiphyContent")
+                val linkPreviewImage get() = By.res("Stream_LinkAttachmentPreview")
+                val linkPreviewTitle get() = By.res("Stream_LinkAttachmentTitle")
+                val linkPreviewDescription get() = By.res("Stream_LinkAttachmentDescription")
             }
 
             class Reactions {
 
                 companion object {
-                    val reactions = By.res("Stream_MessageReaction")
-                    private val like = By.res("Stream_MessageReaction_${ReactionType.LIKE.reaction}")
-                    private val love = By.res("Stream_MessageReaction_${ReactionType.LOVE.reaction}")
-                    private val lol = By.res("Stream_MessageReaction_${ReactionType.LOL.reaction}")
-                    private val wow = By.res("Stream_MessageReaction_${ReactionType.WOW.reaction}")
-                    private val sad = By.res("Stream_MessageReaction_${ReactionType.SAD.reaction}")
+                    val reactions get() = By.res("Stream_MessageReaction")
+                    private val like get() = By.res("Stream_MessageReaction_${ReactionType.LIKE.reaction}")
+                    private val love get() = By.res("Stream_MessageReaction_${ReactionType.LOVE.reaction}")
+                    private val lol get() = By.res("Stream_MessageReaction_${ReactionType.LOL.reaction}")
+                    private val wow get() = By.res("Stream_MessageReaction_${ReactionType.WOW.reaction}")
+                    private val sad get() = By.res("Stream_MessageReaction_${ReactionType.SAD.reaction}")
 
                     fun reaction(type: ReactionType): BySelector {
                         return when (type) {
@@ -156,37 +155,37 @@ open class MessageListPage {
             class GiphyButtons {
 
                 companion object {
-                    val cancel = By.res("Stream_GiphyButton_Cancel")
-                    val shuffle = By.res("Stream_GiphyButton_Shuffle")
-                    val send = By.res("Stream_GiphyButton_Send")
+                    val cancel get() = By.res("Stream_GiphyButton_Cancel")
+                    val shuffle get() = By.res("Stream_GiphyButton_Shuffle")
+                    val send get() = By.res("Stream_GiphyButton_Send")
                 }
             }
 
             class ContextMenu {
 
                 companion object {
-                    val reply = By.res("Stream_ContextMenu_Reply")
-                    val resend = By.res("Stream_ContextMenu_Resend")
-                    val threadReply = By.res("Stream_ContextMenu_Thread reply")
-                    val markAsUnread = By.res("Stream_ContextMenu_Mark as Unread")
-                    val copy = By.res("Stream_ContextMenu_Copy Message")
-                    val edit = By.res("Stream_ContextMenu_Edit Message")
-                    val flag = By.res("Stream_ContextMenu_Flag Message")
-                    val pin = By.res("Stream_ContextMenu_Pin to this Chat")
-                    val unpin = By.res("Stream_ContextMenu_Unpin from this Chat")
-                    val block = By.res("Stream_ContextMenu_Block user")
-                    val delete = By.res("Stream_ContextMenu_Delete Message")
+                    val reply get() = By.res("Stream_ContextMenu_Reply")
+                    val resend get() = By.res("Stream_ContextMenu_Resend")
+                    val threadReply get() = By.res("Stream_ContextMenu_Thread reply")
+                    val markAsUnread get() = By.res("Stream_ContextMenu_Mark as Unread")
+                    val copy get() = By.res("Stream_ContextMenu_Copy Message")
+                    val edit get() = By.res("Stream_ContextMenu_Edit Message")
+                    val flag get() = By.res("Stream_ContextMenu_Flag Message")
+                    val pin get() = By.res("Stream_ContextMenu_Pin to this Chat")
+                    val unpin get() = By.res("Stream_ContextMenu_Unpin from this Chat")
+                    val block get() = By.res("Stream_ContextMenu_Block user")
+                    val delete get() = By.res("Stream_ContextMenu_Delete Message")
                     val ok = By.text("OK")
                 }
 
                 class ReactionsView {
 
                     companion object {
-                        private val like = By.res("Stream_Reaction_${ReactionType.LIKE.reaction}")
-                        private val love = By.res("Stream_Reaction_${ReactionType.LOVE.reaction}")
-                        private val lol = By.res("Stream_Reaction_${ReactionType.LOL.reaction}")
-                        private val wow = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
-                        private val sad = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
+                        private val like get() = By.res("Stream_Reaction_${ReactionType.LIKE.reaction}")
+                        private val love get() = By.res("Stream_Reaction_${ReactionType.LOVE.reaction}")
+                        private val lol get() = By.res("Stream_Reaction_${ReactionType.LOL.reaction}")
+                        private val wow get() = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
+                        private val sad get() = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
 
                         fun reaction(type: ReactionType): BySelector {
                             return when (type) {

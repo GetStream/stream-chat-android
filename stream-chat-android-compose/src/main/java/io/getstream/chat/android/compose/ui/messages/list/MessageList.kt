@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import io.getstream.chat.android.compose.R
@@ -98,7 +97,7 @@ public fun MessageList(
     viewModel: MessageListViewModel,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    contentPadding: PaddingValues = PaddingValues(),
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.value.parentMessageId),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
@@ -177,6 +176,7 @@ public fun MessageList(
             MessageListHelperContent(
                 messageListState = viewModel.currentMessagesState.value,
                 messagesLazyListState = messagesLazyListState,
+                contentPadding = contentPadding,
                 onScrollToBottomClick = onScrollToBottomClicked,
             )
         }
@@ -386,7 +386,7 @@ public fun MessageList(
     threadMessagesStart: ThreadMessagesStart? = null,
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    contentPadding: PaddingValues = PaddingValues(),
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesPageStartReached: () -> Unit = {},
@@ -426,6 +426,7 @@ public fun MessageList(
             MessageListHelperContent(
                 messageListState = currentState,
                 messagesLazyListState = messagesLazyListState,
+                contentPadding = contentPadding,
                 onScrollToBottomClick = onScrollToBottom,
             )
         }

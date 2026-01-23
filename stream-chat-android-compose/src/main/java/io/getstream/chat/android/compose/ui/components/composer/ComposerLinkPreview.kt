@@ -37,11 +37,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -80,34 +76,32 @@ private const val TAG = "ComposerLinkPreview"
  *
  * @param linkPreview - The link preview to show.
  * @param modifier Modifier for styling.
- * @param onClick Lambda called when an item gets clicked.
+ * @param onContentClick The handler called when the content is clicked.
+ * @param onCancelClick The handler called when the cancel button is clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ComposerLinkPreview(
     modifier: Modifier = Modifier,
     linkPreview: LinkPreview,
-    onClick: ((linkPreview: LinkPreview) -> Unit)? = null,
+    onContentClick: ((linkPreview: LinkPreview) -> Unit)? = null,
+    onCancelClick: (() -> Unit)? = null,
 ) {
-    var previewClosed by rememberSaveable { mutableStateOf(false) }
-
-    if (previewClosed) {
-        return
-    }
-
     val context = LocalContext.current
     val attachment = linkPreview.attachment
     val colors = ChatTheme.colors
     val typography = ChatTheme.typography
     val textColor = colors.textHighEmphasis
 
-    Box {
+    Box(
+        modifier = modifier,
+    ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .combinedClickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { handleLinkPreviewClick(onClick, context, linkPreview) },
+                    onClick = { handleLinkPreviewClick(onContentClick, context, linkPreview) },
                 )
                 .background(colors.chatBgOutgoing, ChatTheme.shapes.attachment)
                 .padding(
@@ -141,11 +135,15 @@ public fun ComposerLinkPreview(
                 )
             }
         }
-        ComposerCancelIcon(
-            Modifier
-                .align(Alignment.TopEnd)
-                .offset(x = StreamTokens.spacing2xs, y = -StreamTokens.spacing2xs),
-        ) { previewClosed = true }
+        onCancelClick?.let { onClick ->
+            ComposerCancelIcon(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .offset(x = StreamTokens.spacing2xs, y = -StreamTokens.spacing2xs)
+                    .testTag("Stream_LinkPreviewCancelButton"),
+                onClick = onClick,
+            )
+        }
     }
 }
 
@@ -239,6 +237,7 @@ internal fun ComposerLinkPreview() {
                 originUrl = "Url",
                 attachment = attachment,
             ),
+            onCancelClick = {},
         )
     }
 }

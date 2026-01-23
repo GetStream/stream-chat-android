@@ -150,18 +150,17 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
-import io.getstream.chat.android.compose.ui.messages.composer.AttachmentsButton
-import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerInputContent
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerIntegrations
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterInThreadMode
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerHeaderContent
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerTrailingContent
-import io.getstream.chat.android.compose.ui.messages.composer.SendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.messages.composer.internal.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInputTrailingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
+import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -811,11 +810,13 @@ public interface ChatComponentFactory {
     public fun BoxScope.MessageListHelperContent(
         messageListState: MessageListState,
         messagesLazyListState: MessagesLazyListState,
+        contentPadding: PaddingValues,
         onScrollToBottomClick: (() -> Unit) -> Unit,
     ) {
         DefaultMessagesHelperContent(
             messagesState = messageListState,
             messagesLazyListState = messagesLazyListState,
+            contentPadding = contentPadding,
             scrollToBottom = onScrollToBottomClick,
         )
     }
@@ -1438,7 +1439,7 @@ public interface ChatComponentFactory {
         footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
-        integrations: @Composable RowScope.(MessageComposerState) -> Unit,
+        leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         label: @Composable (MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
@@ -1462,7 +1463,7 @@ public interface ChatComponentFactory {
             footerContent = footerContent,
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
-            integrations = integrations,
+            leadingContent = leadingContent,
             label = label,
             input = input,
             audioRecordingContent = audioRecordingContent,
@@ -1519,15 +1520,22 @@ public interface ChatComponentFactory {
      *
      * @param modifier The modifier to apply to the composable.
      * @param linkPreview The link preview to show.
-     * @param onClick The action to perform when the link preview is clicked.
+     * @param onContentClick The handler called when the content is clicked.
+     * @param onCancelClick The handler called when the cancel button is clicked.
      */
     @Composable
     public fun MessageComposerLinkPreview(
         modifier: Modifier,
         linkPreview: LinkPreview,
-        onClick: ((LinkPreview) -> Unit)?,
+        onContentClick: ((LinkPreview) -> Unit)?,
+        onCancelClick: (() -> Unit)?,
     ) {
-        ComposerLinkPreview(modifier, linkPreview, onClick)
+        ComposerLinkPreview(
+            modifier = modifier,
+            linkPreview = linkPreview,
+            onContentClick = onContentClick,
+            onCancelClick = onCancelClick,
+        )
     }
 
     /**
@@ -1686,42 +1694,24 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default integrations of the message composer.
-     * Provides the "Attachments" and "Commands" buttons shown before the composer.
+     * The default leading content of the message composer, which includes an add attachment button by default.
      *
      * @param state The current state of the message composer.
-     * @param onAttachmentsClick The action to perform when the "Attachments" button is clicked.
-     * @param onCommandsClick The action to perform when the "Commands" button is clicked.
+     * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
-    public fun RowScope.MessageComposerIntegrations(
+    public fun RowScope.MessageComposerLeadingContent(
         state: MessageComposerState,
         onAttachmentsClick: () -> Unit,
-        onCommandsClick: () -> Unit,
     ) {
-        DefaultComposerIntegrations(state, onAttachmentsClick, onCommandsClick, state.ownCapabilities)
-    }
-
-    /**
-     * The default attachments button of the message composer.
-     *
-     * Used as part of [MessageComposerIntegrations].
-     *
-     * @param enabled Whether the button is enabled.
-     * @param onClick The action to perform when the button is clicked.
-     */
-    @Composable
-    public fun RowScope.MessageComposerAttachmentsButton(
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
-        AttachmentsButton(enabled, onClick)
+        DefaultMessageComposerLeadingContent(
+            messageInputState = state,
+            onAttachmentsClick = onAttachmentsClick,
+        )
     }
 
     /**
      * The default commands button of the message composer.
-     *
-     * Used as part of [MessageComposerIntegrations].
      *
      * @param hasCommandSuggestions Whether there are command suggestions available.
      * @param enabled Whether the button is enabled.
@@ -1749,12 +1739,18 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default input content of the message composer.
+     * The default input of the message composer.
      *
      * @param state The current state of the message composer.
-     * @param onInputChanged The action to perform when the input changes.
+     * @param onInputChanged The action to perform when the input is changed.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
-     * @param label The label to show in the composer.
+     * @param onLinkPreviewClick The action to perform when a link preview is clicked.
+     * @param onCancelLinkPreviewClick The action to perform when the link preview cancel button is clicked.
+     * @param label The label of the message composer.
+     * @param onSendClick The action to perform when the send button is clicked.
+     * @param recordingActions The actions to control the audio recording.
+     * @param leadingContent The leading content of the message composer.
+     * @param trailingContent The trailing content of the message composer.
      */
     @Composable
     public fun RowScope.MessageComposerInput(
@@ -1763,16 +1759,25 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+        onCancelLinkPreviewClick: (() -> Unit)?,
         label: @Composable (MessageComposerState) -> Unit,
+        onSendClick: (String, List<Attachment>) -> Unit,
+        recordingActions: AudioRecordingActions,
+        leadingContent: @Composable RowScope.() -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
     ) {
-        DefaultComposerInputContent(
-            modifier = Modifier.animateContentSize(),
+        DefaultMessageComposerInput(
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             label = label,
+            onSendClick = onSendClick,
+            recordingActions = recordingActions,
+            leadingContent = leadingContent,
+            trailingContent = trailingContent,
         )
     }
 
@@ -1785,6 +1790,7 @@ public interface ChatComponentFactory {
      * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param quotedMessage The message that is being quoted (replied to).
+     * @param onCancelClick The action to perform when the cancel button is clicked.
      */
     @Composable
     public fun MessageComposerQuotedMessage(
@@ -1802,21 +1808,54 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default trailing content of the message composer. Contains the "Send" button, and "Audio record" button (if
-     * enabled).
+     * The default leading content of the message composer.
+     * Shown at the start of the composer input.
+     *
+     * Used as part of [MessageComposerInput].
      *
      * @param state The current state of the message composer.
-     * @param onSendClick The action to perform when the "Send" button is clicked. Supply the message text and
-     * attachments.
+     */
+    @Composable
+    public fun MessageComposerInputLeadingContent(
+        state: MessageComposerState,
+    ) {
+    }
+
+    /**
+     * The default trailing content of the message composer.
+     * Shown at the end of the composer input.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      */
     @Composable
-    public fun MessageComposerTrailingContent(
+    public fun MessageComposerInputTrailingContent(
         state: MessageComposerState,
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
     ) {
-        DefaultMessageComposerTrailingContent(state, onSendClick, recordingActions)
+        DefaultMessageComposerInputTrailingContent(
+            messageComposerState = state,
+            onSendMessage = onSendClick,
+            recordingActions = recordingActions,
+        )
+    }
+
+    /**
+     * The default trailing content of the message composer.
+     * Shown after the composer input.
+     *
+     * Used as part of [MessageComposer].
+     *
+     * @param state The current state of the message composer.
+     */
+    @Composable
+    public fun MessageComposerTrailingContent(
+        state: MessageComposerState,
+    ) {
     }
 
     /**
@@ -1841,17 +1880,13 @@ public interface ChatComponentFactory {
      *
      * Used as part of [MessageComposerTrailingContent].
      *
-     * @param enabled Whether the button is enabled.
-     * @param isInputValid Whether the current input in the message composer is valid.
      * @param onClick The action to perform when the button is clicked.
      */
     @Composable
     public fun MessageComposerSendButton(
-        enabled: Boolean,
-        isInputValid: Boolean,
         onClick: () -> Unit,
     ) {
-        SendButton(enabled, isInputValid, onClick)
+        SendButton(onClick = onClick)
     }
 
     /**
