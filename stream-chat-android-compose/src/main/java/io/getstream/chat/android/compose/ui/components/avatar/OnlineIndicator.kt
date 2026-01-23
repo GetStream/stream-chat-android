@@ -54,4 +54,5 @@ internal enum class OnlineIndicatorSize(val indicatorSize: Dp, val borderWidth: 
     Small(8.dp, 1.dp),
     Medium(12.dp, 2.dp),
     Large(14.dp, 2.dp),
+    ExtraLarge(16.dp, 2.dp),
 }

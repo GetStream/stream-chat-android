@@ -66,6 +66,7 @@ public fun UserAvatar(
 }
 
 private fun BoxWithConstraintsScope.resolveIndicatorSize(): OnlineIndicatorSize = when {
+    maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorSize.ExtraLarge
     maxWidth >= AvatarSize.Large -> OnlineIndicatorSize.Large
     maxWidth >= AvatarSize.Medium -> OnlineIndicatorSize.Medium
     else -> OnlineIndicatorSize.Small

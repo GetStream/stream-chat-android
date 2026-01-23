@@ -83,12 +83,13 @@ public object AvatarSize {
     public val Small: Dp = 24.dp
     public val Medium: Dp = 32.dp
     public val Large: Dp = 40.dp
+    public val ExtraLarge: Dp = 64.dp
 }
 
 @Preview
 @Composable
 private fun AvatarPreview() {
-    val sizes = listOf(AvatarSize.Large, AvatarSize.Medium, AvatarSize.Small, AvatarSize.ExtraSmall)
+    val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
 
     ChatTheme {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
