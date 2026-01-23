@@ -18,25 +18,12 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+private val whitespaceRegex = "\\s+".toRegex()
 internal fun String.initials(): String {
-    val result = StringBuilder(2)
-    var isInsideWord = false
-    var i = 0
-
-    while (result.length < 2 && i < length) {
-        val char = this[i]
-
-        if (char.isWhitespace()) {
-            isInsideWord = false
-        } else if (!isInsideWord) {
-            result.append(char.uppercaseChar())
-            isInsideWord = true
-        }
-
-        i++
-    }
-
-    return result.toString()
+    return trim()
+        .split(whitespaceRegex)
+        .take(2)
+        .joinToString(separator = "") { it.take(1).uppercase() }
 }
 
 /**
