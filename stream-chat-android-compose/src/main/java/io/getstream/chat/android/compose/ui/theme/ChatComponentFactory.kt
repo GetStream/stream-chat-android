@@ -133,7 +133,6 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -882,7 +881,6 @@ public interface ChatComponentFactory {
         DefaultMessageContainer(
             messageListItemState = messageListItem,
             reactionSorting = reactionSorting,
-            messageContentFactory = MessageContentFactory.Deprecated,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -1020,7 +1018,6 @@ public interface ChatComponentFactory {
         DefaultMessageItem(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
-            messageContentFactory = MessageContentFactory.Deprecated,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -1116,10 +1113,7 @@ public interface ChatComponentFactory {
     public fun ColumnScope.MessageItemFooterContent(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageItemFooterContent(
-            messageItem = messageItem,
-            messageContentFactory = MessageContentFactory.Deprecated,
-        )
+        DefaultMessageItemFooterContent(messageItem = messageItem)
     }
 
     /**
@@ -1160,7 +1154,6 @@ public interface ChatComponentFactory {
     ) {
         DefaultMessageItemCenterContent(
             messageItem = messageItem,
-            messageContentFactory = MessageContentFactory.Deprecated,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
@@ -1272,7 +1265,6 @@ public interface ChatComponentFactory {
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
-            messageContentFactory = MessageContentFactory.Deprecated,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onUserMentionClick = onUserMentionClick,

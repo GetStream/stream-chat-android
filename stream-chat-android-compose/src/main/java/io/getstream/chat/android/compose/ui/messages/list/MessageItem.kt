@@ -77,7 +77,6 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
@@ -144,7 +143,6 @@ public fun MessageItem(
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
@@ -179,30 +177,10 @@ public fun MessageItem(
         }
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            with(ChatTheme.componentFactory) {
-                MessageItemCenterContent(
-                    messageItem = messageItem,
-                    onLongItemClick = onLongItemClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onAddAnswer = onAddAnswer,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                )
-            }
-        } else {
-            DefaultMessageItemCenterContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemCenterContent(
                 messageItem = messageItem,
                 onLongItemClick = onLongItemClick,
-                messageContentFactory = messageContentFactory,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onGiphyActionClick = onGiphyActionClick,
                 onQuotedMessageClick = onQuotedMessageClick,
@@ -442,40 +420,24 @@ internal fun DefaultMessageItemHeaderContent(
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory,
 ) {
     val message = messageItem.message
     when {
         message.isUploading() -> {
-            if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.MessageFooterUploadingContent(
-                    modifier = Modifier.align(End),
-                    messageItem = messageItem,
-                )
-            } else {
-                messageContentFactory.UploadingFooterContent(
-                    modifier = Modifier.align(End),
-                    messageItem = messageItem,
-                )
-            }
+            ChatTheme.componentFactory.MessageFooterUploadingContent(
+                modifier = Modifier.align(End),
+                messageItem = messageItem,
+            )
         }
 
         message.isDeleted() && !message.deletedForMe &&
             messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
-                    messageItem = messageItem,
-                )
-            } else {
-                messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
-            }
+            ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
+                messageItem = messageItem,
+            )
         }
 
-        else -> if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
-        } else {
-            messageContentFactory.MessageFooterContent(messageItem = messageItem)
-        }
+        else -> ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
     }
 
     val position = messageItem.groupPosition
@@ -522,7 +484,6 @@ internal fun DefaultMessageItemTrailingContent(
 public fun DefaultMessageItemCenterContent(
     modifier: Modifier = Modifier,
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -570,7 +531,6 @@ public fun DefaultMessageItemCenterContent(
         RegularMessageContent(
             modifier = finalModifier,
             messageItem = messageItem,
-            messageContentFactory = messageContentFactory,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -647,7 +607,6 @@ public fun EmojiMessageContent(
 public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -666,7 +625,6 @@ public fun RegularMessageContent(
     val content = @Composable {
         MessageContent(
             message = message,
-            messageContentFactory = messageContentFactory,
             currentUser = messageItem.currentUser,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
