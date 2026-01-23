@@ -214,29 +214,53 @@ public class AttachmentsPickerSystemTabFactory(
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
+        val loadAttachmentsAsync = ChatTheme.attachmentPickerTheme.loadAttachmentsAsync
 
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+        if (loadAttachmentsAsync) {
+            LaunchedEffect(processingViewModel) {
+                processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+                    // Check if some of the files were filtered out due to upload config
+                    if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                        Toast.makeText(
+                            context,
+                            R.string.stream_compose_message_composer_file_not_supported,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                    onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                }
+            }
+        }
+
+        val storageHelper: StorageHelperWrapper = remember {
+            StorageHelperWrapper(context)
+        }
+
+        val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            val uris = listOf(uri)
+            if (loadAttachmentsAsync) {
+                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+            } else {
+                val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
                 // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                if (uris.size != attachments.size) {
                     Toast.makeText(
                         context,
                         R.string.stream_compose_message_composer_file_not_supported,
                         Toast.LENGTH_SHORT,
                     ).show()
                 }
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                onAttachmentsSubmitted(attachments)
             }
-        }
-
-        val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            val uris = listOf(uri)
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
         }
 
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                if (loadAttachmentsAsync) {
+                    processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                } else {
+                    onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(uris))
+                }
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(

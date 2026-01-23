@@ -100,18 +100,29 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         val permissions = Permissions.visualMediaPermissions()
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
+        val loadAttachmentsAsync = ChatTheme.attachmentPickerTheme.loadAttachmentsAsync
+        val storageHelper: StorageHelperWrapper =
+            remember { StorageHelperWrapper(context) }
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.mediaMetadata.collectLatest { metaData ->
-                val items = metaData.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(items)
+        if (loadAttachmentsAsync) {
+            LaunchedEffect(processingViewModel) {
+                processingViewModel.mediaMetadata.collectLatest { metaData ->
+                    val items = metaData.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(items)
+                }
             }
         }
         val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
             if (value != VisualMediaAccess.DENIED) {
-                processingViewModel.getMediaAsync()
+                if (loadAttachmentsAsync) {
+                    processingViewModel.getMediaAsync()
+                } else {
+                    val media = storageHelper.getMedia()
+                    val mediaAttachments = media.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(mediaAttachments)
+                }
             }
         }
 

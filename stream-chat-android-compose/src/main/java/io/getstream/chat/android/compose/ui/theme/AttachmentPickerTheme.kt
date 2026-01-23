@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
  * @param checkIconTintColor The tint color of the check icon.
  * @param contentColor The content color used for text and icons.
  * @param saveAttachmentsOnDismiss If the selected attachments should be saved when the picker is dismissed.
+ * @param loadAttachmentsAsync If file attachments should be read from the filesystem asynchronously.
  */
 @Immutable
 public data class AttachmentPickerTheme(
@@ -41,6 +42,7 @@ public data class AttachmentPickerTheme(
     val checkIconTintColor: Color,
     val contentColor: Color,
     val saveAttachmentsOnDismiss: Boolean,
+    val loadAttachmentsAsync: Boolean = true,
 ) {
 
     public companion object {
@@ -65,6 +67,7 @@ public data class AttachmentPickerTheme(
                 checkIconTintColor = colors.textHighEmphasisInverse,
                 contentColor = colors.overlayDark,
                 saveAttachmentsOnDismiss = false,
+                loadAttachmentsAsync = true,
             )
         }
     }

@@ -92,16 +92,23 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
-    // Listen for attachments to be ready for upload
-    LaunchedEffect(attachmentsPickerViewModel) {
-        attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
-            onAttachmentsSelected(it)
+    val loadAttachmentsAsync = ChatTheme.attachmentPickerTheme.loadAttachmentsAsync
+    if (loadAttachmentsAsync) {
+        // Listen for attachments to be ready for upload
+        LaunchedEffect(attachmentsPickerViewModel) {
+            attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
+                onAttachmentsSelected(it)
+            }
         }
     }
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
-            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+            if (loadAttachmentsAsync) {
+                attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+            } else {
+                onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+            }
         }
         onDismiss()
     }
@@ -152,7 +159,11 @@ public fun AttachmentsPicker(
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
-                            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+                            if (loadAttachmentsAsync) {
+                                attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+                            } else {
+                                onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+                            }
                         },
                     )
                 }
@@ -178,8 +189,14 @@ public fun AttachmentsPicker(
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                                onAttachmentsSubmitted = {
-                                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(it)
+                                onAttachmentsSubmitted = { metadata ->
+                                    if (loadAttachmentsAsync) {
+                                        attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metadata)
+                                    } else {
+                                        onAttachmentsSelected(
+                                            attachmentsPickerViewModel.getAttachmentsFromMetaData(metadata),
+                                        )
+                                    }
                                 },
                             )
                     }

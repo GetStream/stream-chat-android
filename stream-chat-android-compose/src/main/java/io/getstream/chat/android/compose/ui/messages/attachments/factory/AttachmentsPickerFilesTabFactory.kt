@@ -109,26 +109,32 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     ) {
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
+        val loadAttachmentsAsync = ChatTheme.attachmentPickerTheme.loadAttachmentsAsync
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-                // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                    Toast.makeText(
-                        context,
-                        R.string.stream_compose_message_composer_file_not_supported,
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
-            }
+        val storageHelper: StorageHelperWrapper = remember {
+            StorageHelperWrapper(context)
         }
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.filesMetadata.collectLatest { metaData ->
-                val items = metaData.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(items)
+        if (loadAttachmentsAsync) {
+            LaunchedEffect(processingViewModel) {
+                processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
+                    // Check if some of the files were filtered out due to upload config
+                    if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+                        Toast.makeText(
+                            context,
+                            R.string.stream_compose_message_composer_file_not_supported,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                    onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                }
+            }
+            LaunchedEffect(processingViewModel) {
+                processingViewModel.filesMetadata.collectLatest { metaData ->
+                    val items = metaData.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(items)
+                }
             }
         }
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
@@ -140,7 +146,13 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
             }
         val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
             if (value != FilesAccess.DENIED) {
-                processingViewModel.getFilesAsync()
+                if (loadAttachmentsAsync) {
+                    processingViewModel.getFilesAsync()
+                } else {
+                    onAttachmentsChanged(
+                        storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
+                    )
+                }
             }
         }
 
@@ -155,7 +167,21 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     onBrowseFilesResult = { uris ->
-                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                        if (loadAttachmentsAsync) {
+                            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                        } else {
+                            val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
+                            // Check if some of the files were filtered out due to upload config
+                            if (uris.size != attachments.size) {
+                                Toast.makeText(
+                                    context,
+                                    R.string.stream_compose_message_composer_file_not_supported,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                            }
+
+                            onAttachmentsSubmitted(attachments)
+                        }
                     },
                 )
             },
