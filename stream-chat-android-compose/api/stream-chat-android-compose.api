@@ -1476,6 +1476,10 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/Avatar
 	public final fun getSmall-D9Ej5fM ()F
 }
 
+public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarStackKt {
+	public static final fun UserAvatarStack-nRywnlk (FLjava/util/List;FLandroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/avatar/ChannelAvatarKt {
 	public static final fun ChannelAvatar (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ZLio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;Lkotlin/jvm/functions/Function3;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
 }
