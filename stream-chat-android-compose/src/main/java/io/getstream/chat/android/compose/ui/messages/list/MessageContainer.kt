@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
@@ -89,7 +88,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 public fun LazyItemScope.MessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -135,34 +133,9 @@ public fun LazyItemScope.MessageContainer(
         }
     },
     messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            with(ChatTheme.componentFactory) {
-                MessageListItemContent(
-                    messageItem = messageItem,
-                    reactionSorting = reactionSorting,
-                    onLongItemClick = onLongItemClick,
-                    onReactionsClick = onReactionsClick,
-                    onThreadClick = onThreadClick,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onUserAvatarClick = onUserAvatarClick,
-                    onMessageLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onAddAnswer = onAddAnswer,
-                    onReply = onReply,
-                )
-            }
-        } else {
-            DefaultMessageItem(
+        with(ChatTheme.componentFactory) {
+            MessageListItemContent(
                 messageItem = messageItem,
-                messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 onLongItemClick = onLongItemClick,
                 onReactionsClick = onReactionsClick,
@@ -176,8 +149,8 @@ public fun LazyItemScope.MessageContainer(
                 onGiphyActionClick = onGiphyActionClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = onUserAvatarClick?.let { { it.invoke(messageItem.message.user) } },
-                onLinkClick = onLinkClick,
+                onUserAvatarClick = onUserAvatarClick,
+                onMessageLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
                 onReply = onReply,
@@ -374,7 +347,6 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
@@ -395,7 +367,6 @@ internal fun DefaultMessageItem(
 ) {
     MessageItem(
         messageItem = messageItem,
-        messageContentFactory = messageContentFactory,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
