@@ -212,7 +212,7 @@ public data class StreamDimens(
             attachmentsContentGroupPreviewWidth = 250.dp,
             attachmentsContentGroupPreviewHeight = 250.dp,
             pollOptionInputHeight = 56.dp,
-            messageComposerShadowElevation = 4.dp,
+            messageComposerShadowElevation = 24.dp,
         )
     }
 }

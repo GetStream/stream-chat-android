@@ -39,6 +39,9 @@ import androidx.compose.ui.unit.sp
  * @param captionBold Used for unread count indicator.
  * @param singleEmoji Used for messages whose content consists only of a single emoji.
  * @param emojiOnly Used for messages whose content consists only if emojis.
+ * @param bodyEmphasis Used for emphasized body text requiring visual prominence to highlight important information.
+ * @param captionEmphasis Used for emphasized captions requiring attention while maintaining compact display.
+ * @param metadataEmphasis Used for emphasized metadata and supplementary information in secondary content areas.
  */
 @Immutable
 public data class StreamTypography(
@@ -55,6 +58,10 @@ public data class StreamTypography(
     public val tabBar: TextStyle,
     public val singleEmoji: TextStyle,
     public val emojiOnly: TextStyle,
+
+    public val bodyEmphasis: TextStyle,
+    public val captionEmphasis: TextStyle,
+    public val metadataEmphasis: TextStyle,
 ) {
 
     public companion object {
@@ -136,6 +143,25 @@ public data class StreamTypography(
             emojiOnly = TextStyle(
                 fontSize = 50.sp,
                 fontFamily = fontFamily,
+            ),
+
+            bodyEmphasis = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeMd,
+                lineHeight = StreamTokens.lineHeightNormal,
+            ),
+            captionEmphasis = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeSm,
+                lineHeight = StreamTokens.lineHeightTight,
+            ),
+            metadataEmphasis = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeXs,
+                lineHeight = StreamTokens.lineHeightTight,
             ),
         )
     }

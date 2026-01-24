@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
-import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageStyle
 
 /**
  * Represents message theming.
@@ -40,8 +39,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
  * @param backgroundShapes The shapes for the message background.
- * @param quotedTextStyle The text style for the quoted messages contained in a reply.
- * @param quotedBackgroundColor The background color for the quoted messages.
  * @param errorBackgroundColor The background color for the error messages.
  * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
@@ -57,29 +54,10 @@ public data class MessageTheme(
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
     val backgroundShapes: MessageBackgroundShapes,
-    @Deprecated(
-        message = "Use quoted.textStyle instead",
-        replaceWith = ReplaceWith(
-            expression = "QuotedMessageStyle(textStyle = TextStyle(...))",
-            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.textStyle"),
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    val quotedTextStyle: TextStyle,
-    @Deprecated(
-        message = "Use quoted.backgroundColor instead",
-        replaceWith = ReplaceWith(
-            expression = "QuotedMessageStyle(backgroundColor = Color(...))",
-            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.backgroundColor"),
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    val quotedBackgroundColor: Color,
     val errorBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
-    val quoted: QuotedMessageStyle,
     val poll: PollMessageStyle,
     val mentionColor: Color,
     val linkStyle: TextStyle,
@@ -171,18 +149,6 @@ public data class MessageTheme(
                         else -> shapes.otherMessageBubble
                     },
                 ),
-                // Deprecated
-                quotedTextStyle = typography.bodyBold.copy(
-                    color = when (own) {
-                        true -> colors.ownMessageQuotedText
-                        else -> colors.otherMessageQuotedText
-                    },
-                ),
-                // Deprecated
-                quotedBackgroundColor = when (own) {
-                    true -> colors.ownMessageQuotedBackground
-                    else -> colors.otherMessageQuotedBackground
-                },
                 errorBackgroundColor = backgroundColor,
                 deletedBackgroundColor = colors.deletedMessagesBackground,
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
@@ -190,13 +156,6 @@ public data class MessageTheme(
                     isInDarkMode = isInDarkMode,
                     typography = typography,
                     colors = colors,
-                ),
-                quoted = QuotedMessageStyle.defaultStyle(
-                    own = own,
-                    isInDarkMode = isInDarkMode,
-                    typography = typography,
-                    colors = colors,
-                    shapes = shapes,
                 ),
                 poll = PollMessageStyle.defaultStyle(
                     own = own,
@@ -216,14 +175,7 @@ public data class MessageTheme(
                     textDecoration = TextDecoration.Underline,
                 ),
                 linkBackgroundColor = colors.linkBackground,
-            ).let { theme ->
-                theme.copy(
-                    quoted = theme.quoted.copy(
-                        textStyle = theme.quotedTextStyle,
-                        backgroundColor = theme.quotedBackgroundColor,
-                    ),
-                )
-            }
+            )
         }
     }
 }

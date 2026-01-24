@@ -39,28 +39,17 @@ public fun FilesPickerItemImage(
     val attachment = fileItem.attachmentMetaData
     val isImage = fileItem.attachmentMetaData.type == "image"
 
-    val data = if (isImage) {
-        attachment.uri ?: attachment.file
+    if (isImage) {
+        StreamAsyncImage(
+            modifier = modifier.clip(ChatTheme.shapes.imageThumbnail),
+            data = attachment.uri ?: attachment.file,
+            contentScale = ContentScale.Crop,
+            contentDescription = null,
+        )
     } else {
-        MimeTypeIconProvider.getIconRes(attachment.mimeType)
+        FileTypeIcon(
+            data = MimeTypeIconProvider.getIcon(attachment.mimeType),
+            modifier = modifier,
+        )
     }
-
-    val shape = if (isImage) ChatTheme.shapes.imageThumbnail else null
-
-    val imageModifier = modifier.let { baseModifier ->
-        if (shape != null) baseModifier.clip(shape) else baseModifier
-    }
-
-    val contentScale = if (isImage) {
-        ContentScale.Crop
-    } else {
-        ContentScale.Fit
-    }
-
-    StreamAsyncImage(
-        modifier = imageModifier,
-        data = data,
-        contentScale = contentScale,
-        contentDescription = null,
-    )
 }

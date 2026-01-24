@@ -29,13 +29,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
-import io.getstream.chat.android.ui.common.state.messages.Reply
 
 /**
- * Shows the options "header" for the message input component. This is based on the currently active
- * message action - [io.getstream.chat.android.ui.common.state.messages.Reply] or
- * [io.getstream.chat.android.ui.common.state.messages.Edit].
+ * Shows the options "header" for the message input component. This renders the currently active
+ * message action if it's [Edit].
  *
  * @param modifier Modifier for styling.
  * @param activeAction Currently active [MessageAction].
@@ -47,17 +46,7 @@ public fun MessageInputOptions(
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val optionImage =
-        painterResource(
-            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit,
-        )
-    val title = stringResource(
-        id = if (activeAction is Reply) {
-            R.string.stream_compose_reply_to_message
-        } else {
-            R.string.stream_compose_edit_message
-        },
-    )
+    if (activeAction !is Edit) return
 
     Row(
         modifier = modifier,
@@ -65,13 +54,13 @@ public fun MessageInputOptions(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
-            painter = optionImage,
+            painter = painterResource(id = R.drawable.stream_compose_ic_edit),
             contentDescription = null,
             tint = ChatTheme.colors.textLowEmphasis,
         )
 
         Text(
-            text = title,
+            text = stringResource(id = R.string.stream_compose_edit_message),
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
         )

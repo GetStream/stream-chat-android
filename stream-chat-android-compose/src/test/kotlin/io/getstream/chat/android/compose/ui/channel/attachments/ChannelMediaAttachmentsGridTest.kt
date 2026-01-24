@@ -90,9 +90,9 @@ internal class ChannelMediaAttachmentsGridTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Today").assertExists()
-        composeTestRule.onAllNodesWithText("TU")[0].assertExists()
-        composeTestRule.onAllNodesWithText("TU")[1].assertExists()
-        composeTestRule.onAllNodesWithText("TU")[1].assert(hasContentDescription("Play button"))
+        composeTestRule.onAllNodesWithText("T")[0].assertExists()
+        composeTestRule.onAllNodesWithText("T")[1].assertExists()
+        composeTestRule.onAllNodesWithText("T")[1].assert(hasContentDescription("Play button"))
     }
 
     @Test
@@ -116,7 +116,7 @@ internal class ChannelMediaAttachmentsGridTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onAllNodesWithText("TU")[0].performClick()
+        composeTestRule.onAllNodesWithText("T")[0].performClick()
 
         composeTestRule.onNodeWithText("Test User").assertExists()
         composeTestRule.onNodeWithText("just now").assertExists()

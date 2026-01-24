@@ -42,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -117,6 +119,7 @@ public fun Messages(
             MessageListHelperContent(
                 messageListState = messagesState,
                 messagesLazyListState = messagesLazyListState,
+                contentPadding = contentPadding,
                 onScrollToBottomClick = onScrollToBottom,
             )
         }
@@ -145,6 +148,7 @@ public fun Messages(
     Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
+                .graphicsLayer { clip = false }
                 .testTag("Stream_Messages")
                 .fillMaxSize()
                 .onSizeChanged {
@@ -277,10 +281,12 @@ private fun MessageListState.getVerticalArrangement(
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
+    contentPadding: PaddingValues,
     scrollToBottom: (() -> Unit) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
@@ -338,9 +344,19 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         firstVisibleItemIndex,
         areNewestMessagesLoaded,
     )
+
     with(ChatTheme.componentFactory) {
         ScrollToBottomButton(
-            modifier = Modifier.align(Alignment.BottomEnd),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(contentPadding)
+                .then(
+                    if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                        Modifier.padding(horizontal = StreamTokens.spacingMd)
+                    } else {
+                        Modifier.padding(StreamTokens.spacingMd)
+                    },
+                ),
             visible = scrollToBottomButtonVisible,
             count = messagesState.unreadCount,
             onClick = {

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -61,6 +62,7 @@ public fun FileAttachmentPreviewContent(
             .testTag("Stream_FileAttachmentPreviewContent"),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
+        contentPadding = PaddingValues(12.dp),
     ) {
         items(attachments) { attachment ->
             Surface(

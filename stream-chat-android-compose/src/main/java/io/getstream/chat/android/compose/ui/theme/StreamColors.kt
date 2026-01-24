@@ -65,6 +65,52 @@ import io.getstream.chat.android.compose.R
  * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
  * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
  * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
+ * @param accentError Used for destructive actions and error states.
+ * @param accentNeutral Used for neutral accent for low-priority badges.
+ * @param accentSuccess Used for success states and positive actions.
+ * @param accentPrimary Used for main brand accent for interactive elements.
+ * @param avatarPaletteBg1 Used for avatar background color.
+ * @param avatarPaletteBg2 Used for avatar background color.
+ * @param avatarPaletteBg3 Used for avatar background color.
+ * @param avatarPaletteBg4 Used for avatar background color.
+ * @param avatarPaletteBg5 Used for avatar background color.
+ * @param avatarPaletteText1 Used for avatar text color.
+ * @param avatarPaletteText2 Used for avatar text color.
+ * @param avatarPaletteText3 Used for avatar text color.
+ * @param avatarPaletteText4 Used for avatar text color.
+ * @param avatarPaletteText5 Used for avatar text color.
+ * @param borderCoreImage Used for image frame border treatment.
+ * @param borderCoreOnDark Used for borders on dark backgrounds.
+ * @param borderCoreSurfaceSubtle Used for very light separators.
+ * @param borderCorePrimary Used for selected or active state border.
+ * @param textPrimary Used for main text color.
+ * @param stateBgDisabled Used for disabled background for inputs, buttons, or chips.
+ * @param stateTextDisabled Used for disabled text and icon color.
+ * @param buttonStyleGhostBg Used for ghost button background.
+ * @param buttonStyleGhostBorder Used for ghost button border.
+ * @param buttonStyleGhostTextPrimary Used for primary ghost button text.
+ * @param buttonStyleGhostTextSecondary Used for secondary ghost button text.
+ * @param buttonStyleOutlineBg Used for outline button background.
+ * @param buttonStyleOutlineBorder Used for outline button border.
+ * @param buttonStyleOutlineText Used for outline button text.
+ * @param buttonTypeDestructiveBg Used for destructive button background.
+ * @param buttonTypeDestructiveBorder Used for destructive button border.
+ * @param buttonTypeDestructiveText Used for destructive button text.
+ * @param buttonTypeDestructiveTextInverse Used for destructive button inverse text.
+ * @param buttonTypePrimaryBg Used for primary button background.
+ * @param buttonTypePrimaryBgDisabled Used for disabled primary button background.
+ * @param buttonTypePrimaryBorder Used for primary button border.
+ * @param buttonTypePrimaryText Used for primary button text.
+ * @param buttonTypePrimaryTextDisabled Used for disabled primary button text.
+ * @param buttonTypeSecondaryTextDisabled Used for disabled secondary button text.
+ * @param chatBgIncoming Used for incoming message bubble background.
+ * @param chatBgOutgoing Used for outgoing message bubble background.
+ * @param controlRemoveBg Used for remove control background.
+ * @param controlRemoveBorder Used for remove control border.
+ * @param controlRemoveIcon Used for remove control icon.
+ * @param presenceBgOnline Used for online presence indicator.
+ * @param presenceBgOffline Used for offline presence indicator.
+ * @param presenceBorder Used for the outline around the presence dot.
  */
 @Suppress("DEPRECATION_ERROR")
 @Immutable
@@ -106,23 +152,60 @@ public data class StreamColors(
     public val videoBackgroundMediaGalleryPicker: Color,
     public val showMoreOverlay: Color,
     public val showMoreCountText: Color,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
-    public val ownMessageQuotedBackground: Color = otherMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
-    public val otherMessageQuotedBackground: Color = ownMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
-    public val ownMessageQuotedText: Color = textHighEmphasis,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
-    public val otherMessageQuotedText: Color = textHighEmphasis,
 
     // Design System semantic colors
-    public val borderCoreOnDark: Color,
+    public val accentError: Color,
+    public val accentNeutral: Color,
+    public val accentSuccess: Color,
+    public val accentPrimary: Color,
+    public val avatarPaletteBg1: Color,
+    public val avatarPaletteBg2: Color,
+    public val avatarPaletteBg3: Color,
+    public val avatarPaletteBg4: Color,
+    public val avatarPaletteBg5: Color,
+    public val avatarPaletteText1: Color,
+    public val avatarPaletteText2: Color,
+    public val avatarPaletteText3: Color,
+    public val avatarPaletteText4: Color,
+    public val avatarPaletteText5: Color,
     public val borderCoreImage: Color,
+    public val borderCoreOnDark: Color,
+    public val borderCoreSurfaceSubtle: Color,
+    public val borderCorePrimary: Color,
+    public val textPrimary: Color,
+    public val stateBgDisabled: Color,
+    public val stateTextDisabled: Color,
+
+    public val buttonStyleGhostBg: Color,
+    public val buttonStyleGhostBorder: Color,
+    public val buttonStyleGhostTextPrimary: Color = accentPrimary,
+    public val buttonStyleGhostTextSecondary: Color = textPrimary,
+    public val buttonStyleOutlineBg: Color,
+    public val buttonStyleOutlineBorder: Color = borderCoreSurfaceSubtle,
+    public val buttonStyleOutlineText: Color = textPrimary,
+    public val buttonTypeDestructiveBg: Color = accentError,
+    public val buttonTypeDestructiveBorder: Color = accentError,
+    public val buttonTypeDestructiveText: Color,
+    public val buttonTypeDestructiveTextInverse: Color = accentError,
+    public val buttonTypePrimaryBg: Color = accentPrimary,
+    public val buttonTypePrimaryBgDisabled: Color = stateBgDisabled,
+    public val buttonTypePrimaryBorder: Color = borderCorePrimary,
+    public val buttonTypePrimaryText: Color,
+    public val buttonTypePrimaryTextDisabled: Color = stateTextDisabled,
+    public val buttonTypeSecondaryTextDisabled: Color = stateTextDisabled,
     public val chatBgIncoming: Color,
     public val chatBgOutgoing: Color,
+    public val chatBgAttachmentIncoming: Color,
+    public val chatBgAttachmentOutgoing: Color,
+    public val chatReplyIndicatorIncoming: Color,
+    public val chatReplyIndicatorOutgoing: Color,
+    public val chatTextMessage: Color = textPrimary,
     public val controlRemoveBg: Color,
     public val controlRemoveBorder: Color = borderCoreOnDark,
     public val controlRemoveIcon: Color,
+    public val presenceBgOnline: Color = accentSuccess,
+    public val presenceBgOffline: Color = accentNeutral,
+    public val presenceBorder: Color,
 ) {
 
     public companion object {
@@ -131,6 +214,7 @@ public data class StreamColors(
          *
          * @return A [StreamColors] instance holding our color palette.
          */
+        @Suppress("LongMethod")
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
@@ -164,13 +248,43 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
-            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+
+            accentError = StreamPrimitiveColors.red500,
+            accentNeutral = StreamPrimitiveColors.slate500,
+            accentSuccess = StreamPrimitiveColors.green500,
+            accentPrimary = StreamPrimitiveColors.blue500,
             borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
+            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
+            borderCorePrimary = StreamPrimitiveColors.blue600,
+            textPrimary = StreamPrimitiveColors.slate900,
+            stateBgDisabled = StreamPrimitiveColors.slate200,
+            stateTextDisabled = StreamPrimitiveColors.slate400,
+            buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
+            buttonStyleGhostBorder = StreamPrimitiveColors.baseTransparent,
+            buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
+            buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
+            buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
+            avatarPaletteBg1 = StreamPrimitiveColors.blue100,
+            avatarPaletteBg2 = StreamPrimitiveColors.cyan100,
+            avatarPaletteBg3 = StreamPrimitiveColors.green100,
+            avatarPaletteBg4 = StreamPrimitiveColors.purple200,
+            avatarPaletteBg5 = StreamPrimitiveColors.yellow200,
+            avatarPaletteText1 = StreamPrimitiveColors.blue800,
+            avatarPaletteText2 = StreamPrimitiveColors.cyan800,
+            avatarPaletteText3 = StreamPrimitiveColors.green800,
+            avatarPaletteText4 = StreamPrimitiveColors.purple800,
+            avatarPaletteText5 = StreamPrimitiveColors.yellow800,
             chatBgIncoming = StreamPrimitiveColors.slate100,
             chatBgOutgoing = StreamPrimitiveColors.blue100,
+            chatBgAttachmentIncoming = StreamPrimitiveColors.slate200,
+            chatBgAttachmentOutgoing = StreamPrimitiveColors.blue200,
+            chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
+            chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
             controlRemoveBg = StreamPrimitiveColors.slate900,
             controlRemoveBorder = StreamPrimitiveColors.baseWhite,
             controlRemoveIcon = StreamPrimitiveColors.baseWhite,
+            presenceBorder = StreamPrimitiveColors.baseWhite,
         )
 
         /**
@@ -178,6 +292,7 @@ public data class StreamColors(
          *
          * @return A [StreamColors] instance holding our color palette.
          */
+        @Suppress("LongMethod")
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
@@ -211,12 +326,42 @@ public data class StreamColors(
             videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
-            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+
+            accentError = StreamPrimitiveColors.red400,
+            accentNeutral = StreamPrimitiveColors.neutral500,
+            accentSuccess = StreamPrimitiveColors.green400,
+            accentPrimary = StreamPrimitiveColors.blue400,
             borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
+            borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral700,
+            borderCorePrimary = StreamPrimitiveColors.blue300,
+            textPrimary = StreamPrimitiveColors.neutral50,
+            stateBgDisabled = StreamPrimitiveColors.slate800,
+            stateTextDisabled = StreamPrimitiveColors.slate600,
+            buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
+            buttonStyleGhostBorder = StreamPrimitiveColors.baseTransparent,
+            buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
+            buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
+            buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
+            avatarPaletteBg1 = StreamPrimitiveColors.blue800,
+            avatarPaletteBg2 = StreamPrimitiveColors.cyan800,
+            avatarPaletteBg3 = StreamPrimitiveColors.green800,
+            avatarPaletteBg4 = StreamPrimitiveColors.purple800,
+            avatarPaletteBg5 = StreamPrimitiveColors.yellow800,
+            avatarPaletteText1 = StreamPrimitiveColors.blue100,
+            avatarPaletteText2 = StreamPrimitiveColors.cyan100,
+            avatarPaletteText3 = StreamPrimitiveColors.green100,
+            avatarPaletteText4 = StreamPrimitiveColors.purple100,
+            avatarPaletteText5 = StreamPrimitiveColors.yellow100,
             chatBgIncoming = StreamPrimitiveColors.neutral800,
             chatBgOutgoing = StreamPrimitiveColors.blue800,
+            chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
+            chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
+            chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
+            chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue300,
             controlRemoveBg = StreamPrimitiveColors.neutral800,
             controlRemoveIcon = StreamPrimitiveColors.baseWhite,
+            presenceBorder = StreamPrimitiveColors.baseBlack,
         )
     }
 }
@@ -224,10 +369,39 @@ public data class StreamColors(
 @Suppress("MagicNumber")
 internal object StreamPrimitiveColors {
     val baseBlack = Color(0xFF000000)
+    val baseTransparent = Color(0x00000000)
     val baseWhite = Color(0xFFFFFFFF)
     val blue100 = Color(0xFFD2E3FF)
+    val blue200 = Color(0xFFA6C4FF)
+    val blue300 = Color(0xFF7AA7FF)
+    val blue400 = Color(0xFF4E8BFF)
+    val blue500 = Color(0xFF005FFF)
+    val blue600 = Color(0xFF0052CE)
+    val blue700 = Color(0xFF0042A3)
     val blue800 = Color(0xFF003179)
+    val cyan100 = Color(0xFFD7F7FB)
+    val cyan800 = Color(0xFF1C8791)
+    val green100 = Color(0xFFC9FCE7)
+    val green400 = Color(0xFF59E9B5)
+    val green500 = Color(0xFF00E2A1)
+    val green800 = Color(0xFF006548)
+    val neutral50 = Color(0xFFF7F7F7)
+    val neutral500 = Color(0xFF7F7F7F)
+    val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)
+    val purple100 = Color(0xFFEBDEFD)
+    val purple200 = Color(0xFFD8BFFC)
+    val purple800 = Color(0xFF6640AB)
+    val red400 = Color(0xFFE6756C)
+    val red500 = Color(0xFFD92F26)
     val slate100 = Color(0xFFF2F4F6)
+    val slate200 = Color(0xFFE2E6EA)
+    val slate400 = Color(0xFFB8BEC4)
+    val slate500 = Color(0xFF9EA4AA)
+    val slate600 = Color(0xFF838990)
+    val slate800 = Color(0xFF50565D)
     val slate900 = Color(0xFF1E252B)
+    val yellow100 = Color(0xFFFFF1C2)
+    val yellow200 = Color(0xFFFFE8A0)
+    val yellow800 = Color(0xFF9F7700)
 }

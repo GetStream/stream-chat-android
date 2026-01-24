@@ -48,6 +48,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
@@ -270,32 +271,31 @@ public fun FileAttachmentImage(
         isMine -> ChatTheme.ownFileAttachmentTheme
         else -> ChatTheme.otherFileAttachmentTheme
     }
-    val isImage = attachment.isImage()
-    val isVideoWithThumbnails = attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
-
-    val data = attachment.imagePreviewData ?: MimeTypeIconProvider.getIconRes(attachment.mimeType)
-
-    val shape = if (isImage || isVideoWithThumbnails) fileAttachmentTheme.imageThumbnail else null
-
-    val imageModifier = Modifier
+    val baseModifier = Modifier
         .size(height = 40.dp, width = 35.dp)
-        .let { baseModifier ->
-            if (shape != null) baseModifier.clip(shape) else baseModifier
-        }
         .testTag("Stream_FileAttachmentImage")
+    val data = attachment.imagePreviewData
 
-    val contentScale = if (isImage || isVideoWithThumbnails) {
-        ContentScale.Crop
+    if (data != null) {
+        val showThumbnail = attachment.isImage() || attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
+        val imageModifier = if (showThumbnail) {
+            baseModifier.clip(fileAttachmentTheme.imageThumbnail)
+        } else {
+            baseModifier
+        }
+
+        StreamAsyncImage(
+            modifier = imageModifier,
+            data = data,
+            contentScale = if (showThumbnail) ContentScale.Crop else ContentScale.Fit,
+            contentDescription = null,
+        )
     } else {
-        ContentScale.Fit
+        FileTypeIcon(
+            data = MimeTypeIconProvider.getIcon(attachment.mimeType),
+            modifier = baseModifier,
+        )
     }
-
-    StreamAsyncImage(
-        modifier = imageModifier,
-        data = data,
-        contentScale = contentScale,
-        contentDescription = null,
-    )
 }
 
 /**
