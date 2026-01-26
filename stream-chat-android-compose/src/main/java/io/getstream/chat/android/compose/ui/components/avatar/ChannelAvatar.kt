@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import io.getstream.chat.android.compose.R
@@ -49,15 +50,17 @@ public fun ChannelAvatar(
     showIndicator: Boolean = false,
     showBorder: Boolean = false,
 ) {
+    val testTagModifier = modifier.testTag("Stream_ChannelAvatar")
+
     if (channel.image.isNotEmpty()) {
         GroupAvatar(
+            modifier = testTagModifier,
             channel = channel,
             showBorder = showBorder,
-            modifier = modifier,
         )
     } else if (channel.members.size == 1) {
         UserAvatar(
-            modifier = modifier,
+            modifier = testTagModifier,
             user = channel.members.first().user,
             showIndicator = showIndicator,
             showBorder = showBorder,
@@ -67,16 +70,16 @@ public fun ChannelAvatar(
 
         if (directMessageRecipient != null) {
             UserAvatar(
-                modifier = modifier,
+                modifier = testTagModifier,
                 user = directMessageRecipient,
                 showIndicator = showIndicator,
                 showBorder = showBorder,
             )
         } else {
             GroupAvatar(
+                modifier = testTagModifier,
                 channel = channel,
                 showBorder = showBorder,
-                modifier = modifier,
             )
         }
     }
