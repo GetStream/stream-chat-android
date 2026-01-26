@@ -32,7 +32,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
  * @param backgroundShapes The shapes for the message background.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
- * @param linkBackgroundColor The color for the message link card background.
  */
 @Immutable
 public data class MessageTheme(
@@ -40,7 +39,6 @@ public data class MessageTheme(
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
     val mentionColor: Color,
-    val linkBackgroundColor: Color,
 ) {
     public companion object {
 
@@ -122,7 +120,6 @@ public data class MessageTheme(
                     colors = colors,
                 ),
                 mentionColor = colors.chatTextMention,
-                linkBackgroundColor = colors.linkBackground,
             )
         }
     }
