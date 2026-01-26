@@ -17,20 +17,31 @@
 package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.ui.common.utils.extensions.isOneToOne
 
 /**
  * The default avatar for a channel.
@@ -53,16 +64,9 @@ public fun ChannelAvatar(
     val testTagModifier = modifier.testTag("Stream_ChannelAvatar")
 
     if (channel.image.isNotEmpty()) {
-        GroupAvatar(
+        SimpleGroupAvatar(
             modifier = testTagModifier,
             channel = channel,
-            showBorder = showBorder,
-        )
-    } else if (channel.members.size == 1) {
-        UserAvatar(
-            modifier = testTagModifier,
-            user = channel.members.first().user,
-            showIndicator = showIndicator,
             showBorder = showBorder,
         )
     } else {
@@ -76,7 +80,7 @@ public fun ChannelAvatar(
                 showBorder = showBorder,
             )
         } else {
-            GroupAvatar(
+            StackedGroupAvatar(
                 modifier = testTagModifier,
                 channel = channel,
                 showBorder = showBorder,
@@ -86,7 +90,7 @@ public fun ChannelAvatar(
 }
 
 @Composable
-private fun GroupAvatar(
+private fun SimpleGroupAvatar(
     channel: Channel,
     showBorder: Boolean,
     modifier: Modifier,
@@ -97,6 +101,47 @@ private fun GroupAvatar(
             fallback = { ChannelAvatarPlaceholder(channel, size = this.maxWidth) },
             showBorder = showBorder,
         )
+    }
+}
+
+// TODO [G.] indicator?
+@Composable
+private fun StackedGroupAvatar(
+    channel: Channel,
+    showBorder: Boolean,
+    modifier: Modifier,
+) {
+    BoxWithConstraints(modifier) {
+        val avatarSize = resolveStackedAvatarSize()
+
+        when (channel.members.size) {
+            // TODO [G.] ?
+            0 -> Unit
+            1 -> {
+                val colors = ChatTheme.colors
+                UserAvatarIconPlaceholder(
+                    background = colors.avatarBgPlaceholder,
+                    foreground = colors.avatarTextPlaceholder,
+                    size = avatarSize + 2.dp,
+                    // TODO [G.]
+                    modifier = Modifier
+                        .border(2.dp, Color.White, CircleShape)
+                        .align(Alignment.TopStart)
+                )
+            }
+
+            2 -> {}
+            3 -> {}
+            4 -> {}
+            else -> {}
+        }
+    }
+}
+
+private fun BoxWithConstraintsScope.resolveStackedAvatarSize(): Dp {
+    return when {
+        maxWidth >= AvatarSize.ExtraLarge -> AvatarSize.Large
+        else -> AvatarSize.Small
     }
 }
 
@@ -127,10 +172,30 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
     val currentUserId = currentUser?.id ?: return null
 
     return remember(channel, currentUserId) {
-        if (channel.memberCount == 2 && channel.members.any { it.user.id == currentUserId }) {
+        if (channel.isOneToOne(currentUser)) {
             channel.members.first { it.user.id != currentUserId }.user
         } else {
             null
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelAvatarPreview() {
+    val sizes = AvatarSize.run { listOf(ExtraLarge, Large) }
+    ChatTheme {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            sizes.forEach { size ->
+                ChannelAvatar(
+                    PreviewChannelData.channelWithOneUser,
+                    currentUser = null,
+                    modifier = Modifier.size(size),
+                )
+            }
         }
     }
 }

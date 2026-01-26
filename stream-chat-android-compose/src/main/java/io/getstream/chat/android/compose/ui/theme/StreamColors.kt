@@ -161,6 +161,7 @@ public data class StreamColors(
     public val accentNeutral: Color,
     public val accentSuccess: Color,
     public val accentPrimary: Color,
+    public val avatarBgPlaceholder: Color,
     public val avatarPaletteBg1: Color,
     public val avatarPaletteBg2: Color,
     public val avatarPaletteBg3: Color,
@@ -171,6 +172,7 @@ public data class StreamColors(
     public val avatarPaletteText3: Color,
     public val avatarPaletteText4: Color,
     public val avatarPaletteText5: Color,
+    public val avatarTextPlaceholder: Color,
     public val borderCoreImage: Color,
     public val borderCoreOnDark: Color,
     public val borderCoreSurfaceSubtle: Color,
@@ -271,6 +273,7 @@ public data class StreamColors(
             buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
             buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
             buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
+            avatarBgPlaceholder = StreamPrimitiveColors.slate100,
             avatarPaletteBg1 = StreamPrimitiveColors.blue100,
             avatarPaletteBg2 = StreamPrimitiveColors.cyan100,
             avatarPaletteBg3 = StreamPrimitiveColors.green100,
@@ -281,6 +284,7 @@ public data class StreamColors(
             avatarPaletteText3 = StreamPrimitiveColors.green800,
             avatarPaletteText4 = StreamPrimitiveColors.purple800,
             avatarPaletteText5 = StreamPrimitiveColors.yellow800,
+            avatarTextPlaceholder = StreamPrimitiveColors.slate500,
             chatBgIncoming = StreamPrimitiveColors.slate100,
             chatBgOutgoing = StreamPrimitiveColors.blue100,
             chatBgAttachmentIncoming = StreamPrimitiveColors.slate200,
@@ -351,6 +355,7 @@ public data class StreamColors(
             buttonStyleOutlineBg = StreamPrimitiveColors.baseTransparent,
             buttonTypeDestructiveText = StreamPrimitiveColors.baseWhite,
             buttonTypePrimaryText = StreamPrimitiveColors.baseWhite,
+            avatarBgPlaceholder = StreamPrimitiveColors.neutral700,
             avatarPaletteBg1 = StreamPrimitiveColors.blue800,
             avatarPaletteBg2 = StreamPrimitiveColors.cyan800,
             avatarPaletteBg3 = StreamPrimitiveColors.green800,
@@ -361,6 +366,7 @@ public data class StreamColors(
             avatarPaletteText3 = StreamPrimitiveColors.green100,
             avatarPaletteText4 = StreamPrimitiveColors.purple100,
             avatarPaletteText5 = StreamPrimitiveColors.yellow100,
+            avatarTextPlaceholder = StreamPrimitiveColors.neutral400,
             chatBgIncoming = StreamPrimitiveColors.neutral800,
             chatBgOutgoing = StreamPrimitiveColors.blue800,
             chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
@@ -395,6 +401,7 @@ internal object StreamPrimitiveColors {
     val green800 = Color(0xFF006548)
     val neutral50 = Color(0xFFF7F7F7)
     val neutral300 = Color(0xFFC1C1C1)
+    val neutral400 = Color(0xFF8F8F8F)
     val neutral500 = Color(0xFF7F7F7F)
     val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)
