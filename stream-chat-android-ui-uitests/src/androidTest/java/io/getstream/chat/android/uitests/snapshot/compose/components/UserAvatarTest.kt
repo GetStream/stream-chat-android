@@ -45,34 +45,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
     }
 
     @Test
-    fun userAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
-        UserAvatar(
-            modifier = Modifier.size(40.dp),
-            user = TestData.user1(),
-            showIndicator = true,
-        )
-    }
-
-    @Test
-    fun userAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
-        UserAvatar(
-            modifier = Modifier.size(40.dp),
-            user = TestData.user1(),
-            showIndicator = true,
-        )
-    }
-
-    @Test
-    fun userAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
-        UserAvatar(
-            modifier = Modifier.size(40.dp),
-            user = TestData.user1(),
-            showIndicator = true,
-        )
-    }
-
-    @Test
-    fun userAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithOnlineIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
