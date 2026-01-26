@@ -168,6 +168,7 @@ internal data class MessageReadEventDto(
     val channel_id: String,
     val thread: DownstreamThreadInfoDto? = null,
     val last_read_message_id: String?,
+    val team: String? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
