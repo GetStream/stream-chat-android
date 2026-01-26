@@ -16,16 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.components.poll
 
+import android.os.Bundle
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,14 +29,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,77 +54,92 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
-import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ViewModelStore
+import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
-import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
-import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
- * A dialog that should be shown if a user taps the seeing result of the votes.
+ * A dialog that displays poll results for all options in a poll.
  *
- * @param selectedPoll The current poll that contains all the states.
- * @param onDismissRequest Handler for dismissing the dialog.
- * @param onBackPressed Handler for pressing a back button.
+ * Shows each poll option with its vote count, winner indicator (if applicable), and a preview
+ * of voters. Users can tap "Show All" on any option to navigate to [PollOptionVotesDialog]
+ * to see the complete list of votes for that option.
+ *
+ * @param selectedPoll The poll for which results are displayed, containing all poll state.
+ * @param onDismissRequest Handler invoked when the dialog should be dismissed.
+ * @param onBackPressed Handler invoked when the back button is pressed.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 public fun PollViewResultDialog(
     selectedPoll: SelectedPoll,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
-    val state = remember {
-        MutableTransitionState(false).apply {
-            // Start the animation immediately.
-            targetState = true
-        }
-    }
-    Popup(
-        alignment = Alignment.BottomCenter,
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
+    ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        sheetMaxWidth = Dp.Unspecified,
+        shape = RoundedCornerShape(0.dp),
+        dragHandle = {},
+        containerColor = ChatTheme.colors.barsBackground,
     ) {
-        AnimatedVisibility(
-            visibleState = state,
-            enter = fadeIn() + slideInVertically(
-                animationSpec = tween(400),
-                initialOffsetY = { fullHeight -> fullHeight / 2 },
-            ),
-            exit = fadeOut(animationSpec = tween(200)) +
-                slideOutVertically(animationSpec = tween(400)),
-            label = "poll view result dialog",
-        ) {
-            Content(
-                selectedPoll = selectedPoll,
-                onBackPressed = onBackPressed,
-            )
+        var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
+
+        ViewModelStore {
+            Crossfade(
+                modifier = Modifier.fillMaxSize(),
+                targetState = showAllOptionVotes,
+            ) { option ->
+                when (option) {
+                    null -> {
+                        val viewModel = viewModel { PollResultsViewModel(selectedPoll.poll) }
+                        val state by viewModel.state.collectAsState()
+                        Content(
+                            state = state,
+                            onBackPressed = onBackPressed,
+                            onShowAllClick = { option -> showAllOptionVotes = option },
+                        )
+                    }
+
+                    else -> {
+                        PollOptionVotesDialog(
+                            poll = selectedPoll.poll,
+                            option = option,
+                            onDismissRequest = { showAllOptionVotes = null },
+                            onBackPressed = { showAllOptionVotes = null },
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 private fun Content(
-    selectedPoll: SelectedPoll,
+    state: PollResultsViewState,
     onBackPressed: () -> Unit = {},
+    onShowAllClick: (option: Option) -> Unit = {},
 ) {
-    val poll = selectedPoll.poll
-
-    BackHandler { onBackPressed.invoke() }
+    BackHandler(onBack = onBackPressed)
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .systemBarsPadding()
+            .fillMaxSize(),
     ) {
         item {
             PollDialogHeader(
@@ -129,42 +148,29 @@ private fun Content(
             )
         }
 
-        item { PollViewResultTitle(title = poll.name) }
+        item {
+            PollViewResultTitle(
+                title = state.pollName,
+                modifier = Modifier.padding(bottom = 16.dp),
+            )
+        }
 
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-
-        pollViewResultContent(poll = poll)
-
-        item { Spacer(modifier = Modifier.height(16.dp)) }
-    }
-}
-
-private fun LazyListScope.pollViewResultContent(
-    poll: Poll,
-) {
-    val options = poll.options.sortedByDescending { option -> poll.voteCountsByOption[option.id] ?: 0 }
-    val winner = poll.getWinner()
-
-    items(
-        items = options,
-        key = Option::id,
-    ) { option ->
-        val votes = poll.getVotesUnlessAnonymous(option)
-        PollViewResultItem(
-            option = option,
-            isWinner = winner == option,
-            votesCount = poll.voteCountsByOption[option.id] ?: 0,
-            votes = votes,
-        )
+        items(
+            items = state.results,
+            key = { item -> item.option.id },
+        ) { item ->
+            PollViewResultItem(
+                item,
+                onShowAllClick = onShowAllClick,
+            )
+        }
     }
 }
 
 @Composable
 private fun PollViewResultItem(
-    option: Option,
-    isWinner: Boolean,
-    votesCount: Int,
-    votes: List<Vote>,
+    item: PollResultsViewState.ResultItem,
+    onShowAllClick: (option: Option) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -173,19 +179,20 @@ private fun PollViewResultItem(
             .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(ChatTheme.colors.inputBackground)
             .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(modifier = Modifier.fillMaxWidth()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                text = option.text,
+                text = item.option.text,
                 color = ChatTheme.colors.textHighEmphasis,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
             )
 
-            if (isWinner) {
+            if (item.isWinner) {
                 Icon(
                     modifier = Modifier.padding(end = 8.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_award),
@@ -195,7 +202,7 @@ private fun PollViewResultItem(
             }
 
             Text(
-                text = stringResource(id = R.string.stream_compose_poll_vote_counts, votesCount),
+                text = stringResource(id = R.string.stream_compose_poll_vote_counts, item.voteCount),
                 color = ChatTheme.colors.textHighEmphasis,
                 fontSize = 16.sp,
             )
@@ -203,62 +210,33 @@ private fun PollViewResultItem(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        votes.forEach { vote ->
-            PollVoteItem(vote = vote)
+        item.votes.forEach { vote ->
+            PollVoteItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                vote = vote,
+            )
+        }
+
+        if (item.showAllButton) {
+            TextButton(
+                onClick = { onShowAllClick(item.option) },
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+            ) {
+                Text(text = stringResource(R.string.stream_compose_poll_show_all_votes))
+            }
         }
     }
 }
 
 @Composable
-private fun PollVoteItem(vote: Vote) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        val user = vote.user
-        if (user != null) {
-            ChatTheme.componentFactory.Avatar(
-                modifier = Modifier.size(20.dp),
-                imageUrl = user.image,
-                initials = user.initials,
-                shape = ChatTheme.shapes.avatar,
-                textStyle = ChatTheme.typography.captionBold,
-                placeholderPainter = null,
-                errorPlaceholderPainter = null,
-                contentDescription = user.name,
-                initialsAvatarOffset = DpOffset.Zero,
-                onClick = null,
-            )
-
-            Text(
-                modifier = Modifier.weight(1f),
-                text = user.name,
-                color = ChatTheme.colors.textHighEmphasis,
-                style = ChatTheme.typography.body,
-            )
-
-            Text(
-                text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.bodyBold,
-            )
-
-            Text(
-                text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.body,
-            )
-        }
-    }
-}
-
-@Composable
-private fun PollViewResultTitle(title: String) {
+private fun PollViewResultTitle(
+    title: String,
+    modifier: Modifier,
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(16.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp)
@@ -278,21 +256,45 @@ private fun PollViewResultTitle(title: String) {
     }
 }
 
-@Preview
+private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
+    save = { option ->
+        option?.let {
+            Bundle().apply {
+                putString("id", it.id)
+                putString("text", it.text)
+            }
+        }
+    },
+    restore = { bundle ->
+        val id = bundle.getString("id") ?: return@Saver null
+        val text = bundle.getString("text") ?: return@Saver null
+        Option(id = id, text = text)
+    },
+)
+
+@Preview(showBackground = true)
 @Composable
-private fun PollViewResultDialogPreview() {
+private fun PollResultsContentPreview() {
     ChatTheme {
-        PollViewResultDialog()
+        PollResultsContent()
     }
 }
 
 @Composable
-internal fun PollViewResultDialog() {
+internal fun PollResultsContent() {
+    val poll = PreviewPollData.poll1
     Content(
-        selectedPoll = SelectedPoll(
-            poll = PreviewPollData.poll1,
-            message = PreviewMessageData.message1,
-            pollSelectionType = PollSelectionType.ViewResult,
+        state = PollResultsViewState(
+            pollName = poll.name,
+            results = poll.options.mapIndexed { index, option ->
+                PollResultsViewState.ResultItem(
+                    option = option,
+                    isWinner = option == poll.options.first(),
+                    voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                    votes = poll.getVotesUnlessAnonymous(option),
+                    showAllButton = index == 0,
+                )
+            },
         ),
     )
 }

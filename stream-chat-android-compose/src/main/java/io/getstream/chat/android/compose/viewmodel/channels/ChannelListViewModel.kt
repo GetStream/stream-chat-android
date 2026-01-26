@@ -770,7 +770,7 @@ public class ChannelListViewModel(
         /**
          * Debounce time for search queries.
          */
-        private const val SEARCH_DEBOUNCE_MS = 200L
+        private const val SEARCH_DEBOUNCE_MS = 300L
 
         /**
          * Minimum length of the search query to start searching for channels.

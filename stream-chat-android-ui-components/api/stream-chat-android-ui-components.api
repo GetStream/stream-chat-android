@@ -3448,6 +3448,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 	public fun <init> ()V
 	public fun getTheme ()I
 	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroy ()V
 	public fun onDestroyView ()V
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
 }
@@ -5161,6 +5162,17 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public final fun threadLoadOlderToNewer (Z)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 	public final fun userLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 	public final fun userLookupHandlerCompat (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getState ()Landroidx/lifecycle/LiveData;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/PollResultsViewModel$Factory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Lio/getstream/chat/android/models/Poll;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {

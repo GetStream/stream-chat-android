@@ -89,10 +89,24 @@
     <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
-    <string name="stream_compose_quoted_message_image_tag">Picture</string>
+    <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
-    <string name="stream_compose_quoted_message_file_tag">File</string>
-    <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
+    <string name="stream_compose_quoted_message_media">%d media</string>
+    <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
+    <string name="stream_compose_quoted_message_you">You</string>
+
+    <plurals name="stream_compose_quoted_message_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_images">
+        <item quantity="one">Photo</item>
+        <item quantity="other">%d photos</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_videos">
+        <item quantity="one">Video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>
@@ -138,7 +152,7 @@
     <string name="stream_compose_message_composer_hold_to_record">Hold to start, release to send.</string>
     <string name="stream_compose_audio_recording_preview">Voice message</string>
 
-    <string name="stream_compose_message_label">Send a message</string>
+    <string name="stream_compose_message_label">Message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_record_audio_message">Record audio message</string>
@@ -223,6 +237,8 @@
     <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
     <string name="stream_compose_poll_option_max_number_of_answers_hint">Max number of answers</string>
     <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
+    <string name="stream_compose_poll_show_all_votes">Show All</string>
+    <string name="stream_compose_poll_option_results_error">An error occurred while loading the poll option results. Please try again later.</string>
     <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
     <string name="stream_compose_poll_suggest_option">Suggest Option</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>

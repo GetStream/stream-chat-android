@@ -71,20 +71,6 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `file attachment quoted content`() {
-        snapshotWithDarkMode {
-            FileAttachmentQuotedContent()
-        }
-    }
-
-    @Test
-    fun `media attachment quoted content`() {
-        snapshotWithDarkMode {
-            MediaAttachmentQuotedContent()
-        }
-    }
-
-    @Test
     fun `file upload content`() {
         snapshotWithDarkModeRow {
             FileUploadContent()

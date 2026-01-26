@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="48dp"
+    android:viewportWidth="40"
+    android:viewportHeight="48">
+  <path
+      android:pathData="M0,4C0,1.791 1.791,0 4,0H28L40,12V44C40,46.209 38.209,48 36,48H4C1.791,48 0,46.209 0,44V4Z"
+      android:fillColor="#A847B7"/>
+  <path
+      android:pathData="M13.813,21H16.813M13.813,21V17.906M13.813,21V24.094M16.813,21H23.188M16.813,21V24.094M16.813,21V17.906M13.813,17.906V16.313C13.813,15.484 14.484,14.813 15.313,14.813H16.813M13.813,17.906H16.813M13.813,24.094V25.688C13.813,26.516 14.484,27.188 15.313,27.188H16.813M13.813,24.094H16.813M23.188,21H26.188M23.188,21V24.438M23.188,21V17.906M16.813,24.094V27.188M16.813,17.906V14.813M26.188,21V17.906M26.188,21V24.438M23.188,24.438V27.188M23.188,24.438H26.188M23.188,17.906V14.813M23.188,17.906H26.188M26.188,17.906V16.313C26.188,15.484 25.516,14.813 24.688,14.813H23.188M26.188,24.438V25.688C26.188,26.516 25.516,27.188 24.688,27.188H23.188M23.188,27.188H16.813M23.188,14.813H16.813"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.5"
+      android:fillColor="#00000000"
+      android:strokeColor="#ffffff"
+      android:strokeLineCap="square"/>
+  <path
+      android:pathData="M40,12L31,12C29.343,12 28,10.657 28,9V0L40,12Z"
+      android:strokeAlpha="0.5"
+      android:fillColor="#ffffff"
+      android:fillAlpha="0.5"/>
+</vector>

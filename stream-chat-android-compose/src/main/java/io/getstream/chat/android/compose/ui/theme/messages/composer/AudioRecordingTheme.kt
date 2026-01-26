@@ -82,7 +82,7 @@ public data class AudioRecordingTheme(
                     size = ComponentSize.square(48.dp),
                     padding = ComponentPadding.Zero,
                     icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                         tint = colors.textLowEmphasis,
                         size = ComponentSize.square(24.dp),
                     ),

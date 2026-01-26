@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
+import io.getstream.chat.android.ui.utils.extensions.applyEdgeToEdgePadding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -70,6 +72,7 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.applyEdgeToEdgePadding(typeMask = WindowInsetsCompat.Type.systemBars())
         setupDialog()
     }
 

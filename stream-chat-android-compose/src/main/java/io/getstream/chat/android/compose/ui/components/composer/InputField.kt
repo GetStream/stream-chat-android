@@ -33,10 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
@@ -48,7 +44,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
@@ -106,16 +101,13 @@ public fun InputField(
     }
 
     val theme = ChatTheme.messageComposerTheme.inputField
-    val description = stringResource(id = R.string.stream_compose_cd_message_input)
 
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = theme.borderShape)
             .clip(shape = theme.borderShape)
             .background(theme.backgroundColor)
-            .padding(innerPadding)
-            .semantics { contentDescription = description }
-            .testTag("Stream_ComposerInputField"),
+            .padding(innerPadding),
         value = textState,
         onValueChange = {
             textState = it

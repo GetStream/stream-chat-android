@@ -18,9 +18,10 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
+private val whitespaceRegex = "\\s+".toRegex()
 internal fun String.initials(): String {
     return trim()
-        .split("\\s+".toRegex())
+        .split(whitespaceRegex)
         .take(2)
         .joinToString(separator = "") { it.take(1).uppercase() }
 }

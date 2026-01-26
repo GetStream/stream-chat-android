@@ -1212,7 +1212,6 @@ public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.GIPHY,
     AttachmentType.VIDEO,
     AttachmentType.AUDIO,
-    AttachmentType.PRODUCT,
     AttachmentType.FILE,
     AttachmentType.LINK,
     AttachmentType.AUDIO_RECORDING,

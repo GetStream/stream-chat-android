@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.core.app.ActivityOptionsCompat
@@ -64,7 +65,10 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         }
     }
 
-    fun snapshotWithDarkMode(composable: @Composable () -> Unit) {
+    fun snapshotWithDarkMode(
+        contentAlignment: Alignment = Alignment.TopStart,
+        composable: @Composable () -> Unit,
+    ) {
         paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
@@ -77,6 +81,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                             modifier = Modifier
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -86,6 +91,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                             modifier = Modifier
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -95,7 +101,10 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
         }
     }
 
-    fun snapshotWithDarkModeRow(composable: @Composable () -> Unit) {
+    fun snapshotWithDarkModeRow(
+        contentAlignment: Alignment = Alignment.TopStart,
+        composable: @Composable () -> Unit,
+    ) {
         paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
@@ -108,6 +117,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                             modifier = Modifier
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }
@@ -117,6 +127,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                             modifier = Modifier
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
+                            contentAlignment = contentAlignment,
                         ) {
                             composable()
                         }

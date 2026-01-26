@@ -53,7 +53,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
-import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.quotedDateAttachmentFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -73,13 +72,9 @@ class MessagesActivity : AppCompatActivity() {
         val customFactories = listOf(dateAttachmentFactory)
         val defaultFactories = StreamAttachmentFactories.defaults()
 
-        val customQuotedFactories = listOf(quotedDateAttachmentFactory)
-        val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()
-
         setContent {
             ChatTheme(
                 attachmentFactories = customFactories + defaultFactories,
-                quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories,
             ) {
                 CustomMessagesScreen(
                     channelId = channelId,
@@ -187,7 +182,7 @@ class MessagesActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            integrations = {
+            leadingContent = {
                 IconButton(
                     modifier = Modifier
                         .size(48.dp)

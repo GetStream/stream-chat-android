@@ -108,3 +108,6 @@ internal fun Modifier.clickable(
         enabled = enabled,
         onClick = onClick,
     )
+
+internal inline fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> Modifier) =
+    if (condition) this.block() else this

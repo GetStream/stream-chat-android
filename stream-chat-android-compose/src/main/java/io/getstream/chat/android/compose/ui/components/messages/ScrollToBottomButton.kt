@@ -16,17 +16,21 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -38,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 
 /**
@@ -55,40 +60,40 @@ internal fun ScrollToBottomButton(
 ) {
     Box(
         modifier = modifier
-            .semantics { role = Role.Button }
-            .padding(16.dp),
+            .size(48.dp)
+            .semantics { role = Role.Button },
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
-            onClick = onClick,
+        FilledIconButton(
             modifier = Modifier
-                .padding(top = 12.dp)
-                .size(48.dp)
+                .shadow(StreamTokens.spacing2xs, shape = CircleShape)
+                .size(40.dp)
                 .testTag("Stream_ScrollToBottomButton"),
+            onClick = onClick,
             shape = CircleShape,
-            shadowElevation = 4.dp,
-            color = ChatTheme.colors.barsBackground,
-            contentColor = ChatTheme.colors.primaryAccent,
+            colors = IconButtonDefaults.filledIconButtonColors(
+                containerColor = ChatTheme.colors.barsBackground,
+                contentColor = ChatTheme.colors.textHighEmphasis,
+            ),
         ) {
             Icon(
-                modifier = Modifier.padding(16.dp),
                 painter = painterResource(R.drawable.stream_compose_ic_arrow_down),
                 contentDescription = stringResource(R.string.stream_compose_scroll_to_bottom),
             )
         }
-
         FadingVisibility(
-            modifier = Modifier.align(Alignment.TopCenter),
+            modifier = Modifier.align(Alignment.TopEnd),
             visible = count > 0,
         ) {
             if (count > 0) {
                 Surface(
-                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier.border(width = 1.dp, color = Color.White, shape = BadgeShape),
+                    shape = BadgeShape,
                     color = ChatTheme.colors.primaryAccent,
                     contentColor = Color.White,
                 ) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                        modifier = Modifier.padding(horizontal = 6.dp, vertical = StreamTokens.spacing3xs),
                         text = count.toString(),
                         style = ChatTheme.typography.footnoteBold,
                     )
@@ -98,12 +103,14 @@ internal fun ScrollToBottomButton(
     }
 }
 
+private val BadgeShape = RoundedCornerShape(StreamTokens.spacingMd)
+
 @Composable
-@Preview
+@Preview(showBackground = true)
 private fun Preview() {
     ChatTheme {
         ScrollToBottomButton(
-            count = 5,
+            count = 1,
             onClick = { },
         )
     }

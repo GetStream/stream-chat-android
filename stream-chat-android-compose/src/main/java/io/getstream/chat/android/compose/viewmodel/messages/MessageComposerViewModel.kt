@@ -282,6 +282,13 @@ public class MessageComposerViewModel(
     public fun sendRecording(): Unit = messageComposerController.sendRecording()
 
     /**
+     * @see [MessageComposerController.cancelLinkPreview]
+     */
+    public fun cancelLinkPreview() {
+        messageComposerController.cancelLinkPreview()
+    }
+
+    /**
      * Disposes the inner [MessageComposerController].
      */
     override fun onCleared() {

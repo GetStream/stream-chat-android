@@ -31,20 +31,4 @@ private object CustomAttachmentsSnippet {
             }
         }
     }
-
-    class CustomQuotedAttachments: ComponentActivity(){
-
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            val myQuotedAttachmentFactories = listOf<AttachmentFactory>()
-            val defaultFactories = StreamAttachmentFactories.defaultQuotedFactories()
-
-            setContent {
-                // override the default factories by adding your own
-                ChatTheme(quotedAttachmentFactories = myQuotedAttachmentFactories + defaultFactories) {
-                    // Chat components
-                }
-            }
-        }
-    }
 }

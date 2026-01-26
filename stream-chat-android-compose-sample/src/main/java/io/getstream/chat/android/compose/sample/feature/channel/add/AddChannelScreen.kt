@@ -107,7 +107,7 @@ fun AddChannelScreen(
                 }
                 MessageComposer(
                     viewModel = viewModel,
-                    integrations = {
+                    leadingContent = {
                         Spacer(Modifier.width(8.dp))
                     },
                     onSendMessage = {
