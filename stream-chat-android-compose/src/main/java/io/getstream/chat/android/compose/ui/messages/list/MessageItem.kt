@@ -28,7 +28,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -637,7 +636,6 @@ public fun RegularMessageContent(
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = messageTheme.backgroundBorder,
-            contentPadding = messageTheme.contentPadding.values,
             content = content,
         )
     } else {
@@ -648,7 +646,6 @@ public fun RegularMessageContent(
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
                 border = BorderStroke(1.dp, ChatTheme.colors.borders),
-                contentPadding = PaddingValues(),
                 content = content,
             )
 

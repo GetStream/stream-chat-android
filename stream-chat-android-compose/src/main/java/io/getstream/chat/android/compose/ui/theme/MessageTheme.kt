@@ -31,7 +31,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
 /**
  * Represents message theming.
  *
- * @param contentPadding The padding for the message content.
  * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
  * @param backgroundShapes The shapes for the message background.
@@ -43,7 +42,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
  */
 @Immutable
 public data class MessageTheme(
-    val contentPadding: ComponentPadding,
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
     val backgroundShapes: MessageBackgroundShapes,
@@ -115,7 +113,6 @@ public data class MessageTheme(
                 else -> colors.chatBgIncoming
             }
             return MessageTheme(
-                contentPadding = ComponentPadding.Zero,
                 backgroundColor = backgroundColor,
                 backgroundBorder = null,
                 backgroundShapes = MessageBackgroundShapes(

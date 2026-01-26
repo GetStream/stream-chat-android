@@ -1044,7 +1044,6 @@ public interface ChatComponentFactory {
      * @param color The color of the message bubble.
      * @param shape The shape of the message bubble.
      * @param border The border of the message bubble.
-     * @param contentPadding The padding of the message bubble.
      * @param content The content shown inside the message bubble.
      */
     @Composable
@@ -1054,7 +1053,6 @@ public interface ChatComponentFactory {
         color: Color,
         shape: Shape,
         border: BorderStroke?,
-        contentPadding: PaddingValues,
         content: @Composable () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
@@ -1062,7 +1060,6 @@ public interface ChatComponentFactory {
             color = color,
             shape = shape,
             border = border,
-            contentPadding = contentPadding,
             content = content,
         )
     }

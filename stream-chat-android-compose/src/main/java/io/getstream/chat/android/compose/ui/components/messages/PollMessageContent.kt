@@ -21,7 +21,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -136,7 +135,6 @@ public fun PollMessageContent(
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
-            contentPadding = PaddingValues(),
             content = {
                 PollMessageContent(
                     message = message,
@@ -165,7 +163,6 @@ public fun PollMessageContent(
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
                 border = BorderStroke(1.dp, ChatTheme.colors.borders),
-                contentPadding = PaddingValues(),
                 content = {
                     MessageContent(
                         message = message,
