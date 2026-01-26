@@ -22,12 +22,10 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 /**
  * Helper class for managing file and media attachments from device storage.
@@ -44,7 +42,7 @@ import java.util.Locale
  */
 @Suppress("TooManyFunctions")
 public class StorageHelper {
-    private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)
+    private val fileManager = StreamFileManager()
 
     /**
      * Retrieves or creates a cached copy of a file from the given attachment metadata.
@@ -73,14 +71,15 @@ public class StorageHelper {
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!
         }
-        val cachedFile = File(getUniqueCacheFolder(context), attachmentMetaData.getTitleWithExtension())
-        context.contentResolver.openInputStream(attachmentMetaData.uri!!)?.use { inputStream ->
-            cachedFile.outputStream().use {
-                inputStream.copyTo(it)
-            }
-        }
 
-        return cachedFile
+        val fileName = attachmentMetaData.getTitleWithExtension()
+        val inputStream = context.contentResolver.openInputStream(attachmentMetaData.uri!!)
+            ?: return null
+        return fileManager.writeFileInTimestampedCache(
+            context = context,
+            fileName = fileName,
+            source = inputStream,
+        ).getOrNull()
     }
 
     /**
@@ -301,11 +300,6 @@ public class StorageHelper {
     private fun isVideo(mimeType: String?): Boolean {
         return mimeType?.startsWith("video") ?: false
     }
-
-    private fun getUniqueCacheFolder(context: Context): File =
-        File(context.cacheDir, "$FILE_NAME_PREFIX${dateFormat.format(Date().time)}").also {
-            it.mkdirs()
-        }
 
     public companion object {
         public const val TIME_FORMAT: String = "HHmmssSSS"

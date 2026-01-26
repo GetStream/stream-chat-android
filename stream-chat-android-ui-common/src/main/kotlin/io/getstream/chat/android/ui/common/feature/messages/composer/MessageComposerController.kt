@@ -486,7 +486,7 @@ public class MessageComposerController(
         if (config.isDraftMessageEnabled) {
             channelDraftMessages.onEach {
                 if (it[channelCid] == null &&
-                    currentDraftId != null &&
+                    !currentDraftId.isNullOrEmpty() &&
                     messageMode.value is MessageMode.Normal
                 ) {
                     clearData()
@@ -495,7 +495,7 @@ public class MessageComposerController(
 
             threadDraftMessages.onEach {
                 if (it[parentMessageId] == null &&
-                    currentDraftId != null &&
+                    !currentDraftId.isNullOrEmpty() &&
                     messageMode.value is MessageMode.MessageThread
                 ) {
                     clearData()

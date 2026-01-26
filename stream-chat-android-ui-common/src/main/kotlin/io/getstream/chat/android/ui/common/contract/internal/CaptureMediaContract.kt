@@ -21,22 +21,30 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Environment
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-private val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
-
+/**
+ * Activity result contract for capturing media (photos and/or videos) using the device camera.
+ *
+ * Files are created in external storage directories:
+ * - Photos: `{externalFilesDir}/Pictures/`
+ * - Videos: `{externalFilesDir}/Movies/`
+ * With fallback to cache directories if external storage is unavailable.
+ *
+ * @param mode The capture mode determining what media types can be captured
+ * @param fileManager Manager for creating temporary files in external storage
+ */
 @InternalStreamChatApi
-public class CaptureMediaContract(private val mode: Mode) :
-    ActivityResultContract<Unit, File?>() {
+public class CaptureMediaContract(
+    private val mode: Mode,
+    private val fileManager: StreamFileManager = StreamFileManager(),
+) : ActivityResultContract<Unit, File?>() {
 
     private var pictureFile: File? = null
     private var videoFile: File? = null
@@ -53,36 +61,25 @@ public class CaptureMediaContract(private val mode: Mode) :
             }
     }
 
-    private fun getRecordVideoIntents(context: Context): List<Intent> =
-        File(
-            context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
-            createFileName("STREAM_VID", "mp4"),
-        ).let {
-            videoFile = it
-            createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
-        }
+    private fun getRecordVideoIntents(context: Context): List<Intent> {
+        videoFile = fileManager.createVideoInExternalDir(context).getOrNull()
+        return videoFile
+            ?.let { createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it) }
+            ?: emptyList()
+    }
 
-    private fun getTakePictureIntents(context: Context): List<Intent> =
-        File(
-            context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-            createFileName("STREAM_IMG", "jpg"),
-        ).let {
-            pictureFile = it
-            createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
-        }
-
-    private fun createFileName(prefix: String, extension: String) =
-        "${prefix}_${dateFormat.format(Date().time)}.$extension"
+    private fun getTakePictureIntents(context: Context): List<Intent> {
+        pictureFile = fileManager.createPhotoInExternalDir(context).getOrNull()
+        return pictureFile?.let { createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it) }
+            ?: emptyList()
+    }
 
     private fun createIntentList(
         context: Context,
         action: String,
         destinationFile: File,
     ): List<Intent> {
-        val destinationUri = StreamFileUtil.getUriForFile(
-            context,
-            destinationFile,
-        )
+        val destinationUri = ShareableUriProvider().getUriForFile(context, destinationFile)
         val actionIntent = Intent(action)
         return context.packageManager.queryIntentActivities(
             actionIntent,

@@ -25,6 +25,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun castPollVote (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
+	public final fun clearCacheAndTemporaryFiles (Landroid/content/Context;)Lio/getstream/result/call/Call;
 	public final fun clearPersistence ()Lio/getstream/result/call/Call;
 	public final fun closePoll (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun connectAnonymousUser ()Lio/getstream/result/call/Call;
