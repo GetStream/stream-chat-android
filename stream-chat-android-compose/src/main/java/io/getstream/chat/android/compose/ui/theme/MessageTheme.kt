@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
@@ -32,8 +31,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
 /**
  * Represents message theming.
  *
- * @param textStyle The text style for the messages.
- * @param errorTextStyle The text style for the error messages.
  * @param contentPadding The padding for the message content.
  * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
@@ -42,13 +39,10 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
  * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
- * @param linkStyle The text style for the links in message components.
  * @param linkBackgroundColor The color for the message link card background.
  */
 @Immutable
 public data class MessageTheme(
-    val textStyle: TextStyle,
-    val errorTextStyle: TextStyle,
     val contentPadding: ComponentPadding,
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
@@ -59,7 +53,6 @@ public data class MessageTheme(
     val fileAttachmentTheme: FileAttachmentTheme,
     val poll: PollMessageStyle,
     val mentionColor: Color,
-    val linkStyle: TextStyle,
     val linkBackgroundColor: Color,
 ) {
     public companion object {
@@ -117,14 +110,11 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
-            val textStyle = typography.bodyDefault.copy(color = colors.chatTextMessage)
             val backgroundColor = when (own) {
                 true -> colors.chatBgOutgoing
                 else -> colors.chatBgIncoming
             }
             return MessageTheme(
-                textStyle = textStyle,
-                errorTextStyle = textStyle,
                 contentPadding = ComponentPadding.Zero,
                 backgroundColor = backgroundColor,
                 backgroundBorder = null,
@@ -161,7 +151,6 @@ public data class MessageTheme(
                     colors = colors,
                 ),
                 mentionColor = colors.chatTextMention,
-                linkStyle = textStyle.copy(color = colors.chatTextLink),
                 linkBackgroundColor = colors.linkBackground,
             )
         }

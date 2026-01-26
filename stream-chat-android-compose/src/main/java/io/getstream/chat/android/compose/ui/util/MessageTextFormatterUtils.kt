@@ -19,69 +19,16 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import io.getstream.chat.android.client.utils.message.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
-import io.getstream.chat.android.models.Message
 
-/**
- * Builds a function that returns text style, depending on whether the message is mine or not, and based on
- * whether the message is an error/failed message or not.
- *
- * @param ownTheme The theme for messages from the current user.
- * @param otherTheme The theme for messages from the other users.
- */
-// TODO [G.] do we need these functions?
-@Composable
-internal fun defaultTextStyle(
-    ownTheme: MessageTheme,
-    otherTheme: MessageTheme,
-): (Boolean, Message) -> TextStyle {
-    return { isMine, message ->
-        val theme = if (isMine) ownTheme else otherTheme
-        when {
-            message.isErrorOrFailed() -> theme.errorTextStyle
-            else -> theme.textStyle
-        }
-    }
-}
+internal fun messageTextStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
+    typography.bodyDefault.copy(color = colors.chatTextMessage)
 
-/**
- * Builds a function that returns text style, depending on whether the message is mine or not, and based on
- * whether the message is an error/failed message or not.
- *
- * @param isInDarkMode Indicator if the app is in dark mode.
- * @param typography The typography to use for styling.
- * @param colors The colors to use for styling.
- * @param shapes The shapes to use for styling.
- */
-@Composable
-internal fun defaultTextStyle(
-    isInDarkMode: Boolean,
-    typography: StreamTypography,
-    colors: StreamColors,
-    shapes: StreamShapes = StreamShapes.defaultShapes(),
-): (Boolean, Message) -> TextStyle {
-    val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
-    val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, shapes, colors)
-    return defaultTextStyle(ownTheme, otherTheme)
-}
-
-@Composable
-internal fun defaultLinkStyle(colors: StreamColors): (isOwnMessage: Boolean) -> TextStyle =
-    defaultLinkStyle(
-        ownTheme = MessageTheme.defaultOwnTheme(colors = colors),
-        otherTheme = MessageTheme.defaultOtherTheme(colors = colors),
-    )
-
-internal fun defaultLinkStyle(
-    ownTheme: MessageTheme,
-    otherTheme: MessageTheme,
-): (isOwnMessage: Boolean) -> TextStyle = { isOwnMessage ->
-    if (isOwnMessage) ownTheme.linkStyle else otherTheme.linkStyle
-}
+internal fun messageLinkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
+    typography.bodyDefault.copy(color = colors.chatTextLink)
 
 /**
  * Function that returns the color of the mentions text, depending on whether the message is mine or not.

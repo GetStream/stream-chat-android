@@ -44,11 +44,11 @@ import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.compose.ui.util.messageTextStyle
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
-import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -92,11 +92,7 @@ public fun MessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> if (message.isMine(currentUser)) {
-            ChatTheme.ownMessageTheme.textStyle
-        } else {
-            ChatTheme.otherMessageTheme.textStyle
-        }
+        else -> messageTextStyle(ChatTheme.typography, ChatTheme.colors)
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)

@@ -70,8 +70,8 @@ public fun interface MessageTextFormatter {
                 else -> StreamColors.defaultColors()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
-                defaultTextStyle(isInDarkMode, typography, colors),
-            linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
+                { _, _ -> messageTextStyle(typography, colors) },
+            linkStyle: (isMine: Boolean) -> TextStyle = { messageLinkStyle(typography, colors) },
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
@@ -122,16 +122,14 @@ public fun interface MessageTextFormatter {
             ),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
-            val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
-            val linkStyle = defaultLinkStyle(ownMessageTheme, otherMessageTheme)
             val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
             return defaultFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 isInDarkMode = isInDarkMode,
                 typography = typography,
                 colors = colors,
-                textStyle = textStyle,
-                linkStyle = linkStyle,
+                textStyle = { _, _ -> messageTextStyle(typography, colors) },
+                linkStyle = { messageLinkStyle(typography, colors) },
                 mentionColor = mentionColor,
                 builder = builder,
             )
@@ -199,6 +197,7 @@ private class DefaultMessageTextFormatter(
                     } ?: message.text
                 }
             }
+
             else -> message.text
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
