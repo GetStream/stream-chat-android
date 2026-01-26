@@ -61,10 +61,6 @@ import io.getstream.chat.android.compose.R
  * given it contains more than can be displayed in the message list media attachment preview.
  * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
  * given it contains more than can be displayed in the message list media attachment preview.
- * @param ownMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by the current user.
- * @param otherMessageQuotedBackground Changes the background color of the quoted message contained in a reply sent by other users.
- * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
- * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  * @param accentError Used for destructive actions and error states.
  * @param accentNeutral Used for neutral accent for low-priority badges.
  * @param accentSuccess Used for success states and positive actions.
@@ -84,8 +80,10 @@ import io.getstream.chat.android.compose.R
  * @param borderCoreSurfaceSubtle Used for very light separators.
  * @param borderCorePrimary Used for selected or active state border.
  * @param textPrimary Used for main text color.
+ * @param textSecondary Used for secondary text color with lower emphasis.
  * @param stateBgDisabled Used for disabled background for inputs, buttons, or chips.
  * @param stateTextDisabled Used for disabled text and icon color.
+ * @param backgroundElevationElevation2 Used for elevated surface backgrounds at elevation level 2.
  * @param buttonStyleGhostBg Used for ghost button background.
  * @param buttonStyleGhostBorder Used for ghost button border.
  * @param buttonStyleGhostTextPrimary Used for primary ghost button text.
@@ -105,6 +103,11 @@ import io.getstream.chat.android.compose.R
  * @param buttonTypeSecondaryTextDisabled Used for disabled secondary button text.
  * @param chatBgIncoming Used for incoming message bubble background.
  * @param chatBgOutgoing Used for outgoing message bubble background.
+ * @param chatBgAttachmentIncoming Used for incoming message attachment background.
+ * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
+ * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
+ * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
+ * @param chatTextMessage Used for message text color in chat bubbles.
  * @param controlRemoveBg Used for remove control background.
  * @param controlRemoveBorder Used for remove control border.
  * @param controlRemoveIcon Used for remove control icon.
@@ -173,9 +176,10 @@ public data class StreamColors(
     public val borderCoreSurfaceSubtle: Color,
     public val borderCorePrimary: Color,
     public val textPrimary: Color,
+    public val textSecondary: Color,
     public val stateBgDisabled: Color,
     public val stateTextDisabled: Color,
-
+    public val backgroundElevationElevation2: Color,
     public val buttonStyleGhostBg: Color,
     public val buttonStyleGhostBorder: Color,
     public val buttonStyleGhostTextPrimary: Color = accentPrimary,
@@ -253,11 +257,13 @@ public data class StreamColors(
             accentNeutral = StreamPrimitiveColors.slate500,
             accentSuccess = StreamPrimitiveColors.green500,
             accentPrimary = StreamPrimitiveColors.blue500,
+            backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
             borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
             borderCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
             borderCorePrimary = StreamPrimitiveColors.blue600,
             textPrimary = StreamPrimitiveColors.slate900,
+            textSecondary = StreamPrimitiveColors.slate700,
             stateBgDisabled = StreamPrimitiveColors.slate200,
             stateTextDisabled = StreamPrimitiveColors.slate400,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -331,11 +337,13 @@ public data class StreamColors(
             accentNeutral = StreamPrimitiveColors.neutral500,
             accentSuccess = StreamPrimitiveColors.green400,
             accentPrimary = StreamPrimitiveColors.blue400,
+            backgroundElevationElevation2 = StreamPrimitiveColors.neutral800,
             borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
             borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral700,
             borderCorePrimary = StreamPrimitiveColors.blue300,
             textPrimary = StreamPrimitiveColors.neutral50,
+            textSecondary = StreamPrimitiveColors.neutral300,
             stateBgDisabled = StreamPrimitiveColors.slate800,
             stateTextDisabled = StreamPrimitiveColors.slate600,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -386,6 +394,7 @@ internal object StreamPrimitiveColors {
     val green500 = Color(0xFF00E2A1)
     val green800 = Color(0xFF006548)
     val neutral50 = Color(0xFFF7F7F7)
+    val neutral300 = Color(0xFFC1C1C1)
     val neutral500 = Color(0xFF7F7F7F)
     val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)
@@ -399,6 +408,7 @@ internal object StreamPrimitiveColors {
     val slate400 = Color(0xFFB8BEC4)
     val slate500 = Color(0xFF9EA4AA)
     val slate600 = Color(0xFF838990)
+    val slate700 = Color(0xFF4A4A4A)
     val slate800 = Color(0xFF50565D)
     val slate900 = Color(0xFF1E252B)
     val yellow100 = Color(0xFFFFF1C2)
