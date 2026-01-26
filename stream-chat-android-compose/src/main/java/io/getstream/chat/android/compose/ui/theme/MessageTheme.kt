@@ -20,7 +20,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
@@ -31,14 +30,12 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
  *
  * @param backgroundShapes The shapes for the message background.
  * @param audioRecording The theming for the audio recording attachment.
- * @param mentionColor The color for the mentions in the messages.
  */
 @Immutable
 public data class MessageTheme(
     val backgroundShapes: MessageBackgroundShapes,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
-    val mentionColor: Color,
 ) {
     public companion object {
 
@@ -119,7 +116,6 @@ public data class MessageTheme(
                     shapes = shapes,
                     colors = colors,
                 ),
-                mentionColor = colors.chatTextMention,
             )
         }
     }

@@ -73,7 +73,7 @@ public fun interface MessageTextFormatter {
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
                 { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
             linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.messageLinkStyle(typography, colors) },
-            mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
+            mentionColor: (isMine: Boolean) -> Color = { colors.chatTextMention },
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return DefaultMessageTextFormatter(
@@ -123,7 +123,6 @@ public fun interface MessageTextFormatter {
             ),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
-            val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
             return defaultFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 isInDarkMode = isInDarkMode,
@@ -131,7 +130,7 @@ public fun interface MessageTextFormatter {
                 colors = colors,
                 textStyle = { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
                 linkStyle = { MessageStyling.messageLinkStyle(typography, colors) },
-                mentionColor = mentionColor,
+                mentionColor = { colors.chatTextMention },
                 builder = builder,
             )
         }
