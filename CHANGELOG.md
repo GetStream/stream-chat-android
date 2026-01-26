@@ -71,6 +71,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 ### ⬆️ Improved
 
