@@ -40,7 +40,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -155,7 +154,7 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
         )
 
         @Suppress("MagicNumber")
-        UserAvatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(8.dp)
