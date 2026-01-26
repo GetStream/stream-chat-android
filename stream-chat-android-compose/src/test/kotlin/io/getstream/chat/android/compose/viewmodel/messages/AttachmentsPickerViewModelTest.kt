@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
-import app.cash.turbine.test
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
@@ -136,7 +135,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selected images When getting selected attachments async Should emit attachments for upload`() = runTest {
+    fun `Given selected images When getting selected attachments async Should invoke callback with attachments for upload`() = runTest {
         val expectedAttachments = listOf(
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
@@ -147,23 +146,21 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.attachmentsForUpload.test {
-            viewModel.changeAttachmentState(true)
-            viewModel.loadData()
-            viewModel.changeSelectedAttachments(viewModel.images.first())
-            viewModel.changeSelectedAttachments(viewModel.images.last())
+        viewModel.changeAttachmentState(true)
+        viewModel.loadData()
+        viewModel.changeSelectedAttachments(viewModel.images.first())
+        viewModel.changeSelectedAttachments(viewModel.images.last())
 
-            viewModel.getSelectedAttachmentsAsync()
-            advanceUntilIdle()
+        var result: List<Attachment>? = null
+        viewModel.getSelectedAttachmentsAsync { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(2, result.size)
-            assertEquals(expectedAttachments, result)
-        }
+        assertEquals(2, result?.size)
+        assertEquals(expectedAttachments, result)
     }
 
     @Test
-    fun `Given selected files When getting selected attachments async Should emit attachments for upload`() = runTest {
+    fun `Given selected files When getting selected attachments async Should invoke callback with attachments for upload`() = runTest {
         val expectedAttachments = listOf(
             Attachment(type = "file", upload = mock()),
         )
@@ -173,22 +170,20 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.attachmentsForUpload.test {
-            viewModel.changeAttachmentState(true)
-            viewModel.changeAttachmentPickerMode(Files)
-            viewModel.changeSelectedAttachments(viewModel.files.first())
+        viewModel.changeAttachmentState(true)
+        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.changeSelectedAttachments(viewModel.files.first())
 
-            viewModel.getSelectedAttachmentsAsync()
-            advanceUntilIdle()
+        var result: List<Attachment>? = null
+        viewModel.getSelectedAttachmentsAsync { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(1, result.size)
-            assertEquals(expectedAttachments, result)
-        }
+        assertEquals(1, result?.size)
+        assertEquals(expectedAttachments, result)
     }
 
     @Test
-    fun `Given attachment metadata When getting attachments from metadata async Should emit attachments for upload`() = runTest {
+    fun `Given attachment metadata When getting attachments from metadata async Should invoke callback with attachments for upload`() = runTest {
         val metadata = listOf(imageAttachment1, imageAttachment2)
         val expectedAttachments = listOf(
             Attachment(type = "image", upload = mock()),
@@ -199,14 +194,12 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.attachmentsForUpload.test {
-            viewModel.getAttachmentsFromMetadataAsync(metadata)
-            advanceUntilIdle()
+        var result: List<Attachment>? = null
+        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(2, result.size)
-            assertEquals(expectedAttachments, result)
-        }
+        assertEquals(2, result?.size)
+        assertEquals(expectedAttachments, result)
     }
 
     companion object {

@@ -211,12 +211,13 @@ public class AttachmentsPickerViewModel(
     /**
      * Loads up the currently selected attachments. It uses the [attachmentsPickerMode] to know which
      * attachments to use - files or images.
-     * Runs the [getSelectedAttachments] method on [DispatcherProvider.IO] and emits the result
-     * via the [attachmentsForUpload] flow.
+     *
+     * @param onComplete The callback passing the selected attachments.
      */
-    internal fun getSelectedAttachmentsAsync() {
+    internal fun getSelectedAttachmentsAsync(onComplete: (List<Attachment>) -> Unit) {
         viewModelScope.launch(DispatcherProvider.IO) {
-            _attachmentsForUpload.emit(getSelectedAttachments())
+            val attachments = getSelectedAttachments()
+            onComplete(attachments)
         }
     }
 
@@ -242,14 +243,17 @@ public class AttachmentsPickerViewModel(
 
     /**
      * Transforms the selected meta data into a list of [Attachment]s we can upload.
-     * Runs the [getAttachmentsFromMetadataAsync] method on [DispatcherProvider.IO] and emits the result
-     * via the [_attachmentsForUpload] flow.
      *
      * @param metadata List of attachment meta data items.
+     * @param onComplete The callback passing the resolved attachments.
      */
-    internal fun getAttachmentsFromMetadataAsync(metadata: List<AttachmentMetaData>) {
+    internal fun getAttachmentsFromMetadataAsync(
+        metadata: List<AttachmentMetaData>,
+        onComplete: (List<Attachment>) -> Unit,
+    ) {
         viewModelScope.launch(DispatcherProvider.IO) {
-            _attachmentsForUpload.emit(getAttachmentsFromMetaData(metadata))
+            val attachments = getAttachmentsFromMetaData(metadata)
+            onComplete(attachments)
         }
     }
 

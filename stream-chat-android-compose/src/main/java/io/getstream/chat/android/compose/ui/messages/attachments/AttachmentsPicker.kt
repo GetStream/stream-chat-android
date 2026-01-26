@@ -35,7 +35,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -62,7 +61,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
@@ -92,16 +90,12 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
-    // Listen for attachments to be ready for upload
-    LaunchedEffect(attachmentsPickerViewModel) {
-        attachmentsPickerViewModel.attachmentsForUpload.collectLatest {
-            onAttachmentsSelected(it)
-        }
-    }
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
-            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
+                onAttachmentsSelected(attachments)
+            }
         }
         onDismiss()
     }
@@ -152,7 +146,9 @@ public fun AttachmentsPicker(
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
-                            attachmentsPickerViewModel.getSelectedAttachmentsAsync()
+                            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
+                                onAttachmentsSelected(attachments)
+                            }
                         },
                     )
                 }
@@ -179,7 +175,9 @@ public fun AttachmentsPicker(
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
                                 onAttachmentsSubmitted = {
-                                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(it)
+                                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(it) { attachments ->
+                                        onAttachmentsSelected(attachments)
+                                    }
                                 },
                             )
                     }
