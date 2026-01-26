@@ -46,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
@@ -272,9 +273,11 @@ public fun MessageItem(
             ownCapabilities = messageItem.ownCapabilities,
         )
 
+    // Remember the message to ensure updated values are captured in the onReply lambda
+    val replyMessage by rememberUpdatedState(message)
     SwipeToReply(
         modifier = modifier,
-        onReply = { onReply(message) },
+        onReply = { onReply(replyMessage) },
         isSwipeable = { isSwipable },
         swipeToReplyContent = swipeToReplyContent,
     ) {
