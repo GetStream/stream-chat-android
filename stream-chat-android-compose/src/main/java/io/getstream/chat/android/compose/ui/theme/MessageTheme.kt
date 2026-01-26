@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
 /**
  * Represents message theming.
  *
- * @param backgroundBorder The border for the message background.
  * @param backgroundShapes The shapes for the message background.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
@@ -38,7 +36,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
  */
 @Immutable
 public data class MessageTheme(
-    val backgroundBorder: BorderStroke?,
     val backgroundShapes: MessageBackgroundShapes,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
@@ -101,7 +98,6 @@ public data class MessageTheme(
             colors: StreamColors,
         ): MessageTheme {
             return MessageTheme(
-                backgroundBorder = null,
                 backgroundShapes = MessageBackgroundShapes(
                     top = RoundedCornerShape(20.dp),
                     middle = RoundedCornerShape(20.dp),

@@ -635,7 +635,7 @@ public fun RegularMessageContent(
             message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = messageTheme.backgroundBorder,
+            border = null,
             content = content,
         )
     } else {
