@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -70,8 +71,8 @@ public fun interface MessageTextFormatter {
                 else -> StreamColors.defaultColors()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
-                { _, _ -> messageTextStyle(typography, colors) },
-            linkStyle: (isMine: Boolean) -> TextStyle = { messageLinkStyle(typography, colors) },
+                { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
+            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.messageLinkStyle(typography, colors) },
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
@@ -128,8 +129,8 @@ public fun interface MessageTextFormatter {
                 isInDarkMode = isInDarkMode,
                 typography = typography,
                 colors = colors,
-                textStyle = { _, _ -> messageTextStyle(typography, colors) },
-                linkStyle = { messageLinkStyle(typography, colors) },
+                textStyle = { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
+                linkStyle = { MessageStyling.messageLinkStyle(typography, colors) },
                 mentionColor = mentionColor,
                 builder = builder,
             )

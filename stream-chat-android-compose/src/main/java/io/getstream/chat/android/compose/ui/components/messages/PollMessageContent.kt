@@ -60,13 +60,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
@@ -122,10 +122,7 @@ public fun PollMessageContent(
         else -> messageTheme.backgroundShapes.none
     }
 
-    val messageBubbleColor = when {
-        message.isDeleted() -> messageTheme.deletedBackgroundColor
-        else -> messageTheme.poll.backgroundColor
-    }
+    val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {

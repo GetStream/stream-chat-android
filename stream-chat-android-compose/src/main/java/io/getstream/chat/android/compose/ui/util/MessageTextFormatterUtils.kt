@@ -18,17 +18,10 @@ package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
-
-internal fun messageTextStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
-    typography.bodyDefault.copy(color = colors.chatTextMessage)
-
-internal fun messageLinkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
-    typography.bodyDefault.copy(color = colors.chatTextLink)
 
 /**
  * Function that returns the color of the mentions text, depending on whether the message is mine or not.

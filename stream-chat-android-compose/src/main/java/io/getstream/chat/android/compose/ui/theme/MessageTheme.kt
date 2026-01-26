@@ -26,30 +26,22 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
-import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
 
 /**
  * Represents message theming.
  *
- * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
  * @param backgroundShapes The shapes for the message background.
- * @param errorBackgroundColor The background color for the error messages.
- * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
  * @param linkBackgroundColor The color for the message link card background.
  */
 @Immutable
 public data class MessageTheme(
-    val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
     val backgroundShapes: MessageBackgroundShapes,
-    val errorBackgroundColor: Color,
-    val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
-    val poll: PollMessageStyle,
     val mentionColor: Color,
     val linkBackgroundColor: Color,
 ) {
@@ -108,12 +100,7 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
-            val backgroundColor = when (own) {
-                true -> colors.chatBgOutgoing
-                else -> colors.chatBgIncoming
-            }
             return MessageTheme(
-                backgroundColor = backgroundColor,
                 backgroundBorder = null,
                 backgroundShapes = MessageBackgroundShapes(
                     top = RoundedCornerShape(20.dp),
@@ -127,20 +114,11 @@ public data class MessageTheme(
                         else -> shapes.otherMessageBubble
                     },
                 ),
-                errorBackgroundColor = backgroundColor,
-                deletedBackgroundColor = backgroundColor,
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
                     own = own,
                     isInDarkMode = isInDarkMode,
                     typography = typography,
                     colors = colors,
-                ),
-                poll = PollMessageStyle.defaultStyle(
-                    own = own,
-                    isInDarkMode = isInDarkMode,
-                    typography = typography,
-                    colors = colors,
-                    shapes = shapes,
                 ),
                 fileAttachmentTheme = FileAttachmentTheme.defaultTheme(
                     typography = typography,

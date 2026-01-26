@@ -38,13 +38,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.util.fastAny
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
 import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
-import io.getstream.chat.android.compose.ui.util.messageTextStyle
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -92,7 +92,7 @@ public fun MessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> messageTextStyle(ChatTheme.typography, ChatTheme.colors)
+        else -> MessageStyling.messageTextStyle()
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)

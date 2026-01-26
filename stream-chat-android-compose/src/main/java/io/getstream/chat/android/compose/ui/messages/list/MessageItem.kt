@@ -615,7 +615,7 @@ public fun RegularMessageContent(
 
     val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     val messageBubbleShape = getMessageBubbleShape(theme = messageTheme, position = position)
-    val messageBubbleColor = getMessageBubbleColor(theme = messageTheme, message = message)
+    val messageBubbleColor = getMessageBubbleColor(ownsMessage, message = message)
 
     val content = @Composable {
         MessageContent(
