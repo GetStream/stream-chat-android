@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.res.Resources
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +37,6 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
-@VisibleForTesting
 internal class QuotedMessageBodyBuilder(
     private val resources: Resources,
     private val autoTranslationEnabled: Boolean,

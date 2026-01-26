@@ -446,11 +446,8 @@ private fun UserProfilePicture(
             ),
     ) {
         UserAvatar(
-            modifier = Modifier
-                .size(72.dp),
+            modifier = Modifier.size(72.dp),
             user = user,
-            showOnlineIndicator = false,
-            onClick = null,
         )
         Icon(
             modifier = Modifier

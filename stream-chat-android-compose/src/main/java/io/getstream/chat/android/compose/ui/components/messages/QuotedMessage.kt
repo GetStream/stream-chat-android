@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.annotation.DrawableRes
-import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -275,7 +274,6 @@ private fun VideoPlayIndicator() {
     }
 }
 
-@VisibleForTesting
 internal data class QuotedMessageBody(
     val text: String,
     @param:DrawableRes

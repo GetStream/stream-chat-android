@@ -61,6 +61,7 @@ public data class StreamTypography(
 
     public val bodyEmphasis: TextStyle,
     public val captionEmphasis: TextStyle,
+    public val headingLarge: TextStyle,
     public val metadataEmphasis: TextStyle,
 ) {
 
@@ -156,6 +157,12 @@ public data class StreamTypography(
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeSm,
                 lineHeight = StreamTokens.lineHeightTight,
+            ),
+            headingLarge = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeXl,
+                lineHeight = StreamTokens.lineHeightRelaxed,
             ),
             metadataEmphasis = TextStyle(
                 fontFamily = fontFamily,

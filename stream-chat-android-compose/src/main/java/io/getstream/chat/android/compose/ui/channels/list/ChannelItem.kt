@@ -163,7 +163,8 @@ internal fun DefaultChannelItemLeadingContent(
             .size(ChatTheme.dimens.channelAvatarSize),
         channel = channelItem.channel,
         currentUser = currentUser,
-        onClick = null,
+        showIndicator = false,
+        showBorder = false,
     )
 }
 

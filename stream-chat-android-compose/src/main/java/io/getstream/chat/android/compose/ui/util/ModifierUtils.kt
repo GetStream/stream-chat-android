@@ -111,3 +111,6 @@ internal fun Modifier.clickable(
 
 internal inline fun Modifier.applyIf(condition: Boolean, block: Modifier.() -> Modifier) =
     if (condition) this.block() else this
+
+internal inline fun <T : Any> Modifier.ifNotNull(value: T?, block: Modifier.(T) -> Modifier) =
+    if (value != null) this.block(value) else this

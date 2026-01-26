@@ -44,13 +44,14 @@ public fun UserAvatarStack(
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
 ) {
+    val componentFactory = ChatTheme.componentFactory
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(-overlap)) {
         for (user in users) {
-            UserAvatar(
+            componentFactory.UserAvatar(
                 modifier = Modifier.size(avatarSize),
                 user = user,
                 showBorder = showBorder,
-                showOnlineIndicator = false,
+                showIndicator = false,
             )
         }
     }

@@ -64,6 +64,7 @@ import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.result.Error
@@ -195,7 +196,7 @@ class UserLoginActivity : AppCompatActivity() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(AvatarSize.Large),
                 user = userCredentials.user,
             )
 

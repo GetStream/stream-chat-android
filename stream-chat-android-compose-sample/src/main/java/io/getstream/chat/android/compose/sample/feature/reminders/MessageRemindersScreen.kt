@@ -68,6 +68,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -341,7 +342,7 @@ private fun MessageReminderItem(
             reminder.message?.user?.let { user ->
                 UserAvatar(
                     user = user,
-                    modifier = Modifier.size(40.dp),
+                    modifier = Modifier.size(AvatarSize.Large),
                 )
             }
             Column(
