@@ -46,7 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 
 @Composable
-internal fun ContextualMenuContent(
+internal fun ContextualMenu(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -130,7 +130,7 @@ internal fun ContextualMenuDivider(modifier: Modifier = Modifier) {
 @Composable
 private fun ContextualMenuPreview() {
     ChatTheme {
-        ContextualMenuContent(
+        ContextualMenu(
             Modifier
                 .padding(32.dp)
                 .width(IntrinsicSize.Min),
