@@ -20,16 +20,17 @@ import android.content.Context
 import android.net.Uri
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.internal.file.StreamShareFileManager
 import io.getstream.result.Error
 import io.getstream.result.Result
 
 internal class AttachmentFileController(
     private val context: Context,
+    private val shareFileManager: StreamShareFileManager = StreamShareFileManager(),
 ) {
 
     suspend fun getFileFromCache(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.getFileFromCache(context, attachment)
+        shareFileManager.getShareableUriForAttachment(context, attachment)
 
     suspend fun downloadImage(attachment: Attachment): Result<Uri> =
         attachment.imageUrl?.let { imageUrl ->
@@ -37,10 +38,10 @@ internal class AttachmentFileController(
                 context = context,
                 url = imageUrl,
             )?.let { bitmap ->
-                StreamFileUtil.writeImageToSharableFile(context, bitmap)
+                shareFileManager.writeBitmapToShareableFile(context, bitmap)
             } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
         } ?: Result.Failure(Error.GenericError("Unable to share image"))
 
     suspend fun downloadFile(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.writeFileToShareableFile(context, attachment)
+        shareFileManager.writeAttachmentToShareableFile(context, attachment)
 }
