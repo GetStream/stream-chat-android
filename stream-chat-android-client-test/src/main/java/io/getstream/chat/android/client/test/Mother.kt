@@ -250,6 +250,7 @@ public fun randomMessageReadEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     lastReadMessageId: String? = randomString(),
+    team: String? = null,
 ): MessageReadEvent {
     return MessageReadEvent(
         type = EventType.MESSAGE_READ,
@@ -260,6 +261,7 @@ public fun randomMessageReadEvent(
         channelType = channelType,
         channelId = channelId,
         lastReadMessageId = lastReadMessageId,
+        team = team,
     )
 }
 
