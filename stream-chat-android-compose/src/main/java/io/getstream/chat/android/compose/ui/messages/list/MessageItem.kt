@@ -63,7 +63,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -80,6 +79,8 @@ import io.getstream.chat.android.compose.ui.components.messages.PollMessageConte
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -96,7 +97,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -310,17 +310,13 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
                 messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = modifier.testTag("Stream_UserAvatar"),
-            imageUrl = messageItem.message.user.image,
-            initials = messageItem.message.user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = messageItem.message.user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = onUserAvatarClick,
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = modifier
+                .testTag("Stream_UserAvatar")
+                .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
+            user = messageItem.message.user,
+            showIndicator = false,
+            showBorder = false,
         )
     } else {
         Spacer(modifier = modifier)

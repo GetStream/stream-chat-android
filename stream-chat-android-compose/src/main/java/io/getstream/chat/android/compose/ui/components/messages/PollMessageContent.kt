@@ -63,10 +63,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -439,9 +441,12 @@ private fun PollOptionItem(
 
             Row {
                 if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
-                    UserAvatarRow(
+                    UserAvatarStack(
+                        overlap = StreamTokens.spacingXs,
                         modifier = Modifier.padding(end = 2.dp),
                         users = users,
+                        avatarSize = AvatarSize.ExtraSmall,
+                        showBorder = true,
                     )
                 }
 

@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.extensions.deliveredReadsOf
 import io.getstream.chat.android.client.extensions.readsOf
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -59,7 +59,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
@@ -234,11 +233,9 @@ private fun ReadItem(userRead: ChannelUserRead) {
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Avatar(
+        UserAvatar(
             modifier = Modifier.size(48.dp),
-            imageUrl = userRead.user.image,
-            initials = userRead.user.initials,
-            contentDescription = userRead.user.name,
+            user = userRead.user,
         )
 
         Text(

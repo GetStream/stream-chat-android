@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +48,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
@@ -58,6 +56,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -65,7 +64,6 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePrevie
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Composable displaying a grid of media attachments in a bottom sheet layout.
@@ -235,22 +233,14 @@ private fun MediaGalleryPhotosMenuItem(
             }
         }
 
-        ChatTheme.componentFactory.Avatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(8.dp)
-                .size(24.dp)
-                .border(width = 1.dp, color = Color.White, shape = ChatTheme.shapes.avatar)
-                .shadow(elevation = 4.dp, shape = ChatTheme.shapes.avatar),
-            imageUrl = user.image,
-            initials = user.initials,
-            textStyle = ChatTheme.typography.captionBold,
-            shape = ChatTheme.shapes.avatar,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = null,
-            initialsAvatarOffset = DpOffset(0.dp, 0.dp),
-            onClick = null,
+                .size(AvatarSize.Small),
+            user = user,
+            showIndicator = false,
+            showBorder = true,
         )
 
         if (isVideo && imageState.isCompleted) {

@@ -2,14 +2,14 @@
 
 package io.getstream.chat.docs.kotlin.compose.utility
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/utility-components/channel-avatar/#usage)
@@ -38,9 +38,10 @@ private object ChannelAvatarHandlingActionsSnippet {
         ChannelAvatar(
             channel = channel,
             currentUser = currentUser,
-        ) {
-            // Handle avatar clicks here
-        }
+            modifier = Modifier.clickable {
+                // Handle avatar clicks here
+            }
+        )
     }
 }
 
@@ -55,7 +56,6 @@ private object ChannelAvatarCustomizationSnippet {
             channel = channel,
             currentUser = currentUser,
             modifier = Modifier.size(48.dp),
-            shape = RoundedCornerShape(8.dp)
         )
     }
 }

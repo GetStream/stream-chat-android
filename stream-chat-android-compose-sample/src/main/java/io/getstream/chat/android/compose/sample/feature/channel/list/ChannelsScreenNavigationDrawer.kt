@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
@@ -123,7 +124,7 @@ private fun LoggedInUserHeader(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserAvatar(
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(AvatarSize.Large),
                 user = user,
             )
             Text(
