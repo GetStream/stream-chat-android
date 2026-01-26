@@ -60,26 +60,26 @@ public fun UserAvatar(
         )
 
         if (showIndicator) {
-            val indicatorSize = resolveIndicatorSize()
+            val dimensions = resolveIndicatorDimensions()
             OnlineIndicator(
                 isOnline = user.online,
-                size = indicatorSize,
+                dimensions = dimensions,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .offset(
-                        x = indicatorSize.borderWidth,
-                        y = -indicatorSize.borderWidth,
+                        x = dimensions.offset,
+                        y = -dimensions.offset,
                     ),
             )
         }
     }
 }
 
-private fun BoxWithConstraintsScope.resolveIndicatorSize(): OnlineIndicatorSize = when {
-    maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorSize.ExtraLarge
-    maxWidth >= AvatarSize.Large -> OnlineIndicatorSize.Large
-    maxWidth >= AvatarSize.Medium -> OnlineIndicatorSize.Medium
-    else -> OnlineIndicatorSize.Small
+private fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicatorDimensions = when {
+    maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
+    maxWidth >= AvatarSize.Large -> OnlineIndicatorDimensions.Large
+    maxWidth >= AvatarSize.Medium -> OnlineIndicatorDimensions.Medium
+    else -> OnlineIndicatorDimensions.Small
 }
 
 @Composable
