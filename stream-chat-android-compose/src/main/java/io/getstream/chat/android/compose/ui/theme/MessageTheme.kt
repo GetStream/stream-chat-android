@@ -17,23 +17,18 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 
 /**
  * Represents message theming.
  *
- * @param backgroundShapes The shapes for the message background.
  * @param audioRecording The theming for the audio recording attachment.
  */
 @Immutable
 public data class MessageTheme(
-    val backgroundShapes: MessageBackgroundShapes,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
 ) {
@@ -84,7 +79,6 @@ public data class MessageTheme(
         )
 
         @Composable
-        @Suppress("DEPRECATION_ERROR")
         private fun defaultTheme(
             own: Boolean,
             isInDarkMode: Boolean,
@@ -93,18 +87,6 @@ public data class MessageTheme(
             colors: StreamColors,
         ): MessageTheme {
             return MessageTheme(
-                backgroundShapes = MessageBackgroundShapes(
-                    top = RoundedCornerShape(20.dp),
-                    middle = RoundedCornerShape(20.dp),
-                    bottom = when (own) {
-                        true -> shapes.myMessageBubble
-                        else -> shapes.otherMessageBubble
-                    },
-                    none = when (own) {
-                        true -> shapes.myMessageBubble
-                        else -> shapes.otherMessageBubble
-                    },
-                ),
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
                     own = own,
                     isInDarkMode = isInDarkMode,
@@ -120,18 +102,3 @@ public data class MessageTheme(
         }
     }
 }
-
-/**
- * Represents the shapes for the message background in different positions.
- *
- * @param top The shape which is used for the top message in a group.
- * @param middle The shape which is used for the middle message in a group.
- * @param bottom The shape which is used for the bottom message in a group.
- * @param none The shape which is used for messages that are not in a group.
- */
-public data class MessageBackgroundShapes(
-    val top: Shape,
-    val middle: Shape,
-    val bottom: Shape,
-    val none: Shape,
-)

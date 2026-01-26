@@ -23,7 +23,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
@@ -92,8 +91,6 @@ public fun interface MessageTextFormatter {
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
-         * @param ownMessageTheme The theme to use for the current user's messages.
-         * @param otherMessageTheme The theme to use for other users' messages.
          * @param builder The builder to use for customizing the text.
          * @return The default implementation of [MessageTextFormatter].
          *
@@ -109,18 +106,6 @@ public fun interface MessageTextFormatter {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                shapes = shapes,
-                colors = colors,
-            ),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                shapes = shapes,
-                colors = colors,
-            ),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return defaultFormatter(

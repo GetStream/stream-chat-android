@@ -79,7 +79,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
@@ -111,17 +110,9 @@ public fun PollMessageContent(
     onLongItemClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
-    val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = when (position) {
-        MessagePosition.TOP -> messageTheme.backgroundShapes.top
-        MessagePosition.MIDDLE -> messageTheme.backgroundShapes.middle
-        MessagePosition.BOTTOM -> messageTheme.backgroundShapes.bottom
-        else -> messageTheme.backgroundShapes.none
-    }
-
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
     val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
     val poll = message.poll

@@ -50,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -78,7 +77,7 @@ import io.getstream.chat.android.compose.ui.components.messages.PollMessageConte
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -610,11 +609,9 @@ public fun RegularMessageContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
-    val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = getMessageBubbleShape(theme = messageTheme, position = position)
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
     val messageBubbleColor = getMessageBubbleColor(ownsMessage, message = message)
 
     val content = @Composable {
@@ -657,23 +654,6 @@ public fun RegularMessageContent(
                 message = message,
             )
         }
-    }
-}
-
-/**
- * Determines the shape of the message bubble based on the message position and ownership.
- *
- * @param theme The message theme to use.
- * @param position The position of the message in the group (top, middle, etc.).
- * @return A shape for the message bubble.
- */
-@Composable
-private fun getMessageBubbleShape(theme: MessageTheme, position: MessagePosition): Shape {
-    return when (position) {
-        MessagePosition.TOP -> theme.backgroundShapes.top
-        MessagePosition.MIDDLE -> theme.backgroundShapes.middle
-        MessagePosition.BOTTOM -> theme.backgroundShapes.bottom
-        else -> theme.backgroundShapes.none
     }
 }
 
