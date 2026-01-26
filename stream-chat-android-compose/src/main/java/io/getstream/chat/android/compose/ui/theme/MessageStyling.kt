@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,13 +31,13 @@ internal object MessageStyling {
     }
 
     @Composable
-    fun messageTextStyle(): TextStyle =
-        messageTextStyle(ChatTheme.typography, ChatTheme.colors)
+    fun textStyle(): TextStyle =
+        textStyle(ChatTheme.typography, ChatTheme.colors)
 
-    fun messageTextStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
+    fun textStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextMessage)
 
-    fun messageLinkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
+    fun linkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextLink)
 
     private val roundBubble = RoundedCornerShape(StreamTokens.radius2xl)
@@ -42,11 +58,11 @@ internal object MessageStyling {
         return when (position) {
             MessagePosition.TOP,
             MessagePosition.MIDDLE,
-                -> roundBubble
+            -> roundBubble
 
             MessagePosition.BOTTOM,
             MessagePosition.NONE,
-                -> when {
+            -> when {
                 outgoing -> outgoingBubble
                 else -> incomingBubble
             }

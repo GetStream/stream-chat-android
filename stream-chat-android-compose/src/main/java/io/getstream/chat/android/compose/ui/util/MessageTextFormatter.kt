@@ -70,8 +70,8 @@ public fun interface MessageTextFormatter {
                 else -> StreamColors.defaultColors()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
-                { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
-            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.messageLinkStyle(typography, colors) },
+                { _, _ -> MessageStyling.textStyle(typography, colors) },
+            linkStyle: (isMine: Boolean) -> TextStyle = { MessageStyling.linkStyle(typography, colors) },
             mentionColor: (isMine: Boolean) -> Color = { colors.chatTextMention },
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
@@ -113,8 +113,8 @@ public fun interface MessageTextFormatter {
                 isInDarkMode = isInDarkMode,
                 typography = typography,
                 colors = colors,
-                textStyle = { _, _ -> MessageStyling.messageTextStyle(typography, colors) },
-                linkStyle = { MessageStyling.messageLinkStyle(typography, colors) },
+                textStyle = { _, _ -> MessageStyling.textStyle(typography, colors) },
+                linkStyle = { MessageStyling.linkStyle(typography, colors) },
                 mentionColor = { colors.chatTextMention },
                 builder = builder,
             )

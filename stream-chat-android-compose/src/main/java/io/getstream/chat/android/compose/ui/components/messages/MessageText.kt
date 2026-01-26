@@ -92,7 +92,7 @@ public fun MessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> MessageStyling.messageTextStyle()
+        else -> MessageStyling.textStyle()
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
