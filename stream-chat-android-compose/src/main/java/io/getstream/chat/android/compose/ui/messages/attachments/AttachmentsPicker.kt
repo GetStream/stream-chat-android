@@ -90,14 +90,16 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
-    val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
+    val saveAttachmentsOnDismiss = true
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
             attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
                 onAttachmentsSelected(attachments)
+                onDismiss()
             }
+        } else {
+            onDismiss()
         }
-        onDismiss()
     }
     BackHandler(onBack = dismissAction)
     // Cross-validate requested tabFactories with the allowed ones from BE
