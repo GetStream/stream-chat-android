@@ -18,21 +18,15 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,12 +36,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
@@ -55,12 +51,16 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactoryFilter
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
@@ -68,27 +68,29 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * files and media capture tabs.
  *
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
- * items have been selected.
- * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
- * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
- * @param onDismiss Handler when the user dismisses the UI.
  * @param modifier Modifier for styling.
- * @param tabFactories The list of attachment picker tab factories.
- * @param shape The shape of the dialog.
+ * @param shape The shape of the bottom bar.
  * @param messageMode The message mode, used to determine if the default "Polls" tab is enabled.
+ * items have been selected.
+ * @param tabFactories The list of attachment picker tab factories.
+ * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
+ * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
+ * @param onDismiss Handler when the user dismisses the UI.
  */
-@Suppress("LongMethod")
 @Composable
 public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
-    onAttachmentsSelected: (List<Attachment>) -> Unit,
-    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
-    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
-    shape: Shape = ChatTheme.shapes.bottomSheet,
+    shape: Shape = RectangleShape,
     messageMode: MessageMode = MessageMode.Normal,
+    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
+    onTabClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
+    onAttachmentsSelected: (List<Attachment>) -> Unit = {},
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
+    onDismiss: () -> Unit = {
+        attachmentsPickerViewModel.changeAttachmentState(false)
+        attachmentsPickerViewModel.dismissAttachments()
+    },
 ) {
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
@@ -103,86 +105,52 @@ public fun AttachmentsPicker(
     }
     BackHandler(onBack = dismissAction)
     // Cross-validate requested tabFactories with the allowed ones from BE
-    val filter = remember { AttachmentsPickerTabFactoryFilter() }
-    val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel, messageMode)
+    val allowedFactories = remember(tabFactories, attachmentsPickerViewModel.channel, messageMode) {
+        AttachmentsPickerTabFactoryFilter().filterAllowedFactories(
+            factories = tabFactories,
+            channel = attachmentsPickerViewModel.channel,
+            messageMode = messageMode,
+        )
+    }
     val defaultTabIndex = allowedFactories
         .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
         .takeIf { it >= 0 }
         ?: 0
     var selectedTabIndex by rememberSaveable { mutableIntStateOf(defaultTabIndex) }
 
-    Box(
-        modifier = Modifier
-            .background(ChatTheme.attachmentPickerTheme.backgroundOverlay)
-            .safeDrawingPadding()
-            .fillMaxSize()
-            .clickable(
-                onClick = dismissAction,
-                indication = null,
-                interactionSource = null,
-            ),
+    Surface(
+        modifier = modifier.testTag("Stream_AttachmentsPicker"),
+        shape = shape,
+        color = ChatTheme.colors.barsBackground,
     ) {
-        Card(
-            modifier = modifier.clickable(
-                indication = null,
-                onClick = {},
-                interactionSource = null,
-            ),
-            shape = if (attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
-                RoundedCornerShape(0.dp)
-            } else {
-                shape
-            },
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.attachmentPickerTheme.backgroundSecondary),
-        ) {
-            Column {
-                if (!attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
-                    AttachmentPickerOptions(
-                        hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
-                        tabFactories = allowedFactories,
-                        tabIndex = selectedTabIndex,
-                        channel = attachmentsPickerViewModel.channel,
-                        onTabClick = { index, attachmentPickerMode ->
-                            onTabClick.invoke(index, attachmentPickerMode)
-                            selectedTabIndex = index
-                            attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
-                        },
-                        onSendAttachmentsClick = {
-                            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                                onAttachmentsSelected(attachments)
+        Column {
+            AttachmentPickerOptions(
+                hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
+                tabFactories = allowedFactories,
+                tabIndex = selectedTabIndex,
+                channel = attachmentsPickerViewModel.channel,
+                onTabClick = { index, attachmentPickerMode ->
+                    onTabClick.invoke(index, attachmentPickerMode)
+                    selectedTabIndex = index
+                    attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
+                },
+                onSendAttachmentsClick = attachmentsPickerViewModel::getSelectedAttachmentsAsync,
+            )
+
+            AnimatedContent(targetState = selectedTabIndex) { index ->
+                allowedFactories.getOrNull(index)?.let { selectedTab ->
+                    selectedTab.PickerTabContent(
+                        onAttachmentPickerAction = { pickerAction ->
+                            when (pickerAction) {
+                                is AttachmentPickerBack -> dismissAction()
+                                is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
                             }
                         },
+                        attachments = attachmentsPickerViewModel.attachments,
+                        onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                        onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                        onAttachmentsSubmitted = attachmentsPickerViewModel::getAttachmentsFromMetadataAsync,
                     )
-                }
-
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    shape = if (attachmentsPickerViewModel.attachmentsPickerMode.isFullContent) {
-                        RoundedCornerShape(0.dp)
-                    } else {
-                        shape
-                    },
-                    color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
-                ) {
-                    AnimatedContent(targetState = selectedTabIndex, label = "") {
-                        allowedFactories.getOrNull(it)
-                            ?.PickerTabContent(
-                                onAttachmentPickerAction = { pickerAction ->
-                                    when (pickerAction) {
-                                        AttachmentPickerBack -> dismissAction()
-                                        is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
-                                    }
-                                },
-                                attachments = attachmentsPickerViewModel.attachments,
-                                onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                                onAttachmentsSubmitted = {
-                                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(it) { attachments ->
-                                        onAttachmentsSelected(attachments)
-                                    }
-                                },
-                            )
-                    }
                 }
             }
         }
@@ -211,29 +179,40 @@ internal fun AttachmentPickerOptions(
     onSendAttachmentsClick: () -> Unit,
 ) {
     Row(
-        Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .padding(
+                horizontal = StreamTokens.spacingMd,
+            )
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             tabFactories.forEachIndexed { index, tabFactory ->
 
                 val isSelected = index == tabIndex
-                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled(channel))
+                val isEnabled = !hasPickedAttachments && tabFactory.isPickerTabEnabled(channel)
 
-                IconButton(
+                FilledIconToggleButton(
                     enabled = isEnabled,
-                    content = {
-                        tabFactory.PickerTabIcon(
-                            isEnabled = isEnabled,
-                            isSelected = isSelected,
-                        )
-                    },
-                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) },
-                )
+                    checked = isSelected,
+                    onCheckedChange = { onTabClick(index, tabFactory.attachmentsPickerMode) },
+                    colors = IconButtonDefaults.filledIconToggleButtonColors(
+                        containerColor = ChatTheme.colors.barsBackground,
+                        contentColor = ChatTheme.colors.textLowEmphasis,
+                        disabledContainerColor = ChatTheme.colors.barsBackground,
+                        disabledContentColor = ChatTheme.colors.disabled,
+                        checkedContainerColor = ChatTheme.colors.borders,
+                        checkedContentColor = ChatTheme.colors.textHighEmphasis,
+                    ),
+                ) {
+                    tabFactory.PickerTabIcon(
+                        isEnabled = isEnabled,
+                        isSelected = isSelected,
+                    )
+                }
             }
         }
-
-        Spacer(modifier = Modifier.weight(1f))
 
         ChatTheme.componentFactory.AttachmentsPickerSendButton(
             hasPickedAttachments = hasPickedAttachments,
@@ -272,4 +251,17 @@ internal fun DefaultAttachmentsPickerSendButton(
             )
         },
     )
+}
+
+@Preview
+@Composable
+private fun AttachmentsPickerPreview() {
+    ChatPreviewTheme {
+        AttachmentsPicker(
+            attachmentsPickerViewModel = AttachmentsPickerViewModel(
+                storageHelper = StorageHelperWrapper(LocalContext.current),
+                channelState = MutableStateFlow(null),
+            ),
+        )
+    }
 }

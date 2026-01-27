@@ -211,6 +211,7 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
+            containerColor = ChatTheme.colors.appBackground,
         ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
 

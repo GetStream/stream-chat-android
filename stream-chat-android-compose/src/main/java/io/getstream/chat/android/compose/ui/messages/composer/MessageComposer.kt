@@ -387,7 +387,7 @@ public fun MessageComposer(
                         } else {
                             StreamTokens.spacingMd
                         },
-                        bottom = StreamTokens.spacing2xl,
+                        bottom = StreamTokens.spacingMd,
                     ),
                 verticalAlignment = Bottom,
             ) {

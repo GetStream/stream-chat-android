@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -280,11 +279,6 @@ class MessagesActivity : ComponentActivity() {
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .height(pickerHeight),
-                    shape = if (isFullScreenContent) {
-                        RoundedCornerShape(0.dp)
-                    } else {
-                        ChatTheme.shapes.bottomSheet
-                    },
                     onAttachmentsSelected = { attachments ->
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         composerViewModel.addSelectedAttachments(attachments)
