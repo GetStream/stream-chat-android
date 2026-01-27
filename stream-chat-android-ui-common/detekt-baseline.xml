@@ -22,7 +22,6 @@
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamTransliterator.kt$DefaultStreamTransliterator$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LocalUserLookupHandler.kt$LocalUserLookupHandler$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:StreamFileUtil.kt$StreamFileUtil$e: Exception</ID>
     <ID>TooManyFunctions:AudioRecordingController.kt$AudioRecordingController</ID>
     <ID>TooManyFunctions:MessageListController.kt$MessageListController</ID>
     <ID>TooManyFunctions:StreamMediaRecorder.kt$StreamMediaRecorder</ID>
