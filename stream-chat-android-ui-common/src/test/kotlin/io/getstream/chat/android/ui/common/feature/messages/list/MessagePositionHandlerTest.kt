@@ -57,7 +57,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.TOP)
+        result `should be equal to` MessagePosition.TOP
     }
 
     @Test
@@ -75,7 +75,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.MIDDLE)
+        result `should be equal to` MessagePosition.MIDDLE
     }
 
     @Test
@@ -93,7 +93,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.BOTTOM)
+        result `should be equal to` MessagePosition.BOTTOM
     }
 
     @Test
@@ -111,7 +111,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.NONE)
+        result `should be equal to` MessagePosition.NONE
     }
 
     @Test
@@ -129,7 +129,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.NONE)
+        result `should be equal to` MessagePosition.NONE
     }
 
     @Test
@@ -147,7 +147,7 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.TOP)
+        result `should be equal to` MessagePosition.TOP
     }
 
     @Test
@@ -165,6 +165,6 @@ internal class MessagePositionHandlerTest {
             isInThread = false,
         )
 
-        result `should be equal to` listOf(MessagePosition.BOTTOM)
+        result `should be equal to` MessagePosition.BOTTOM
     }
 }

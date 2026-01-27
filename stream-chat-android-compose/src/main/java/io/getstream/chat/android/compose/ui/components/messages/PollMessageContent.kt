@@ -116,10 +116,10 @@ public fun PollMessageContent(
     val ownsMessage = messageItem.isMine
 
     val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = when {
-        position.contains(MessagePosition.TOP) -> messageTheme.backgroundShapes.top
-        position.contains(MessagePosition.MIDDLE) -> messageTheme.backgroundShapes.middle
-        position.contains(MessagePosition.BOTTOM) -> messageTheme.backgroundShapes.bottom
+    val messageBubbleShape = when (position) {
+        MessagePosition.TOP -> messageTheme.backgroundShapes.top
+        MessagePosition.MIDDLE -> messageTheme.backgroundShapes.middle
+        MessagePosition.BOTTOM -> messageTheme.backgroundShapes.bottom
         else -> messageTheme.backgroundShapes.none
     }
 

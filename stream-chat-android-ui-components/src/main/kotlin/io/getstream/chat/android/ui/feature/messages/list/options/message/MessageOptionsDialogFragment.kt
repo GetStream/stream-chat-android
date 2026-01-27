@@ -117,7 +117,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     private val messageItem: MessageListItem.MessageItem by lazy {
         MessageListItem.MessageItem(
             message,
-            positions = listOf(MessagePosition.BOTTOM),
+            position = MessagePosition.BOTTOM,
             isMine = message.user.id == ChatUI.currentUserProvider.getCurrentUser()?.id,
         )
     }

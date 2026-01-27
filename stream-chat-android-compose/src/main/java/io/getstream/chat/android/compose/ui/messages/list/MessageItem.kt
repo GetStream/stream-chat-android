@@ -79,6 +79,7 @@ import io.getstream.chat.android.compose.ui.components.messages.PollMessageConte
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
+import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -306,8 +307,8 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
     @Suppress("ComplexCondition")
     if (!messageItem.isMine && (
             messageItem.showMessageFooter ||
-                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
-                messageItem.groupPosition.contains(MessagePosition.NONE)
+                messageItem.groupPosition == MessagePosition.BOTTOM ||
+                messageItem.groupPosition == MessagePosition.NONE
             )
     ) {
         ChatTheme.componentFactory.UserAvatar(
@@ -437,8 +438,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
     }
 
     val position = messageItem.groupPosition
-    val spacerSize =
-        if (position.contains(MessagePosition.NONE) || position.contains(MessagePosition.BOTTOM)) 4.dp else 2.dp
+    val spacerSize = if (position == MessagePosition.NONE || position == MessagePosition.BOTTOM) 4.dp else 2.dp
 
     Spacer(Modifier.size(spacerSize))
 }
@@ -615,8 +615,8 @@ public fun RegularMessageContent(
     val ownsMessage = messageItem.isMine
 
     val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
-    val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
+    val messageBubbleShape = getMessageBubbleShape(theme = messageTheme, position = position)
+    val messageBubbleColor = getMessageBubbleColor(theme = messageTheme, message = message)
 
     val content = @Composable {
         MessageContent(
@@ -666,17 +666,16 @@ public fun RegularMessageContent(
 /**
  * Determines the shape of the message bubble based on the message position and ownership.
  *
+ * @param theme The message theme to use.
  * @param position The position of the message in the group (top, middle, etc.).
- * @param ownsMessage Indicates if the current user owns the message.
  * @return A shape for the message bubble.
  */
 @Composable
-private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
-    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    return when {
-        position.contains(MessagePosition.TOP) -> theme.backgroundShapes.top
-        position.contains(MessagePosition.MIDDLE) -> theme.backgroundShapes.middle
-        position.contains(MessagePosition.BOTTOM) -> theme.backgroundShapes.bottom
+private fun getMessageBubbleShape(theme: MessageTheme, position: MessagePosition): Shape {
+    return when (position) {
+        MessagePosition.TOP -> theme.backgroundShapes.top
+        MessagePosition.MIDDLE -> theme.backgroundShapes.middle
+        MessagePosition.BOTTOM -> theme.backgroundShapes.bottom
         else -> theme.backgroundShapes.none
     }
 }
