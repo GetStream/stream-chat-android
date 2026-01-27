@@ -22,7 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 internal object MessageStyling {
     @Composable
@@ -60,6 +63,43 @@ internal object MessageStyling {
         return ChatTheme.typography.metadataDefault.copy(color = ChatTheme.colors.chatTextTimestamp)
     }
 
+    @Composable
+    fun quotedMessageStyle(message: Message, replyMessage: Message?, currentUser: User?): QuotedMessageStyle {
+        val colors = ChatTheme.colors
+
+        return if (replyMessage != null) {
+            // replyMessage is not null: we're rendering an already-sent message
+            if (replyMessage.isMine(currentUser)) {
+                QuotedMessageStyle(
+                    backgroundColor = colors.chatBgAttachmentOutgoing,
+                    indicatorColor = colors.chatReplyIndicatorOutgoing,
+                    textColor = colors.chatTextOutgoing,
+                )
+            } else {
+                QuotedMessageStyle(
+                    backgroundColor = colors.chatBgAttachmentIncoming,
+                    indicatorColor = colors.chatReplyIndicatorIncoming,
+                    textColor = colors.chatTextIncoming,
+                )
+            }
+        } else {
+            // replyMessage is null: we're composing a reply
+            if (message.isMine(currentUser)) {
+                QuotedMessageStyle(
+                    backgroundColor = colors.chatBgOutgoing,
+                    indicatorColor = colors.chatReplyIndicatorOutgoing,
+                    textColor = colors.chatTextOutgoing,
+                )
+            } else {
+                QuotedMessageStyle(
+                    backgroundColor = colors.chatBgIncoming,
+                    indicatorColor = colors.chatReplyIndicatorIncoming,
+                    textColor = colors.chatTextIncoming,
+                )
+            }
+        }
+    }
+
     private val roundBubble = RoundedCornerShape(StreamTokens.radius2xl)
     private val outgoingBubble = RoundedCornerShape(
         topStart = StreamTokens.radius2xl,
@@ -78,14 +118,20 @@ internal object MessageStyling {
         return when (position) {
             MessagePosition.TOP,
             MessagePosition.MIDDLE,
-                -> roundBubble
+            -> roundBubble
 
             MessagePosition.BOTTOM,
             MessagePosition.NONE,
-                -> when {
+            -> when {
                 outgoing -> outgoingBubble
                 else -> incomingBubble
             }
         }
     }
+
+    data class QuotedMessageStyle(
+        val backgroundColor: Color,
+        val indicatorColor: Color,
+        val textColor: Color,
+    )
 }

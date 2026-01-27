@@ -1397,7 +1397,7 @@ public final class io/getstream/chat/android/compose/ui/components/SimpleMenuKt 
 }
 
 public final class io/getstream/chat/android/compose/ui/components/TimestampKt {
-	public static final fun Timestamp (Ljava/util/Date;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/compose/state/DateFormatType;Landroidx/compose/runtime/Composer;II)V
+	public static final fun Timestamp (Ljava/util/Date;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/compose/state/DateFormatType;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/TranslatedLabelKt {

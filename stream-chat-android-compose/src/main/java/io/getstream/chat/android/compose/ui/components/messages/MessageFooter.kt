@@ -119,7 +119,7 @@ public fun MessageFooter(
                     Timestamp(
                         date = date,
                         formatType = DateFormatType.TIME,
-                        textStyle = textStyle
+                        textStyle = textStyle,
                     )
                 }
                 if (showEditLabel && !showEditInfo) {
@@ -177,6 +177,6 @@ internal fun MessageEditedTimestamp(
         date = editedAt,
         modifier = modifier,
         formatType = formatType,
-        textStyle = MessageStyling.timestampStyle()
+        textStyle = MessageStyling.timestampStyle(),
     )
 }

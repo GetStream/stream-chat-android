@@ -55,7 +55,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -83,34 +83,7 @@ public fun QuotedMessage(
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
 ) {
-    val colors = ChatTheme.colors
-    val backgroundColor: Color
-    val indicatorColor: Color
-    val textColor: Color
-
-    if (replyMessage != null) {
-        // replyMessage is not null: we're rendering an already-sent message
-        if (replyMessage.isMine(currentUser)) {
-            backgroundColor = colors.chatBgAttachmentOutgoing
-            indicatorColor = colors.chatReplyIndicatorOutgoing
-            textColor = colors.chatTextOutgoing
-        } else {
-            backgroundColor = colors.chatBgAttachmentIncoming
-            indicatorColor = colors.chatReplyIndicatorIncoming
-            textColor = colors.chatTextIncoming
-        }
-    } else {
-        // replyMessage is null: we're composing a reply
-        if (message.isMine(currentUser)) {
-            backgroundColor = colors.chatBgOutgoing
-            indicatorColor = colors.chatReplyIndicatorOutgoing
-            textColor = colors.chatTextOutgoing
-        } else {
-            backgroundColor = colors.chatBgIncoming
-            indicatorColor = colors.chatReplyIndicatorIncoming
-            textColor = colors.chatTextIncoming
-        }
-    }
+    val style = MessageStyling.quotedMessageStyle(message, replyMessage, currentUser)
 
     Row(
         modifier = modifier
@@ -120,7 +93,7 @@ public fun QuotedMessage(
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },
             )
-            .background(backgroundColor, RoundedCornerShape(StreamTokens.radiusLg))
+            .background(style.backgroundColor, RoundedCornerShape(StreamTokens.radiusLg))
             .padding(StreamTokens.spacingXs)
             .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
@@ -130,7 +103,7 @@ public fun QuotedMessage(
                 .fillMaxHeight()
                 .padding(vertical = 2.dp),
             thickness = 2.dp,
-            color = indicatorColor,
+            color = style.indicatorColor,
         )
 
         val bodyBuilder = rememberBodyBuilder()
@@ -143,8 +116,8 @@ public fun QuotedMessage(
                 .weight(1f),
             verticalArrangement = Arrangement.Center,
         ) {
-            QuotedMessageUserName(message, replyMessage, currentUser, textColor)
-            QuotedMessageText(body, textColor)
+            QuotedMessageUserName(message, replyMessage, currentUser, style.textColor)
+            QuotedMessageText(body, style.textColor)
         }
 
         QuotedMessageAttachmentPreview(body)
