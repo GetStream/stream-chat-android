@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,19 +24,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -108,6 +117,19 @@ private fun SimpleGroupAvatar(
     }
 }
 
+private object StackedGroupAvatarSpecs {
+    private val borderSize = 2.dp // TODO [G.] tokens?
+    val borderStroke = BorderStroke(2.dp, Color.White) // TODO [G.] color
+    fun baseModifier(avatarSize: Dp) = Modifier
+        .size(avatarSize + borderSize)
+        .border(borderStroke, CircleShape)
+
+    val alignments2 = listOf(Alignment.TopStart, Alignment.BottomEnd)
+    val alignments3 = listOf(Alignment.TopCenter, Alignment.BottomStart, Alignment.BottomEnd)
+    val alignments4 = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
+    val alignmentsMore = listOf(Alignment.TopStart, Alignment.TopEnd)
+}
+
 // TODO [G.] indicator?
 @Composable
 private fun StackedGroupAvatar(
@@ -116,88 +138,112 @@ private fun StackedGroupAvatar(
     modifier: Modifier,
 ) {
     BoxWithConstraints(modifier) {
-        val avatarSize = resolveStackedAvatarSize()
-        val borderSize = 2.dp // TODO [G.] tokens?
-
+        val dimensions = resolveStackedAvatarDimensions()
+        val borderSize = StackedGroupAvatarSpecs.borderStroke.width
+        val borderStroke = StackedGroupAvatarSpecs.borderStroke
+        val baseModifier = StackedGroupAvatarSpecs.baseModifier(dimensions.avatarSize)
         when (channel.members.size) {
             // TODO [G.] 0?
             0 -> Spacer(modifier)
+
             1 -> {
+                val alignments = StackedGroupAvatarSpecs.alignments2
                 val colors = ChatTheme.colors
                 UserAvatarIconPlaceholder(
                     background = colors.avatarBgPlaceholder,
                     foreground = colors.avatarTextPlaceholder,
-                    size = avatarSize,
+                    size = dimensions.avatarSize + borderSize,
                     modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(StreamTokens.spacing3xs),
+                        .border(borderStroke, CircleShape)
+                        .align(alignments[0]),
                 )
 
                 UserAvatar(
                     user = channel.members.first().user,
-                    modifier = Modifier
-                        .padding(StreamTokens.spacing3xs)
-                        .size(avatarSize + borderSize)
-                        .border(borderSize, Color.White, CircleShape)
-                        .align(Alignment.BottomEnd),
+                    modifier = baseModifier.align(alignments[1]),
                 )
             }
 
             2 -> {
-                UserAvatar(
-                    user = channel.members[0].user,
-                    modifier = Modifier
-                        .padding(StreamTokens.spacing3xs)
-                        .size(avatarSize)
-                        .align(Alignment.TopStart),
-                )
-                UserAvatar(
-                    user = channel.members[1].user,
-                    modifier = Modifier
-                        .padding(StreamTokens.spacing3xs)
-                        .size(avatarSize + borderSize)
-                        .border(borderSize, Color.White, CircleShape)
-                        .align(Alignment.BottomEnd),
-                )
+                val alignments = StackedGroupAvatarSpecs.alignments2
+                for (i in alignments.indices) {
+                    UserAvatar(
+                        user = channel.members[i].user,
+                        modifier = baseModifier.align(alignments[i]),
+                    )
+                }
             }
 
             3 -> {
-                UserAvatar(
-                    user = channel.members[0].user,
-                    modifier = Modifier
-                        .size(avatarSize)
-                        .align(Alignment.TopCenter),
-                )
-                UserAvatar(
-                    user = channel.members[1].user,
-                    modifier = Modifier
-                        .size(avatarSize + borderSize)
-                        .border(borderSize, Color.White, CircleShape)
-                        .align(Alignment.BottomStart),
-                )
-                UserAvatar(
-                    user = channel.members[2].user,
-                    modifier = Modifier
-                        .size(avatarSize + borderSize)
-                        .border(borderSize, Color.White, CircleShape)
-                        .align(Alignment.BottomEnd),
-                )
+                val alignments = StackedGroupAvatarSpecs.alignments3
+                for (i in alignments.indices) {
+                    UserAvatar(
+                        user = channel.members[i].user,
+                        modifier = baseModifier.align(alignments[i]),
+                    )
+                }
             }
 
             4 -> {
-
+                val alignments = StackedGroupAvatarSpecs.alignments4
+                for (i in alignments.indices) {
+                    UserAvatar(
+                        user = channel.members[i].user,
+                        modifier = baseModifier.align(alignments[i]),
+                    )
+                }
             }
 
-            else -> {}
+            else -> {
+                val alignments = StackedGroupAvatarSpecs.alignmentsMore
+                for (i in alignments.indices) {
+                    UserAvatar(
+                        user = channel.members[i].user,
+                        modifier = baseModifier.align(alignments[i]),
+                    )
+                }
+                CountBadge(
+                    // TODO [G.] resource?
+                    text = "+" + (channel.members.size - alignments.size),
+                    modifier = Modifier
+                        .requiredWidth(IntrinsicSize.Max)
+                        .defaultMinSize(minWidth = dimensions.badgeSize, minHeight = dimensions.badgeSize)
+                        .align(Alignment.BottomCenter)
+                )
+            }
         }
     }
 }
 
-private fun BoxWithConstraintsScope.resolveStackedAvatarSize(): Dp {
+// TODO [G.] public?
+@Composable
+private fun CountBadge(text: String, modifier: Modifier = Modifier) {
+    // TODO [G.] tokens & the like
+    Text(
+        text = text,
+        modifier = modifier
+            .shadow(2.dp, CircleShape)
+            .background(Color.White, CircleShape)
+            .padding(horizontal = StreamTokens.spacingXs)
+            .wrapContentSize(),
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = ChatTheme.typography.numericLarge.copy(color = ChatTheme.colors.badgeTextInverse)
+    )
+}
+
+private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
+    // TODO [G.] badge dimens
     return when {
-        maxWidth >= AvatarSize.ExtraLarge -> AvatarSize.Large
-        else -> AvatarSize.Small
+        maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.ExtraLarge
+        else -> StackedGroupAvatarDimensions.Large
     }
+}
+
+private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: Dp) {
+    ExtraLarge(avatarSize = AvatarSize.Large, badgeSize = 32.dp),
+    Large(avatarSize = AvatarSize.Small, badgeSize = 24.dp),
 }
 
 @Composable
@@ -239,42 +285,25 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 @Composable
 private fun ChannelAvatarPreview() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large) }
+    val variants = listOf(1, 2, 3, 4, 5, 13, 1003)
     ChatTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    ChannelAvatar(
-                        PreviewChannelData.channelWithOneUser,
-                        currentUser = null,
-                        modifier = Modifier.size(size),
-                    )
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    ChannelAvatar(
-                        PreviewChannelData.channelWithOnlineUser,
-                        currentUser = null,
-                        modifier = Modifier.size(size),
-                    )
-                }
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    ChannelAvatar(
-                        PreviewChannelData.channelWithFewMembers,
-                        currentUser = null,
-                        modifier = Modifier.size(size),
-                    )
+        Column(
+            // TODO [G.] color
+            modifier = Modifier.background(Color.White),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            variants.forEach { n ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    sizes.forEach { size ->
+                        ChannelAvatar(
+                            channel = PreviewChannelData.makeChannelWithMembers(n),
+                            currentUser = null,
+                            modifier = Modifier.size(size),
+                        )
+                    }
                 }
             }
         }

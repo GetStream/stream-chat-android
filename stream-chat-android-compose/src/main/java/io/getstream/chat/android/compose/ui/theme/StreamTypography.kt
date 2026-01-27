@@ -63,6 +63,7 @@ public data class StreamTypography(
     public val captionEmphasis: TextStyle,
     public val headingLarge: TextStyle,
     public val metadataEmphasis: TextStyle,
+    public val numericLarge: TextStyle,
 ) {
 
     public companion object {
@@ -170,6 +171,12 @@ public data class StreamTypography(
                 fontSize = StreamTokens.fontSizeXs,
                 lineHeight = StreamTokens.lineHeightTight,
             ),
+            numericLarge = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightBold,
+                fontSize = StreamTokens.fontSizeXs,
+                lineHeight = StreamTokens.lineHeight12,
+            )
         )
     }
 }

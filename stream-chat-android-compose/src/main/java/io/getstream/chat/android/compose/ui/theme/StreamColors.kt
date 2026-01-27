@@ -182,6 +182,7 @@ public data class StreamColors(
     public val stateBgDisabled: Color,
     public val stateTextDisabled: Color,
     public val backgroundElevationElevation2: Color,
+    public val badgeTextInverse: Color = textPrimary,
     public val buttonStyleGhostBg: Color,
     public val buttonStyleGhostBorder: Color,
     public val buttonStyleGhostTextPrimary: Color = accentPrimary,
