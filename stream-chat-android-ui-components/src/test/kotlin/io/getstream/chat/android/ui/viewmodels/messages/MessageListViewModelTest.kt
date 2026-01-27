@@ -442,7 +442,7 @@ internal class MessageListViewModelTest {
                 MessageListItem.MessageItem(
                     message = message,
                     showMessageFooter = index == this.size - 1,
-                    positions = listOf(position),
+                    position = position,
                     isMessageRead = false,
                 )
             }

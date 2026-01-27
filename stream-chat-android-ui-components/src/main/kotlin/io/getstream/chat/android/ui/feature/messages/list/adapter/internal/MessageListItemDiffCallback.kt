@@ -73,7 +73,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             replies = oldMessage.replyCount != newMessage.replyCount,
             syncStatus = oldMessage.syncStatus != newMessage.syncStatus,
             deleted = oldMessage.deletedAt != newMessage.deletedAt,
-            positions = oldItem.positions != newItem.positions,
+            positions = oldItem.position != newItem.position,
             pinned = oldMessage.pinned != newMessage.pinned,
             user = oldMessage.user != newMessage.user,
             mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,

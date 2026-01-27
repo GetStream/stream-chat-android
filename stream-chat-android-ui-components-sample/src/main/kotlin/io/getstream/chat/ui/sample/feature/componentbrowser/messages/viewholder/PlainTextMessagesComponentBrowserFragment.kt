@@ -38,37 +38,37 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor"),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ut enim ad minim veniam", createdAt = date),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit", createdAt = date),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Whaaat?", createdAt = date),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, type = "ephemeral"),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
                 message = Message(text = "Ephemeral", createdAt = date, syncStatus = SyncStatus.FAILED_PERMANENTLY),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -77,7 +77,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink, attachmentLink),
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -86,7 +86,7 @@ class PlainTextMessagesComponentBrowserFragment : BaseMessagesComponentBrowserFr
                     createdAt = date,
                     attachments = mutableListOf(attachmentLink),
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = false,
             ),
         )
