@@ -191,6 +191,7 @@ public data class StreamColors(
     public val textTertiary: Color,
     public val textDisabled: Color,
     public val appBackground: Color = backgroundElevationElevation0,
+    public val backgroundCoreSelected: Color = textPrimary.copy(alpha = .15f),
     public val backgroundElevationElevation2: Color,
     public val buttonDestructiveBg: Color = accentError,
     public val buttonDestructiveBorder: Color = accentError,

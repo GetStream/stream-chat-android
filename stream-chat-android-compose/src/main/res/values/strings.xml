@@ -152,6 +152,12 @@
     <string name="stream_compose_message_composer_hold_to_record">Hold to start, release to send.</string>
     <string name="stream_compose_audio_recording_preview">Voice message</string>
 
+    <!-- Attachment Picker -->
+    <string name="stream_compose_attachment_media_picker">Media</string>
+    <string name="stream_compose_attachment_file_picker">Files</string>
+    <string name="stream_compose_attachment_camera_picker">Camera</string>
+    <string name="stream_compose_attachment_polls_picker">Polls</string>
+
     <string name="stream_compose_message_label">Message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
