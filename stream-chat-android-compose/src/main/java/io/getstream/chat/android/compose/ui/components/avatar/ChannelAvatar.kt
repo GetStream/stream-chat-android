@@ -122,11 +122,15 @@ private fun StackedGroupAvatar(
                 UserAvatarIconPlaceholder(
                     background = colors.avatarBgPlaceholder,
                     foreground = colors.avatarTextPlaceholder,
-                    size = avatarSize + 2.dp,
-                    // TODO [G.]
-                    modifier = Modifier
+                    size = avatarSize,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+
+                UserAvatar(
+                    channel.members.first().user, Modifier
+                        .size(avatarSize + 2.dp)
                         .border(2.dp, Color.White, CircleShape)
-                        .align(Alignment.TopStart)
+                        .align(Alignment.BottomEnd)
                 )
             }
 
@@ -186,7 +190,7 @@ private fun ChannelAvatarPreview() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large) }
     ChatTheme {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             sizes.forEach { size ->
