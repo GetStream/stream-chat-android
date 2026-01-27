@@ -4,9 +4,8 @@ package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.result.call.enqueue
+import io.getstream.chat.android.client.api.OfflineConfig
 import io.getstream.result.Result
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/offline-support">Offline Support</a>
@@ -15,11 +14,14 @@ class OfflineSupport {
 
     private val apiKey = "api-key"
 
-    fun configureOfflinePlugin(context: Context) {
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = context)
+    fun configureOfflineSupport(context: Context) {
+        val config = OfflineConfig(
+            enabled = true,
+            ignoredChannelTypes = setOf("livestream"),
+        )
 
         ChatClient.Builder(apiKey, context)
-            .withPlugins(offlinePluginFactory)
+            .offlineConfig(config)
             .build()
     }
 

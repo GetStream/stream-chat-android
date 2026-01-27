@@ -20,7 +20,6 @@ import android.app.Application
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
@@ -29,7 +28,6 @@ class ChatApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = this)
         val statePluginFactory = StreamStatePluginFactory(
             config = StatePluginConfig(
                 backgroundSyncEnabled = false,
@@ -39,7 +37,7 @@ class ChatApp : Application() {
         )
 
         ChatClient.Builder("hrwwzsgrzapv", this)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .withPlugins(statePluginFactory)
             .logLevel(ChatLogLevel.NOTHING)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()

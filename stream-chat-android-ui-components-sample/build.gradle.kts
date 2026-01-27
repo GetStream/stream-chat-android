@@ -146,7 +146,6 @@ shot {
 dependencies {
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-markdown-transformer"))
-    implementation(project(":stream-chat-android-offline"))
     implementation(files("../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar"))
 
     implementation(libs.stream.log)

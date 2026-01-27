@@ -20,12 +20,6 @@ android {
         create("stream-chat-android-client-stream") {
             dimension = "sdk"
         }
-        create("stream-chat-android-offline-baseline") {
-            dimension = "sdk"
-        }
-        create("stream-chat-android-offline-stream") {
-            dimension = "sdk"
-        }
         create("stream-chat-android-compose-baseline") {
             dimension = "sdk"
         }
@@ -67,8 +61,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     "stream-chat-android-client-streamImplementation"(project(":stream-chat-android-client"))
-
-    "stream-chat-android-offline-streamImplementation"(project(":stream-chat-android-offline"))
 
     "stream-chat-android-ui-components-streamImplementation"(project(":stream-chat-android-ui-components"))
 
