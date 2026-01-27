@@ -90,7 +90,7 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     messageMode: MessageMode = MessageMode.Normal,
 ) {
-    val saveAttachmentsOnDismiss = true
+    val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {
         if (saveAttachmentsOnDismiss) {
             attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
