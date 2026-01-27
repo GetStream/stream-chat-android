@@ -349,12 +349,20 @@ internal fun DefaultBottomBarContent(
             .fillMaxWidth()
             .wrapContentHeight(),
         viewModel = composerViewModel,
-        onAttachmentsClick = remember(attachmentsPickerViewModel) {
-            {
-                attachmentsPickerViewModel.changeAttachmentState(
-                    true,
-                )
-            }
+        onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+        onCommandsClick = composerViewModel::toggleCommandsVisibility,
+        onCancelAction = {
+            listViewModel.dismissAllMessageActions()
+            composerViewModel.dismissMessageActions()
+        },
+        onLinkPreviewClick = onComposerLinkPreviewClick,
+        onSendMessage = { message ->
+            composerViewModel.sendMessage(
+                message.copy(
+                    skipPushNotification = skipPushNotification,
+                    skipEnrichUrl = skipEnrichUrl,
+                ),
+            )
         },
         onCommandsClick = remember(composerViewModel) {
             {

@@ -202,6 +202,18 @@ internal class AttachmentsPickerViewModelTest {
         assertEquals(expectedAttachments, result)
     }
 
+    @Test
+    fun `Should toggle the attachment state`() {
+        val storageHelper: StorageHelperWrapper = mock()
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.toggleAttachmentState()
+        assertTrue(viewModel.isShowingAttachments)
+
+        viewModel.toggleAttachmentState()
+        assertFalse(viewModel.isShowingAttachments)
+    }
+
     companion object {
 
         private val imageAttachment1 = AttachmentMetaData(

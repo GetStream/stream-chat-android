@@ -4869,6 +4869,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setImages (Ljava/util/List;)V
 	public final fun setPolls (Ljava/util/List;)V
+	public final fun toggleAttachmentState ()V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/AudioPlayerViewModel : androidx/lifecycle/ViewModel {

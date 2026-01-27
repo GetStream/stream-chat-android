@@ -147,6 +147,13 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
+     * Toggles the visibility of the attachments picker.
+     */
+    public fun toggleAttachmentState() {
+        changeAttachmentState(showAttachments = !isShowingAttachments)
+    }
+
+    /**
      * Loads the attachment data, based on the [AttachmentsPickerMode].
      *
      * @param attachmentsPickerMode The currently selected picker mode.
