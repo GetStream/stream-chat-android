@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageFooterStatusIndicatorParams
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.core.utils.date.truncateFuture
@@ -85,7 +86,7 @@ public fun MessageFooter(
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }
-            val textStyle = ChatTheme.typography.metadataDefault.copy(color = ChatTheme.colors.chatTextTimestamp)
+            val textStyle = MessageStyling.timestampStyle()
             Row(
                 modifier = Modifier
                     .padding(top = 4.dp, bottom = 4.dp),
@@ -118,7 +119,7 @@ public fun MessageFooter(
                     Timestamp(
                         date = date,
                         formatType = DateFormatType.TIME,
-                        textStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp)
+                        textStyle = textStyle
                     )
                 }
                 if (showEditLabel && !showEditInfo) {
@@ -176,6 +177,6 @@ internal fun MessageEditedTimestamp(
         date = editedAt,
         modifier = modifier,
         formatType = formatType,
-        textStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp)
+        textStyle = MessageStyling.timestampStyle()
     )
 }

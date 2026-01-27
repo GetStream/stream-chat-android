@@ -55,6 +55,11 @@ internal object MessageStyling {
     fun linkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextLink)
 
+    @Composable
+    fun timestampStyle(): TextStyle {
+        return ChatTheme.typography.metadataDefault.copy(color = ChatTheme.colors.chatTextTimestamp)
+    }
+
     private val roundBubble = RoundedCornerShape(StreamTokens.radius2xl)
     private val outgoingBubble = RoundedCornerShape(
         topStart = StreamTokens.radius2xl,
@@ -73,11 +78,11 @@ internal object MessageStyling {
         return when (position) {
             MessagePosition.TOP,
             MessagePosition.MIDDLE,
-            -> roundBubble
+                -> roundBubble
 
             MessagePosition.BOTTOM,
             MessagePosition.NONE,
-            -> when {
+                -> when {
                 outgoing -> outgoingBubble
                 else -> incomingBubble
             }
