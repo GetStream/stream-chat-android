@@ -370,6 +370,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         lastReadMessageId = message.id,
+        team = null,
     )
     private val messageUpdatedEvent = MessageUpdatedEvent(
         type = EventType.MESSAGE_UPDATED,

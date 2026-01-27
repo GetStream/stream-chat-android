@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Add `ChatClient.clearCacheAndTemporaryFiles(context: Context)` method for clearing cache and temporary files created by the SDK. [#6090](https://github.com/GetStream/stream-chat-android/pull/6090)
+- Add `team` property to the `MessageReadEvent`. [#6105](https://github.com/GetStream/stream-chat-android/pull/6105)
 
 ### ⚠️ Changed
 
@@ -70,6 +71,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 ### ⬆️ Improved
 

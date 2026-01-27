@@ -441,6 +441,7 @@ internal class EventMapping(
             channelId = channel_id,
             thread = thread?.toDomain(),
             lastReadMessageId = last_read_message_id,
+            team = team,
         )
     }
 
