@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
  * @param bodyDefault Used for body text, like message text.
  * @param bodyEmphasis Used for emphasized body text requiring visual prominence to highlight important information.
  * @param captionEmphasis Used for emphasized captions requiring attention while maintaining compact display.
+ * @param metadataEmphasis Used for metadata and supplementary information.
  * @param metadataEmphasis Used for emphasized metadata and supplementary information in secondary content areas.
  */
 @Immutable
