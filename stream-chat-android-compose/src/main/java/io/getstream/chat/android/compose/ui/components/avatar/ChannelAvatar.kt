@@ -22,7 +22,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
@@ -113,30 +117,77 @@ private fun StackedGroupAvatar(
 ) {
     BoxWithConstraints(modifier) {
         val avatarSize = resolveStackedAvatarSize()
+        val borderSize = 2.dp // TODO [G.] tokens?
 
         when (channel.members.size) {
-            // TODO [G.] ?
-            0 -> Unit
+            // TODO [G.] 0?
+            0 -> Spacer(modifier)
             1 -> {
                 val colors = ChatTheme.colors
                 UserAvatarIconPlaceholder(
                     background = colors.avatarBgPlaceholder,
                     foreground = colors.avatarTextPlaceholder,
                     size = avatarSize,
-                    modifier = Modifier.align(Alignment.TopStart)
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(StreamTokens.spacing3xs),
                 )
 
                 UserAvatar(
-                    channel.members.first().user, Modifier
-                        .size(avatarSize + 2.dp)
-                        .border(2.dp, Color.White, CircleShape)
-                        .align(Alignment.BottomEnd)
+                    user = channel.members.first().user,
+                    modifier = Modifier
+                        .padding(StreamTokens.spacing3xs)
+                        .size(avatarSize + borderSize)
+                        .border(borderSize, Color.White, CircleShape)
+                        .align(Alignment.BottomEnd),
                 )
             }
 
-            2 -> {}
-            3 -> {}
-            4 -> {}
+            2 -> {
+                UserAvatar(
+                    user = channel.members[0].user,
+                    modifier = Modifier
+                        .padding(StreamTokens.spacing3xs)
+                        .size(avatarSize)
+                        .align(Alignment.TopStart),
+                )
+                UserAvatar(
+                    user = channel.members[1].user,
+                    modifier = Modifier
+                        .padding(StreamTokens.spacing3xs)
+                        .size(avatarSize + borderSize)
+                        .border(borderSize, Color.White, CircleShape)
+                        .align(Alignment.BottomEnd),
+                )
+            }
+
+            3 -> {
+                UserAvatar(
+                    user = channel.members[0].user,
+                    modifier = Modifier
+                        .size(avatarSize)
+                        .align(Alignment.TopCenter),
+                )
+                UserAvatar(
+                    user = channel.members[1].user,
+                    modifier = Modifier
+                        .size(avatarSize + borderSize)
+                        .border(borderSize, Color.White, CircleShape)
+                        .align(Alignment.BottomStart),
+                )
+                UserAvatar(
+                    user = channel.members[2].user,
+                    modifier = Modifier
+                        .size(avatarSize + borderSize)
+                        .border(borderSize, Color.White, CircleShape)
+                        .align(Alignment.BottomEnd),
+                )
+            }
+
+            4 -> {
+
+            }
+
             else -> {}
         }
     }
@@ -189,16 +240,42 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
 private fun ChannelAvatarPreview() {
     val sizes = AvatarSize.run { listOf(ExtraLarge, Large) }
     ChatTheme {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            sizes.forEach { size ->
-                ChannelAvatar(
-                    PreviewChannelData.channelWithOneUser,
-                    currentUser = null,
-                    modifier = Modifier.size(size),
-                )
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        PreviewChannelData.channelWithOneUser,
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        PreviewChannelData.channelWithOnlineUser,
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    ChannelAvatar(
+                        PreviewChannelData.channelWithFewMembers,
+                        currentUser = null,
+                        modifier = Modifier.size(size),
+                    )
+                }
             }
         }
     }

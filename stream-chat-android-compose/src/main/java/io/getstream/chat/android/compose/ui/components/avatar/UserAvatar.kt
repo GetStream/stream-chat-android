@@ -116,7 +116,7 @@ internal fun UserAvatarPlaceholder(user: User, size: Dp, modifier: Modifier = Mo
             background = background,
             foreground = foreground,
             size = size,
-            modifier = modifier
+            modifier = modifier,
         )
     }
 }
