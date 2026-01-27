@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -31,11 +32,25 @@ internal object MessageStyling {
     }
 
     @Composable
-    fun textStyle(): TextStyle =
-        textStyle(ChatTheme.typography, ChatTheme.colors)
+    fun textColor(outgoing: Boolean): Color {
+        return textColor(outgoing, ChatTheme.colors)
+    }
 
-    fun textStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
-        typography.bodyDefault.copy(color = colors.chatTextMessage)
+    fun textColor(outgoing: Boolean, colors: StreamColors): Color {
+        return if (outgoing) {
+            colors.chatTextOutgoing
+        } else {
+            colors.chatTextIncoming
+        }
+    }
+
+    @Composable
+    fun textStyle(outgoing: Boolean): TextStyle =
+        textStyle(outgoing, ChatTheme.typography, ChatTheme.colors)
+
+    fun textStyle(outgoing: Boolean, typography: StreamTypography, colors: StreamColors): TextStyle {
+        return typography.bodyDefault.copy(color = textColor(outgoing, colors))
+    }
 
     fun linkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextLink)

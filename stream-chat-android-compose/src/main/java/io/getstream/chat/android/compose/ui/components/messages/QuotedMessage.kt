@@ -86,24 +86,29 @@ public fun QuotedMessage(
     val colors = ChatTheme.colors
     val backgroundColor: Color
     val indicatorColor: Color
+    val textColor: Color
 
     if (replyMessage != null) {
         // replyMessage is not null: we're rendering an already-sent message
         if (replyMessage.isMine(currentUser)) {
             backgroundColor = colors.chatBgAttachmentOutgoing
             indicatorColor = colors.chatReplyIndicatorOutgoing
+            textColor = colors.chatTextOutgoing
         } else {
             backgroundColor = colors.chatBgAttachmentIncoming
             indicatorColor = colors.chatReplyIndicatorIncoming
+            textColor = colors.chatTextIncoming
         }
     } else {
         // replyMessage is null: we're composing a reply
         if (message.isMine(currentUser)) {
             backgroundColor = colors.chatBgOutgoing
             indicatorColor = colors.chatReplyIndicatorOutgoing
+            textColor = colors.chatTextOutgoing
         } else {
             backgroundColor = colors.chatBgIncoming
             indicatorColor = colors.chatReplyIndicatorIncoming
+            textColor = colors.chatTextIncoming
         }
     }
 
@@ -138,8 +143,8 @@ public fun QuotedMessage(
                 .weight(1f),
             verticalArrangement = Arrangement.Center,
         ) {
-            QuotedMessageUserName(message, replyMessage, currentUser)
-            QuotedMessageText(body)
+            QuotedMessageUserName(message, replyMessage, currentUser, textColor)
+            QuotedMessageText(body, textColor)
         }
 
         QuotedMessageAttachmentPreview(body)
@@ -176,6 +181,7 @@ private fun QuotedMessageUserName(
     message: Message,
     replyMessage: Message?,
     currentUser: User?,
+    color: Color,
 ) {
     val userName = if (message.isMine(currentUser)) {
         stringResource(R.string.stream_compose_quoted_message_you)
@@ -188,16 +194,14 @@ private fun QuotedMessageUserName(
     Text(
         text = userName,
         fontWeight = FontWeight.SemiBold,
-        color = ChatTheme.colors.chatTextMessage,
+        color = color,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
-private fun QuotedMessageText(body: QuotedMessageBody) {
-    val color = ChatTheme.colors.chatTextMessage
-
+private fun QuotedMessageText(body: QuotedMessageBody, color: Color) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,

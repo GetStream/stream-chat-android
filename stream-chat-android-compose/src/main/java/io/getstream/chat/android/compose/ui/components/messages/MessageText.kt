@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -92,7 +93,7 @@ public fun MessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> MessageStyling.textStyle()
+        else -> MessageStyling.textStyle(outgoing = message.isMine(currentUser))
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)

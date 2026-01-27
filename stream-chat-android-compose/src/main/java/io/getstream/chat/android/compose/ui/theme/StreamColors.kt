@@ -34,7 +34,6 @@ import io.getstream.chat.android.compose.R
  * @param inputBackground Used for the input background, deleted messages, section headings.
  * @param appBackground Used for the default app background and channel list item background.
  * @param barsBackground Used for button text, top and bottom bar background and other user messages.
- * @param linkBackground Used for the message link card background.
  * @param overlay Used for general overlays and background when opening modals.
  * @param overlayDark Used for the date separator background color.
  * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
@@ -102,7 +101,8 @@ import io.getstream.chat.android.compose.R
  * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
  * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
  * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
- * @param chatTextMessage Used for message text color in chat bubbles.
+ * @param chatTextIncoming Used for incoming message text color in chat bubbles.
+ * @param chatTextOutgoing Used for outgoing message text color in chat bubbles.
  * @param controlRemoveBg Used for remove control background.
  * @param controlRemoveBorder Used for remove control border.
  * @param controlRemoveIcon Used for remove control icon.
@@ -188,7 +188,8 @@ public data class StreamColors(
     public val chatBgAttachmentOutgoing: Color,
     public val chatReplyIndicatorIncoming: Color,
     public val chatReplyIndicatorOutgoing: Color,
-    public val chatTextMessage: Color = textPrimary,
+    public val chatTextIncoming: Color = textPrimary,
+    public val chatTextOutgoing: Color = textPrimary,
     public val chatTextLink: Color = primaryAccent,
     public val chatTextMention: Color = chatTextLink,
     public val chatTextTimestamp: Color = textTertiary,
