@@ -41,7 +41,7 @@ public interface AttachmentsPickerTabFactory {
     public fun isPickerTabEnabled(channel: Channel): Boolean = true
 
     /**
-     * Emits an icon for the tab.
+     * Icon for the tab.
      *
      * @param isEnabled If the tab is enabled.
      * @param isSelected If the tab is selected.
@@ -50,7 +50,7 @@ public interface AttachmentsPickerTabFactory {
     public fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean)
 
     /**
-     * Emits a content for the tab.
+     * Content for the tab.
      *
      * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
@@ -66,4 +66,15 @@ public interface AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     )
+
+    /**
+     * Content for the fullscreen.
+     *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
+     */
+    @Composable
+    public fun PickerFullscreenContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    ) {
+    }
 }

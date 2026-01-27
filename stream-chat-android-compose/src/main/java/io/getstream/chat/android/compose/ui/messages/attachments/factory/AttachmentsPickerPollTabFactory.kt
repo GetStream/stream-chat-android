@@ -17,8 +17,14 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -83,6 +89,26 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            OutlinedButton(
+                onClick = { /* Navigate to create poll screen */ },
+            ) {
+                Text("Create Poll")
+            }
+        }
+    }
+
+    /**
+     * Content that allows users to create a poll in the fullscreen.
+     */
+    @Composable
+    override fun PickerFullscreenContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     ) {
         CreatePollScreen(onAttachmentPickerAction)
     }
