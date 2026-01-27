@@ -2142,7 +2142,6 @@ public final class io/getstream/chat/android/compose/ui/mentions/MentionListKt {
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun AttachmentsPickerMenu (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MessageDialogs (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MessageMenus (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
 	public static final fun MessageModerationDialog (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;ZZLandroidx/compose/runtime/Composer;I)V
@@ -2151,7 +2150,18 @@ public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenK
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
-	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerMenuKt {
+	public static final fun AttachmentsPickerMenu (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentsPickerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentsPickerKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function5;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function5;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerAction {
