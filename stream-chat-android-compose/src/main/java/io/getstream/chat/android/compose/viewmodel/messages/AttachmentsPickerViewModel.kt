@@ -34,13 +34,11 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
@@ -110,9 +108,6 @@ public class AttachmentsPickerViewModel(
      */
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
-
-    private val _attachmentsForUpload: MutableSharedFlow<List<Attachment>> = MutableSharedFlow(extraBufferCapacity = 1)
-    internal val attachmentsForUpload: SharedFlow<List<Attachment>> = _attachmentsForUpload.asSharedFlow()
 
     /**
      * Loads all the items based on the current type.
@@ -215,8 +210,10 @@ public class AttachmentsPickerViewModel(
      * @param onComplete The callback passing the selected attachments.
      */
     internal fun getSelectedAttachmentsAsync(onComplete: (List<Attachment>) -> Unit) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val attachments = getSelectedAttachments()
+        viewModelScope.launch {
+            val attachments = withContext(DispatcherProvider.IO) {
+                getSelectedAttachments()
+            }
             onComplete(attachments)
         }
     }
@@ -251,8 +248,10 @@ public class AttachmentsPickerViewModel(
         metadata: List<AttachmentMetaData>,
         onComplete: (List<Attachment>) -> Unit,
     ) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val attachments = getAttachmentsFromMetaData(metadata)
+        viewModelScope.launch {
+            val attachments = withContext(DispatcherProvider.IO) {
+                getAttachmentsFromMetaData(metadata)
+            }
             onComplete(attachments)
         }
     }

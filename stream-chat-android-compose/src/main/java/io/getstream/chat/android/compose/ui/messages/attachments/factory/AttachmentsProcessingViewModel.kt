@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * ViewModel responsible for asynchronous processing of attachment metadata.
@@ -44,12 +45,14 @@ internal class AttachmentsProcessingViewModel(
      * @param onComplete The callback passing the processed attachments.
      */
     fun getAttachmentsMetadataFromUrisAsync(uris: List<Uri>, onComplete: (AttachmentsMetadataFromUris) -> Unit) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getAttachmentsMetadataFromUris(uris)
-            val attachmentsMetadataFromUris = AttachmentsMetadataFromUris(
-                uris = uris,
-                attachmentsMetadata = metadata,
-            )
+        viewModelScope.launch {
+            val attachmentsMetadataFromUris = withContext(DispatcherProvider.IO) {
+                val metadata = storageHelper.getAttachmentsMetadataFromUris(uris)
+                AttachmentsMetadataFromUris(
+                    uris = uris,
+                    attachmentsMetadata = metadata,
+                )
+            }
             onComplete(attachmentsMetadataFromUris)
         }
     }
@@ -60,8 +63,10 @@ internal class AttachmentsProcessingViewModel(
      * @param onComplete The callback passing the resolved files.
      */
     fun getFilesAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getFiles()
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) {
+                storageHelper.getFiles()
+            }
             onComplete(metadata)
         }
     }
@@ -72,8 +77,10 @@ internal class AttachmentsProcessingViewModel(
      * @param onComplete The callback passing the resolved files.
      */
     fun getMediaAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getMedia()
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) {
+                storageHelper.getMedia()
+            }
             onComplete(metadata)
         }
     }
