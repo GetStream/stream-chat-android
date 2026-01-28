@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import io.getstream.chat.android.compose.ui.messages.attachments.PickerMediaMode
 import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 
 /**
@@ -100,21 +101,10 @@ public object AttachmentsPickerTabFactories {
             if (imagesTabEnabled) AttachmentsPickerImagesTabFactory() else null,
             if (filesTabEnabled) AttachmentsPickerFilesTabFactory() else null,
             when {
-                takeImageEnabled && recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
-                    )
-
-                takeImageEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
-                    )
-
-                recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
-                    )
-
+                takeImageEnabled &&
+                    recordVideoEnabled -> AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO_AND_VIDEO)
+                takeImageEnabled -> AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO)
+                recordVideoEnabled -> AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.VIDEO)
                 else -> null
             },
             if (pollEnabled) AttachmentsPickerPollTabFactory() else null,
