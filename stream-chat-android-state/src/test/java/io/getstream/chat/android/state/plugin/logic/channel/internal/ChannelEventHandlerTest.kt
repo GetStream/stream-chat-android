@@ -656,6 +656,7 @@ internal class ChannelEventHandlerTest {
             channelId = randomString(),
             lastReadMessageId = randomString(),
             thread = randomThreadInfo(),
+            team = null,
         )
 
         handler.handle(event)

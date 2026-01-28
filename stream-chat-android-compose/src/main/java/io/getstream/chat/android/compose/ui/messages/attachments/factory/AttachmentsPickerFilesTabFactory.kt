@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -56,7 +57,6 @@ import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -112,25 +112,6 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-                // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                    Toast.makeText(
-                        context,
-                        R.string.stream_compose_message_composer_file_not_supported,
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
-            }
-        }
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.filesMetadata.collectLatest { metaData ->
-                val items = metaData.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(items)
-            }
-        }
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
         val permissionLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -140,7 +121,10 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
             }
         val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
             if (value != FilesAccess.DENIED) {
-                processingViewModel.getFilesAsync()
+                processingViewModel.getFilesAsync { metadata ->
+                    val items = metadata.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(items)
+                }
             }
         }
 
@@ -155,7 +139,10 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     onBrowseFilesResult = { uris ->
-                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                            showErrorIfNeeded(context, metadata)
+                            onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                        }
                     },
                 )
             },
@@ -281,6 +268,16 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                 },
                 onClick = onClick,
             )
+        }
+    }
+
+    private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
+        if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+            Toast.makeText(
+                context,
+                R.string.stream_compose_message_composer_file_not_supported,
+                Toast.LENGTH_SHORT,
+            ).show()
         }
     }
 }

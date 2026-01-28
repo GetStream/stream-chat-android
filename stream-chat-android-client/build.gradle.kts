@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.dokka)
 }
 
 android {

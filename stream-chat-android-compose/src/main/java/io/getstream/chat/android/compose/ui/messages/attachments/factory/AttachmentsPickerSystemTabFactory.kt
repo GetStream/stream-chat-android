@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -82,7 +83,6 @@ import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerCo
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -215,28 +215,20 @@ public class AttachmentsPickerSystemTabFactory(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
 
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-                // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                    Toast.makeText(
-                        context,
-                        R.string.stream_compose_message_composer_file_not_supported,
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
+        val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            val uris = listOf(uri)
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                showErrorIfNeeded(context, metadata)
                 onAttachmentsSubmitted(metadata.attachmentsMetadata)
             }
         }
 
-        val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            val uris = listOf(uri)
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
-        }
-
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                    showErrorIfNeeded(context, metadata)
+                    onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                }
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(
@@ -339,6 +331,16 @@ public class AttachmentsPickerSystemTabFactory(
             type = "*/*" // General type to include multiple types
             putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
             addCategory(Intent.CATEGORY_OPENABLE)
+        }
+    }
+
+    private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
+        if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+            Toast.makeText(
+                context,
+                R.string.stream_compose_message_composer_file_not_supported,
+                Toast.LENGTH_SHORT,
+            ).show()
         }
     }
 }
