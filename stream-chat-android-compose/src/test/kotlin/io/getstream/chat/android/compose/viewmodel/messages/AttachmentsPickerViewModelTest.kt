@@ -53,14 +53,12 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.loadData()
+        viewModel.loadAttachmentsData(viewModel.attachmentsPickerMode)
 
         assertTrue(viewModel.isShowingAttachments)
         assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(2, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(2, viewModel.attachments.size)
+        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
@@ -76,10 +74,8 @@ internal class AttachmentsPickerViewModelTest {
 
         assertTrue(viewModel.isShowingAttachments)
         assertEquals(Files, viewModel.attachmentsPickerMode)
-        assertEquals(0, viewModel.images.size)
-        assertEquals(2, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(2, viewModel.attachments.size)
+        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
@@ -92,15 +88,13 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
+        viewModel.loadAttachmentsData(viewModel.attachmentsPickerMode)
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
         assertTrue(viewModel.isShowingAttachments)
         assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(2, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertTrue(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(2, viewModel.attachments.size)
+        assertTrue(viewModel.hasPickedAttachments)
         assertEquals(1, viewModel.getSelectedAttachments().size)
     }
 
@@ -117,10 +111,8 @@ internal class AttachmentsPickerViewModelTest {
 
         assertFalse(viewModel.isShowingAttachments)
         assertEquals(Images, viewModel.attachmentsPickerMode)
-        assertEquals(0, viewModel.images.size)
-        assertEquals(0, viewModel.files.size)
-        assertFalse(viewModel.hasPickedImages)
-        assertFalse(viewModel.hasPickedFiles)
+        assertEquals(0, viewModel.attachments.size)
+        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
