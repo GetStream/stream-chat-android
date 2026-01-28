@@ -23,10 +23,8 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * ViewModel responsible for asynchronous processing of attachment metadata.
@@ -40,67 +38,50 @@ internal class AttachmentsProcessingViewModel(
     private val storageHelper: StorageHelperWrapper,
 ) : ViewModel() {
 
-    private val _attachmentsMetadataFromUris =
-        MutableSharedFlow<AttachmentsMetadataFromUris>(extraBufferCapacity = 1)
-    private val _filesMetadata =
-        MutableSharedFlow<List<AttachmentMetaData>>(extraBufferCapacity = 1)
-    private val _mediaMetadata =
-        MutableSharedFlow<List<AttachmentMetaData>>(extraBufferCapacity = 1)
-
-    /**
-     * Flow of events emitted when attachments metadata is retrieved from URIs.
-     */
-    val attachmentsMetadataFromUris: SharedFlow<AttachmentsMetadataFromUris> =
-        _attachmentsMetadataFromUris.asSharedFlow()
-
-    /**
-     * Flow of events emitted when files metadata is retrieved.
-     */
-    val filesMetadata: SharedFlow<List<AttachmentMetaData>> =
-        _filesMetadata.asSharedFlow()
-
-    /**
-     * Flow of events emitted when media metadata is retrieved.
-     */
-    val mediaMetadata: SharedFlow<List<AttachmentMetaData>> =
-        _mediaMetadata.asSharedFlow()
-
     /**
      * Processes a list of attachment URIs in the background and emits the result.
-     * Observe the [attachmentsMetadataFromUris] flow to be notified about the result.
      *
      * @param uris The list of URIs to process.
+     * @param onComplete The callback passing the processed attachments.
      */
-    fun getAttachmentsMetadataFromUrisAsync(uris: List<Uri>) {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getAttachmentsMetadataFromUris(uris)
-            val attachmentsMetadataFromUris = AttachmentsMetadataFromUris(
-                uris = uris,
-                attachmentsMetadata = metadata,
-            )
-            _attachmentsMetadataFromUris.emit(attachmentsMetadataFromUris)
+    fun getAttachmentsMetadataFromUrisAsync(uris: List<Uri>, onComplete: (AttachmentsMetadataFromUris) -> Unit) {
+        viewModelScope.launch {
+            val attachmentsMetadataFromUris = withContext(DispatcherProvider.IO) {
+                val metadata = storageHelper.getAttachmentsMetadataFromUris(uris)
+                AttachmentsMetadataFromUris(
+                    uris = uris,
+                    attachmentsMetadata = metadata,
+                )
+            }
+            onComplete(attachmentsMetadataFromUris)
         }
     }
 
     /**
      * Retrieves files metadata asynchronously and emits the result.
-     * Observe the [filesMetadata] flow to be notified about the result.
+     *
+     * @param onComplete The callback passing the resolved files.
      */
-    fun getFilesAsync() {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getFiles()
-            _filesMetadata.emit(metadata)
+    fun getFilesAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) {
+                storageHelper.getFiles()
+            }
+            onComplete(metadata)
         }
     }
 
     /**
      * Retrieves media metadata asynchronously and emits the result.
-     * Observe the [mediaMetadata] flow to be notified about the result.
+     *
+     * @param onComplete The callback passing the resolved files.
      */
-    fun getMediaAsync() {
-        viewModelScope.launch(DispatcherProvider.IO) {
-            val metadata = storageHelper.getMedia()
-            _mediaMetadata.emit(metadata)
+    fun getMediaAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) {
+                storageHelper.getMedia()
+            }
+            onComplete(metadata)
         }
     }
 }
