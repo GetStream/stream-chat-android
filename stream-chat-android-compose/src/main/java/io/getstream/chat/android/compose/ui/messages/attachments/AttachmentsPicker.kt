@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -40,10 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactoryFilter
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -96,19 +94,6 @@ public fun AttachmentsPicker(
     }
     BackHandler(onBack = dismissAction)
     val channel = attachmentsPickerViewModel.channel
-    // Cross-validate requested tabFactories with the allowed ones from BE
-    val allowedFactories = remember(tabFactories, channel, messageMode) {
-        AttachmentsPickerTabFactoryFilter().filterAllowedFactories(
-            factories = tabFactories,
-            channel = channel,
-            messageMode = messageMode,
-        )
-    }
-    val defaultTabIndex = allowedFactories
-        .indexOfFirst { it.isPickerTabEnabled(channel) }
-        .takeIf { it >= 0 }
-        ?: 0
-    var selectedTabIndex by rememberSaveable { mutableIntStateOf(defaultTabIndex) }
 
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
@@ -119,25 +104,19 @@ public fun AttachmentsPicker(
             AttachmentTypePicker(
                 messageMode = messageMode,
                 channel = channel,
-                onTypeClick = { index, attachmentPickerMode ->
-                    onTabClick.invoke(index, attachmentPickerMode)
-                    selectedTabIndex = index
-                    attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
+                onPickerTypeClick = { index, attachmentPickerMode ->
+                    onTabClick(index, attachmentPickerMode)
+                    attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode)
                 },
-            )
-
-            AnimatedContent(targetState = selectedTabIndex) { index ->
-                allowedFactories.getOrNull(index)?.let { selectedTab ->
-                    selectedTab.PickerTabContent(
-                        onAttachmentPickerAction = { pickerAction ->
-                            when (pickerAction) {
-                                is AttachmentPickerBack -> dismissAction()
-                                is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
-                            }
-                        },
+            ) { attachmentsPickerMode ->
+                AnimatedContent(
+                    targetState = attachmentsPickerMode,
+                ) { pickerMode ->
+                    AttachmentPickerContent(
+                        attachmentsPickerMode = pickerMode,
                         attachments = attachmentsPickerViewModel.attachments,
-                        onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                         onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                        onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                         onAttachmentsSubmitted = attachmentsPickerViewModel::getAttachmentsFromMetadataAsync,
                     )
                 }
