@@ -85,14 +85,4 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
-
-    private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
-        if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-            Toast.makeText(
-                context,
-                R.string.stream_compose_message_composer_file_not_supported,
-                Toast.LENGTH_SHORT,
-            ).show()
-        }
-    }
 }

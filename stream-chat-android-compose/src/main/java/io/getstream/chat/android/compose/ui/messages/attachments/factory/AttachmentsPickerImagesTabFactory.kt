@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 /**
  * Holds the information required to add support for "images" tab in the attachment picker.

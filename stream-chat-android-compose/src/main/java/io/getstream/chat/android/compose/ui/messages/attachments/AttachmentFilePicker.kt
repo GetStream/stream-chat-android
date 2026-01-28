@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.NoStorageAccessContent
@@ -58,7 +60,6 @@ import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun AttachmentFilePicker(
@@ -72,25 +73,6 @@ internal fun AttachmentFilePicker(
     val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
         factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
     )
-    LaunchedEffect(processingViewModel) {
-        processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-            // Check if some of the files were filtered out due to upload config
-            if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                Toast.makeText(
-                    context,
-                    R.string.stream_compose_message_composer_file_not_supported,
-                    Toast.LENGTH_SHORT,
-                ).show()
-            }
-            onAttachmentsSubmitted(metadata.attachmentsMetadata)
-        }
-    }
-    LaunchedEffect(processingViewModel) {
-        processingViewModel.filesMetadata.collectLatest { metaData ->
-            val items = metaData.map { AttachmentPickerItemState(attachmentMetaData = it) }
-            onAttachmentsChanged(items)
-        }
-    }
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -100,7 +82,10 @@ internal fun AttachmentFilePicker(
         }
     val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
         if (value != FilesAccess.DENIED) {
-            processingViewModel.getFilesAsync()
+            processingViewModel.getFilesAsync { metadata ->
+                val items = metadata.map { AttachmentPickerItemState(attachmentMetaData = it) }
+                onAttachmentsChanged(items)
+            }
         }
     }
 
@@ -115,7 +100,10 @@ internal fun AttachmentFilePicker(
                 files = attachments,
                 onItemSelected = onAttachmentItemSelected,
                 onBrowseFilesResult = { uris ->
-                    processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                    processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                        showErrorIfNeeded(context, metadata)
+                        onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                    }
                 },
             )
         },
@@ -138,6 +126,16 @@ internal fun AttachmentFilePicker(
             )
             showPermanentlyDeniedSnackBar = false
         }
+    }
+}
+
+private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
+    if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+        Toast.makeText(
+            context,
+            R.string.stream_compose_message_composer_file_not_supported,
+            Toast.LENGTH_SHORT,
+        ).show()
     }
 }
 

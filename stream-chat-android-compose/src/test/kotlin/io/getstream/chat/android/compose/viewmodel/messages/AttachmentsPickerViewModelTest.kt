@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import android.net.Uri
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
@@ -25,11 +26,13 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -43,6 +46,9 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 internal class AttachmentsPickerViewModelTest {
+
+    @get:Rule
+    val testCoroutineRule = TestCoroutineRule()
 
     private val storageHelper: StorageHelperWrapper = mock()
     private val channelState = MutableStateFlow(mockChannelState())
@@ -168,9 +174,12 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.loadData()
-        viewModel.changeSelectedAttachments(viewModel.images.first())
-        viewModel.changeSelectedAttachments(viewModel.images.last())
+        viewModel.attachments = listOf(
+            AttachmentPickerItemState(imageAttachment1),
+            AttachmentPickerItemState(imageAttachment2),
+        )
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
+        viewModel.changeSelectedAttachments(viewModel.attachments.last())
 
         var result: List<Attachment>? = null
         viewModel.getSelectedAttachmentsAsync { result = it }
@@ -190,7 +199,11 @@ internal class AttachmentsPickerViewModelTest {
 
         viewModel.changeAttachmentState(true)
         viewModel.changeAttachmentPickerMode(Files)
-        viewModel.changeSelectedAttachments(viewModel.files.first())
+        viewModel.attachments = listOf(
+            AttachmentPickerItemState(fileAttachment1),
+            AttachmentPickerItemState(fileAttachment2),
+        )
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
         var result: List<Attachment>? = null
         viewModel.getSelectedAttachmentsAsync { result = it }

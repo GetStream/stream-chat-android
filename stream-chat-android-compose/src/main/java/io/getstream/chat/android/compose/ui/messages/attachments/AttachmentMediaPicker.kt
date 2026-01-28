@@ -45,7 +45,6 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun AttachmentMediaPicker(
@@ -58,17 +57,13 @@ internal fun AttachmentMediaPicker(
     val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
         factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
     )
-    LaunchedEffect(processingViewModel) {
-        processingViewModel.mediaMetadata.collectLatest { metaData ->
-            val items = metaData.map { AttachmentPickerItemState(attachmentMetaData = it) }
-            onAttachmentsChanged(items)
-        }
-    }
-
     val permissions = Permissions.visualMediaPermissions()
     val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
         if (value != VisualMediaAccess.DENIED) {
-            processingViewModel.getMediaAsync()
+            processingViewModel.getMediaAsync { metadata ->
+                val items = metadata.map { AttachmentPickerItemState(attachmentMetaData = it) }
+                onAttachmentsChanged(items)
+            }
         }
     }
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
