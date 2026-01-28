@@ -59,7 +59,7 @@ public object StreamAttachmentFactories {
      * The default max length of the link attachments description. We limit this, because for some links the description
      * can be too long.
      */
-    private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 5
+    private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 2
 
     /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
