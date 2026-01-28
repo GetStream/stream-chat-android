@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -55,7 +54,9 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -64,6 +65,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
+private val ItemShape = RoundedCornerShape(2.dp)
 
 /**
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
@@ -97,7 +99,8 @@ public fun ImagesPicker(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
-        contentPadding = PaddingValues(1.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         if (showAddMore) {
             item { addMoreContent() }
@@ -132,8 +135,8 @@ internal fun DefaultImagesPickerItem(
 
     Box(
         modifier = Modifier
-            .height(125.dp)
-            .padding(2.dp)
+            .aspectRatio(1f)
+            .clip(ItemShape)
             .clickable { onImageSelected(imageItem) }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
@@ -144,22 +147,27 @@ internal fun DefaultImagesPickerItem(
             contentScale = ContentScale.Crop,
         )
 
-        if (imageItem.isSelected) {
+        if (imageItem.selection is Selection.Selected) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
+                    .padding(StreamTokens.spacingXs)
                     .size(24.dp)
                     .background(
                         shape = CircleShape,
-                        color = ChatTheme.attachmentPickerTheme.checkIconBackgroundColor,
+                        color = ChatTheme.colors.borderCoreOnDark,
+                    )
+                    .padding(2.dp)
+                    .background(
+                        shape = CircleShape,
+                        color = ChatTheme.colors.accentPrimary,
                     ),
+                contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    modifier = Modifier.align(Alignment.Center),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-                    contentDescription = null,
-                    tint = ChatTheme.attachmentPickerTheme.checkIconTintColor,
+                Text(
+                    text = imageItem.selection.count.toString(),
+                    color = ChatTheme.colors.badgeText,
+                    style = ChatTheme.typography.numericXl,
                 )
             }
         }
@@ -228,12 +236,11 @@ private fun BoxScope.VideoThumbnailOverlay(
  * @param onPickMoreClick Action invoked when the user clicks on the 'pick more' tile.
  */
 @Composable
-internal fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
+private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .height(125.dp)
-            .padding(2.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .aspectRatio(1f)
+            .clip(ItemShape)
             .border(
                 width = 1.dp,
                 color = ChatTheme.colors.borders,
@@ -287,17 +294,15 @@ internal fun ImagesPicker(showAddMore: Boolean) {
         images = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                isSelected = false,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                isSelected = true,
+                selection = Selection.Selected(count = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
                     videoLength = VideoFrameMillis
                 },
-                isSelected = false,
             ),
         ),
         onImageSelected = {},
