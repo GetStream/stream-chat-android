@@ -17,11 +17,11 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -40,7 +39,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-@ExtendWith(TestCoroutineExtension::class)
 internal class AttachmentsPickerViewModelTest {
 
     private val channelState = MutableStateFlow(mock<ChannelState>())
@@ -99,6 +97,27 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
+    fun `Given selected images When deselecting earlier item Should update selection order`() {
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentState(true)
+        viewModel.loadAttachmentsData(viewModel.attachmentsPickerMode)
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
+        viewModel.changeSelectedAttachments(viewModel.attachments.last())
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
+
+        val firstItem = viewModel.attachments.first()
+        val lastItem = viewModel.attachments.last()
+        assertFalse(firstItem.isSelected)
+        assertEquals(Selection.Unselected, firstItem.selection)
+        assertTrue(lastItem.isSelected)
+        assertEquals(Selection.Selected(count = 1), lastItem.selection)
+    }
+
+    @Test
     fun `Given files on the file system When showing and hiding attachments picker Should reset the picker state`() {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
@@ -114,6 +133,19 @@ internal class AttachmentsPickerViewModelTest {
         assertEquals(0, viewModel.attachments.size)
         assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
+    }
+
+    @Test
+    fun `Given permission denied When changing picker mode Should not load attachments`() {
+        val storageHelper: StorageHelperWrapper = mock()
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentPickerMode(Files, hasPermission = { false })
+
+        assertEquals(Files, viewModel.attachmentsPickerMode)
+        assertEquals(0, viewModel.attachments.size)
+        verify(storageHelper, never()).getFiles()
+        verify(storageHelper, never()).getMedia()
     }
 
     @Test
@@ -171,6 +203,58 @@ internal class AttachmentsPickerViewModelTest {
         advanceUntilIdle()
 
         assertEquals(1, result?.size)
+        assertEquals(expectedAttachments, result)
+    }
+
+    @Test
+    fun `Given selected attachments When getting selected attachments Should map metadata for upload`() {
+        val expectedAttachments = listOf(Attachment(type = "image", upload = mock()))
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
+            whenever(it.getAttachmentsForUpload(any())) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentState(true)
+        viewModel.loadAttachmentsData(viewModel.attachmentsPickerMode)
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
+
+        val result = viewModel.getSelectedAttachments()
+
+        assertEquals(expectedAttachments, result)
+    }
+
+    @Test
+    fun `Given attachment metadata When getting attachments from metadata Should return attachments`() {
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val expectedAttachments = listOf(
+            Attachment(type = "image", upload = mock()),
+            Attachment(type = "image", upload = mock()),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        val result = viewModel.getAttachmentsFromMetaData(metadata)
+
+        assertEquals(expectedAttachments, result)
+    }
+
+    @Test
+    fun `Given attachment uris When getting attachments from uris Should return attachments`() {
+        val uris = listOf(Uri.parse("file://test1.pdf"), Uri.parse("file://test2.pdf"))
+        val expectedAttachments = listOf(
+            Attachment(type = "file", upload = mock()),
+            Attachment(type = "file", upload = mock()),
+        )
+        val storageHelper: StorageHelperWrapper = mock {
+            whenever(it.getAttachmentsFromUris(uris)) doReturn expectedAttachments
+        }
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        val result = viewModel.getAttachmentsFromUris(uris)
+
         assertEquals(expectedAttachments, result)
     }
 
