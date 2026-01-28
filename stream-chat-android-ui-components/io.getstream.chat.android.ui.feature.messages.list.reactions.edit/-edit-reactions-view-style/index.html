@@ -1,0 +1,333 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>EditReactionsViewStyle</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-components:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-components::io.getstream.chat.android.ui.feature.messages.list.reactions.edit/EditReactionsViewStyle///PointingToDeclaration//-523872580">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-components</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.feature.messages.list.reactions.edit</a><span class="delimiter">/</span><span class="current">EditReactionsViewStyle</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Edit</span><wbr><span>Reactions</span><wbr><span>View</span><wbr><span><span>Style</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">EditReactionsViewStyle</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>bubbleColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>bubbleColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>horizontalPadding<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>bubbleHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>bubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>largeTailBubbleCyOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>largeTailBubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>largeTailBubbleOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>smallTailBubbleCyOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>smallTailBubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>smallTailBubbleOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>reactionsColumn<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>verticalPadding<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span> : <a href="../../io.getstream.chat.android.ui.helper/-view-style/index.html">ViewStyle</a></div><p class="paragraph">Style for EditReactionsView. Use this class together with <a href="../../io.getstream.chat.android.ui.helper/-transform-style/edit-reactions-style-transformer.html">TransformStyle.editReactionsStyleTransformer</a> to change EditReactionsView styles programmatically.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bubble</span><wbr><span>Color</span><wbr><span><span>Mine</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Reaction bubble color for the current user.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bubble</span><wbr><span>Color</span><wbr><span><span>Theirs</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Reaction bubble color for other users.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>horizontal</span><wbr><span><span>Padding</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The horizontal padding to be applied to the start and end of the bubble.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>item</span><wbr><span><span>Size</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The size of the reaction item.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bubble</span><wbr><span><span>Height</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Height of the reactions part of the bubble.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bubble</span><wbr><span><span>Radius</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The radius of the reactions part of the bubble.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span>Cy</span><wbr><span><span>Offset</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The y axis offset of the large tail bubble center point</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Radius</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The radius of the large tail bubble.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Offset</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The x axis offset of the large tail bubble center point.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span>Cy</span><wbr><span><span>Offset</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The y axis offset of the small tail bubble center point.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Radius</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The radius of the bubble small tail.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Offset</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The x axis offset of the small tail bubble center point.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>reactions</span><wbr><span><span>Column</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The number of reaction columns.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>vertical</span><wbr><span><span>Padding</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The vertical padding to be applied to top and bottom of the view.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-115509925%2FConstructors%2F-523872580" anchor-label="EditReactionsViewStyle" id="-115509925%2FConstructors%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-edit-reactions-view-style.html"><span>Edit</span><wbr><span>Reactions</span><wbr><span>View</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-115509925%2FConstructors%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>bubbleColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>bubbleColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>horizontalPadding<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemSize<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>bubbleHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>bubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>largeTailBubbleCyOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>largeTailBubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>largeTailBubbleOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>smallTailBubbleCyOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>smallTailBubbleRadius<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>smallTailBubbleOffset<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">reactionsColumn<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>verticalPadding<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1728065039%2FClasslikes%2F-523872580" anchor-label="Companion" id="-1728065039%2FClasslikes%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1728065039%2FClasslikes%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1745368832%2FProperties%2F-523872580" anchor-label="bubbleColorMine" id="1745368832%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bubble-color-mine.html"><span>bubble</span><wbr><span>Color</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1745368832%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="bubble-color-mine.html">bubbleColorMine</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-636476870%2FProperties%2F-523872580" anchor-label="bubbleColorTheirs" id="-636476870%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bubble-color-theirs.html"><span>bubble</span><wbr><span>Color</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-636476870%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="bubble-color-theirs.html">bubbleColorTheirs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="851209789%2FProperties%2F-523872580" anchor-label="bubbleHeight" id="851209789%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bubble-height.html"><span>bubble</span><wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="851209789%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="bubble-height.html">bubbleHeight</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-75976398%2FProperties%2F-523872580" anchor-label="bubbleRadius" id="-75976398%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bubble-radius.html"><span>bubble</span><wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-75976398%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="bubble-radius.html">bubbleRadius</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="59739389%2FProperties%2F-523872580" anchor-label="horizontalPadding" id="59739389%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="horizontal-padding.html"><span>horizontal</span><wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="59739389%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="horizontal-padding.html">horizontalPadding</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1413580292%2FProperties%2F-523872580" anchor-label="itemSize" id="-1413580292%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-size.html"><span>item</span><wbr><span><span>Size</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1413580292%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-size.html">itemSize</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1791877750%2FProperties%2F-523872580" anchor-label="largeTailBubbleCyOffset" id="-1791877750%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="large-tail-bubble-cy-offset.html"><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span>Cy</span><wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1791877750%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="large-tail-bubble-cy-offset.html">largeTailBubbleCyOffset</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1490607712%2FProperties%2F-523872580" anchor-label="largeTailBubbleOffset" id="1490607712%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="large-tail-bubble-offset.html"><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1490607712%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="large-tail-bubble-offset.html">largeTailBubbleOffset</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1822524225%2FProperties%2F-523872580" anchor-label="largeTailBubbleRadius" id="1822524225%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="large-tail-bubble-radius.html"><span>large</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1822524225%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="large-tail-bubble-radius.html">largeTailBubbleRadius</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2117923722%2FProperties%2F-523872580" anchor-label="reactionsColumn" id="2117923722%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reactions-column.html"><span>reactions</span><wbr><span><span>Column</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2117923722%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="reactions-column.html">reactionsColumn</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1272931266%2FProperties%2F-523872580" anchor-label="smallTailBubbleCyOffset" id="-1272931266%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="small-tail-bubble-cy-offset.html"><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span>Cy</span><wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1272931266%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="small-tail-bubble-cy-offset.html">smallTailBubbleCyOffset</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1728018964%2FProperties%2F-523872580" anchor-label="smallTailBubbleOffset" id="1728018964%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="small-tail-bubble-offset.html"><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Offset</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1728018964%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="small-tail-bubble-offset.html">smallTailBubbleOffset</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2059935477%2FProperties%2F-523872580" anchor-label="smallTailBubbleRadius" id="2059935477%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="small-tail-bubble-radius.html"><span>small</span><wbr><span>Tail</span><wbr><span>Bubble</span><wbr><span><span>Radius</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2059935477%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="small-tail-bubble-radius.html">smallTailBubbleRadius</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1232451471%2FProperties%2F-523872580" anchor-label="verticalPadding" id="1232451471%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="vertical-padding.html"><span>vertical</span><wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1232451471%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="vertical-padding.html">verticalPadding</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

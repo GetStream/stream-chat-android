@@ -1,0 +1,209 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>AudioRecordingPlaybackTheme</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-compose:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-compose::io.getstream.chat.android.compose.ui.theme.messages.composer/AudioRecordingPlaybackTheme///PointingToDeclaration//29477497">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.compose.ui.theme.messages.composer</a><span class="delimiter">/</span><span class="current">AudioRecordingPlaybackTheme</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Audio</span><wbr><span>Recording</span><wbr><span>Playback</span><wbr><span><span>Theme</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">AudioRecordingPlaybackTheme</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>height<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>micIndicator<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>playButton<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>pauseButton<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>timerTextStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>waveformSliderStyle<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-waveform-slider-style/index.html">WaveformSliderStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>waveformSliderPadding<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-component-padding/index.html">ComponentPadding</a></span></span><span class="token punctuation">)</span></div><p class="paragraph">Represents the theme for the audio recording playback component.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1303812224%2FConstructors%2F29477497" anchor-label="AudioRecordingPlaybackTheme" id="-1303812224%2FConstructors%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-audio-recording-playback-theme.html"><span>Audio</span><wbr><span>Recording</span><wbr><span>Playback</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1303812224%2FConstructors%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">height<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a><span class="token punctuation">, </span></span><span class="parameter ">micIndicator<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter ">playButton<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter ">pauseButton<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a><span class="token punctuation">, </span></span><span class="parameter ">timerTextStyle<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">waveformSliderStyle<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-waveform-slider-style/index.html">WaveformSliderStyle</a><span class="token punctuation">, </span></span><span class="parameter ">waveformSliderPadding<span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-component-padding/index.html">ComponentPadding</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="58360095%2FProperties%2F29477497" anchor-label="height" id="58360095%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="height.html"><span><span>height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="58360095%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="height.html">height</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/unit/Dp.html">Dp</a></div><div class="brief "><p class="paragraph">The height of the playback component.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="485431070%2FProperties%2F29477497" anchor-label="micIndicator" id="485431070%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mic-indicator.html"><span>mic</span><wbr><span><span>Indicator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="485431070%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="mic-indicator.html">micIndicator</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a></div><div class="brief "><p class="paragraph">The style for the mic indicator.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="590874860%2FProperties%2F29477497" anchor-label="pauseButton" id="590874860%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause-button.html"><span>pause</span><wbr><span><span>Button</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="590874860%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="pause-button.html">pauseButton</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a></div><div class="brief "><p class="paragraph">The style for the pause button.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2080753440%2FProperties%2F29477497" anchor-label="playButton" id="2080753440%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="play-button.html"><span>play</span><wbr><span><span>Button</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2080753440%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="play-button.html">playButton</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-icon-container-style/index.html">IconContainerStyle</a></div><div class="brief "><p class="paragraph">The style for the play button.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1905803655%2FProperties%2F29477497" anchor-label="timerTextStyle" id="1905803655%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="timer-text-style.html"><span>timer</span><wbr><span>Text</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1905803655%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="timer-text-style.html">timerTextStyle</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/text/TextStyle.html">TextStyle</a></div><div class="brief "><p class="paragraph">The text style for the timer.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1373703073%2FProperties%2F29477497" anchor-label="waveformSliderPadding" id="1373703073%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="waveform-slider-padding.html"><span>waveform</span><wbr><span>Slider</span><wbr><span><span>Padding</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1373703073%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="waveform-slider-padding.html">waveformSliderPadding</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-component-padding/index.html">ComponentPadding</a></div><div class="brief "><p class="paragraph">The padding for the waveform slider.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="570224449%2FProperties%2F29477497" anchor-label="waveformSliderStyle" id="570224449%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="waveform-slider-style.html"><span>waveform</span><wbr><span>Slider</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="570224449%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="waveform-slider-style.html">waveformSliderStyle</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme/-waveform-slider-style/index.html">WaveformSliderStyle</a></div><div class="brief "><p class="paragraph">The style for the waveform slider.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

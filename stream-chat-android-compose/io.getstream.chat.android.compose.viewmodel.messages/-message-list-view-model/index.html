@@ -1,0 +1,1038 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MessageListViewModel</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-compose:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-compose::io.getstream.chat.android.compose.viewmodel.messages/MessageListViewModel///PointingToDeclaration//29477497">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.compose.viewmodel.messages</a><span class="delimiter">/</span><span class="current">MessageListViewModel</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Message</span><wbr><span>List</span><wbr><span>View</span><wbr><span><span>Model</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">MessageListViewModel</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageListController<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.feature.messages.list/-message-list-controller/index.html">MessageListController</a></span></span><span class="token punctuation">)</span> : <a href="https://developer.android.com/reference/kotlin/androidx/lifecycle/ViewModel.html">ViewModel</a></div><p class="paragraph">ViewModel responsible for handling all the business logic &amp; state for the list of messages.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>message</span><wbr><span>List</span><wbr><span><span>Controller</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Controller used to relay the logic and fetch the state.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1938454033%2FConstructors%2F29477497" anchor-label="MessageListViewModel" id="-1938454033%2FConstructors%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-message-list-view-model.html"><span>Message</span><wbr><span>List</span><wbr><span>View</span><wbr><span><span>Model</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1938454033%2FConstructors%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageListController<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.feature.messages.list/-message-list-controller/index.html">MessageListController</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="2136758594%2FProperties%2F29477497" anchor-label="channel" id="2136758594%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel.html"><span><span>channel</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2136758594%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="channel.html">channel</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">The information for the current <a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="603690994%2FProperties%2F29477497" anchor-label="connectionState" id="603690994%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="connection-state.html"><span>connection</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="603690994%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="connection-state.html">connectionState</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-connection-state/index.html">ConnectionState</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gives us information about the online state of the device.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1713275753%2FProperties%2F29477497" anchor-label="currentMessagesState" id="1713275753%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-messages-state.html"><span>current</span><wbr><span>Messages</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1713275753%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="current-messages-state.html">currentMessagesState</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/State.html">State</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-list-state/index.html">MessageListState</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">State handler for the UI, which holds all the information the UI needs to render messages.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="824240884%2FProperties%2F29477497" anchor-label="deletedMessageVisibilityState" id="824240884%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="deleted-message-visibility-state.html"><span>deleted</span><wbr><span>Message</span><wbr><span>Visibility</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="824240884%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="deleted-message-visibility-state.html">deletedMessageVisibilityState</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-deleted-message-visibility/index.html">DeletedMessageVisibility</a></div><div class="brief "><p class="paragraph">Regulates the visibility of deleted messages.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="48517340%2FProperties%2F29477497" anchor-label="isInThread" id="48517340%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-in-thread.html"><span>is</span><wbr><span>In</span><wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="48517340%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-in-thread.html">isInThread</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gives us information if we're currently in the <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">Thread</a> message mode.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-407834088%2FProperties%2F29477497" anchor-label="isOnline" id="-407834088%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-online.html"><span>is</span><wbr><span><span>Online</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-407834088%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-online.html">isOnline</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/Flow///PointingToDeclaration/">Flow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gives us information about the online state of the device.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1216883872%2FProperties%2F29477497" anchor-label="isShowingOverlay" id="1216883872%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-showing-overlay.html"><span>is</span><wbr><span>Showing</span><wbr><span><span>Overlay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1216883872%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-showing-overlay.html">isShowingOverlay</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gives us information if we have selected a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-714062750%2FProperties%2F29477497" anchor-label="isShowingPollOptionDetails" id="-714062750%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-showing-poll-option-details.html"><span>is</span><wbr><span>Showing</span><wbr><span>Poll</span><wbr><span>Option</span><wbr><span><span>Details</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-714062750%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-showing-poll-option-details.html">isShowingPollOptionDetails</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Whether is the poll option details should be shown or not.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1489210137%2FProperties%2F29477497" anchor-label="isStartedForThread" id="1489210137%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-started-for-thread.html"><span>is</span><wbr><span>Started</span><wbr><span>For</span><wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1489210137%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="is-started-for-thread.html">isStartedForThread</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Gives us information if the <a href="index.html">MessageListViewModel</a> was started for the purpose of showing a thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-329518241%2FProperties%2F29477497" anchor-label="messageActions" id="-329518241%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-actions.html"><span>message</span><wbr><span><span>Actions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-329518241%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-actions.html">messageActions</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-set/index.html">Set</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-action/index.html">MessageAction</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Set of currently active <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-action/index.html">MessageAction</a>s. Used to show things like edit, reply, delete and similar actions.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2041814408%2FProperties%2F29477497" anchor-label="messageFooterVisibilityState" id="-2041814408%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-footer-visibility-state.html"><span>message</span><wbr><span>Footer</span><wbr><span>Visibility</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2041814408%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-footer-visibility-state.html">messageFooterVisibilityState</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-footer-visibility/index.html">MessageFooterVisibility</a></div><div class="brief "><p class="paragraph">Regulates the message footer visibility.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1667522011%2FProperties%2F29477497" anchor-label="messageMode" id="1667522011%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-mode.html"><span>message</span><wbr><span><span>Mode</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1667522011%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-mode.html">messageMode</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-mode/index.html">MessageMode</a></div><div class="brief "><p class="paragraph">Holds the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-mode/index.html">MessageMode</a> that's used for the messages list. <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-mode/-normal/index.html">MessageMode.Normal</a> by default.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="549433107%2FProperties%2F29477497" anchor-label="pollState" id="549433107%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="poll-state.html"><span>poll</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="549433107%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="poll-state.html">pollState</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.poll/-poll-state/index.html">PollState</a></div><div class="brief "><p class="paragraph">Holds the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.poll/-poll-state/index.html">PollState</a> that's used for the messages list.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1521637236%2FProperties%2F29477497" anchor-label="showSystemMessagesState" id="-1521637236%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-system-messages-state.html"><span>show</span><wbr><span>System</span><wbr><span>Messages</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1521637236%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-system-messages-state.html">showSystemMessagesState</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Determines whether we should show system messages or not.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-840115404%2FProperties%2F29477497" anchor-label="typingUsers" id="-840115404%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="typing-users.html"><span>typing</span><wbr><span><span>Users</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-840115404%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="typing-users.html">typingUsers</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The list of typing users.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-566674902%2FProperties%2F29477497" anchor-label="user" id="-566674902%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user.html"><span><span>user</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-566674902%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="user.html">user</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Gives us information about the logged in user state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="978795377%2FFunctions%2F29477497" anchor-label="addCloseable" id="978795377%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#383812252%2FFunctions%2F29477497"><span>add</span><wbr><span><span>Closeable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="978795377%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">fun </span><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#383812252%2FFunctions%2F29477497"><span class="token function">addCloseable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">closeable<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html">AutoCloseable</a></span></span><span class="token punctuation">)</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#1722490497%2FFunctions%2F29477497"><span class="token function">addCloseable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">closeable<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html">AutoCloseable</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="552248073%2FFunctions%2F29477497" anchor-label="addPollOption" id="552248073%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-poll-option.html"><span>add</span><wbr><span>Poll</span><wbr><span><span>Option</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="552248073%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="add-poll-option.html"><span class="token function">addPollOption</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">poll<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">, </span></span><span class="parameter ">option<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Adds a new poll option to the given poll.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1124548075%2FFunctions%2F29477497" anchor-label="banUser" id="1124548075%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ban-user.html"><span>ban</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1124548075%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="ban-user.html"><span class="token function">banUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">timeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Bans the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="782746554%2FFunctions%2F29477497" anchor-label="castAnswer" id="782746554%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cast-answer.html"><span>cast</span><wbr><span><span>Answer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="782746554%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cast-answer.html"><span class="token function">castAnswer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">poll<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">, </span></span><span class="parameter ">answer<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Cast an answer for a poll in a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2037765656%2FFunctions%2F29477497" anchor-label="castVote" id="-2037765656%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cast-vote.html"><span>cast</span><wbr><span><span>Vote</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2037765656%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cast-vote.html"><span class="token function">castVote</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">poll<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">, </span></span><span class="parameter ">option<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-option/index.html">Option</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Cast a vote for a poll in a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-330762824%2FFunctions%2F29477497" anchor-label="clearNewMessageState" id="-330762824%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="clear-new-message-state.html"><span>clear</span><wbr><span>New</span><wbr><span>Message</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-330762824%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="clear-new-message-state.html"><span class="token function">clearNewMessageState</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Clears the <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-new-message-state/index.html">NewMessageState</a> from our UI state, after the user taps on the "Scroll to bottom" or "New Message" actions in the list or simply scrolls to the bottom.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-788713770%2FFunctions%2F29477497" anchor-label="closePoll" id="-788713770%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close-poll.html"><span>close</span><wbr><span><span>Poll</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-788713770%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="close-poll.html"><span class="token function">closePoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pollId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Close a poll in a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="996331155%2FFunctions%2F29477497" anchor-label="deleteMessage" id="996331155%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-message.html"><span>delete</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="996331155%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="delete-message.html"><span class="token function">deleteMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">hard<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes the delete actions from our <a href="message-actions.html">messageActions</a>, as well as the overlay, before deleting the selected message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1232978600%2FFunctions%2F29477497" anchor-label="dismissAllMessageActions" id="1232978600%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dismiss-all-message-actions.html"><span>dismiss</span><wbr><span>All</span><wbr><span>Message</span><wbr><span><span>Actions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1232978600%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="dismiss-all-message-actions.html"><span class="token function">dismissAllMessageActions</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Dismisses all message actions, when we cancel them in the rest of the UI.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="145826700%2FFunctions%2F29477497" anchor-label="dismissMessageAction" id="145826700%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dismiss-message-action.html"><span>dismiss</span><wbr><span>Message</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="145826700%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="dismiss-message-action.html"><span class="token function">dismissMessageAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageAction<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-action/index.html">MessageAction</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Used to dismiss a specific message action, such as delete, reply, edit or something similar.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1448747400%2FFunctions%2F29477497" anchor-label="displayPollMoreOptions" id="-1448747400%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="display-poll-more-options.html"><span>display</span><wbr><span>Poll</span><wbr><span>More</span><wbr><span><span>Options</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1448747400%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="display-poll-more-options.html"><span class="token function">displayPollMoreOptions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">selectedPoll<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.poll/-selected-poll/index.html">SelectedPoll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the user taps the show more options button on the poll message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1191427645%2FFunctions%2F29477497" anchor-label="flagMessage" id="1191427645%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flag-message.html"><span>flag</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1191427645%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="flag-message.html"><span class="token function">flagMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">customData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes the flag actions from our <a href="message-actions.html">messageActions</a>, as well as the overlay, before flagging the selected message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1076231593%2FFunctions%2F29477497" anchor-label="flagUser" id="1076231593%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="flag-user.html"><span>flag</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1076231593%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="flag-user.html"><span class="token function">flagUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">customData<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator"> = </span>emptyMap()</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Flags a user identified by the provided ID.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1102255800%2FFunctions%2F29477497" anchor-label="getCloseable" id="1102255800%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#1102255800%2FFunctions%2F29477497"><span>get</span><wbr><span><span>Closeable</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1102255800%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><span class="token operator">&lt;</span><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#1102255800%2FFunctions%2F29477497">T</a><span class="token operator"> : </span><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html">AutoCloseable</a><span class="token operator">&gt; </span><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#1102255800%2FFunctions%2F29477497"><span class="token function">getCloseable</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">key<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.viewmodel.threads/-thread-list-view-model/index.html#1102255800%2FFunctions%2F29477497">T</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1672425838%2FFunctions%2F29477497" anchor-label="getMessageById" id="-1672425838%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-message-by-id.html"><span>get</span><wbr><span>Message</span><wbr><span>By</span><wbr><span><span>Id</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1672425838%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="get-message-by-id.html"><span class="token function">getMessageById</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns a message with the given ID from the <a href="current-messages-state.html">currentMessagesState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1222546705%2FFunctions%2F29477497" anchor-label="hideUnreadSeparator" id="1222546705%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="hide-unread-separator.html"><span>hide</span><wbr><span>Unread</span><wbr><span><span>Separator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1222546705%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="hide-unread-separator.html"><span class="token function">hideUnreadSeparator</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Hides the unread label in the messages list (if already visible).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1803162524%2FFunctions%2F29477497" anchor-label="leaveThread" id="-1803162524%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="leave-thread.html"><span>leave</span><wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1803162524%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="leave-thread.html"><span class="token function">leaveThread</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Leaves the thread we're in and resets the state of the <a href="message-mode.html">messageMode</a> and both of the <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-list-state/index.html">MessageListState</a>s.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-400480597%2FFunctions%2F29477497" anchor-label="loadNewerMessages" id="-400480597%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-newer-messages.html"><span>load</span><wbr><span>Newer</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-400480597%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="load-newer-messages.html"><span class="token function">loadNewerMessages</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">messageLimit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>messageListController.messageLimit</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads newer messages of a channel following the currently newest loaded message. In case of threads this will do nothing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1669349175%2FFunctions%2F29477497" anchor-label="loadOlderMessages" id="-1669349175%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="load-older-messages.html"><span>load</span><wbr><span>Older</span><wbr><span><span>Messages</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1669349175%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="load-older-messages.html"><span class="token function">loadOlderMessages</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageLimit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>messageListController.messageLimit</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Loads older messages of a channel following the currently oldest loaded message. Also will load older messages of a thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2015430983%2FFunctions%2F29477497" anchor-label="muteUser" id="-2015430983%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mute-user.html"><span>mute</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2015430983%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="mute-user.html"><span class="token function">muteUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">timeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Mutes the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1183610042%2FFunctions%2F29477497" anchor-label="openMessageThread" id="-1183610042%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="open-message-thread.html"><span>open</span><wbr><span>Message</span><wbr><span><span>Thread</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1183610042%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="open-message-thread.html"><span class="token function">openMessageThread</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Changes the current <a href="message-mode.html">messageMode</a> to be <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Thread.html">Thread</a> with <a href="../../../stream-chat-android-state/io.getstream.chat.android.state.plugin.state.channel.thread/-thread-state/index.html">ThreadState</a> and Loads thread data using ChatClient directly. The data is observed by using <a href="../../../stream-chat-android-state/io.getstream.chat.android.state.plugin.state.channel.thread/-thread-state/index.html">ThreadState</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="409605590%2FFunctions%2F29477497" anchor-label="pauseAudioRecordingAttachments" id="409605590%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="pause-audio-recording-attachments.html"><span>pause</span><wbr><span>Audio</span><wbr><span>Recording</span><wbr><span><span>Attachments</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="409605590%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="pause-audio-recording-attachments.html"><span class="token function">pauseAudioRecordingAttachments</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Pauses all running audio recording attachments.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1526452597%2FFunctions%2F29477497" anchor-label="performGiphyAction" id="1526452597%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-giphy-action.html"><span>perform</span><wbr><span>Giphy</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1526452597%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="perform-giphy-action.html"><span class="token function">performGiphyAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">action<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-giphy-action/index.html">GiphyAction</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Executes one of the actions for the given ephemeral giphy message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1716009181%2FFunctions%2F29477497" anchor-label="performMessageAction" id="-1716009181%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="perform-message-action.html"><span>perform</span><wbr><span>Message</span><wbr><span><span>Action</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1716009181%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="perform-message-action.html"><span class="token function">performMessageAction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageAction<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages/-message-action/index.html">MessageAction</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the user selects a new message action, in the message overlay.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-625876679%2FFunctions%2F29477497" anchor-label="removeOverlay" id="-625876679%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-overlay.html"><span>remove</span><wbr><span><span>Overlay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-625876679%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-overlay.html"><span class="token function">removeOverlay</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Resets the <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-list-state/index.html">MessageListState</a>s, to remove the message overlay, by setting 'selectedMessage' to null.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2082650465%2FFunctions%2F29477497" anchor-label="removeShadowBanFromUser" id="-2082650465%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-shadow-ban-from-user.html"><span>remove</span><wbr><span>Shadow</span><wbr><span>Ban</span><wbr><span>From</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2082650465%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-shadow-ban-from-user.html"><span class="token function">removeShadowBanFromUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Removes the shadow ban for the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1955907118%2FFunctions%2F29477497" anchor-label="removeVote" id="1955907118%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-vote.html"><span>remove</span><wbr><span><span>Vote</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1955907118%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="remove-vote.html"><span class="token function">removeVote</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">poll<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">, </span></span><span class="parameter ">vote<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-vote/index.html">Vote</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Remove a vote for a poll in a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1726866617%2FFunctions%2F29477497" anchor-label="scrollToBottom" id="-1726866617%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scroll-to-bottom.html"><span>scroll</span><wbr><span>To</span><wbr><span><span>Bottom</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1726866617%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="scroll-to-bottom.html"><span class="token function">scrollToBottom</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageLimit<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>messageListController.messageLimit<span class="token punctuation">, </span></span><span class="parameter ">scrollToBottom<span class="token operator">: </span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Requests that the list scrolls to the bottom to the newest messages. If the newest messages are loaded will set scroll the list to the bottom. If they are not loaded will request the newest data and once loaded will scroll to the bottom of the list.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1728631493%2FFunctions%2F29477497" anchor-label="scrollToFirstUnreadMessage" id="1728631493%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scroll-to-first-unread-message.html"><span>scroll</span><wbr><span>To</span><wbr><span>First</span><wbr><span>Unread</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1728631493%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="scroll-to-first-unread-message.html"><span class="token function">scrollToFirstUnreadMessage</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Scrolls to the first unread message in the list. If there are no unread messages, this method does nothing.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-312236768%2FFunctions%2F29477497" anchor-label="scrollToMessage" id="-312236768%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="scroll-to-message.html"><span>scroll</span><wbr><span>To</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-312236768%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="scroll-to-message.html"><span class="token function">scrollToMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">parentMessageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Scrolls to message if in list otherwise get the message from backend. Does not work for threads.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-453382997%2FFunctions%2F29477497" anchor-label="selectExtendedReactions" id="-453382997%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-extended-reactions.html"><span>select</span><wbr><span>Extended</span><wbr><span><span>Reactions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-453382997%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="select-extended-reactions.html"><span class="token function">selectExtendedReactions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the user taps the show more reactions button.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2072622079%2FFunctions%2F29477497" anchor-label="selectMessage" id="-2072622079%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-message.html"><span>select</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2072622079%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="select-message.html"><span class="token function">selectMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the user long taps on and selects a message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2093304924%2FFunctions%2F29477497" anchor-label="selectReactions" id="-2093304924%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="select-reactions.html"><span>select</span><wbr><span><span>Reactions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2093304924%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="select-reactions.html"><span class="token function">selectReactions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the user taps on and selects message reactions.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-479894294%2FFunctions%2F29477497" anchor-label="setDateSeparatorHandler" id="-479894294%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-date-separator-handler.html"><span>set</span><wbr><span>Date</span><wbr><span>Separator</span><wbr><span><span>Handler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-479894294%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-date-separator-handler.html"><span class="token function">setDateSeparatorHandler</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">dateSeparatorHandler<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.feature.messages.list/-date-separator-handler/index.html">DateSeparatorHandler</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the date separator handler which determines when to add date separators. By default, a date separator will be added if the difference between two messages' dates is greater than 4h.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="244460378%2FFunctions%2F29477497" anchor-label="setDeletedMessageVisibility" id="244460378%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-deleted-message-visibility.html"><span>set</span><wbr><span>Deleted</span><wbr><span>Message</span><wbr><span><span>Visibility</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="244460378%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-deleted-message-visibility.html"><span class="token function">setDeletedMessageVisibility</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">deletedMessageVisibility<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-deleted-message-visibility/index.html">DeletedMessageVisibility</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the value used to filter deleted messages.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1830866316%2FFunctions%2F29477497" anchor-label="setMessageFooterVisibility" id="-1830866316%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-message-footer-visibility.html"><span>set</span><wbr><span>Message</span><wbr><span>Footer</span><wbr><span><span>Visibility</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1830866316%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-message-footer-visibility.html"><span class="token function">setMessageFooterVisibility</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageFooterVisibility<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-footer-visibility/index.html">MessageFooterVisibility</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the value used to determine if message footer content is shown.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1570377717%2FFunctions%2F29477497" anchor-label="setMessagePositionHandler" id="-1570377717%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-message-position-handler.html"><span>set</span><wbr><span>Message</span><wbr><span>Position</span><wbr><span><span>Handler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1570377717%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-message-position-handler.html"><span class="token function">setMessagePositionHandler</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messagePositionHandler<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.feature.messages.list/-message-position-handler/index.html">MessagePositionHandler</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a handler which determines the position of a message inside a group.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1717729838%2FFunctions%2F29477497" anchor-label="setSystemMessageVisibility" id="-1717729838%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-system-message-visibility.html"><span>set</span><wbr><span>System</span><wbr><span>Message</span><wbr><span><span>Visibility</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1717729838%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-system-message-visibility.html"><span class="token function">setSystemMessageVisibility</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">areSystemMessagesVisible<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets whether the system messages should be visible.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="81563796%2FFunctions%2F29477497" anchor-label="setThreadDateSeparatorHandler" id="81563796%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-thread-date-separator-handler.html"><span>set</span><wbr><span>Thread</span><wbr><span>Date</span><wbr><span>Separator</span><wbr><span><span>Handler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="81563796%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="set-thread-date-separator-handler.html"><span class="token function">setThreadDateSeparatorHandler</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">threadDateSeparatorHandler<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.feature.messages.list/-date-separator-handler/index.html">DateSeparatorHandler</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets the thread date separator handler which determines when to add date separators inside the thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="754548011%2FFunctions%2F29477497" anchor-label="shadowBanUser" id="754548011%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shadow-ban-user.html"><span>shadow</span><wbr><span>Ban</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="754548011%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="shadow-ban-user.html"><span class="token function">shadowBanUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">reason<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">timeout<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Shadow bans the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1366372319%2FFunctions%2F29477497" anchor-label="toggleOriginalText" id="-1366372319%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="toggle-original-text.html"><span>toggle</span><wbr><span>Original</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1366372319%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="toggle-original-text.html"><span class="token function">toggleOriginalText</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">messageId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Toggles between the translated and the original text of the message (if the message was auto-translated).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1296727744%2FFunctions%2F29477497" anchor-label="unbanUser" id="-1296727744%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unban-user.html"><span>unban</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1296727744%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unban-user.html"><span class="token function">unbanUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unbans the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1028254847%2FFunctions%2F29477497" anchor-label="unflagUser" id="1028254847%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unflag-user.html"><span>unflag</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1028254847%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unflag-user.html"><span class="token function">unflagUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Un-flags a user identified by the provided ID.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1816041196%2FFunctions%2F29477497" anchor-label="unmuteUser" id="1816041196%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unmute-user.html"><span>unmute</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1816041196%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="unmute-user.html"><span class="token function">unmuteUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Unmutes the given user inside this channel.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1231273408%2FFunctions%2F29477497" anchor-label="updateLastSeenMessage" id="-1231273408%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-last-seen-message.html"><span>update</span><wbr><span>Last</span><wbr><span>Seen</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1231273408%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-last-seen-message.html"><span class="token function">updateLastSeenMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Attempts to update the last seen message in the channel or thread. We only update the last seen message the first time the data loads and whenever we see a message that's newer than the current last seen message.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2024999603%2FFunctions%2F29477497" anchor-label="updatePollState" id="2024999603%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-poll-state.html"><span>update</span><wbr><span>Poll</span><wbr><span><span>State</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2024999603%2FFunctions%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="update-poll-state.html"><span class="token function">updatePollState</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">poll<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">pollSelectionType<span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.poll/-poll-selection-type/index.html">PollSelectionType</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Triggered when the poll information has been changed and need to sync on the poll states.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,250 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>QueryChannelsState</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-state:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-state::io.getstream.chat.android.state.plugin.state.querychannels/QueryChannelsState///PointingToDeclaration//972091354">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-state</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.state.plugin.state.querychannels</a><span class="delimiter">/</span><span class="current">QueryChannelsState</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Query</span><wbr><span>Channels</span><wbr><span><span>State</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">interface </span><a href="index.html">QueryChannelsState</a></div><p class="paragraph">Contains a state related to a single query channels request.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="1492188372%2FProperties%2F972091354" anchor-label="channels" id="1492188372%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channels.html"><span><span>channels</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1492188372%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="channels.html">channels</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The collection of channels loaded by the query channels request. The StateFlow is initialized with null which means that channels are not loaded yet.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-449014485%2FProperties%2F972091354" anchor-label="channelsStateData" id="-449014485%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channels-state-data.html"><span>channels</span><wbr><span>State</span><wbr><span><span>Data</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-449014485%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="channels-state-data.html">channelsStateData</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../-channels-state-data/index.html">ChannelsStateData</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The channels loaded state. See <a href="../-channels-state-data/index.html">ChannelsStateData</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="453506836%2FProperties%2F972091354" anchor-label="chatEventHandlerFactory" id="453506836%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="chat-event-handler-factory.html"><span>chat</span><wbr><span>Event</span><wbr><span>Handler</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="453506836%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">var </span><a href="chat-event-handler-factory.html">chatEventHandlerFactory</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.state.event.handler.chat.factory/-chat-event-handler-factory/index.html">ChatEventHandlerFactory</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Factory that produces <a href="../../io.getstream.chat.android.state.event.handler.chat/-chat-event-handler/index.html">ChatEventHandler</a>, which decides whether the set of channels should be updated.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1396668594%2FProperties%2F972091354" anchor-label="currentRequest" id="-1396668594%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="current-request.html"><span>current</span><wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1396668594%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="current-request.html">currentRequest</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-client/io.getstream.chat.android.client.api.models/-query-channels-request/index.html">QueryChannelsRequest</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The request for the current page.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-250801804%2FProperties%2F972091354" anchor-label="endOfChannels" id="-250801804%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="end-of-channels.html"><span>end</span><wbr><span>Of</span><wbr><span><span>Channels</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-250801804%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="end-of-channels.html">endOfChannels</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If the current state reached the final page.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-223719444%2FProperties%2F972091354" anchor-label="filter" id="-223719444%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="filter.html"><span><span>filter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-223719444%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="filter.html">filter</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-filter-object/index.html">FilterObject</a></div><div class="brief "><p class="paragraph">The filter is associated with this query channels state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1711844806%2FProperties%2F972091354" anchor-label="loading" id="-1711844806%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loading.html"><span><span>loading</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1711844806%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="loading.html">loading</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If the current state is being loaded.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="634583525%2FProperties%2F972091354" anchor-label="loadingMore" id="634583525%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loading-more.html"><span>loading</span><wbr><span><span>More</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="634583525%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="loading-more.html">loadingMore</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If the current state is loading more channels (a next page is being loaded).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2034284425%2FProperties%2F972091354" anchor-label="nextPageRequest" id="2034284425%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="next-page-request.html"><span>next</span><wbr><span>Page</span><wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2034284425%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="next-page-request.html">nextPageRequest</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="../../../stream-chat-android-client/io.getstream.chat.android.client.api.models/-query-channels-request/index.html">QueryChannelsRequest</a><span class="token operator">?</span><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The request for the next page, if there is a page.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1641164550%2FProperties%2F972091354" anchor-label="recoveryNeeded" id="-1641164550%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="recovery-needed.html"><span>recovery</span><wbr><span><span>Needed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1641164550%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="recovery-needed.html">recoveryNeeded</a><span class="token operator">: </span><span data-unresolved-link="kotlinx.coroutines.flow/StateFlow///PointingToDeclaration/">StateFlow</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">If the channels need to be synced.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1485879878%2FProperties%2F972091354" anchor-label="sort" id="1485879878%2FProperties%2F972091354" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-state:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-state:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="sort.html"><span><span>sort</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1485879878%2FProperties%2F972091354"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-state:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">abstract </span><span class="token keyword">val </span><a href="sort.html">sort</a><span class="token operator">: </span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models.querysort/-query-sorter/index.html">QuerySorter</a><span class="token operator">&lt;</span><a href="../../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">The sort object which requested for this query channels state.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

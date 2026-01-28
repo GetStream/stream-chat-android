@@ -1,0 +1,584 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ChannelListViewStyle</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-components:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-components::io.getstream.chat.android.ui.feature.channels.list/ChannelListViewStyle///PointingToDeclaration//-523872580">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-components</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.feature.channels.list</a><span class="delimiter">/</span><span class="current">ChannelListViewStyle</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Channel</span><wbr><span>List</span><wbr><span>View</span><wbr><span><span>Style</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">ChannelListViewStyle</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>optionsIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>deleteIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>optionsEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>deleteEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>swipeEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>backgroundColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>backgroundLayoutColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>channelTitleText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>draftMessageLabel<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>lastMessageText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>lastMessageDateText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>indicatorSentIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>indicatorDeliveredIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>indicatorReadIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>indicatorPendingSyncIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>foregroundLayoutColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>unreadMessageCounterText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>unreadMessageCounterBackgroundColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mutedChannelIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>itemSeparator<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span><span class="token keyword">val </span>loadingView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span><span class="token keyword">val </span>emptyStateView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span><span class="token keyword">val </span>loadingMoreView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>edgeEffectColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>showChannelDeliveryStatusIndicator<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>readCountEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemMarginStart<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemMarginEnd<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemTitleMarginStart<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemVerticalSpacerHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>itemVerticalSpacerPosition<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span> : <a href="../../io.getstream.chat.android.ui.helper/-view-style/index.html">ViewStyle</a></div><p class="paragraph">Style for <a href="../-channel-list-view/index.html">ChannelListView</a>. Use this class together with <a href="../../io.getstream.chat.android.ui.helper/-transform-style/channel-list-style-transformer.html">TransformStyle.channelListStyleTransformer</a> to change <a href="../-channel-list-view/index.html">ChannelListView</a> styles programmatically.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-1819005880%2FConstructors%2F-523872580" anchor-label="ChannelListViewStyle" id="-1819005880%2FConstructors%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-channel-list-view-style.html"><span>Channel</span><wbr><span>List</span><wbr><span>View</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1819005880%2FConstructors%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">optionsIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">deleteIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">optionsEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">deleteEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">swipeEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>backgroundColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>backgroundLayoutColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">channelTitleText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">draftMessageLabel<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">lastMessageText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">lastMessageDateText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">indicatorSentIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">indicatorDeliveredIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">indicatorReadIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">indicatorPendingSyncIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>foregroundLayoutColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">unreadMessageCounterText<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>unreadMessageCounterBackgroundColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">mutedChannelIcon<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter ">itemSeparator<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span>loadingView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span>emptyStateView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/LayoutRes.html"><span class="token annotation builtin">LayoutRes</span></a>&nbsp;</span>loadingMoreView<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>edgeEffectColor<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">showChannelDeliveryStatusIndicator<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">readCountEnabled<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemMarginStart<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemMarginEnd<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemTitleMarginStart<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemVerticalSpacerHeight<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>itemVerticalSpacerPosition<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1978491300%2FProperties%2F-523872580" anchor-label="backgroundColor" id="-1978491300%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="background-color.html"><span>background</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1978491300%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="background-color.html">backgroundColor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1503248730%2FProperties%2F-523872580" anchor-label="backgroundLayoutColor" id="-1503248730%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="background-layout-color.html"><span>background</span><wbr><span>Layout</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1503248730%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="background-layout-color.html">backgroundLayoutColor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color for <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/color/stream_ui_white_smoke.html">R.color.stream_ui_white_smoke</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1791946041%2FProperties%2F-523872580" anchor-label="channelTitleText" id="-1791946041%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-title-text.html"><span>channel</span><wbr><span>Title</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1791946041%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="channel-title-text.html">channelTitleText</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for channel's title, displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1120247355%2FProperties%2F-523872580" anchor-label="deleteEnabled" id="1120247355%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-enabled.html"><span>delete</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1120247355%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="delete-enabled.html">deleteEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables/disables delete channel option. Enabled by default.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-903920859%2FProperties%2F-523872580" anchor-label="deleteIcon" id="-903920859%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-icon.html"><span>delete</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-903920859%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="delete-icon.html">deleteIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for deleting channel option. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_delete.html">R.drawable.stream_ui_ic_delete</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="10534627%2FProperties%2F-523872580" anchor-label="draftMessageLabel" id="10534627%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="draft-message-label.html"><span>draft</span><wbr><span>Message</span><wbr><span><span>Label</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="10534627%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="draft-message-label.html">draftMessageLabel</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="672955100%2FProperties%2F-523872580" anchor-label="edgeEffectColor" id="672955100%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="edge-effect-color.html"><span>edge</span><wbr><span>Effect</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="672955100%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="edge-effect-color.html">edgeEffectColor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Color applied to the <a href="../-channel-list-view/index.html">ChannelListView</a> edge effect. Pass null if you want to use default <a href="https://developer.android.com/reference/kotlin/android/R.attr.html#colorEdgeEffect--">android.R.attr.colorEdgeEffect</a>. Default value is null.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1371847040%2FProperties%2F-523872580" anchor-label="emptyStateView" id="1371847040%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="empty-state-view.html"><span>empty</span><wbr><span>State</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1371847040%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="empty-state-view.html">emptyStateView</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Empty state view. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/layout/stream_ui_channel_list_empty_state_view.html">R.layout.stream_ui_channel_list_empty_state_view</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="224439355%2FProperties%2F-523872580" anchor-label="foregroundLayoutColor" id="224439355%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="foreground-layout-color.html"><span>foreground</span><wbr><span>Layout</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="224439355%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="foreground-layout-color.html">foregroundLayoutColor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Foreground color for <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/color/stream_ui_white_snow.html">R.color.stream_ui_white_snow</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="712189915%2FProperties%2F-523872580" anchor-label="indicatorDeliveredIcon" id="712189915%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="indicator-delivered-icon.html"><span>indicator</span><wbr><span>Delivered</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="712189915%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="indicator-delivered-icon.html">indicatorDeliveredIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for indicating message delivered status in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_check_double_grey.html">R.drawable.stream_ui_ic_check_double_grey</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2137840755%2FProperties%2F-523872580" anchor-label="indicatorPendingSyncIcon" id="-2137840755%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="indicator-pending-sync-icon.html"><span>indicator</span><wbr><span>Pending</span><wbr><span>Sync</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2137840755%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="indicator-pending-sync-icon.html">indicatorPendingSyncIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for indicating sync pending status in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_clock.html">R.drawable.stream_ui_ic_clock</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-66987533%2FProperties%2F-523872580" anchor-label="indicatorReadIcon" id="-66987533%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="indicator-read-icon.html"><span>indicator</span><wbr><span>Read</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-66987533%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="indicator-read-icon.html">indicatorReadIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for indicating message read status in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_check_double.html">R.drawable.stream_ui_ic_check_double</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1804174543%2FProperties%2F-523872580" anchor-label="indicatorSentIcon" id="-1804174543%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="indicator-sent-icon.html"><span>indicator</span><wbr><span>Sent</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1804174543%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="indicator-sent-icon.html">indicatorSentIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for indicating message sent status in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_check_single.html">R.drawable.stream_ui_ic_check_single</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="15866511%2FProperties%2F-523872580" anchor-label="itemHeight" id="15866511%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-height.html"><span>item</span><wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="15866511%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-height.html">itemHeight</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Height of the channel list item. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_height.html">R.dimen.stream_ui_channel_list_item_height</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1185874089%2FProperties%2F-523872580" anchor-label="itemMarginEnd" id="-1185874089%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-margin-end.html"><span>item</span><wbr><span>Margin</span><wbr><span><span>End</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1185874089%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-margin-end.html">itemMarginEnd</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">End margin of the channel list item. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_margin_end.html">R.dimen.stream_ui_channel_list_item_margin_end</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1272531056%2FProperties%2F-523872580" anchor-label="itemMarginStart" id="1272531056%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-margin-start.html"><span>item</span><wbr><span>Margin</span><wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1272531056%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-margin-start.html">itemMarginStart</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Start margin of the channel list item. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_margin_start.html">R.dimen.stream_ui_channel_list_item_margin_start</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="137411519%2FProperties%2F-523872580" anchor-label="itemSeparator" id="137411519%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-separator.html"><span>item</span><wbr><span><span>Separator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="137411519%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-separator.html">itemSeparator</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Items' separator. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_divider.html">R.drawable.stream_ui_divider</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1185768390%2FProperties%2F-523872580" anchor-label="itemTitleMarginStart" id="-1185768390%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-title-margin-start.html"><span>item</span><wbr><span>Title</span><wbr><span>Margin</span><wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1185768390%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-title-margin-start.html">itemTitleMarginStart</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Start margin of the channel list item title. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_title_margin_start.html">R.dimen.stream_ui_channel_list_item_title_margin_start</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2123139283%2FProperties%2F-523872580" anchor-label="itemVerticalSpacerHeight" id="-2123139283%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-vertical-spacer-height.html"><span>item</span><wbr><span>Vertical</span><wbr><span>Spacer</span><wbr><span><span>Height</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2123139283%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-vertical-spacer-height.html">itemVerticalSpacerHeight</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Height of the channel list item vertical spacer. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_vertical_spacer_height.html">R.dimen.stream_ui_channel_list_item_vertical_spacer_height</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1495876523%2FProperties%2F-523872580" anchor-label="itemVerticalSpacerPosition" id="1495876523%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="item-vertical-spacer-position.html"><span>item</span><wbr><span>Vertical</span><wbr><span>Spacer</span><wbr><span><span>Position</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1495876523%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="item-vertical-spacer-position.html">itemVerticalSpacerPosition</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Position of the channel list item vertical spacer. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/dimen/stream_ui_channel_list_item_vertical_spacer_position.html">R.dimen.stream_ui_channel_list_item_vertical_spacer_position</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="285713765%2FProperties%2F-523872580" anchor-label="lastMessageDateText" id="285713765%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="last-message-date-text.html"><span>last</span><wbr><span>Message</span><wbr><span>Date</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="285713765%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="last-message-date-text.html">lastMessageDateText</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for last message date text displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="709769203%2FProperties%2F-523872580" anchor-label="lastMessageText" id="709769203%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="last-message-text.html"><span>last</span><wbr><span>Message</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="709769203%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="last-message-text.html">lastMessageText</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for last message text, displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="304417627%2FProperties%2F-523872580" anchor-label="loadingMoreView" id="304417627%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loading-more-view.html"><span>loading</span><wbr><span>More</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="304417627%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="loading-more-view.html">loadingMoreView</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Loading more view. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/layout/stream_ui_channel_list_loading_more_view.html">R.layout.stream_ui_channel_list_loading_more_view</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1689274704%2FProperties%2F-523872580" anchor-label="loadingView" id="-1689274704%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="loading-view.html"><span>loading</span><wbr><span><span>View</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1689274704%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="loading-view.html">loadingView</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Loading view. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/layout/stream_ui_default_loading_view.html">R.layout.stream_ui_default_loading_view</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1222051288%2FProperties%2F-523872580" anchor-label="mutedChannelIcon" id="1222051288%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="muted-channel-icon.html"><span>muted</span><wbr><span>Channel</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1222051288%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="muted-channel-icon.html">mutedChannelIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for muted channel, displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_mute_black.html">R.drawable.stream_ui_ic_mute_black</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-916794362%2FProperties%2F-523872580" anchor-label="optionsEnabled" id="-916794362%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="options-enabled.html"><span>options</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-916794362%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="options-enabled.html">optionsEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables/disables channel's options. Enabled by default.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="88332602%2FProperties%2F-523872580" anchor-label="optionsIcon" id="88332602%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="options-icon.html"><span>options</span><wbr><span><span>Icon</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="88332602%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="options-icon.html">optionsIcon</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/drawable/Drawable.html">Drawable</a></div><div class="brief "><p class="paragraph">Icon for channel's options. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/drawable/stream_ui_ic_more.html">R.drawable.stream_ui_ic_more</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="405044097%2FProperties%2F-523872580" anchor-label="readCountEnabled" id="405044097%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="read-count-enabled.html"><span>read</span><wbr><span>Count</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="405044097%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="read-count-enabled.html">readCountEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables/disables read count. Enabled by default.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2140119878%2FProperties%2F-523872580" anchor-label="showChannelDeliveryStatusIndicator" id="2140119878%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-channel-delivery-status-indicator.html"><span>show</span><wbr><span>Channel</span><wbr><span>Delivery</span><wbr><span>Status</span><wbr><span><span>Indicator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2140119878%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-channel-delivery-status-indicator.html">showChannelDeliveryStatusIndicator</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Flag if we need to show the delivery indicator or not.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1885431902%2FProperties%2F-523872580" anchor-label="swipeEnabled" id="-1885431902%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="swipe-enabled.html"><span>swipe</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1885431902%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="swipe-enabled.html">swipeEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Enables/disables swipe on channel list item. Enabled by default.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1532606976%2FProperties%2F-523872580" anchor-label="unreadMessageCounterBackgroundColor" id="-1532606976%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unread-message-counter-background-color.html"><span>unread</span><wbr><span>Message</span><wbr><span>Counter</span><wbr><span>Background</span><wbr><span><span>Color</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1532606976%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="unread-message-counter-background-color.html">unreadMessageCounterBackgroundColor</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color for message counter, displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/color/stream_ui_accent_red.html">R.color.stream_ui_accent_red</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1183062344%2FProperties%2F-523872580" anchor-label="unreadMessageCounterText" id="-1183062344%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="unread-message-counter-text.html"><span>unread</span><wbr><span>Message</span><wbr><span>Counter</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1183062344%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="unread-message-counter-text.html">unreadMessageCounterText</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for message counter text, displayed in <span data-unresolved-link="io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal/ChannelViewHolder///PointingToDeclaration/">ChannelViewHolder</span>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

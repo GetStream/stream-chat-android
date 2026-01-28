@@ -1,0 +1,269 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>DefaultStreamMediaRecorder</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-common:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-common::io.getstream.sdk.chat.audio.recording/DefaultStreamMediaRecorder///PointingToDeclaration//-348677689">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-common</a><span class="delimiter">/</span><a href="../index.html">io.getstream.sdk.chat.audio.recording</a><span class="delimiter">/</span><span class="current">DefaultStreamMediaRecorder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Default</span><wbr><span>Stream</span><wbr><span>Media</span><wbr><span><span>Recorder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">DefaultStreamMediaRecorder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">audioSource<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.AudioSource.MIC<span class="token punctuation">, </span></span><span class="parameter ">outputFormat<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.OutputFormat.AAC_ADTS<span class="token punctuation">, </span></span><span class="parameter ">audioEncoder<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.AudioEncoder.AAC<span class="token punctuation">, </span></span><span class="parameter ">audioSamplingRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>SAMPLING_RATE_16KHZ<span class="token punctuation">, </span></span><span class="parameter ">audioEncodingBitRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>ENCODING_BIT_RATE_32KBPS<span class="token punctuation">, </span></span><span class="parameter ">audioChannels<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>CHANNELS<span class="token punctuation">, </span></span><span class="parameter ">fileManager<span class="token operator">: </span><a href="../../../stream-chat-android-client/io.getstream.chat.android.client.internal.file/-stream-file-manager/index.html">StreamFileManager</a><span class="token operator"> = </span>StreamFileManager()</span></span><span class="token punctuation">)</span> : <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a></div><p class="paragraph">The default implementation of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>, used as a wrapper around <a href="https://developer.android.com/reference/kotlin/android/media/MediaRecorder.html">MediaRecorder</a> simplifying working with it.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>context</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The <a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a> necessary to prepare for recording.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>file</span><wbr><span><span>Manager</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The file manager for creating audio recording files .</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="1993188892%2FConstructors%2F-348677689" anchor-label="DefaultStreamMediaRecorder" id="1993188892%2FConstructors%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-default-stream-media-recorder.html"><span>Default</span><wbr><span>Stream</span><wbr><span>Media</span><wbr><span><span>Recorder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1993188892%2FConstructors%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">context<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a><span class="token punctuation">, </span></span><span class="parameter ">audioSource<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.AudioSource.MIC<span class="token punctuation">, </span></span><span class="parameter ">outputFormat<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.OutputFormat.AAC_ADTS<span class="token punctuation">, </span></span><span class="parameter ">audioEncoder<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>MediaRecorder.AudioEncoder.AAC<span class="token punctuation">, </span></span><span class="parameter ">audioSamplingRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>SAMPLING_RATE_16KHZ<span class="token punctuation">, </span></span><span class="parameter ">audioEncodingBitRate<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>ENCODING_BIT_RATE_32KBPS<span class="token punctuation">, </span></span><span class="parameter ">audioChannels<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>CHANNELS<span class="token punctuation">, </span></span><span class="parameter ">fileManager<span class="token operator">: </span><a href="../../../stream-chat-android-client/io.getstream.chat.android.client.internal.file/-stream-file-manager/index.html">StreamFileManager</a><span class="token operator"> = </span>StreamFileManager()</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1803820747%2FFunctions%2F-348677689" anchor-label="deleteRecording" id="-1803820747%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="delete-recording.html"><span>delete</span><wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1803820747%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="delete-recording.html"><span class="token function">deleteRecording</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">recordingFile<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result/Result///PointingToDeclaration/">Result</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Deleted the recording to the file provided by <a href="delete-recording.html">recordingFile</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-8792724%2FFunctions%2F-348677689" anchor-label="release" id="-8792724%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="release.html"><span><span>release</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-8792724%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="release.html"><span class="token function">release</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Releases the <a href="https://developer.android.com/reference/kotlin/android/media/MediaRecorder.html">MediaRecorder</a> used by <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1594128912%2FFunctions%2F-348677689" anchor-label="setOnCurrentRecordingDurationChangedListener" id="-1594128912%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-current-recording-duration-changed-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Current</span><wbr><span>Recording</span><wbr><span>Duration</span><wbr><span>Changed</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1594128912%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-current-recording-duration-changed-listener.html"><span class="token function">setOnCurrentRecordingDurationChangedListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onCurrentRecordingDurationChanged<span class="token operator">: </span><a href="../-stream-media-recorder/-on-current-recording-duration-changed/index.html">StreamMediaRecorder.OnCurrentRecordingDurationChanged</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a <a href="../-stream-media-recorder/-on-current-recording-duration-changed/index.html">StreamMediaRecorder.OnCurrentRecordingDurationChanged</a> listener on this instance of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1000954212%2FFunctions%2F-348677689" anchor-label="setOnErrorListener" id="-1000954212%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-error-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Error</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1000954212%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-error-listener.html"><span class="token function">setOnErrorListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onErrorListener<span class="token operator">: </span><a href="../-stream-media-recorder/-on-error-listener/index.html">StreamMediaRecorder.OnErrorListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an error listener.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1883984364%2FFunctions%2F-348677689" anchor-label="setOnInfoListener" id="1883984364%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-info-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Info</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1883984364%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-info-listener.html"><span class="token function">setOnInfoListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onInfoListener<span class="token operator">: </span><a href="../-stream-media-recorder/-on-info-listener/index.html">StreamMediaRecorder.OnInfoListener</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an info listener.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1002028912%2FFunctions%2F-348677689" anchor-label="setOnMaxAmplitudeSampledListener" id="-1002028912%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-max-amplitude-sampled-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Max</span><wbr><span>Amplitude</span><wbr><span>Sampled</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1002028912%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-max-amplitude-sampled-listener.html"><span class="token function">setOnMaxAmplitudeSampledListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onMaxAmplitudeSampled<span class="token operator">: </span><a href="../-stream-media-recorder/-on-max-amplitude-sampled/index.html">StreamMediaRecorder.OnMaxAmplitudeSampled</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a <a href="../-stream-media-recorder/set-on-max-amplitude-sampled-listener.html">StreamMediaRecorder.setOnMaxAmplitudeSampledListener</a> listener on this instance of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1862263730%2FFunctions%2F-348677689" anchor-label="setOnMediaRecorderStateChangedListener" id="-1862263730%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-media-recorder-state-changed-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Media</span><wbr><span>Recorder</span><wbr><span>State</span><wbr><span>Changed</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1862263730%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-media-recorder-state-changed-listener.html"><span class="token function">setOnMediaRecorderStateChangedListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onMediaRecorderStateChange<span class="token operator">: </span><a href="../-stream-media-recorder/-on-media-recorder-state-change/index.html">StreamMediaRecorder.OnMediaRecorderStateChange</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets a <a href="../-stream-media-recorder/-on-media-recorder-state-change/index.html">StreamMediaRecorder.OnMediaRecorderStateChange</a> listener on this instance of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-639226628%2FFunctions%2F-348677689" anchor-label="setOnRecordingStartedListener" id="-639226628%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-recording-started-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Recording</span><wbr><span>Started</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-639226628%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-recording-started-listener.html"><span class="token function">setOnRecordingStartedListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onRecordingStarted<span class="token operator">: </span><a href="../-stream-media-recorder/-on-recording-started/index.html">StreamMediaRecorder.OnRecordingStarted</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an <a href="../-stream-media-recorder/-on-recording-started/index.html">StreamMediaRecorder.OnRecordingStarted</a> listener on this instance of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="795533412%2FFunctions%2F-348677689" anchor-label="setOnRecordingStoppedListener" id="795533412%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="set-on-recording-stopped-listener.html"><span>set</span><wbr><span>On</span><wbr><span>Recording</span><wbr><span>Stopped</span><wbr><span><span>Listener</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="795533412%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="set-on-recording-stopped-listener.html"><span class="token function">setOnRecordingStoppedListener</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">onRecordingStopped<span class="token operator">: </span><a href="../-stream-media-recorder/-on-recording-stopped/index.html">StreamMediaRecorder.OnRecordingStopped</a></span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Sets an <a href="../-stream-media-recorder/-on-recording-stopped/index.html">StreamMediaRecorder.OnRecordingStopped</a> listener on this instance of <a href="../-stream-media-recorder/index.html">StreamMediaRecorder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1484653264%2FFunctions%2F-348677689" anchor-label="startAudioRecording" id="-1484653264%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="start-audio-recording.html"><span>start</span><wbr><span>Audio</span><wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1484653264%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="start-audio-recording.html"><span class="token function">startAudioRecording</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">recordingFile<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token punctuation">, </span></span><span class="parameter ">amplitudePollingInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result/Result///PointingToDeclaration/">Result</span><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Prepares the given <a href="start-audio-recording.html">recordingFile</a> and starts recording. Calling the function again after a recording has already been started will reset the recording process.</p></div><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="start-audio-recording.html"><span class="token function">startAudioRecording</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">recordingName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">amplitudePollingInterval<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-long/index.html">Long</a><span class="token punctuation">, </span></span><span class="parameter ">override<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result/Result///PointingToDeclaration/">Result</span><span class="token operator">&lt;</span><a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Creates a <a href="https://docs.oracle.com/javase/8/docs/api/java/io/File.html">File</a> internally and starts recording. Calling the function again after a recording has already been started will reset the recording process.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1743414756%2FFunctions%2F-348677689" anchor-label="stopRecording" id="1743414756%2FFunctions%2F-348677689" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-common:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-common:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stop-recording.html"><span>stop</span><wbr><span><span>Recording</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1743414756%2FFunctions%2F-348677689"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-common:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="stop-recording.html"><span class="token function">stopRecording</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><span data-unresolved-link="io.getstream.result/Result///PointingToDeclaration/">Result</span><span class="token operator">&lt;</span><a href="../-recorded-media/index.html">RecordedMedia</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Stops recording and saves the recording to the file provided by <a href="start-audio-recording.html">startAudioRecording</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

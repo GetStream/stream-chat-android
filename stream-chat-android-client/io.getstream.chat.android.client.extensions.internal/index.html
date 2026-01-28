@@ -1,0 +1,688 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>io.getstream.chat.android.client.extensions.internal</title>
+<link href="../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../styles/style.css" rel="Stylesheet">
+<link href="../../styles/main.css" rel="Stylesheet">
+<link href="../../styles/prism.css" rel="Stylesheet">
+<link href="../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-client:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="package" id="content" pageids="stream-chat-android-client::io.getstream.chat.android.client.extensions.internal////PointingToDeclaration//-423410878">
+  <div class="breadcrumbs"><a href="../index.html">stream-chat-android-client</a><span class="delimiter">/</span><span class="current">io.getstream.chat.android.client.extensions.internal</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Package-level</span></span> <span><span>declarations</span></span></h1>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="FUNCTION,EXTENSION_FUNCTION">Functions</button><button class="section-tab" data-togglable="PROPERTY,EXTENSION_PROPERTY">Properties</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-812823639%2FProperties%2F-423410878" anchor-label="lastMessage" id="-812823639%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_PROPERTY" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="last-message.html"><span>last</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-812823639%2FProperties%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="last-message.html">lastMessage</a><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Retrieves the last not deleted <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a> of the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a> which is not a thread reply, calculated as the message with the most recent <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/created-at.html">Message.createdAt</a> or <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/created-locally-at.html">Message.createdLocallyAt</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="989296698%2FProperties%2F-423410878" anchor-label="NEVER" id="989296698%2FProperties%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-n-e-v-e-r.html"><span><span>NEVER</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="989296698%2FProperties%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="-n-e-v-e-r.html">NEVER</a><span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a></div><div class="brief "><p class="paragraph">Internal indicator of a 'never' date.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-712418470%2FFunctions%2F-423410878" anchor-label="addMember" id="-712418470%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-member.html"><span>add</span><wbr><span><span>Member</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-712418470%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="add-member.html"><span class="token function">addMember</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">member<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Adds member to the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/members.html">Channel.members</a> and aligns <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/member-count.html">Channel.memberCount</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1372756101%2FFunctions%2F-423410878" anchor-label="addMembership" id="-1372756101%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-membership.html"><span>add</span><wbr><span><span>Membership</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1372756101%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="add-membership.html"><span class="token function">addMembership</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">member<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Sets <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/membership.html">Channel.membership</a> to <a href="add-membership.html">member</a> if <a href="add-membership.html">currentUserId</a> equals to member.getUserId().</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="386124802%2FFunctions%2F-423410878" anchor-label="addMyReaction" id="386124802%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="add-my-reaction.html"><span>add</span><wbr><span>My</span><wbr><span><span>Reaction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="386124802%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="add-my-reaction.html"><span class="token function">addMyReaction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reaction<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token punctuation">, </span></span><span class="parameter ">enforceUnique<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></div><div class="brief "><p class="paragraph">Add a <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a> created by the currently logged user to the given <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1222816748%2FFunctions%2F-423410878" anchor-label="applyPagination" id="-1222816748%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="apply-pagination.html"><span>apply</span><wbr><span><span>Pagination</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1222816748%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="apply-pagination.html"><span class="token function">applyPagination</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">pagination<span class="token operator">: </span><a href="../io.getstream.chat.android.client.query.pagination/-any-channel-pagination-request/index.html">AnyChannelPaginationRequest</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Transforms the given <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a> of <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a>s by applying the given <a href="../io.getstream.chat.android.client.query.pagination/-any-channel-pagination-request/index.html">AnyChannelPaginationRequest</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1386923898%2FFunctions%2F-423410878" anchor-label="enrichIfNeeded" id="1386923898%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enrich-if-needed.html"><span>enrich</span><wbr><span>If</span><wbr><span><span>Needed</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1386923898%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-chat-event/index.html">ChatEvent</a><span class="token punctuation">.</span><a href="enrich-if-needed.html"><span class="token function">enrichIfNeeded</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../io.getstream.chat.android.client.events/-chat-event/index.html">ChatEvent</a></div><div class="brief "><p class="paragraph">Enriches the wrapped Message from the <a href="../io.getstream.chat.android.client.events/-chat-event/index.html">ChatEvent</a> with the Channel ID.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1998075536%2FFunctions%2F-423410878" anchor-label="enrichWithDataBeforeSending" id="-1998075536%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="enrich-with-data-before-sending.html"><span>enrich</span><wbr><span>With</span><wbr><span>Data</span><wbr><span>Before</span><wbr><span><span>Sending</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1998075536%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token punctuation">.</span><a href="enrich-with-data-before-sending.html"><span class="token function">enrichWithDataBeforeSending</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUser<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter ">isOnline<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">enforceUnique<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">skipPush<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="852527730%2FFunctions%2F-423410878" anchor-label="getVotesUnlessAnonymous" id="852527730%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-votes-unless-anonymous.html"><span>get</span><wbr><span>Votes</span><wbr><span>Unless</span><wbr><span><span>Anonymous</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="852527730%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">.</span><a href="get-votes-unless-anonymous.html"><span class="token function">getVotesUnlessAnonymous</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">option<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-option/index.html">Option</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-vote/index.html">Vote</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns the votes for a specific option in the poll. If the poll is anonymous, it returns an empty list.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1326766233%2FFunctions%2F-423410878" anchor-label="getWinner" id="1326766233%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-winner.html"><span>get</span><wbr><span><span>Winner</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1326766233%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token punctuation">.</span><a href="get-winner.html"><span class="token function">getWinner</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-option/index.html">Option</a><span class="token operator">?</span></div><div class="brief "><p class="paragraph">Returns the unique winner of the poll.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="644979307%2FFunctions%2F-423410878" anchor-label="hasPendingAttachments" id="644979307%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="has-pending-attachments.html"><span>has</span><wbr><span>Pending</span><wbr><span><span>Attachments</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="644979307%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="has-pending-attachments.html"><span class="token function">hasPendingAttachments</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the given <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a> has pending attachments. A pending attachment is an attachment that is either in <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/-upload-state/-in-progress/index.html">Attachment.UploadState.InProgress</a> or <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-attachment/-upload-state/-idle/index.html">Attachment.UploadState.Idle</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="203151333%2FFunctions%2F-423410878" anchor-label="markAsReadByUser" id="203151333%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mark-as-read-by-user.html"><span>mark</span><wbr><span>As</span><wbr><span>Read</span><wbr><span>By</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="203151333%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a><span class="token punctuation">.</span><a href="mark-as-read-by-user.html"><span class="token function">markAsReadByUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">threadInfo<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread-info/index.html">ThreadInfo</a><span class="token punctuation">, </span></span><span class="parameter ">user<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter ">createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a></div><div class="brief "><p class="paragraph">Marks the given thread as read by the given user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1697087942%2FFunctions%2F-423410878" anchor-label="markAsUnreadByUser" id="-1697087942%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="mark-as-unread-by-user.html"><span>mark</span><wbr><span>As</span><wbr><span>Unread</span><wbr><span>By</span><wbr><span><span>User</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1697087942%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a><span class="token punctuation">.</span><a href="mark-as-unread-by-user.html"><span class="token function">markAsUnreadByUser</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">user<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token punctuation">, </span></span><span class="parameter ">createdAt<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a></div><div class="brief "><p class="paragraph">Marks the given thread as unread by the given user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="624853405%2FFunctions%2F-423410878" anchor-label="mergeReactions" id="624853405%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="merge-reactions.html"><span>merge</span><wbr><span><span>Reactions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="624853405%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="merge-reactions.html"><span class="token function">mergeReactions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">recentReactions<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token operator">&gt;</span><span class="token punctuation">, </span></span><span class="parameter ">cachedReactions<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Merges two collections of reactions by their <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/type.html">Reaction.type</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1041736507%2FFunctions%2F-423410878" anchor-label="populateMentions" id="-1041736507%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="populate-mentions.html"><span>populate</span><wbr><span><span>Mentions</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1041736507%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="populate-mentions.html"><span class="token function">populateMentions</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">channel<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></div><div class="brief "><p class="paragraph">Fills <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/mentioned-users-ids.html">Message.mentionedUsersIds</a> based on <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/text.html">Message.text</a> and <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/members.html">Channel.members</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-290053311%2FFunctions%2F-423410878" anchor-label="processPoll" id="-290053311%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="process-poll.html"><span>process</span><wbr><span><span>Poll</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-290053311%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-answer-casted-event/index.html">AnswerCastedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-answer-casted-event/index.html">AnswerCastedEvent</a> and updates the poll with the new answer.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-poll-closed-event/index.html">PollClosedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-poll-closed-event/index.html">PollClosedEvent</a> and updates the poll by marking it as closed.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-poll-updated-event/index.html">PollUpdatedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-poll-updated-event/index.html">PollUpdatedEvent</a> and updates the poll with the new data.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-vote-removed-event/index.html">VoteRemovedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-vote-removed-event/index.html">VoteRemovedEvent</a> and updates the poll by removing the vote.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-vote-casted-event/index.html">VoteCastedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-vote-casted-event/index.html">VoteCastedEvent</a> and updates the poll with the new vote.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../io.getstream.chat.android.client.events/-vote-changed-event/index.html">VoteChangedEvent</a><span class="token punctuation">.</span><a href="process-poll.html"><span class="token function">processPoll</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">getOldPoll<span class="token operator">: </span><span class="token punctuation">(</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-poll/index.html">Poll</a></div><div class="brief "><p class="paragraph">Processes the <a href="../io.getstream.chat.android.client.events/-vote-changed-event/index.html">VoteChangedEvent</a> and updates the poll with the new vote.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-901067703%2FFunctions%2F-423410878" anchor-label="removeMember" id="-901067703%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-member.html"><span>remove</span><wbr><span><span>Member</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-901067703%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="remove-member.html"><span class="token function">removeMember</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">memberUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Removes member from the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/members.html">Channel.members</a> and aligns <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/member-count.html">Channel.memberCount</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-859091443%2FFunctions%2F-423410878" anchor-label="removeMembership" id="-859091443%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-membership.html"><span>remove</span><wbr><span><span>Membership</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-859091443%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="remove-membership.html"><span class="token function">removeMembership</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Sets <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/membership.html">Channel.membership</a> to null if <a href="remove-membership.html">currentUserId</a> equals to membership.user.id.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1248199383%2FFunctions%2F-423410878" anchor-label="removeMyReaction" id="1248199383%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="remove-my-reaction.html"><span>remove</span><wbr><span>My</span><wbr><span><span>Reaction</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1248199383%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="remove-my-reaction.html"><span class="token function">removeMyReaction</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reaction<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></div><div class="brief "><p class="paragraph">Remove a <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a> created by the currently logged user from the given <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1124297546%2FFunctions%2F-423410878" anchor-label="shouldIncrementUnreadCount" id="-1124297546%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="should-increment-unread-count.html"><span>should</span><wbr><span>Increment</span><wbr><span>Unread</span><wbr><span><span>Count</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1124297546%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="should-increment-unread-count.html"><span class="token function">shouldIncrementUnreadCount</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">lastMessageAtDate<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span><span class="token punctuation">, </span></span><span class="parameter ">isChannelMuted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Function that parses if the unread count should be increased or not.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="655366596%2FFunctions%2F-423410878" anchor-label="toCid" id="655366596%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-cid.html"><span>to</span><wbr><span><span>Cid</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="655366596%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-pair/index.html">Pair</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="to-cid.html"><span class="token function">toCid</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></div><div class="brief "><p class="paragraph">Converts a pair of channelType and channelId into cid.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="195389060%2FFunctions%2F-423410878" anchor-label="toMessageReminderInfo" id="195389060%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="to-message-reminder-info.html"><span>to</span><wbr><span>Message</span><wbr><span>Reminder</span><wbr><span><span>Info</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="195389060%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message-reminder/index.html">MessageReminder</a><span class="token punctuation">.</span><a href="to-message-reminder-info.html"><span class="token function">toMessageReminderInfo</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message-reminder-info/index.html">MessageReminderInfo</a></div><div class="brief "><p class="paragraph">Converts a <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message-reminder/index.html">MessageReminder</a> to a <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message-reminder-info/index.html">MessageReminderInfo</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1608777934%2FFunctions%2F-423410878" anchor-label="updateByUsers" id="-1608777934%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-by-users.html"><span>update</span><wbr><span>By</span><wbr><span><span>Users</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1608777934%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-by-users.html"><span class="token function">updateByUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userMap<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates collection of reactions with more recent data of <a href="users.html">users</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1569023608%2FFunctions%2F-423410878" anchor-label="updateLastMessage" id="-1569023608%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-last-message.html"><span>update</span><wbr><span>Last</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1569023608%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-last-message.html"><span class="token function">updateLastMessage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">receivedEventDate<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token punctuation">, </span></span><span class="parameter ">message<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">, </span></span><span class="parameter ">currentUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Updates the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a> with newest <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1031229345%2FFunctions%2F-423410878" anchor-label="updateLiveLocations" id="1031229345%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-live-locations.html"><span>update</span><wbr><span>Live</span><wbr><span><span>Locations</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1031229345%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-live-locations.html"><span class="token function">updateLiveLocations</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">locations<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-location/index.html">Location</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates the live locations of the channels with the provided <a href="update-live-locations.html">locations</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-351388108%2FFunctions%2F-423410878" anchor-label="updateMember" id="-351388108%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-member.html"><span>update</span><wbr><span><span>Member</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-351388108%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-member.html"><span class="token function">updateMember</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">member<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Updates <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a> member.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="727418397%2FFunctions%2F-423410878" anchor-label="updateMemberBanned" id="727418397%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-member-banned.html"><span>update</span><wbr><span>Member</span><wbr><span><span>Banned</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="727418397%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-member-banned.html"><span class="token function">updateMemberBanned</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">memberUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token punctuation">, </span></span><span class="parameter ">shadow<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Updates <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/banned.html">Member.banned</a> property inside the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/members.html">Channel.members</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1688521104%2FFunctions%2F-423410878" anchor-label="updateMembership" id="-1688521104%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-membership.html"><span>update</span><wbr><span><span>Membership</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1688521104%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-membership.html"><span class="token function">updateMembership</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">member<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Sets <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/membership.html">Channel.membership</a> to <a href="update-membership.html">member</a> if member.user.id equals to Channel.membership.user.id.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-545840949%2FFunctions%2F-423410878" anchor-label="updateMembershipBanned" id="-545840949%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-membership-banned.html"><span>update</span><wbr><span>Membership</span><wbr><span><span>Banned</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-545840949%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-membership-banned.html"><span class="token function">updateMembershipBanned</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">memberUserId<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">banned<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Sets Channel.membership.banned to <a href="update-membership-banned.html">banned</a> if <a href="update-membership-banned.html">memberUserId</a> equals to Channel.membership.user.id.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1340038268%2FFunctions%2F-423410878" anchor-label="updateParent" id="1340038268%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-parent.html"><span>update</span><wbr><span><span>Parent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1340038268%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a><span class="token punctuation">.</span><a href="update-parent.html"><span class="token function">updateParent</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">parent<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a></div><div class="brief "><p class="paragraph">Updates the parent message of a Thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1888065621%2FFunctions%2F-423410878" anchor-label="updateParentOrReply" id="-1888065621%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-parent-or-reply.html"><span>update</span><wbr><span>Parent</span><wbr><span>Or</span><wbr><span><span>Reply</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1888065621%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a><span class="token punctuation">.</span><a href="update-parent-or-reply.html"><span class="token function">updateParentOrReply</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a></div><div class="brief "><p class="paragraph">Updates the given Thread with the new message (parent or reply).</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2084228086%2FFunctions%2F-423410878" anchor-label="updateReads" id="2084228086%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-reads.html"><span>update</span><wbr><span><span>Reads</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2084228086%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="update-reads.html"><span class="token function">updateReads</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">newRead<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel-user-read/index.html">ChannelUserRead</a><span class="token punctuation">, </span></span><span class="parameter ">currentUserId<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user-id/index.html">UserId</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a></div><div class="brief "><p class="paragraph">Updates the <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a> with a new <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel-user-read/index.html">ChannelUserRead</a>. If an existing read for the user already exists, it will be replaced with the new one. If not, the new read will be added to the list of reads.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="975054188%2FFunctions%2F-423410878" anchor-label="updateSyncStatus" id="975054188%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-sync-status.html"><span>update</span><wbr><span>Sync</span><wbr><span><span>Status</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="975054188%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a><span class="token punctuation">.</span><a href="update-sync-status.html"><span class="token function">updateSyncStatus</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">result<span class="token operator">: </span><span data-unresolved-link="io.getstream.result/Result///PointingToDeclaration/">Result</span><span class="token operator">&lt;</span><span class="token operator">*</span><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-reaction/index.html">Reaction</a></div><div class="brief "><p class="paragraph">Updates the reaction's sync status based on <a href="update-sync-status.html">result</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1380041669%2FFunctions%2F-423410878" anchor-label="updateUsers" id="1380041669%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="update-users.html"><span>update</span><wbr><span><span>Users</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1380041669%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">users<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></div><div class="brief "><p class="paragraph">Updates a message with more recent data of <a href="update-users.html">users</a>. It updates author user, latestReactions, replyTo message, mentionedUsers, threadParticipants and pinnedBy user of this instance.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">users<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates collection of channels with more recent data of <a href="update-users.html">users</a>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">userMap<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-member/index.html">Member</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates collection of members with more recent data of <a href="users.html">users</a>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">users<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">users<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates collection of messages with more recent data of <a href="update-users.html">users</a>.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-collection/index.html">Collection</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span><span class="token punctuation">.</span><a href="update-users.html"><span class="token function">updateUsers</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">users<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-map/index.html">Map</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Updates a collection of users by more fresh value of <a href="update-users.html">users</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1184102862%2FFunctions%2F-423410878" anchor-label="upsertReply" id="-1184102862%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="upsert-reply.html"><span>upsert</span><wbr><span><span>Reply</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1184102862%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a><span class="token punctuation">.</span><a href="upsert-reply.html"><span class="token function">upsertReply</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">reply<span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-thread/index.html">Thread</a></div><div class="brief "><p class="paragraph">Inserts a new reply (or updates and existing one) in a Thread.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1600335204%2FFunctions%2F-423410878" anchor-label="users" id="-1600335204%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="users.html"><span><span>users</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1600335204%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-channel/index.html">Channel</a><span class="token punctuation">.</span><a href="users.html"><span class="token function">users</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns all users including watchers of a channel that are associated with it.</p></div><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="users.html"><span class="token function">users</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Retrieves all <a href="../../stream-chat-android-core/io.getstream.chat.android.models/-user/index.html">User</a>s involved in the message. Includes the author, reaction authors, original message author (if the message is reply), mentioned users, thread participants, pinned by user, and poll voters.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1863028848%2FFunctions%2F-423410878" anchor-label="wasCreatedAfter" id="-1863028848%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="was-created-after.html"><span>was</span><wbr><span>Created</span><wbr><span><span>After</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1863028848%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="was-created-after.html"><span class="token function">wasCreatedAfter</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">date<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the message was created after the given <a href="was-created-after.html">date</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2132097242%2FFunctions%2F-423410878" anchor-label="wasCreatedAfterOrAt" id="-2132097242%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="was-created-after-or-at.html"><span>was</span><wbr><span>Created</span><wbr><span>After</span><wbr><span>Or</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2132097242%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="was-created-after-or-at.html"><span class="token function">wasCreatedAfterOrAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">date<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the message was created after or at the given <a href="was-created-after-or-at.html">date</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1989889987%2FFunctions%2F-423410878" anchor-label="wasCreatedBefore" id="1989889987%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="was-created-before.html"><span>was</span><wbr><span>Created</span><wbr><span><span>Before</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1989889987%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="was-created-before.html"><span class="token function">wasCreatedBefore</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">date<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the message was created before the given <a href="was-created-before.html">date</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2062570969%2FFunctions%2F-423410878" anchor-label="wasCreatedBeforeOrAt" id="2062570969%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="EXTENSION_FUNCTION" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="was-created-before-or-at.html"><span>was</span><wbr><span>Created</span><wbr><span>Before</span><wbr><span>Or</span><wbr><span><span>At</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2062570969%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="../../stream-chat-android-core/io.getstream.chat.android.models/-message/index.html">Message</a><span class="token punctuation">.</span><a href="was-created-before-or-at.html"><span class="token function">wasCreatedBeforeOrAt</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">date<span class="token operator">: </span><a href="https://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Checks if the message was created before or at the given <a href="was-created-before-or-at.html">date</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

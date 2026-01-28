@@ -1,0 +1,299 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>MessageReplyStyle</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-ui-components:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-ui-components::io.getstream.chat.android.ui.feature.messages.list/MessageReplyStyle///PointingToDeclaration//-523872580">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-ui-components</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.ui.feature.messages.list</a><span class="delimiter">/</span><span class="current">MessageReplyStyle</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Message</span><wbr><span>Reply</span><wbr><span><span>Style</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">MessageReplyStyle</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>showUserAvatar<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>messageBackgroundColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>messageBackgroundColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>linkBackgroundColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>linkBackgroundColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textStyleMine<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textStyleTheirs<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>linkStyleMine<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>linkStyleTheirs<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>messageStrokeColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>messageStrokeWidthMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span><span class="token keyword">val </span>messageStrokeColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span><span class="token keyword">val </span>messageStrokeWidthTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span> : <a href="../../io.getstream.chat.android.ui.helper/-view-style/index.html">ViewStyle</a></div><p class="paragraph">Style for view holders used inside <a href="../-message-list-view/index.html">MessageListView</a> allowing to customize message "reply" view. Use this class together with <a href="../../io.getstream.chat.android.ui.helper/-transform-style/message-reply-style-transformer.html">TransformStyle.messageReplyStyleTransformer</a> to change styles programmatically.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>show</span><wbr><span>User</span><wbr><span><span>Avatar</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Whether to show user avatar in the reply view. Default value is <code class="lang-kotlin">true</code>.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-671992789%2FConstructors%2F-523872580" anchor-label="MessageReplyStyle" id="-671992789%2FConstructors%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-message-reply-style.html"><span>Message</span><wbr><span>Reply</span><wbr><span><span>Style</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-671992789%2FConstructors%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">showUserAvatar<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>messageBackgroundColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>messageBackgroundColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>linkBackgroundColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>linkBackgroundColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter ">textStyleMine<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">textStyleTheirs<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">linkStyleMine<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter ">linkStyleTheirs<span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>messageStrokeColorMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>messageStrokeWidthMine<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/ColorInt.html"><span class="token annotation builtin">ColorInt</span></a>&nbsp;</span>messageStrokeColorTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span></span><span class="parameter "><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/annotation/Px.html"><span class="token annotation builtin">Px</span></a>&nbsp;</span>messageStrokeWidthTheirs<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1037984996%2FProperties%2F-523872580" anchor-label="linkBackgroundColorMine" id="-1037984996%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="link-background-color-mine.html"><span>link</span><wbr><span>Background</span><wbr><span>Color</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1037984996%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="link-background-color-mine.html">linkBackgroundColorMine</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color of links in the message sent by the current user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="325119830%2FProperties%2F-523872580" anchor-label="linkBackgroundColorTheirs" id="325119830%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="link-background-color-theirs.html"><span>link</span><wbr><span>Background</span><wbr><span>Color</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="325119830%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="link-background-color-theirs.html">linkBackgroundColorTheirs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color of links in the message sent by the other user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1499519360%2FProperties%2F-523872580" anchor-label="linkStyleMine" id="-1499519360%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="link-style-mine.html"><span>link</span><wbr><span>Style</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1499519360%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="link-style-mine.html">linkStyleMine</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for message link sent by the current user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-827772486%2FProperties%2F-523872580" anchor-label="linkStyleTheirs" id="-827772486%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="link-style-theirs.html"><span>link</span><wbr><span>Style</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-827772486%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="link-style-theirs.html">linkStyleTheirs</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for message link sent by other users.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2027133039%2FProperties%2F-523872580" anchor-label="messageBackgroundColorMine" id="2027133039%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-background-color-mine.html"><span>message</span><wbr><span>Background</span><wbr><span>Color</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2027133039%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-background-color-mine.html">messageBackgroundColorMine</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color for message sent by the current user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/color/stream_ui_grey_gainsboro.html">R.color.stream_ui_grey_gainsboro</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-444013591%2FProperties%2F-523872580" anchor-label="messageBackgroundColorTheirs" id="-444013591%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-background-color-theirs.html"><span>message</span><wbr><span>Background</span><wbr><span>Color</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-444013591%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-background-color-theirs.html">messageBackgroundColorTheirs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Background color for message sent by other user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui/-r/color/stream_ui_white.html">R.color.stream_ui_white</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="621233145%2FProperties%2F-523872580" anchor-label="messageStrokeColorMine" id="621233145%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-stroke-color-mine.html"><span>message</span><wbr><span>Stroke</span><wbr><span>Color</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="621233145%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-stroke-color-mine.html">messageStrokeColorMine</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Stroke color for message sent by the current user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-reply-style/-companion/-m-e-s-s-a-g-e_-s-t-r-o-k-e_-c-o-l-o-r_-m-i-n-e.html">MESSAGE_STROKE_COLOR_MINE</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1400886515%2FProperties%2F-523872580" anchor-label="messageStrokeColorTheirs" id="1400886515%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-stroke-color-theirs.html"><span>message</span><wbr><span>Stroke</span><wbr><span>Color</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1400886515%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-stroke-color-theirs.html">messageStrokeColorTheirs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a></div><div class="brief "><p class="paragraph">Stroke color for message sent by other user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-reply-style/-companion/-m-e-s-s-a-g-e_-s-t-r-o-k-e_-c-o-l-o-r_-t-h-e-i-r-s.html">MESSAGE_STROKE_COLOR_THEIRS</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="415196278%2FProperties%2F-523872580" anchor-label="messageStrokeWidthMine" id="415196278%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-stroke-width-mine.html"><span>message</span><wbr><span>Stroke</span><wbr><span>Width</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="415196278%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-stroke-width-mine.html">messageStrokeWidthMine</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Stroke width for message sent by the current user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-reply-style/-companion/-m-e-s-s-a-g-e_-s-t-r-o-k-e_-w-i-d-t-h_-m-i-n-e.html">MESSAGE_STROKE_WIDTH_MINE</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="967952944%2FProperties%2F-523872580" anchor-label="messageStrokeWidthTheirs" id="967952944%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-stroke-width-theirs.html"><span>message</span><wbr><span>Stroke</span><wbr><span>Width</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="967952944%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="message-stroke-width-theirs.html">messageStrokeWidthTheirs</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-float/index.html">Float</a></div><div class="brief "><p class="paragraph">Stroke width for message sent by other user. Default value is <a href="../../../stream-chat-android-ui-components/io.getstream.chat.android.ui.feature.messages.list/-message-reply-style/-companion/-m-e-s-s-a-g-e_-s-t-r-o-k-e_-w-i-d-t-h_-t-h-e-i-r-s.html">MESSAGE_STROKE_WIDTH_THEIRS</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1174356401%2FProperties%2F-523872580" anchor-label="showUserAvatar" id="-1174356401%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-user-avatar.html"><span>show</span><wbr><span>User</span><wbr><span><span>Avatar</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1174356401%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-user-avatar.html">showUserAvatar</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">true</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1968460045%2FProperties%2F-523872580" anchor-label="textStyleMine" id="-1968460045%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-style-mine.html"><span>text</span><wbr><span>Style</span><wbr><span><span>Mine</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1968460045%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-style-mine.html">textStyleMine</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for message text sent by the current user.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-508204691%2FProperties%2F-523872580" anchor-label="textStyleTheirs" id="-508204691%2FProperties%2F-523872580" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-ui-components:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-ui-components:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-style-theirs.html"><span>text</span><wbr><span>Style</span><wbr><span><span>Theirs</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-508204691%2FProperties%2F-523872580"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-ui-components:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-style-theirs.html">textStyleTheirs</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.ui.font/-text-style/index.html">TextStyle</a></div><div class="brief "><p class="paragraph">Appearance for message text sent by other users.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

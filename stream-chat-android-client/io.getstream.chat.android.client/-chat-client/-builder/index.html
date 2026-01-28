@@ -1,0 +1,512 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>Builder</title>
+<link href="../../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-client:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-client::io.getstream.chat.android.client/ChatClient.Builder///PointingToDeclaration//-423410878">
+  <div class="breadcrumbs"><a href="../../../index.html">stream-chat-android-client</a><span class="delimiter">/</span><a href="../../index.html">io.getstream.chat.android.client</a><span class="delimiter">/</span><a href="../index.html">ChatClient</a><span class="delimiter">/</span><span class="current">Builder</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Builder</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Builder</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">apiKey<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">appContext<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span> : <a href="../-chat-client-builder/index.html">ChatClient.ChatClientBuilder</a></div><p class="paragraph">Builder to initialize the singleton <a href="../index.html">ChatClient</a> instance and configure its parameters.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>api</span><wbr><span><span>Key</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The API key of your Stream Chat app obtained from the <a href="https://dashboard.getstream.io/">Stream Dashboard</a>.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>app</span><wbr><span><span>Context</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The application <a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a>.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="117169338%2FConstructors%2F-423410878" anchor-label="Builder" id="117169338%2FConstructors%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-builder.html"><span><span>Builder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="117169338%2FConstructors%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">apiKey<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">appContext<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/content/Context.html">Context</a></span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1085630749%2FFunctions%2F-423410878" anchor-label="appName" id="-1085630749%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="app-name.html"><span>app</span><wbr><span><span>Name</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1085630749%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="app-name.html"><span class="token function">appName</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">appName<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets name of the application that is using the Stream Chat SDK. Used for logging and debugging purposes.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="733246830%2FFunctions%2F-423410878" anchor-label="appVersion" id="733246830%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="app-version.html"><span>app</span><wbr><span><span>Version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="733246830%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="app-version.html"><span class="token function">appVersion</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">appVersion<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets version of the application that is using the Stream Chat SDK. Used for logging and debugging purposes. Eg: 1.0.0</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-486034955%2FFunctions%2F-423410878" anchor-label="baseUrl" id="-486034955%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="base-url.html"><span>base</span><wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-486034955%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="base-url.html"><span class="token function">baseUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets the base URL to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="434848735%2FFunctions%2F-423410878" anchor-label="build" id="434848735%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="build.html"><span><span>build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="434848735%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="build.html"><span class="token function">build</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">ChatClient</a></div><div class="brief "><p class="paragraph">Create a <a href="../index.html">ChatClient</a> instance based on the current configuration of the <a href="index.html">Builder</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1800969145%2FFunctions%2F-423410878" anchor-label="cdnUrl" id="1800969145%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="cdn-url.html"><span>cdn</span><wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1800969145%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="cdn-url.html"><span class="token function">cdnUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets the CDN URL to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="718993470%2FFunctions%2F-423410878" anchor-label="clientDebugger" id="718993470%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="client-debugger.html"><span>client</span><wbr><span><span>Debugger</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="718993470%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="client-debugger.html"><span class="token function">clientDebugger</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">clientDebugger<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.debugger/-chat-client-debugger/index.html">ChatClientDebugger</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a <a href="../../../io.getstream.chat.android.client.debugger/-chat-client-debugger/index.html">ChatClientDebugger</a> instance that will be invoked accordingly through various flows within SDK.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1677970472%2FFunctions%2F-423410878" anchor-label="credentialStorage" id="1677970472%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="credential-storage.html"><span>credential</span><wbr><span><span>Storage</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1677970472%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="credential-storage.html"><span class="token function">credentialStorage</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">credentialStorage<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.user.storage/-user-credential-storage/index.html">UserCredentialStorage</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Overrides a default, based on shared preferences implementation for <a href="../../../io.getstream.chat.android.client.user.storage/-user-credential-storage/index.html">UserCredentialStorage</a>.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1955018747%2FFunctions%2F-423410878" anchor-label="debugRequests" id="1955018747%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="debug-requests.html"><span>debug</span><wbr><span><span>Requests</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1955018747%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="debug-requests.html"><span class="token function">debugRequests</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">shouldDebug<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Debug requests using <a href="../../../io.getstream.chat.android.client.plugins.requests/-api-requests-analyser/index.html">io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser</a>. Use this to debug your requests. This shouldn't be enabled in release builds as it uses a memory cache.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1391514990%2FFunctions%2F-423410878" anchor-label="disableDistinctApiCalls" id="1391514990%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="disable-distinct-api-calls.html"><span>disable</span><wbr><span>Distinct</span><wbr><span>Api</span><wbr><span><span>Calls</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1391514990%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="disable-distinct-api-calls.html"><span class="token function">disableDistinctApiCalls</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Allows simultaneous network calls of the same request, avoiding combining them into one. By default <span data-unresolved-link="io.getstream.chat.android.client/ChatClient.Builder/distinctApiCalls/#/PointingToDeclaration/">distinctApiCalls</span> is enabled.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1027222149%2FFunctions%2F-423410878" anchor-label="disableWarmUp" id="1027222149%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="disable-warm-up.html"><span>disable</span><wbr><span>Warm</span><wbr><span><span>Up</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1027222149%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="disable-warm-up.html"><span class="token function">disableWarmUp</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">By default, ChatClient performs a dummy HTTP call to the Stream API when a user is set to initialize the HTTP connection and make subsequent requests reusing this connection execute faster.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1520095239%2FFunctions%2F-423410878" anchor-label="fileTransformer" id="1520095239%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="file-transformer.html"><span>file</span><wbr><span><span>Transformer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1520095239%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="file-transformer.html"><span class="token function">fileTransformer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fileTransformer<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.uploader/-file-transformer/index.html">FileTransformer</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <a href="../../../io.getstream.chat.android.client.uploader/-file-transformer/index.html">FileTransformer</a> implementation that will be used by the client to transform files before uploading them.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1506307641%2FFunctions%2F-423410878" anchor-label="fileUploader" id="-1506307641%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="file-uploader.html"><span>file</span><wbr><span><span>Uploader</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1506307641%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="file-uploader.html"><span class="token function">fileUploader</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">fileUploader<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.uploader/-file-uploader/index.html">FileUploader</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom file uploader implementation that will be used by the client to upload files and images.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-100663149%2FFunctions%2F-423410878" anchor-label="forceHttpUrl" id="-100663149%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="force-http-url.html"><span>force</span><wbr><span>Http</span><wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-100663149%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="force-http-url.html"><span class="token function">forceHttpUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets the HTTP URL to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1134153976%2FFunctions%2F-423410878" anchor-label="forceInsecureConnection" id="-1134153976%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="force-insecure-connection.html"><span>force</span><wbr><span>Insecure</span><wbr><span><span>Connection</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1134153976%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="force-insecure-connection.html"><span class="token function">forceInsecureConnection</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Force to use insecure connection (HTTP) instead of secure connection (HTTPS). This is useful for testing purposes. By default, the client uses HTTPS. Production apps should always use HTTPS.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1832275455%2FFunctions%2F-423410878" anchor-label="forceWsUrl" id="1832275455%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="force-ws-url.html"><span>force</span><wbr><span>Ws</span><wbr><span><span>Url</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1832275455%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="force-ws-url.html"><span class="token function">forceWsUrl</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">value<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets the WebSocket URL to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1382081028%2FFunctions%2F-423410878" anchor-label="internalBuild" id="-1382081028%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="internal-build.html"><span>internal</span><wbr><span><span>Build</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1382081028%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="internal-build.html"><span class="token function">internalBuild</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../index.html">ChatClient</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1131016003%2FFunctions%2F-423410878" anchor-label="loggerHandler" id="-1131016003%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="logger-handler.html"><span>logger</span><wbr><span><span>Handler</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1131016003%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="logger-handler.html"><span class="token function">loggerHandler</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">loggerHandler<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.logger/-chat-logger-handler/index.html">ChatLoggerHandler</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a <a href="../../../io.getstream.chat.android.client.logger/-chat-logger-handler/index.html">ChatLoggerHandler</a> instance that will receive log events from the SDK.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2097457339%2FFunctions%2F-423410878" anchor-label="logLevel" id="-2097457339%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="log-level.html"><span>log</span><wbr><span><span>Level</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2097457339%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="log-level.html"><span class="token function">logLevel</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">level<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.logger/-chat-log-level/index.html">ChatLogLevel</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets the log level to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-94010592%2FFunctions%2F-423410878" anchor-label="notifications" id="-94010592%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="notifications.html"><span><span>notifications</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-94010592%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.jvm/-jvm-overloads/index.html"><span class="token annotation builtin">JvmOverloads</span></a></div></div><span class="token keyword">fun </span><a href="notifications.html"><span class="token function">notifications</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">notificationConfig<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.notifications.handler/-notification-config/index.html">NotificationConfig</a><span class="token punctuation">, </span></span><span class="parameter ">notificationsHandler<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.notifications.handler/-notification-handler/index.html">NotificationHandler</a><span class="token operator"> = </span>NotificationHandlerFactory.createNotificationHandler(
+                    context = appContext,
+                    notificationConfig = notificationConfig,
+                )</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <a href="../../../io.getstream.chat.android.client.notifications.handler/-notification-handler/index.html">NotificationHandler</a> that the SDK will use to handle everything around push notifications. Create your own subclass and override methods to customize notification appearance and behavior.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2144247632%2FFunctions%2F-423410878" anchor-label="okHttpClient" id="2144247632%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="ok-http-client.html"><span>ok</span><wbr><span>Http</span><wbr><span><span>Client</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2144247632%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="ok-http-client.html"><span class="token function">okHttpClient</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">okHttpClient<span class="token operator">: </span><span data-unresolved-link="okhttp3/OkHttpClient///PointingToDeclaration/">OkHttpClient</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <span data-unresolved-link="okhttp3/OkHttpClient///PointingToDeclaration/">OkHttpClient</span> that will be used by the client to perform API calls to Stream.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="559996190%2FFunctions%2F-423410878" anchor-label="retryPolicy" id="559996190%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="retry-policy.html"><span>retry</span><wbr><span><span>Policy</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="559996190%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="retry-policy.html"><span class="token function">retryPolicy</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">retryPolicy<span class="token operator">: </span><span data-unresolved-link="io.getstream.result.call.retry/RetryPolicy///PointingToDeclaration/">RetryPolicy</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <span data-unresolved-link="io.getstream.result.call.retry/RetryPolicy///PointingToDeclaration/">RetryPolicy</span> used to determine whether a particular call should be retried. By default, no calls are retried.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-401657218%2FFunctions%2F-423410878" anchor-label="sendMessageInterceptor" id="-401657218%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="send-message-interceptor.html"><span>send</span><wbr><span>Message</span><wbr><span><span>Interceptor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-401657218%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="send-message-interceptor.html"><span class="token function">sendMessageInterceptor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">sendMessageInterceptor<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.interceptor/-send-message-interceptor/index.html">SendMessageInterceptor</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom message sender implementation that will be used to send messages to the server. By providing a custom <a href="../../../io.getstream.chat.android.client.interceptor/-send-message-interceptor/index.html">SendMessageInterceptor</a> you can override the logic for sending messages with your own custom logic.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-302450168%2FFunctions%2F-423410878" anchor-label="shareFileDownloadRequestInterceptor" id="-302450168%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="share-file-download-request-interceptor.html"><span>share</span><wbr><span>File</span><wbr><span>Download</span><wbr><span>Request</span><wbr><span><span>Interceptor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-302450168%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="share-file-download-request-interceptor.html"><span class="token function">shareFileDownloadRequestInterceptor</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">shareFileDownloadRequestInterceptor<span class="token operator">: </span><span data-unresolved-link="okhttp3/Interceptor///PointingToDeclaration/">Interceptor</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <span data-unresolved-link="okhttp3/Interceptor///PointingToDeclaration/">Interceptor</span> that will be used to intercept file download requests for the purpose of sharing the file. Use this to add custom headers or modify the request in any way.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="786563846%2FFunctions%2F-423410878" anchor-label="uploadAttachmentsNetworkType" id="786563846%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="upload-attachments-network-type.html"><span>upload</span><wbr><span>Attachments</span><wbr><span>Network</span><wbr><span><span>Type</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="786563846%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="upload-attachments-network-type.html"><span class="token function">uploadAttachmentsNetworkType</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">type<span class="token operator">: </span><a href="../../../../stream-chat-android-core/io.getstream.chat.android.models/-upload-attachments-network-type/index.html">UploadAttachmentsNetworkType</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">An enumeration of various network types used as a constraint inside upload attachments worker.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2030900269%2FFunctions%2F-423410878" anchor-label="withApiModelTransformer" id="2030900269%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-api-model-transformer.html"><span>with</span><wbr><span>Api</span><wbr><span>Model</span><wbr><span><span>Transformer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2030900269%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="with-api-model-transformer.html"><span class="token function">withApiModelTransformer</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">apiModelTransformers<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.transformer/-api-model-transformers/index.html">ApiModelTransformers</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Sets a custom <a href="../../../io.getstream.chat.android.client.transformer/-api-model-transformers/index.html">ApiModelTransformers</a> implementation that will be used by the client to transform models.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1380268919%2FFunctions%2F-423410878" anchor-label="withPlugins" id="-1380268919%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-plugins.html"><span>with</span><wbr><span><span>Plugins</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1380268919%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="with-plugins.html"><span class="token function">withPlugins</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">vararg </span>pluginFactories<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.plugin.factory/-plugin-factory/index.html">PluginFactory</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Adds plugins factory to be used by the client.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="166265844%2FFunctions%2F-423410878" anchor-label="withRepositoryFactoryProvider" id="166265844%2FFunctions%2F-423410878" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-client:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-client:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="with-repository-factory-provider.html"><span>with</span><wbr><span>Repository</span><wbr><span>Factory</span><wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="166265844%2FFunctions%2F-423410878"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-client:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">fun </span><a href="with-repository-factory-provider.html"><span class="token function">withRepositoryFactoryProvider</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">provider<span class="token operator">: </span><a href="../../../io.getstream.chat.android.client.persistance.repository.factory/-repository-factory/-provider/index.html">RepositoryFactory.Provider</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="index.html">ChatClient.Builder</a></div><div class="brief "><p class="paragraph">Inject a <a href="../../../io.getstream.chat.android.client.persistance.repository.factory/-repository-factory/-provider/index.html">RepositoryFactory.Provider</a> to use your own DB Persistence mechanism.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,648 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>StreamColors</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-compose:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-compose::io.getstream.chat.android.compose.ui.theme/StreamColors///PointingToDeclaration//29477497">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.compose.ui.theme</a><span class="delimiter">/</span><span class="current">StreamColors</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Stream</span><wbr><span><span>Colors</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Immutable.html"><span class="token annotation builtin">Immutable</span></a></div></div><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">StreamColors</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>textHighEmphasis<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textHighEmphasisInverse<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>textLowEmphasis<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>disabled<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>borders<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>inputBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>appBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>barsBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>linkBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>overlay<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>overlayDark<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>primaryAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>errorAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>infoAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>highlight<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ownMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>otherMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>deletedMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>giphyMessageBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>threadSeparatorGradientStart<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>threadSeparatorGradientEnd<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mediaShimmerBase<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>mediaShimmerHighlights<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ownMessageText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>otherMessageText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageBackgroundMessageList<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>imageBackgroundMediaGalleryPicker<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>videoBackgroundMessageList<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>videoBackgroundMediaGalleryPicker<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>showMoreOverlay<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>showMoreCountText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ownMessageQuotedBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>otherMessagesBackground<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>otherMessageQuotedBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>ownMessagesBackground<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>ownMessageQuotedText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>otherMessageQuotedText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis</span></span><span class="token punctuation">)</span></div><p class="paragraph">Contains all the colors in our palette. Each color is used for various things an can be changed to customize the app design style.</p><h4 class="">Parameters</h4><div class="table"><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>text</span><wbr><span>High</span><wbr><span><span>Emphasis</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for main text and active icon status.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>text</span><wbr><span>High</span><wbr><span>Emphasis</span><wbr><span><span>Inverse</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for contrasting backgrounds or elements against the main text and active icon status, providing better visibility and readability.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>text</span><wbr><span>Low</span><wbr><span><span>Emphasis</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for secondary text, default icon state, deleted messages text and datestamp background.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>disabled</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for disabled icons and empty states.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>borders</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for borders, the background of self messages, selected items, pressed state, button dividers.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>input</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for the input background, deleted messages, section headings.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>app</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for the default app background and channel list item background.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>bars</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for button text, top and bottom bar background and other user messages.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>link</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for the message link card background.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>overlay</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for general overlays and background when opening modals.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>overlay</span><wbr><span><span>Dark</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for the date separator background color.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>primary</span><wbr><span><span>Accent</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for selected icon state, call to actions, white buttons text and links.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>error</span><wbr><span><span>Accent</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for error text labels, notification badges and disruptive action text and icons.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>info</span><wbr><span><span>Accent</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for the online status.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span><span>highlight</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for message highlights.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>own</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as a background color for the messages sent by the current user.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>other</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as a background color for the messages sent by other users.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>deleted</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as a background for deleted messages.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>giphy</span><wbr><span>Message</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as a background for the ephemeral giphy messages.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>thread</span><wbr><span>Separator</span><wbr><span>Gradient</span><wbr><span><span>Start</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as a start color for vertical gradient background in a thread separator.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>thread</span><wbr><span>Separator</span><wbr><span>Gradient</span><wbr><span><span>End</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used as an end color for vertical gradient background in a thread separator.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>own</span><wbr><span>Message</span><wbr><span><span>Text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for message text color for the current user. <a href="text-high-emphasis.html">textHighEmphasis</a> by default.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>other</span><wbr><span>Message</span><wbr><span><span>Text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used for message text color for other users. <a href="text-high-emphasis.html">textHighEmphasis</a> by default.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>image</span><wbr><span>Background</span><wbr><span>Message</span><wbr><span><span>List</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used to set the background colour of videos inside the message list. Most visible in placeholders before the video previews are loaded.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>image</span><wbr><span>Background</span><wbr><span>Media</span><wbr><span>Gallery</span><wbr><span><span>Picker</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Used to set the background colour of videos inside the media gallery picker in the media gallery preview screen. Most visible in placeholders before the videos previews are loaded.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>show</span><wbr><span>More</span><wbr><span><span>Overlay</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The color of the overlay displaying how many more media attachments the message contains, given it contains more than can be displayed in the message list media attachment preview.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>show</span><wbr><span>More</span><wbr><span>Count</span><wbr><span><span>Text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">The color of the text displaying how many more media attachments the message contains, given it contains more than can be displayed in the message list media attachment preview.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>own</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Changes the background color of the quoted message contained in a reply sent by the current user.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>other</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Background</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Changes the background color of the quoted message contained in a reply sent by other users.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>own</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Changes the text color of the quoted message contained in a reply sent by the current user. <a href="text-high-emphasis.html">textHighEmphasis</a> by default.</p></div></div></div></div><div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="main-subrow keyValue "><div class=""><span class="inline-flex"><div><u><span>other</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Text</span></span></u></div></span></div><div><div class="title"><p class="paragraph">Changes the text color of the quoted message contained in a reply sent by other users. <a href="text-high-emphasis.html">textHighEmphasis</a> by default.</p></div></div></div></div></div></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="908803076%2FConstructors%2F29477497" anchor-label="StreamColors" id="908803076%2FConstructors%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-stream-colors.html"><span>Stream</span><wbr><span><span>Colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="908803076%2FConstructors%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">textHighEmphasis<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">textHighEmphasisInverse<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">textLowEmphasis<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">disabled<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">borders<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">inputBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">appBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">barsBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">linkBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">overlay<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">overlayDark<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">primaryAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">errorAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">infoAccent<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">highlight<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">ownMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">otherMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">deletedMessagesBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">giphyMessageBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">threadSeparatorGradientStart<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">threadSeparatorGradientEnd<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">mediaShimmerBase<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">mediaShimmerHighlights<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">ownMessageText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter ">otherMessageText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter ">imageBackgroundMessageList<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">imageBackgroundMediaGalleryPicker<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">videoBackgroundMessageList<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">videoBackgroundMediaGalleryPicker<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">showMoreOverlay<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">showMoreCountText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token punctuation">, </span></span><span class="parameter ">ownMessageQuotedBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>otherMessagesBackground<span class="token punctuation">, </span></span><span class="parameter ">otherMessageQuotedBackground<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>ownMessagesBackground<span class="token punctuation">, </span></span><span class="parameter ">ownMessageQuotedText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis<span class="token punctuation">, </span></span><span class="parameter ">otherMessageQuotedText<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>textHighEmphasis</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="1754514964%2FClasslikes%2F29477497" anchor-label="Companion" id="1754514964%2FClasslikes%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1754514964%2FClasslikes%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1052722818%2FProperties%2F29477497" anchor-label="appBackground" id="-1052722818%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="app-background.html"><span>app</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1052722818%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="app-background.html">appBackground</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1603616863%2FProperties%2F29477497" anchor-label="barsBackground" id="1603616863%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="bars-background.html"><span>bars</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1603616863%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="bars-background.html">barsBackground</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="529179878%2FProperties%2F29477497" anchor-label="borders" id="529179878%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="borders.html"><span><span>borders</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="529179878%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="borders.html">borders</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="877753498%2FProperties%2F29477497" anchor-label="deletedMessagesBackground" id="877753498%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="deleted-messages-background.html"><span>deleted</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="877753498%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="deleted-messages-background.html"><strike>deletedMessagesBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1382729295%2FProperties%2F29477497" anchor-label="disabled" id="-1382729295%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="disabled.html"><span><span>disabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1382729295%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="disabled.html">disabled</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1790392347%2FProperties%2F29477497" anchor-label="errorAccent" id="1790392347%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="error-accent.html"><span>error</span><wbr><span><span>Accent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1790392347%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="error-accent.html">errorAccent</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="710635639%2FProperties%2F29477497" anchor-label="giphyMessageBackground" id="710635639%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="giphy-message-background.html"><span>giphy</span><wbr><span>Message</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="710635639%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="giphy-message-background.html">giphyMessageBackground</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-627746151%2FProperties%2F29477497" anchor-label="highlight" id="-627746151%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="highlight.html"><span><span>highlight</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-627746151%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="highlight.html">highlight</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1175726760%2FProperties%2F29477497" anchor-label="imageBackgroundMediaGalleryPicker" id="1175726760%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="image-background-media-gallery-picker.html"><span>image</span><wbr><span>Background</span><wbr><span>Media</span><wbr><span>Gallery</span><wbr><span><span>Picker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1175726760%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="image-background-media-gallery-picker.html">imageBackgroundMediaGalleryPicker</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2022708335%2FProperties%2F29477497" anchor-label="imageBackgroundMessageList" id="-2022708335%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="image-background-message-list.html"><span>image</span><wbr><span>Background</span><wbr><span>Message</span><wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2022708335%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="image-background-message-list.html">imageBackgroundMessageList</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1417499797%2FProperties%2F29477497" anchor-label="infoAccent" id="1417499797%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="info-accent.html"><span>info</span><wbr><span><span>Accent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1417499797%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="info-accent.html">infoAccent</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1088426187%2FProperties%2F29477497" anchor-label="inputBackground" id="-1088426187%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="input-background.html"><span>input</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1088426187%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="input-background.html">inputBackground</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1402649829%2FProperties%2F29477497" anchor-label="linkBackground" id="1402649829%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="link-background.html"><span>link</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1402649829%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="link-background.html"><strike>linkBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="361078655%2FProperties%2F29477497" anchor-label="mediaShimmerBase" id="361078655%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="media-shimmer-base.html"><span>media</span><wbr><span>Shimmer</span><wbr><span><span>Base</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="361078655%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="media-shimmer-base.html">mediaShimmerBase</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="290427281%2FProperties%2F29477497" anchor-label="mediaShimmerHighlights" id="290427281%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="media-shimmer-highlights.html"><span>media</span><wbr><span>Shimmer</span><wbr><span><span>Highlights</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="290427281%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="media-shimmer-highlights.html">mediaShimmerHighlights</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1216936032%2FProperties%2F29477497" anchor-label="otherMessageQuotedBackground" id="-1216936032%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-message-quoted-background.html"><span>other</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1216936032%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="other-message-quoted-background.html"><strike>otherMessageQuotedBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1481157311%2FProperties%2F29477497" anchor-label="otherMessageQuotedText" id="-1481157311%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-message-quoted-text.html"><span>other</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1481157311%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="other-message-quoted-text.html"><strike>otherMessageQuotedText</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-942205629%2FProperties%2F29477497" anchor-label="otherMessagesBackground" id="-942205629%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-messages-background.html"><span>other</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-942205629%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="other-messages-background.html"><strike>otherMessagesBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1118389385%2FProperties%2F29477497" anchor-label="otherMessageText" id="1118389385%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-message-text.html"><span>other</span><wbr><span>Message</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1118389385%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="other-message-text.html"><strike>otherMessageText</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1469960579%2FProperties%2F29477497" anchor-label="overlay" id="-1469960579%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="overlay.html"><span><span>overlay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1469960579%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="overlay.html">overlay</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2063237031%2FProperties%2F29477497" anchor-label="overlayDark" id="2063237031%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="overlay-dark.html"><span>overlay</span><wbr><span><span>Dark</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2063237031%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="overlay-dark.html">overlayDark</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1268010986%2FProperties%2F29477497" anchor-label="ownMessageQuotedBackground" id="-1268010986%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-message-quoted-background.html"><span>own</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1268010986%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="own-message-quoted-background.html"><strike>ownMessageQuotedBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="26807863%2FProperties%2F29477497" anchor-label="ownMessageQuotedText" id="26807863%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-message-quoted-text.html"><span>own</span><wbr><span>Message</span><wbr><span>Quoted</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="26807863%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="own-message-quoted-text.html"><strike>ownMessageQuotedText</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1439925491%2FProperties%2F29477497" anchor-label="ownMessagesBackground" id="-1439925491%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-messages-background.html"><span>own</span><wbr><span>Messages</span><wbr><span><span>Background</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1439925491%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="own-messages-background.html"><strike>ownMessagesBackground</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="850292223%2FProperties%2F29477497" anchor-label="ownMessageText" id="850292223%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-message-text.html"><span>own</span><wbr><span>Message</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="850292223%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="own-message-text.html"><strike>ownMessageText</strike></a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2089355039%2FProperties%2F29477497" anchor-label="primaryAccent" id="-2089355039%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="primary-accent.html"><span>primary</span><wbr><span><span>Accent</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2089355039%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="primary-accent.html">primaryAccent</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1175481603%2FProperties%2F29477497" anchor-label="showMoreCountText" id="1175481603%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-more-count-text.html"><span>show</span><wbr><span>More</span><wbr><span>Count</span><wbr><span><span>Text</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1175481603%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-more-count-text.html">showMoreCountText</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="761962127%2FProperties%2F29477497" anchor-label="showMoreOverlay" id="761962127%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-more-overlay.html"><span>show</span><wbr><span>More</span><wbr><span><span>Overlay</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="761962127%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="show-more-overlay.html">showMoreOverlay</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1077747714%2FProperties%2F29477497" anchor-label="textHighEmphasis" id="1077747714%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-high-emphasis.html"><span>text</span><wbr><span>High</span><wbr><span><span>Emphasis</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1077747714%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-high-emphasis.html">textHighEmphasis</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1369317688%2FProperties%2F29477497" anchor-label="textHighEmphasisInverse" id="-1369317688%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-high-emphasis-inverse.html"><span>text</span><wbr><span>High</span><wbr><span>Emphasis</span><wbr><span><span>Inverse</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1369317688%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-high-emphasis-inverse.html">textHighEmphasisInverse</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1844458666%2FProperties%2F29477497" anchor-label="textLowEmphasis" id="1844458666%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="text-low-emphasis.html"><span>text</span><wbr><span>Low</span><wbr><span><span>Emphasis</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1844458666%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="text-low-emphasis.html">textLowEmphasis</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1714979299%2FProperties%2F29477497" anchor-label="threadSeparatorGradientEnd" id="-1714979299%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="thread-separator-gradient-end.html"><span>thread</span><wbr><span>Separator</span><wbr><span>Gradient</span><wbr><span><span>End</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1714979299%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="thread-separator-gradient-end.html">threadSeparatorGradientEnd</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-391434826%2FProperties%2F29477497" anchor-label="threadSeparatorGradientStart" id="-391434826%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="thread-separator-gradient-start.html"><span>thread</span><wbr><span>Separator</span><wbr><span>Gradient</span><wbr><span><span>Start</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-391434826%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="thread-separator-gradient-start.html">threadSeparatorGradientStart</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1914997880%2FProperties%2F29477497" anchor-label="videoBackgroundMediaGalleryPicker" id="-1914997880%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="video-background-media-gallery-picker.html"><span>video</span><wbr><span>Background</span><wbr><span>Media</span><wbr><span>Gallery</span><wbr><span><span>Picker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1914997880%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="video-background-media-gallery-picker.html">videoBackgroundMediaGalleryPicker</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1353113265%2FProperties%2F29477497" anchor-label="videoBackgroundMessageList" id="1353113265%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="video-background-message-list.html"><span>video</span><wbr><span>Background</span><wbr><span>Message</span><wbr><span><span>List</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1353113265%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">val </span><a href="video-background-message-list.html">videoBackgroundMessageList</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,835 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>ChatTheme</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script></head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            stream-chat-android
+                    </a>            </div>
+            <div class="library-version">6.32.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":stream-chat-android-compose:dokkaHtmlPartial/release">androidJvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="stream-chat-android-compose::io.getstream.chat.android.compose.ui.theme/ChatTheme///PointingToDeclaration//29477497">
+  <div class="breadcrumbs"><a href="../../index.html">stream-chat-android-compose</a><span class="delimiter">/</span><a href="../index.html">io.getstream.chat.android.compose.ui.theme</a><span class="delimiter">/</span><span class="current">ChatTheme</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Chat</span><wbr><span><span>Theme</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">object </span><a href="index.html">ChatTheme</a></div><p class="paragraph">Contains ease-of-use accessors for different properties used to style and customize the app look and feel.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="488298821%2FProperties%2F29477497" anchor-label="attachmentFactories" id="488298821%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="attachment-factories.html"><span>attachment</span><wbr><span><span>Factories</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="488298821%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="attachment-factories.html">attachmentFactories</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../io.getstream.chat.android.compose.ui.attachments/-attachment-factory/index.html">AttachmentFactory</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Retrieves the current list of <a href="../../io.getstream.chat.android.compose.ui.attachments/-attachment-factory/index.html">AttachmentFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1065169422%2FProperties%2F29477497" anchor-label="attachmentPickerTheme" id="-1065169422%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="attachment-picker-theme.html"><span>attachment</span><wbr><span>Picker</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1065169422%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="attachment-picker-theme.html">attachmentPickerTheme</a><span class="token operator">: </span><a href="../-attachment-picker-theme/index.html">AttachmentPickerTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-attachment-picker-theme/index.html">AttachmentPickerTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1751734844%2FProperties%2F29477497" anchor-label="attachmentPreviewHandlers" id="1751734844%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="attachment-preview-handlers.html"><span>attachment</span><wbr><span>Preview</span><wbr><span><span>Handlers</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1751734844%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="attachment-preview-handlers.html">attachmentPreviewHandlers</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../io.getstream.chat.android.compose.ui.attachments.preview.handler/-attachment-preview-handler/index.html">AttachmentPreviewHandler</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Retrieves the current list of <a href="../../io.getstream.chat.android.compose.ui.attachments.preview.handler/-attachment-preview-handler/index.html">AttachmentPreviewHandler</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1477499591%2FProperties%2F29477497" anchor-label="attachmentsPickerTabFactories" id="-1477499591%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="attachments-picker-tab-factories.html"><span>attachments</span><wbr><span>Picker</span><wbr><span>Tab</span><wbr><span><span>Factories</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1477499591%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="attachments-picker-tab-factories.html">attachmentsPickerTabFactories</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../io.getstream.chat.android.compose.ui.messages.attachments.factory/-attachments-picker-tab-factory/index.html">AttachmentsPickerTabFactory</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Retrieves the current list of <a href="../../io.getstream.chat.android.compose.ui.messages.attachments.factory/-attachments-picker-tab-factory/index.html">AttachmentsPickerTabFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-22357263%2FProperties%2F29477497" anchor-label="autoTranslationEnabled" id="-22357263%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="auto-translation-enabled.html"><span>auto</span><wbr><span>Translation</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-22357263%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="auto-translation-enabled.html">autoTranslationEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="auto-translation-enabled.html">autoTranslationEnabled</a> value at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="61480820%2FProperties%2F29477497" anchor-label="channelNameFormatter" id="61480820%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-name-formatter.html"><span>channel</span><wbr><span>Name</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="61480820%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="channel-name-formatter.html">channelNameFormatter</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.utils/-channel-name-formatter/index.html">ChannelNameFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.utils/-channel-name-formatter/index.html">ChannelNameFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-169691076%2FProperties%2F29477497" anchor-label="channelOptionsTheme" id="-169691076%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="channel-options-theme.html"><span>channel</span><wbr><span>Options</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-169691076%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="channel-options-theme.html">channelOptionsTheme</a><span class="token operator">: </span><a href="../-channel-options-theme/index.html">ChannelOptionsTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-channel-options-theme/index.html">ChannelOptionsTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1529531392%2FProperties%2F29477497" anchor-label="colors" id="1529531392%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="colors.html"><span><span>colors</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1529531392%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="colors.html">colors</a><span class="token operator">: </span><a href="../-stream-colors/index.html">StreamColors</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-stream-colors/index.html">StreamColors</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1058136835%2FProperties%2F29477497" anchor-label="componentFactory" id="1058136835%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="component-factory.html"><span>component</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1058136835%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="component-factory.html">componentFactory</a><span class="token operator">: </span><a href="../-chat-component-factory/index.html">ChatComponentFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-chat-component-factory/index.html">ChatComponentFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1147329682%2FProperties%2F29477497" anchor-label="dateFormatter" id="-1147329682%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="date-formatter.html"><span>date</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1147329682%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="date-formatter.html">dateFormatter</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-date-formatter/index.html">DateFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-date-formatter/index.html">DateFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1206445646%2FProperties%2F29477497" anchor-label="dimens" id="1206445646%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="dimens.html"><span><span>dimens</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1206445646%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="dimens.html">dimens</a><span class="token operator">: </span><a href="../-stream-dimens/index.html">StreamDimens</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-stream-dimens/index.html">StreamDimens</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="2119649620%2FProperties%2F29477497" anchor-label="durationFormatter" id="2119649620%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="duration-formatter.html"><span>duration</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2119649620%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="duration-formatter.html">durationFormatter</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-duration-formatter/index.html">DurationFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-duration-formatter/index.html">DurationFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-131510573%2FProperties%2F29477497" anchor-label="isComposerLinkPreviewEnabled" id="-131510573%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="is-composer-link-preview-enabled.html"><span>is</span><wbr><span>Composer</span><wbr><span>Link</span><wbr><span>Preview</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-131510573%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="is-composer-link-preview-enabled.html">isComposerLinkPreviewEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="is-composer-link-preview-enabled.html">isComposerLinkPreviewEnabled</a> value at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-464192940%2FProperties%2F29477497" anchor-label="keyboardBehaviour" id="-464192940%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="keyboard-behaviour.html"><span>keyboard</span><wbr><span><span>Behaviour</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-464192940%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="keyboard-behaviour.html">keyboardBehaviour</a><span class="token operator">: </span><a href="../-stream-keyboard-behaviour/index.html">StreamKeyboardBehaviour</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-stream-keyboard-behaviour/index.html">StreamKeyboardBehaviour</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="584042816%2FProperties%2F29477497" anchor-label="mediaGalleryConfig" id="584042816%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="media-gallery-config.html"><span>media</span><wbr><span>Gallery</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="584042816%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="media-gallery-config.html">mediaGalleryConfig</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.attachments.preview/-media-gallery-config/index.html">MediaGalleryConfig</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.attachments.preview/-media-gallery-config/index.html">MediaGalleryConfig</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1409660509%2FProperties%2F29477497" anchor-label="messageAlignmentProvider" id="-1409660509%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-alignment-provider.html"><span>message</span><wbr><span>Alignment</span><wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1409660509%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-alignment-provider.html">messageAlignmentProvider</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-message-alignment-provider/index.html">MessageAlignmentProvider</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-message-alignment-provider/index.html">MessageAlignmentProvider</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1091487918%2FProperties%2F29477497" anchor-label="messageComposerTheme" id="1091487918%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-composer-theme.html"><span>message</span><wbr><span>Composer</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1091487918%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-composer-theme.html">messageComposerTheme</a><span class="token operator">: </span><a href="../-message-composer-theme/index.html">MessageComposerTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-message-composer-theme/index.html">MessageComposerTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="839250034%2FProperties%2F29477497" anchor-label="messageContentFactory" id="839250034%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-content-factory.html"><span>message</span><wbr><span>Content</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="839250034%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div></div><span class="token keyword">val </span><a href="message-content-factory.html">messageContentFactory</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.components.messages.factory/-message-content-factory/index.html">MessageContentFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current list of quoted <a href="../../io.getstream.chat.android.compose.ui.components.messages.factory/-message-content-factory/index.html">MessageContentFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-417281615%2FProperties%2F29477497" anchor-label="messageDateSeparatorTheme" id="-417281615%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-date-separator-theme.html"><span>message</span><wbr><span>Date</span><wbr><span>Separator</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-417281615%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-date-separator-theme.html">messageDateSeparatorTheme</a><span class="token operator">: </span><a href="../-message-date-separator-theme/index.html">MessageDateSeparatorTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-message-date-separator-theme/index.html">MessageDateSeparatorTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1546418248%2FProperties%2F29477497" anchor-label="messageOptionsTheme" id="-1546418248%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-options-theme.html"><span>message</span><wbr><span>Options</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1546418248%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-options-theme.html">messageOptionsTheme</a><span class="token operator">: </span><a href="../-message-options-theme/index.html">MessageOptionsTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-message-options-theme/index.html">MessageOptionsTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2019857646%2FProperties%2F29477497" anchor-label="messageOptionsUserReactionAlignment" id="-2019857646%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-options-user-reaction-alignment.html"><span>message</span><wbr><span>Options</span><wbr><span>User</span><wbr><span>Reaction</span><wbr><span><span>Alignment</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2019857646%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-options-user-reaction-alignment.html">messageOptionsUserReactionAlignment</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-options-user-reaction-alignment/index.html">MessageOptionsUserReactionAlignment</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.state.messages.list/-message-options-user-reaction-alignment/index.html">MessageOptionsUserReactionAlignment</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1993154689%2FProperties%2F29477497" anchor-label="messagePreviewFormatter" id="1993154689%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-preview-formatter.html"><span>message</span><wbr><span>Preview</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1993154689%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-preview-formatter.html">messagePreviewFormatter</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-message-preview-formatter/index.html">MessagePreviewFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-message-preview-formatter/index.html">MessagePreviewFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1772497242%2FProperties%2F29477497" anchor-label="messagePreviewIconFactory" id="1772497242%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-preview-icon-factory.html"><span>message</span><wbr><span>Preview</span><wbr><span>Icon</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1772497242%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-preview-icon-factory.html">messagePreviewIconFactory</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-message-preview-icon-factory/index.html">MessagePreviewIconFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current message preview icon factory at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1345527398%2FProperties%2F29477497" anchor-label="messageTextFormatter" id="-1345527398%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-text-formatter.html"><span>message</span><wbr><span>Text</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1345527398%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-text-formatter.html">messageTextFormatter</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-message-text-formatter/index.html">MessageTextFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-message-text-formatter/index.html">MessageTextFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1489540368%2FProperties%2F29477497" anchor-label="messageUnreadSeparatorTheme" id="1489540368%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="message-unread-separator-theme.html"><span>message</span><wbr><span>Unread</span><wbr><span>Separator</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1489540368%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="message-unread-separator-theme.html">messageUnreadSeparatorTheme</a><span class="token operator">: </span><a href="../-message-unread-separator-theme/index.html">MessageUnreadSeparatorTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-message-unread-separator-theme/index.html">MessageUnreadSeparatorTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-259407402%2FProperties%2F29477497" anchor-label="otherFileAttachmentTheme" id="-259407402%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-file-attachment-theme.html"><span>other</span><wbr><span>File</span><wbr><span>Attachment</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-259407402%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="other-file-attachment-theme.html">otherFileAttachmentTheme</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme.messages.attachments/-file-attachment-theme/index.html">FileAttachmentTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current other <a href="../../io.getstream.chat.android.compose.ui.theme.messages.attachments/-file-attachment-theme/index.html">FileAttachmentTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-2015843016%2FProperties%2F29477497" anchor-label="otherMessageTheme" id="-2015843016%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="other-message-theme.html"><span>other</span><wbr><span>Message</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-2015843016%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="other-message-theme.html">otherMessageTheme</a><span class="token operator">: </span><a href="../-message-theme/index.html">MessageTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current other <a href="../-message-theme/index.html">MessageTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-880002548%2FProperties%2F29477497" anchor-label="ownFileAttachmentTheme" id="-880002548%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-file-attachment-theme.html"><span>own</span><wbr><span>File</span><wbr><span>Attachment</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-880002548%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="own-file-attachment-theme.html">ownFileAttachmentTheme</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.theme.messages.attachments/-file-attachment-theme/index.html">FileAttachmentTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current own <a href="../../io.getstream.chat.android.compose.ui.theme.messages.attachments/-file-attachment-theme/index.html">FileAttachmentTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1871092286%2FProperties%2F29477497" anchor-label="ownMessageTheme" id="-1871092286%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="own-message-theme.html"><span>own</span><wbr><span>Message</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1871092286%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="own-message-theme.html">ownMessageTheme</a><span class="token operator">: </span><a href="../-message-theme/index.html">MessageTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current own <a href="../-message-theme/index.html">MessageTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1925030758%2FProperties%2F29477497" anchor-label="pollSwitchitemFactory" id="1925030758%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="poll-switchitem-factory.html"><span>poll</span><wbr><span>Switchitem</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1925030758%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="poll-switchitem-factory.html">pollSwitchitemFactory</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-poll-switch-item-factory/index.html">PollSwitchItemFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-poll-switch-item-factory/index.html">PollSwitchItemFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1888873741%2FProperties%2F29477497" anchor-label="quotedAttachmentFactories" id="1888873741%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="quoted-attachment-factories.html"><span>quoted</span><wbr><span>Attachment</span><wbr><span><span>Factories</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1888873741%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="quoted-attachment-factories.html">quotedAttachmentFactories</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../io.getstream.chat.android.compose.ui.attachments/-attachment-factory/index.html">AttachmentFactory</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Retrieves the current list of quoted <a href="../../io.getstream.chat.android.compose.ui.attachments/-attachment-factory/index.html">AttachmentFactory</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-877377838%2FProperties%2F29477497" anchor-label="quotedMessageTextFormatter" id="-877377838%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="quoted-message-text-formatter.html"><span>quoted</span><wbr><span>Message</span><wbr><span>Text</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-877377838%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="quoted-message-text-formatter.html">quotedMessageTextFormatter</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-quoted-message-text-formatter/index.html">QuotedMessageTextFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-quoted-message-text-formatter/index.html">QuotedMessageTextFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1482158206%2FProperties%2F29477497" anchor-label="reactionIconFactory" id="-1482158206%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reaction-icon-factory.html"><span>reaction</span><wbr><span>Icon</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1482158206%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="reaction-icon-factory.html">reactionIconFactory</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-reaction-icon-factory/index.html">ReactionIconFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current reaction icon factory at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-34457060%2FProperties%2F29477497" anchor-label="reactionOptionsTheme" id="-34457060%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reaction-options-theme.html"><span>reaction</span><wbr><span>Options</span><wbr><span><span>Theme</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-34457060%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="reaction-options-theme.html">reactionOptionsTheme</a><span class="token operator">: </span><a href="../-reaction-options-theme/index.html">ReactionOptionsTheme</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-reaction-options-theme/index.html">ReactionOptionsTheme</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1103687721%2FProperties%2F29477497" anchor-label="reactionPushEmojiFactory" id="1103687721%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="reaction-push-emoji-factory.html"><span>reaction</span><wbr><span>Push</span><wbr><span>Emoji</span><wbr><span><span>Factory</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1103687721%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="reaction-push-emoji-factory.html">reactionPushEmojiFactory</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-reaction-push-emoji-factory/index.html">ReactionPushEmojiFactory</a></div><div class="brief "><p class="paragraph">Retrieves the current reaction push emoji factory at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1452715208%2FProperties%2F29477497" anchor-label="readCountEnabled" id="1452715208%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="read-count-enabled.html"><span>read</span><wbr><span>Count</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1452715208%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="read-count-enabled.html">readCountEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1964027952%2FProperties%2F29477497" anchor-label="searchResultNameFormatter" id="-1964027952%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="search-result-name-formatter.html"><span>search</span><wbr><span>Result</span><wbr><span>Name</span><wbr><span><span>Formatter</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1964027952%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="search-result-name-formatter.html">searchResultNameFormatter</a><span class="token operator">: </span><a href="../../io.getstream.chat.android.compose.ui.util/-search-result-name-formatter/index.html">SearchResultNameFormatter</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../io.getstream.chat.android.compose.ui.util/-search-result-name-formatter/index.html">SearchResultNameFormatter</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-431818050%2FProperties%2F29477497" anchor-label="shapes" id="-431818050%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="shapes.html"><span><span>shapes</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-431818050%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="shapes.html">shapes</a><span class="token operator">: </span><a href="../-stream-shapes/index.html">StreamShapes</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-stream-shapes/index.html">StreamShapes</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="709757010%2FProperties%2F29477497" anchor-label="showOriginalTranslationEnabled" id="709757010%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="show-original-translation-enabled.html"><span>show</span><wbr><span>Original</span><wbr><span>Translation</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="709757010%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="show-original-translation-enabled.html">showOriginalTranslationEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="show-original-translation-enabled.html">showOriginalTranslationEnabled</a> value at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-126719247%2FProperties%2F29477497" anchor-label="streamCdnImageResizing" id="-126719247%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-cdn-image-resizing.html"><span>stream</span><wbr><span>Cdn</span><wbr><span>Image</span><wbr><span><span>Resizing</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-126719247%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-cdn-image-resizing.html">streamCdnImageResizing</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.images.resizing/-stream-cdn-image-resizing/index.html">StreamCdnImageResizing</a></div><div class="brief "><p class="paragraph">Retrieves the value of <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.images.resizing/-stream-cdn-image-resizing/index.html">StreamCdnImageResizing</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1734170978%2FProperties%2F29477497" anchor-label="streamDownloadAttachmentUriGenerator" id="-1734170978%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-download-attachment-uri-generator.html"><span>stream</span><wbr><span>Download</span><wbr><span>Attachment</span><wbr><span>Uri</span><wbr><span><span>Generator</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1734170978%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-download-attachment-uri-generator.html">streamDownloadAttachmentUriGenerator</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-download-attachment-uri-generator/index.html">DownloadAttachmentUriGenerator</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-664834798%2FProperties%2F29477497" anchor-label="streamDownloadRequestInterceptor" id="-664834798%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-download-request-interceptor.html"><span>stream</span><wbr><span>Download</span><wbr><span>Request</span><wbr><span><span>Interceptor</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-664834798%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-download-request-interceptor.html">streamDownloadRequestInterceptor</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-download-request-interceptor/index.html">DownloadRequestInterceptor</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1900586630%2FProperties%2F29477497" anchor-label="streamImageAssetTransformer" id="1900586630%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-image-asset-transformer.html"><span>stream</span><wbr><span>Image</span><wbr><span>Asset</span><wbr><span><span>Transformer</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1900586630%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-image-asset-transformer.html">streamImageAssetTransformer</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-image-asset-transformer/index.html">ImageAssetTransformer</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-image-asset-transformer/index.html">ImageAssetTransformer</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-592736492%2FProperties%2F29477497" anchor-label="streamImageHeadersProvider" id="-592736492%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-image-headers-provider.html"><span>stream</span><wbr><span>Image</span><wbr><span>Headers</span><wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-592736492%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-image-headers-provider.html">streamImageHeadersProvider</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-image-headers-provider/index.html">ImageHeadersProvider</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-image-headers-provider/index.html">ImageHeadersProvider</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="500160520%2FProperties%2F29477497" anchor-label="streamMediaRecorder" id="500160520%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="stream-media-recorder.html"><span>stream</span><wbr><span>Media</span><wbr><span><span>Recorder</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="500160520%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="stream-media-recorder.html">streamMediaRecorder</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.sdk.chat.audio.recording/-stream-media-recorder/index.html">StreamMediaRecorder</a></div><div class="brief "><p class="paragraph">Retrieves the current list of <a href="../../../stream-chat-android-ui-common/io.getstream.sdk.chat.audio.recording/-stream-media-recorder/index.html">StreamMediaRecorder</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-812642542%2FProperties%2F29477497" anchor-label="timeProvider" id="-812642542%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="time-provider.html"><span>time</span><wbr><span><span>Provider</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-812642542%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="time-provider.html">timeProvider</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-time-provider/index.html">TimeProvider</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.helper/-time-provider/index.html">TimeProvider</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="616228769%2FProperties%2F29477497" anchor-label="typography" id="616228769%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="typography.html"><span><span>typography</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="616228769%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="typography.html">typography</a><span class="token operator">: </span><a href="../-stream-typography/index.html">StreamTypography</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../-stream-typography/index.html">StreamTypography</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-392267327%2FProperties%2F29477497" anchor-label="useDefaultSystemMediaPicker" id="-392267327%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="use-default-system-media-picker.html"><span>use</span><wbr><span>Default</span><wbr><span>System</span><wbr><span>Media</span><wbr><span><span>Picker</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-392267327%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="use-default-system-media-picker.html">useDefaultSystemMediaPicker</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Retrieves the current flag for the "System Attachments Picker" at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1230465526%2FProperties%2F29477497" anchor-label="userPresence" id="-1230465526%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="user-presence.html"><span>user</span><wbr><span><span>Presence</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1230465526%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="user-presence.html">userPresence</a><span class="token operator">: </span><a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.model/-user-presence/index.html">UserPresence</a></div><div class="brief "><p class="paragraph">Retrieves the current <a href="../../../stream-chat-android-ui-common/io.getstream.chat.android.ui.common.model/-user-presence/index.html">UserPresence</a> at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-864661167%2FProperties%2F29477497" anchor-label="videoThumbnailsEnabled" id="-864661167%2FProperties%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+          <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="video-thumbnails-enabled.html"><span>video</span><wbr><span>Thumbnails</span><wbr><span><span>Enabled</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-864661167%2FProperties%2F29477497"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":stream-chat-android-compose:dokkaHtmlPartial/release"><div class="symbol monospace"><div class="block"><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a></div><div class="block"><span class="token annotation builtin">@get:</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/ReadOnlyComposable.html"><span class="token annotation builtin">ReadOnlyComposable</span></a></div></div><span class="token keyword">val </span><a href="video-thumbnails-enabled.html">videoThumbnailsEnabled</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a></div><div class="brief "><p class="paragraph">Retrieves the value of <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a> dictating whether video thumbnails are enabled at the call site's position in the hierarchy.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
