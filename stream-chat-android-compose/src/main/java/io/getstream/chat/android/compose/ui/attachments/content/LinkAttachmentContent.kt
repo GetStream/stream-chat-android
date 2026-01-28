@@ -75,44 +75,10 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  *
  * When clicking it, we open the preview link.
  *
- * @param attachmentState - The state of the attachment, holding the root modifier, the message
- * and the onLongItemClick handler.
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
- * @param modifier Modifier for styling.
- * @param onItemClick Lambda called when an item gets clicked.
- */
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-@Deprecated(
-    message = "Use the version with the `onItemClick` parameter that accepts a LinkAttachmentClickData.",
-    replaceWith = ReplaceWith(
-        expression = "LinkAttachmentContent(attachmentState, linkDescriptionMaxLines, modifier, onItemClick)",
-    ),
-)
-public fun LinkAttachmentContent(
-    attachmentState: AttachmentState,
-    linkDescriptionMaxLines: Int,
-    modifier: Modifier = Modifier,
-    onItemClick: (context: Context, url: String) -> Unit,
-) {
-    LinkAttachmentContent(
-        state = attachmentState,
-        linkDescriptionMaxLines = linkDescriptionMaxLines,
-        modifier = modifier,
-        onItemClick = { onItemClick(it.context, it.url) },
-    )
-}
-
-/**
- * Builds a link attachment message, which shows the link image preview, the title of the link
- * as well as its description.
- *
- * When clicking it, we open the preview link.
- *
  * @param state - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param modifier Modifier for styling.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -120,8 +86,8 @@ public fun LinkAttachmentContent(
 @Suppress("LongMethod")
 public fun LinkAttachmentContent(
     state: AttachmentState,
-    linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
+    linkDescriptionMaxLines: Int = 2,
     onItemClick: (LinkAttachmentClickData) -> Unit = {
         onLinkAttachmentContentClick(it.context, it.url)
     },
@@ -142,6 +108,7 @@ public fun LinkAttachmentContent(
 
     Column(
         modifier = modifier
+            .padding(MessageStyling.messageSectionPadding)
             .clip(ChatTheme.shapes.attachment)
             .background(getLinkBackgroundColor(state.isMine))
             .combinedClickable(

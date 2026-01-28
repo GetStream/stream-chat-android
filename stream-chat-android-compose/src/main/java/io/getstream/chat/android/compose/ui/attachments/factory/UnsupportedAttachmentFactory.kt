@@ -16,12 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
@@ -29,11 +24,4 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public object UnsupportedAttachmentFactory : AttachmentFactory(
     type = Type.BuiltIn.UNSUPPORTED,
     canHandle = { true },
-    content = @Composable { modifier, _ ->
-        UnsupportedAttachmentContent(
-            modifier = modifier
-                .wrapContentHeight()
-                .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
-        )
-    },
 )

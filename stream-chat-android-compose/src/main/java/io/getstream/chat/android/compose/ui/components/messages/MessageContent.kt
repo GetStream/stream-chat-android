@@ -22,11 +22,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.ColorImage
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isFile
@@ -38,10 +45,14 @@ import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -174,11 +185,9 @@ internal fun DefaultMessageContent(
         val info = message.rememberMessageInfo()
 
         if (info.hasUploads) {
-            MessageAttachmentsContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            FileUploadContent(
+                modifier = Modifier,
+                attachmentState = attachmentState,
             )
         } else {
             if (info.hasMedia) {
@@ -195,6 +204,13 @@ internal fun DefaultMessageContent(
                 )
             }
 
+            if (info.hasLinks) {
+                componentFactory.LinkAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
             if (info.hasFiles) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,
@@ -202,11 +218,18 @@ internal fun DefaultMessageContent(
                 )
             }
 
-            MessageAttachmentsContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            if (info.hasRecordings) {
+                componentFactory.AudioRecordAttachmentContent(
+                    modifier = Modifier,
+                    attachmentState = attachmentState,
+                )
+            }
+        }
+
+        if (info.hasUnknown) {
+            componentFactory.CustomAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
             )
         }
 
@@ -221,7 +244,7 @@ internal fun DefaultMessageContent(
             )
         }
 
-        if ((!info.displaysFullSizeAttachment || info.hasFiles) && !info.hasUploads) {
+        if (!info.displaysFullSizeAttachment && !info.hasUploads) {
             Spacer(Modifier.height(MessageStyling.contentPadding))
         }
     }

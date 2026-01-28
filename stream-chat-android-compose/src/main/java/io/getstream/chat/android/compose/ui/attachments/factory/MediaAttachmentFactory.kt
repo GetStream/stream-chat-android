@@ -93,7 +93,6 @@ public class MediaAttachmentFactory(
             previewItemOverlayContent = previewItemOverlayContent,
         )
     },
-    content = { _, _ -> },
 )
 
 /**
