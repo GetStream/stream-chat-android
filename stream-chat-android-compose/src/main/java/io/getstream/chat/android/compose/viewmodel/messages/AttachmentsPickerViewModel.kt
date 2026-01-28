@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -94,15 +93,9 @@ public class AttachmentsPickerViewModel(
      * If no permission is granted, it will not try to load data to avoid crashes.
      *
      * @param attachmentsPickerMode The currently selected picker mode.
-     * @param hasPermission Handler to check if there is permission for wanted action.
      */
-    public fun changeAttachmentPickerMode(
-        attachmentsPickerMode: AttachmentsPickerMode,
-        hasPermission: () -> Boolean = { true },
-    ) {
+    public fun changeAttachmentPickerMode(attachmentsPickerMode: AttachmentsPickerMode) {
         this.attachmentsPickerMode = attachmentsPickerMode
-
-        if (hasPermission()) loadAttachmentsData(attachmentsPickerMode)
     }
 
     /**
@@ -125,17 +118,6 @@ public class AttachmentsPickerViewModel(
         changeAttachmentState(showAttachments = !isShowingAttachments)
     }
 
-    @VisibleForTesting
-    internal fun loadAttachmentsData(attachmentsPickerMode: AttachmentsPickerMode) {
-        if (attachmentsPickerMode == Images) {
-            val images = storageHelper.getMedia().map { AttachmentPickerItemState(attachmentMetaData = it) }
-            this.attachments = images
-        } else if (attachmentsPickerMode == Files) {
-            val files = storageHelper.getFiles().map { AttachmentPickerItemState(attachmentMetaData = it) }
-            this.attachments = files
-        }
-    }
-
     /**
      * Triggered when an [AttachmentMetaData] is selected in the list.
      *
@@ -153,6 +135,7 @@ public class AttachmentsPickerViewModel(
                     index == itemIndex -> item.copy(selection = Selection.Unselected)
                     item.selection is Selection.Selected && item.selection.count > removedCount ->
                         item.copy(selection = Selection.Selected(count = item.selection.count - 1))
+
                     else -> item
                 }
             }
