@@ -71,6 +71,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix file picker and media capture not working in cases when the attachments picker composable is disposed. [#6104](https://github.com/GetStream/stream-chat-android/pull/6104)
 - Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 ### ⬆️ Improved
