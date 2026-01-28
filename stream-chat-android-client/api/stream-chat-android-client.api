@@ -3600,8 +3600,6 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 	public static final fun isFile (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isGiphy (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isImage (Lio/getstream/chat/android/models/Attachment;)Z
-	public static final fun isImgur (Lio/getstream/chat/android/models/Attachment;)Z
-	public static final fun isLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isVideo (Lio/getstream/chat/android/models/Attachment;)Z
 }
 

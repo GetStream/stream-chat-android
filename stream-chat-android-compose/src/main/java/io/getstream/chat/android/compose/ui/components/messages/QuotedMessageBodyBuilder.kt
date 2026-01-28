@@ -197,7 +197,7 @@ internal class QuotedMessageBodyBuilder(
 
                 type == AttachmentType.GIPHY -> giphyAttachment = attachment
 
-                type == AttachmentType.IMAGE || type == AttachmentType.IMGUR -> {
+                type == AttachmentType.IMAGE -> {
                     imageCount++
                     fileCount++
                     mediaPreviewData = attachment.upload ?: attachment.imagePreviewUrl
