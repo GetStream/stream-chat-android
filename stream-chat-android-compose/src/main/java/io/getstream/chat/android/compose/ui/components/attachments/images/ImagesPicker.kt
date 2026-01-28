@@ -244,7 +244,7 @@ private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
             .border(
                 width = 1.dp,
                 color = ChatTheme.colors.borders,
-                shape = RoundedCornerShape(8.dp),
+                shape = ItemShape,
             )
             .clickable(
                 onClick = onPickMoreClick,
