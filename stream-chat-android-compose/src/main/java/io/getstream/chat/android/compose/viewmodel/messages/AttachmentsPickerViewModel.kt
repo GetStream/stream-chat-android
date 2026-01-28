@@ -35,9 +35,14 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -55,9 +60,17 @@ public class AttachmentsPickerViewModel(
     /**
      * The information for the current [Channel].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     public val channel: Channel by channelState
         .filterNotNull()
-        .map(ChannelState::toChannel)
+        .flatMapLatest { state ->
+            combine(
+                state.channelData,
+                state.channelConfig,
+            ) { _, _ ->
+                state.toChannel()
+            }
+        }
         .asState(viewModelScope, Channel())
 
     /**

@@ -23,6 +23,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,7 +45,7 @@ import org.mockito.kotlin.whenever
 internal class AttachmentsPickerViewModelTest {
 
     private val storageHelper: StorageHelperWrapper = mock()
-    private val channelState = MutableStateFlow(mock<ChannelState>())
+    private val channelState = MutableStateFlow(mockChannelState())
 
     @Test
     fun `Given images on the file system When showing attachments picker Should show available images`() {
@@ -277,6 +279,15 @@ internal class AttachmentsPickerViewModelTest {
 
         viewModel.toggleAttachmentState()
         assertFalse(viewModel.isShowingAttachments)
+    }
+
+    private fun mockChannelState(): ChannelState {
+        val channel = randomChannel()
+        return mock {
+            on { channelData } doReturn MutableStateFlow(channel.toChannelData())
+            on { channelConfig } doReturn MutableStateFlow(channel.config)
+            on { toChannel() } doReturn channel
+        }
     }
 
     companion object {
