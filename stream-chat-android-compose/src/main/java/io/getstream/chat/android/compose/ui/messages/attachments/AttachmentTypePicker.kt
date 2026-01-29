@@ -24,11 +24,7 @@ import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 internal fun AttachmentTypePicker(
     channel: Channel,
     messageMode: MessageMode,
+    selectedAttachmentsPickerMode: AttachmentsPickerMode,
     onPickerTypeClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
     content: @Composable (AttachmentsPickerMode) -> Unit,
 ) {
@@ -67,8 +64,6 @@ internal fun AttachmentTypePicker(
         }
     }
 
-    var selectedModeIndex by rememberSaveable { mutableIntStateOf(0) }
-
     Row(
         modifier = Modifier
             .padding(
@@ -79,23 +74,20 @@ internal fun AttachmentTypePicker(
     ) {
         attachmentsPickerModes.forEachIndexed { index, attachmentsPickerMode ->
 
-            val isSelected = index == selectedModeIndex
+            val isSelected = attachmentsPickerMode == selectedAttachmentsPickerMode
 
             AttachmentPickerTypeInfos[attachmentsPickerMode]?.let { typeInfo ->
 
                 AttachmentPickerToggleButton(
                     pickerTypeInfo = typeInfo,
                     isSelected = isSelected,
-                    onClick = {
-                        selectedModeIndex = index
-                        onPickerTypeClick(index, attachmentsPickerMode)
-                    },
+                    onClick = { onPickerTypeClick(index, attachmentsPickerMode) },
                 )
             }
         }
     }
 
-    content(attachmentsPickerModes[selectedModeIndex])
+    content(selectedAttachmentsPickerMode)
 }
 
 @Composable
@@ -173,8 +165,9 @@ private fun AttachmentTypePickerPreview() {
 @Composable
 internal fun AttachmentTypePicker() {
     AttachmentTypePicker(
-        messageMode = MessageMode.Normal,
         channel = Channel(),
+        messageMode = MessageMode.Normal,
+        selectedAttachmentsPickerMode = Images,
     ) {}
 }
 
@@ -189,10 +182,11 @@ private fun AttachmentTypePickerWithPollsPreview() {
 @Composable
 internal fun AttachmentTypePickerWithPolls() {
     AttachmentTypePicker(
-        messageMode = MessageMode.Normal,
         channel = Channel(
             ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
             config = Config(pollsEnabled = true),
         ),
+        messageMode = MessageMode.Normal,
+        selectedAttachmentsPickerMode = Poll,
     ) {}
 }

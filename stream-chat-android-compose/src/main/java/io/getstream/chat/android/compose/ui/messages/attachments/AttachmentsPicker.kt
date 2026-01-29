@@ -23,8 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -98,8 +96,9 @@ public fun AttachmentsPicker(
     ) {
         Column {
             AttachmentTypePicker(
-                messageMode = messageMode,
                 channel = channel,
+                messageMode = messageMode,
+                selectedAttachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
                 onPickerTypeClick = { index, attachmentPickerMode ->
                     onTabClick(index, attachmentPickerMode)
                     attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode)
