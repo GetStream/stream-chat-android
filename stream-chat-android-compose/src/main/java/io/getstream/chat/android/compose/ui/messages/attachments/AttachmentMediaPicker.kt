@@ -61,7 +61,7 @@ internal fun AttachmentMediaPicker(
     val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
         if (value != VisualMediaAccess.DENIED) {
             processingViewModel.getMediaAsync { metadata ->
-                val items = metadata.map { AttachmentPickerItemState(attachmentMetaData = it) }
+                val items = metadata.map(::AttachmentPickerItemState)
                 onAttachmentsChanged(items)
             }
         }

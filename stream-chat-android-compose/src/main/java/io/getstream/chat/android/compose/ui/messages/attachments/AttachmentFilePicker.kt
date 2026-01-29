@@ -83,7 +83,7 @@ internal fun AttachmentFilePicker(
     val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
         if (value != FilesAccess.DENIED) {
             processingViewModel.getFilesAsync { metadata ->
-                val items = metadata.map { AttachmentPickerItemState(attachmentMetaData = it) }
+                val items = metadata.map(::AttachmentPickerItemState)
                 onAttachmentsChanged(items)
             }
         }

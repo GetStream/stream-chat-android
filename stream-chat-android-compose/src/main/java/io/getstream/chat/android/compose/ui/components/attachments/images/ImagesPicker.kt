@@ -66,6 +66,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
 private val ItemShape = RoundedCornerShape(2.dp)
+private val SelectionIndicatorSize = 24.dp
 
 /**
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
@@ -148,34 +149,66 @@ internal fun DefaultImagesPickerItem(
         )
 
         if (imageItem.selection is Selection.Selected) {
-            Box(
+            SelectedIndicator(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(StreamTokens.spacingXs)
-                    .size(24.dp)
-                    .background(
-                        shape = CircleShape,
-                        color = ChatTheme.colors.borderCoreOnDark,
-                    )
-                    .padding(2.dp)
-                    .background(
-                        shape = CircleShape,
-                        color = ChatTheme.colors.accentPrimary,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = imageItem.selection.count.toString(),
-                    color = ChatTheme.colors.badgeText,
-                    style = ChatTheme.typography.numericXl,
-                )
-            }
+                    .padding(StreamTokens.spacingXs),
+                selection = imageItem.selection,
+            )
+        } else {
+            UnselectedIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(StreamTokens.spacingXs),
+            )
         }
 
         if (isVideo) {
             VideoThumbnailOverlay(attachmentMetaData.videoLength)
         }
     }
+}
+
+@Composable
+private fun SelectedIndicator(
+    selection: Selection.Selected,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(SelectionIndicatorSize)
+            .background(
+                shape = CircleShape,
+                color = ChatTheme.colors.borderCoreOnDark,
+            )
+            .padding(2.dp)
+            .background(
+                shape = CircleShape,
+                color = ChatTheme.colors.accentPrimary,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = selection.count.toString(),
+            color = ChatTheme.colors.badgeText,
+            style = ChatTheme.typography.numericXl,
+        )
+    }
+}
+
+@Composable
+private fun UnselectedIndicator(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(SelectionIndicatorSize)
+            .border(
+                width = 2.dp,
+                shape = CircleShape,
+                color = ChatTheme.colors.borderCoreOnDark,
+            ),
+    )
 }
 
 /**
