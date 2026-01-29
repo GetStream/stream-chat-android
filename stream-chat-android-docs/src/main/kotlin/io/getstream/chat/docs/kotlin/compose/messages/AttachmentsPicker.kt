@@ -121,9 +121,8 @@ private object AttachmentsPickerHandlingActionsSnippet {
                                     composerViewModel.addSelectedAttachments(attachments)
                                 },
                                 onTabClick = { _, _ -> },
-                                onDismiss = { // Reset the UI state and dismiss the picker
+                                onDismiss = { // Dismiss the picker
                                     attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                                    attachmentsPickerViewModel.dismissAttachments()
                                 }
                             )
                         }

@@ -82,11 +82,6 @@ public class AttachmentsPickerViewModel(
     public var attachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
-     * List of polls available, from the system.
-     */
-    public var polls: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
-
-    /**
      * Gives us info if there are any attachment items that are selected.
      */
     public val hasPickedAttachments: Boolean
@@ -117,7 +112,7 @@ public class AttachmentsPickerViewModel(
         isShowingAttachments = showAttachments
 
         if (!showAttachments) {
-            dismissAttachments()
+            resetState()
         }
     }
 
@@ -226,11 +221,7 @@ public class AttachmentsPickerViewModel(
         }
     }
 
-    /**
-     * Triggered when we dismiss the attachments picker. Resets the picker mode to images and
-     * clears the list until the user needs them again.
-     */
-    public fun dismissAttachments() {
+    private fun resetState() {
         attachmentsPickerMode = Images
         attachments = emptyList()
     }

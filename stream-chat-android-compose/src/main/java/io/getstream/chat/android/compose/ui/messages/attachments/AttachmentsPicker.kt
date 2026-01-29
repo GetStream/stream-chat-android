@@ -70,10 +70,7 @@ public fun AttachmentsPicker(
     onTabClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
     onAttachmentsSelected: (List<Attachment>) -> Unit = {},
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
-    onDismiss: () -> Unit = {
-        attachmentsPickerViewModel.changeAttachmentState(false)
-        attachmentsPickerViewModel.dismissAttachments()
-    },
+    onDismiss: () -> Unit = { attachmentsPickerViewModel.changeAttachmentState(false) },
 ) {
     val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
     val dismissAction = {

@@ -289,10 +289,7 @@ class MessagesActivity : ComponentActivity() {
                             composerViewModel.createPoll(action.pollConfig)
                         }
                     },
-                    onDismiss = {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
-                    },
+                    onDismiss = { attachmentsPickerViewModel.changeAttachmentState(false) },
                     messageMode = messageMode,
                 )
             }
