@@ -295,7 +295,7 @@ internal fun SingleMediaAttachment(
         }
     }
 
-    val shouldBeFullSize = message.text.isEmpty() && message.replyTo == null
+    val shouldBeFullSize = message.text.isEmpty() && message.replyTo == null && message.attachments.size == 1
     MediaAttachmentContentItem(
         attachment = attachment,
         modifier = modifier

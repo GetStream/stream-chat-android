@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
@@ -134,10 +133,7 @@ public object StreamAttachmentFactories {
             contentScale = contentScale,
             onContentItemClick = onGiphyContentItemClick,
         ),
-        MediaAttachmentFactory(
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onMediaContentItemClick,
-        ),
+        MediaAttachmentFactory(),
         FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
@@ -148,7 +144,6 @@ public object StreamAttachmentFactories {
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
-        skipEnrichUrl: Boolean = false,
         onUploadContentItemClick: (
             Attachment,
             List<AttachmentPreviewHandler>,
@@ -158,18 +153,6 @@ public object StreamAttachmentFactories {
         },
         onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {
             onGiphyAttachmentContentClick(it.context, it.url)
-        },
-        onMediaContentItemClick: (MediaAttachmentClickData) -> Unit = {
-            onMediaAttachmentContentItemClick(
-                it.mediaGalleryPreviewLauncher,
-                it.message,
-                it.attachmentPosition,
-                it.videoThumbnailsEnabled,
-                it.downloadAttachmentUriGenerator,
-                it.downloadRequestInterceptor,
-                it.streamCdnImageResizing,
-                it.skipEnrichUrl,
-            )
         },
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
@@ -193,10 +176,7 @@ public object StreamAttachmentFactories {
             contentScale = contentScale,
             onItemClick = onGiphyContentItemClick,
         ),
-        MediaAttachmentFactory(
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onMediaContentItemClick,
-        ),
+        MediaAttachmentFactory(),
         FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }

@@ -199,6 +199,13 @@ internal fun DefaultMessageContent(
                 )
             }
 
+            if (AttachmentType.IMAGE in attachmentTypes || AttachmentType.VIDEO in attachmentTypes) {
+                componentFactory.MediaAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
             MessageAttachmentsContent(
                 message = message,
                 currentUser = currentUser,

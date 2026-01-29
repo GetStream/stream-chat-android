@@ -2911,6 +2911,17 @@ public interface ChatComponentFactory {
         )
     }
 
+    @Composable
+    public fun MediaAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
     /**
      * Factory method for creating a file attachment item.
      *

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,20 +31,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
-import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
-import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
  * An [AttachmentFactory] that is able to handle Image and Video attachments.
@@ -100,81 +92,8 @@ public class MediaAttachmentFactory(
             previewItemOverlayContent = previewItemOverlayContent,
         )
     },
-    content = @Composable { modifier, state ->
-        MediaAttachmentContent(
-            modifier = modifier,
-            state = state,
-            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-            itemOverlayContent = itemOverlayContent,
-            skipEnrichUrl = skipEnrichUrl,
-            onItemClick = onContentItemClick,
-        )
-    },
-) {
-
-    /**
-     * Creates a new instance of [MediaAttachmentFactory] with the default parameters.
-     */
-    @Deprecated(
-        message = "Use the constructor that does not take onContentItemClick parameter.",
-        replaceWith = ReplaceWith(
-            "MediaAttachmentFactory(" +
-                "maximumNumberOfPreviewedItems, " +
-                "skipEnrichUrl, " +
-                "onContentItemClick, " +
-                "canHandle, " +
-                "itemOverlayContent, " +
-                "previewItemOverlayContent" +
-                ")",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    public constructor(
-        maximumNumberOfPreviewedItems: Int = 4,
-        skipEnrichUrl: Boolean = false,
-        onContentItemClick: (
-            mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
-            message: Message,
-            attachmentPosition: Int,
-            videoThumbnailsEnabled: Boolean,
-            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-            downloadRequestInterceptor: DownloadRequestInterceptor,
-            streamCdnImageResizing: StreamCdnImageResizing,
-            skipEnrichUrl: Boolean,
-        ) -> Unit,
-        canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
-            attachments.all { it.isImage() || it.isVideo() }
-        },
-        itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
-            if (attachmentType == AttachmentType.VIDEO) {
-                DefaultItemOverlayContent()
-            }
-        },
-        previewItemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
-            if (attachmentType == AttachmentType.VIDEO) {
-                DefaultPreviewItemOverlayContent()
-            }
-        },
-    ) : this(
-        maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-        skipEnrichUrl = skipEnrichUrl,
-        onContentItemClick = {
-            onContentItemClick(
-                it.mediaGalleryPreviewLauncher,
-                it.message,
-                it.attachmentPosition,
-                it.videoThumbnailsEnabled,
-                it.downloadAttachmentUriGenerator,
-                it.downloadRequestInterceptor,
-                it.streamCdnImageResizing,
-                skipEnrichUrl,
-            )
-        },
-        canHandle = canHandle,
-        itemOverlayContent = itemOverlayContent,
-        previewItemOverlayContent = previewItemOverlayContent,
-    )
-}
+    content = { _, _ -> },
+)
 
 /**
  * Represents the default play button that is
