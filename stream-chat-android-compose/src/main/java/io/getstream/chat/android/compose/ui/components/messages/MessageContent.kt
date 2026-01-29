@@ -207,6 +207,13 @@ internal fun DefaultMessageContent(
                 )
             }
 
+            if (info.hasGiphys) {
+                componentFactory.GiphyAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
             if (info.hasFiles) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,

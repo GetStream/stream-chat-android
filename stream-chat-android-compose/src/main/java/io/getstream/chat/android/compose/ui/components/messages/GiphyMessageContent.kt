@@ -41,7 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
@@ -106,11 +106,15 @@ public fun GiphyMessageContent(
             )
         }
 
-        MessageAttachmentsContent(
+        val attachmentState = AttachmentState(
             message = message,
-            currentUser = currentUser,
+            isMine = message.user.id == currentUser?.id,
             onLongItemClick = {},
             onMediaGalleryPreviewResult = {},
+        )
+        ChatTheme.componentFactory.GiphyAttachmentContent(
+            modifier = modifier,
+            state = attachmentState,
         )
 
         Spacer(

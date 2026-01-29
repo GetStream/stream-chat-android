@@ -2914,6 +2914,17 @@ public interface ChatComponentFactory {
     }
 
     @Composable
+    public fun GiphyAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    @Composable
     public fun MediaAttachmentContent(
         state: AttachmentState,
         modifier: Modifier,

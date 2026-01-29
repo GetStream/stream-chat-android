@@ -53,10 +53,12 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -147,7 +149,7 @@ public fun GiphyAttachmentContent(
 public fun GiphyAttachmentContent(
     state: AttachmentState,
     modifier: Modifier = Modifier,
-    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
     onItemClick: (GiphyAttachmentClickData) -> Unit = {
@@ -213,10 +215,14 @@ public fun GiphyAttachmentContent(
         }
     }
 
+    val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     Box(
         modifier = modifier
             .size(giphyDimensions)
-            .applyIf(message.text.isNotEmpty()) { clip(ChatTheme.shapes.attachment) }
+            .applyIf(!shouldBeFullSize) {
+                padding(MessageStyling.messageSectionPadding)
+                    .clip(ChatTheme.shapes.attachment)
+            }
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
