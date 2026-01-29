@@ -39,7 +39,6 @@ import androidx.compose.ui.util.fastAny
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
 import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
@@ -103,7 +102,7 @@ public fun MessageText(
     ) {
         ClickableText(
             modifier = modifier
-                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs)
+                .padding(MessageStyling.textPadding)
                 .testTag("Stream_MessageClickableText"),
             text = styledText,
             style = style,
@@ -124,7 +123,7 @@ public fun MessageText(
     } else {
         Text(
             modifier = modifier
-                .padding(horizontal = StreamTokens.spacingSm, vertical = StreamTokens.spacingXs)
+                .padding(MessageStyling.textPadding)
                 .clipToBounds()
                 .testTag("Stream_MessageText"),
             text = styledText,

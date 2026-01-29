@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -101,7 +102,7 @@ public fun FileAttachmentContent(
             if (attachment.isFile() || attachment.isAudio()) {
                 ChatTheme.componentFactory.FileAttachmentItem(
                     modifier = Modifier
-                        .padding(2.dp)
+                        .padding(MessageStyling.messageSectionPadding)
                         .fillMaxWidth()
                         .combinedClickable(
                             indication = null,

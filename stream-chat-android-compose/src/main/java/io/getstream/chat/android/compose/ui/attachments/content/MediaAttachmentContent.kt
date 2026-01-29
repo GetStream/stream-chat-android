@@ -79,6 +79,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -86,6 +87,7 @@ import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.compose.ui.util.ifNotNull
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -236,7 +238,7 @@ public fun MediaAttachmentContent(
         Row(
             modifier = modifier
                 .semantics { this.contentDescription = description }
-                .padding(StreamTokens.spacingXs),
+                .padding(MessageStyling.messageSectionPadding),
             horizontalArrangement = Arrangement.spacedBy(gridSpacing),
         ) {
             MultipleMediaAttachmentsColumns(
@@ -295,11 +297,11 @@ internal fun SingleMediaAttachment(
         }
     }
 
-    val shouldBeFullSize = message.text.isEmpty() && message.replyTo == null && message.attachments.size == 1
+    val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     MediaAttachmentContentItem(
         attachment = attachment,
         modifier = modifier
-            .applyIf(!shouldBeFullSize) { padding(StreamTokens.spacingXs) }
+            .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
             .heightIn(
                 max = if (isVideo) {
                     ChatTheme.dimens.attachmentsContentVideoMaxHeight

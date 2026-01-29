@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +34,8 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -165,7 +169,7 @@ internal fun DefaultMessageContent(
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier,
                 message = quotedMessage,
                 currentUser = currentUser,
                 replyMessage = message,
@@ -174,9 +178,7 @@ internal fun DefaultMessageContent(
             )
         }
 
-        val attachmentTypes = remember(message.attachments) {
-            message.attachments.mapTo(mutableSetOf(), Attachment::type)
-        }
+        val info = message.rememberMessageInfo()
         val attachmentState = AttachmentState(
             message = message,
             isMine = message.user.id == currentUser?.id,
@@ -192,14 +194,14 @@ internal fun DefaultMessageContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             )
         } else {
-            if (AttachmentType.FILE in attachmentTypes || AttachmentType.AUDIO in attachmentTypes) {
+            if (AttachmentType.FILE in info.attachmentTypes || AttachmentType.AUDIO in info.attachmentTypes) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,
                     attachmentState = attachmentState,
                 )
             }
 
-            if (AttachmentType.IMAGE in attachmentTypes || AttachmentType.VIDEO in attachmentTypes) {
+            if (AttachmentType.IMAGE in info.attachmentTypes || AttachmentType.VIDEO in info.attachmentTypes) {
                 componentFactory.MediaAttachmentContent(
                     modifier = Modifier,
                     state = attachmentState,
@@ -216,6 +218,7 @@ internal fun DefaultMessageContent(
 
         if (message.text.isNotEmpty()) {
             componentFactory.MessageTextContent(
+                modifier = Modifier,
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
@@ -223,5 +226,26 @@ internal fun DefaultMessageContent(
                 onUserMentionClick = onUserMentionClick,
             )
         }
+
+        if (!info.displaysFullSizeAttachment) {
+            Spacer(Modifier.height(MessageStyling.contentPadding))
+        }
     }
 }
+
+@Composable
+private fun Message.rememberMessageInfo(): MessageContentInfo {
+    return remember(this) {
+        val attachmentTypes = attachments.mapTo(mutableSetOf(), Attachment::type)
+
+        MessageContentInfo(
+            attachmentTypes = attachmentTypes,
+            displaysFullSizeAttachment = shouldBeDisplayedAsFullSizeAttachment(),
+        )
+    }
+}
+
+private data class MessageContentInfo(
+    val attachmentTypes: Set<String?>,
+    val displaysFullSizeAttachment: Boolean,
+)

@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
-import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerBox
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -63,9 +62,12 @@ import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -152,13 +154,15 @@ public fun AudioRecordAttachmentContent(
 
     val playerState by viewModel.state.collectAsStateWithLifecycle()
 
-    val isMine = attachmentState.message.isMine(getCurrentUserId())
-    Column(modifier = modifier) {
+    val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
+    Column(
+        modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
+    ) {
         audioRecordings.forEach { audioRecording ->
             AudioRecordAttachmentContentItem(
                 attachment = audioRecording,
                 playerState = playerState,
-                isMine = isMine,
+                isMine = attachmentState.isMine,
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },
