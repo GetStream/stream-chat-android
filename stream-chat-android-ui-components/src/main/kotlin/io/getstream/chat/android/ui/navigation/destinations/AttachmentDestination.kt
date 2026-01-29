@@ -66,7 +66,7 @@ public open class AttachmentDestination(
                 when {
                     attachment.titleLink != null || attachment.ogUrl != null || attachment.assetUrl != null -> {
                         url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
-                        type = AttachmentType.LINK
+                        type = AttachmentType.IMAGE
                     }
 
                     attachment.isGif() -> {

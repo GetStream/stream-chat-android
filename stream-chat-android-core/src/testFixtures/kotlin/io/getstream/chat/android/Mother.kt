@@ -1208,12 +1208,10 @@ public fun randomAttachmentType(): String =
 
 public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.IMAGE,
-    AttachmentType.IMGUR,
     AttachmentType.GIPHY,
     AttachmentType.VIDEO,
     AttachmentType.AUDIO,
     AttachmentType.FILE,
-    AttachmentType.LINK,
     AttachmentType.AUDIO_RECORDING,
     AttachmentType.UNKNOWN,
 )

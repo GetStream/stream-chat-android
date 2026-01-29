@@ -12,11 +12,13 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `markDelivered` not working when switching users. [#6093](https://github.com/GetStream/stream-chat-android/pull/6093)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce `NotificationIdFactory` for customizing the default notification IDs. [#6072](https://github.com/GetStream/stream-chat-android/pull/6072)
+- Add `ChatClient.clearCacheAndTemporaryFiles(context: Context)` method for clearing cache and temporary files created by the SDK. [#6090](https://github.com/GetStream/stream-chat-android/pull/6090)
+- Add `team` property to the `MessageReadEvent`. [#6105](https://github.com/GetStream/stream-chat-android/pull/6105)
 
 ### ⚠️ Changed
 
@@ -35,7 +37,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix `message.updated` and `message.deleted` events unhiding the channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
 
 ### ⬆️ Improved
 
@@ -51,7 +52,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add poll results + poll option votes state/controllers to support pagination and error handling. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
@@ -59,14 +59,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
-- Fix poll dialogs layout on edge-to-edge devices by applying system bar insets. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+- Fix audio recording content stuck in 'held' state. [#6078](https://github.com/GetStream/stream-chat-android/pull/6078)
 
 ### ⬆️ Improved
-- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
 
 ### ✅ Added
-- Add XML poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
@@ -74,15 +71,12 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix audio recording race conditions. [#6077](https://github.com/GetStream/stream-chat-android/pull/6077)
-- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+- Fix file picker and media capture not working in cases when the attachments picker composable is disposed. [#6104](https://github.com/GetStream/stream-chat-android/pull/6104)
+- Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 ### ⬆️ Improved
-- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
-- Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
 
 ### ✅ Added
-- Add Compose poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 ### ⚠️ Changed
 
@@ -98,6 +92,42 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 16th, 2026 - 6.31.0
+## stream-chat-android-client
+### ✅ Added
+- Introduce `NotificationIdFactory` for customizing the default notification IDs. [#6072](https://github.com/GetStream/stream-chat-android/pull/6072)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix `message.updated` and `message.deleted` events unhiding the channel. [#6038](https://github.com/GetStream/stream-chat-android/pull/6038)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Add poll results + poll option votes state/controllers to support pagination and error handling. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+- Fix poll dialogs layout on edge-to-edge devices by applying system bar insets. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+
+### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
+
+### ✅ Added
+- Add XML poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix audio recording race conditions. [#6077](https://github.com/GetStream/stream-chat-android/pull/6077)
+- Fix poll results sheet cutting off the last option items. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
+
+### ⬆️ Improved
+- Add stricter `ExoPlayer` cleanup logic to prevent keeping `AudioMix` partial wake locks. [#6075](https://github.com/GetStream/stream-chat-android/pull/6075)
+- Increase default search debounce period to 300ms. [#6076](https://github.com/GetStream/stream-chat-android/pull/6076)
+
+### ✅ Added
+- Add Compose poll option votes dialog with pagination support. [#6043](https://github.com/GetStream/stream-chat-android/pull/6043)
 
 # January 02th, 2026 - 6.30.2
 ## stream-chat-android-state

@@ -242,6 +242,12 @@ fun UserRobot.assertMentionWasApplied(): UserRobot {
     return this
 }
 
+fun UserRobot.assertComposerText(expectedText: String): UserRobot {
+    val actualText = Composer.inputField.waitToAppear().text
+    assertEquals(expectedText, actualText)
+    return this
+}
+
 fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
         assertTrue(MessageListPage.MessageList.scrollToBottomButton.waitToAppear().isDisplayed())

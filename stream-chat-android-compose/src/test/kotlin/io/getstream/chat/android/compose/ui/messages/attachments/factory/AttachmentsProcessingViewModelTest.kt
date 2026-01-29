@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import app.cash.turbine.test
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -39,7 +38,7 @@ import org.mockito.kotlin.whenever
 internal class AttachmentsProcessingViewModelTest {
 
     @Test
-    fun `Given URIs When processing attachments Should emit result with processed metadata`() = runTest {
+    fun `Given URIs When processing attachments Should invoke callback with processed metadata`() = runTest {
         val uri1 = mock<Uri>()
         val uri2 = mock<Uri>()
         val uris = listOf(uri1, uri2)
@@ -60,19 +59,17 @@ internal class AttachmentsProcessingViewModelTest {
         }
         val viewModel = AttachmentsProcessingViewModel(storageHelper)
 
-        viewModel.attachmentsMetadataFromUris.test {
-            viewModel.getAttachmentsMetadataFromUrisAsync(uris)
-            advanceUntilIdle()
+        var result: AttachmentsMetadataFromUris? = null
+        viewModel.getAttachmentsMetadataFromUrisAsync(uris) { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(uris, result.uris)
-            assertEquals(expectedMetadata, result.attachmentsMetadata)
-            assertEquals(2, result.attachmentsMetadata.size)
-        }
+        assertEquals(uris, result?.uris)
+        assertEquals(expectedMetadata, result?.attachmentsMetadata)
+        assertEquals(2, result?.attachmentsMetadata?.size)
     }
 
     @Test
-    fun `Given files When getting files async Should emit files metadata`() = runTest {
+    fun `Given files When getting files async Should invoke callback with files metadata`() = runTest {
         val expectedFilesMetadata = listOf(
             AttachmentMetaData(
                 type = "file",
@@ -90,18 +87,16 @@ internal class AttachmentsProcessingViewModelTest {
         }
         val viewModel = AttachmentsProcessingViewModel(storageHelper)
 
-        viewModel.filesMetadata.test {
-            viewModel.getFilesAsync()
-            advanceUntilIdle()
+        var result: List<AttachmentMetaData>? = null
+        viewModel.getFilesAsync { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(expectedFilesMetadata, result)
-            assertEquals(2, result.size)
-        }
+        assertEquals(expectedFilesMetadata, result)
+        assertEquals(2, result?.size)
     }
 
     @Test
-    fun `Given media When getting media async Should emit media metadata`() = runTest {
+    fun `Given media When getting media async Should invoke callback with media metadata`() = runTest {
         val expectedMediaMetadata = listOf(
             AttachmentMetaData(
                 type = "image",
@@ -124,14 +119,12 @@ internal class AttachmentsProcessingViewModelTest {
         }
         val viewModel = AttachmentsProcessingViewModel(storageHelper)
 
-        viewModel.mediaMetadata.test {
-            viewModel.getMediaAsync()
-            advanceUntilIdle()
+        var result: List<AttachmentMetaData>? = null
+        viewModel.getMediaAsync { result = it }
+        advanceUntilIdle()
 
-            val result = awaitItem()
-            assertEquals(expectedMediaMetadata, result)
-            assertEquals(3, result.size)
-        }
+        assertEquals(expectedMediaMetadata, result)
+        assertEquals(3, result?.size)
     }
 }
 

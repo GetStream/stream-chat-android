@@ -293,6 +293,7 @@ public data class MessageReadEvent(
     override val channelId: String,
     val lastReadMessageId: String?,
     val thread: ThreadInfo? = null,
+    val team: String? = null,
 ) : CidEvent(), UserEvent
 
 /**

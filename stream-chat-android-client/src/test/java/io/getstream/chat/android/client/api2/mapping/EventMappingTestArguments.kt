@@ -1082,6 +1082,7 @@ internal object EventMappingTestArguments {
         channelId = messageReadDto.channel_id,
         user = with(domainMapping) { messageReadDto.user.toDomain() },
         lastReadMessageId = messageReadDto.last_read_message_id,
+        team = messageReadDto.team,
     )
 
     private val messageUpdated = MessageUpdatedEvent(
