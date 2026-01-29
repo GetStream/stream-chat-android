@@ -43,6 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -96,22 +98,24 @@ public fun FileAttachmentContent(
             .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
-            ChatTheme.componentFactory.FileAttachmentItem(
-                modifier = Modifier
-                    .padding(2.dp)
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = {
-                            onItemClick(previewHandlers, attachment)
-                        },
-                        onLongClick = { onItemLongClick(message) },
-                    ),
-                attachment = attachment,
-                isMine = isMine,
-                showFileSize = showFileSize,
-            )
+            if (attachment.isFile() || attachment.isAudio()) {
+                ChatTheme.componentFactory.FileAttachmentItem(
+                    modifier = Modifier
+                        .padding(2.dp)
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = {
+                                onItemClick(previewHandlers, attachment)
+                            },
+                            onLongClick = { onItemLongClick(message) },
+                        ),
+                    attachment = attachment,
+                    isMine = isMine,
+                    showFileSize = showFileSize,
+                )
+            }
         }
     }
 }
