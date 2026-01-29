@@ -95,7 +95,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -208,7 +207,7 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
-    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = state
+    val message = state.message
 
     // Prepare the image loader for the media gallery
     val imageLoader = LocalStreamImageLoader.current
@@ -216,17 +215,15 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
-    val attachments = message.attachments.filter {
-        !it.hasLink() && (it.isImage() || it.isVideo())
-    }
+    val attachments = state.filteredAttachments
 
     if (attachments.size == 1) {
         SingleMediaAttachment(
             attachment = attachments.first(),
             message = message,
             modifier = modifier,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onLongItemClick = onLongItemClick,
+            onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+            onLongItemClick = state.onLongItemClick,
             skipEnrichUrl = skipEnrichUrl,
             onContentItemClick = onItemClick,
             overlayContent = itemOverlayContent,
@@ -247,8 +244,8 @@ public fun MediaAttachmentContent(
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 message = message,
                 skipEnrichUrl = skipEnrichUrl,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+                onLongItemClick = state.onLongItemClick,
                 onContentItemClick = onItemClick,
                 itemOverlayContent = itemOverlayContent,
             )
@@ -783,17 +780,15 @@ internal fun SingleMediaAttachmentContent() {
         ColorImage(color = Color.Yellow.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachments =
+            listOf(Attachment(type = AttachmentType.IMAGE, imageUrl = "https://placekitten.com/200/300"))
         MediaAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
                     text = "Hello",
-                    attachments = listOf(
-                        Attachment(
-                            type = AttachmentType.IMAGE,
-                            imageUrl = "https://placekitten.com/200/300",
-                        ),
-                    ),
+                    attachments = attachments,
                 ),
+                filteredAttachments = attachments
             ),
         )
     }
@@ -814,28 +809,28 @@ internal fun MultipleMediaAttachmentContent() {
         ColorImage(color = Color.Blue.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachments = listOf(
+            Attachment(
+                type = AttachmentType.VIDEO,
+                thumbUrl = "https://placekitten.com/100/100",
+            ),
+            Attachment(
+                type = AttachmentType.IMAGE,
+                imageUrl = "https://placekitten.com/200/200",
+            ),
+            Attachment(
+                type = AttachmentType.VIDEO,
+                thumbUrl = "https://placekitten.com/300/300",
+            ),
+            Attachment(
+                type = AttachmentType.IMAGE,
+                imageUrl = "https://placekitten.com/400/400",
+            ),
+        )
         MediaAttachmentContent(
             attachmentState = AttachmentState(
-                message = Message(
-                    attachments = listOf(
-                        Attachment(
-                            type = AttachmentType.VIDEO,
-                            thumbUrl = "https://placekitten.com/100/100",
-                        ),
-                        Attachment(
-                            type = AttachmentType.IMAGE,
-                            imageUrl = "https://placekitten.com/200/200",
-                        ),
-                        Attachment(
-                            type = AttachmentType.VIDEO,
-                            thumbUrl = "https://placekitten.com/300/300",
-                        ),
-                        Attachment(
-                            type = AttachmentType.IMAGE,
-                            imageUrl = "https://placekitten.com/400/400",
-                        ),
-                    ),
-                ),
+                message = Message(attachments = attachments),
+                filteredAttachments = attachments,
             ),
         )
     }

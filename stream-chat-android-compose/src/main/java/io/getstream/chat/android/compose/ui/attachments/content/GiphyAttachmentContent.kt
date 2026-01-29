@@ -155,7 +155,7 @@ public fun GiphyAttachmentContent(
     },
 ) {
     val context = LocalContext.current
-    val (message, _, onLongItemClick) = state
+    val message = state.message
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
@@ -230,7 +230,7 @@ public fun GiphyAttachmentContent(
                         ),
                     )
                 },
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { state.onLongItemClick(message) },
             ),
     ) {
         StreamAsyncImage(
@@ -330,17 +330,19 @@ internal fun GiphyAttachmentContent() {
         ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachments = listOf(
+            Attachment(
+                titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
+                type = AttachmentType.GIPHY
+            ),
+        )
         GiphyAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
                     text = "Hello",
-                    attachments = listOf(
-                        Attachment(
-                            titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
-                            type = AttachmentType.GIPHY,
-                        ),
-                    ),
+                    attachments = attachments,
                 ),
+                filteredAttachments = attachments,
             ),
         )
     }

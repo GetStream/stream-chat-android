@@ -27,6 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
@@ -37,10 +43,10 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
@@ -178,15 +184,18 @@ internal fun DefaultMessageContent(
             )
         }
 
+        val makeAttachmentState: (List<Attachment>) -> AttachmentState = { filteredAttachments ->
+            AttachmentState(
+                message = message,
+                isMine = message.user.id == currentUser?.id,
+                filteredAttachments = filteredAttachments,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        }
         val info = message.rememberMessageInfo()
-        val attachmentState = AttachmentState(
-            message = message,
-            isMine = message.user.id == currentUser?.id,
-            onLongItemClick = onLongItemClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-        )
 
-        if (message.attachments.any(Attachment::isUploading)) {
+        if (info.hasUploads) {
             MessageAttachmentsContent(
                 message = message,
                 currentUser = currentUser,
@@ -194,17 +203,17 @@ internal fun DefaultMessageContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             )
         } else {
-            if (AttachmentType.FILE in info.attachmentTypes || AttachmentType.AUDIO in info.attachmentTypes) {
+            if (info.files.isNotEmpty()) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,
-                    attachmentState = attachmentState,
+                    attachmentState = makeAttachmentState(info.files),
                 )
             }
 
-            if (AttachmentType.IMAGE in info.attachmentTypes || AttachmentType.VIDEO in info.attachmentTypes) {
+            if (info.media.isNotEmpty()) {
                 componentFactory.MediaAttachmentContent(
                     modifier = Modifier,
-                    state = attachmentState,
+                    state = makeAttachmentState(info.media),
                 )
             }
 
@@ -236,16 +245,46 @@ internal fun DefaultMessageContent(
 @Composable
 private fun Message.rememberMessageInfo(): MessageContentInfo {
     return remember(this) {
-        val attachmentTypes = attachments.mapTo(mutableSetOf(), Attachment::type)
+        val files = mutableListOf<Attachment>()
+        val recordings = mutableListOf<Attachment>()
+        val links = mutableListOf<Attachment>()
+        val media = mutableListOf<Attachment>()
+        val giphys = mutableListOf<Attachment>()
+        val unknown = mutableListOf<Attachment>()
+        var hasUploads = false
+
+        attachments.forEach {
+            hasUploads = hasUploads || it.isUploading()
+            when {
+                it.isFile() || it.isAudio() -> files.add(it)
+                it.isAudioRecording() -> recordings.add(it)
+                it.hasLink() && !it.isGiphy() -> links.add(it)
+                it.isGiphy() -> giphys.add(it)
+                it.isImage() || it.isVideo() -> media.add(it)
+                else -> unknown.add(it)
+            }
+        }
 
         MessageContentInfo(
-            attachmentTypes = attachmentTypes,
+            files = files,
+            recordings = recordings,
+            links = links,
+            media = media,
+            giphys = giphys,
+            unknown = unknown,
+            hasUploads = hasUploads,
             displaysFullSizeAttachment = shouldBeDisplayedAsFullSizeAttachment(),
         )
     }
 }
 
 private data class MessageContentInfo(
-    val attachmentTypes: Set<String?>,
+    val files: List<Attachment>,
+    val recordings: List<Attachment>,
+    val links: List<Attachment>,
+    val media: List<Attachment>,
+    val giphys: List<Attachment>,
+    val unknown: MutableList<Attachment>,
+    val hasUploads: Boolean,
     val displaysFullSizeAttachment: Boolean,
 )

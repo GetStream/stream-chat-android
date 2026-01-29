@@ -17,12 +17,17 @@
 package io.getstream.chat.android.compose.state.messages.attachments
 
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 
 /**
  * Represents the state of Attachment items, used to render and add handlers required for the attachment to work.
  *
  * @param message Data that represents the message information.
+ * @param filteredAttachments List of attachments of the relevant type, e.g.
+ * [ChatComponentFactory.MediaAttachmentContent] will see only media attachments here. All attachments are still
+ * available in [message] ([Message.attachments]).
  * @param isMine Flag that indicates if the message is from the current user.
  * @param onLongItemClick Handler for a long click on the message item.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an action to perform from
@@ -30,6 +35,7 @@ import io.getstream.chat.android.models.Message
  */
 public data class AttachmentState(
     val message: Message,
+    val filteredAttachments: List<Attachment>,
     val isMine: Boolean = false,
     val onLongItemClick: (Message) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
