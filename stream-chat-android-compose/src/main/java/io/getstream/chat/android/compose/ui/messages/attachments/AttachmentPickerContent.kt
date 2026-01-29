@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 @Composable
@@ -33,6 +34,7 @@ internal fun AttachmentPickerContent(
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
 ) {
     when (attachmentsPickerMode) {
@@ -55,7 +57,7 @@ internal fun AttachmentPickerContent(
         )
 
         is Poll -> AttachmentPollPicker(
-            onClick = { /* Navigate to create poll screen */ },
+            onAttachmentPickerAction = onAttachmentPickerAction,
         )
 
         is System -> TODO()

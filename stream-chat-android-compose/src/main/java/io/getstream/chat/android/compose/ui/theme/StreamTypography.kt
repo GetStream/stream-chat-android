@@ -158,6 +158,12 @@ public data class StreamTypography(
                 fontSize = StreamTokens.fontSizeMd,
                 lineHeight = StreamTokens.lineHeightNormal,
             ),
+            bodyDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightNormal,
+                fontSize = StreamTokens.fontSizeMd,
+                lineHeight = StreamTokens.lineHeightNormal,
+            ),
             bodyEmphasis = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,

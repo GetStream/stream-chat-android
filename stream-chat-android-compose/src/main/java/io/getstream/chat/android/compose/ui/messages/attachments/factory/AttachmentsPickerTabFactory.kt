@@ -66,15 +66,4 @@ public interface AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     )
-
-    /**
-     * Content for the fullscreen.
-     *
-     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
-     */
-    @Composable
-    public fun PickerFullscreenContent(
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    ) {
-    }
 }

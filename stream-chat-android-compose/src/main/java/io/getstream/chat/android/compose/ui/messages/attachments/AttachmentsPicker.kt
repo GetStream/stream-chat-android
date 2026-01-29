@@ -84,7 +84,6 @@ public fun AttachmentsPicker(
         }
     }
     BackHandler(onBack = dismissAction)
-    val channel = attachmentsPickerViewModel.channel
 
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
@@ -93,7 +92,7 @@ public fun AttachmentsPicker(
     ) {
         Column {
             AttachmentTypePicker(
-                channel = channel,
+                channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,
                 selectedAttachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
                 onPickerTypeClick = { index, attachmentPickerMode ->
@@ -109,6 +108,7 @@ public fun AttachmentsPicker(
                         attachments = attachmentsPickerViewModel.attachments,
                         onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
                         onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                        onAttachmentPickerAction = onAttachmentPickerAction,
                         onAttachmentsSubmitted = { metaData ->
                             attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
                                 onAttachmentsSelected(attachments)

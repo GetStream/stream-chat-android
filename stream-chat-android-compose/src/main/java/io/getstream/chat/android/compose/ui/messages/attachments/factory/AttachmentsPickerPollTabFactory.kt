@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.isPollEnabled
 import io.getstream.chat.android.models.Channel
@@ -85,19 +84,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        AttachmentPollPicker(
-            onClick = { /* Navigate to create poll screen */ },
-        )
-    }
-
-    /**
-     * Content that allows users to create a poll in the fullscreen.
-     */
-    @Composable
-    override fun PickerFullscreenContent(
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    ) {
-        CreatePollScreen(onAttachmentPickerAction)
+        AttachmentPollPicker(onAttachmentPickerAction)
     }
 }
 
