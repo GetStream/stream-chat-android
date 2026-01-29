@@ -105,6 +105,7 @@ public fun AttachmentsPicker(
                 ) { pickerMode ->
                     AttachmentPickerContent(
                         attachmentsPickerMode = pickerMode,
+                        commands = attachmentsPickerViewModel.channel.config.commands,
                         attachments = attachmentsPickerViewModel.attachments,
                         onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
                         onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,

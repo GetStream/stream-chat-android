@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.PollConfig
 
 /**
@@ -39,3 +40,8 @@ public data class AttachmentPickerPollCreation(public val pollConfig: PollConfig
  * An user action that indicates an intention to create a poll.
  */
 public data object AttachmentPickerCreatePollClick : AttachmentPickerAction
+
+/**
+ * An user action that indicates a command was clicked.
+ */
+public data class AttachmentPickerCommandClickClick(public val command: Command) : AttachmentPickerAction

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.Commands
 import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
@@ -26,11 +27,13 @@ import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.state.messages.attachments.System
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 @Composable
 internal fun AttachmentPickerContent(
     attachmentsPickerMode: AttachmentsPickerMode,
+    commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -57,6 +60,11 @@ internal fun AttachmentPickerContent(
         )
 
         is Poll -> AttachmentPollPicker(
+            onAttachmentPickerAction = onAttachmentPickerAction,
+        )
+
+        is Commands -> AttachmentCommandPicker(
+            commands = commands,
             onAttachmentPickerAction = onAttachmentPickerAction,
         )
 

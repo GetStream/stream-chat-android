@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.Commands
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
@@ -135,20 +136,25 @@ private val AttachmentPickerTypeInfos = mapOf(
         contentDescription = R.string.stream_compose_attachment_media_picker,
         testTag = "Stream_AttachmentPickerImagesTab",
     ),
-    Files to AttachmentPickerTypeInfo(
-        icon = R.drawable.stream_compose_ic_attachment_file_picker,
-        contentDescription = R.string.stream_compose_attachment_file_picker,
-        testTag = "Stream_AttachmentPickerFilesTab",
-    ),
     MediaCapture to AttachmentPickerTypeInfo(
         icon = R.drawable.stream_compose_ic_attachment_camera_picker,
         contentDescription = R.string.stream_compose_attachment_camera_picker,
         testTag = "Stream_AttachmentPickerMediaCaptureTab",
     ),
+    Files to AttachmentPickerTypeInfo(
+        icon = R.drawable.stream_compose_ic_attachment_file_picker,
+        contentDescription = R.string.stream_compose_attachment_file_picker,
+        testTag = "Stream_AttachmentPickerFilesTab",
+    ),
     Poll to AttachmentPickerTypeInfo(
         icon = R.drawable.stream_compose_ic_attachment_polls_picker,
         contentDescription = R.string.stream_compose_attachment_polls_picker,
         testTag = "Stream_AttachmentPickerPollsTab",
+    ),
+    Commands to AttachmentPickerTypeInfo(
+        icon = R.drawable.stream_compose_ic_attachment_commands_picker,
+        contentDescription = R.string.stream_compose_attachment_commands_picker,
+        testTag = "Stream_AttachmentPickerCommandsTab",
     ),
 )
 

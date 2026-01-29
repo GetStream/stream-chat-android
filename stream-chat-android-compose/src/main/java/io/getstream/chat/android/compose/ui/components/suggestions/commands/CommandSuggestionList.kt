@@ -106,7 +106,7 @@ internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CommandSuggestionLazyList(
+internal fun CommandSuggestionLazyList(
     commands: List<Command>,
     onCommandSelected: (Command) -> Unit = {},
     itemContent: @Composable (Command) -> Unit = { command ->
