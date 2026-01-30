@@ -594,7 +594,8 @@ private fun RecordingContent(
         PlaybackTimerText(
             progress = currentProgress,
             durationInMs = durationInMs,
-            style = playbackTheme.timerTextStyle,
+            color = ChatTheme.colors.textPrimary,
+            countdown = false,
         )
 
         Box(
