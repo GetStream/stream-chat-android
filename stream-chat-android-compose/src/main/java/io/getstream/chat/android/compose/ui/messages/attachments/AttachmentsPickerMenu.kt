@@ -86,6 +86,12 @@ public fun AttachmentsPickerMenu(
     AttachmentsPicker(
         attachmentsPickerViewModel = attachmentsPickerViewModel,
         modifier = Modifier.height(animatedHeight),
+        onAttachmentItemSelected = { attachmentItem ->
+            attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem)
+            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
+                composerViewModel.updateSelectedAttachments(attachments)
+            }
+        },
         onAttachmentsSelected = { attachments ->
             attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
             composerViewModel.addSelectedAttachments(attachments)

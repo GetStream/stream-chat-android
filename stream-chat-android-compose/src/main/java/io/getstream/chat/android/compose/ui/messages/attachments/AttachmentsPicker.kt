@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
@@ -68,6 +69,8 @@ public fun AttachmentsPicker(
     messageMode: MessageMode = MessageMode.Normal,
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit =
+        attachmentsPickerViewModel::changeSelectedAttachments,
     onAttachmentsSelected: (List<Attachment>) -> Unit = {},
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onDismiss: () -> Unit = { attachmentsPickerViewModel.changeAttachmentState(false) },
@@ -108,7 +111,7 @@ public fun AttachmentsPicker(
                         commands = attachmentsPickerViewModel.channel.config.commands,
                         attachments = attachmentsPickerViewModel.attachments,
                         onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                        onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                        onAttachmentItemSelected = onAttachmentItemSelected,
                         onAttachmentPickerAction = onAttachmentPickerAction,
                         onAttachmentsSubmitted = { metaData ->
                             attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->

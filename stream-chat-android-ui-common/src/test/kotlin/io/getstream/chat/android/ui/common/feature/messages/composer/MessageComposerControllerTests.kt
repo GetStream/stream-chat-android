@@ -20,13 +20,17 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -226,6 +230,25 @@ internal class MessageComposerControllerTests {
         controller.messageInput.value.source `should be equal to` MessageInput.Source.MentionSelected
     }
 
+    @Test
+    fun `Given no attachments When updateSelectedAttachments called Then attachments are set`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val attachments = listOf(randomAttachment(), randomAttachment())
+
+        // When
+        controller.updateSelectedAttachments(attachments)
+
+        // Then
+        controller.selectedAttachments.value `should be equal to` attachments
+    }
+
     /**
      * Custom test implementation of [Mention] for testing purposes.
      */
@@ -244,8 +267,25 @@ internal class MessageComposerControllerTests {
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
 
-        fun givenAppSettings(appSettings: AppSettings) = apply {
+        fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
+        }
+
+        private fun defaultAppSettings(): AppSettings {
+            val fileUploadConfig = FileUploadConfig(
+                allowedFileExtensions = emptyList(),
+                allowedMimeTypes = emptyList(),
+                blockedFileExtensions = emptyList(),
+                blockedMimeTypes = emptyList(),
+                sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+            )
+            return AppSettings(
+                app = App(
+                    name = "test-app",
+                    fileUploadConfig = fileUploadConfig,
+                    imageUploadConfig = fileUploadConfig,
+                ),
+            )
         }
 
         fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
