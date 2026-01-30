@@ -39,9 +39,9 @@ import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be`
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain`
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
@@ -64,7 +64,7 @@ internal class MessageComposerControllerTest {
             "example.co.uk",
         )
         validUrls.forEach { url ->
-            pattern.matches(url) `should be equal to` true
+            assertTrue(pattern.matches(url), "Expected $url to be a valid URL")
         }
     }
 
@@ -81,7 +81,7 @@ internal class MessageComposerControllerTest {
             "http://example",
         )
         invalidUrls.forEach { url ->
-            pattern.matches(url) `should be equal to` false
+            assertFalse(pattern.matches(url), "Expected $url to be an invalid URL")
         }
     }
 
@@ -100,7 +100,7 @@ internal class MessageComposerControllerTest {
             .givenChannelState(configState = configFlow)
             .get()
         // then
-        controller.state.value.hasCommands `should be` true
+        assertTrue(controller.state.value.hasCommands)
     }
 
     @Test
@@ -117,7 +117,7 @@ internal class MessageComposerControllerTest {
             .givenChannelState(configState = configFlow)
             .get()
         // then
-        controller.state.value.pollsEnabled `should be` true
+        assertTrue(controller.state.value.pollsEnabled)
     }
 
     @Test
@@ -137,9 +137,9 @@ internal class MessageComposerControllerTest {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
-        controller.state.value.selectedMentions.size `should be equal to` 1
-        controller.state.value.selectedMentions `should contain` Mention.User(user)
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(Mention.User(user)))
     }
 
     @Test
@@ -159,7 +159,7 @@ internal class MessageComposerControllerTest {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
     }
 
     @Test
@@ -179,9 +179,9 @@ internal class MessageComposerControllerTest {
         controller.selectMention(customMention)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Notify @Channel Name "
-        controller.state.value.selectedMentions.size `should be equal to` 1
-        controller.state.value.selectedMentions `should contain` customMention
+        assertEquals("Notify @Channel Name ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(customMention))
     }
 
     @Test
@@ -204,8 +204,8 @@ internal class MessageComposerControllerTest {
         controller.selectMention(user2)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe and @Jane Smith "
-        controller.state.value.selectedMentions.size `should be equal to` 2
+        assertEquals("Hello @John Doe and @Jane Smith ", controller.messageInput.value.text)
+        assertEquals(2, controller.state.value.selectedMentions.size)
     }
 
     @Test
@@ -225,7 +225,7 @@ internal class MessageComposerControllerTest {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.source `should be equal to` MessageInput.Source.MentionSelected
+        assertEquals(MessageInput.Source.MentionSelected, controller.messageInput.value.source)
     }
 
     @Test
@@ -244,7 +244,7 @@ internal class MessageComposerControllerTest {
         controller.updateSelectedAttachments(attachments)
 
         // Then
-        controller.selectedAttachments.value `should be equal to` attachments
+        assertEquals(attachments, controller.selectedAttachments.value)
     }
 
     /**
