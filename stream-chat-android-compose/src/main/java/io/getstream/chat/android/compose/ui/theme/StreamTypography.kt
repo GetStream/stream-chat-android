@@ -151,16 +151,9 @@ public data class StreamTypography(
                 fontFamily = fontFamily,
                 fontSize = 64.sp,
             ),
-
             bodyDefault = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightRegular,
-                fontSize = StreamTokens.fontSizeMd,
-                lineHeight = StreamTokens.lineHeightNormal,
-            ),
-            bodyDefault = TextStyle(
-                fontFamily = fontFamily,
-                fontWeight = StreamTokens.fontWeightNormal,
                 fontSize = StreamTokens.fontSizeMd,
                 lineHeight = StreamTokens.lineHeightNormal,
             ),
