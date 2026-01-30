@@ -157,7 +157,7 @@
     <string name="stream_compose_attachment_file_picker">Files</string>
     <string name="stream_compose_attachment_camera_picker">Camera</string>
     <string name="stream_compose_attachment_polls_picker">Polls</string>
-    <string name="stream_compose_attachment_poll_picker_content">Create a poll and let\neveryone vote</string>
+    <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
     <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
     <string name="stream_compose_attachment_commands_picker">Commands</string>
 

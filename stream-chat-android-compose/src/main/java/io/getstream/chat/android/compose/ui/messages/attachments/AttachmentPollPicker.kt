@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -91,6 +92,9 @@ internal fun AttachmentPollPicker(
                 showCreateDialog = true
                 onAttachmentPickerAction(AttachmentPickerCreatePollClick)
             },
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = ChatTheme.colors.buttonSecondaryText,
+            ),
         ) {
             Text(
                 text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta),
