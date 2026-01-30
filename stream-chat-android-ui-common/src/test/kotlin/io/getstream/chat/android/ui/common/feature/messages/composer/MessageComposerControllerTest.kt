@@ -36,7 +36,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
@@ -50,8 +49,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
-internal class MessageComposerControllerTests {
+internal class MessageComposerControllerTest {
 
     @Test
     fun `test valid URLs with LinkPattern`() {
