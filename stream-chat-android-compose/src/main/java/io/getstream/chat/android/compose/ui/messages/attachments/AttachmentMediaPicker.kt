@@ -38,7 +38,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.NoStorageAccessContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -79,7 +78,7 @@ internal fun AttachmentMediaPicker(
         visualMediaAccess = mediaAccess,
         attachments = attachments,
         onAttachmentItemSelected = onAttachmentItemSelected,
-        onRequestAccessClick = { permissionLauncher.launch(permissions) },
+        onGrantPermissionClick = { permissionLauncher.launch(permissions) },
     )
 
     // Access permanently denied snackbar
@@ -107,7 +106,7 @@ private fun VisualMediaAccessContent(
     visualMediaAccess: VisualMediaAccess,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    onRequestAccessClick: () -> Unit,
+    onGrantPermissionClick: () -> Unit,
 ) {
     when (visualMediaAccess) {
         VisualMediaAccess.FULL -> {
@@ -125,12 +124,12 @@ private fun VisualMediaAccessContent(
                 images = attachments,
                 onImageSelected = onAttachmentItemSelected,
                 showAddMore = true,
-                onAddMoreClick = onRequestAccessClick,
+                onAddMoreClick = onGrantPermissionClick,
             )
         }
 
         VisualMediaAccess.DENIED -> {
-            NoStorageAccessContent(onRequestAccessClick = onRequestAccessClick)
+            RequiredStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
         }
     }
 }

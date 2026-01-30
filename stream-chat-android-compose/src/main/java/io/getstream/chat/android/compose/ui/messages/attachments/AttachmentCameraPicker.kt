@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.MissingPermissionContent
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
@@ -42,7 +41,7 @@ internal fun AttachmentCameraPicker(
 ) {
     val context = LocalContext.current
 
-    // TODO Do we need permission for camera?
+    // Handling camera permission flow is required if the host application has declared the permission.
     val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
 
     val cameraPermissionState = if (requiresCameraPermission) {
@@ -68,7 +67,7 @@ internal fun AttachmentCameraPicker(
             }
         }
     } else if (cameraPermissionState.status is PermissionStatus.Denied) {
-        MissingPermissionContent(cameraPermissionState)
+        RequiredCameraPermission()
     }
 }
 

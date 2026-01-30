@@ -51,7 +51,6 @@ import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPi
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.NoStorageAccessContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -92,7 +91,7 @@ internal fun AttachmentFilePicker(
     // Content
     FilesAccessContent(
         filesAccess = filesAccess,
-        onRequestFilesAccess = { permissionLauncher.launch(Permissions.filesPermissions()) },
+        onGrantPermissionClick = { permissionLauncher.launch(Permissions.filesPermissions()) },
         onRequestVisualMediaAccess = { permissionLauncher.launch(Permissions.visualMediaPermissions()) },
         onRequestAudioAccess = { permissionLauncher.launch(Permissions.audioPermissions()) },
         filePicker = {
@@ -143,13 +142,13 @@ private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFro
 private fun FilesAccessContent(
     filesAccess: FilesAccess,
     filePicker: @Composable () -> Unit,
-    onRequestFilesAccess: () -> Unit,
+    onGrantPermissionClick: () -> Unit,
     onRequestVisualMediaAccess: () -> Unit,
     onRequestAudioAccess: () -> Unit,
 ) {
     when (filesAccess) {
         FilesAccess.DENIED -> {
-            NoStorageAccessContent(onRequestAccessClick = onRequestFilesAccess)
+            RequiredStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
         }
 
         FilesAccess.PARTIAL_VISUAL -> {

@@ -72,6 +72,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.ui.messages.attachments.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -340,7 +341,7 @@ private fun CameraPermissionDialog(
                 .background(ChatTheme.colors.barsBackground, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.BottomCenter,
         ) {
-            MissingPermissionContent(permissionState)
+            RequiredCameraPermission()
         }
     }
 }

@@ -185,7 +185,6 @@
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
     <string name="stream_compose_new_message">New message</string>
     <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
-    <string name="stream_compose_grant_permission">Give permission</string>
     <string name="stream_compose_remaining_images_count">+%1$d</string>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
     <string name="stream_compose_attachment_gallery_share">Share Image</string>
