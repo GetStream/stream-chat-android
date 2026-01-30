@@ -21,7 +21,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,13 +60,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
@@ -80,7 +79,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
@@ -112,21 +110,10 @@ public fun PollMessageContent(
     onLongItemClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
-    val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = when (position) {
-        MessagePosition.TOP -> messageTheme.backgroundShapes.top
-        MessagePosition.MIDDLE -> messageTheme.backgroundShapes.middle
-        MessagePosition.BOTTOM -> messageTheme.backgroundShapes.bottom
-        else -> messageTheme.backgroundShapes.none
-    }
-
-    val messageBubbleColor = when {
-        message.isDeleted() -> messageTheme.deletedBackgroundColor
-        else -> messageTheme.poll.backgroundColor
-    }
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
+    val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
@@ -136,7 +123,6 @@ public fun PollMessageContent(
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
-            contentPadding = PaddingValues(),
             content = {
                 PollMessageContent(
                     message = message,
@@ -165,7 +151,6 @@ public fun PollMessageContent(
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
                 border = BorderStroke(1.dp, ChatTheme.colors.borders),
-                contentPadding = PaddingValues(),
                 content = {
                     MessageContent(
                         message = message,

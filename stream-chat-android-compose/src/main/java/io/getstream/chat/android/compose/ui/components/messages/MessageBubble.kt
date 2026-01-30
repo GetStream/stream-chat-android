@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isErrorOrFailed
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.models.Message
 
 /**
@@ -67,16 +67,16 @@ public fun MessageBubble(
 /**
  * Determines the background color of the message bubble based on the message content and ownership.
  *
- * @param theme The message theme to use.
+ * @param outgoing Whether the message is by the current user
  * @param message The message data.
  * @return A color for the message bubble.
  */
 @Composable
-internal fun getMessageBubbleColor(theme: MessageTheme, message: Message): Color {
+internal fun getMessageBubbleColor(outgoing: Boolean, message: Message): Color {
     return when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> theme.deletedBackgroundColor
-        message.isErrorOrFailed() -> theme.errorBackgroundColor
-        else -> theme.backgroundColor
+        message.isDeleted() -> MessageStyling.backgroundColor(outgoing)
+        message.isErrorOrFailed() -> MessageStyling.backgroundColor(outgoing)
+        else -> MessageStyling.backgroundColor(outgoing)
     }
 }

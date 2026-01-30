@@ -242,10 +242,7 @@ private fun AnnotatedString.Builder.tagUser(
         if (start < 0) return@forEach
 
         addStyle(
-            style = SpanStyle(
-                color = mentionsColor,
-                fontWeight = FontWeight.Bold,
-            ),
+            style = SpanStyle(color = mentionsColor),
             start = start - 1, // -1 to include the @ symbol
             end = end,
         )

@@ -61,8 +61,8 @@ public data class StreamShapes(
          */
         public fun defaultShapes(): StreamShapes = StreamShapes(
             avatar = CircleShape,
-            myMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp),
-            otherMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp),
+            myMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp),
+            otherMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 20.dp),
             inputField = RoundedCornerShape(24.dp),
             attachment = RoundedCornerShape(12.dp),
             imageThumbnail = RoundedCornerShape(8.dp),
