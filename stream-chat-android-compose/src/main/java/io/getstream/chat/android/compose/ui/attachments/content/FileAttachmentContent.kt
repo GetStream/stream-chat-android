@@ -101,10 +101,7 @@ public fun FileAttachmentContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .applyIf(!shouldBeFullSize) {
-                            val color = when {
-                                attachmentState.isMine -> ChatTheme.colors.chatBgAttachmentOutgoing
-                                else -> ChatTheme.colors.chatBgAttachmentIncoming
-                            }
+                            val color = MessageStyling.attachmentBackgroundColor(attachmentState.isMine)
                             padding(MessageStyling.messageSectionPadding)
                                 .background(color, fileAttachmentShape)
                         }

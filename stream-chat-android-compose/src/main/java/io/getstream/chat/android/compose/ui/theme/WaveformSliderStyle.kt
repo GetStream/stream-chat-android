@@ -58,6 +58,7 @@ public data class WaveformSliderStyle(
     }
 }
 
+// TODO [G.] what to do with this -> Keep? Delete and let customers pass a composable for the thumb? Something else?
 /**
  * Represents the style for the waveform thumb.
  */
@@ -80,8 +81,8 @@ public data class WaveformThumbStyle(
                 else -> StreamColors.defaultColors()
             },
         ): WaveformThumbStyle = WaveformThumbStyle(
-            widthDefault = 7.dp,
-            widthPressed = 10.dp,
+            widthDefault = 0.dp,
+            widthPressed = 0.dp,
             backgroundColor = Color.White,
             backgroundShape = RoundedCornerShape(5.dp),
             borderColor = Color.LightGray,

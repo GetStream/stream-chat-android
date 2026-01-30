@@ -104,11 +104,8 @@ public fun AudioRecordAttachmentPreviewContentItem(
     AudioRecordAttachmentContentItemBase(
         modifier = modifier,
         attachment = attachment,
+        outlineColor = ChatTheme.colors.borderCorePrimary,
         playerState = playerState,
-        size = theme.size,
-        padding = theme.padding,
-        playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
-        timerStyle = theme.timerStyle,
         waveformSliderStyle = theme.waveformSliderStyle,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
