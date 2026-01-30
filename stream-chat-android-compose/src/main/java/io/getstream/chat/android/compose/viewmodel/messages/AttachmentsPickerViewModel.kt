@@ -124,6 +124,34 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
+     * Removes the selection for an attachment that matches the given [Attachment].
+     * This is used to sync the picker state when an attachment is removed from the composer.
+     *
+     * @param attachment The attachment to unselect.
+     */
+    public fun removeSelectedAttachment(attachment: Attachment) {
+        val itemIndex = attachments.indexOfFirst { item ->
+            // Safe: attachment.name is set from attachmentMetaData.title when the attachment is created
+            item.attachmentMetaData.title == attachment.name
+        }
+        if (itemIndex == -1) return
+
+        val currentItem = attachments[itemIndex]
+        if (currentItem.selection !is Selection.Selected) return
+
+        val removedCount = currentItem.selection.count
+        attachments = attachments.mapIndexed { index, item ->
+            when {
+                index == itemIndex -> item.copy(selection = Selection.Unselected)
+                item.selection is Selection.Selected && item.selection.count > removedCount ->
+                    item.copy(selection = Selection.Selected(count = item.selection.count - 1))
+
+                else -> item
+            }
+        }
+    }
+
+    /**
      * Triggered when an [AttachmentMetaData] is selected in the list.
      *
      * @param attachmentItem The selected item.

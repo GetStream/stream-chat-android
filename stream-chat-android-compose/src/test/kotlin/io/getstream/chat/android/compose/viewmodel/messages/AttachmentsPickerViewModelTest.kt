@@ -294,6 +294,28 @@ internal class AttachmentsPickerViewModelTest {
         assertFalse(viewModel.isShowingAttachments)
     }
 
+    @Test
+    fun `Given multiple selected attachments When removing first Should unselect and update selection order`() {
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentState(true)
+        viewModel.attachments = listOf(
+            AttachmentPickerItemState(imageAttachment1),
+            AttachmentPickerItemState(imageAttachment2),
+        )
+        viewModel.changeSelectedAttachments(viewModel.attachments.first())
+        viewModel.changeSelectedAttachments(viewModel.attachments.last())
+
+        viewModel.removeSelectedAttachment(Attachment(name = imageAttachment1.title))
+
+        val firstItem = viewModel.attachments.first()
+        val lastItem = viewModel.attachments.last()
+        assertFalse(firstItem.isSelected)
+        assertEquals(Selection.Unselected, firstItem.selection)
+        assertTrue(lastItem.isSelected)
+        assertEquals(Selection.Selected(count = 1), lastItem.selection)
+    }
+
     private fun mockChannelState(): ChannelState {
         val channel = randomChannel()
         return mock {
