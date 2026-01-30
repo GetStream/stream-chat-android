@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
+@Suppress("LongParameterList")
 @Composable
 internal fun AttachmentPickerContent(
     attachmentsPickerMode: AttachmentsPickerMode,

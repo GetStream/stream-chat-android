@@ -52,7 +52,6 @@ internal fun AttachmentPollPicker(
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
 ) {
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .padding(
@@ -96,16 +95,12 @@ internal fun AttachmentPollPicker(
                 contentColor = ChatTheme.colors.buttonSecondaryText,
             ),
         ) {
-            Text(
-                text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta),
-            )
+            Text(text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta))
         }
     }
 
     if (showCreateDialog) {
-        FullscreenDialog(
-            onDismissRequest = { showCreateDialog = false },
-        ) {
+        FullscreenDialog(onDismissRequest = { showCreateDialog = false }) {
             CreatePollScreen(
                 onAttachmentPickerAction = { action ->
                     showCreateDialog = false
