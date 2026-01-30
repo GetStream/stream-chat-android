@@ -149,7 +149,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
@@ -1651,7 +1650,7 @@ public interface ChatComponentFactory {
      * @param command The command for which the center content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerCommandSuggestionItemCenterContent(
+    public fun MessageComposerCommandSuggestionItemCenterContent(
         modifier: Modifier,
         command: Command,
     ) {
@@ -1673,22 +1672,6 @@ public interface ChatComponentFactory {
             messageInputState = state,
             onAttachmentsClick = onAttachmentsClick,
         )
-    }
-
-    /**
-     * The default commands button of the message composer.
-     *
-     * @param hasCommandSuggestions Whether there are command suggestions available.
-     * @param enabled Whether the button is enabled.
-     * @param onClick The action to perform when the button is clicked.
-     */
-    @Composable
-    public fun RowScope.MessageComposerCommandsButton(
-        hasCommandSuggestions: Boolean,
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
-        CommandsButton(hasCommandSuggestions, enabled, onClick)
     }
 
     /**

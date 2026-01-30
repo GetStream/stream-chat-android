@@ -30,7 +30,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -272,41 +271,6 @@ internal fun DefaultMessageComposerInputTrailingContent(
             )
         }
     }
-}
-
-/**
- * Default implementation of the "Commands" button.
- */
-@Composable
-internal fun CommandsButton(
-    hasCommandSuggestions: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val commandsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.commandsButton
-    val tint = if (hasCommandSuggestions && enabled) {
-        ChatTheme.colors.primaryAccent
-    } else if (enabled) {
-        commandsButtonStyle.icon.tint
-    } else {
-        ChatTheme.colors.disabled
-    }
-    IconButton(
-        modifier = Modifier
-            .size(commandsButtonStyle.size)
-            .padding(commandsButtonStyle.padding)
-            .testTag("Stream_ComposerCommandsButton"),
-        enabled = enabled,
-        content = {
-            Icon(
-                modifier = Modifier.size(commandsButtonStyle.icon.size),
-                painter = commandsButtonStyle.icon.painter,
-                contentDescription = stringResource(R.string.stream_compose_message_composer_instant_commands),
-                tint = tint,
-            )
-        },
-        onClick = onClick,
-    )
 }
 
 /**

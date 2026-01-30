@@ -18,14 +18,13 @@ package io.getstream.chat.android.compose.ui.components.suggestions.commands
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.CommandDefaults
@@ -63,19 +63,15 @@ public fun CommandSuggestionItem(
     },
     centerContent: @Composable RowScope.(Command) -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageComposerCommandSuggestionItemCenterContent(command = it, modifier = Modifier)
+            MessageComposerCommandSuggestionItemCenterContent(command = it, modifier = Modifier.weight(1f))
         }
     },
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight()
             .clickable { onCommandSelected(command) }
-            .padding(
-                vertical = ChatTheme.dimens.commandSuggestionItemVerticalPadding,
-                horizontal = ChatTheme.dimens.commandSuggestionItemHorizontalPadding,
-            )
+            .padding(StreamTokens.spacingSm)
             .testTag("Stream_SuggestionListGiphyButton"),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -92,13 +88,20 @@ public fun CommandSuggestionItem(
  */
 @Composable
 internal fun DefaultCommandSuggestionItemLeadingContent(command: Command) {
-    Image(
-        modifier = Modifier
-            .padding(end = 8.dp)
-            .size(ChatTheme.dimens.commandSuggestionItemIconSize),
-        painter = painterResource(id = command.imageRes),
-        contentDescription = null,
-    )
+    if (command.isColouredImage) {
+        Image(
+            modifier = Modifier.padding(end = StreamTokens.spacingSm),
+            painter = painterResource(id = command.imageRes),
+            contentDescription = null,
+        )
+    } else {
+        Icon(
+            modifier = Modifier.padding(end = StreamTokens.spacingSm),
+            painter = painterResource(id = command.imageRes),
+            contentDescription = null,
+            tint = ChatTheme.colors.textSecondary,
+        )
+    }
 }
 
 /**
@@ -108,7 +111,7 @@ internal fun DefaultCommandSuggestionItemLeadingContent(command: Command) {
  *  @param modifier Modifier for styling.
  */
 @Composable
-internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
+internal fun DefaultCommandSuggestionItemCenterContent(
     command: Command,
     modifier: Modifier = Modifier,
 ) {
@@ -119,25 +122,22 @@ internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
     )
 
     Row(
-        modifier = modifier
-            .weight(1f)
-            .wrapContentHeight(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
     ) {
         Text(
+            modifier = Modifier.width(80.dp),
             text = command.name.replaceFirstChar(Char::uppercase),
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
         Text(
             text = commandDescription,
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textTertiary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -146,8 +146,11 @@ internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
 
 private val Command.imageRes: Int
     @DrawableRes get() = when (name) {
+        // TODO Designer to export a fixed mute icon
         CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
         CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
         // fallback to the 'giphy' icon for backwards compatibility
-        else -> R.drawable.stream_compose_ic_giphy
+        else -> R.drawable.stream_ic_command_giphy
     }
+
+private val Command.isColouredImage: Boolean get() = name == CommandDefaults.GIPHY
