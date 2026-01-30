@@ -34,8 +34,8 @@ import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionLis
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.previewdata.PreviewCommandData
 
 /**
  * Represents the command suggestion list popup.
@@ -124,24 +124,9 @@ internal fun CommandSuggestionList() {
         DefaultCommandSuggestionListHeader()
         CommandSuggestionLazyList(
             commands = listOf(
-                Command(
-                    name = "giphy",
-                    description = "Post a random gif to the channel",
-                    args = "[text]",
-                    set = "fun_set",
-                ),
-                Command(
-                    name = "mute",
-                    description = "Mute a user",
-                    args = "[@username]",
-                    set = "moderation_set",
-                ),
-                Command(
-                    name = "unmute",
-                    description = "Unmute a user",
-                    args = "[@username]",
-                    set = "moderation_set",
-                ),
+                PreviewCommandData.command1,
+                PreviewCommandData.command2,
+                PreviewCommandData.command3,
             ),
         )
     }

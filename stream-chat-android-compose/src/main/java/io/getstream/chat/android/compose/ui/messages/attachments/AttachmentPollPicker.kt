@@ -125,6 +125,6 @@ private fun AttachmentPollPickerPreview() {
 }
 
 @Composable
-private fun AttachmentPollPicker() {
+internal fun AttachmentPollPicker() {
     AttachmentPollPicker {}
 }

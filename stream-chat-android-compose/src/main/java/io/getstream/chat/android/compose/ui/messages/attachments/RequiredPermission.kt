@@ -123,7 +123,7 @@ private fun RequiredPermission(
             onClick = onGrantPermissionClick,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = ChatTheme.colors.buttonSecondaryText,
-            )
+            ),
         ) {
             Text(stringResource(id = R.string.stream_ui_message_composer_grant_permission_button))
         }
