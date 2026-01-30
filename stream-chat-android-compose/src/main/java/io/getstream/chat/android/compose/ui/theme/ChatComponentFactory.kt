@@ -3021,10 +3021,10 @@ public interface ChatComponentFactory {
         showFileSize: (Attachment) -> Boolean,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
-            modifier = modifier,
             attachment = attachment,
             isMine = isMine,
             showFileSize = showFileSize,
+            modifier = modifier,
         )
     }
 

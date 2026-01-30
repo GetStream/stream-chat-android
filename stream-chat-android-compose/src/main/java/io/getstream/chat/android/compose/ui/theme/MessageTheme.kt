@@ -20,7 +20,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 
 /**
  * Represents message theming.
@@ -30,7 +29,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
 @Immutable
 public data class MessageTheme(
     val audioRecording: AudioRecordingAttachmentTheme,
-    val fileAttachmentTheme: FileAttachmentTheme,
 ) {
     public companion object {
 
@@ -91,11 +89,6 @@ public data class MessageTheme(
                     own = own,
                     isInDarkMode = isInDarkMode,
                     typography = typography,
-                    colors = colors,
-                ),
-                fileAttachmentTheme = FileAttachmentTheme.defaultTheme(
-                    typography = typography,
-                    shapes = shapes,
                     colors = colors,
                 ),
             )
