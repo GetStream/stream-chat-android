@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledIconToggleButton
@@ -67,6 +68,7 @@ internal fun AttachmentTypePicker(
 
     Row(
         modifier = Modifier
+            .fillMaxWidth()
             .padding(
                 start = StreamTokens.spacingMd,
                 bottom = StreamTokens.spacingSm,
