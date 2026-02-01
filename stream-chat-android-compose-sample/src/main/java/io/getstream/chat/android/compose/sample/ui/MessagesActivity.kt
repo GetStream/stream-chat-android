@@ -136,6 +136,7 @@ class MessagesActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Test comment added by Claude
         setContent {
             SetupChatTheme()
         }
