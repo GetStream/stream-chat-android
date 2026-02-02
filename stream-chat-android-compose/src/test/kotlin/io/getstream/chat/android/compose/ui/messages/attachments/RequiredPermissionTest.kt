@@ -23,7 +23,7 @@ import io.getstream.chat.android.test.TestCoroutineRule
 import org.junit.Rule
 import org.junit.Test
 
-internal class RequirePermissionTest : PaparazziComposeTest {
+internal class RequiredPermissionTest : PaparazziComposeTest {
 
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
