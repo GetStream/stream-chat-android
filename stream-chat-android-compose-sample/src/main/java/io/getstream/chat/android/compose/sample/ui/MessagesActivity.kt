@@ -70,7 +70,7 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -274,7 +274,7 @@ class MessagesActivity : ComponentActivity() {
                     label = "full sized picker animation",
                 )
 
-                AttachmentsPicker(
+                AttachmentPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)

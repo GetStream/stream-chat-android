@@ -62,7 +62,7 @@ import io.getstream.chat.android.compose.ui.components.moderatedmessage.Moderate
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPickerMenu
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
@@ -360,7 +360,7 @@ internal fun DefaultBottomBarContent(
             },
         )
 
-        AttachmentsPickerMenu(
+        AttachmentPickerMenu(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel,
         )

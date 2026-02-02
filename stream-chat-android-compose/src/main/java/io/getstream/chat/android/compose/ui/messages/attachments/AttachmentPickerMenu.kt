@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * perform actions.
  */
 @Composable
-public fun AttachmentsPickerMenu(
+public fun AttachmentPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
@@ -83,7 +83,7 @@ public fun AttachmentsPickerMenu(
         label = "actions menu height",
     )
 
-    AttachmentsPicker(
+    AttachmentPicker(
         attachmentsPickerViewModel = attachmentsPickerViewModel,
         modifier = Modifier.height(animatedHeight),
         onAttachmentItemSelected = { attachmentItem ->

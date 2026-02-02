@@ -34,7 +34,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -42,27 +41,23 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
- * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
- * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
- * files and media capture tabs.
+ * Represents the bottom bar UI that allows users to pick attachments.
  *
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * @param modifier Modifier for styling.
  * @param shape The shape of the bottom bar.
  * @param messageMode The message mode, used to determine if the default "Polls" tab is enabled.
  * items have been selected.
- * @param tabFactories The list of attachment picker tab factories.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
  * @param onDismiss Handler when the user dismisses the UI.
  */
 @Composable
-public fun AttachmentsPicker(
+public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     modifier: Modifier = Modifier,
     shape: Shape = RectangleShape,
     messageMode: MessageMode = MessageMode.Normal,
-    tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit =
         attachmentsPickerViewModel::changeSelectedAttachments,

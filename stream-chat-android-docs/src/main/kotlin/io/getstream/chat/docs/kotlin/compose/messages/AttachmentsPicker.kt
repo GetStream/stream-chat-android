@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -60,7 +60,7 @@ private object AttachmentsPickerUsageSnippet {
                         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
                         if (isShowingAttachments) {
-                            AttachmentsPicker( // Add the picker to your UI
+                            AttachmentPicker( // Add the picker to your UI
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
@@ -110,7 +110,7 @@ private object AttachmentsPickerHandlingActionsSnippet {
                         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
                         if (isShowingAttachments) {
-                            AttachmentsPicker(
+                            AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
@@ -159,7 +159,7 @@ private object AttachmentsPickerCustomizationSnippet {
                         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
                         if (isShowingAttachments) {
-                            AttachmentsPicker(
+                            AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 modifier = Modifier.fillMaxSize(), // Fill all the available space
                                 shape = RectangleShape, // Use a shape without rounded corners
@@ -198,7 +198,7 @@ private object AttachmentsPickerCustomizationSnippet {
                         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
                         if (isShowingAttachments) {
-                            AttachmentsPicker(
+                            AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 modifier = Modifier.fillMaxSize(), // Fill all the available space
                                 shape = RectangleShape, // Use a shape without rounded corners
