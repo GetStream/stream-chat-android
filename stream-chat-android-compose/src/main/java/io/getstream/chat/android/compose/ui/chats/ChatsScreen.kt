@@ -727,7 +727,6 @@ private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFac
     MessageComposer(
         viewModel = composerViewModel,
         onAttachmentsClick = { attachmentsPickerViewModel.toggleAttachmentState() },
-        onCommandsClick = composerViewModel::toggleCommandsVisibility,
         onCancelAction = {
             listViewModel.dismissAllMessageActions()
             composerViewModel.dismissMessageActions()

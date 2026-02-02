@@ -339,8 +339,8 @@ internal fun DefaultBottomBarContent(
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = composerViewModel,
+            isAttachmentPickerVisible = attachmentsPickerViewModel.isShowingAttachments,
             onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
-            onCommandsClick = composerViewModel::toggleCommandsVisibility,
             onAttachmentRemoved = { attachment ->
                 composerViewModel.removeSelectedAttachment(attachment)
                 attachmentsPickerViewModel.removeSelectedAttachment(attachment)

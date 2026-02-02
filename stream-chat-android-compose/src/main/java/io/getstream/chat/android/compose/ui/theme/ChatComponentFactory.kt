@@ -1387,10 +1387,10 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageComposer(
         messageComposerState: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onSendMessage: (String, List<Attachment>) -> Unit,
         modifier: Modifier,
         onAttachmentsClick: () -> Unit,
-        onCommandsClick: () -> Unit,
         onValueChange: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
@@ -1411,10 +1411,10 @@ public interface ChatComponentFactory {
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
             messageComposerState = messageComposerState,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onSendMessage = onSendMessage,
             modifier = modifier,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
@@ -1666,10 +1666,12 @@ public interface ChatComponentFactory {
     @Composable
     public fun RowScope.MessageComposerLeadingContent(
         state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
     ) {
         DefaultMessageComposerLeadingContent(
             messageInputState = state,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onAttachmentsClick = onAttachmentsClick,
         )
     }

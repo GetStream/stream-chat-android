@@ -69,10 +69,10 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param viewModel The ViewModel that provides pieces of data to show in the composer, like the
  * currently selected integration data or the user input. It also handles sending messages.
  * @param modifier Modifier for styling.
+ * @param isAttachmentPickerVisible If the attachment picker is visible or not.
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
- * @param onCommandsClick Handler for the default Commands integration.
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
@@ -98,9 +98,9 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
+    isAttachmentPickerVisible: Boolean = false,
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
-    onCommandsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
@@ -143,6 +143,7 @@ public fun MessageComposer(
         with(ChatTheme.componentFactory) {
             MessageComposerLeadingContent(
                 state = it,
+                isAttachmentPickerVisible = isAttachmentPickerVisible,
                 onAttachmentsClick = onAttachmentsClick,
             )
         }
@@ -201,6 +202,7 @@ public fun MessageComposer(
 
     ChatTheme.componentFactory.MessageComposer(
         modifier = modifier,
+        isAttachmentPickerVisible = isAttachmentPickerVisible,
         onSendMessage = { text, attachments ->
             val messageWithData = viewModel.buildNewMessage(text, attachments)
 
@@ -221,7 +223,6 @@ public fun MessageComposer(
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
         onAttachmentsClick = onAttachmentsClick,
-        onCommandsClick = onCommandsClick,
         onValueChange = onValueChange,
         onAttachmentRemoved = onAttachmentRemoved,
         onLinkPreviewClick = onLinkPreviewClick,
@@ -236,8 +237,8 @@ public fun MessageComposer(
  * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
  * @param modifier Modifier for styling.
+ * @param isAttachmentPickerVisible If the attachment picker is visible or not.
  * @param onAttachmentsClick Handler for the default Attachments integration.
- * @param onCommandsClick Handler for the default Commands integration.
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
@@ -264,8 +265,8 @@ public fun MessageComposer(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     modifier: Modifier = Modifier,
+    isAttachmentPickerVisible: Boolean = false,
     onAttachmentsClick: () -> Unit = {},
-    onCommandsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
@@ -308,6 +309,7 @@ public fun MessageComposer(
         with(ChatTheme.componentFactory) {
             MessageComposerLeadingContent(
                 state = it,
+                isAttachmentPickerVisible = isAttachmentPickerVisible,
                 onAttachmentsClick = onAttachmentsClick,
             )
         }
@@ -533,6 +535,23 @@ internal fun MessageComposerDefaultStyle() {
     )
 }
 
+@Preview
+@Composable
+private fun MessageComposerDefaultStyleWithVisibleAttachmentPickerPreview() {
+    ChatTheme {
+        MessageComposerDefaultStyleWithVisibleAttachmentPicker()
+    }
+}
+
+@Composable
+internal fun MessageComposerDefaultStyleWithVisibleAttachmentPicker() {
+    MessageComposer(
+        messageComposerState = PreviewMessageComposerState,
+        isAttachmentPickerVisible = true,
+        onSendMessage = { _, _ -> },
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun MessageComposerFloatingStylePreview() {
@@ -546,6 +565,25 @@ internal fun MessageComposerFloatingStyle() {
     CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
+            onSendMessage = { _, _ -> },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MessageComposerFloatingStyleWithVisibleAttachmentPickerPreview() {
+    ChatTheme {
+        MessageComposerFloatingStyleWithVisibleAttachmentPicker()
+    }
+}
+
+@Composable
+internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
+    CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
+        MessageComposer(
+            messageComposerState = PreviewMessageComposerState,
+            isAttachmentPickerVisible = true,
             onSendMessage = { _, _ -> },
         )
     }
