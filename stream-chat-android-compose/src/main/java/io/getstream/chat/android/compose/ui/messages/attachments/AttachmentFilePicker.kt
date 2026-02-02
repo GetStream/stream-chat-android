@@ -42,19 +42,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.filesAccessAsState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -63,9 +67,9 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 @Composable
 internal fun AttachmentFilePicker(
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
+    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -244,4 +248,37 @@ private fun RequestAdditionalAccessButton(
             onClick = onClick,
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentFilePickerPreview() {
+    ChatPreviewTheme {
+        AttachmentFilePicker()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentFilePicker() {
+    AttachmentFilePicker(
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
+                    size = 10_000
+                },
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
+                    size = 100_000
+                },
+                selection = Selection.Selected(count = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
+                    size = 1_000_000
+                },
+            ),
+        ),
+    )
 }
