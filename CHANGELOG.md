@@ -12,13 +12,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix `markDelivered` not working when switching users. [#6093](https://github.com/GetStream/stream-chat-android/pull/6093)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient.clearCacheAndTemporaryFiles(context: Context)` method for clearing cache and temporary files created by the SDK. [#6090](https://github.com/GetStream/stream-chat-android/pull/6090)
-- Add `team` property to the `MessageReadEvent`. [#6105](https://github.com/GetStream/stream-chat-android/pull/6105)
 
 ### ⚠️ Changed
 
@@ -59,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix audio recording content stuck in 'held' state. [#6078](https://github.com/GetStream/stream-chat-android/pull/6078)
 
 ### ⬆️ Improved
 
@@ -71,8 +67,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix file picker and media capture not working in cases when the attachments picker composable is disposed. [#6104](https://github.com/GetStream/stream-chat-android/pull/6104)
-- Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 ### ⬆️ Improved
 
@@ -92,6 +86,24 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 28th, 2026 - 6.32.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix `markDelivered` not working when switching users. [#6093](https://github.com/GetStream/stream-chat-android/pull/6093)
+
+### ✅ Added
+- Add `ChatClient.clearCacheAndTemporaryFiles(context: Context)` method for clearing cache and temporary files created by the SDK. [#6090](https://github.com/GetStream/stream-chat-android/pull/6090)
+- Add `team` property to the `MessageReadEvent`. [#6105](https://github.com/GetStream/stream-chat-android/pull/6105)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix audio recording content stuck in 'held' state. [#6078](https://github.com/GetStream/stream-chat-android/pull/6078)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix file picker and media capture not working in cases when the attachments picker composable is disposed. [#6104](https://github.com/GetStream/stream-chat-android/pull/6104)
+- Fix quoting edited messages showing outdated text. [#6107](https://github.com/GetStream/stream-chat-android/pull/6107)
 
 # January 16th, 2026 - 6.31.0
 ## stream-chat-android-client
