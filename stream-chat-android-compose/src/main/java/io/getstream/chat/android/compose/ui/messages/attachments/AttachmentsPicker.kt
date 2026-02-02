@@ -94,8 +94,6 @@ public fun AttachmentsPicker(
                 messageMode = messageMode,
                 commands = attachmentsPickerViewModel.channel.config.commands,
                 attachments = attachmentsPickerViewModel.attachments,
-                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                onAttachmentItemSelected = onAttachmentItemSelected,
                 onAttachmentPickerAction = onAttachmentPickerAction,
                 onAttachmentsSubmitted = { metaData ->
                     attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->

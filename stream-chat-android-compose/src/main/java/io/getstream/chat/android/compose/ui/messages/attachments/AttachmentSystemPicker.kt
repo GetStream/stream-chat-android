@@ -17,9 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -80,8 +78,6 @@ internal fun AttachmentSystemPickerContent(
     messageMode: MessageMode,
     commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
 ) {
@@ -91,18 +87,21 @@ internal fun AttachmentSystemPickerContent(
         factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
     )
 
-    val filePickerLauncher = rememberFilePickerLauncher { uri ->
-        val uris = listOf(uri)
-        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-            showErrorIfNeeded(context, metadata)
-            onAttachmentsSubmitted(metadata.attachmentsMetadata)
+    val filePickerLauncher = rememberFilePickerLauncher(config.visualMediaAllowMultiple) { uris ->
+        if (uris.isNotEmpty()) {
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                showErrorIfNeeded(context, metadata)
+                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+            }
         }
     }
 
     val mediaPickerLauncher = rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-            showErrorIfNeeded(context, metadata)
-            onAttachmentsSubmitted(metadata.attachmentsMetadata)
+        if (uris.isNotEmpty()) {
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                showErrorIfNeeded(context, metadata)
+                onAttachmentsSubmitted(metadata.attachmentsMetadata)
+            }
         }
     }
 
@@ -132,6 +131,7 @@ internal fun AttachmentSystemPickerContent(
     var showCommandsPickerDialog by remember { mutableStateOf(false) }
 
     val visualMediaType = config.visualMediaType.toContractVisualMediaType()
+    val fileTypes = AttachmentFilter().getSupportedMimeTypes().toTypedArray()
 
     AttachmentTypeSystemPicker(
         channel = channel,
@@ -150,7 +150,7 @@ internal fun AttachmentSystemPickerContent(
                     }
                 }
 
-                is Files -> filePickerLauncher.launch(filePickerIntent())
+                is Files -> filePickerLauncher.launch(fileTypes)
 
                 is Poll -> {
                     showCreatePollDialog = true
@@ -197,10 +197,16 @@ internal fun AttachmentSystemPickerContent(
 }
 
 @Composable
-private fun rememberFilePickerLauncher(onResult: (Uri) -> Unit) =
-    rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            result.data?.data?.let(onResult)
+private fun rememberFilePickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) =
+    if (allowMultiple) {
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+            onResult(uris)
+        }
+    } else {
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) {
+                onResult(listOf(uri))
+            }
         }
     }
 
@@ -217,15 +223,6 @@ private fun rememberVisualMediaPickerLauncher(allowMultiple: Boolean, onResult: 
             }
         }
     }
-
-private fun filePickerIntent(): Intent {
-    val attachmentFilter = AttachmentFilter()
-    return Intent(Intent.ACTION_GET_CONTENT).apply {
-        type = "*/*" // General type to include multiple types
-        putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
-        addCategory(Intent.CATEGORY_OPENABLE)
-    }
-}
 
 private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
     if (metadata.uris.size != metadata.attachmentsMetadata.size) {
