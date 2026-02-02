@@ -376,7 +376,7 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
-        lastMessageAt = maxOfNullable(this.lastMessageAt, that.lastMessageAt),
+        lastMessageAt = that.lastMessageAt,
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -387,17 +387,6 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         unreadCount = that.unreadCount,
          */
     )
-}
-
-/**
- * Returns the maximum of two nullable dates, treating null as "no value".
- */
-private fun maxOfNullable(a: Date?, b: Date?): Date? {
-    return when {
-        a == null -> b
-        b == null -> a
-        else -> if (a.after(b)) a else b
-    }
 }
 
 /**
