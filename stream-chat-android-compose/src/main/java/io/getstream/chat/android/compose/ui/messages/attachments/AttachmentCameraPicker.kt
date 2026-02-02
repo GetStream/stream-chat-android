@@ -17,16 +17,38 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
@@ -39,31 +61,84 @@ internal fun AttachmentCameraPicker(
 ) {
     val context = LocalContext.current
 
-    // Handling camera permission flow is required if the host application has declared the permission.
-    val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
-
-    val cameraPermissionState = if (requiresCameraPermission) {
-        rememberPermissionState(permission = Manifest.permission.CAMERA)
-    } else {
-        null
-    }
-
-    val mediaCaptureResultLauncher = rememberCaptureMediaLauncher(
+    val captureMediaLauncher = rememberCaptureMediaLauncher(
         photo = pickerMediaMode == PickerMediaMode.PHOTO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
         video = pickerMediaMode == PickerMediaMode.VIDEO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
     ) { file ->
         val attachments = listOf(AttachmentMetaData(context, file))
         onAttachmentsSubmitted(attachments)
     }
-
-    if (cameraPermissionState == null || cameraPermissionState.status == PermissionStatus.Granted) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LaunchedEffect(Unit) {
-                mediaCaptureResultLauncher?.launch(Unit)
-            }
+    // Handling camera permission flow is only required if the host application has declared the permission.
+    val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
+    val cameraPermissionState = if (requiresCameraPermission) {
+        rememberPermissionState(Manifest.permission.CAMERA)
+    } else {
+        null
+    }
+    var showRequiredCameraPermission by remember { mutableStateOf(false) }
+    LaunchedEffect(cameraPermissionState?.status) {
+        if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
+            captureMediaLauncher?.launch(Unit)
+        } else if (cameraPermissionState.status.shouldShowRationale) {
+            showRequiredCameraPermission = true
+        } else {
+            cameraPermissionState.launchPermissionRequest()
         }
-    } else if (cameraPermissionState.status is PermissionStatus.Denied) {
+    }
+
+    if (showRequiredCameraPermission) {
         RequiredCameraPermission()
+    } else {
+        AttachmentCameraPickerContent { captureMediaLauncher?.launch(Unit) }
+    }
+}
+
+@Composable
+private fun AttachmentCameraPickerContent(
+    onCaptureClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .padding(
+                start = StreamTokens.spacing2xl,
+                end = StreamTokens.spacing2xl,
+                bottom = StreamTokens.spacing3xl,
+            )
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs, Alignment.CenterVertically),
+        ) {
+            Icon(
+                modifier = Modifier.size(32.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_attachment_camera_picker),
+                contentDescription = null,
+                tint = ChatTheme.colors.textTertiary,
+            )
+            Text(
+                text = stringResource(id = R.string.stream_compose_attachment_camera_picker_content),
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textTertiary,
+                textAlign = TextAlign.Center,
+            )
+        }
+        OutlinedButton(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+            onClick = onCaptureClick,
+            colors = ButtonDefaults.outlinedButtonColors(
+                contentColor = ChatTheme.colors.buttonSecondaryText,
+            ),
+        ) {
+            Text(text = stringResource(id = R.string.stream_compose_attachment_camera_picker))
+        }
     }
 }
 

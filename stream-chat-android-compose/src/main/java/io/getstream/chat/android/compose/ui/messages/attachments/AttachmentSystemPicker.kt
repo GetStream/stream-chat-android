@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -107,22 +106,23 @@ internal fun AttachmentSystemPickerContent(
         }
     }
 
-    val captureLauncher = rememberCaptureMediaLauncher(
+    val captureMediaLauncher = rememberCaptureMediaLauncher(
         photo = config.captureImageAllowed,
         video = config.captureVideoAllowed,
     ) { file ->
         val attachments = listOf(AttachmentMetaData(context, file))
         onAttachmentsSubmitted(attachments)
     }
-    var showCameraPermissionDialog by remember { mutableStateOf(false) }
-    val cameraPermissionRequired = context.isPermissionDeclared(Manifest.permission.CAMERA)
-    val cameraPermissionState = if (cameraPermissionRequired) {
+    // Handling camera permission flow is only required if the host application has declared the permission.
+    val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
+    val cameraPermissionState = if (requiresCameraPermission) {
         rememberPermissionState(Manifest.permission.CAMERA) { granted ->
-            if (granted) captureLauncher?.launch(Unit)
+            if (granted) captureMediaLauncher?.launch(Unit)
         }
     } else {
         null
     }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
     LaunchedEffect(cameraPermissionState?.status) {
         showCameraPermissionDialog = false
     }
@@ -141,13 +141,12 @@ internal fun AttachmentSystemPickerContent(
                 is Images -> mediaPickerLauncher.launch(PickVisualMediaRequest(visualMediaType))
 
                 is MediaCapture -> {
-                    // Permission grant is needed only if CAMERA is declared in the Manifest and is not yet granted
-                    if (!cameraPermissionRequired || cameraPermissionState?.status?.isGranted == true) {
-                        captureLauncher?.launch(Unit)
-                    } else if (cameraPermissionState?.status?.shouldShowRationale == true) {
+                    if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
+                        captureMediaLauncher?.launch(Unit)
+                    } else if (cameraPermissionState.status.shouldShowRationale) {
                         showCameraPermissionDialog = true
                     } else {
-                        cameraPermissionState?.launchPermissionRequest()
+                        cameraPermissionState.launchPermissionRequest()
                     }
                 }
 
@@ -171,9 +170,8 @@ internal fun AttachmentSystemPickerContent(
         },
     )
 
-    if (showCameraPermissionDialog && cameraPermissionState != null) {
+    if (showCameraPermissionDialog) {
         CameraPermissionDialog(
-            permissionState = cameraPermissionState,
             onDismiss = { showCameraPermissionDialog = false },
         )
     }
@@ -239,10 +237,8 @@ private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFro
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun CameraPermissionDialog(
-    permissionState: PermissionState,
     onDismiss: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismiss) {
