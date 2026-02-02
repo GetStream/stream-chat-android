@@ -30,26 +30,31 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.visualMediaAccessAsState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 @Composable
 internal fun AttachmentMediaPicker(
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -132,4 +137,33 @@ private fun VisualMediaAccessContent(
             RequiredStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentMediaPickerPreview() {
+    ChatPreviewTheme {
+        AttachmentMediaPicker()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentMediaPicker() {
+    AttachmentMediaPicker(
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(count = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
+                    videoLength = 1_000
+                },
+            ),
+        ),
+    )
 }
