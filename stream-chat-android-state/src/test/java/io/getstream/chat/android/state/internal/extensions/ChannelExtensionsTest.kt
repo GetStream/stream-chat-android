@@ -28,7 +28,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import okio.buffer
@@ -80,33 +79,10 @@ internal class ChannelExtensionsTest {
 
     @Test
     fun `When apply pagination Should sort correctly descending`() {
-        val firstChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(1000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
-        val secondChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(3000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
-        val thirdChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(2000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
+        val firstChannel = randomChannel(lastMessageAt = Date(1000))
+        val secondChannel = randomChannel(lastMessageAt = Date(3000))
+        val thirdChannel = randomChannel(lastMessageAt = Date(2000))
+
         val sort = QuerySortByField.descByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
@@ -128,33 +104,10 @@ internal class ChannelExtensionsTest {
 
     @Test
     fun `When apply pagination Should sort correctly ascending`() {
-        val firstChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(1000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
-        val secondChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(3000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
-        val thirdChannel = randomChannel(
-            messages = listOf(
-                randomMessage(
-                    createdAt = Date(2000),
-                    createdLocallyAt = null,
-                    parentId = null,
-                ),
-            ),
-        )
+        val firstChannel = randomChannel(lastMessageAt = Date(1000))
+        val secondChannel = randomChannel(lastMessageAt = Date(3000))
+        val thirdChannel = randomChannel(lastMessageAt = Date(2000))
+
         val sort = QuerySortByField.ascByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
