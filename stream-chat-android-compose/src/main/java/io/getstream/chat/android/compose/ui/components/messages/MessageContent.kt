@@ -203,17 +203,17 @@ internal fun DefaultMessageContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             )
         } else {
-            if (info.files.isNotEmpty()) {
-                componentFactory.FileAttachmentContent(
-                    modifier = Modifier,
-                    attachmentState = makeAttachmentState(info.files),
-                )
-            }
-
             if (info.media.isNotEmpty()) {
                 componentFactory.MediaAttachmentContent(
                     modifier = Modifier,
                     state = makeAttachmentState(info.media),
+                )
+            }
+
+            if (info.files.isNotEmpty()) {
+                componentFactory.FileAttachmentContent(
+                    modifier = Modifier,
+                    attachmentState = makeAttachmentState(info.files),
                 )
             }
 
