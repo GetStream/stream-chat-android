@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.dokka)
 }
 
 android {

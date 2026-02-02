@@ -24,10 +24,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -43,6 +43,7 @@ import kotlin.math.log10
  * working with it.
  *
  * @param context The [Context] necessary to prepare for recording.
+ * @param fileManager The file manager for creating audio recording files .
  */
 public class DefaultStreamMediaRecorder(
     private val context: Context,
@@ -52,6 +53,7 @@ public class DefaultStreamMediaRecorder(
     private val audioSamplingRate: Int = SAMPLING_RATE_16KHZ,
     private val audioEncodingBitRate: Int = ENCODING_BIT_RATE_32KBPS,
     private val audioChannels: Int = CHANNELS,
+    private val fileManager: StreamFileManager = StreamFileManager(),
 ) : StreamMediaRecorder {
 
     /**
@@ -210,7 +212,7 @@ public class DefaultStreamMediaRecorder(
         override: Boolean,
     ): Result<File> {
         return try {
-            StreamFileUtil.createFileInCacheDir(context, recordingName)
+            fileManager.createFileInCache(context, recordingName)
                 .onSuccess {
                     recordingFile = it
                     initializeMediaRecorderForAudio(recordingFile = it)

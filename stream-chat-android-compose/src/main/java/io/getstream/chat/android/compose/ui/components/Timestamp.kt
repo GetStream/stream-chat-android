@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.DateFormatType.DATE
 import io.getstream.chat.android.compose.state.DateFormatType.RELATIVE
@@ -44,6 +45,7 @@ public fun Timestamp(
     modifier: Modifier = Modifier,
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
+    textStyle: TextStyle = ChatTheme.typography.footnote.copy(ChatTheme.colors.textLowEmphasis),
 ) {
     val timestamp = if (LocalInspectionMode.current) {
         "13:49"
@@ -58,7 +60,6 @@ public fun Timestamp(
     Text(
         modifier = modifier.testTag("Stream_Timestamp"),
         text = timestamp,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = textStyle,
     )
 }

@@ -20,7 +20,7 @@ import android.content.Context
 import android.net.Uri
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import io.getstream.chat.android.ui.common.utils.Utils
 import java.io.File
 
@@ -49,7 +49,7 @@ public data class AttachmentMetaData(
     public constructor(
         context: Context,
         file: File,
-    ) : this(file = file, uri = StreamFileUtil.getUriForFile(context, file)) {
+    ) : this(file = file, uri = ShareableUriProvider().getUriForFile(context, file)) {
         mimeType = Utils.getMimeType(file)
         type = getTypeFromMimeType(mimeType)
         size = file.length()

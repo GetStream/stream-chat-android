@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
  * @param imageThumbnail The shape of image thumbnails, shown in selected attachments and image file attachments.
  * @param bottomSheet The shape of components used as bottom sheets.
  * @param suggestionList The shape of suggestion list popup.
- * @param attachmentSiteLabel The shape of the label showing website name over link attachments.
  * @param header The shape of the headers, such as the ones appearing on the Channel or Message screens.
  * @param quotedAttachment The shape of quoted attachments.
  */
@@ -48,7 +47,6 @@ public data class StreamShapes(
     public val imageThumbnail: Shape,
     public val bottomSheet: Shape,
     public val suggestionList: Shape,
-    public val attachmentSiteLabel: Shape,
     public val header: Shape,
     public val quotedAttachment: Shape,
     public val pollOptionInput: Shape,
@@ -61,14 +59,13 @@ public data class StreamShapes(
          */
         public fun defaultShapes(): StreamShapes = StreamShapes(
             avatar = CircleShape,
-            myMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp),
-            otherMessageBubble = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp),
+            myMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp),
+            otherMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 20.dp),
             inputField = RoundedCornerShape(24.dp),
-            attachment = RoundedCornerShape(12.dp),
+            attachment = RoundedCornerShape(StreamTokens.radiusLg),
             imageThumbnail = RoundedCornerShape(8.dp),
             bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             suggestionList = RoundedCornerShape(16.dp),
-            attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
             header = RectangleShape,
             quotedAttachment = RoundedCornerShape(4.dp),
             pollOptionInput = RoundedCornerShape(16.dp),

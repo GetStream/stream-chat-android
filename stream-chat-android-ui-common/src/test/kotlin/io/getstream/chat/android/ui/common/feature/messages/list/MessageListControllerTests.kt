@@ -177,7 +177,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.MIDDLE)
+            val expectedPosition = MessagePosition.MIDDLE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
@@ -198,7 +198,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.NONE)
+            val expectedPosition = MessagePosition.NONE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
@@ -219,7 +219,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.NONE)
+            val expectedPosition = MessagePosition.NONE
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition

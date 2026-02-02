@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "images" tab in the attachment picker.
@@ -103,15 +102,12 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.mediaMetadata.collectLatest { metaData ->
-                val items = metaData.map { AttachmentPickerItemState(it, false) }
-                onAttachmentsChanged(items)
-            }
-        }
         val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
             if (value != VisualMediaAccess.DENIED) {
-                processingViewModel.getMediaAsync()
+                processingViewModel.getMediaAsync { metadata ->
+                    val items = metadata.map { AttachmentPickerItemState(it, false) }
+                    onAttachmentsChanged(items)
+                }
             }
         }
 

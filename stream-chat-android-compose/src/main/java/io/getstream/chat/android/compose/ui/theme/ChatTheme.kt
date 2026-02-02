@@ -413,8 +413,6 @@ public fun ChatTheme(
         typography = typography,
         shapes = shapes,
         colors = colors,
-        ownMessageTheme = ownMessageTheme,
-        otherMessageTheme = otherMessageTheme,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),

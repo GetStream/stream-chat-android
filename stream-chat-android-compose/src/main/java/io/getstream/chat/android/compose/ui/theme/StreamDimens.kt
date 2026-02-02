@@ -210,7 +210,7 @@ public data class StreamDimens(
             attachmentsContentMediaGridSpacing = 2.dp,
             attachmentsContentVideoWidth = 250.dp,
             attachmentsContentGroupPreviewWidth = 250.dp,
-            attachmentsContentGroupPreviewHeight = 250.dp,
+            attachmentsContentGroupPreviewHeight = 196.dp,
             pollOptionInputHeight = 56.dp,
             messageComposerShadowElevation = 24.dp,
         )

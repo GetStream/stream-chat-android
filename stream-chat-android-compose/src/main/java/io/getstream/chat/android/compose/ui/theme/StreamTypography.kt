@@ -39,8 +39,10 @@ import androidx.compose.ui.unit.sp
  * @param captionBold Used for unread count indicator.
  * @param singleEmoji Used for messages whose content consists only of a single emoji.
  * @param emojiOnly Used for messages whose content consists only if emojis.
+ * @param bodyDefault Used for body text, like message text.
  * @param bodyEmphasis Used for emphasized body text requiring visual prominence to highlight important information.
  * @param captionEmphasis Used for emphasized captions requiring attention while maintaining compact display.
+ * @param metadataEmphasis Used for metadata and supplementary information.
  * @param metadataEmphasis Used for emphasized metadata and supplementary information in secondary content areas.
  */
 @Immutable
@@ -59,9 +61,11 @@ public data class StreamTypography(
     public val singleEmoji: TextStyle,
     public val emojiOnly: TextStyle,
 
+    public val bodyDefault: TextStyle,
     public val bodyEmphasis: TextStyle,
     public val captionEmphasis: TextStyle,
     public val headingLarge: TextStyle,
+    public val metadataDefault: TextStyle,
     public val metadataEmphasis: TextStyle,
 ) {
 
@@ -138,14 +142,20 @@ public data class StreamTypography(
                 fontFamily = fontFamily,
             ),
             singleEmoji = TextStyle(
-                fontSize = 50.sp,
                 fontFamily = fontFamily,
+                fontSize = 64.sp,
             ),
             emojiOnly = TextStyle(
-                fontSize = 50.sp,
                 fontFamily = fontFamily,
+                fontSize = 64.sp,
             ),
 
+            bodyDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightRegular,
+                fontSize = StreamTokens.fontSizeMd,
+                lineHeight = StreamTokens.lineHeightNormal,
+            ),
             bodyEmphasis = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,
@@ -156,6 +166,12 @@ public data class StreamTypography(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeSm,
+                lineHeight = StreamTokens.lineHeightTight,
+            ),
+            metadataDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightRegular,
+                fontSize = StreamTokens.fontSizeXs,
                 lineHeight = StreamTokens.lineHeightTight,
             ),
             headingLarge = TextStyle(

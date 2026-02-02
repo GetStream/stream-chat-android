@@ -84,30 +84,6 @@ internal class AttachmentUtilsTests {
     }
 
     @Test
-    fun `isImgur should return true for imgur attachment`() {
-        val attachment = randomAttachment(type = AttachmentType.IMGUR)
-        attachment.isImgur() shouldBeEqualTo true
-    }
-
-    @Test
-    fun `isImgur should return false for non-imgur attachment`() {
-        val attachment = randomAttachment(type = AttachmentType.IMAGE)
-        attachment.isImgur() shouldBeEqualTo false
-    }
-
-    @Test
-    fun `isLink should return true for link attachment`() {
-        val attachment = randomAttachment(type = AttachmentType.LINK)
-        attachment.isLink() shouldBeEqualTo true
-    }
-
-    @Test
-    fun `isLink should return false for non-link attachment`() {
-        val attachment = randomAttachment(type = AttachmentType.IMAGE)
-        attachment.isLink() shouldBeEqualTo false
-    }
-
-    @Test
     fun `isAudioRecording should return true for audio recording attachment`() {
         val attachment = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
         attachment.isAudioRecording() shouldBeEqualTo true

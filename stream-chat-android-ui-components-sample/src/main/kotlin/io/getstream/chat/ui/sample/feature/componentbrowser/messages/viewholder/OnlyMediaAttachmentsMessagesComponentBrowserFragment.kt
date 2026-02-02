@@ -33,7 +33,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
         return listOf(
             MessageListItem.MessageItem(
                 message = Message(attachments = mutableListOf(Attachment(type = "image", imageUrl = uri1))),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -43,7 +43,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri2),
                     ),
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -54,7 +54,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3),
                     ),
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = true,
             ),
             MessageListItem.MessageItem(
@@ -64,7 +64,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri2),
                     ),
                 ),
-                positions = listOf(MessagePosition.TOP),
+                position = MessagePosition.TOP,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -75,7 +75,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3),
                     ),
                 ),
-                positions = listOf(MessagePosition.MIDDLE),
+                position = MessagePosition.MIDDLE,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -87,7 +87,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri1),
                     ),
                 ),
-                positions = listOf(MessagePosition.BOTTOM),
+                position = MessagePosition.BOTTOM,
                 isMine = false,
             ),
             MessageListItem.MessageItem(
@@ -101,7 +101,7 @@ class OnlyMediaAttachmentsMessagesComponentBrowserFragment : BaseMessagesCompone
                         Attachment(type = "image", imageUrl = uri3),
                     ),
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
         )

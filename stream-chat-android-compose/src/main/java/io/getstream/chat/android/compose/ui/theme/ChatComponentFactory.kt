@@ -1044,7 +1044,6 @@ public interface ChatComponentFactory {
      * @param color The color of the message bubble.
      * @param shape The shape of the message bubble.
      * @param border The border of the message bubble.
-     * @param contentPadding The padding of the message bubble.
      * @param content The content shown inside the message bubble.
      */
     @Composable
@@ -1054,7 +1053,6 @@ public interface ChatComponentFactory {
         color: Color,
         shape: Shape,
         border: BorderStroke?,
-        contentPadding: PaddingValues,
         content: @Composable () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
@@ -1062,7 +1060,6 @@ public interface ChatComponentFactory {
             color = color,
             shape = shape,
             border = border,
-            contentPadding = contentPadding,
             content = content,
         )
     }
@@ -1361,36 +1358,6 @@ public interface ChatComponentFactory {
         )
     }
 
-    /**
-     * The default read status indicator in the message footer, weather the message is sent, pending or read.
-     */
-    @Deprecated(
-        message = "Use the new version of MessageFooterStatusIndicator that takes MessageFooterStatusIndicatorParams.",
-        replaceWith = ReplaceWith(
-            "MessageFooterStatusIndicator(\n" +
-                "    params = MessageFooterStatusIndicatorParams(\n" +
-                "        modifier = modifier,\n" +
-                "        messageItem = messageItem,\n" +
-                "    ),\n" +
-                ")",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    @Composable
-    public fun MessageFooterStatusIndicator(
-        modifier: Modifier,
-        message: Message,
-        isMessageRead: Boolean,
-        readCount: Int,
-    ) {
-        MessageReadStatusIcon(
-            modifier = modifier,
-            message = message,
-            isMessageRead = isMessageRead,
-            readCount = readCount,
-        )
-    }
-
     @Composable
     public fun MessageFooterStatusIndicator(
         params: MessageFooterStatusIndicatorParams,
@@ -1404,7 +1371,7 @@ public interface ChatComponentFactory {
                 readCount = params.messageItem.messageReadBy.size,
             )
         } else {
-            MessageFooterStatusIndicator(
+            MessageReadStatusIcon(
                 modifier = params.modifier,
                 message = params.messageItem.message,
                 isMessageRead = params.messageItem.isMessageRead,

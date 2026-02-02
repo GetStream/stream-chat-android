@@ -36,6 +36,8 @@ internal object StreamTokens {
     val radius3xl = CornerSize(24.dp)
     val radius4xl = CornerSize(32.dp)
 
+    val size12 = 12.dp
+
     val spacing3xs = 2.dp
     val spacing2xs = 4.dp
     val spacingXs = 8.dp
@@ -47,6 +49,7 @@ internal object StreamTokens {
     val spacing3xl = 40.dp
 
     val fontWeightSemiBold = FontWeight.SemiBold
+    val fontWeightRegular = FontWeight.Normal
     val fontSizeXs = 12.sp
     val fontSizeSm = 14.sp
     val fontSizeMd = 16.sp

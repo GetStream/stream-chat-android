@@ -28,6 +28,7 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.allowHardware
 import coil3.request.crossfade
 import coil3.video.VideoFrameDecoder
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -35,11 +36,24 @@ import okio.Path.Companion.toOkioPath
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
 private const val DEFAULT_DISK_CACHE_PERCENTAGE = 0.02
-private const val DISK_CACHE_DIRECTORY = "stream_image_cache"
 
+/**
+ * Factory for creating Coil ImageLoader instances with Stream Chat specific configuration.
+ *
+ * This factory configures:
+ * - Memory cache with 25% of available memory
+ * - Disk cache using FileCacheManager's Coil cache directory (2% of disk space)
+ * - OkHttp with cache control and optimized network dispatcher
+ * - Support for GIFs, animated images, and video frames
+ *
+ * @param builder Optional lambda to customize the ImageLoader configuration
+ */
 public class StreamImageLoaderFactory(
     private val builder: ImageLoader.Builder.() -> Unit = {},
 ) : SingletonImageLoader.Factory {
+
+    private val fileManager = StreamFileManager()
+
     override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)
             .memoryCache { MemoryCache.Builder().maxSizePercent(context, DEFAULT_MEMORY_PERCENTAGE).build() }
@@ -68,7 +82,7 @@ public class StreamImageLoaderFactory(
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY).toOkioPath())
+                    .directory(fileManager.getImageCache(context).toOkioPath())
                     .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
                     .build()
             }

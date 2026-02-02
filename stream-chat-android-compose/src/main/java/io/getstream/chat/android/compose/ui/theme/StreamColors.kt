@@ -34,21 +34,15 @@ import io.getstream.chat.android.compose.R
  * @param inputBackground Used for the input background, deleted messages, section headings.
  * @param appBackground Used for the default app background and channel list item background.
  * @param barsBackground Used for button text, top and bottom bar background and other user messages.
- * @param linkBackground Used for the message link card background.
  * @param overlay Used for general overlays and background when opening modals.
  * @param overlayDark Used for the date separator background color.
  * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
  * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
  * @param infoAccent Used for the online status.
  * @param highlight Used for message highlights.
- * @param ownMessagesBackground Used as a background color for the messages sent by the current user.
- * @param otherMessagesBackground Used as a background color for the messages sent by other users.
- * @param deletedMessagesBackground Used as a background for deleted messages.
  * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
- * @param ownMessageText Used for message text color for the current user. [textHighEmphasis] by default.
- * @param otherMessageText Used for message text color for other users. [textHighEmphasis] by default.
  * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
  * Most visible in placeholders before the images are loaded.
  * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
@@ -107,7 +101,8 @@ import io.getstream.chat.android.compose.R
  * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
  * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
  * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
- * @param chatTextMessage Used for message text color in chat bubbles.
+ * @param chatTextIncoming Used for incoming message text color in chat bubbles.
+ * @param chatTextOutgoing Used for outgoing message text color in chat bubbles.
  * @param controlRemoveBg Used for remove control background.
  * @param controlRemoveBorder Used for remove control border.
  * @param controlRemoveIcon Used for remove control icon.
@@ -124,31 +119,18 @@ public data class StreamColors(
     public val disabled: Color,
     public val borders: Color,
     public val inputBackground: Color,
-    public val appBackground: Color,
     public val barsBackground: Color,
-    @Deprecated("Use MessageTheme.linkBackgroundColor instead", level = DeprecationLevel.WARNING)
-    public val linkBackground: Color,
     public val overlay: Color,
     public val overlayDark: Color,
     public val primaryAccent: Color,
     public val errorAccent: Color,
     public val infoAccent: Color,
     public val highlight: Color,
-    @Deprecated("Use MessageTheme.backgroundColor instead", level = DeprecationLevel.ERROR)
-    public val ownMessagesBackground: Color,
-    @Deprecated("Use MessageTheme.backgroundColor instead", level = DeprecationLevel.ERROR)
-    public val otherMessagesBackground: Color,
-    @Deprecated("Use MessageTheme.deletedBackgroundColor instead", level = DeprecationLevel.ERROR)
-    public val deletedMessagesBackground: Color,
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
     public val mediaShimmerBase: Color,
     public val mediaShimmerHighlights: Color,
-    @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
-    public val ownMessageText: Color = textHighEmphasis,
-    @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
-    public val otherMessageText: Color = textHighEmphasis,
     public val imageBackgroundMessageList: Color,
     public val imageBackgroundMediaGalleryPicker: Color,
     public val videoBackgroundMessageList: Color,
@@ -171,14 +153,17 @@ public data class StreamColors(
     public val avatarPaletteText3: Color,
     public val avatarPaletteText4: Color,
     public val avatarPaletteText5: Color,
+    public val backgroundElevationElevation0: Color,
     public val borderCoreImage: Color,
     public val borderCoreOnDark: Color,
     public val borderCoreSurfaceSubtle: Color,
     public val borderCorePrimary: Color,
     public val textPrimary: Color,
     public val textSecondary: Color,
+    public val textTertiary: Color,
     public val stateBgDisabled: Color,
     public val stateTextDisabled: Color,
+    public val appBackground: Color = backgroundElevationElevation0,
     public val backgroundElevationElevation2: Color,
     public val buttonStyleGhostBg: Color,
     public val buttonStyleGhostBorder: Color,
@@ -203,7 +188,11 @@ public data class StreamColors(
     public val chatBgAttachmentOutgoing: Color,
     public val chatReplyIndicatorIncoming: Color,
     public val chatReplyIndicatorOutgoing: Color,
-    public val chatTextMessage: Color = textPrimary,
+    public val chatTextIncoming: Color = textPrimary,
+    public val chatTextOutgoing: Color = textPrimary,
+    public val chatTextLink: Color = primaryAccent,
+    public val chatTextMention: Color = chatTextLink,
+    public val chatTextTimestamp: Color = textTertiary,
     public val controlRemoveBg: Color,
     public val controlRemoveBorder: Color = borderCoreOnDark,
     public val controlRemoveIcon: Color,
@@ -227,25 +216,18 @@ public data class StreamColors(
             disabled = colorResource(R.color.stream_compose_disabled),
             borders = colorResource(R.color.stream_compose_borders),
             inputBackground = colorResource(R.color.stream_compose_input_background),
-            appBackground = colorResource(R.color.stream_compose_app_background),
             barsBackground = colorResource(R.color.stream_compose_bars_background),
-            linkBackground = colorResource(R.color.stream_compose_link_background),
             overlay = colorResource(R.color.stream_compose_overlay_regular),
             overlayDark = colorResource(R.color.stream_compose_overlay_dark),
             primaryAccent = colorResource(R.color.stream_compose_primary_accent),
             errorAccent = colorResource(R.color.stream_compose_error_accent),
             infoAccent = colorResource(R.color.stream_compose_info_accent),
             highlight = colorResource(R.color.stream_compose_highlight),
-            ownMessagesBackground = colorResource(R.color.stream_compose_borders),
-            otherMessagesBackground = colorResource(R.color.stream_compose_bars_background),
-            deletedMessagesBackground = colorResource(R.color.stream_compose_input_background),
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
             mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
             mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
-            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
@@ -257,6 +239,7 @@ public data class StreamColors(
             accentNeutral = StreamPrimitiveColors.slate500,
             accentSuccess = StreamPrimitiveColors.green500,
             accentPrimary = StreamPrimitiveColors.blue500,
+            backgroundElevationElevation0 = StreamPrimitiveColors.baseWhite,
             backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
             borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
@@ -264,6 +247,7 @@ public data class StreamColors(
             borderCorePrimary = StreamPrimitiveColors.blue600,
             textPrimary = StreamPrimitiveColors.slate900,
             textSecondary = StreamPrimitiveColors.slate700,
+            textTertiary = StreamPrimitiveColors.slate500,
             stateBgDisabled = StreamPrimitiveColors.slate200,
             stateTextDisabled = StreamPrimitiveColors.slate400,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -309,23 +293,17 @@ public data class StreamColors(
             inputBackground = colorResource(R.color.stream_compose_input_background_dark),
             appBackground = colorResource(R.color.stream_compose_app_background_dark),
             barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
-            linkBackground = colorResource(R.color.stream_compose_link_background_dark),
             overlay = colorResource(R.color.stream_compose_overlay_regular_dark),
             overlayDark = colorResource(R.color.stream_compose_overlay_dark_dark),
             primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
             errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
             infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
             highlight = colorResource(R.color.stream_compose_highlight_dark),
-            ownMessagesBackground = colorResource(R.color.stream_compose_borders_dark),
-            otherMessagesBackground = colorResource(R.color.stream_compose_bars_background_dark),
-            deletedMessagesBackground = colorResource(R.color.stream_compose_input_background_dark),
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
             mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
             mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-            ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
-            otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
             imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
             videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
@@ -334,6 +312,7 @@ public data class StreamColors(
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
 
             accentError = StreamPrimitiveColors.red400,
+            backgroundElevationElevation0 = StreamPrimitiveColors.baseBlack,
             accentNeutral = StreamPrimitiveColors.neutral500,
             accentSuccess = StreamPrimitiveColors.green400,
             accentPrimary = StreamPrimitiveColors.blue400,
@@ -343,7 +322,8 @@ public data class StreamColors(
             borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral700,
             borderCorePrimary = StreamPrimitiveColors.blue300,
             textPrimary = StreamPrimitiveColors.neutral50,
-            textSecondary = StreamPrimitiveColors.neutral300,
+            textSecondary = StreamPrimitiveColors.neutral100,
+            textTertiary = StreamPrimitiveColors.neutral400,
             stateBgDisabled = StreamPrimitiveColors.slate800,
             stateTextDisabled = StreamPrimitiveColors.slate600,
             buttonStyleGhostBg = StreamPrimitiveColors.baseTransparent,
@@ -394,7 +374,9 @@ internal object StreamPrimitiveColors {
     val green500 = Color(0xFF00E2A1)
     val green800 = Color(0xFF006548)
     val neutral50 = Color(0xFFF7F7F7)
+    val neutral100 = Color(0xFFEFEFEF)
     val neutral300 = Color(0xFFC1C1C1)
+    val neutral400 = Color(0xFF8F8F8F)
     val neutral500 = Color(0xFF7F7F7F)
     val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF383838)

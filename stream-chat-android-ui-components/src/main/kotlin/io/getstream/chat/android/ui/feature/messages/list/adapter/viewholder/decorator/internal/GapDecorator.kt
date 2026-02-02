@@ -114,7 +114,7 @@ internal class GapDecorator : BaseDecorator() {
     ) = setupGapView(viewHolder.binding.gapView, data)
 
     private fun setupGapView(gapView: GapView, data: MessageListItem.MessageItem) {
-        if (data.positions.contains(MessagePosition.TOP)) {
+        if (data.position == MessagePosition.TOP) {
             gapView.showBigGap()
         } else {
             gapView.showSmallGap()

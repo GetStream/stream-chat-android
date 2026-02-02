@@ -80,7 +80,7 @@ public data class MessageItemState(
     public val isInThread: Boolean = false,
     public val showMessageFooter: Boolean = false,
     public val currentUser: User? = null,
-    public val groupPosition: List<MessagePosition> = listOf(MessagePosition.NONE),
+    public val groupPosition: MessagePosition = MessagePosition.NONE,
     public val isMessageRead: Boolean = false,
     public val isMessageDelivered: Boolean = false,
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
