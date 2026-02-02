@@ -165,7 +165,7 @@ public fun LinkAttachmentContent(
             LinkAttachmentImagePreview(it)
         }
 
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(StreamTokens.spacingSm))
 
         attachment.title?.let {
             LinkAttachmentTitle(it, textColor)
