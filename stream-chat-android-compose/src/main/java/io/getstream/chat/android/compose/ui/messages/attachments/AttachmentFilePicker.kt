@@ -22,6 +22,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -92,32 +93,33 @@ internal fun AttachmentFilePicker(
         }
     }
 
-    // Content
-    FilesAccessContent(
-        filesAccess = filesAccess,
-        onGrantPermissionClick = { permissionLauncher.launch(Permissions.filesPermissions()) },
-        onRequestVisualMediaAccess = { permissionLauncher.launch(Permissions.visualMediaPermissions()) },
-        onRequestAudioAccess = { permissionLauncher.launch(Permissions.audioPermissions()) },
-        filePicker = {
-            FilesPicker(
-                files = attachments,
-                onItemSelected = onAttachmentItemSelected,
-                onBrowseFilesResult = { uris ->
-                    processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-                        showErrorIfNeeded(context, metadata)
-                        onAttachmentsSubmitted(metadata.attachmentsMetadata)
-                    }
-                },
-            )
-        },
-    )
-
-    // Access permanently denied snackbar
     val snackBarHostState = remember { SnackbarHostState() }
-    PermissionPermanentlyDeniedSnackBar(
-        hostState = snackBarHostState,
-        onActionClick = context::openSystemSettings,
-    )
+    Box(contentAlignment = Alignment.Center) {
+        // Content
+        FilesAccessContent(
+            filesAccess = filesAccess,
+            onGrantPermissionClick = { permissionLauncher.launch(Permissions.filesPermissions()) },
+            onRequestVisualMediaAccess = { permissionLauncher.launch(Permissions.visualMediaPermissions()) },
+            onRequestAudioAccess = { permissionLauncher.launch(Permissions.audioPermissions()) },
+            filePicker = {
+                FilesPicker(
+                    files = attachments,
+                    onItemSelected = onAttachmentItemSelected,
+                    onBrowseFilesResult = { uris ->
+                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                            showErrorIfNeeded(context, metadata)
+                            onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                        }
+                    },
+                )
+            },
+        )
+        // Access permanently denied snackbar
+        PermissionPermanentlyDeniedSnackBar(
+            hostState = snackBarHostState,
+            onActionClick = context::openSystemSettings,
+        )
+    }
     val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
     val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
     LaunchedEffect(showPermanentlyDeniedSnackBar) {
