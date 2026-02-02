@@ -89,7 +89,7 @@ public fun AttachmentsPicker(
         color = ChatTheme.colors.barsBackground,
     ) {
         if (ChatTheme.useDefaultSystemMediaPicker) {
-            AttachmentSystemPickerContent(
+            AttachmentSystemPicker(
                 channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,
                 commands = attachmentsPickerViewModel.channel.config.commands,

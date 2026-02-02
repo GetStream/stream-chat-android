@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -59,6 +60,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.Channel
@@ -72,14 +74,14 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
-internal fun AttachmentSystemPickerContent(
+internal fun AttachmentSystemPicker(
     config: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     channel: Channel,
     messageMode: MessageMode,
     commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
+    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -246,4 +248,23 @@ private fun CameraPermissionDialog(
             RequiredCameraPermission()
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPicker()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentSystemPicker() {
+    AttachmentSystemPicker(
+        channel = Channel(),
+        messageMode = MessageMode.Normal,
+        commands = emptyList(),
+        attachments = emptyList(),
+    )
 }
