@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -49,7 +50,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
@@ -151,12 +151,17 @@ public enum class PickerMediaMode {
     PHOTO_AND_VIDEO,
 }
 
-/**
- * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
- */
-private val PickerMediaMode.mode: CaptureMediaContract.Mode
-    get() = when (this) {
-        PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
-        PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
-        PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentCameraPickerPreview() {
+    ChatTheme {
+        AttachmentCameraPicker()
     }
+}
+
+@Composable
+internal fun AttachmentCameraPicker() {
+    AttachmentCameraPicker(
+        pickerMediaMode = PickerMediaMode.PHOTO_AND_VIDEO,
+    ) {}
+}
