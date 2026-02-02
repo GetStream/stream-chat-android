@@ -17,21 +17,19 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -50,20 +48,18 @@ internal fun AttachmentCameraPicker(
         null
     }
 
-    val contract = remember { CaptureMediaContract(pickerMediaMode.mode) }
-    val mediaCaptureResultLauncher = rememberLauncherForActivityResult(contract = contract) { file: File? ->
-        val attachments = if (file == null) {
-            emptyList()
-        } else {
-            listOf(AttachmentMetaData(context, file))
-        }
+    val mediaCaptureResultLauncher = rememberCaptureMediaLauncher(
+        photo = pickerMediaMode == PickerMediaMode.PHOTO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
+        video = pickerMediaMode == PickerMediaMode.VIDEO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
+    ) { file ->
+        val attachments = listOf(AttachmentMetaData(context, file))
         onAttachmentsSubmitted(attachments)
     }
 
     if (cameraPermissionState == null || cameraPermissionState.status == PermissionStatus.Granted) {
         Box(modifier = Modifier.fillMaxSize()) {
             LaunchedEffect(Unit) {
-                mediaCaptureResultLauncher.launch(Unit)
+                mediaCaptureResultLauncher?.launch(Unit)
             }
         }
     } else if (cameraPermissionState.status is PermissionStatus.Denied) {

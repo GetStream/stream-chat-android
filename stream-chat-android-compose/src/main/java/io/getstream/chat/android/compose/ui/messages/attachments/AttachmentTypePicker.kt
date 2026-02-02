@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -94,6 +95,43 @@ internal fun AttachmentTypePicker(
 }
 
 @Composable
+internal fun AttachmentTypeSystemPicker(
+    channel: Channel,
+    messageMode: MessageMode,
+    onPickerTypeClick: (AttachmentsPickerMode) -> Unit = { },
+) {
+    val attachmentsPickerModes = remember(channel, messageMode) {
+        AttachmentsPickerModes.filter { attachmentsPickerMode ->
+            attachmentsPickerMode.isModeVisible(
+                channel = channel,
+                messageMode = messageMode,
+            )
+        }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingSm,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        attachmentsPickerModes.forEach { attachmentsPickerMode ->
+
+            AttachmentPickerTypeInfos[attachmentsPickerMode]?.let { typeInfo ->
+
+                AttachmentPickerButton(
+                    pickerTypeInfo = typeInfo,
+                    onClick = { onPickerTypeClick(attachmentsPickerMode) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun AttachmentPickerToggleButton(
     pickerTypeInfo: AttachmentPickerTypeInfo,
     isSelected: Boolean,
@@ -108,6 +146,27 @@ private fun AttachmentPickerToggleButton(
             contentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
             checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
             checkedContentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
+        ),
+    ) {
+        Icon(
+            modifier = Modifier.testTag(pickerTypeInfo.testTag),
+            painter = painterResource(pickerTypeInfo.icon),
+            contentDescription = stringResource(pickerTypeInfo.contentDescription),
+        )
+    }
+}
+
+@Composable
+private fun AttachmentPickerButton(
+    pickerTypeInfo: AttachmentPickerTypeInfo,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = Modifier.size(48.dp),
+        onClick = onClick,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = Color.Transparent,
+            contentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
         ),
     ) {
         Icon(
@@ -197,4 +256,39 @@ internal fun AttachmentTypePickerWithPolls() {
         messageMode = MessageMode.Normal,
         selectedAttachmentsPickerMode = Poll,
     ) {}
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentTypeSystemPickerPreview() {
+    ChatTheme {
+        AttachmentTypeSystemPicker()
+    }
+}
+
+@Composable
+internal fun AttachmentTypeSystemPicker() {
+    AttachmentTypeSystemPicker(
+        channel = Channel(),
+        messageMode = MessageMode.Normal,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentTypeSystemPickerWithPollsPreview() {
+    ChatTheme {
+        AttachmentTypeSystemPickerWithPolls()
+    }
+}
+
+@Composable
+internal fun AttachmentTypeSystemPickerWithPolls() {
+    AttachmentTypeSystemPicker(
+        channel = Channel(
+            ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
+            config = Config(pollsEnabled = true),
+        ),
+        messageMode = MessageMode.Normal,
+    )
 }

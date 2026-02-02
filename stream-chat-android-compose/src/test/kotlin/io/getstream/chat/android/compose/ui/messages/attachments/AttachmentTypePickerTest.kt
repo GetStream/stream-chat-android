@@ -39,9 +39,23 @@ internal class AttachmentTypePickerTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `with polls`() {
+    fun `default with polls`() {
         snapshotWithDarkMode {
             AttachmentTypePickerWithPolls()
+        }
+    }
+
+    @Test
+    fun `system picker`() {
+        snapshotWithDarkMode {
+            AttachmentTypeSystemPicker()
+        }
+    }
+
+    @Test
+    fun `system picker with polls`() {
+        snapshotWithDarkMode {
+            AttachmentTypeSystemPickerWithPolls()
         }
     }
 }

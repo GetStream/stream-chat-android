@@ -26,25 +26,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
@@ -93,32 +88,49 @@ public fun AttachmentsPicker(
         shape = shape,
         color = ChatTheme.colors.barsBackground,
     ) {
-        Column {
-            AttachmentTypePicker(
+        if (ChatTheme.useDefaultSystemMediaPicker) {
+            AttachmentSystemPickerContent(
                 channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,
-                selectedAttachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
-                onPickerTypeClick = { index, attachmentPickerMode ->
-                    onTabClick(index, attachmentPickerMode)
-                    attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode)
+                commands = attachmentsPickerViewModel.channel.config.commands,
+                attachments = attachmentsPickerViewModel.attachments,
+                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                onAttachmentItemSelected = onAttachmentItemSelected,
+                onAttachmentPickerAction = onAttachmentPickerAction,
+                onAttachmentsSubmitted = { metaData ->
+                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
+                        onAttachmentsSelected(attachments)
+                    }
                 },
-            ) { attachmentsPickerMode ->
-                AnimatedContent(
-                    targetState = attachmentsPickerMode,
-                ) { pickerMode ->
-                    AttachmentPickerContent(
-                        attachmentsPickerMode = pickerMode,
-                        commands = attachmentsPickerViewModel.channel.config.commands,
-                        attachments = attachmentsPickerViewModel.attachments,
-                        onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                        onAttachmentItemSelected = onAttachmentItemSelected,
-                        onAttachmentPickerAction = onAttachmentPickerAction,
-                        onAttachmentsSubmitted = { metaData ->
-                            attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
-                                onAttachmentsSelected(attachments)
-                            }
-                        },
-                    )
+            )
+        } else {
+            Column {
+                AttachmentTypePicker(
+                    channel = attachmentsPickerViewModel.channel,
+                    messageMode = messageMode,
+                    selectedAttachmentsPickerMode = attachmentsPickerViewModel.attachmentsPickerMode,
+                    onPickerTypeClick = { index, attachmentPickerMode ->
+                        onTabClick(index, attachmentPickerMode)
+                        attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode)
+                    },
+                ) { attachmentsPickerMode ->
+                    AnimatedContent(
+                        targetState = attachmentsPickerMode,
+                    ) { pickerMode ->
+                        AttachmentPickerContent(
+                            attachmentsPickerMode = pickerMode,
+                            commands = attachmentsPickerViewModel.channel.config.commands,
+                            attachments = attachmentsPickerViewModel.attachments,
+                            onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                            onAttachmentItemSelected = onAttachmentItemSelected,
+                            onAttachmentPickerAction = onAttachmentPickerAction,
+                            onAttachmentsSubmitted = { metaData ->
+                                attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
+                                    onAttachmentsSelected(attachments)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -155,17 +167,4 @@ internal fun DefaultAttachmentsPickerSendButton(
             )
         },
     )
-}
-
-@Preview
-@Composable
-private fun AttachmentsPickerPreview() {
-    ChatPreviewTheme {
-        AttachmentsPicker(
-            attachmentsPickerViewModel = AttachmentsPickerViewModel(
-                storageHelper = StorageHelperWrapper(LocalContext.current),
-                channelState = MutableStateFlow(null),
-            ),
-        )
-    }
 }
