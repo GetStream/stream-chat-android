@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -215,7 +216,7 @@ public fun GiphyAttachmentContent(
     Box(
         modifier = modifier
             .size(giphyDimensions)
-            .clip(ChatTheme.shapes.attachment)
+            .applyIf(message.text.isNotEmpty()) { clip(ChatTheme.shapes.attachment) }
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -332,6 +333,7 @@ internal fun GiphyAttachmentContent() {
         GiphyAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
+                    text = "Hello",
                     attachments = listOf(
                         Attachment(
                             titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",

@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -645,7 +644,7 @@ public fun RegularMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                border = null,
                 content = content,
             )
 

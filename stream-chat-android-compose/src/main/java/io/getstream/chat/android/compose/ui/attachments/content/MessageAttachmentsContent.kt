@@ -19,11 +19,11 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
@@ -68,14 +68,16 @@ public fun MessageAttachmentsContent(
         )
 
         if (attachmentFactory != null) {
-            attachmentFactory.content(
+            attachmentFactory.content(Modifier, attachmentState)
+        } else if (linkFactory != null) {
+            linkFactory.content(
                 Modifier.padding(
-                    2.dp.takeIf { message.text.isEmpty() } ?: 8.dp,
+                    top = StreamTokens.spacingXs,
+                    start = StreamTokens.spacingXs,
+                    end = StreamTokens.spacingXs,
                 ),
                 attachmentState,
             )
-        } else if (linkFactory != null) {
-            linkFactory.content(Modifier.padding(8.dp), attachmentState)
         }
     }
 }
