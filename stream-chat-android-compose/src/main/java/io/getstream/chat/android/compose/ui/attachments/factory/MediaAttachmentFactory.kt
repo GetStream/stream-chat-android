@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentC
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 
@@ -125,7 +126,7 @@ internal fun DefaultPreviewItemOverlayContent() {
     PlayButton(
         modifier = Modifier
             .shadow(6.dp, shape = CircleShape)
-            .background(color = Color.White, shape = CircleShape)
+            .background(color = ChatTheme.colors.controlPlayControlBg, shape = CircleShape)
             .fillMaxSize(0.25f),
     )
 }

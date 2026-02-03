@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -64,6 +65,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -203,7 +205,7 @@ public fun MediaAttachmentContent(
     },
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
-            PlayButton()
+            PlayButtonOverlay()
         }
     },
 ) {
@@ -629,6 +631,24 @@ internal fun MediaAttachmentContentItem(
     }
 }
 
+@Composable
+private fun PlayButtonOverlay() {
+    val colors = ChatTheme.colors
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .background(colors.controlPlayControlBg, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_play),
+            contentDescription = null,
+            tint = colors.controlPlayControlIcon,
+            modifier = Modifier.size(16.dp),
+        )
+    }
+}
+
 /**
  * A simple play button that is overlaid above
  * video attachments.
@@ -642,20 +662,15 @@ internal fun PlayButton(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
 ) {
-    Column(
+    Box(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
+        contentAlignment = Alignment.Center,
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxSize(0.85f)
-                .alignBy { measured ->
-                    // emulated offset as seen in the design specs,
-                    // otherwise the button is visibly off to the start of the screen
-                    -(measured.measuredWidth * 1 / 6)
-                },
+        Icon(
+            modifier = Modifier.fillMaxSize(0.6f),
             painter = painterResource(id = R.drawable.stream_compose_ic_play),
             contentDescription = contentDescription,
+            tint = ChatTheme.colors.controlPlayControlIcon,
         )
     }
 }
