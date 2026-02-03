@@ -106,24 +106,23 @@ public fun AttachmentPicker(
                         onTabClick(index, attachmentPickerMode)
                         attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode)
                     },
-                ) { attachmentsPickerMode ->
-                    AnimatedContent(
-                        targetState = attachmentsPickerMode,
-                    ) { pickerMode ->
-                        AttachmentPickerContent(
-                            attachmentsPickerMode = pickerMode,
-                            commands = attachmentsPickerViewModel.channel.config.commands,
-                            attachments = attachmentsPickerViewModel.attachments,
-                            onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                            onAttachmentItemSelected = onAttachmentItemSelected,
-                            onAttachmentPickerAction = onAttachmentPickerAction,
-                            onAttachmentsSubmitted = { metaData ->
-                                attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
-                                    onAttachmentsSelected(attachments)
-                                }
-                            },
-                        )
-                    }
+                )
+                AnimatedContent(
+                    targetState = attachmentsPickerViewModel.attachmentsPickerMode,
+                ) { pickerMode ->
+                    AttachmentPickerContent(
+                        attachmentsPickerMode = pickerMode,
+                        commands = attachmentsPickerViewModel.channel.config.commands,
+                        attachments = attachmentsPickerViewModel.attachments,
+                        onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                        onAttachmentItemSelected = onAttachmentItemSelected,
+                        onAttachmentPickerAction = onAttachmentPickerAction,
+                        onAttachmentsSubmitted = { metaData ->
+                            attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
+                                onAttachmentsSelected(attachments)
+                            }
+                        },
+                    )
                 }
             }
         }

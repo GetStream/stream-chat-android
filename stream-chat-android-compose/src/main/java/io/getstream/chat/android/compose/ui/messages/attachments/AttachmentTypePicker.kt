@@ -56,7 +56,6 @@ internal fun AttachmentTypePicker(
     messageMode: MessageMode,
     selectedAttachmentsPickerMode: AttachmentsPickerMode,
     onPickerTypeClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
-    content: @Composable (AttachmentsPickerMode) -> Unit,
 ) {
     val attachmentsPickerModes = remember(channel, messageMode) {
         AttachmentsPickerModes.filter { attachmentsPickerMode ->
@@ -90,8 +89,6 @@ internal fun AttachmentTypePicker(
             }
         }
     }
-
-    content(selectedAttachmentsPickerMode)
 }
 
 @Composable
@@ -235,7 +232,7 @@ internal fun AttachmentTypePicker() {
         channel = Channel(),
         messageMode = MessageMode.Normal,
         selectedAttachmentsPickerMode = Images,
-    ) {}
+    )
 }
 
 @Preview(showBackground = true)
@@ -255,7 +252,7 @@ internal fun AttachmentTypePickerWithPolls() {
         ),
         messageMode = MessageMode.Normal,
         selectedAttachmentsPickerMode = Poll,
-    ) {}
+    )
 }
 
 @Preview(showBackground = true)
