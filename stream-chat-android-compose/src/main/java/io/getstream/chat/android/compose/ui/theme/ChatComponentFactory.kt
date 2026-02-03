@@ -149,7 +149,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
@@ -1388,10 +1387,10 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageComposer(
         messageComposerState: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onSendMessage: (String, List<Attachment>) -> Unit,
         modifier: Modifier,
         onAttachmentsClick: () -> Unit,
-        onCommandsClick: () -> Unit,
         onValueChange: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
@@ -1412,10 +1411,10 @@ public interface ChatComponentFactory {
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
             messageComposerState = messageComposerState,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onSendMessage = onSendMessage,
             modifier = modifier,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
@@ -1651,7 +1650,7 @@ public interface ChatComponentFactory {
      * @param command The command for which the center content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerCommandSuggestionItemCenterContent(
+    public fun MessageComposerCommandSuggestionItemCenterContent(
         modifier: Modifier,
         command: Command,
     ) {
@@ -1667,28 +1666,14 @@ public interface ChatComponentFactory {
     @Composable
     public fun RowScope.MessageComposerLeadingContent(
         state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
     ) {
         DefaultMessageComposerLeadingContent(
             messageInputState = state,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onAttachmentsClick = onAttachmentsClick,
         )
-    }
-
-    /**
-     * The default commands button of the message composer.
-     *
-     * @param hasCommandSuggestions Whether there are command suggestions available.
-     * @param enabled Whether the button is enabled.
-     * @param onClick The action to perform when the button is clicked.
-     */
-    @Composable
-    public fun RowScope.MessageComposerCommandsButton(
-        hasCommandSuggestions: Boolean,
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
-        CommandsButton(hasCommandSuggestions, enabled, onClick)
     }
 
     /**

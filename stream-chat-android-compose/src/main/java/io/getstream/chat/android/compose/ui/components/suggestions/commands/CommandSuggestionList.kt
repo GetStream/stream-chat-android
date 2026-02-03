@@ -17,30 +17,25 @@
 package io.getstream.chat.android.compose.ui.components.suggestions.commands
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.previewdata.PreviewCommandData
 
 /**
  * Represents the command suggestion list popup.
@@ -66,7 +61,6 @@ public fun CommandSuggestionList(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
-            .padding(ChatTheme.dimens.suggestionListPadding)
             .testTag("Stream_SuggestionList"),
         headerContent = { DefaultCommandSuggestionListHeader() },
     ) {
@@ -80,33 +74,23 @@ public fun CommandSuggestionList(
 
 @Composable
 internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
-    Row(
+    Text(
         modifier = modifier
-            .semantics(mergeDescendants = true) {}
-            .fillMaxWidth()
-            .height(40.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            modifier = Modifier
-                .padding(horizontal = 8.dp)
-                .size(24.dp)
-                .testTag("Stream_SuggestionListTitle"),
-            painter = painterResource(id = R.drawable.stream_compose_ic_command),
-            tint = ChatTheme.colors.primaryAccent,
-            contentDescription = null,
-        )
-        Text(
-            text = stringResource(id = R.string.stream_compose_message_composer_instant_commands),
-            style = ChatTheme.typography.body,
-            maxLines = 1,
-            color = ChatTheme.colors.textLowEmphasis,
-        )
-    }
+            .padding(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingXs,
+                bottom = StreamTokens.spacingMd,
+            )
+            .fillMaxWidth(),
+        text = stringResource(R.string.stream_compose_message_composer_instant_commands),
+        style = ChatTheme.typography.headingSmall,
+        color = ChatTheme.colors.textPrimary,
+    )
 }
 
 @Composable
-private fun CommandSuggestionLazyList(
+internal fun CommandSuggestionLazyList(
     commands: List<Command>,
     onCommandSelected: (Command) -> Unit = {},
     itemContent: @Composable (Command) -> Unit = { command ->
@@ -140,24 +124,9 @@ internal fun CommandSuggestionList() {
         DefaultCommandSuggestionListHeader()
         CommandSuggestionLazyList(
             commands = listOf(
-                Command(
-                    name = "giphy",
-                    description = "Post a random gif to the channel",
-                    args = "[text]",
-                    set = "fun_set",
-                ),
-                Command(
-                    name = "mute",
-                    description = "Mute a user",
-                    args = "[@username]",
-                    set = "moderation_set",
-                ),
-                Command(
-                    name = "unmute",
-                    description = "Unmute a user",
-                    args = "[@username]",
-                    set = "moderation_set",
-                ),
+                PreviewCommandData.command1,
+                PreviewCommandData.command2,
+                PreviewCommandData.command3,
             ),
         )
     }

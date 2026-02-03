@@ -204,7 +204,7 @@ public data class StreamDimens(
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsPickerHeight = 350.dp,
-            attachmentsSystemPickerHeight = 220.dp,
+            attachmentsSystemPickerHeight = 72.dp,
             attachmentsContentImageMaxHeight = 600.dp,
             attachmentsContentVideoMaxHeight = 400.dp,
             attachmentsContentMediaGridSpacing = 2.dp,

@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -30,14 +31,15 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -114,6 +116,7 @@ internal fun DefaultMessageComposerFooterInThreadMode(
 @Composable
 internal fun DefaultMessageComposerLeadingContent(
     messageInputState: MessageComposerState,
+    isAttachmentPickerVisible: Boolean,
     onAttachmentsClick: () -> Unit,
 ) {
     val hasCommandInput = messageInputState.inputValue.startsWith("/")
@@ -130,6 +133,9 @@ internal fun DefaultMessageComposerLeadingContent(
 
     if (canSendMessage && !isRecording && canUploadFile) {
         val attachmentsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.attachmentsButton
+        val iconRotation by animateFloatAsState(
+            targetValue = if (isAttachmentPickerVisible) OpenAttachmentPickerButtonRotation else 0f,
+        )
         FilledIconButton(
             enabled = isAddButtonEnabled,
             modifier = Modifier
@@ -158,13 +164,17 @@ internal fun DefaultMessageComposerLeadingContent(
             onClick = onAttachmentsClick,
         ) {
             Icon(
-                modifier = Modifier.size(attachmentsButtonStyle.icon.size),
+                modifier = Modifier
+                    .size(attachmentsButtonStyle.icon.size)
+                    .graphicsLayer { rotationZ = iconRotation },
                 painter = attachmentsButtonStyle.icon.painter,
                 contentDescription = stringResource(id = R.string.stream_compose_attachments),
             )
         }
     }
 }
+
+private const val OpenAttachmentPickerButtonRotation = 225f
 
 @Composable
 internal fun DefaultComposerLabel(state: MessageComposerState) {
@@ -266,47 +276,13 @@ internal fun DefaultMessageComposerInputTrailingContent(
             "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
                 onClick = { onSendMessage(inputText, attachments) },
             )
+
             "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
                 state = messageComposerState.recording,
                 recordingActions = recordingActions,
             )
         }
     }
-}
-
-/**
- * Default implementation of the "Commands" button.
- */
-@Composable
-internal fun CommandsButton(
-    hasCommandSuggestions: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val commandsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.commandsButton
-    val tint = if (hasCommandSuggestions && enabled) {
-        ChatTheme.colors.primaryAccent
-    } else if (enabled) {
-        commandsButtonStyle.icon.tint
-    } else {
-        ChatTheme.colors.disabled
-    }
-    IconButton(
-        modifier = Modifier
-            .size(commandsButtonStyle.size)
-            .padding(commandsButtonStyle.padding)
-            .testTag("Stream_ComposerCommandsButton"),
-        enabled = enabled,
-        content = {
-            Icon(
-                modifier = Modifier.size(commandsButtonStyle.icon.size),
-                painter = commandsButtonStyle.icon.painter,
-                contentDescription = stringResource(R.string.stream_compose_message_composer_instant_commands),
-                tint = tint,
-            )
-        },
-        onClick = onClick,
-    )
 }
 
 /**

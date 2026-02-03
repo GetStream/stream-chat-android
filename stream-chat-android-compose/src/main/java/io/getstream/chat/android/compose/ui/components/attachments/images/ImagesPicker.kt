@@ -20,17 +20,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -44,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,15 +49,18 @@ import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
+private val ItemShape = RoundedCornerShape(2.dp)
+private val SelectionIndicatorSize = 24.dp
 
 /**
  * Shows the UI for images the user can pick for message attachments. Exposes the logic of selecting
@@ -97,7 +94,8 @@ public fun ImagesPicker(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
-        contentPadding = PaddingValues(1.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         if (showAddMore) {
             item { addMoreContent() }
@@ -132,8 +130,8 @@ internal fun DefaultImagesPickerItem(
 
     Box(
         modifier = Modifier
-            .height(125.dp)
-            .padding(2.dp)
+            .aspectRatio(1f)
+            .clip(ItemShape)
             .clickable { onImageSelected(imageItem) }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
@@ -144,80 +142,103 @@ internal fun DefaultImagesPickerItem(
             contentScale = ContentScale.Crop,
         )
 
-        if (imageItem.isSelected) {
-            Box(
+        if (imageItem.selection is Selection.Selected) {
+            SelectedIndicator(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(4.dp)
-                    .size(24.dp)
-                    .background(
-                        shape = CircleShape,
-                        color = ChatTheme.attachmentPickerTheme.checkIconBackgroundColor,
-                    ),
-            ) {
-                Icon(
-                    modifier = Modifier.align(Alignment.Center),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-                    contentDescription = null,
-                    tint = ChatTheme.attachmentPickerTheme.checkIconTintColor,
-                )
-            }
+                    .padding(StreamTokens.spacingXs),
+                selection = imageItem.selection,
+            )
+        } else {
+            UnselectedIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(StreamTokens.spacingXs),
+            )
         }
 
         if (isVideo) {
-            VideoThumbnailOverlay(attachmentMetaData.videoLength)
+            VideoThumbnailOverlay(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(StreamTokens.spacingXs),
+                videoLength = attachmentMetaData.videoLength,
+            )
         }
     }
 }
 
-/**
- * Represents an overlay that is shown over videos in the picker.
- *
- * @param videoLength The duration of video in seconds.
- * @param modifier Modifier for styling.
- */
 @Composable
-private fun BoxScope.VideoThumbnailOverlay(
+private fun SelectedIndicator(
+    selection: Selection.Selected,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(SelectionIndicatorSize)
+            .background(
+                shape = CircleShape,
+                color = ChatTheme.colors.borderCoreOnDark,
+            )
+            .padding(2.dp)
+            .background(
+                shape = CircleShape,
+                color = ChatTheme.colors.accentPrimary,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = selection.position.toString(),
+            color = ChatTheme.colors.badgeText,
+            style = ChatTheme.typography.numericExtraLarge,
+        )
+    }
+}
+
+@Composable
+private fun UnselectedIndicator(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .size(SelectionIndicatorSize)
+            .border(
+                width = 2.dp,
+                shape = CircleShape,
+                color = ChatTheme.colors.borderCoreOnDark,
+            ),
+    )
+}
+
+@Composable
+private fun VideoThumbnailOverlay(
     videoLength: Long,
     modifier: Modifier = Modifier,
 ) {
-    val overlayShape = RoundedCornerShape(12.dp)
+    val overlayShape = RoundedCornerShape(9.dp)
 
     Row(
         modifier = modifier
-            .wrapContentSize()
-            .padding(horizontal = 4.dp, vertical = 5.dp)
-            .border(
-                width = 1.dp,
-                color = ChatTheme.colors.borders,
-                shape = overlayShape,
-            )
             .background(
                 shape = overlayShape,
-                color = ChatTheme.colors.barsBackground,
+                color = ChatTheme.colors.badgeBgInverse,
             )
-            .align(Alignment.BottomCenter)
-            .padding(vertical = 2.dp, horizontal = 6.dp),
-        horizontalArrangement = Arrangement.Center,
+            .padding(
+                horizontal = StreamTokens.spacingXs,
+                vertical = StreamTokens.spacing2xs,
+            ),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier
-                .size(16.dp)
-                .aspectRatio(1f)
-                .mirrorRtl(LocalLayoutDirection.current)
-                .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.stream_compose_ic_video),
             contentDescription = null,
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.badgeText,
         )
-
         Text(
-            modifier = Modifier
-                .padding(start = 4.dp, end = 2.dp)
-                .align(Alignment.CenterVertically),
             text = MediaStringUtil.convertVideoLength(videoLength),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.numericMedium,
+            color = ChatTheme.colors.badgeText,
         )
     }
 }
@@ -228,34 +249,29 @@ private fun BoxScope.VideoThumbnailOverlay(
  * @param onPickMoreClick Action invoked when the user clicks on the 'pick more' tile.
  */
 @Composable
-internal fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
+private fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .height(125.dp)
-            .padding(2.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .border(
-                width = 1.dp,
-                color = ChatTheme.colors.borders,
-                shape = RoundedCornerShape(8.dp),
+            .aspectRatio(1f)
+            .background(
+                color = ChatTheme.colors.backgroundCoreSurfaceSubtle,
+                shape = ItemShape,
             )
-            .clickable(
-                onClick = onPickMoreClick,
-            )
+            .clip(ItemShape)
+            .clickable(onClick = onPickMoreClick)
             .testTag("Stream_AttachmentPickerPickMore"),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs, Alignment.CenterVertically),
     ) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_add),
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
-        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = stringResource(R.string.stream_ui_message_composer_permissions_visual_media_add_more),
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.captionEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -287,17 +303,15 @@ internal fun ImagesPicker(showAddMore: Boolean) {
         images = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                isSelected = false,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                isSelected = true,
+                selection = Selection.Selected(position = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
                     videoLength = VideoFrameMillis
                 },
-                isSelected = false,
             ),
         ),
         onImageSelected = {},

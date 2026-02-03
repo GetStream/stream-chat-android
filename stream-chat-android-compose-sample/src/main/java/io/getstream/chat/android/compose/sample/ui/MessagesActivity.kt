@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -71,7 +70,7 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -159,6 +158,7 @@ class MessagesActivity : ComponentActivity() {
             colors = colors,
             shapes = shapes,
             typography = typography,
+            useDefaultSystemMediaPicker = false,
             attachmentsPickerTabFactories = attachmentsPickerTabFactories,
             componentFactory = CustomChatComponentFactory(),
             dateFormatter = ChatApp.dateFormatter,
@@ -275,16 +275,11 @@ class MessagesActivity : ComponentActivity() {
                     label = "full sized picker animation",
                 )
 
-                AttachmentsPicker(
+                AttachmentPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .height(pickerHeight),
-                    shape = if (isFullScreenContent) {
-                        RoundedCornerShape(0.dp)
-                    } else {
-                        ChatTheme.shapes.bottomSheet
-                    },
                     onAttachmentsSelected = { attachments ->
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         composerViewModel.addSelectedAttachments(attachments)
@@ -295,10 +290,7 @@ class MessagesActivity : ComponentActivity() {
                             composerViewModel.createPoll(action.pollConfig)
                         }
                     },
-                    onDismiss = {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
-                    },
+                    onDismiss = { attachmentsPickerViewModel.changeAttachmentState(false) },
                     messageMode = messageMode,
                 )
             }
