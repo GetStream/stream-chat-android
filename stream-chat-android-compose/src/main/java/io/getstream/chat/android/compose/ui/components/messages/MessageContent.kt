@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Represents the default message content within the bubble that can show different UI based on the message state.
@@ -183,19 +184,28 @@ internal fun DefaultMessageContent(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
 
-        if (AttachmentType.FILE in attachmentTypes || AttachmentType.AUDIO in attachmentTypes) {
-            componentFactory.FileAttachmentContent(
-                modifier = Modifier,
-                attachmentState = attachmentState,
+        if (message.attachments.any(Attachment::isUploading)) {
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        } else {
+            if (AttachmentType.FILE in attachmentTypes || AttachmentType.AUDIO in attachmentTypes) {
+                componentFactory.FileAttachmentContent(
+                    modifier = Modifier,
+                    attachmentState = attachmentState,
+                )
+            }
+
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             )
         }
-
-        MessageAttachmentsContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-        )
 
         if (message.text.isNotEmpty()) {
             componentFactory.MessageTextContent(
