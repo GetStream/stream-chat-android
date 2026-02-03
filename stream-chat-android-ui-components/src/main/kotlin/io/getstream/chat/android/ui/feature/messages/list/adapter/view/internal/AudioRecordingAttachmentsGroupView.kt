@@ -225,7 +225,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
 
         setOnSpeedButtonClickListener {
             logger.v { "[onSpeedButtonClick] audioHash: $audioHash" }
-            audioPlayer.changeSpeed()
+            audioPlayer.changeSpeed(audioHash)
         }
 
         setOnSeekbarMoveListeners({
