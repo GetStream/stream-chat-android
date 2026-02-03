@@ -330,19 +330,17 @@ internal fun GiphyAttachmentContent() {
         ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        val attachments = listOf(
-            Attachment(
-                titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
-                type = AttachmentType.GIPHY,
-            ),
-        )
         GiphyAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
                     text = "Hello",
-                    attachments = attachments,
+                    attachments = listOf(
+                        Attachment(
+                            titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
+                            type = AttachmentType.GIPHY,
+                        ),
+                    ),
                 ),
-                filteredAttachments = attachments,
             ),
         )
     }

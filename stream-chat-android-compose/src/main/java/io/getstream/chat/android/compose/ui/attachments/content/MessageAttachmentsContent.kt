@@ -63,7 +63,6 @@ public fun MessageAttachmentsContent(
         val attachmentState = AttachmentState(
             message = message,
             isMine = message.user.id == currentUser?.id,
-            filteredAttachments = emptyList(),
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )

@@ -307,11 +307,9 @@ internal fun LinkAttachmentContent() {
             imageUrl = "Image",
             authorName = "Author",
         )
-        val attachments = listOf(attachment)
         LinkAttachmentContent(
             state = AttachmentState(
-                message = Message(attachments = attachments),
-                filteredAttachments = attachments,
+                message = Message(attachments = listOf(attachment)),
             ),
             linkDescriptionMaxLines = 2,
         )

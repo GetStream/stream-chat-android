@@ -43,6 +43,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -59,6 +61,7 @@ import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePrevie
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -96,23 +99,25 @@ public fun FileAttachmentContent(
             )
             .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
-        for (attachment in attachmentState.filteredAttachments) {
-            ChatTheme.componentFactory.FileAttachmentItem(
-                modifier = Modifier
-                    .padding(MessageStyling.messageSectionPadding)
-                    .fillMaxWidth()
-                    .combinedClickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = {
-                            onItemClick(previewHandlers, attachment)
-                        },
-                        onLongClick = { attachmentState.onLongItemClick(message) },
-                    ),
-                attachment = attachment,
-                isMine = attachmentState.isMine,
-                showFileSize = showFileSize,
-            )
+        for (attachment in message.attachments) {
+            if (attachment.isFile() || attachment.isAudio()) {
+                ChatTheme.componentFactory.FileAttachmentItem(
+                    modifier = Modifier
+                        .padding(MessageStyling.messageSectionPadding)
+                        .fillMaxWidth()
+                        .combinedClickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                            onClick = {
+                                onItemClick(previewHandlers, attachment)
+                            },
+                            onLongClick = { attachmentState.onLongItemClick(message) },
+                        ),
+                    attachment = attachment,
+                    isMine = attachmentState.isMine,
+                    showFileSize = showFileSize,
+                )
+            }
         }
     }
 }
@@ -331,11 +336,10 @@ private fun OtherFileAttachmentContentPreview() {
 
 @Composable
 internal fun FileAttachmentContent(isMine: Boolean) {
-    val attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))
+    val attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF, type = AttachmentType.FILE))
     FileAttachmentContent(
         attachmentState = AttachmentState(
             message = Message(attachments = attachments),
-            filteredAttachments = attachments,
             isMine = isMine,
         ),
     )

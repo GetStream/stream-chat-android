@@ -215,7 +215,7 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
-    val attachments = state.filteredAttachments
+    val attachments = remember(message.attachments) { message.attachments.filter { it.isImage() || it.isVideo() } }
 
     if (attachments.size == 1) {
         SingleMediaAttachment(
@@ -780,15 +780,17 @@ internal fun SingleMediaAttachmentContent() {
         ColorImage(color = Color.Yellow.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        val attachments =
-            listOf(Attachment(type = AttachmentType.IMAGE, imageUrl = "https://placekitten.com/200/300"))
         MediaAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
                     text = "Hello",
-                    attachments = attachments,
+                    attachments = listOf(
+                        Attachment(
+                            type = AttachmentType.IMAGE,
+                            imageUrl = "https://placekitten.com/200/300",
+                        ),
+                    ),
                 ),
-                filteredAttachments = attachments,
             ),
         )
     }
@@ -830,7 +832,6 @@ internal fun MultipleMediaAttachmentContent() {
         MediaAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(attachments = attachments),
-                filteredAttachments = attachments,
             ),
         )
     }

@@ -215,14 +215,12 @@ internal fun FileUploadContent() {
             totalBytes = 1024 * 1024, // 1MB total
         ),
     )
-    val attachments = listOf(uploadingAttachment)
     val attachmentState = AttachmentState(
         message = Message(
             id = "message-id",
             text = "This is a message with an uploading attachment.",
-            attachments = attachments,
+            attachments = listOf(uploadingAttachment),
         ),
-        filteredAttachments = attachments,
     )
     FileUploadContent(attachmentState = attachmentState)
 }
