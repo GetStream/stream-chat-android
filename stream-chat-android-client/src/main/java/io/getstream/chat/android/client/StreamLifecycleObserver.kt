@@ -54,7 +54,7 @@ internal class StreamLifecycleObserver(
             handlers = handlers - handler
             if (handlers.isEmpty() && isObserving.compareAndSet(true, false)) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
-                logger.v { "X[dispose] unsubscribed" }
+                logger.v { "[dispose] unsubscribed" }
             }
         }
     }
