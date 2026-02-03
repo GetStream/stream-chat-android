@@ -151,8 +151,8 @@ internal class AttachmentsPickerViewModelTest {
 
         assertEquals(Files, viewModel.attachmentsPickerMode)
         assertEquals(0, viewModel.attachments.size)
-        verify(mock<StorageHelperWrapper>(), never()).getFiles()
-        verify(mock<StorageHelperWrapper>(), never()).getMedia()
+        verify(storageHelper, never()).getFiles()
+        verify(storageHelper, never()).getMedia()
     }
 
     @Test
