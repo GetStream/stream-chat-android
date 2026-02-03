@@ -47,7 +47,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param modifier Modifier for styling.
  * @param shape The shape of the bottom bar.
  * @param messageMode The message mode, used to determine if the default "Polls" tab is enabled.
- * items have been selected.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
  * @param onDismiss Handler when the user dismisses the UI.
