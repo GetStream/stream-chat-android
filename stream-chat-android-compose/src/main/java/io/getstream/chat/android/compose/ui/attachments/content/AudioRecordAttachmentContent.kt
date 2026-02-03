@@ -178,7 +178,8 @@ public fun AudioRecordAttachmentContentItem(
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
         tailContent = {
-            SpeedButton(speed = playerState.current.playingSpeed, outlineColor = outlineColor) {
+            val speed = playerState.speeds.getOrDefault(attachment.audioHash, 1f)
+            SpeedButton(speed = speed, outlineColor = outlineColor) {
                 onPlaySpeedClick(currentAttachment)
             }
         },
