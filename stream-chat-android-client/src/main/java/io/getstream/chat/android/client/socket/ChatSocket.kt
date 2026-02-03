@@ -141,7 +141,8 @@ internal open class ChatSocket(
                                 tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
-                                userScope.launch { disposeObservers() }
+                                disposeNetworkStateObserver()
+                                userScope.launch { lifecycleObserver.dispose(lifecycleHandler) }
                             }
                             is State.Disconnected.NetworkDisconnected -> {
                                 streamWebSocket?.close()
@@ -156,7 +157,8 @@ internal open class ChatSocket(
                                 tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
-                                userScope.launch { disposeObservers() }
+                                disposeNetworkStateObserver()
+                                userScope.launch { lifecycleObserver.dispose(lifecycleHandler) }
                             }
                             is State.Disconnected.DisconnectedTemporarily -> {
                                 healthMonitor.onDisconnected()
@@ -203,11 +205,6 @@ internal open class ChatSocket(
     private suspend fun startObservers() {
         lifecycleObserver.observe(lifecycleHandler)
         networkStateProvider.subscribe(networkStateListener)
-    }
-
-    private suspend fun disposeObservers() {
-        lifecycleObserver.dispose(lifecycleHandler)
-        disposeNetworkStateObserver()
     }
 
     private fun disposeNetworkStateObserver() {

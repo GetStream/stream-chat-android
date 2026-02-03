@@ -22,6 +22,7 @@ import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicBoolean
@@ -38,22 +39,22 @@ internal class StreamLifecycleObserver(
     private val isObserving = AtomicBoolean(false)
 
     suspend fun observe(handler: LifecycleHandler) {
-        if (isObserving.compareAndSet(false, true)) {
-            recurringResumeEvent = false
-            withContext(DispatcherProvider.Main) {
+        withContext(DispatcherProvider.Main) {
+            handlers = handlers + handler
+            if (isObserving.compareAndSet(false, true)) {
+                recurringResumeEvent = false
                 lifecycle.addObserver(this@StreamLifecycleObserver)
                 logger.v { "[observe] subscribed" }
             }
         }
-        handlers = handlers + handler
     }
 
     suspend fun dispose(handler: LifecycleHandler) {
-        handlers = handlers - handler
-        if (handlers.isEmpty() && isObserving.compareAndSet(true, false)) {
-            withContext(DispatcherProvider.Main) {
+        withContext(NonCancellable + DispatcherProvider.Main) {
+            handlers = handlers - handler
+            if (handlers.isEmpty() && isObserving.compareAndSet(true, false)) {
                 lifecycle.removeObserver(this@StreamLifecycleObserver)
-                logger.v { "[dispose] unsubscribed" }
+                logger.v { "X[dispose] unsubscribed" }
             }
         }
     }
