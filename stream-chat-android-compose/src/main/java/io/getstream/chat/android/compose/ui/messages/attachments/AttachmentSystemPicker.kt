@@ -194,6 +194,10 @@ internal fun AttachmentSystemPicker(
         ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
             AttachmentCommandPicker(
                 commands = commands,
+                onAttachmentPickerAction = { action ->
+                    showCommandsPickerDialog = false
+                    onAttachmentPickerAction(action)
+                },
             )
         }
     }
