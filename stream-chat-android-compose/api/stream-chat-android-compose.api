@@ -324,7 +324,7 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public final fun copy (I)Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState$Selection$Selected;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState$Selection$Selected;IILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState$Selection$Selected;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCount ()I
+	public final fun getPosition ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
