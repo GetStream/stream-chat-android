@@ -333,7 +333,7 @@ internal fun GiphyAttachmentContent() {
         val attachments = listOf(
             Attachment(
                 titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
-                type = AttachmentType.GIPHY
+                type = AttachmentType.GIPHY,
             ),
         )
         GiphyAttachmentContent(

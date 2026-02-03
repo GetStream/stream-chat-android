@@ -156,7 +156,7 @@ public fun AudioRecordAttachmentContent(
 
     val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
     Column(
-        modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
+        modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
     ) {
         audioRecordings.forEach { audioRecording ->
             AudioRecordAttachmentContentItem(

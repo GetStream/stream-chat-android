@@ -222,7 +222,7 @@ internal fun FileUploadContent() {
             text = "This is a message with an uploading attachment.",
             attachments = attachments,
         ),
-        filteredAttachments = attachments
+        filteredAttachments = attachments,
     )
     FileUploadContent(attachmentState = attachmentState)
 }

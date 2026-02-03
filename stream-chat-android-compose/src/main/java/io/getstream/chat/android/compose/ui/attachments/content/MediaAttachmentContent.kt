@@ -788,7 +788,7 @@ internal fun SingleMediaAttachmentContent() {
                     text = "Hello",
                     attachments = attachments,
                 ),
-                filteredAttachments = attachments
+                filteredAttachments = attachments,
             ),
         )
     }

@@ -160,6 +160,7 @@ internal fun DefaultMessageDeletedContent(
  * @param onLinkClick Handler for clicking on a link in the message.
  */
 @Composable
+@Suppress("LongMethod")
 internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
