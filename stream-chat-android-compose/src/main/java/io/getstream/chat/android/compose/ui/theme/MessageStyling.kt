@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.runtime.Composable
@@ -99,6 +100,19 @@ internal object MessageStyling {
             }
         }
     }
+
+    val contentPadding = StreamTokens.spacingXs
+    val sectionsDistance = StreamTokens.spacingXs
+    val messageSectionPadding = PaddingValues(
+        top = sectionsDistance,
+        start = contentPadding,
+        end = contentPadding,
+    )
+    val textPadding = PaddingValues(
+        top = sectionsDistance,
+        start = StreamTokens.spacingSm,
+        end = StreamTokens.spacingSm,
+    )
 
     private val roundBubble = RoundedCornerShape(StreamTokens.radius2xl)
     private val outgoingBubble = RoundedCornerShape(

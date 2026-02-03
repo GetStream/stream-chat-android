@@ -155,7 +155,7 @@ public fun GiphyAttachmentContent(
     },
 ) {
     val context = LocalContext.current
-    val (message, _, onLongItemClick) = state
+    val message = state.message
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
@@ -230,7 +230,7 @@ public fun GiphyAttachmentContent(
                         ),
                     )
                 },
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { state.onLongItemClick(message) },
             ),
     ) {
         StreamAsyncImage(

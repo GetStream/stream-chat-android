@@ -151,6 +151,7 @@ public data class StreamColors(
     public val showMoreCountText: Color,
 
     // Design System semantic colors
+    public val accentBlack: Color,
     public val accentError: Color,
     public val accentNeutral: Color,
     public val accentSuccess: Color,
@@ -219,9 +220,11 @@ public data class StreamColors(
     public val chatReplyIndicatorOutgoing: Color,
     public val chatTextIncoming: Color = textPrimary,
     public val chatTextOutgoing: Color = textPrimary,
-    public val chatTextLink: Color = primaryAccent,
+    public val chatTextLink: Color = accentPrimary,
     public val chatTextMention: Color = chatTextLink,
     public val chatTextTimestamp: Color = textTertiary,
+    public val controlPlayControlBg: Color = accentBlack,
+    public val controlPlayControlIcon: Color = textOnAccent,
     public val controlRemoveBg: Color,
     public val controlRemoveBorder: Color = borderCoreOnDark,
     public val controlRemoveIcon: Color,
@@ -264,6 +267,7 @@ public data class StreamColors(
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
 
+            accentBlack = StreamPrimitiveColors.baseBlack,
             accentError = StreamPrimitiveColors.red500,
             accentNeutral = StreamPrimitiveColors.slate500,
             accentPrimary = StreamPrimitiveColors.blue500,
@@ -355,6 +359,7 @@ public data class StreamColors(
             showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
             showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
 
+            accentBlack = StreamPrimitiveColors.baseBlack,
             accentError = StreamPrimitiveColors.red400,
             backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral800,
             accentNeutral = StreamPrimitiveColors.neutral500,

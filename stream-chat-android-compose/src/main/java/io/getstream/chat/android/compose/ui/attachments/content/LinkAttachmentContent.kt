@@ -126,11 +126,10 @@ public fun LinkAttachmentContent(
         onLinkAttachmentContentClick(it.context, it.url)
     },
 ) {
-    val (message, isMine, onLongItemClick) = state
-
     val context = LocalContext.current
+    val message = state.message
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
-    val textColor = MessageStyling.textColor(outgoing = isMine)
+    val textColor = MessageStyling.textColor(outgoing = state.isMine)
 
     checkNotNull(attachment) {
         "Missing link attachment."
@@ -144,7 +143,7 @@ public fun LinkAttachmentContent(
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
-            .background(getLinkBackgroundColor(isMine))
+            .background(getLinkBackgroundColor(state.isMine))
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -158,7 +157,7 @@ public fun LinkAttachmentContent(
                         ),
                     )
                 },
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { state.onLongItemClick(message) },
             ),
     ) {
         attachment.imagePreviewUrl?.let {

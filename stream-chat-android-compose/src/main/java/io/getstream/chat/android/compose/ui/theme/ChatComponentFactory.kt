@@ -1273,6 +1273,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageTextContent(
+        modifier: Modifier,
         message: Message,
         currentUser: User?,
         onLongItemClick: (Message) -> Unit,
@@ -1280,6 +1281,7 @@ public interface ChatComponentFactory {
         onUserMentionClick: (User) -> Unit,
     ) {
         MessageText(
+            modifier = modifier,
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
@@ -1302,7 +1304,7 @@ public interface ChatComponentFactory {
         onQuotedMessageClick: (Message) -> Unit,
     ) {
         QuotedMessage(
-            modifier = modifier,
+            modifier = modifier.padding(MessageStyling.messageSectionPadding),
             message = message,
             currentUser = currentUser,
             replyMessage = replyMessage,
@@ -2908,6 +2910,17 @@ public interface ChatComponentFactory {
             attachmentState = attachmentState,
             showFileSize = { true },
             onItemClick = ::onFileAttachmentContentItemClick,
+        )
+    }
+
+    @Composable
+    public fun MediaAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent(
+            state = state,
+            modifier = modifier,
         )
     }
 

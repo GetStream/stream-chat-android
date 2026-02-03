@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
@@ -32,11 +40,12 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
@@ -150,6 +159,7 @@ internal fun DefaultMessageDeletedContent(
  * @param onLinkClick Handler for clicking on a link in the message.
  */
 @Composable
+@Suppress("LongMethod")
 internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
@@ -165,7 +175,7 @@ internal fun DefaultMessageContent(
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
             componentFactory.MessageQuotedContent(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                modifier = Modifier,
                 message = quotedMessage,
                 currentUser = currentUser,
                 replyMessage = message,
@@ -174,17 +184,15 @@ internal fun DefaultMessageContent(
             )
         }
 
-        val attachmentTypes = remember(message.attachments) {
-            message.attachments.mapTo(mutableSetOf(), Attachment::type)
-        }
         val attachmentState = AttachmentState(
             message = message,
             isMine = message.user.id == currentUser?.id,
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
+        val info = message.rememberMessageInfo()
 
-        if (message.attachments.any(Attachment::isUploading)) {
+        if (info.hasUploads) {
             MessageAttachmentsContent(
                 message = message,
                 currentUser = currentUser,
@@ -192,7 +200,14 @@ internal fun DefaultMessageContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             )
         } else {
-            if (AttachmentType.FILE in attachmentTypes || AttachmentType.AUDIO in attachmentTypes) {
+            if (info.hasMedia) {
+                componentFactory.MediaAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
+            if (info.hasFiles) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,
                     attachmentState = attachmentState,
@@ -209,6 +224,7 @@ internal fun DefaultMessageContent(
 
         if (message.text.isNotEmpty()) {
             componentFactory.MessageTextContent(
+                modifier = Modifier,
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
@@ -216,5 +232,56 @@ internal fun DefaultMessageContent(
                 onUserMentionClick = onUserMentionClick,
             )
         }
+
+        if ((!info.displaysFullSizeAttachment || info.hasFiles) && !info.hasUploads) {
+            Spacer(Modifier.height(MessageStyling.contentPadding))
+        }
     }
 }
+
+@Composable
+private fun Message.rememberMessageInfo(): MessageContentInfo {
+    return remember(this) {
+        var hasFiles = false
+        var hasRecordings = false
+        var hasLinks = false
+        var hasMedia = false
+        var hasGiphys = false
+        var hasUnknown = false
+        var hasUploads = false
+
+        attachments.forEach {
+            hasUploads = hasUploads || it.isUploading()
+            when {
+                it.isFile() || it.isAudio() -> hasFiles = true
+                it.isAudioRecording() -> hasRecordings = true
+                it.hasLink() && !it.isGiphy() -> hasLinks = true
+                it.isGiphy() -> hasGiphys = true
+                it.isImage() || it.isVideo() -> hasMedia = true
+                else -> hasUnknown = true
+            }
+        }
+
+        MessageContentInfo(
+            hasFiles = hasFiles,
+            hasRecordings = hasRecordings,
+            hasLinks = hasLinks,
+            hasMedia = hasMedia,
+            hasGiphys = hasGiphys,
+            hasUnknown = hasUnknown,
+            hasUploads = hasUploads,
+            displaysFullSizeAttachment = shouldBeDisplayedAsFullSizeAttachment(),
+        )
+    }
+}
+
+private data class MessageContentInfo(
+    val hasFiles: Boolean,
+    val hasRecordings: Boolean,
+    val hasLinks: Boolean,
+    val hasMedia: Boolean,
+    val hasGiphys: Boolean,
+    val hasUnknown: Boolean,
+    val hasUploads: Boolean,
+    val displaysFullSizeAttachment: Boolean,
+)
