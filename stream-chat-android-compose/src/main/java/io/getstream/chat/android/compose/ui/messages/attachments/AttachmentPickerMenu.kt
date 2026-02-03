@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandClickClick
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -104,7 +104,7 @@ public fun AttachmentPickerMenu(
                         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                         composerViewModel.createPoll(action.pollConfig)
                     }
-                    is AttachmentPickerCommandClickClick -> {
+                    is AttachmentPickerCommandSelect -> {
                         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                         composerViewModel.selectCommand(action.command)
                     }

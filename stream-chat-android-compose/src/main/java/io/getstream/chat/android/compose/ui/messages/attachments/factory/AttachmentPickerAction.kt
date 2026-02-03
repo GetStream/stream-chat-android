@@ -42,6 +42,6 @@ public data class AttachmentPickerPollCreation(public val pollConfig: PollConfig
 public data object AttachmentPickerCreatePollClick : AttachmentPickerAction
 
 /**
- * An user action that indicates a command was clicked.
+ * An user action that indicates a command was selected.
  */
-public data class AttachmentPickerCommandClickClick(public val command: Command) : AttachmentPickerAction
+public data class AttachmentPickerCommandSelect(public val command: Command) : AttachmentPickerAction

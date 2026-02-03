@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionLazyList
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionListHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandClickClick
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.previewdata.PreviewCommandData
@@ -42,7 +42,7 @@ internal fun AttachmentCommandPicker(
         CommandSuggestionLazyList(
             commands = commands,
             onCommandSelected = { command ->
-                onAttachmentPickerAction(AttachmentPickerCommandClickClick(command))
+                onAttachmentPickerAction(AttachmentPickerCommandSelect(command))
             },
         )
     }
