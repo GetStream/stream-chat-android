@@ -26,7 +26,6 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
@@ -81,8 +80,6 @@ public object StreamAttachmentFactories {
      * @param onLinkContentItemClick Lambda called when a link attachment content item gets clicked.
      * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
-     * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
-     * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
@@ -115,11 +112,6 @@ public object StreamAttachmentFactories {
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClick,
-        showFileSize: (Attachment) -> Boolean = { true },
-        onFileContentItemClick: (
-            previewHandlers: List<AttachmentPreviewHandler>,
-            attachment: Attachment,
-        ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
@@ -146,10 +138,7 @@ public object StreamAttachmentFactories {
             skipEnrichUrl = skipEnrichUrl,
             onContentItemClick = onMediaContentItemClick,
         ),
-        FileAttachmentFactory(
-            showFileSize = showFileSize,
-            onContentItemClick = onFileContentItemClick,
-        ),
+        FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
 
@@ -182,11 +171,6 @@ public object StreamAttachmentFactories {
                 it.skipEnrichUrl,
             )
         },
-        showFileSize: (Attachment) -> Boolean = { true },
-        onFileContentItemClick: (
-            previewHandlers: List<AttachmentPreviewHandler>,
-            attachment: Attachment,
-        ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
@@ -213,10 +197,7 @@ public object StreamAttachmentFactories {
             skipEnrichUrl = skipEnrichUrl,
             onContentItemClick = onMediaContentItemClick,
         ),
-        FileAttachmentFactory(
-            showFileSize = showFileSize,
-            onContentItemClick = onFileContentItemClick,
-        ),
+        FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
 }

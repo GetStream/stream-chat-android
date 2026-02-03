@@ -82,6 +82,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -2910,22 +2911,18 @@ public interface ChatComponentFactory {
      *
      * @param modifier Modifier for styling the composable.
      * @param attachmentState The state of the attachment, containing information about the file.
-     * @param showFileSize A lambda function that determines whether the file size should be displayed.
-     * @param onItemClick A lambda function invoked when the file attachment is clicked, providing a list of
      * [AttachmentPreviewHandler] and the clicked [Attachment].
      */
     @Composable
     public fun FileAttachmentContent(
         modifier: Modifier,
         attachmentState: AttachmentState,
-        showFileSize: (Attachment) -> Boolean,
-        onItemClick: (List<AttachmentPreviewHandler>, Attachment) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
             modifier = modifier,
             attachmentState = attachmentState,
-            showFileSize = showFileSize,
-            onItemClick = onItemClick,
+            showFileSize = { true },
+            onItemClick = ::onFileAttachmentContentItemClick,
         )
     }
 

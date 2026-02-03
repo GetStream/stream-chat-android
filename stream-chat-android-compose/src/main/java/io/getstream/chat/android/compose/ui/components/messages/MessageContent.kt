@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -28,11 +29,15 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Represents the default message content within the bubble that can show different UI based on the message state.
@@ -154,10 +159,12 @@ internal fun DefaultMessageContent(
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
+    val componentFactory = ChatTheme.componentFactory
+
     Column {
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
-            ChatTheme.componentFactory.MessageQuotedContent(
+            componentFactory.MessageQuotedContent(
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 message = quotedMessage,
                 currentUser = currentUser,
@@ -166,15 +173,42 @@ internal fun DefaultMessageContent(
                 onQuotedMessageClick = onQuotedMessageClick,
             )
         }
-        MessageAttachmentsContent(
+
+        val attachmentTypes = remember(message.attachments) {
+            message.attachments.mapTo(mutableSetOf(), Attachment::type)
+        }
+        val attachmentState = AttachmentState(
             message = message,
-            currentUser = currentUser,
+            isMine = message.user.id == currentUser?.id,
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
 
+        if (message.attachments.any(Attachment::isUploading)) {
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        } else {
+            if (AttachmentType.FILE in attachmentTypes || AttachmentType.AUDIO in attachmentTypes) {
+                componentFactory.FileAttachmentContent(
+                    modifier = Modifier,
+                    attachmentState = attachmentState,
+                )
+            }
+
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        }
+
         if (message.text.isNotEmpty()) {
-            ChatTheme.componentFactory.MessageTextContent(
+            componentFactory.MessageTextContent(
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
