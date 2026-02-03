@@ -55,7 +55,6 @@ public class AudioRecordAttachmentFactory(
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
             attachmentState = attachmentState,
             viewModelFactory = viewModelFactory,
-            getCurrentUserId = getCurrentUserId,
         )
     },
 ) {

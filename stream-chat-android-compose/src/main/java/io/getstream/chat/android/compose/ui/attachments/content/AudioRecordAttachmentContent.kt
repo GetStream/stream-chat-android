@@ -77,72 +77,16 @@ import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 
 /**
  * Represents the audio recording attachment content.
- */
-@Deprecated(
-    message = "Use AudioRecordAttachmentContent with 4 parameters instead",
-    replaceWith = ReplaceWith(
-        expression = "AudioRecordAttachmentContent(/* parameters */, getCurrentUserId = { /* your implementation */ })",
-        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
-    ),
-)
-@Composable
-public fun AudioRecordGroupContent(
-    modifier: Modifier = Modifier,
-    attachmentState: AttachmentState,
-    viewModelFactory: AudioPlayerViewModelFactory,
-) {
-    AudioRecordAttachmentContent(
-        modifier = modifier,
-        attachmentState = attachmentState,
-        viewModelFactory = viewModelFactory,
-    )
-}
-
-/**
- * Represents the audio recording attachment content item.
- */
-@Deprecated(
-    message = "Use AudioRecordAttachmentContentItem instead",
-    replaceWith = ReplaceWith(
-        expression = "AudioRecordAttachmentContentItem(/* parameters */)",
-        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
-    ),
-)
-@Composable
-public fun AudioRecordAttachmentContent(
-    modifier: Modifier = Modifier,
-    attachment: Attachment,
-    playerState: AudioPlayerState,
-    onPlayToggleClick: (Attachment) -> Unit,
-    onPlaySpeedClick: (Attachment) -> Unit,
-    onScrubberDragStart: (Attachment) -> Unit = {},
-    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
-) {
-    AudioRecordAttachmentContentItem(
-        modifier = modifier,
-        attachment = attachment,
-        playerState = playerState,
-        onPlayToggleClick = onPlayToggleClick,
-        onPlaySpeedClick = onPlaySpeedClick,
-        onThumbDragStart = onScrubberDragStart,
-        onThumbDragStop = onScrubberDragStop,
-    )
-}
-
-/**
- * Represents the audio recording attachment content.
  *
  * @param modifier Modifier for styling.
  * @param attachmentState The state of the attachment.
  * @param viewModelFactory The factory for creating the [AudioPlayerViewModel].
- * @param getCurrentUserId The function to get the current user ID.
  */
 @Composable
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
-    getCurrentUserId: () -> String? = { null },
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
