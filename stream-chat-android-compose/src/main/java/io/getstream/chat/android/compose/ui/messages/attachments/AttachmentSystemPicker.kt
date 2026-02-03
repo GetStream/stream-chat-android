@@ -90,7 +90,7 @@ internal fun AttachmentSystemPicker(
         factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
     )
 
-    val filePickerLauncher = rememberFilePickerLauncher(config.visualMediaAllowMultiple) { uris ->
+    val filePickerLauncher = rememberFilePickerLauncher(config.filesAllowMultiple) { uris ->
         if (uris.isNotEmpty()) {
             processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
                 showErrorIfNeeded(context, metadata)
