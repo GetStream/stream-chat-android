@@ -78,10 +78,12 @@ internal fun AttachmentCameraPicker(
     var showRequiredCameraPermission by remember { mutableStateOf(false) }
     LaunchedEffect(cameraPermissionState?.status) {
         if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
+            showRequiredCameraPermission = false
             captureMediaLauncher?.launch(Unit)
         } else if (cameraPermissionState.status.shouldShowRationale) {
             showRequiredCameraPermission = true
         } else {
+            showRequiredCameraPermission = false
             cameraPermissionState.launchPermissionRequest()
         }
     }
