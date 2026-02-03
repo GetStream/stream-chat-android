@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix race condition crash when accessing `globalState` during disconnect. [#6122](https://github.com/GetStream/stream-chat-android/pull/6122)
+- Fix network callback and lifecycle observer not being unregistered during disconnect. [#6125](https://github.com/GetStream/stream-chat-android/pull/6125)
 
 ### ⬆️ Improved
 
