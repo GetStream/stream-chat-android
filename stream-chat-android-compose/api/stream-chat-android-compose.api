@@ -4132,11 +4132,11 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamTypography {
 	public final fun getFootnoteBold ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFootnoteItalic ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getHeadingLarge ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getHeadingSm ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getHeadingSmall ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getMetadataDefault ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getMetadataEmphasis ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getNumericMd ()Landroidx/compose/ui/text/TextStyle;
-	public final fun getNumericXl ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getNumericExtraLarge ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getNumericMedium ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getSingleEmoji ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getTabBar ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getTitle1 ()Landroidx/compose/ui/text/TextStyle;

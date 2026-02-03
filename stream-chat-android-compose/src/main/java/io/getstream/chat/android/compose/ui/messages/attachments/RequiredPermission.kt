@@ -105,7 +105,7 @@ private fun RequiredPermission(
             )
             Text(
                 text = stringResource(title),
-                style = ChatTheme.typography.headingSm,
+                style = ChatTheme.typography.headingSmall,
                 color = ChatTheme.colors.textSecondary,
                 textAlign = TextAlign.Center,
             )

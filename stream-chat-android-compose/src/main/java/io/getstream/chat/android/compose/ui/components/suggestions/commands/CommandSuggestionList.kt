@@ -84,7 +84,7 @@ internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
             )
             .fillMaxWidth(),
         text = stringResource(R.string.stream_compose_message_composer_instant_commands),
-        style = ChatTheme.typography.headingSm,
+        style = ChatTheme.typography.headingSmall,
         color = ChatTheme.colors.textPrimary,
     )
 }

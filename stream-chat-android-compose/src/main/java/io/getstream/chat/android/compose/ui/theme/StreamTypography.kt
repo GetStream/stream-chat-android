@@ -43,12 +43,12 @@ import androidx.compose.ui.unit.sp
  * @param bodyEmphasis Used for emphasized body text requiring visual prominence to highlight important information.
  * @param captionDefault Style for captions and supplementary information.
  * @param captionEmphasis Style for emphasized captions that require attention.
- * @param headingSm Style for small headings.
+ * @param headingSmall Style for small headings.
  * @param headingLarge Style for large, prominent headings.
  * @param metadataDefault Style for metadata and secondary information.
  * @param metadataEmphasis Style for emphasized metadata in secondary content areas.
- * @param numericMd Style for medium-sized numeric indicators, like the unread count.
- * @param numericXl Style for extra-large numeric indicators.
+ * @param numericMedium Style for medium-sized numeric indicators, like the unread count.
+ * @param numericExtraLarge Style for extra-large numeric indicators.
  */
 @Immutable
 public data class StreamTypography(
@@ -70,12 +70,12 @@ public data class StreamTypography(
     public val bodyEmphasis: TextStyle,
     public val captionDefault: TextStyle,
     public val captionEmphasis: TextStyle,
-    public val headingSm: TextStyle,
+    public val headingSmall: TextStyle,
     public val headingLarge: TextStyle,
     public val metadataDefault: TextStyle,
     public val metadataEmphasis: TextStyle,
-    public val numericMd: TextStyle,
-    public val numericXl: TextStyle,
+    public val numericMedium: TextStyle,
+    public val numericExtraLarge: TextStyle,
 ) {
 
     public companion object {
@@ -188,7 +188,7 @@ public data class StreamTypography(
                 fontSize = StreamTokens.fontSizeXs,
                 lineHeight = StreamTokens.lineHeightTight,
             ),
-            headingSm = TextStyle(
+            headingSmall = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeMd,
@@ -206,13 +206,13 @@ public data class StreamTypography(
                 fontSize = StreamTokens.fontSizeXs,
                 lineHeight = StreamTokens.lineHeightTight,
             ),
-            numericMd = TextStyle(
+            numericMedium = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightBold,
                 fontSize = StreamTokens.fontSize2xs,
                 lineHeight = StreamTokens.lineHeightTighter,
             ),
-            numericXl = TextStyle(
+            numericExtraLarge = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightBold,
                 fontSize = StreamTokens.fontSizeSm,

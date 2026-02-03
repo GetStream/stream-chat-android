@@ -190,7 +190,7 @@ private fun SelectedIndicator(
         Text(
             text = selection.position.toString(),
             color = ChatTheme.colors.badgeText,
-            style = ChatTheme.typography.numericXl,
+            style = ChatTheme.typography.numericExtraLarge,
         )
     }
 }
@@ -237,7 +237,7 @@ private fun VideoThumbnailOverlay(
         )
         Text(
             text = MediaStringUtil.convertVideoLength(videoLength),
-            style = ChatTheme.typography.numericMd,
+            style = ChatTheme.typography.numericMedium,
             color = ChatTheme.colors.badgeText,
         )
     }
