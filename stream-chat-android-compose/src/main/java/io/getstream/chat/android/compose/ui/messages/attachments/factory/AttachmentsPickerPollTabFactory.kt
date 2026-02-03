@@ -84,7 +84,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        AttachmentPollPicker(onAttachmentPickerAction)
+        AttachmentPollPicker(onAttachmentPickerAction = onAttachmentPickerAction)
     }
 }
 

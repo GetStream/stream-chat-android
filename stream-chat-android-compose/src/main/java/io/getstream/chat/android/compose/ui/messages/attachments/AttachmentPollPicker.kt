@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,11 +48,22 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePoll
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
+@Suppress("LongMethod")
 @Composable
 internal fun AttachmentPollPicker(
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    showCreateDialogOnInit: Boolean = true,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
 ) {
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
+    val onCreatePollClick = {
+        showCreateDialog = true
+        onAttachmentPickerAction(AttachmentPickerCreatePollClick)
+    }
+    LaunchedEffect(showCreateDialogOnInit) {
+        if (showCreateDialogOnInit) {
+            onCreatePollClick()
+        }
+    }
     Column(
         modifier = Modifier
             .padding(
@@ -87,10 +99,7 @@ internal fun AttachmentPollPicker(
             modifier = Modifier
                 .height(48.dp)
                 .fillMaxWidth(),
-            onClick = {
-                showCreateDialog = true
-                onAttachmentPickerAction(AttachmentPickerCreatePollClick)
-            },
+            onClick = onCreatePollClick,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = ChatTheme.colors.buttonSecondaryText,
             ),
@@ -98,7 +107,6 @@ internal fun AttachmentPollPicker(
             Text(text = stringResource(id = R.string.stream_compose_attachment_poll_picker_cta))
         }
     }
-
     if (showCreateDialog) {
         FullscreenDialog(onDismissRequest = { showCreateDialog = false }) {
             CreatePollScreen(
@@ -121,5 +129,7 @@ private fun AttachmentPollPickerPreview() {
 
 @Composable
 internal fun AttachmentPollPicker() {
-    AttachmentPollPicker {}
+    AttachmentPollPicker(
+        showCreateDialogOnInit = false,
+    )
 }
