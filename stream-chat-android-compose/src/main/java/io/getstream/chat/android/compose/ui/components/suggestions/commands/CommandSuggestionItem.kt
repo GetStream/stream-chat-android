@@ -88,18 +88,18 @@ public fun CommandSuggestionItem(
  */
 @Composable
 internal fun DefaultCommandSuggestionItemLeadingContent(command: Command) {
-    if (command.isColouredImage) {
-        Image(
-            modifier = Modifier.padding(end = StreamTokens.spacingSm),
-            painter = painterResource(id = command.imageRes),
-            contentDescription = null,
-        )
-    } else {
+    if (command.isMonochromaticIcon) {
         Icon(
             modifier = Modifier.padding(end = StreamTokens.spacingSm),
             painter = painterResource(id = command.imageRes),
             contentDescription = null,
             tint = ChatTheme.colors.textSecondary,
+        )
+    } else {
+        Image(
+            modifier = Modifier.padding(end = StreamTokens.spacingSm),
+            painter = painterResource(id = command.imageRes),
+            contentDescription = null,
         )
     }
 }
@@ -146,11 +146,12 @@ internal fun DefaultCommandSuggestionItemCenterContent(
 
 private val Command.imageRes: Int
     @DrawableRes get() = when (name) {
-        // TODO Designer to export a fixed mute icon
         CommandDefaults.MUTE -> UiCommonR.drawable.stream_ic_command_mute
         CommandDefaults.UNMUTE -> UiCommonR.drawable.stream_ic_command_unmute
         // fallback to the 'giphy' icon for backwards compatibility
         else -> R.drawable.stream_ic_command_giphy
     }
 
-private val Command.isColouredImage: Boolean get() = name == CommandDefaults.GIPHY
+private val Command.isMonochromaticIcon: Boolean
+    get() = name == CommandDefaults.MUTE ||
+        name == CommandDefaults.UNMUTE
