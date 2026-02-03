@@ -2376,9 +2376,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;
 	public final fun defaultFactories (ZZZZZ)Ljava/util/List;
 	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
-	public final fun defaultFactoriesWithoutStoragePermissions ()Ljava/util/List;
-	public final fun defaultFactoriesWithoutStoragePermissions (ZZZZZ)Ljava/util/List;
-	public static synthetic fun defaultFactoriesWithoutStoragePermissions$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
 	public final fun systemAttachmentsPickerTabFactories (Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;)Ljava/util/List;
 	public static synthetic fun systemAttachmentsPickerTabFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;ILjava/lang/Object;)Ljava/util/List;
 }

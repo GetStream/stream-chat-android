@@ -27,21 +27,26 @@ internal class AttachmentsPickerTabFactoriesTest {
     @Test
     fun testDefaultFactoriesWithoutStoragePermissions() {
         // when
-        val factories = AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions(
-            filesAllowed = true,
-            mediaAllowed = true,
-            captureImageAllowed = true,
-            captureVideoAllowed = true,
-            pollAllowed = true,
+        val factories = AttachmentsPickerTabFactories.systemAttachmentsPickerTabFactories(
+            config = SystemAttachmentsPickerConfig(
+                visualMediaAllowed = true,
+                visualMediaAllowMultiple = true,
+                filesAllowed = true,
+                filesAllowMultiple = true,
+                captureImageAllowed = true,
+                captureVideoAllowed = true,
+                pollAllowed = true,
+            ),
         )
         // then
         factories.size `should be equal to` 1
         factories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
         val factory = factories[0] as AttachmentsPickerSystemTabFactory
         factory.config.visualMediaAllowed `should be equal to` true
-        factory.config.visualMediaAllowMultiple `should be equal to` false
+        factory.config.visualMediaAllowMultiple `should be equal to` true
         factory.config.visualMediaType `should be equal to` VisualMediaType.IMAGE_AND_VIDEO
         factory.config.filesAllowed `should be equal to` true
+        factory.config.filesAllowMultiple `should be equal to` true
         factory.config.captureImageAllowed `should be equal to` true
         factory.config.captureVideoAllowed `should be equal to` true
         factory.config.pollAllowed `should be equal to` true
@@ -53,12 +58,16 @@ internal class AttachmentsPickerTabFactoriesTest {
     @Test
     fun testDefaultFactoriesWithoutStoragePermissionsAllDisabled() {
         // when
-        val factories = AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions(
-            filesAllowed = false,
-            mediaAllowed = false,
-            captureImageAllowed = false,
-            captureVideoAllowed = false,
-            pollAllowed = false,
+        val factories = AttachmentsPickerTabFactories.systemAttachmentsPickerTabFactories(
+            config = SystemAttachmentsPickerConfig(
+                visualMediaAllowed = false,
+                visualMediaAllowMultiple = false,
+                filesAllowed = false,
+                filesAllowMultiple = false,
+                captureImageAllowed = false,
+                captureVideoAllowed = false,
+                pollAllowed = false,
+            ),
         )
         // then
         factories.size `should be equal to` 1
@@ -68,6 +77,7 @@ internal class AttachmentsPickerTabFactoriesTest {
         factory.config.visualMediaAllowMultiple `should be equal to` false
         factory.config.visualMediaType `should be equal to` VisualMediaType.IMAGE_AND_VIDEO
         factory.config.filesAllowed `should be equal to` false
+        factory.config.filesAllowMultiple `should be equal to` false
         factory.config.captureImageAllowed `should be equal to` false
         factory.config.captureVideoAllowed `should be equal to` false
         factory.config.pollAllowed `should be equal to` false
@@ -84,7 +94,7 @@ internal class AttachmentsPickerTabFactoriesTest {
         factories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
         val factory = factories[0] as AttachmentsPickerSystemTabFactory
         factory.config.visualMediaAllowed `should be equal to` true
-        factory.config.visualMediaAllowMultiple `should be equal to` false
+        factory.config.visualMediaAllowMultiple `should be equal to` true
         factory.config.visualMediaType `should be equal to` VisualMediaType.IMAGE_AND_VIDEO
         factory.config.filesAllowed `should be equal to` true
         factory.config.captureImageAllowed `should be equal to` true
