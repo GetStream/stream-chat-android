@@ -188,7 +188,7 @@ private fun SelectedIndicator(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = selection.count.toString(),
+            text = selection.position.toString(),
             color = ChatTheme.colors.badgeText,
             style = ChatTheme.typography.numericXl,
         )
@@ -306,7 +306,7 @@ internal fun ImagesPicker(showAddMore: Boolean) {
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                selection = Selection.Selected(count = 1),
+                selection = Selection.Selected(position = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {

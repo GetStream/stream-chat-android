@@ -189,7 +189,7 @@ internal fun FilesPickerItems() {
         DefaultFilesPickerItem(
             fileItem = AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
-                selection = Selection.Selected(count = 1),
+                selection = Selection.Selected(position = 1),
             ),
             onItemSelected = {},
         )

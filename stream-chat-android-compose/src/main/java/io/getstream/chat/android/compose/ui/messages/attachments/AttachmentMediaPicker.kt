@@ -161,7 +161,7 @@ internal fun AttachmentMediaPicker() {
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                selection = Selection.Selected(count = 1),
+                selection = Selection.Selected(position = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {

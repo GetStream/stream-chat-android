@@ -125,7 +125,7 @@ internal class AttachmentsPickerViewModelTest {
         assertFalse(firstItem.isSelected)
         assertEquals(Selection.Unselected, firstItem.selection)
         assertTrue(lastItem.isSelected)
-        assertEquals(Selection.Selected(count = 1), lastItem.selection)
+        assertEquals(Selection.Selected(position = 1), lastItem.selection)
     }
 
     @Test
@@ -313,7 +313,7 @@ internal class AttachmentsPickerViewModelTest {
         assertFalse(firstItem.isSelected)
         assertEquals(Selection.Unselected, firstItem.selection)
         assertTrue(lastItem.isSelected)
-        assertEquals(Selection.Selected(count = 1), lastItem.selection)
+        assertEquals(Selection.Selected(position = 1), lastItem.selection)
     }
 
     private fun mockChannelState(): ChannelState {

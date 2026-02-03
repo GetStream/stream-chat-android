@@ -139,12 +139,12 @@ public class AttachmentsPickerViewModel(
         val currentItem = attachments[itemIndex]
         if (currentItem.selection !is Selection.Selected) return
 
-        val removedCount = currentItem.selection.count
+        val removedPosition = currentItem.selection.position
         attachments = attachments.mapIndexed { index, item ->
             when {
                 index == itemIndex -> item.copy(selection = Selection.Unselected)
-                item.selection is Selection.Selected && item.selection.count > removedCount ->
-                    item.copy(selection = Selection.Selected(count = item.selection.count - 1))
+                item.selection is Selection.Selected && item.selection.position > removedPosition ->
+                    item.copy(selection = Selection.Selected(position = item.selection.position - 1))
 
                 else -> item
             }
@@ -162,12 +162,12 @@ public class AttachmentsPickerViewModel(
 
         val currentItem = attachments[itemIndex]
         val updatedAttachments = if (currentItem.selection is Selection.Selected) {
-            val removedCount = currentItem.selection.count
+            val removedPosition = currentItem.selection.position
             attachments.mapIndexed { index, item ->
                 when {
                     index == itemIndex -> item.copy(selection = Selection.Unselected)
-                    item.selection is Selection.Selected && item.selection.count > removedCount ->
-                        item.copy(selection = Selection.Selected(count = item.selection.count - 1))
+                    item.selection is Selection.Selected && item.selection.position > removedPosition ->
+                        item.copy(selection = Selection.Selected(position = item.selection.position - 1))
 
                     else -> item
                 }
@@ -176,7 +176,7 @@ public class AttachmentsPickerViewModel(
             val nextSelectionCount = attachments.count(AttachmentPickerItemState::isSelected) + 1
             attachments.mapIndexed { index, item ->
                 if (index == itemIndex) {
-                    item.copy(selection = Selection.Selected(count = nextSelectionCount))
+                    item.copy(selection = Selection.Selected(position = nextSelectionCount))
                 } else {
                     item
                 }

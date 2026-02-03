@@ -38,9 +38,9 @@ public data class AttachmentPickerItemState(
         /**
          * The selected state of the attachment.
          *
-         * @param count The number of items selected.
+         * @param position The position of the selected attachment in the list.
          */
-        public data class Selected(val count: Int) : Selection
+        public data class Selected(val position: Int) : Selection
 
         /**
          * The unselected state of the attachment.

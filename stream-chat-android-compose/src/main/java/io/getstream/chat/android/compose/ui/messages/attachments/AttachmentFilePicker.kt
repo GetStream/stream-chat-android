@@ -274,7 +274,7 @@ internal fun AttachmentFilePicker() {
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
                     size = 100_000
                 },
-                selection = Selection.Selected(count = 1),
+                selection = Selection.Selected(position = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
