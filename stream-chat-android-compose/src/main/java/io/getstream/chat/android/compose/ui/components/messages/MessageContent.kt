@@ -237,7 +237,7 @@ internal fun DefaultMessageContent(
             )
         }
 
-        if (!info.displaysFullSizeAttachment) {
+        if ((!info.displaysFullSizeAttachment || info.files.isNotEmpty()) && !info.hasUploads) {
             Spacer(Modifier.height(MessageStyling.contentPadding))
         }
     }
