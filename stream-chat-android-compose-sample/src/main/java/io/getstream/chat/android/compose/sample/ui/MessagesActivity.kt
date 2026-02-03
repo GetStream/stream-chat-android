@@ -158,6 +158,7 @@ class MessagesActivity : ComponentActivity() {
             colors = colors,
             shapes = shapes,
             typography = typography,
+            useDefaultSystemMediaPicker = false,
             attachmentsPickerTabFactories = attachmentsPickerTabFactories,
             componentFactory = CustomChatComponentFactory(),
             dateFormatter = ChatApp.dateFormatter,
