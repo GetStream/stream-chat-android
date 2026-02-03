@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
  * @param onDismiss Handler when the user dismisses the UI.
  */
+@Suppress("LongMethod")
 @Composable
 public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
