@@ -143,9 +143,9 @@ private fun AttachmentPickerToggleButton(
         onCheckedChange = { onClick() },
         colors = IconButtonDefaults.filledIconToggleButtonColors(
             containerColor = Color.Transparent,
-            contentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
+            contentColor = ChatTheme.colors.buttonSecondaryText,
             checkedContainerColor = ChatTheme.colors.backgroundCoreSelected,
-            checkedContentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
+            checkedContentColor = ChatTheme.colors.buttonSecondaryText,
         ),
     ) {
         Icon(
@@ -166,7 +166,7 @@ private fun AttachmentPickerButton(
         onClick = onClick,
         colors = IconButtonDefaults.iconButtonColors(
             containerColor = Color.Transparent,
-            contentColor = ChatTheme.colors.buttonStyleGhostTextSecondary,
+            contentColor = ChatTheme.colors.buttonSecondaryText,
         ),
     ) {
         Icon(
