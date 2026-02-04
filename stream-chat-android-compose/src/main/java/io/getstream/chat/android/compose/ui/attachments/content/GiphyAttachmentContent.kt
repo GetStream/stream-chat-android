@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -181,6 +182,7 @@ public fun GiphyAttachmentContent(
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     Box(
         modifier = modifier
+            .testTag("Stream_GiphyContent")
             .size(giphyDimensions)
             .applyIf(!shouldBeFullSize) {
                 padding(MessageStyling.messageSectionPadding)
