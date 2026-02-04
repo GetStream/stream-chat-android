@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix race condition crash when accessing `globalState` during disconnect. [#6122](https://github.com/GetStream/stream-chat-android/pull/6122)
+- Fix crash when `onNext` is called on a disposed subscription. [#6126](https://github.com/GetStream/stream-chat-android/pull/6126)
 
 ### ⬆️ Improved
 
