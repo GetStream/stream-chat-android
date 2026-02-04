@@ -23,7 +23,7 @@ import androidx.compose.ui.res.colorResource
 import io.getstream.chat.android.compose.R
 
 /**
- * Contains all the colors in our palette. Each color is used for various things an can be changed to
+ * Contains all the colors in our palette. Each color is used for various things and can be changed to
  * customize the app design style.
  * @param textHighEmphasis Used for main text and active icon status.
  * @param textHighEmphasisInverse Used for contrasting backgrounds or elements against the main text and active icon
@@ -32,7 +32,6 @@ import io.getstream.chat.android.compose.R
  * @param disabled Used for disabled icons and empty states.
  * @param borders Used for borders, the background of self messages, selected items, pressed state, button dividers.
  * @param inputBackground Used for the input background, deleted messages, section headings.
- * @param appBackground Used for the default app background and channel list item background.
  * @param barsBackground Used for button text, top and bottom bar background and other user messages.
  * @param overlay Used for general overlays and background when opening modals.
  * @param overlayDark Used for the date separator background color.
@@ -49,12 +48,13 @@ import io.getstream.chat.android.compose.R
  * in the media gallery preview screen. Most visible in placeholders before the images are loaded.
  * @param imageBackgroundMessageList Used to set the background colour of videos inside the message list.
  * Most visible in placeholders before the video previews are loaded.
- * @param imageBackgroundMediaGalleryPicker Used to set the background colour of videos inside the media gallery picker
- * in the media gallery preview screen. Most visible in placeholders before the videos previews are loaded.
+ * @param videoBackgroundMediaGalleryPicker Used to set the background color of videos inside the media gallery picker
+ * in the media gallery preview screen. Most visible in placeholders before the video previews are loaded.
  * @param showMoreOverlay The color of the overlay displaying how many more media attachments the message contains,
  * given it contains more than can be displayed in the message list media attachment preview.
  * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
  * given it contains more than can be displayed in the message list media attachment preview.
+ * @param accentBlack Used for black accent elements.
  * @param accentError Used for destructive actions and error states.
  * @param accentNeutral Used for neutral accent for low-priority badges.
  * @param accentSuccess Used for success states and positive actions.
@@ -71,9 +71,11 @@ import io.getstream.chat.android.compose.R
  * @param avatarPaletteText5 Used for avatar text color.
  * @param backgroundCoreDisabled Used for disabled background in components like buttons.
  * @param backgroundCoreSurface Used for surface background in components like buttons.
+ * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
  * @param backgroundElevationElevation0 Used for base elevation surface backgrounds.
  * @param borderCoreImage Used for image frame border treatment.
  * @param borderCoreDefault Used for default border color.
+ * @param borderCoreOnAccent Used for borders on accent backgrounds.
  * @param borderCoreOnDark Used for borders on dark backgrounds.
  * @param borderCoreSurfaceSubtle Used for very light separators.
  * @param borderCorePrimary Used for selected or active state border.
@@ -94,6 +96,14 @@ import io.getstream.chat.android.compose.R
  * @param textSecondary Used for secondary text color with lower emphasis.
  * @param textTertiary Used for tertiary text color with lowest emphasis.
  * @param textDisabled Used for disabled text and icon color.
+ * @param badgeBgInverse Used for badge background with inverse color scheme.
+ * @param badgeBgOverlay Used for badge background when displayed as an overlay.
+ * @param badgeText Used for badge text color.
+ * @param badgeTextOnAccent Used for badge text color on accent backgrounds.
+ * @param stateBgDisabled Used for disabled state background.
+ * @param stateTextDisabled Used for disabled state text color.
+ * @param appBackground Used for the default app background.
+ * @param backgroundCoreSelected Used for selected state background.
  * @param backgroundElevationElevation2 Used for elevated surface backgrounds at elevation level 2.
  * @param buttonDestructiveBg Used for destructive button background.
  * @param buttonDestructiveBorder Used for destructive button border.
@@ -115,6 +125,11 @@ import io.getstream.chat.android.compose.R
  * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
  * @param chatTextIncoming Used for incoming message text color in chat bubbles.
  * @param chatTextOutgoing Used for outgoing message text color in chat bubbles.
+ * @param chatTextLink Used for link text color in chat messages.
+ * @param chatTextMention Used for mention text color in chat messages.
+ * @param chatTextTimestamp Used for timestamp text color in chat messages.
+ * @param controlPlayControlBg Used for play control button background.
+ * @param controlPlayControlIcon Used for play control button icon.
  * @param controlRemoveBg Used for remove control background.
  * @param controlRemoveBorder Used for remove control border.
  * @param controlRemoveIcon Used for remove control icon.
