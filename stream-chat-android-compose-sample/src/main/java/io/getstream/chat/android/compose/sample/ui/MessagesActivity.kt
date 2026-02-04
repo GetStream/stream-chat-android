@@ -23,7 +23,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -44,12 +42,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -60,7 +54,6 @@ import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActi
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
-import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -70,9 +63,7 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -151,16 +142,13 @@ class MessagesActivity : ComponentActivity() {
                 ),
             )
         val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
-        val attachmentsPickerTabFactories = AttachmentsPickerTabFactories.defaultFactories() +
-            LocationPickerTabFactory(viewModelFactory = SharedLocationViewModelFactory(cid))
+        val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
             shapes = shapes,
             typography = typography,
-            useDefaultSystemMediaPicker = false,
-            attachmentsPickerTabFactories = attachmentsPickerTabFactories,
-            componentFactory = CustomChatComponentFactory(),
+            componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
@@ -215,10 +203,8 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     fun MyCustomUi() {
-        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val currentMessagesState by listViewModel.currentMessagesState
         val selectedMessageState = currentMessagesState.selectedMessageState
-        val messageMode by composerViewModel.messageMode.collectAsState()
         val user by listViewModel.user.collectAsState()
         val lazyListState = rememberMessageListState()
 
@@ -230,7 +216,13 @@ class MessagesActivity : ComponentActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
-                    MyCustomComposer()
+                    Column {
+                        MyCustomComposer()
+                        AttachmentPickerMenu(
+                            attachmentsPickerViewModel = attachmentsPickerViewModel,
+                            composerViewModel = composerViewModel,
+                        )
+                    }
                 },
             ) {
                 MessageList(
@@ -264,34 +256,6 @@ class MessagesActivity : ComponentActivity() {
                     onReply = { message ->
                         composerViewModel.performMessageAction(Reply(message))
                     },
-                )
-            }
-
-            if (isShowingAttachments) {
-                var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
-                val screenHeight = LocalConfiguration.current.screenHeightDp
-                val pickerHeight by animateDpAsState(
-                    targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
-                    label = "full sized picker animation",
-                )
-
-                AttachmentPicker(
-                    attachmentsPickerViewModel = attachmentsPickerViewModel,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .height(pickerHeight),
-                    onAttachmentsSelected = { attachments ->
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        composerViewModel.addSelectedAttachments(attachments)
-                    },
-                    onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
-                    onAttachmentPickerAction = { action ->
-                        if (action is AttachmentPickerPollCreation) {
-                            composerViewModel.createPoll(action.pollConfig)
-                        }
-                    },
-                    onDismiss = { attachmentsPickerViewModel.changeAttachmentState(false) },
-                    messageMode = messageMode,
                 )
             }
 
@@ -371,7 +335,6 @@ class MessagesActivity : ComponentActivity() {
     fun MyCustomComposer() {
         MessageComposer(
             viewModel = composerViewModel,
-            leadingContent = {},
             input = { inputState ->
                 MessageInput(
                     modifier = Modifier
@@ -407,6 +370,7 @@ class MessagesActivity : ComponentActivity() {
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
+            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
         )
     }
 
