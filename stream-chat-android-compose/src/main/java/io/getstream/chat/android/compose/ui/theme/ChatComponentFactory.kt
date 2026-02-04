@@ -2894,11 +2894,10 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the content of a file attachment.
+     * Factory method for creating the content of file attachments in a message.
      *
      * @param modifier Modifier for styling the composable.
-     * @param attachmentState The state of the attachment, containing information about the file.
-     * [AttachmentPreviewHandler] and the clicked [Attachment].
+     * @param attachmentState The state of the attachment.
      */
     @Composable
     public fun FileAttachmentContent(
@@ -2913,6 +2912,12 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of Giphy attachments in a message.
+     *
+     * @param state The state of the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun GiphyAttachmentContent(
         state: AttachmentState,
@@ -2924,6 +2929,12 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of media attachments in a message.
+     *
+     * @param state The state of the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun MediaAttachmentContent(
         state: AttachmentState,
