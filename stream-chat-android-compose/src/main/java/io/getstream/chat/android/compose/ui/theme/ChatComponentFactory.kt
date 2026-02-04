@@ -62,7 +62,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -73,7 +72,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
@@ -84,6 +82,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -112,7 +111,6 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
-import io.getstream.chat.android.compose.ui.components.avatar.InitialsAvatar
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -151,7 +149,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
@@ -1047,7 +1044,6 @@ public interface ChatComponentFactory {
      * @param color The color of the message bubble.
      * @param shape The shape of the message bubble.
      * @param border The border of the message bubble.
-     * @param contentPadding The padding of the message bubble.
      * @param content The content shown inside the message bubble.
      */
     @Composable
@@ -1057,7 +1053,6 @@ public interface ChatComponentFactory {
         color: Color,
         shape: Shape,
         border: BorderStroke?,
-        contentPadding: PaddingValues,
         content: @Composable () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
@@ -1065,7 +1060,6 @@ public interface ChatComponentFactory {
             color = color,
             shape = shape,
             border = border,
-            contentPadding = contentPadding,
             content = content,
         )
     }
@@ -1279,6 +1273,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageTextContent(
+        modifier: Modifier,
         message: Message,
         currentUser: User?,
         onLongItemClick: (Message) -> Unit,
@@ -1286,6 +1281,7 @@ public interface ChatComponentFactory {
         onUserMentionClick: (User) -> Unit,
     ) {
         MessageText(
+            modifier = modifier,
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
@@ -1308,7 +1304,7 @@ public interface ChatComponentFactory {
         onQuotedMessageClick: (Message) -> Unit,
     ) {
         QuotedMessage(
-            modifier = modifier,
+            modifier = modifier.padding(MessageStyling.messageSectionPadding),
             message = message,
             currentUser = currentUser,
             replyMessage = replyMessage,
@@ -1364,36 +1360,6 @@ public interface ChatComponentFactory {
         )
     }
 
-    /**
-     * The default read status indicator in the message footer, weather the message is sent, pending or read.
-     */
-    @Deprecated(
-        message = "Use the new version of MessageFooterStatusIndicator that takes MessageFooterStatusIndicatorParams.",
-        replaceWith = ReplaceWith(
-            "MessageFooterStatusIndicator(\n" +
-                "    params = MessageFooterStatusIndicatorParams(\n" +
-                "        modifier = modifier,\n" +
-                "        messageItem = messageItem,\n" +
-                "    ),\n" +
-                ")",
-        ),
-        level = DeprecationLevel.WARNING,
-    )
-    @Composable
-    public fun MessageFooterStatusIndicator(
-        modifier: Modifier,
-        message: Message,
-        isMessageRead: Boolean,
-        readCount: Int,
-    ) {
-        MessageReadStatusIcon(
-            modifier = modifier,
-            message = message,
-            isMessageRead = isMessageRead,
-            readCount = readCount,
-        )
-    }
-
     @Composable
     public fun MessageFooterStatusIndicator(
         params: MessageFooterStatusIndicatorParams,
@@ -1407,7 +1373,7 @@ public interface ChatComponentFactory {
                 readCount = params.messageItem.messageReadBy.size,
             )
         } else {
-            MessageFooterStatusIndicator(
+            MessageReadStatusIcon(
                 modifier = params.modifier,
                 message = params.messageItem.message,
                 isMessageRead = params.messageItem.isMessageRead,
@@ -1423,10 +1389,10 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageComposer(
         messageComposerState: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onSendMessage: (String, List<Attachment>) -> Unit,
         modifier: Modifier,
         onAttachmentsClick: () -> Unit,
-        onCommandsClick: () -> Unit,
         onValueChange: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
@@ -1447,10 +1413,10 @@ public interface ChatComponentFactory {
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
             messageComposerState = messageComposerState,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onSendMessage = onSendMessage,
             modifier = modifier,
             onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
@@ -1686,7 +1652,7 @@ public interface ChatComponentFactory {
      * @param command The command for which the center content is rendered.
      */
     @Composable
-    public fun RowScope.MessageComposerCommandSuggestionItemCenterContent(
+    public fun MessageComposerCommandSuggestionItemCenterContent(
         modifier: Modifier,
         command: Command,
     ) {
@@ -1702,28 +1668,14 @@ public interface ChatComponentFactory {
     @Composable
     public fun RowScope.MessageComposerLeadingContent(
         state: MessageComposerState,
+        isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
     ) {
         DefaultMessageComposerLeadingContent(
             messageInputState = state,
+            isAttachmentPickerVisible = isAttachmentPickerVisible,
             onAttachmentsClick = onAttachmentsClick,
         )
-    }
-
-    /**
-     * The default commands button of the message composer.
-     *
-     * @param hasCommandSuggestions Whether there are command suggestions available.
-     * @param enabled Whether the button is enabled.
-     * @param onClick The action to perform when the button is clicked.
-     */
-    @Composable
-    public fun RowScope.MessageComposerCommandsButton(
-        hasCommandSuggestions: Boolean,
-        enabled: Boolean,
-        onClick: () -> Unit,
-    ) {
-        CommandsButton(hasCommandSuggestions, enabled, onClick)
     }
 
     /**
@@ -1920,125 +1872,77 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default avatar, which renders an image from the provided image URL.
-     * In case the image URL is empty or there is an error loading the image,
-     * it falls back to an image with initials.
+     * The default avatar component that displays an image from a URL or falls back to a placeholder.
+     * This component serves as the foundational UI for all avatar types.
+     *
+     * @param imageUrl The URL of the image to display.
+     * @param fallback The fallback content to be displayed if the [imageUrl] is null or fails to load.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun Avatar(
         modifier: Modifier,
-        imageUrl: String,
-        initials: String,
-        shape: Shape,
-        textStyle: TextStyle,
-        placeholderPainter: Painter?,
-        errorPlaceholderPainter: Painter?,
-        contentDescription: String?,
-        initialsAvatarOffset: DpOffset,
-        onClick: (() -> Unit)?,
+        imageUrl: String?,
+        fallback: @Composable () -> Unit,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.Avatar(
             modifier = modifier,
             imageUrl = imageUrl,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            placeholderPainter = placeholderPainter,
-            errorPlaceholderPainter = errorPlaceholderPainter,
-            contentDescription = contentDescription,
-            initialsAvatarOffset = initialsAvatarOffset,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default fallback avatar, which renders initials in a circle.
-     * It is used when the image URL is empty or there is an error loading the image.
-     */
-    @Composable
-    public fun FallbackAvatar(
-        imageUrl: String,
-        initials: String,
-        modifier: Modifier,
-        shape: Shape,
-        textStyle: TextStyle,
-        avatarOffset: DpOffset,
-        onClick: (() -> Unit)?,
-    ) {
-        InitialsAvatar(
-            modifier = modifier,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick,
-            avatarOffset = avatarOffset,
+            fallback = fallback,
+            showBorder = showBorder,
         )
     }
 
     /**
      * The default user avatar content.
-     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
-     * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
+     *
+     * This component displays the user's uploaded image or falls back to their initials if no
+     * image is available. It is commonly used in message lists, headers, and user profiles.
+     *
+     * @param user The user whose avatar will be displayed.
+     * @param showIndicator Whether to overlay a status indicator to show whether the user is online.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun UserAvatar(
         modifier: Modifier,
         user: User,
-        textStyle: TextStyle,
-        showOnlineIndicator: Boolean,
-        onlineIndicator: @Composable BoxScope.() -> Unit,
-        onClick: (() -> Unit)?,
+        showIndicator: Boolean,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
             modifier = modifier,
             user = user,
-            textStyle = textStyle,
-            contentDescription = user.name,
-            showOnlineIndicator = showOnlineIndicator,
-            onlineIndicator = onlineIndicator,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default group avatar, which renders a matrix of user images or initials.
-     */
-    @Composable
-    public fun GroupAvatar(
-        modifier: Modifier,
-        users: List<User>,
-        shape: Shape,
-        textStyle: TextStyle,
-        onClick: (() -> Unit)?,
-    ) {
-        io.getstream.chat.android.compose.ui.components.avatar.GroupAvatar(
-            modifier = modifier,
-            users = users,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
         )
     }
 
     /**
      * The default avatar for a channel.
-     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
-     * Based on the state of the [Channel] and the number of members,
-     * it might use [Avatar], [UserAvatar], or [GroupAvatar] to show different types of images.
+     *
+     * This component displays the channel image, the user avatar for direct messages, or a placeholder.
+     *
+     * @param channel The channel whose avatar will be displayed.
+     * @param currentUser The user currently logged in.
+     * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+     * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable
     public fun ChannelAvatar(
         modifier: Modifier,
         channel: Channel,
         currentUser: User?,
-        onClick: (() -> Unit)?,
+        showIndicator: Boolean,
+        showBorder: Boolean,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
             modifier = modifier,
             channel = channel,
             currentUser = currentUser,
-            contentDescription = channel.name,
-            onClick = onClick,
+            showIndicator = showIndicator,
+            showBorder = showBorder,
         )
     }
 
@@ -2994,22 +2898,29 @@ public interface ChatComponentFactory {
      *
      * @param modifier Modifier for styling the composable.
      * @param attachmentState The state of the attachment, containing information about the file.
-     * @param showFileSize A lambda function that determines whether the file size should be displayed.
-     * @param onItemClick A lambda function invoked when the file attachment is clicked, providing a list of
      * [AttachmentPreviewHandler] and the clicked [Attachment].
      */
     @Composable
     public fun FileAttachmentContent(
         modifier: Modifier,
         attachmentState: AttachmentState,
-        showFileSize: (Attachment) -> Boolean,
-        onItemClick: (List<AttachmentPreviewHandler>, Attachment) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
             modifier = modifier,
             attachmentState = attachmentState,
-            showFileSize = showFileSize,
-            onItemClick = onItemClick,
+            showFileSize = { true },
+            onItemClick = ::onFileAttachmentContentItemClick,
+        )
+    }
+
+    @Composable
+    public fun MediaAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent(
+            state = state,
+            modifier = modifier,
         )
     }
 

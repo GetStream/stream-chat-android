@@ -132,14 +132,14 @@ private fun IsReadCount(
                 text = readCount.toString(),
                 modifier = Modifier.testTag("Stream_MessageReadCount"),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.chatTextTimestamp,
             )
         }
         Icon(
             modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
             painter = painterResource(id = R.drawable.stream_compose_message_seen),
             contentDescription = null,
-            tint = ChatTheme.colors.primaryAccent,
+            tint = ChatTheme.colors.accentPrimary,
         )
     }
 }
@@ -150,7 +150,7 @@ private fun IsPendingIcon(modifier: Modifier) {
         modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
         painter = painterResource(id = R.drawable.stream_compose_ic_clock),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_pending),
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.chatTextTimestamp,
     )
 }
 
@@ -160,7 +160,7 @@ private fun IsSentIcon(modifier: Modifier) {
         modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
         painter = painterResource(id = R.drawable.stream_compose_message_sent),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_sent),
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.chatTextTimestamp,
     )
 }
 
@@ -172,7 +172,7 @@ private fun IsDeliveredIcon(modifier: Modifier) {
         contentDescription = stringResource(
             R.string.stream_ui_message_list_semantics_message_status_delivered,
         ),
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.chatTextTimestamp,
     )
 }
 

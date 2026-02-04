@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -70,9 +71,8 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
-import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.ui.messages.attachments.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -82,7 +82,6 @@ import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerCo
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -92,56 +91,6 @@ import kotlinx.coroutines.flow.collectLatest
 public class AttachmentsPickerSystemTabFactory(
     public val config: SystemAttachmentsPickerConfig,
 ) : AttachmentsPickerTabFactory {
-
-    /**
-     * Holds the information required to add support for "files" tab in the attachment picker.
-     *
-     * @param otherFactories A list of other [AttachmentsPickerTabFactory] used to handle different attachment pickers.
-     */
-    @Deprecated(
-        message = "Use constructor(config) instead.",
-        replaceWith = ReplaceWith(expression = "AttachmentsPickerSystemTabFactory(config)"),
-        level = DeprecationLevel.ERROR,
-    )
-    public constructor(otherFactories: List<AttachmentsPickerTabFactory>) : this(
-        config = SystemAttachmentsPickerConfig(
-            filesAllowed = true,
-            visualMediaAllowed = true,
-            captureImageAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
-            captureVideoAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
-            pollAllowed = otherFactories.any { it.attachmentsPickerMode == Poll },
-        ),
-    )
-
-    /**
-     * Holds the information required to add support for "files" tab in the attachment picker.
-     *
-     * @param filesAllowed If the option to pick files is included in the attachments picker.
-     * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
-     * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
-     * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
-     * @param pollAllowed If the option to create a poll is included in the attachments picker.
-     */
-    @Deprecated(
-        message = "Use AttachmentsPickerSystemTabFactory(config) instead.",
-        replaceWith = ReplaceWith(expression = "AttachmentsPickerSystemTabFactory(config)"),
-        level = DeprecationLevel.WARNING,
-    )
-    public constructor(
-        filesAllowed: Boolean,
-        mediaAllowed: Boolean,
-        captureImageAllowed: Boolean,
-        captureVideoAllowed: Boolean,
-        pollAllowed: Boolean,
-    ) : this(
-        config = SystemAttachmentsPickerConfig(
-            filesAllowed = filesAllowed,
-            visualMediaAllowed = mediaAllowed,
-            captureImageAllowed = captureImageAllowed,
-            captureVideoAllowed = captureVideoAllowed,
-            pollAllowed = pollAllowed,
-        ),
-    )
 
     /** Returns whether file attachments are allowed. */
     @Deprecated(message = "Use config.filesAllowed instead.", level = DeprecationLevel.WARNING)
@@ -215,28 +164,20 @@ public class AttachmentsPickerSystemTabFactory(
             factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
         )
 
-        LaunchedEffect(processingViewModel) {
-            processingViewModel.attachmentsMetadataFromUris.collectLatest { metadata ->
-                // Check if some of the files were filtered out due to upload config
-                if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-                    Toast.makeText(
-                        context,
-                        R.string.stream_compose_message_composer_file_not_supported,
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                }
+        val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            val uris = listOf(uri)
+            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                showErrorIfNeeded(context, metadata)
                 onAttachmentsSubmitted(metadata.attachmentsMetadata)
             }
         }
 
-        val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            val uris = listOf(uri)
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
-        }
-
         val imagePickerLauncher =
             rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
-                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris)
+                processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
+                    showErrorIfNeeded(context, metadata)
+                    onAttachmentsSubmitted(metadata.attachmentsMetadata)
+                }
             }
 
         val captureLauncher = rememberCaptureMediaLauncher(
@@ -341,6 +282,16 @@ public class AttachmentsPickerSystemTabFactory(
             addCategory(Intent.CATEGORY_OPENABLE)
         }
     }
+
+    private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
+        if (metadata.uris.size != metadata.attachmentsMetadata.size) {
+            Toast.makeText(
+                context,
+                R.string.stream_compose_message_composer_file_not_supported,
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
 }
 
 @Composable
@@ -390,7 +341,7 @@ private fun CameraPermissionDialog(
                 .background(ChatTheme.colors.barsBackground, RoundedCornerShape(16.dp)),
             contentAlignment = Alignment.BottomCenter,
         ) {
-            MissingPermissionContent(permissionState)
+            RequiredCameraPermission()
         }
     }
 }

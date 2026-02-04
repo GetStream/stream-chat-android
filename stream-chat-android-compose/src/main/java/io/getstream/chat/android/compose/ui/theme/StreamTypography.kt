@@ -39,9 +39,16 @@ import androidx.compose.ui.unit.sp
  * @param captionBold Used for unread count indicator.
  * @param singleEmoji Used for messages whose content consists only of a single emoji.
  * @param emojiOnly Used for messages whose content consists only if emojis.
+ * @param bodyDefault Used for body text, like message text.
  * @param bodyEmphasis Used for emphasized body text requiring visual prominence to highlight important information.
- * @param captionEmphasis Used for emphasized captions requiring attention while maintaining compact display.
- * @param metadataEmphasis Used for emphasized metadata and supplementary information in secondary content areas.
+ * @param captionDefault Style for captions and supplementary information.
+ * @param captionEmphasis Style for emphasized captions that require attention.
+ * @param headingSmall Style for small headings.
+ * @param headingLarge Style for large, prominent headings.
+ * @param metadataDefault Style for metadata and secondary information.
+ * @param metadataEmphasis Style for emphasized metadata in secondary content areas.
+ * @param numericMedium Style for medium-sized numeric indicators, like the unread count.
+ * @param numericExtraLarge Style for extra-large numeric indicators.
  */
 @Immutable
 public data class StreamTypography(
@@ -59,9 +66,16 @@ public data class StreamTypography(
     public val singleEmoji: TextStyle,
     public val emojiOnly: TextStyle,
 
+    public val bodyDefault: TextStyle,
     public val bodyEmphasis: TextStyle,
+    public val captionDefault: TextStyle,
     public val captionEmphasis: TextStyle,
+    public val headingSmall: TextStyle,
+    public val headingLarge: TextStyle,
+    public val metadataDefault: TextStyle,
     public val metadataEmphasis: TextStyle,
+    public val numericMedium: TextStyle,
+    public val numericExtraLarge: TextStyle,
 ) {
 
     public companion object {
@@ -137,19 +151,30 @@ public data class StreamTypography(
                 fontFamily = fontFamily,
             ),
             singleEmoji = TextStyle(
-                fontSize = 50.sp,
                 fontFamily = fontFamily,
+                fontSize = 64.sp,
             ),
             emojiOnly = TextStyle(
-                fontSize = 50.sp,
                 fontFamily = fontFamily,
+                fontSize = 64.sp,
             ),
-
+            bodyDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightRegular,
+                fontSize = StreamTokens.fontSizeMd,
+                lineHeight = StreamTokens.lineHeightNormal,
+            ),
             bodyEmphasis = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeMd,
                 lineHeight = StreamTokens.lineHeightNormal,
+            ),
+            captionDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightRegular,
+                fontSize = StreamTokens.fontSizeSm,
+                lineHeight = StreamTokens.lineHeightTight,
             ),
             captionEmphasis = TextStyle(
                 fontFamily = fontFamily,
@@ -157,11 +182,41 @@ public data class StreamTypography(
                 fontSize = StreamTokens.fontSizeSm,
                 lineHeight = StreamTokens.lineHeightTight,
             ),
+            metadataDefault = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightRegular,
+                fontSize = StreamTokens.fontSizeXs,
+                lineHeight = StreamTokens.lineHeightTight,
+            ),
+            headingSmall = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeMd,
+                lineHeight = StreamTokens.lineHeightTight,
+            ),
+            headingLarge = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeXl,
+                lineHeight = StreamTokens.lineHeightRelaxed,
+            ),
             metadataEmphasis = TextStyle(
                 fontFamily = fontFamily,
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeXs,
                 lineHeight = StreamTokens.lineHeightTight,
+            ),
+            numericMedium = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightBold,
+                fontSize = StreamTokens.fontSize2xs,
+                lineHeight = StreamTokens.lineHeightTighter,
+            ),
+            numericExtraLarge = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightBold,
+                fontSize = StreamTokens.fontSizeSm,
+                lineHeight = StreamTokens.lineHeightTighter,
             ),
         )
     }

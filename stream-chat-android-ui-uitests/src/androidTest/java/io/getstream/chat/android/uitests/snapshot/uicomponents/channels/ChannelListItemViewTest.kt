@@ -58,7 +58,6 @@ class ChannelListItemViewTest : ScreenshotTest {
                     TestData.message2(),
                 ),
                 unreadCount = 2,
-                channelLastMessageAt = TestData.date2(),
             ),
         )
     }
@@ -76,7 +75,6 @@ class ChannelListItemViewTest : ScreenshotTest {
                         TestData.message1(),
                         TestData.message2(),
                     ),
-                    channelLastMessageAt = TestData.date2(),
                     extraData = it.extraData + mapOf("mutedChannel" to true),
                     // extraData = extraData["mutedChannel"] = true,
                 )

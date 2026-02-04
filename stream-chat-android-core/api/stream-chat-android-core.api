@@ -315,9 +315,7 @@ public final class io/getstream/chat/android/models/AttachmentType {
 	public static final field FILE Ljava/lang/String;
 	public static final field GIPHY Ljava/lang/String;
 	public static final field IMAGE Ljava/lang/String;
-	public static final field IMGUR Ljava/lang/String;
 	public static final field INSTANCE Lio/getstream/chat/android/models/AttachmentType;
-	public static final field LINK Ljava/lang/String;
 	public static final field UNKNOWN Ljava/lang/String;
 	public static final field VIDEO Ljava/lang/String;
 }

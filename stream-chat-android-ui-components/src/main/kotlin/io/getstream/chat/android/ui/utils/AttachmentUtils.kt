@@ -26,8 +26,8 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.disposable.Disposable
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader.ImageTransformation.RoundedCorners
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
+import io.getstream.chat.android.ui.common.internal.file.ShareableUriProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
@@ -54,7 +54,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
                 // We don't have icons for image types, but we can load the actual image in this case
                 if (actualMimeType?.startsWith("image") == true && attachment.upload != null) {
                     load(
-                        data = StreamFileUtil.getUriForFile(context, attachment.upload!!),
+                        data = ShareableUriProvider().getUriForFile(context, attachment.upload!!),
                         transformation = FILE_THUMB_TRANSFORMATION,
                     )
                 } else {

@@ -28,7 +28,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.isPollEnabled
 import io.getstream.chat.android.models.Channel
@@ -84,7 +84,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        CreatePollScreen(onAttachmentPickerAction)
+        AttachmentPollPicker(onAttachmentPickerAction = onAttachmentPickerAction)
     }
 }
 

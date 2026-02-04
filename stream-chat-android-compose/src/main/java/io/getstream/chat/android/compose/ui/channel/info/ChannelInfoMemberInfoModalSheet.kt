@@ -45,9 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModel
@@ -170,13 +168,11 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
                 .padding(top = 8.dp)
                 .size(72.dp),
             user = user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = user.shouldShowOnlineIndicator(
+            showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,
                 currentUser = null,
             ),
-            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
-            onClick = null,
+            showBorder = false,
         )
     }
 }

@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 internal object StreamTokens {
+    val borderStrokeSubtle = 1.2.dp
+
+    val elevation3 = 4.dp
+
     val radius2xs = CornerSize(2.dp)
     val radiusXs = CornerSize(4.dp)
     val radiusSm = CornerSize(6.dp)
@@ -31,6 +35,8 @@ internal object StreamTokens {
     val radius2xl = CornerSize(20.dp)
     val radius3xl = CornerSize(24.dp)
     val radius4xl = CornerSize(32.dp)
+
+    val size12 = 12.dp
 
     val spacing3xs = 2.dp
     val spacing2xs = 4.dp
@@ -42,10 +48,17 @@ internal object StreamTokens {
     val spacing2xl = 32.dp
     val spacing3xl = 40.dp
 
+    val fontWeightBold = FontWeight.Bold
     val fontWeightSemiBold = FontWeight.SemiBold
+    val fontWeightRegular = FontWeight.Normal
+    val fontSize2xs = 10.sp
     val fontSizeXs = 12.sp
     val fontSizeSm = 14.sp
     val fontSizeMd = 16.sp
-    val lineHeightNormal = 20.sp
+    val fontSizeXl = 20.sp
+    val lineHeightTightest = 10.sp
+    val lineHeightTighter = 14.sp
     val lineHeightTight = 16.sp
+    val lineHeightNormal = 20.sp
+    val lineHeightRelaxed = 24.sp
 }

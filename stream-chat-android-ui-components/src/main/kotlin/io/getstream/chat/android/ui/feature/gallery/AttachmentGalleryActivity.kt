@@ -32,13 +32,14 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.internal.file.StreamShareFileManager
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentGalleryBinding
 import io.getstream.chat.android.ui.feature.gallery.internal.AttachmentGalleryPagerAdapter
@@ -205,7 +206,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     context = applicationContext,
                     url = imageUrl,
                 )?.let { bitmap ->
-                    StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
+                    StreamShareFileManager().writeBitmapToShareableFile(applicationContext, bitmap)
                 }?.onSuccess { uri ->
                     shareLocalFile(
                         uri = uri,
@@ -229,7 +230,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         shareMediaJob?.cancel()
 
         shareMediaJob = lifecycleScope.launch {
-            val result = StreamFileUtil.writeFileToShareableFile(
+            val result = StreamShareFileManager().writeAttachmentToShareableFile(
                 context = applicationContext,
                 attachment = attachment,
             )
@@ -455,7 +456,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
      */
     override fun onDestroy() {
         super.onDestroy()
-        StreamFileUtil.clearStreamCache(context = applicationContext)
+        StreamFileManager().clearCache(applicationContext)
     }
 
     public fun interface AttachmentShowInChatOptionHandler {

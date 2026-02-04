@@ -25,12 +25,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isErrorOrFailed
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.models.Message
 
 /**
@@ -48,7 +47,7 @@ public fun MessageBubble(
     color: Color,
     shape: Shape,
     modifier: Modifier = Modifier,
-    border: BorderStroke? = BorderStroke(1.dp, ChatTheme.colors.borders),
+    border: BorderStroke? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable () -> Unit,
 ) {
@@ -67,18 +66,16 @@ public fun MessageBubble(
 /**
  * Determines the background color of the message bubble based on the message content and ownership.
  *
+ * @param outgoing Whether the message is by the current user
  * @param message The message data.
- * @param ownsMessage Indicates if the current user owns the message.
  * @return A color for the message bubble.
  */
-@InternalStreamChatApi
 @Composable
-public fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
-    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
+internal fun getMessageBubbleColor(outgoing: Boolean, message: Message): Color {
     return when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> theme.deletedBackgroundColor
-        message.isErrorOrFailed() -> theme.errorBackgroundColor
-        else -> theme.backgroundColor
+        message.isDeleted() -> MessageStyling.backgroundColor(outgoing)
+        message.isErrorOrFailed() -> MessageStyling.backgroundColor(outgoing)
+        else -> MessageStyling.backgroundColor(outgoing)
     }
 }

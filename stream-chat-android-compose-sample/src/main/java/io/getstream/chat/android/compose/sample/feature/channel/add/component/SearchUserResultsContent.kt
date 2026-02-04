@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.SearchUsersViewModel
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -240,7 +241,7 @@ private fun SearchUserResultItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         UserAvatar(
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier.size(AvatarSize.Large),
             user = user,
         )
         Spacer(modifier = Modifier.size(8.dp))

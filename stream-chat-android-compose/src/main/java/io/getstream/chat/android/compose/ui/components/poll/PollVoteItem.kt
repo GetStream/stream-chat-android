@@ -23,11 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 @Composable
 internal fun PollVoteItem(
@@ -41,17 +40,11 @@ internal fun PollVoteItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = Modifier.size(20.dp),
-            imageUrl = user.image,
-            initials = user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = null,
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = Modifier.size(AvatarSize.ExtraSmall),
+            user = user,
+            showIndicator = false,
+            showBorder = false,
         )
 
         Text(

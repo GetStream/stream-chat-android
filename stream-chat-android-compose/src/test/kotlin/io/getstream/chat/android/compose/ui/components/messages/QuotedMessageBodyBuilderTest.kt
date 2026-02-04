@@ -582,22 +582,6 @@ internal class QuotedMessageBodyBuilderTest {
                 ),
             ),
             Arguments.of(
-                "Imgur attachment",
-                Message(
-                    text = "",
-                    attachments = listOf(
-                        Attachment(type = AttachmentType.IMGUR, imageUrl = "https://imgur.com/image.jpg"),
-                    ),
-                ),
-                null,
-                false,
-                QuotedMessageBody(
-                    text = "Photos: 1",
-                    iconId = R.drawable.stream_compose_ic_camera,
-                    imagePreviewData = "https://imgur.com/image.jpg",
-                ),
-            ),
-            Arguments.of(
                 "Auto-translation enabled with matching language",
                 Message(text = "Hello", i18n = mapOf("pt_text" to "Olá")),
                 randomUser(language = "pt"),

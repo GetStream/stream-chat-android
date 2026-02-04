@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 internal fun OnlineIndicator(
     isOnline: Boolean,
-    size: OnlineIndicatorSize,
+    dimensions: OnlineIndicatorDimensions,
     modifier: Modifier = Modifier,
 ) {
     val colors = ChatTheme.colors
@@ -43,15 +43,16 @@ internal fun OnlineIndicator(
 
     Box(
         modifier
-            .size(size.indicatorSize)
-            .border(size.borderWidth, colors.presenceBorder, CircleShape)
-            .padding(size.borderWidth)
+            .size(dimensions.indicatorSize)
+            .border(dimensions.borderWidth, colors.presenceBorder, CircleShape)
+            .padding(dimensions.borderWidth)
             .background(color, CircleShape),
     )
 }
 
-internal enum class OnlineIndicatorSize(val indicatorSize: Dp, val borderWidth: Dp) {
-    Small(8.dp, 1.dp),
-    Medium(12.dp, 2.dp),
-    Large(14.dp, 2.dp),
+internal enum class OnlineIndicatorDimensions(val indicatorSize: Dp, val borderWidth: Dp, val offset: Dp) {
+    Small(indicatorSize = 8.dp, borderWidth = 1.dp, offset = 1.dp),
+    Medium(indicatorSize = 12.dp, borderWidth = 2.dp, offset = 2.dp),
+    Large(indicatorSize = 14.dp, borderWidth = 2.dp, offset = 2.dp),
+    ExtraLarge(indicatorSize = 16.dp, borderWidth = 2.dp, offset = 0.dp),
 }

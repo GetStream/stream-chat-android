@@ -23,9 +23,33 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  * appropriate set of metadata to describe it.
  *
  * @param attachmentMetaData The metadata for the item, holding the links, size, types, name etc.
- * @param isSelected If the item is selected or not.
+ * @param selection The selection state of the item.
  */
 public data class AttachmentPickerItemState(
     val attachmentMetaData: AttachmentMetaData,
-    val isSelected: Boolean,
-)
+    val selection: Selection = Selection.Unselected,
+) {
+
+    /**
+     * The selection state of the item.
+     */
+    public sealed interface Selection {
+
+        /**
+         * The selected state of the attachment.
+         *
+         * @param position The position of the selected attachment in the list.
+         */
+        public data class Selected(val position: Int) : Selection
+
+        /**
+         * The unselected state of the attachment.
+         */
+        public data object Unselected : Selection
+    }
+
+    /**
+     * Whether the item is selected.
+     */
+    public val isSelected: Boolean get() = selection is Selection.Selected
+}

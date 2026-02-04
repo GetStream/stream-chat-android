@@ -267,7 +267,7 @@ private fun LocationPermissionRequired(
             colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
             onClick = onClick,
         ) {
-            Text(stringResource(id = R.string.stream_compose_grant_permission))
+            Text(stringResource(id = R.string.stream_ui_message_composer_grant_permission_button))
         }
     }
 }

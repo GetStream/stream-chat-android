@@ -46,7 +46,7 @@ public fun interface MessagePositionHandler {
         isAfterDateSeparator: Boolean,
         isBeforeDateSeparator: Boolean,
         isInThread: Boolean,
-    ): List<MessagePosition>
+    ): MessagePosition
 
     public companion object {
         /**
@@ -56,45 +56,29 @@ public fun interface MessagePositionHandler {
          * @return The default implementation of [MessagePositionHandler].
          */
         @InternalStreamChatApi
-        @Suppress("ComplexCondition")
         public fun defaultHandler(): MessagePositionHandler {
             return MessagePositionHandler {
-                    prevMessage: Message?,
-                    curMessage: Message,
-                    nextMessage: Message?,
+                    previous: Message?,
+                    message: Message,
+                    next: Message?,
                     isAfterDateSeparator: Boolean,
                     isBeforeDateSeparator: Boolean,
                     _: Boolean,
                 ->
+                val isGroupedWithPrevious = !isAfterDateSeparator && previous.isValidMessageFromUser(message.user)
+                val isGroupedWithNext = !isBeforeDateSeparator && next.isValidMessageFromUser(message.user)
 
-                val curUser = curMessage.user
-                mutableListOf<MessagePosition>().apply {
-                    val isTop = !isBeforeDateSeparator &&
-                        (isAfterDateSeparator || prevMessage.isInvalidMessageFromUser(curUser)) &&
-                        nextMessage.isValidMessageFromUser(curUser)
-
-                    val isMiddle = !isAfterDateSeparator && !isBeforeDateSeparator &&
-                        prevMessage.isValidMessageFromUser(curUser) &&
-                        nextMessage.isValidMessageFromUser(curUser)
-
-                    val isBottom = !isAfterDateSeparator &&
-                        (isBeforeDateSeparator || nextMessage.isInvalidMessageFromUser(curUser)) &&
-                        prevMessage.isValidMessageFromUser(curUser)
-
-                    if (isTop) add(MessagePosition.TOP)
-                    if (isMiddle) add(MessagePosition.MIDDLE)
-                    if (isBottom) add(MessagePosition.BOTTOM)
-                    if (isEmpty()) add(MessagePosition.NONE)
+                when {
+                    isGroupedWithNext && !isGroupedWithPrevious -> MessagePosition.TOP
+                    isGroupedWithNext && isGroupedWithPrevious -> MessagePosition.MIDDLE
+                    isGroupedWithPrevious -> MessagePosition.BOTTOM
+                    else -> MessagePosition.NONE
                 }
             }
         }
 
         private fun Message?.isValidMessageFromUser(user: User): Boolean {
             return this != null && !this.isSystem() && !this.isError() && this.user.id == user.id
-        }
-
-        private fun Message?.isInvalidMessageFromUser(user: User): Boolean {
-            return isValidMessageFromUser(user).not()
         }
     }
 }

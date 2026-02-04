@@ -24,24 +24,29 @@ public sealed class AttachmentsPickerMode(
 )
 
 /**
- * Represents the mode with media files from the device.
+ * Represents the mode to pick media files.
  */
 public data object Images : AttachmentsPickerMode()
 
 /**
- * Represents the mode with files from the device.
+ * Represents the mode to pick files.
  */
 public data object Files : AttachmentsPickerMode()
 
 /**
- * Represents the mode with media capture.
+ * Represents the mode to capture media from the camera.
  */
 public data object MediaCapture : AttachmentsPickerMode()
 
 /**
- * Represents the mode, creates a poll.
+ * Represents the mode to create a poll.
  */
 public data object Poll : AttachmentsPickerMode(isFullContent = true)
+
+/**
+ * Represents the mode to pick a command.
+ */
+public data object Commands : AttachmentsPickerMode()
 
 /**
  * Represents the system picker mode - where the user can pick media files from the device, without the need to grant
