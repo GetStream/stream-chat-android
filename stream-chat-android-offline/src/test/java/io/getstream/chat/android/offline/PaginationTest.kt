@@ -24,7 +24,6 @@ import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.asc
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.offline.PaginationTest.Companion.createPaginationInput
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomMessage
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -157,40 +156,21 @@ internal class PaginationTest {
                     it,
                 )
             },
-            // last_updated is a computed field based on max(createdAt, lastMessageAt)
             listOf(
                 randomChannel(
                     type = "c",
                     createdAt = null,
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = calendar(2020, 10, 2),
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = calendar(2020, 10, 2),
                 ),
                 randomChannel(
                     type = "a",
                     createdAt = calendar(2020, 10, 4),
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = null,
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = null,
                 ),
                 randomChannel(
                     type = "b",
                     createdAt = calendar(2020, 10, 1),
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = calendar(2020, 10, 3),
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = calendar(2020, 10, 3),
                 ),
             ).let {
                 Arguments.of(
@@ -219,33 +199,15 @@ internal class PaginationTest {
             listOf(
                 randomChannel(
                     type = "c",
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = calendar(2020, 10, 2),
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = calendar(2020, 10, 2),
                 ),
                 randomChannel(
                     type = "a",
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = calendar(2020, 10, 4),
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = calendar(2020, 10, 4),
                 ),
                 randomChannel(
                     type = "b",
-                    messages = listOf(
-                        randomMessage(
-                            createdAt = calendar(2020, 10, 3),
-                            createdLocallyAt = null,
-                            parentId = null,
-                        ),
-                    ),
+                    lastMessageAt = calendar(2020, 10, 3),
                 ),
             ).let {
                 Arguments.of(

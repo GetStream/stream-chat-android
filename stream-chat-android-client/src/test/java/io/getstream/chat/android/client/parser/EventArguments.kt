@@ -197,6 +197,7 @@ internal object EventArguments {
         members = listOf(member),
         memberCount = 1,
         config = config,
+        lastMessageAt = date,
     )
 
     private val channelInfo = ChannelInfo(

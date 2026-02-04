@@ -251,6 +251,33 @@ internal class DomainMappingTest {
     }
 
     @Test
+    fun `DownstreamChannelDto is correctly mapped to Channel`() {
+        val downstreamChannelDto = randomDownstreamChannelDto()
+        val sut = Fixture().get()
+        val channel = with(sut) {
+            downstreamChannelDto.toDomain()
+        }
+
+        assertEquals(downstreamChannelDto.id, channel.id)
+        assertEquals(downstreamChannelDto.type, channel.type)
+        assertEquals(downstreamChannelDto.name ?: "", channel.name)
+        assertEquals(downstreamChannelDto.image ?: "", channel.image)
+        assertEquals(downstreamChannelDto.watcher_count, channel.watcherCount)
+        assertEquals(downstreamChannelDto.filter_tags.orEmpty(), channel.filterTags)
+        assertEquals(downstreamChannelDto.frozen, channel.frozen)
+        assertEquals(downstreamChannelDto.created_at, channel.createdAt)
+        assertEquals(downstreamChannelDto.deleted_at, channel.deletedAt)
+        assertEquals(downstreamChannelDto.updated_at, channel.updatedAt)
+        assertEquals(downstreamChannelDto.member_count, channel.memberCount)
+        assertEquals(downstreamChannelDto.team, channel.team)
+        assertEquals(downstreamChannelDto.cooldown, channel.cooldown)
+        assertEquals(downstreamChannelDto.own_capabilities.toSet(), channel.ownCapabilities)
+        assertEquals(downstreamChannelDto.message_count, channel.messageCount)
+        assertEquals(downstreamChannelDto.last_message_at, channel.lastMessageAt)
+        assertEquals(downstreamChannelDto.extraData, channel.extraData)
+    }
+
+    @Test
     fun `AppSettingsResponse is correctly mapped to AppSettings`() {
         val response = randomAppSettingsResponse()
         val sut = Fixture().get()
