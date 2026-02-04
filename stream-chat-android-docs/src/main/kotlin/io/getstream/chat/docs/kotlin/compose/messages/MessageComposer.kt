@@ -86,7 +86,7 @@ private object MessageComposerUsageSnippet {
                         }
                     )
                 }
-            ) {
+            ) { contentPadding ->
                 // 5 - the rest of your UI
                 // ...
             }
@@ -117,13 +117,13 @@ private object MessageComposerHandlingActionsSnippet {
                 ChatTheme {
                     MessageComposer(
                         viewModel = viewModel,
-                        onSendMessage = { viewModel.sendMessage(it) },
-                        onValueChange = { viewModel.setMessageInput(it) },
-                        onAttachmentRemoved = { viewModel.removeSelectedAttachment(it) },
-                        onCancelAction = { viewModel.dismissMessageActions() },
-                        onMentionSelected = { viewModel.selectMention(it) },
-                        onCommandSelected = { viewModel.selectCommand(it) },
-                        onAlsoSendToChannelSelected = { viewModel.setAlsoSendToChannel(it) },
+                        onSendMessage = viewModel::sendMessage,
+                        onValueChange = viewModel::setMessageInput,
+                        onAttachmentRemoved = viewModel::removeSelectedAttachment,
+                        onCancelAction = viewModel::dismissMessageActions,
+                        onMentionSelected = viewModel::selectMention,
+                        onCommandSelected = viewModel::selectCommand,
+                        onAlsoSendToChannelSelected = viewModel::setAlsoSendToChannel,
                     )
                 }
             }
