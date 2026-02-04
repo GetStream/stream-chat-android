@@ -34,7 +34,6 @@ plugins {
 
 // TODO [G.]
 // Configuration.kt is still referenced:
-// - publish-new-version.yml
 // - buildSrc/src/main/kotlin/io/getstream/chat/android/command/version/task/Constants.kt
 
 streamProject {
