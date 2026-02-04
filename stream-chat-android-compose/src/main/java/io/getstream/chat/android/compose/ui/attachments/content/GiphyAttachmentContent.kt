@@ -65,6 +65,7 @@ import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAtta
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.GiphyInfo
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 import io.getstream.chat.android.ui.common.utils.giphyInfo
@@ -173,48 +174,9 @@ public fun GiphyAttachmentContent(
         "Missing preview URL."
     }
 
-    val density = LocalDensity.current
-
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
 
-    val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
-    val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
-
-    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
-    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
-
-    val giphyDimensions: DpSize = remember(giphyInfo) {
-        if (giphyInfo != null) {
-            with(density) {
-                val giphyWidth = giphyInfo.width.toDp()
-                val giphyHeight = giphyInfo.height.toDp()
-
-                when {
-                    giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
-                        DpSize(
-                            width = width.coerceIn(
-                                minimumValue = null,
-                                maximumValue = maxWidth,
-                            ),
-                            height = height.coerceIn(
-                                minimumValue = null,
-                                maximumValue = maxHeight,
-                            ),
-                        )
-                    }
-
-                    else -> calculateResultingDimensions(
-                        maxWidth = maxWidth,
-                        maxHeight = maxHeight,
-                        giphyWidth = giphyWidth,
-                        giphyHeight = giphyHeight,
-                    )
-                }
-            }
-        } else {
-            DpSize(maxWidth, maxHeight)
-        }
-    }
+    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
 
     val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     Box(
@@ -253,6 +215,54 @@ public fun GiphyAttachmentContent(
                 .padding(StreamTokens.spacingXs),
         )
     }
+}
+
+@Composable
+private fun calculateSize(
+    giphyInfo: GiphyInfo?,
+    giphySizingMode: GiphySizingMode,
+): DpSize {
+    val density = LocalDensity.current
+
+    val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
+    val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
+
+    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
+    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
+
+    val giphyDimensions: DpSize = remember(giphyInfo, density, maxWidth, width, maxHeight, height) {
+        if (giphyInfo != null) {
+            with(density) {
+                val giphyWidth = giphyInfo.width.toDp()
+                val giphyHeight = giphyInfo.height.toDp()
+
+                when {
+                    giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
+                        DpSize(
+                            width = width.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxWidth,
+                            ),
+                            height = height.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxHeight,
+                            ),
+                        )
+                    }
+
+                    else -> calculateResultingDimensions(
+                        maxWidth = maxWidth,
+                        maxHeight = maxHeight,
+                        giphyWidth = giphyWidth,
+                        giphyHeight = giphyHeight,
+                    )
+                }
+            }
+        } else {
+            DpSize(maxWidth, maxHeight)
+        }
+    }
+    return giphyDimensions
 }
 
 @Composable
