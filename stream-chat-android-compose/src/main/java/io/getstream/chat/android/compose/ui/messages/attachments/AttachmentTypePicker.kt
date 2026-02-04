@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,7 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,12 +38,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Commands
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
-import io.getstream.chat.android.compose.state.messages.attachments.Poll
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.isPollEnabled
@@ -54,18 +56,14 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 internal fun AttachmentTypePicker(
     channel: Channel,
     messageMode: MessageMode,
-    selectedAttachmentsPickerMode: AttachmentsPickerMode,
-    onPickerTypeClick: (Int, AttachmentsPickerMode) -> Unit = { _, _ -> },
+    selectedAttachmentPickerMode: AttachmentPickerMode?,
+    onModeSelected: (AttachmentPickerMode) -> Unit = {},
+    additionalContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val attachmentsPickerModes = remember(channel, messageMode) {
-        AttachmentsPickerModes.filter { attachmentsPickerMode ->
-            attachmentsPickerMode.isModeVisible(
-                channel = channel,
-                messageMode = messageMode,
-            )
-        }
-    }
-
+    val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
+        channel = channel,
+        messageMode = messageMode,
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -75,19 +73,21 @@ internal fun AttachmentTypePicker(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        attachmentsPickerModes.forEachIndexed { index, attachmentsPickerMode ->
-
-            val isSelected = attachmentsPickerMode == selectedAttachmentsPickerMode
-
-            AttachmentPickerTypeInfos[attachmentsPickerMode]?.let { typeInfo ->
-
+        modes.forEach { mode ->
+            val isSelected = selectedAttachmentPickerMode != null &&
+                selectedAttachmentPickerMode::class == mode::class
+            AttachmentPickerModeInfos[mode::class]?.let { typeInfo ->
                 AttachmentPickerToggleButton(
                     pickerTypeInfo = typeInfo,
                     isSelected = isSelected,
-                    onClick = { onPickerTypeClick(index, attachmentsPickerMode) },
+                    onClick = { onModeSelected(mode) },
                 )
             }
         }
+        additionalContent()
+    }
+    LaunchedEffect(modes) {
+        onModeSelected(modes.first())
     }
 }
 
@@ -95,17 +95,13 @@ internal fun AttachmentTypePicker(
 internal fun AttachmentTypeSystemPicker(
     channel: Channel,
     messageMode: MessageMode,
-    onPickerTypeClick: (AttachmentsPickerMode) -> Unit = { },
+    onModeSelected: (AttachmentPickerMode) -> Unit = {},
+    additionalContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val attachmentsPickerModes = remember(channel, messageMode) {
-        AttachmentsPickerModes.filter { attachmentsPickerMode ->
-            attachmentsPickerMode.isModeVisible(
-                channel = channel,
-                messageMode = messageMode,
-            )
-        }
-    }
-
+    val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
+        channel = channel,
+        messageMode = messageMode,
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,22 +111,21 @@ internal fun AttachmentTypeSystemPicker(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        attachmentsPickerModes.forEach { attachmentsPickerMode ->
-
-            AttachmentPickerTypeInfos[attachmentsPickerMode]?.let { typeInfo ->
-
+        modes.forEach { mode ->
+            AttachmentPickerModeInfos[mode::class]?.let { typeInfo ->
                 AttachmentPickerButton(
                     pickerTypeInfo = typeInfo,
-                    onClick = { onPickerTypeClick(attachmentsPickerMode) },
+                    onClick = { onModeSelected(mode) },
                 )
             }
         }
+        additionalContent()
     }
 }
 
 @Composable
 private fun AttachmentPickerToggleButton(
-    pickerTypeInfo: AttachmentPickerTypeInfo,
+    pickerTypeInfo: AttachmentPickerModeInfo,
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
@@ -155,7 +150,7 @@ private fun AttachmentPickerToggleButton(
 
 @Composable
 private fun AttachmentPickerButton(
-    pickerTypeInfo: AttachmentPickerTypeInfo,
+    pickerTypeInfo: AttachmentPickerModeInfo,
     onClick: () -> Unit,
 ) {
     IconButton(
@@ -174,49 +169,54 @@ private fun AttachmentPickerButton(
     }
 }
 
-private fun AttachmentsPickerMode.isModeVisible(
+/**
+ * Filters the list of attachment picker modes based on channel capabilities.
+ * For example, [PollPickerMode] is only shown if the channel has polls enabled
+ * and the message mode is [MessageMode.Normal].
+ */
+private fun List<AttachmentPickerMode>.filterByCapabilities(
     channel: Channel,
     messageMode: MessageMode,
-) = when (this) {
-    is Poll -> channel.isPollEnabled() && messageMode is MessageMode.Normal
-    else -> true
+): List<AttachmentPickerMode> = filter { mode ->
+    when (mode) {
+        is PollPickerMode -> channel.isPollEnabled() && messageMode is MessageMode.Normal
+        else -> true
+    }
 }
 
-private data class AttachmentPickerTypeInfo(
-    @get:StringRes val icon: Int,
+private data class AttachmentPickerModeInfo(
+    @get:DrawableRes val icon: Int,
     @get:StringRes val contentDescription: Int,
     val testTag: String,
 )
 
-private val AttachmentPickerTypeInfos = mapOf(
-    Images to AttachmentPickerTypeInfo(
+private val AttachmentPickerModeInfos = mapOf(
+    GalleryPickerMode::class to AttachmentPickerModeInfo(
         icon = R.drawable.stream_compose_ic_attachment_media_picker,
         contentDescription = R.string.stream_compose_attachment_media_picker,
         testTag = "Stream_AttachmentPickerImagesTab",
     ),
-    MediaCapture to AttachmentPickerTypeInfo(
+    CameraPickerMode::class to AttachmentPickerModeInfo(
         icon = R.drawable.stream_compose_ic_attachment_camera_picker,
         contentDescription = R.string.stream_compose_attachment_camera_picker,
         testTag = "Stream_AttachmentPickerMediaCaptureTab",
     ),
-    Files to AttachmentPickerTypeInfo(
+    FilePickerMode::class to AttachmentPickerModeInfo(
         icon = R.drawable.stream_compose_ic_attachment_file_picker,
         contentDescription = R.string.stream_compose_attachment_file_picker,
         testTag = "Stream_AttachmentPickerFilesTab",
     ),
-    Poll to AttachmentPickerTypeInfo(
+    PollPickerMode::class to AttachmentPickerModeInfo(
         icon = R.drawable.stream_compose_ic_attachment_polls_picker,
         contentDescription = R.string.stream_compose_attachment_polls_picker,
         testTag = "Stream_AttachmentPickerPollsTab",
     ),
-    Commands to AttachmentPickerTypeInfo(
+    CommandPickerMode::class to AttachmentPickerModeInfo(
         icon = R.drawable.stream_compose_ic_attachment_commands_picker,
         contentDescription = R.string.stream_compose_attachment_commands_picker,
         testTag = "Stream_AttachmentPickerCommandsTab",
     ),
 )
-
-private val AttachmentsPickerModes = AttachmentPickerTypeInfos.keys.toList()
 
 @Preview(showBackground = true)
 @Composable
@@ -231,7 +231,7 @@ internal fun AttachmentTypePicker() {
     AttachmentTypePicker(
         channel = Channel(),
         messageMode = MessageMode.Normal,
-        selectedAttachmentsPickerMode = Images,
+        selectedAttachmentPickerMode = GalleryPickerMode(),
     )
 }
 
@@ -251,7 +251,7 @@ internal fun AttachmentTypePickerWithPolls() {
             config = Config(pollsEnabled = true),
         ),
         messageMode = MessageMode.Normal,
-        selectedAttachmentsPickerMode = Poll,
+        selectedAttachmentPickerMode = PollPickerMode(),
     )
 }
 

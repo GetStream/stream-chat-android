@@ -39,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
@@ -54,6 +55,7 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 @Composable
 internal fun AttachmentMediaPicker(
+    pickerMode: GalleryPickerMode,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
@@ -155,6 +157,7 @@ private fun AttachmentMediaPickerPreview() {
 @Composable
 internal fun AttachmentMediaPicker() {
     AttachmentMediaPicker(
+        pickerMode = GalleryPickerMode(),
         attachments = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),

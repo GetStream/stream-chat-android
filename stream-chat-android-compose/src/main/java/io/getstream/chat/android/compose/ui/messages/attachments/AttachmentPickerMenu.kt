@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
@@ -76,7 +77,7 @@ public fun AttachmentPickerMenu(
     }
 
     val menuHeight = when {
-        ChatTheme.useDefaultSystemMediaPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
+        ChatTheme.attachmentPickerConfig.useSystemPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
         else -> ChatTheme.dimens.attachmentsPickerHeight
     }
 
@@ -85,33 +86,36 @@ public fun AttachmentPickerMenu(
         enter = expandVertically(expandFrom = Alignment.Top),
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
-        AttachmentPicker(
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            modifier = Modifier.height(menuHeight),
-            onAttachmentItemSelected = { attachmentItem ->
-                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem)
-                attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                    composerViewModel.updateSelectedAttachments(attachments)
-                }
-            },
-            onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                composerViewModel.addSelectedAttachments(attachments)
-            },
-            onAttachmentPickerAction = { action ->
-                when (action) {
-                    is AttachmentPickerPollCreation -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.createPoll(action.pollConfig)
+        Box(modifier = Modifier.height(menuHeight)) {
+            ChatTheme.componentFactory.AttachmentPicker(
+                attachmentsPickerViewModel = attachmentsPickerViewModel,
+                messageMode = messageMode,
+                onAttachmentItemSelected = { attachmentItem ->
+                    attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem)
+                    attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
+                        composerViewModel.updateSelectedAttachments(attachments)
                     }
-                    is AttachmentPickerCommandSelect -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.selectCommand(action.command)
+                },
+                onAttachmentsSelected = { attachments ->
+                    attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                    composerViewModel.addSelectedAttachments(attachments)
+                },
+                onAttachmentPickerAction = { action ->
+                    when (action) {
+                        is AttachmentPickerPollCreation -> {
+                            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                            composerViewModel.createPoll(action.pollConfig)
+                        }
+
+                        is AttachmentPickerCommandSelect -> {
+                            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                            composerViewModel.selectCommand(action.command)
+                        }
                     }
-                }
-                isShowingDialog = action is AttachmentPickerCreatePollClick
-            },
-            messageMode = messageMode,
-        )
+                    isShowingDialog = action is AttachmentPickerCreatePollClick
+                },
+                onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            )
+        }
     }
 }

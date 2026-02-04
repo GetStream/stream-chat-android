@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionLazyList
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionListHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
@@ -31,6 +32,7 @@ import io.getstream.chat.android.previewdata.PreviewCommandData
 
 @Composable
 internal fun AttachmentCommandPicker(
+    pickerMode: CommandPickerMode,
     commands: List<Command>,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
 ) {
@@ -59,6 +61,7 @@ private fun AttachmentCommandPickerPreview() {
 @Composable
 internal fun AttachmentCommandPicker() {
     AttachmentCommandPicker(
+        pickerMode = CommandPickerMode,
         commands = listOf(
             PreviewCommandData.command1,
             PreviewCommandData.command2,
