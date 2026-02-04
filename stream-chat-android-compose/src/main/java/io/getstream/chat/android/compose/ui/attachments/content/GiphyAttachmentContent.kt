@@ -250,7 +250,7 @@ public fun GiphyAttachmentContent(
         GiphyLabel(
             Modifier
                 .align(Alignment.BottomStart)
-                .padding(StreamTokens.spacingXs)
+                .padding(StreamTokens.spacingXs),
         )
     }
 }
