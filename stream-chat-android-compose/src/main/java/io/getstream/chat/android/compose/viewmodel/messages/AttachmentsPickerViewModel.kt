@@ -25,15 +25,13 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -44,10 +42,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * ViewModel responsible for handling the state and business logic of attachments.
+ * ViewModel responsible for handling the state and business logic of the attachment picker.
  *
- * Loads media or files based on the current picker mode, keeps selection state, and prepares items
- * for upload.
+ * This ViewModel loads media or files based on the current picker mode, keeps track of the selection state,
+ * and prepares the selected items for upload. It is used by attachment picker UIs to show available files/media
+ * and manage user selections.
+ *
+ * @param storageHelper A wrapper for the [StorageHelper]
+ * that helps with accessing and processing files from the device storage.
+ * @param channelState A [StateFlow] that provides the current [ChannelState], used to access channel-specific
+ * information and configuration.
  */
 public class AttachmentsPickerViewModel(
     private val storageHelper: StorageHelperWrapper,
@@ -71,9 +75,9 @@ public class AttachmentsPickerViewModel(
         .asState(viewModelScope, Channel())
 
     /**
-     * Currently selected picker mode. [Images], [Files] or [MediaCapture].
+     * Currently selected attachment picker mode.
      */
-    public var attachmentsPickerMode: AttachmentsPickerMode by mutableStateOf(Images)
+    public var pickerMode: AttachmentPickerMode? by mutableStateOf(null)
         private set
 
     /**
@@ -82,25 +86,19 @@ public class AttachmentsPickerViewModel(
     public var attachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
-     * Gives us info if there are any attachment items that are selected.
-     */
-    public val hasPickedAttachments: Boolean
-        get() = attachments.any { it.isSelected }
-
-    /**
      * Gives us information if we're showing the attachments picker or not.
      */
     public var isShowingAttachments: Boolean by mutableStateOf(false)
         private set
 
     /**
-     * Changes the currently selected [AttachmentsPickerMode] and loads the required data.
+     * Changes the currently selected [AttachmentPickerMode] and loads the required data.
      * If no permission is granted, it will not try to load data to avoid crashes.
      *
-     * @param attachmentsPickerMode The currently selected picker mode.
+     * @param pickerMode The currently selected picker mode.
      */
-    public fun changeAttachmentPickerMode(attachmentsPickerMode: AttachmentsPickerMode) {
-        this.attachmentsPickerMode = attachmentsPickerMode
+    public fun changePickerMode(attachmentPickerMode: AttachmentPickerMode) {
+        this.pickerMode = attachmentPickerMode
     }
 
     /**
@@ -250,7 +248,7 @@ public class AttachmentsPickerViewModel(
     }
 
     private fun resetState() {
-        attachmentsPickerMode = Images
+        pickerMode = null
         attachments = emptyList()
     }
 }

@@ -20,8 +20,7 @@ import android.net.Uri
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.toChannelData
@@ -36,7 +35,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -64,9 +65,8 @@ internal class AttachmentsPickerViewModelTest {
         )
 
         assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertNull(viewModel.pickerMode)
         assertEquals(2, viewModel.attachments.size)
-        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
@@ -75,16 +75,15 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(
             AttachmentPickerItemState(fileAttachment1),
             AttachmentPickerItemState(fileAttachment2),
         )
 
         assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Files, viewModel.attachmentsPickerMode)
+        assertInstanceOf<FilePickerMode>(viewModel.pickerMode)
         assertEquals(2, viewModel.attachments.size)
-        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
@@ -101,9 +100,8 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
         assertTrue(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertNull(viewModel.pickerMode)
         assertEquals(2, viewModel.attachments.size)
-        assertTrue(viewModel.hasPickedAttachments)
         assertEquals(1, viewModel.getSelectedAttachments().size)
     }
 
@@ -133,13 +131,12 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.changePickerMode(FilePickerMode())
         viewModel.changeAttachmentState(false)
 
         assertFalse(viewModel.isShowingAttachments)
-        assertEquals(Images, viewModel.attachmentsPickerMode)
+        assertNull(viewModel.pickerMode)
         assertEquals(0, viewModel.attachments.size)
-        assertFalse(viewModel.hasPickedAttachments)
         assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
@@ -147,9 +144,9 @@ internal class AttachmentsPickerViewModelTest {
     fun `When changing picker mode Should not load attachments`() {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.changePickerMode(FilePickerMode())
 
-        assertEquals(Files, viewModel.attachmentsPickerMode)
+        assertInstanceOf<FilePickerMode>(viewModel.pickerMode)
         assertEquals(0, viewModel.attachments.size)
         verify(storageHelper, never()).getFiles()
         verify(storageHelper, never()).getMedia()
@@ -198,7 +195,7 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
+        viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(
             AttachmentPickerItemState(fileAttachment1),
             AttachmentPickerItemState(fileAttachment2),
