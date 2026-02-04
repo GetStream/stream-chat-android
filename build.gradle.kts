@@ -47,6 +47,11 @@ streamProject {
 
     publishing {
         description = "Stream Chat official Android SDK"
+        ignoredModules = setOf(
+            "stream-chat-android-client-test",
+            "stream-chat-android-e2e-test",
+            "stream-chat-android-test",
+        )
     }
 }
 
