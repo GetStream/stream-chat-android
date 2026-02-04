@@ -44,6 +44,7 @@ import java.util.Date
  * @param messageCount The total number of messages in the channel, if known.
  * @param pushPreference The current user's push notification preference for this channel, if set.
  * @param filterTags The list of filter tags applied to the channel.
+ * @param lastMessageAt Date/time of the last message sent.
  */
 @Immutable
 public data class ChannelData(
@@ -66,6 +67,7 @@ public data class ChannelData(
     val messageCount: Int? = null,
     val pushPreference: PushPreference? = null,
     val filterTags: List<String> = emptyList(),
+    val lastMessageAt: Date? = null,
 ) {
 
     /**
@@ -110,6 +112,7 @@ public data class ChannelData(
         messageCount = channel.messageCount,
         pushPreference = channel.pushPreference,
         filterTags = channel.filterTags,
+        lastMessageAt = channel.lastMessageAt,
     )
 
     @Deprecated(
@@ -189,6 +192,7 @@ public data class ChannelData(
             activeLiveLocations = emptyList(),
             messageCount = messageCount,
             pushPreference = pushPreference,
+            lastMessageAt = lastMessageAt,
         )
     }
 
@@ -225,6 +229,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
         messageCount = that.messageCount ?: this.messageCount,
+        lastMessageAt = that.lastMessageAt,
         /* Do not merge (ownCapabilities, membership, pushPreference) fields, they are not updated in events
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

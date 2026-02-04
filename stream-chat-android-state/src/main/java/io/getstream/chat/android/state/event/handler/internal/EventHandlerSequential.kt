@@ -119,6 +119,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -549,10 +550,16 @@ internal class EventHandlerSequential(
                         logger.w { "[updateOfflineStorage] #new_message; (now channel found for ${event.cid})" }
                         continue
                     }
+                    val newLastMessageAt = calculateNewLastMessageAt(
+                        message = enrichedMessage,
+                        currentLastMessageAt = channel.lastMessageAt,
+                        skipLastMsgUpdateForSystemMsgs = channel.config.skipLastMsgUpdateForSystemMsgs,
+                    )
                     val updatedChannel = channel.copy(
                         hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
+                        lastMessageAt = newLastMessageAt,
                     )
                     batch.addChannel(updatedChannel)
                     // Update thread data in DB if the new message is added to a thread

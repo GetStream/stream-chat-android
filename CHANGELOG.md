@@ -38,6 +38,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improve `Channel.lastMessageAt` calculation by converting it from a computed property to a stored property. [#6118](https://github.com/GetStream/stream-chat-android/pull/6118)
 
 ### ✅ Added
 
