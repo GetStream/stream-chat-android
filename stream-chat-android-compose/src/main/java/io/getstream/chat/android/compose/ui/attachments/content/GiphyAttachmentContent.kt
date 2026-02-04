@@ -21,14 +21,17 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -41,6 +44,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -53,6 +57,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
@@ -242,15 +247,34 @@ public fun GiphyAttachmentContent(
             contentScale = contentScale,
         )
 
-        Image(
-            modifier = Modifier
+        GiphyLabel(
+            Modifier
                 .align(Alignment.BottomStart)
-                .padding(8.dp)
-                .width(64.dp)
-                .wrapContentHeight(),
-            painter = painterResource(R.drawable.stream_compose_giphy_label),
+                .padding(StreamTokens.spacingXs)
+        )
+    }
+}
+
+@Composable
+private fun GiphyLabel(modifier: Modifier) {
+    val colors = ChatTheme.colors
+    Row(
+        modifier = modifier
+            .background(colors.badgeBgOverlay, RoundedCornerShape(StreamTokens.radiusLg))
+            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            modifier = Modifier.size(12.dp),
+            painter = painterResource(R.drawable.stream_ic_command_giphy),
             contentDescription = null,
             contentScale = ContentScale.Inside,
+        )
+        Text(
+            text = stringResource(R.string.stream_compose_giphy_label),
+            style = ChatTheme.typography.metadataEmphasis,
+            color = colors.badgeTextOnAccent,
         )
     }
 }
