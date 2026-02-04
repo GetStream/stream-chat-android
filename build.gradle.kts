@@ -1,9 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
-import io.getstream.chat.android.command.release.task.ReleaseTask
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -25,16 +22,10 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
-    id("io.getstream.chat.ReleasePlugin")
-    id("io.getstream.chat.ChangelogReleaseSectionPlugin")
     alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.binary.compatibility.validator)
 }
-
-// TODO [G.]
-// Configuration.kt is still referenced:
-// - buildSrc/src/main/kotlin/io/getstream/chat/android/command/version/task/Constants.kt
 
 streamProject {
     spotless {
@@ -106,17 +97,12 @@ subprojects {
 }
 
 tasks.withType<DependencyUpdatesTask> {
+    fun isStable(version: String): Boolean = ("^[0-9.-]+$").toRegex().matches(version)
+    fun isNonStable(version: String): Boolean = isStable(version).not()
+
     rejectVersionIf {
-        Dependencies.isStable(currentVersion) && Dependencies.isNonStable(candidate.version)
+        isStable(currentVersion) && isNonStable(candidate.version)
     }
-}
-
-tasks.withType<ReleaseTask> {
-    config.changelogPath = "CHANGELOG.md"
-}
-
-tasks.withType<ChangelogReleaseSectionTask> {
-    config.changelogPath = "CHANGELOG.md"
 }
 
 tasks.withType<Delete> {
