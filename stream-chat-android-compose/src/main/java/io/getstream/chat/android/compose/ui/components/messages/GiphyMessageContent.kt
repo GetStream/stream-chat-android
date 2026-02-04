@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -112,21 +113,27 @@ public fun GiphyMessageContent(
                 onClick = { onGiphyActionClick(SendGiphy(message)) },
                 text = stringResource(R.string.stream_compose_message_list_giphy_send),
                 style = StreamButtonStyleDefaults.primaryGhost,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("Stream_GiphyButton_Send"),
             )
 
             StreamTextButton(
                 onClick = { onGiphyActionClick(ShuffleGiphy(message)) },
                 text = stringResource(R.string.stream_compose_message_list_giphy_shuffle),
                 style = StreamButtonStyleDefaults.secondaryGhost,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("Stream_GiphyButton_Shuffle"),
             )
 
             StreamTextButton(
                 onClick = { onGiphyActionClick(CancelGiphy(message)) },
                 text = stringResource(R.string.stream_compose_message_list_giphy_cancel),
                 style = StreamButtonStyleDefaults.secondaryGhost,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .testTag("Stream_GiphyButton_Cancel"),
             )
         }
     }
