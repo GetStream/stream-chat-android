@@ -31,8 +31,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -180,38 +178,36 @@ public fun GiphyAttachmentContent(
     val width = ChatTheme.dimens.attachmentsContentGiphyWidth
     val height = ChatTheme.dimens.attachmentsContentGiphyHeight
 
-    val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
-        derivedStateOf {
-            if (giphyInfo != null) {
-                with(density) {
-                    val giphyWidth = giphyInfo.width.toDp()
-                    val giphyHeight = giphyInfo.height.toDp()
+    val giphyDimensions: DpSize = remember(giphyInfo) {
+        if (giphyInfo != null) {
+            with(density) {
+                val giphyWidth = giphyInfo.width.toDp()
+                val giphyHeight = giphyInfo.height.toDp()
 
-                    when {
-                        giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
-                            DpSize(
-                                width = width.coerceIn(
-                                    minimumValue = null,
-                                    maximumValue = maxWidth,
-                                ),
-                                height = height.coerceIn(
-                                    minimumValue = null,
-                                    maximumValue = maxHeight,
-                                ),
-                            )
-                        }
-
-                        else -> calculateResultingDimensions(
-                            maxWidth = maxWidth,
-                            maxHeight = maxHeight,
-                            giphyWidth = giphyWidth,
-                            giphyHeight = giphyHeight,
+                when {
+                    giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
+                        DpSize(
+                            width = width.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxWidth,
+                            ),
+                            height = height.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxHeight,
+                            ),
                         )
                     }
+
+                    else -> calculateResultingDimensions(
+                        maxWidth = maxWidth,
+                        maxHeight = maxHeight,
+                        giphyWidth = giphyWidth,
+                        giphyHeight = giphyHeight,
+                    )
                 }
-            } else {
-                DpSize(maxWidth, maxHeight)
             }
+        } else {
+            DpSize(maxWidth, maxHeight)
         }
     }
 
