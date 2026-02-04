@@ -1,13 +1,9 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.stream.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 apply(from = "$rootDir/scripts/detekt-compose.gradle")
@@ -48,19 +44,4 @@ dependencies {
     implementation(libs.compose.markdown)
 
     detektPlugins(libs.detekt.formatting)
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = Configuration.artifactGroup,
-        artifactId = "stream-chat-android-ai-assistant",
-        version = rootProject.version.toString(),
-    )
-    configure(
-        AndroidSingleVariantLibrary(
-            variant = "release",
-            sourcesJar = true,
-            publishJavadocJar = true,
-        ),
-    )
 }
