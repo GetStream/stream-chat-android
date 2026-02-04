@@ -97,6 +97,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -217,7 +218,9 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
-    val attachments = remember(message.attachments) { message.attachments.filter { it.isImage() || it.isVideo() } }
+    val attachments = remember(message.attachments) {
+        message.attachments.filter { (it.isImage() || it.isVideo()) && !it.hasLink() }
+    }
 
     if (attachments.size == 1) {
         SingleMediaAttachment(
@@ -590,7 +593,7 @@ internal fun MediaAttachmentContentItem(
                 when (state) {
                     is AsyncImagePainter.State.Empty,
                     is AsyncImagePainter.State.Loading,
-                    -> ShimmerProgressIndicator(
+                        -> ShimmerProgressIndicator(
                         modifier = Modifier.fillMaxSize(),
                     )
 
