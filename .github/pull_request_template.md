@@ -1,8 +1,8 @@
-### 🎯 Goal
+### Goal
 
 _Describe why we are making this change_
 
-### 🛠 Implementation details
+### Implementation
 
 _Describe the implementation_
 
@@ -35,7 +35,7 @@ _Add relevant videos_
 </tbody>
 </table>
 
-### 🧪 Testing
+### Testing
 
 _Explain how this change can be tested (or why it can't be tested)_
 
@@ -57,11 +57,11 @@ Provide the patch code here
 #### General
 - [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required)
 - [ ] Assigned a person / code owner group (required)
-- [ ] Thread with the PR link started in a respective Slack channel (#android-chat-core or #android-chat-ui) (required)
+- [ ] Thread with the PR link started in a respective Slack channel (required internally)
+- [ ] PR targets the `develop` branch
 - [ ] PR is linked to the GitHub issue it resolves
 
 #### Code & documentation
-- [ ] Changelog is updated with client-facing changes
 - [ ] New code is covered by unit tests
 - [ ] Comparison screenshots added for visual changes
 - [ ] Affected documentation updated (KDocs, docusaurus, tutorial)
@@ -72,7 +72,6 @@ Provide the patch code here
 - [ ] UI Changes correct (before & after images)
 - [ ] Bugs validated (bugfixes)
 - [ ] New feature tested and works
-- [ ] Release notes and docs clearly describe changes
 - [ ] All code we touched has new or updated KDocs
 - [ ] Check the SDK Size Comparison table in the CI logs
 
