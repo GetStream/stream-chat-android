@@ -699,7 +699,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Link
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentContentKt {
-	public static final fun LinkAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun LinkAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentClickData {

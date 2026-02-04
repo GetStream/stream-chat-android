@@ -52,7 +52,7 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     @Test
     fun `link attachment content`() {
         snapshotWithDarkMode {
-            LinkAttachmentContent()
+            LinkAttachmentContent(howMany = 1)
         }
     }
 
