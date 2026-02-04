@@ -21,24 +21,28 @@ import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be`
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should contain`
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
@@ -46,8 +50,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@ExperimentalCoroutinesApi
-internal class MessageComposerControllerTests {
+internal class MessageComposerControllerTest {
 
     @Test
     fun `test valid URLs with LinkPattern`() {
@@ -62,7 +65,7 @@ internal class MessageComposerControllerTests {
             "example.co.uk",
         )
         validUrls.forEach { url ->
-            pattern.matches(url) `should be equal to` true
+            assertTrue(pattern.matches(url), "Expected $url to be a valid URL")
         }
     }
 
@@ -79,7 +82,7 @@ internal class MessageComposerControllerTests {
             "http://example",
         )
         invalidUrls.forEach { url ->
-            pattern.matches(url) `should be equal to` false
+            assertFalse(pattern.matches(url), "Expected $url to be an invalid URL")
         }
     }
 
@@ -98,7 +101,7 @@ internal class MessageComposerControllerTests {
             .givenChannelState(configState = configFlow)
             .get()
         // then
-        controller.state.value.hasCommands `should be` true
+        assertTrue(controller.state.value.hasCommands)
     }
 
     @Test
@@ -115,7 +118,7 @@ internal class MessageComposerControllerTests {
             .givenChannelState(configState = configFlow)
             .get()
         // then
-        controller.state.value.pollsEnabled `should be` true
+        assertTrue(controller.state.value.pollsEnabled)
     }
 
     @Test
@@ -135,9 +138,9 @@ internal class MessageComposerControllerTests {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
-        controller.state.value.selectedMentions.size `should be equal to` 1
-        controller.state.value.selectedMentions `should contain` Mention.User(user)
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(Mention.User(user)))
     }
 
     @Test
@@ -157,7 +160,7 @@ internal class MessageComposerControllerTests {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe "
+        assertEquals("Hello @John Doe ", controller.messageInput.value.text)
     }
 
     @Test
@@ -177,9 +180,9 @@ internal class MessageComposerControllerTests {
         controller.selectMention(customMention)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Notify @Channel Name "
-        controller.state.value.selectedMentions.size `should be equal to` 1
-        controller.state.value.selectedMentions `should contain` customMention
+        assertEquals("Notify @Channel Name ", controller.messageInput.value.text)
+        assertEquals(1, controller.state.value.selectedMentions.size)
+        assertTrue(controller.state.value.selectedMentions.contains(customMention))
     }
 
     @Test
@@ -202,8 +205,8 @@ internal class MessageComposerControllerTests {
         controller.selectMention(user2)
 
         // Then
-        controller.messageInput.value.text `should be equal to` "Hello @John Doe and @Jane Smith "
-        controller.state.value.selectedMentions.size `should be equal to` 2
+        assertEquals("Hello @John Doe and @Jane Smith ", controller.messageInput.value.text)
+        assertEquals(2, controller.state.value.selectedMentions.size)
     }
 
     @Test
@@ -223,7 +226,26 @@ internal class MessageComposerControllerTests {
         controller.selectMention(user)
 
         // Then
-        controller.messageInput.value.source `should be equal to` MessageInput.Source.MentionSelected
+        assertEquals(MessageInput.Source.MentionSelected, controller.messageInput.value.source)
+    }
+
+    @Test
+    fun `Given no attachments When updateSelectedAttachments called Then attachments are set`() = runTest {
+        // Given
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState()
+            .get()
+        val attachments = listOf(randomAttachment(), randomAttachment())
+
+        // When
+        controller.updateSelectedAttachments(attachments)
+
+        // Then
+        assertEquals(attachments, controller.selectedAttachments.value)
     }
 
     /**
@@ -244,8 +266,25 @@ internal class MessageComposerControllerTests {
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
 
-        fun givenAppSettings(appSettings: AppSettings) = apply {
+        fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
+        }
+
+        private fun defaultAppSettings(): AppSettings {
+            val fileUploadConfig = FileUploadConfig(
+                allowedFileExtensions = emptyList(),
+                allowedMimeTypes = emptyList(),
+                blockedFileExtensions = emptyList(),
+                blockedMimeTypes = emptyList(),
+                sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
+            )
+            return AppSettings(
+                app = App(
+                    name = "test-app",
+                    fileUploadConfig = fileUploadConfig,
+                    imageUploadConfig = fileUploadConfig,
+                ),
+            )
         }
 
         fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {

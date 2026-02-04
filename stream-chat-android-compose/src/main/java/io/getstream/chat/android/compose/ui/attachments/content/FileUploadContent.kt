@@ -219,7 +219,7 @@ internal fun FileUploadContent() {
         message = Message(
             id = "message-id",
             text = "This is a message with an uploading attachment.",
-            attachments = mutableListOf(uploadingAttachment),
+            attachments = listOf(uploadingAttachment),
         ),
     )
     FileUploadContent(attachmentState = attachmentState)

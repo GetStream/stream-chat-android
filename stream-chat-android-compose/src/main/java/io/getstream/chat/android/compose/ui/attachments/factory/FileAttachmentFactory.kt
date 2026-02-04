@@ -16,13 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.isAnyFileType
@@ -31,16 +27,9 @@ import io.getstream.chat.android.ui.common.utils.extensions.isAnyFileType
  * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
  *
- * @param showFileSize Lambda that determines whether to show the file size in the attachment content.
- * @param onContentItemClick Lambda called when an item gets clicked.
  * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class FileAttachmentFactory(
-    showFileSize: (Attachment) -> Boolean = { true },
-    onContentItemClick: (
-        previewHandlers: List<AttachmentPreviewHandler>,
-        attachment: Attachment,
-    ) -> Unit = ::onFileAttachmentContentItemClick,
     canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
         attachments.any(Attachment::isAnyFileType)
     },
@@ -54,14 +43,5 @@ public class FileAttachmentFactory(
             onAttachmentRemoved = onAttachmentRemoved,
         )
     },
-    content = @Composable { modifier, state ->
-        ChatTheme.componentFactory.FileAttachmentContent(
-            modifier = modifier
-                .wrapContentHeight()
-                .width(ChatTheme.dimens.attachmentsContentFileWidth),
-            attachmentState = state,
-            showFileSize = showFileSize,
-            onItemClick = onContentItemClick,
-        )
-    },
+    content = { _, _ -> },
 )

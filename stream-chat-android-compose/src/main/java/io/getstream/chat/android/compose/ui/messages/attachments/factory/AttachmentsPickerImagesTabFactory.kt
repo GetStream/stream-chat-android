@@ -16,37 +16,19 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.ui.common.permissions.Permissions
-import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 /**
  * Holds the information required to add support for "images" tab in the attachment picker.
@@ -96,94 +78,10 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        val permissions = Permissions.visualMediaPermissions()
-        val context = LocalContext.current
-        val lifecycleOwner = LocalLifecycleOwner.current
-        val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-            factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
-        )
-        val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
-            if (value != VisualMediaAccess.DENIED) {
-                processingViewModel.getMediaAsync { metadata ->
-                    val items = metadata.map { AttachmentPickerItemState(it, false) }
-                    onAttachmentsChanged(items)
-                }
-            }
-        }
-
-        var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
-
-        val permissionLauncher =
-            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                if (Permissions.isPermanentlyDenied(context, result)) {
-                    showPermanentlyDeniedSnackBar = true
-                }
-            }
-
-        // Content
-        VisualMediaAccessContent(
-            visualMediaAccess = mediaAccess,
+        AttachmentMediaPicker(
             attachments = attachments,
+            onAttachmentsChanged = onAttachmentsChanged,
             onAttachmentItemSelected = onAttachmentItemSelected,
-            onRequestAccessClick = {
-                permissionLauncher.launch(permissions)
-            },
         )
-
-        // Access permanently denied snackbar
-        val snackBarHostState = remember { SnackbarHostState() }
-        PermissionPermanentlyDeniedSnackBar(
-            hostState = snackBarHostState,
-            onActionClick = { context.openSystemSettings() },
-        )
-        val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
-        val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
-        LaunchedEffect(showPermanentlyDeniedSnackBar) {
-            if (showPermanentlyDeniedSnackBar) {
-                snackBarHostState.showSnackbar(snackbarMessage, snackbarAction, duration = SnackbarDuration.Short)
-                showPermanentlyDeniedSnackBar = false
-            }
-        }
-    }
-
-    /**
-     * Renders the visual media content based on the [VisualMediaAccess] state.
-     *
-     * @param visualMediaAccess The current state of the visual media access.
-     * @param attachments The list of attachments to display.
-     * @param onAttachmentItemSelected Action invoked when the user selects an attachment.
-     * @param onRequestAccessClick Action invoked when the user taps on the "Give permission" button.
-     */
-    @Composable
-    private fun VisualMediaAccessContent(
-        visualMediaAccess: VisualMediaAccess,
-        attachments: List<AttachmentPickerItemState>,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onRequestAccessClick: () -> Unit,
-    ) {
-        when (visualMediaAccess) {
-            VisualMediaAccess.FULL -> {
-                ImagesPicker(
-                    modifier = Modifier.padding(top = 16.dp, start = 2.dp, end = 2.dp, bottom = 2.dp),
-                    images = attachments,
-                    onImageSelected = onAttachmentItemSelected,
-                    showAddMore = false,
-                )
-            }
-
-            VisualMediaAccess.PARTIAL -> {
-                ImagesPicker(
-                    modifier = Modifier.padding(top = 16.dp, start = 2.dp, end = 2.dp, bottom = 2.dp),
-                    images = attachments,
-                    onImageSelected = onAttachmentItemSelected,
-                    showAddMore = true,
-                    onAddMoreClick = onRequestAccessClick,
-                )
-            }
-
-            VisualMediaAccess.DENIED -> {
-                NoStorageAccessContent(onRequestAccessClick = onRequestAccessClick)
-            }
-        }
     }
 }

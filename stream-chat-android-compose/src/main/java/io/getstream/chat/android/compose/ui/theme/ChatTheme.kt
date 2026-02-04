@@ -329,7 +329,7 @@ public fun ChatTheme(
     autoTranslationEnabled: Boolean = false,
     showOriginalTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
-    useDefaultSystemMediaPicker: Boolean = false,
+    useDefaultSystemMediaPicker: Boolean = true,
     messageComposerFloatingStyleEnabled: Boolean = false,
     systemAttachmentsPickerConfig: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),

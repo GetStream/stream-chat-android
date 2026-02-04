@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:autoMirrored="true"
+    android:viewportWidth="20"
+    android:viewportHeight="20"
+    >
+
+    <path
+        android:pathData="M3.958,5.625H5.358C5.915,5.625 6.436,5.346 6.745,4.883L7.422,3.867C7.731,3.404 8.251,3.125 8.809,3.125H11.191C11.749,3.125 12.269,3.404 12.578,3.867L13.255,4.883C13.564,5.346 14.085,5.625 14.642,5.625H16.042C16.962,5.625 17.708,6.371 17.708,7.292V15.208C17.708,16.129 16.962,16.875 16.042,16.875H3.958C3.038,16.875 2.292,16.129 2.292,15.208V7.292C2.292,6.371 3.038,5.625 3.958,5.625Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#000000"
+        android:strokeLineCap="square"
+        android:strokeLineJoin="round"
+        />
+
+    <path
+        android:pathData="M12.708,10.833C12.708,12.329 11.496,13.542 10,13.542C8.504,13.542 7.292,12.329 7.292,10.833C7.292,9.338 8.504,8.125 10,8.125C11.496,8.125 12.708,9.338 12.708,10.833Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#000000"
+        android:strokeLineCap="square"
+        android:strokeLineJoin="round"
+        />
+
+</vector>

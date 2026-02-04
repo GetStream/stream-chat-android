@@ -120,10 +120,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         composerViewModel.addSelectedAttachments(attachments)
                     },
-                    onDismiss = {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
-                    }
+                    onDismiss = { attachmentsPickerViewModel.changeAttachmentState(false) }
                 )
             }
         }

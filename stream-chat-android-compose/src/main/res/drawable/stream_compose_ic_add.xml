@@ -26,7 +26,7 @@
         android:fillColor="#00000000"
         android:pathData="M10,3.125V10M10,10V16.875M10,10H3.125M10,10H16.875"
         android:strokeWidth="1.5"
-        android:strokeColor="#384047"
+        android:strokeColor="#000000"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         />

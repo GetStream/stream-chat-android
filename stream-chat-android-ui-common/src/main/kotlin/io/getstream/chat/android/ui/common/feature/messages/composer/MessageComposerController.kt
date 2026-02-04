@@ -618,6 +618,15 @@ public class MessageComposerController(
     }
 
     /**
+     * Updates the selected attachments that are shown within the composer UI.
+     */
+    public fun updateSelectedAttachments(attachments: List<Attachment>) {
+        selectedAttachments.update { attachments }
+
+        handleValidationErrors()
+    }
+
+    /**
      * Stores the selected attachments from the attachment picker. These will be shown in the UI,
      * within the composer component. We upload and send these attachments once the user taps on the
      * send button.
@@ -646,7 +655,7 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
-        selectedAttachments.value = selectedAttachments.value - attachment
+        selectedAttachments.value -= attachment
 
         handleValidationErrors()
     }

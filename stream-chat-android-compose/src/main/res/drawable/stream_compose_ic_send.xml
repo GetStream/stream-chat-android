@@ -23,10 +23,9 @@
     >
 
     <path
-        android:fillColor="#00000000"
         android:pathData="M5,10H7.708M5,10L2.811,4.058C2.55,3.349 3.29,2.687 3.965,3.024L16.426,9.255C17.04,9.562 17.04,10.438 16.426,10.745L3.965,16.976C3.29,17.313 2.55,16.651 2.811,15.942L5,10Z"
         android:strokeWidth="1.5"
-        android:strokeColor="#ffffff"
+        android:strokeColor="#000000"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         />
