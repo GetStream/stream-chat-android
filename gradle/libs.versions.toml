@@ -244,5 +244,4 @@ stream-project = { id = "io.getstream.project", version.ref = "streamConventions
 stream-android-library = { id = "io.getstream.android.library", version.ref = "streamConventions" }
 stream-android-application = { id = "io.getstream.android.application", version.ref = "streamConventions" }
 stream-java-library = { id = "io.getstream.java.library", version.ref = "streamConventions" }
-stream-publish = { id = "io.getstream.publish", version.ref = "streamConventions" }
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi"}
