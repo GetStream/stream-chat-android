@@ -109,6 +109,12 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+/**
+ * CompositionLocal for providing [AttachmentPickerConfig] to the composition tree.
+ */
+public val LocalAttachmentPickerConfig: ProvidableCompositionLocal<AttachmentPickerConfig> = compositionLocalOf {
+    error("No AttachmentPickerConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * The local composition containing the current "Message Composer Floating Style Enabled" flag.
@@ -274,6 +280,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param useDefaultSystemMediaPicker Flag that determines which attachment picker should be used. If true, the system
  * attachments picker which doesn't use storage permissions will be used. If false, the default attachments picker which
  * requires storage permissions will be used.
+ * @param attachmentPickerConfig Configuration for the attachment picker modes and settings.
  * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
  * @param systemAttachmentsPickerConfig Configuration for the system attachments picker.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
@@ -330,6 +337,7 @@ public fun ChatTheme(
     showOriginalTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
     useDefaultSystemMediaPicker: Boolean = true,
+    attachmentPickerConfig: AttachmentPickerConfig = AttachmentPickerConfig(),
     messageComposerFloatingStyleEnabled: Boolean = false,
     systemAttachmentsPickerConfig: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
@@ -431,6 +439,7 @@ public fun ChatTheme(
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalShimmerTheme provides StreamShimmerTheme,
         LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
+        LocalAttachmentPickerConfig provides attachmentPickerConfig,
         LocalMessageComposerFloatingStyleEnabled provides messageComposerFloatingStyleEnabled,
         LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,
@@ -530,6 +539,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalUseDefaultSystemMediaPicker.current
+
+    /**
+     * Retrieves the current [AttachmentPickerConfig] at the call site's position in the hierarchy.
+     */
+    public val attachmentPickerConfig: AttachmentPickerConfig
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAttachmentPickerConfig.current
 
     /**
      * Retrieves the current flag for the "Message Composer Floating Style Enabled"
