@@ -39,12 +39,11 @@ import coil3.ImageLoader
 import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
@@ -72,7 +71,6 @@ import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
-import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -109,6 +107,7 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
 private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+
 /**
  * CompositionLocal for providing [AttachmentPickerConfig] to the composition tree.
  */
@@ -195,10 +194,6 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
         "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
             "in a ChatTheme.",
     )
-}
-
-private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
-    error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
@@ -313,7 +308,6 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
- * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
@@ -339,7 +333,6 @@ public fun ChatTheme(
     useDefaultSystemMediaPicker: Boolean = true,
     attachmentPickerConfig: AttachmentPickerConfig = AttachmentPickerConfig(),
     messageComposerFloatingStyleEnabled: Boolean = false,
-    systemAttachmentsPickerConfig: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -380,12 +373,6 @@ public fun ChatTheme(
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
-    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
-        if (useDefaultSystemMediaPicker) {
-            AttachmentsPickerTabFactories.systemAttachmentsPickerTabFactories(systemAttachmentsPickerConfig)
-        } else {
-            AttachmentsPickerTabFactories.defaultFactories()
-        },
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
@@ -472,7 +459,6 @@ public fun ChatTheme(
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalChannelOptionsTheme provides channelOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
-        LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalReadCountEnabled provides readCountEnabled,
@@ -716,14 +702,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageOptionsUserReactionAlignment.current
-
-    /**
-     * Retrieves the current list of [AttachmentsPickerTabFactory] at the call site's position in the hierarchy.
-     */
-    public val attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory>
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAttachmentsPickerTabFactories.current
 
     /**
      * Retrieves the value of [Boolean] dictating whether video thumbnails are enabled at the call site's
