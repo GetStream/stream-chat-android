@@ -1,0 +1,37 @@
+changelog:
+  exclude:
+    labels:
+      - "pr:ignore-for-release"
+    authors:
+      - "github-actions[bot]"
+      - "stream-public-bot"
+  categories:
+    - title: Breaking Changes 🛠
+      labels:
+        - "pr:breaking-change"
+    - title: New Features 🎉
+      labels:
+        - "pr:new-feature"
+    - title: Bug Fixes 🐛
+      labels:
+        - "pr:bug"
+    - title: Improvements ✨
+      labels:
+        - "pr:improvement"
+    - title: Documentation 📚
+      labels:
+        - "pr:documentation"
+    - title: Dependencies 📦
+      labels:
+        - "pr:dependencies"
+    - title: Internal 🧪
+      labels:
+        - "pr:internal"
+        - "pr:ci"
+        - "pr:test"
+    - title: Demo App 🧩
+      labels:
+        - "pr:demo-app"
+    - title: Other Changes
+      labels:
+        - "*"
