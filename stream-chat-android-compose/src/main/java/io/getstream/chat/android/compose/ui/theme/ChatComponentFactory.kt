@@ -3567,11 +3567,13 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * An attachment picker menu that expands and collapses with animation.
-     * Integrates with the message composer to handle attachment selection and actions.
+     * Container component that manages the attachment picker's visibility and animations.
      *
-     * @param attachmentsPickerViewModel The view model that manages the picker state.
-     * @param composerViewModel The message composer view model for handling attachments.
+     * Override this to customize the picker container behavior, including animations,
+     * keyboard coordination, and composer integration.
+     *
+     * @param attachmentsPickerViewModel Controls picker visibility and manages attachment state.
+     * @param composerViewModel Receives selected attachments and handles poll/command actions.
      */
     @Composable
     public fun AttachmentPickerMenu(
@@ -3585,15 +3587,17 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The main attachment picker bottom bar that allows users to select attachments.
-     * Displays tabs for different attachment types and handles attachment selection.
+     * Main attachment picker component with mode tabs and content area.
      *
-     * @param attachmentsPickerViewModel The view model that manages the picker state.
-     * @param messageMode The current message mode (Normal or Thread).
-     * @param onAttachmentItemSelected Handler invoked when an attachment item is selected.
-     * @param onAttachmentsSelected Handler invoked when attachments are confirmed.
-     * @param onAttachmentPickerAction Handler invoked for picker actions.
-     * @param onDismiss Handler invoked when the picker is dismissed.
+     * Override this to customize the overall picker layout. The picker automatically switches
+     * between system picker and in-app picker based on [ChatTheme.attachmentPickerConfig].
+     *
+     * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
+     * @param messageMode Current message mode; affects poll availability (disabled in threads).
+     * @param onAttachmentItemSelected Called when user taps an item to select/deselect it.
+     * @param onAttachmentsSelected Called when attachments are confirmed for sending.
+     * @param onAttachmentPickerAction Called for special actions (poll creation, command selection).
+     * @param onDismiss Called when the picker should close.
      */
     @Composable
     public fun AttachmentPicker(
@@ -3615,14 +3619,16 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default attachment type picker that shows a row of toggle buttons for different picker modes.
-     * Used in the in-app attachment picker to switch between different attachment types.
+     * Tab bar for the in-app attachment picker showing toggle buttons for each mode.
      *
-     * @param channel The channel where attachments will be sent.
-     * @param messageMode The current message mode.
-     * @param selectedAttachmentPickerMode The currently selected picker mode.
-     * @param onModeSelected Handler invoked when a picker mode is selected.
-     * @param additionalContent Additional content to display in the row of buttons.
+     * Override this to customize the tab bar appearance or add custom tabs. The available
+     * modes are determined by [ChatTheme.attachmentPickerConfig.modes].
+     *
+     * @param channel Used to check channel capabilities (e.g., polls enabled).
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param selectedAttachmentPickerMode The currently active mode (highlighted tab).
+     * @param onModeSelected Called when user taps a tab to switch modes.
+     * @param additionalContent Slot for adding custom content after the mode buttons.
      */
     @Composable
     public fun AttachmentTypePicker(
@@ -3642,13 +3648,15 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default system attachment type picker that shows a row of buttons for launching system pickers.
-     * Each button launches a native system picker for the corresponding attachment type.
+     * Button bar for the system attachment picker showing action buttons for each mode.
      *
-     * @param channel The channel where attachments will be sent.
-     * @param messageMode The current message mode.
-     * @param onModeSelected Handler invoked when a picker mode is selected.
-     * @param additionalContent Additional content to display in the row of buttons.
+     * Unlike [AttachmentTypePicker], each button directly launches the corresponding system picker
+     * rather than switching to an in-app content view. No storage permissions are required.
+     *
+     * @param channel Used to check channel capabilities (e.g., polls enabled).
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param onModeSelected Called when user taps a button to launch a system picker.
+     * @param additionalContent Slot for adding custom content after the mode buttons.
      */
     @Composable
     public fun AttachmentTypeSystemPicker(
@@ -3666,16 +3674,18 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default attachment picker content that renders the appropriate picker based on the current mode.
-     * Handles switching between different picker modes (gallery, file, camera, poll, etc).
+     * Content router that displays the appropriate picker UI based on the current mode.
      *
-     * @param pickerMode The current picker mode.
-     * @param commands The list of available commands.
-     * @param attachments The list of attachment items.
-     * @param onAttachmentsChanged Handler invoked when the attachments list changes.
-     * @param onAttachmentItemSelected Handler invoked when an attachment item is selected.
-     * @param onAttachmentPickerAction Handler invoked for picker actions.
-     * @param onAttachmentsSubmitted Handler invoked when attachments are submitted.
+     * Override this to add support for custom [AttachmentPickerMode] implementations or
+     * to customize how modes are rendered.
+     *
+     * @param pickerMode The currently active mode; determines which picker UI to show.
+     * @param commands Available slash commands for [CommandPickerMode].
+     * @param attachments Current attachment items loaded for gallery/file modes.
+     * @param onAttachmentsChanged Called when the attachment list needs updating (e.g., after loading).
+     * @param onAttachmentItemSelected Called when user selects/deselects an attachment.
+     * @param onAttachmentPickerAction Called for mode-specific actions (poll creation, command selection).
+     * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
      */
     @Composable
     public fun AttachmentPickerContent(
@@ -3699,13 +3709,15 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default media picker content for selecting images and videos from the device gallery.
-     * Shows a grid of media items that can be selected.
+     * Grid picker for selecting images and videos from device storage.
      *
-     * @param pickerMode The gallery picker mode.
-     * @param attachments The list of attachment items to display.
-     * @param onAttachmentsChanged Handler invoked when the attachments list changes.
-     * @param onAttachmentItemSelected Handler invoked when an attachment item is selected.
+     * Shows a scrollable grid of media thumbnails with selection badges. Requires storage
+     * permissions to display content.
+     *
+     * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
+     * @param attachments Media items to display in the grid.
+     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
      */
     @Composable
     public fun AttachmentMediaPicker(
@@ -3723,11 +3735,13 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default camera picker content for capturing photos or videos.
-     * Shows a button to launch the device camera for capturing media.
+     * Camera capture interface for taking photos or recording videos.
      *
-     * @param pickerMode The camera picker mode.
-     * @param onAttachmentsSubmitted Handler invoked when attachments are captured and submitted.
+     * Displays a button that launches the device camera. Captured media is automatically
+     * submitted as an attachment.
+     *
+     * @param pickerMode Configuration for camera capture (photo, video, or both).
+     * @param onAttachmentsSubmitted Called with the captured media metadata.
      */
     @Composable
     public fun AttachmentCameraPicker(
@@ -3741,14 +3755,16 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default file picker content for selecting files from the device.
-     * Shows a list of files with options to browse and select files.
+     * List picker for selecting files from device storage.
      *
-     * @param pickerMode The file picker mode.
-     * @param attachments The list of attachment items to display.
-     * @param onAttachmentsChanged Handler invoked when the attachments list changes.
-     * @param onAttachmentItemSelected Handler invoked when an attachment item is selected.
-     * @param onAttachmentsSubmitted Handler invoked when attachments are submitted.
+     * Shows a scrollable list of files (documents, audio, etc.) with file type icons,
+     * names, and sizes. Requires storage permissions to display content.
+     *
+     * @param pickerMode Configuration for the file picker (multi-select).
+     * @param attachments File items to display in the list.
+     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
+     * @param onAttachmentsSubmitted Called when files are picked via system file browser.
      */
     @Composable
     public fun AttachmentFilePicker(
@@ -3768,11 +3784,14 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default poll picker content for creating polls.
-     * Shows a button to launch the poll creation flow.
+     * Poll creation entry point in the attachment picker.
      *
-     * @param pickerMode The poll picker mode.
-     * @param onAttachmentPickerAction Handler invoked for picker actions like creating a poll.
+     * Shows a button or automatically opens the poll creation dialog based on [PollPickerMode.autoShowCreateDialog].
+     * Poll creation is only available when the channel has the "polls" capability.
+     *
+     * @param pickerMode Configuration for poll picker behavior.
+     * @param onAttachmentPickerAction Called with [AttachmentPickerPollCreation] when a poll is created,
+     * or [AttachmentPickerCreatePollClick] when the create button is tapped.
      */
     @Composable
     public fun AttachmentPollPicker(
@@ -3786,12 +3805,14 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default command picker content for selecting slash commands.
-     * Shows a list of available commands that can be selected.
+     * Slash command picker showing available commands.
      *
-     * @param pickerMode The command picker mode.
-     * @param commands The list of available commands to display.
-     * @param onAttachmentPickerAction Handler invoked when a command is selected.
+     * Displays a scrollable list of commands configured for the channel (e.g., /giphy, /mute).
+     * Tapping a command inserts it into the message composer.
+     *
+     * @param pickerMode The command picker mode configuration.
+     * @param commands Available commands from the channel configuration.
+     * @param onAttachmentPickerAction Called with [AttachmentPickerCommandSelect] when a command is selected.
      */
     @Composable
     public fun AttachmentCommandPicker(
@@ -3807,15 +3828,18 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default system attachment picker that uses the device's native pickers.
-     * Shows a row of buttons that launch system pickers for media, files, camera, and polls.
+     * System picker variant that uses native OS pickers instead of in-app UI.
      *
-     * @param channel The channel where attachments will be sent.
-     * @param messageMode The current message mode.
-     * @param commands The list of available commands.
-     * @param attachments The list of attachment items.
-     * @param onAttachmentPickerAction Handler invoked for picker actions.
-     * @param onAttachmentsSubmitted Handler invoked when attachments are submitted.
+     * Shows a row of buttons that launch system pickers (photo picker, file browser, camera).
+     * This variant does not require storage permissions since it uses system intents.
+     * Used when [ChatTheme.attachmentPickerConfig.useSystemPicker] is `true`.
+     *
+     * @param channel Used to check channel capabilities for filtering available modes.
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param commands Available commands for the command picker button.
+     * @param attachments Current attachment state (used for state management).
+     * @param onAttachmentPickerAction Called for poll creation and command selection.
+     * @param onAttachmentsSubmitted Called when files are selected from system pickers.
      */
     @Composable
     public fun AttachmentSystemPicker(

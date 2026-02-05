@@ -16,12 +16,32 @@
 
 package io.getstream.chat.android.compose.state.messages.attachments
 
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+
 /**
- * Configuration for the attachment picker.
+ * Configuration for the attachment picker component.
  *
- * @param useSystemPicker Whether to use the system picker (no storage permissions required)
- * or the in-app picker.
- * @param modes The list of picker modes to display.
+ * This class allows you to customize the behavior and available options in the attachment picker.
+ * You can configure it through [ChatTheme.attachmentPickerConfig].
+ *
+ * Example usage:
+ * ```kotlin
+ * ChatTheme(
+ *     attachmentPickerConfig = AttachmentPickerConfig(
+ *         useSystemPicker = true,
+ *         modes = listOf(GalleryPickerMode(), FilePickerMode(), CameraPickerMode()),
+ *     )
+ * ) {
+ *     // Your chat UI
+ * }
+ * ```
+ *
+ * @param useSystemPicker When `true`, uses the system's native file/media picker which does not require
+ * storage permissions. When `false` (default), uses the in-app picker which shows a grid of media files
+ * but requires storage permissions to be granted.
+ * @param modes The list of [AttachmentPickerMode] instances that define which attachment types are available.
+ * The order of modes determines the order of tabs in the picker. Defaults to gallery, files, camera, poll,
+ * and commands.
  */
 public data class AttachmentPickerConfig(
     val useSystemPicker: Boolean = false,

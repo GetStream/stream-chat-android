@@ -298,7 +298,6 @@ private fun AttachmentSystemPickerPreview() {
     }
 }
 
-@Suppress("MagicNumber")
 @Composable
 internal fun AttachmentSystemPicker() {
     AttachmentSystemPicker(

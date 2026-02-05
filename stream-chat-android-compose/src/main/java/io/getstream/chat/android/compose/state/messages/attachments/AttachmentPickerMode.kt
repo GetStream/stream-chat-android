@@ -17,15 +17,30 @@
 package io.getstream.chat.android.compose.state.messages.attachments
 
 /**
- * Represents an attachment picker mode.
+ * Represents a mode (tab) in the attachment picker.
+ *
+ * Each mode defines a specific type of attachment that users can select or create.
+ * Implement this interface to create custom picker modes, or use the built-in implementations:
+ * - [GalleryPickerMode] - Pick images and videos from device gallery
+ * - [FilePickerMode] - Pick files from device storage
+ * - [CameraPickerMode] - Capture photos or videos with the camera
+ * - [PollPickerMode] - Create a poll
+ * - [CommandPickerMode] - Select a slash command
+ *
+ * @see AttachmentPickerConfig for configuring which modes are available
  */
 public interface AttachmentPickerMode
 
 /**
- * Mode for picking images and videos from the gallery.
+ * Mode for picking images and videos from the device gallery.
  *
- * @param allowMultipleSelection Whether multiple items can be selected.
- * @param mediaType The type of media to show in the gallery.
+ * When selected, displays a grid of media files from the device's storage. Requires storage
+ * permissions when using the in-app picker (not required for system picker).
+ *
+ * @param allowMultipleSelection When `true`, users can select multiple items. When `false`,
+ * only single selection is allowed. Defaults to `true`.
+ * @param mediaType Filters which media types are shown. See [MediaType] for options.
+ * Defaults to [MediaType.ImagesAndVideos].
  */
 public data class GalleryPickerMode(
     val allowMultipleSelection: Boolean = true,
@@ -33,39 +48,61 @@ public data class GalleryPickerMode(
 ) : AttachmentPickerMode
 
 /**
- * Mode for picking files from storage.
+ * Mode for picking files from device storage.
  *
- * @param allowMultipleSelection Whether multiple files can be selected.
+ * When selected, displays a list of files from the device's storage including documents,
+ * audio files, and other file types. Requires storage permissions when using the in-app picker.
+ *
+ * @param allowMultipleSelection When `true`, users can select multiple files. When `false`,
+ * only single selection is allowed. Defaults to `true`.
  */
 public data class FilePickerMode(
     val allowMultipleSelection: Boolean = true,
 ) : AttachmentPickerMode
 
 /**
- * Mode for capturing photos or videos with the camera.
+ * Mode for capturing photos or videos using the device camera.
  *
- * @param captureMode The type of media that can be captured.
+ * When selected, launches the camera to capture media. The captured media is automatically
+ * added to the message composer as an attachment.
+ *
+ * @param captureMode Determines what type of media can be captured. See [CaptureMode] for options.
+ * Defaults to [CaptureMode.PhotoAndVideo].
  */
 public data class CameraPickerMode(
     val captureMode: CaptureMode = CaptureMode.PhotoAndVideo,
 ) : AttachmentPickerMode
 
 /**
- * Mode for creating a poll.
+ * Mode for creating a poll attachment.
  *
- * @param autoShowCreateDialog Whether to automatically show the create poll dialog when the picker is opened.
+ * When selected, shows the poll creation interface where users can configure poll options,
+ * questions, and settings. The created poll is attached to the message.
+ *
+ * Note: Poll creation is only available when the channel has the "polls" capability enabled.
+ *
+ * @param autoShowCreateDialog When `true`, automatically shows the poll creation dialog when
+ * this mode is selected. When `false`, shows a button to open the dialog. Defaults to `true`.
  */
 public data class PollPickerMode(
     val autoShowCreateDialog: Boolean = true,
 ) : AttachmentPickerMode
 
 /**
- * Mode for selecting a command.
+ * Mode for selecting a slash command.
+ *
+ * When selected, displays a list of available commands (like /giphy, /mute, etc.) that can
+ * be inserted into the message composer. The available commands are determined by the
+ * channel configuration.
  */
 public data object CommandPickerMode : AttachmentPickerMode
 
 /**
- * The type of media to show in the gallery picker.
+ * Defines which media types are shown in the gallery picker.
+ *
+ * @property ImagesOnly Show only image files (jpg, png, gif, webp, etc.)
+ * @property VideosOnly Show only video files (mp4, mov, etc.)
+ * @property ImagesAndVideos Show both images and videos
  */
 public enum class MediaType {
     ImagesOnly,
@@ -74,7 +111,11 @@ public enum class MediaType {
 }
 
 /**
- * The type of media that can be captured with the camera.
+ * Defines what type of media can be captured with the camera.
+ *
+ * @property Photo Only allow photo capture
+ * @property Video Only allow video recording
+ * @property PhotoAndVideo Allow both photo capture and video recording
  */
 public enum class CaptureMode {
     Photo,

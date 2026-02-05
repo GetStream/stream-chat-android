@@ -31,15 +31,35 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
- * The main attachment picker bottom bar that allows users to select attachments.
- * Displays tabs for different attachment types and handles attachment selection.
+ * The main attachment picker component that allows users to select and attach files to messages.
  *
- * @param attachmentsPickerViewModel The view model that manages the picker state.
- * @param messageMode The current message mode (Normal or Thread).
- * @param onAttachmentItemSelected Handler invoked when an attachment item is selected.
- * @param onAttachmentsSelected Handler invoked when attachments are confirmed.
- * @param onAttachmentPickerAction Handler invoked for picker actions.
- * @param onDismiss Handler invoked when the picker is dismissed.
+ * This composable displays tabs for different attachment types (gallery, files, camera, polls, commands)
+ * and the corresponding content for the selected tab. It is typically wrapped by [AttachmentPickerMenu]
+ * which handles the animated expand/collapse behavior and positioning.
+ *
+ * The picker behavior is configured through [ChatTheme.attachmentPickerConfig]:
+ * - When `useSystemPicker` is `true`, shows buttons that launch system pickers (no permissions required)
+ * - When `useSystemPicker` is `false`, shows an in-app grid picker (requires storage permissions)
+ *
+ * The picker integrates with [AttachmentsPickerViewModel] to manage state and with the message composer
+ * to add selected attachments to messages.
+ *
+ * For customization, override the picker components in [ChatTheme.componentFactory]:
+ * - `AttachmentTypePicker` - The tab bar for switching between modes
+ * - `AttachmentPickerContent` - The content area for each mode
+ * - `AttachmentSystemPicker` - The system picker variant
+ *
+ * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that manages picker state,
+ * including the current mode, available attachments, and selection state.
+ * @param messageMode The current message mode ([MessageMode.Normal] or [MessageMode.MessageThread]).
+ * Used to determine if poll creation is available (not available in threads).
+ * @param onAttachmentItemSelected Called when a user taps an attachment item to select/deselect it.
+ * By default, delegates to [AttachmentsPickerViewModel.changeSelectedAttachments].
+ * @param onAttachmentsSelected Called when attachments are confirmed and should be added to the composer.
+ * Receives the list of [Attachment] objects ready to be sent.
+ * @param onAttachmentPickerAction Called for picker-specific actions like poll creation or command selection.
+ * See [AttachmentPickerAction] for available actions.
+ * @param onDismiss Called when the picker should be dismissed (back press, outside tap, etc.).
  */
 @Suppress("LongMethod")
 @Composable
