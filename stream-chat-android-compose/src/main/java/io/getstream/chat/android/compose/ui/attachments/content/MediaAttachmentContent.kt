@@ -593,7 +593,7 @@ internal fun MediaAttachmentContentItem(
                 when (state) {
                     is AsyncImagePainter.State.Empty,
                     is AsyncImagePainter.State.Loading,
-                        -> ShimmerProgressIndicator(
+                    -> ShimmerProgressIndicator(
                         modifier = Modifier.fillMaxSize(),
                     )
 
