@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -148,6 +149,7 @@ class MessagesActivity : ComponentActivity() {
             colors = colors,
             shapes = shapes,
             typography = typography,
+            attachmentPickerConfig = AttachmentPickerConfig(useSystemPicker = false),
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,

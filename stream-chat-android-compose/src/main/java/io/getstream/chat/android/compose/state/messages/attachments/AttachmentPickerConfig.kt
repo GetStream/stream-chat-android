@@ -36,15 +36,35 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * }
  * ```
  *
- * @param useSystemPicker When `true`, uses the system's native file/media picker which does not require
- * storage permissions. When `false` (default), uses the in-app picker which shows a grid of media files
- * but requires storage permissions to be granted.
+ * ## Permissions
+ *
+ * When using the in-app picker (`useSystemPicker = false`), the following permissions must be declared
+ * in your app's `AndroidManifest.xml`:
+ *
+ * ```xml
+ * <!-- For Android 12 (API 32) and below -->
+ * <uses-permission
+ *     android:name="android.permission.READ_EXTERNAL_STORAGE"
+ *     android:maxSdkVersion="32" />
+ *
+ * <!-- For Android 13 (API 33) and above -->
+ * <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+ * <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+ * <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+ * ```
+ *
+ * When using the system picker (`useSystemPicker = true`), no storage permissions are required as the
+ * system picker handles permissions internally.
+ *
+ * @param useSystemPicker When `true` (default), uses the system's native file/media picker which does not require
+ * storage permissions. When `false`, uses the in-app picker which shows a grid of media files but requires
+ * storage permissions to be granted and declared in your manifest.
  * @param modes The list of [AttachmentPickerMode] instances that define which attachment types are available.
  * The order of modes determines the order of tabs in the picker. Defaults to gallery, files, camera, poll,
  * and commands.
  */
 public data class AttachmentPickerConfig(
-    val useSystemPicker: Boolean = false,
+    val useSystemPicker: Boolean = true,
     val modes: List<AttachmentPickerMode> = DefaultAttachmentPickerModes,
 )
 
