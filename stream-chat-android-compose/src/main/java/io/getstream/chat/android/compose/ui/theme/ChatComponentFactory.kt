@@ -3626,24 +3626,24 @@ public interface ChatComponentFactory {
      *
      * @param channel Used to check channel capabilities (e.g., polls enabled).
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
-     * @param selectedAttachmentPickerMode The currently active mode (highlighted tab).
+     * @param selectedMode The currently active mode (highlighted tab).
      * @param onModeSelected Called when user taps a tab to switch modes.
-     * @param additionalContent Slot for adding custom content after the mode buttons.
+     * @param trailingContent Slot for adding custom content after the mode buttons.
      */
     @Composable
     public fun AttachmentTypePicker(
         channel: Channel,
         messageMode: MessageMode,
-        selectedAttachmentPickerMode: AttachmentPickerMode?,
+        selectedMode: AttachmentPickerMode?,
         onModeSelected: (AttachmentPickerMode) -> Unit,
-        additionalContent: @Composable RowScope.() -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypePicker(
             channel = channel,
             messageMode = messageMode,
-            selectedAttachmentPickerMode = selectedAttachmentPickerMode,
+            selectedMode = selectedMode,
             onModeSelected = onModeSelected,
-            additionalContent = additionalContent,
+            trailingContent = trailingContent,
         )
     }
 
@@ -3656,20 +3656,20 @@ public interface ChatComponentFactory {
      * @param channel Used to check channel capabilities (e.g., polls enabled).
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
      * @param onModeSelected Called when user taps a button to launch a system picker.
-     * @param additionalContent Slot for adding custom content after the mode buttons.
+     * @param trailingContent Slot for adding custom content after the mode buttons.
      */
     @Composable
     public fun AttachmentTypeSystemPicker(
         channel: Channel,
         messageMode: MessageMode,
         onModeSelected: (AttachmentPickerMode) -> Unit,
-        additionalContent: @Composable RowScope.() -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypeSystemPicker(
             channel = channel,
             messageMode = messageMode,
             onModeSelected = onModeSelected,
-            additionalContent = additionalContent,
+            trailingContent = trailingContent,
         )
     }
 

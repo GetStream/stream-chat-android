@@ -109,9 +109,9 @@ public fun AttachmentPicker(
                 ChatTheme.componentFactory.AttachmentTypePicker(
                     channel = attachmentsPickerViewModel.channel,
                     messageMode = messageMode,
-                    selectedAttachmentPickerMode = attachmentsPickerViewModel.pickerMode,
+                    selectedMode = attachmentsPickerViewModel.pickerMode,
                     onModeSelected = attachmentsPickerViewModel::changePickerMode,
-                    additionalContent = {},
+                    trailingContent = {},
                 )
                 AnimatedContent(
                     targetState = attachmentsPickerViewModel.pickerMode,

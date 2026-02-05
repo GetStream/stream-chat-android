@@ -56,9 +56,9 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 internal fun AttachmentTypePicker(
     channel: Channel,
     messageMode: MessageMode,
-    selectedAttachmentPickerMode: AttachmentPickerMode?,
+    selectedMode: AttachmentPickerMode?,
     onModeSelected: (AttachmentPickerMode) -> Unit = {},
-    additionalContent: @Composable RowScope.() -> Unit = {},
+    trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
         channel = channel,
@@ -74,8 +74,8 @@ internal fun AttachmentTypePicker(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         modes.forEach { mode ->
-            val isSelected = selectedAttachmentPickerMode != null &&
-                selectedAttachmentPickerMode::class == mode::class
+            val isSelected = selectedMode != null &&
+                selectedMode::class == mode::class
             AttachmentPickerModeInfos[mode::class]?.let { typeInfo ->
                 AttachmentPickerToggleButton(
                     pickerTypeInfo = typeInfo,
@@ -84,7 +84,7 @@ internal fun AttachmentTypePicker(
                 )
             }
         }
-        additionalContent()
+        trailingContent()
     }
     LaunchedEffect(modes) {
         onModeSelected(modes.first())
@@ -96,7 +96,7 @@ internal fun AttachmentTypeSystemPicker(
     channel: Channel,
     messageMode: MessageMode,
     onModeSelected: (AttachmentPickerMode) -> Unit = {},
-    additionalContent: @Composable RowScope.() -> Unit = {},
+    trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
         channel = channel,
@@ -119,7 +119,7 @@ internal fun AttachmentTypeSystemPicker(
                 )
             }
         }
-        additionalContent()
+        trailingContent()
     }
 }
 
@@ -231,7 +231,7 @@ internal fun AttachmentTypePicker() {
     AttachmentTypePicker(
         channel = Channel(),
         messageMode = MessageMode.Normal,
-        selectedAttachmentPickerMode = GalleryPickerMode(),
+        selectedMode = GalleryPickerMode(),
     )
 }
 
@@ -251,7 +251,7 @@ internal fun AttachmentTypePickerWithPolls() {
             config = Config(pollsEnabled = true),
         ),
         messageMode = MessageMode.Normal,
-        selectedAttachmentPickerMode = PollPickerMode(),
+        selectedMode = PollPickerMode(),
     )
 }
 

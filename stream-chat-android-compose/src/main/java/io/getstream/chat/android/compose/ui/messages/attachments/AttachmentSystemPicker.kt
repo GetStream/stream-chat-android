@@ -176,7 +176,7 @@ internal fun AttachmentSystemPicker(
                 else -> Unit
             }
         },
-        additionalContent = {},
+        trailingContent = {},
     )
 
     if (showCameraPermissionDialog) {

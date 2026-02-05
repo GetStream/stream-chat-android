@@ -66,13 +66,12 @@ class LocationComponentFactory(
     override fun AttachmentTypePicker(
         channel: Channel,
         messageMode: MessageMode,
-        selectedAttachmentPickerMode: AttachmentPickerMode?,
+        selectedMode: AttachmentPickerMode?,
         onModeSelected: (AttachmentPickerMode) -> Unit,
-        additionalContent: @Composable RowScope.() -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
     ) {
-        super.AttachmentTypePicker(channel, messageMode, selectedAttachmentPickerMode, onModeSelected) {
-            val isSelected = selectedAttachmentPickerMode != null &&
-                selectedAttachmentPickerMode::class == LocationPickerMode
+        super.AttachmentTypePicker(channel, messageMode, selectedMode, onModeSelected) {
+            val isSelected = selectedMode != null && selectedMode::class == LocationPickerMode
 
             FilledIconToggleButton(
                 modifier = Modifier.size(48.dp),
