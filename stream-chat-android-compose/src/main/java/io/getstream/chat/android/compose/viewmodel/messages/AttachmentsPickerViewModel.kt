@@ -185,20 +185,17 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Loads up the currently selected attachments and maps them to [Attachment] objects
-     * based on their type.
+     * Loads up the currently selected attachments and maps them to [Attachment] objects.
      */
-    public fun getSelectedAttachments(): List<Attachment> {
-        val selectedAttachments = attachments.filter { it.isSelected }
-
-        return storageHelper.getAttachmentsForUpload(selectedAttachments.map { it.attachmentMetaData })
-    }
+    public fun getSelectedAttachments(): List<Attachment> =
+        attachments.filter(AttachmentPickerItemState::isSelected)
+            .map(AttachmentPickerItemState::attachmentMetaData)
+            .let(storageHelper::getAttachmentsForUpload)
 
     /**
-     * Loads up the currently selected attachments. It uses the [attachmentsPickerMode] to know which
-     * attachments to use - files or images.
+     * Asynchronously loads up the currently selected attachments and maps them to [Attachment] objects.
      *
-     * @param onComplete The callback passing the selected attachments.
+     * @param onComplete The callback called when the attachments are loaded.
      */
     internal fun getSelectedAttachmentsAsync(onComplete: (List<Attachment>) -> Unit) {
         viewModelScope.launch {
