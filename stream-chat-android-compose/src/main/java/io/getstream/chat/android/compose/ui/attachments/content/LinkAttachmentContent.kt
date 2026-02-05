@@ -164,7 +164,7 @@ private fun FullSizeLinkAttachmentContent(
             LinkAttachmentTitle(
                 text = it,
                 color = textColor,
-                modifier = Modifier.padding(horizontal = StreamTokens.spacingSm)
+                modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
             )
         }
 
@@ -177,7 +177,7 @@ private fun FullSizeLinkAttachmentContent(
                     start = StreamTokens.spacingSm,
                     end = StreamTokens.spacingSm,
                     top = StreamTokens.spacing2xs,
-                )
+                ),
             )
         }
 
@@ -188,8 +188,8 @@ private fun FullSizeLinkAttachmentContent(
                 start = StreamTokens.spacingSm,
                 end = StreamTokens.spacingSm,
                 top = StreamTokens.spacing2xs,
-                bottom = StreamTokens.spacingSm
-            )
+                bottom = StreamTokens.spacingSm,
+            ),
         )
     }
 }
@@ -209,14 +209,14 @@ private fun CompactLinkAttachmentContent(
             start = StreamTokens.spacingXs,
             end = StreamTokens.spacingSm,
         ),
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
         attachment.imagePreviewUrl?.let {
             LinkAttachmentImagePreview(
                 imageUrl = it,
                 modifier = Modifier
                     .size(40.dp)
-                    .clip(RoundedCornerShape(StreamTokens.radiusMd))
+                    .clip(RoundedCornerShape(StreamTokens.radiusMd)),
             )
         }
 

@@ -134,7 +134,7 @@ public fun LazyItemScope.MessageContainer(
     },
     messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
         with(ChatTheme.componentFactory) {
-            MessageListItemContent(
+            MessageContainer(
                 messageItem = messageItem,
                 reactionSorting = reactionSorting,
                 onLongItemClick = onLongItemClick,
@@ -327,7 +327,8 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
 }
 
 /**
- * The default message item content.
+ * The default container for a regular message, which includes the author avatar,
+ * message bubble, and reactions.
  *
  * @param messageItem The message item to show.
  * @param onLongItemClick Handler when the user long taps on an item.
@@ -344,7 +345,7 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun DefaultMessageItem(
+internal fun DefaultMessageContainer(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,

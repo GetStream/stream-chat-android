@@ -23,14 +23,14 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
- * Parameters for the [ChatComponentFactory.MessageReactionList] component.
+ * Parameters for the [ChatComponentFactory.MessageReactions] component.
  *
  * @param modifier Modifier for styling.
  * @param message The message for which the reactions are displayed.
  * @param reactions The list of reaction options to display.
  * @param onClick Handler when the reaction list is clicked. The message is provided as a parameter.
  */
-public data class MessageReactionListParams(
+public data class MessageReactionsParams(
     val modifier: Modifier = Modifier,
     val message: Message,
     val reactions: List<ReactionOptionItemState>,
