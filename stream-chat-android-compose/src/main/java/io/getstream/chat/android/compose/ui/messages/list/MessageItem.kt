@@ -75,7 +75,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
+import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -127,11 +127,6 @@ import kotlin.math.roundToInt
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param leadingContent The content shown at the start of a message list item.
- * @param headerContent The content shown at the top of a message list item.
- * @param centerContent The content shown at the center of a message list item.
- * @param footerContent The content shown at the bottom of a message list item.
- * @param trailingContent The content shown at the end of a message list item.
  */
 @Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
@@ -157,62 +152,6 @@ public fun MessageItem(
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemLeadingContent(
-                messageItem = messageItem,
-                onUserAvatarClick = onUserAvatarClick,
-            )
-        }
-    },
-    headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemHeaderContent(
-                messageItem = messageItem,
-                reactionSorting = reactionSorting,
-                onReactionsClick = onReactionsClick,
-            )
-        }
-    },
-    centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemCenterContent(
-                messageItem = messageItem,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onGiphyActionClick = onGiphyActionClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onAddAnswer = onAddAnswer,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-            )
-        }
-    },
-    footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemFooterContent(
-                messageItem = messageItem,
-            )
-        }
-    },
-    trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemTrailingContent(
-                messageItem = messageItem,
-            )
-        }
-    },
-    swipeToReplyContent: @Composable RowScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            SwipeToReplyContent()
-        }
-    },
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
@@ -254,7 +193,6 @@ public fun MessageItem(
         modifier = modifier,
         onReply = { onReply(replyMessage) },
         isSwipeable = { isSwipable },
-        swipeToReplyContent = swipeToReplyContent,
     ) {
         Box(
             modifier = Modifier
@@ -271,30 +209,61 @@ public fun MessageItem(
                     .then(clickModifier)
                     .testTag("Stream_MessageCell"),
             ) {
-                leadingContent(messageItem)
+                with(ChatTheme.componentFactory) {
+                    MessageAuthor(
+                        messageItem = messageItem,
+                        onUserAvatarClick = onUserAvatarClick,
+                    )
+                }
                 Column(
                     modifier = Modifier.weight(1f, fill = false),
                     horizontalAlignment = messageAlignment.contentAlignment,
                 ) {
-                    headerContent(messageItem)
-                    centerContent(messageItem)
-                    footerContent(messageItem)
+                    with(ChatTheme.componentFactory) {
+                        MessageTop(
+                            messageItem = messageItem,
+                            reactionSorting = reactionSorting,
+                            onReactionsClick = onReactionsClick,
+                        )
+                        MessageContent(
+                            messageItem = messageItem,
+                            onLongItemClick = onLongItemClick,
+                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                            onGiphyActionClick = onGiphyActionClick,
+                            onQuotedMessageClick = onQuotedMessageClick,
+                            onLinkClick = onLinkClick,
+                            onUserMentionClick = onUserMentionClick,
+                            onPollUpdated = onPollUpdated,
+                            onCastVote = onCastVote,
+                            onRemoveVote = onRemoveVote,
+                            selectPoll = selectPoll,
+                            onAddAnswer = onAddAnswer,
+                            onClosePoll = onClosePoll,
+                            onAddPollOption = onAddPollOption,
+                        )
+                        MessageBottom(messageItem = messageItem)
+                    }
                 }
-                trailingContent(messageItem)
+                with(ChatTheme.componentFactory) {
+                    MessageItemTrailingContent(
+                        messageItem = messageItem,
+                    )
+                }
             }
         }
     }
 }
 
 /**
- * Represents the default content shown at the start of the message list item.
+ * Represents the default author content for a message.
  *
  * By default, we show a user avatar if the message doesn't belong to the current user.
  *
  * @param messageItem The message item to show the content for.
+ * @param onUserAvatarClick Handler when the user taps on the avatar.
  */
 @Composable
-internal fun RowScope.DefaultMessageItemLeadingContent(
+internal fun RowScope.DefaultMessageAuthor(
     messageItem: MessageItemState,
     onUserAvatarClick: (() -> Unit)? = null,
 ) {
@@ -324,9 +293,9 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
 }
 
 /**
- * Represents the default content shown at the top of the message list item.
+ * Represents the default top content inside the message bubble.
  *
- * By default, we show if the message is pinned and a list of reactions for the message.
+ * By default, we show if the message is pinned and thread labels.
  *
  * @param messageItem The message item to show the content for.
  * @param reactionSorting The sorting for the reactions, if we have any.
@@ -334,7 +303,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
  */
 @Suppress("LongMethod")
 @Composable
-internal fun DefaultMessageItemHeaderContent(
+internal fun DefaultMessageTop(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
     onReactionsClick: (Message) -> Unit = {},
@@ -392,8 +361,8 @@ internal fun DefaultMessageItemHeaderContent(
                     emojiCode = pushEmojiFactory.emojiCode(type),
                 )
             }?.let { reactions ->
-                ChatTheme.componentFactory.MessageReactionList(
-                    params = MessageReactionListParams(
+                ChatTheme.componentFactory.MessageReactions(
+                    params = MessageReactionsParams(
                         message = message,
                         reactions = reactions,
                         onClick = onReactionsClick,
@@ -404,9 +373,9 @@ internal fun DefaultMessageItemHeaderContent(
 }
 
 /**
- * Represents the default content shown at the bottom of the message list item.
+ * Represents the default bottom content inside the message bubble.
  *
- * By default, the following can be shown in the footer:
+ * By default, the following can be shown:
  * - uploading status
  * - thread participants
  * - message timestamp
@@ -414,7 +383,7 @@ internal fun DefaultMessageItemHeaderContent(
  * @param messageItem The message item to show the content for.
  */
 @Composable
-internal fun ColumnScope.DefaultMessageItemFooterContent(
+internal fun ColumnScope.DefaultMessageBottom(
     messageItem: MessageItemState,
 ) {
     val message = messageItem.message
@@ -459,11 +428,12 @@ internal fun DefaultMessageItemTrailingContent(
 }
 
 /**
- * Represents the default content shown at the center of the message list item.
+ * Represents the default content inside the message bubble.
  *
  * By default, we show a message bubble with attachments or emoji stickers if message is emoji only.
  *
  * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
@@ -476,7 +446,7 @@ internal fun DefaultMessageItemTrailingContent(
  */
 @Suppress("LongParameterList")
 @Composable
-public fun DefaultMessageItemCenterContent(
+public fun DefaultMessageContent(
     modifier: Modifier = Modifier,
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
@@ -661,10 +631,11 @@ public fun RegularMessageContent(
 /**
  * Represent a swipe to reply content.
  *
+ * The swipe-to-reply content is provided through [ChatTheme.componentFactory].
+ *
  * @param modifier Modifier for styling.
  * @param onReply Handler when the user swipes to reply.
  * @param isSwipeable Handler to determine if the message is swipeable.
- * @param swipeToReplyContent The content to show when swiping to reply.
  * @param content The swipeable content to show when not swiping to reply.
  */
 @Suppress("LongMethod")
@@ -673,7 +644,6 @@ private fun SwipeToReply(
     modifier: Modifier = Modifier,
     onReply: () -> Unit = {},
     isSwipeable: () -> Boolean = { true },
-    swipeToReplyContent: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit,
 ) {
     var swipeToReplyWidth by remember { mutableFloatStateOf(0f) }
@@ -700,7 +670,9 @@ private fun SwipeToReply(
                 },
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            swipeToReplyContent()
+            with(ChatTheme.componentFactory) {
+                SwipeToReplyContent()
+            }
         }
         Row(
             modifier = modifier
