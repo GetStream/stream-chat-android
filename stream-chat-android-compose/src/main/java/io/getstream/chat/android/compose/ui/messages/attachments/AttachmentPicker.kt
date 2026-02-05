@@ -19,20 +19,13 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -120,36 +113,4 @@ public fun AttachmentPicker(
             }
         }
     }
-}
-
-/**
- * The default "Send" button in the attachments picker heading.
- *
- * @param hasPickedAttachments Indicator if there are selected attachments.
- * @param onClick The action to be taken when the button is clicked.
- */
-@Composable
-internal fun DefaultAttachmentsPickerSendButton(
-    hasPickedAttachments: Boolean,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        enabled = hasPickedAttachments,
-        onClick = onClick,
-        content = {
-            val layoutDirection = LocalLayoutDirection.current
-            Icon(
-                modifier = Modifier
-                    .mirrorRtl(layoutDirection = layoutDirection)
-                    .testTag("Stream_AttachmentPickerSendButton"),
-                painter = painterResource(id = R.drawable.stream_compose_ic_left),
-                contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                tint = if (hasPickedAttachments) {
-                    ChatTheme.colors.primaryAccent
-                } else {
-                    ChatTheme.colors.textLowEmphasis
-                },
-            )
-        },
-    )
 }
