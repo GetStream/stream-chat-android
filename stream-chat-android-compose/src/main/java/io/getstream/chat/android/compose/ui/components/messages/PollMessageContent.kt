@@ -112,7 +112,8 @@ public fun PollMessageContent(
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
 
-    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
+    val direction = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem).layoutDirection
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, direction)
     val messageBubbleColor = MessageStyling.backgroundColor(messageItem.isMine)
 
     val poll = message.poll

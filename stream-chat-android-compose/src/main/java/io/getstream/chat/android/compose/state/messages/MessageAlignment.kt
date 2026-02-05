@@ -23,18 +23,36 @@ import androidx.compose.ui.Alignment
  *
  * @param itemAlignment The alignment of the message item.
  * @param contentAlignment The alignment of the inner content.
+ * @param layoutDirection The layout direction of the message.
  */
-public enum class MessageAlignment(
+public data class MessageAlignment(
     public val itemAlignment: Alignment,
     public val contentAlignment: Alignment.Horizontal,
+    public val layoutDirection: MessageLayoutDirection,
 ) {
-    /**
-     * Represents the alignment at the start of the screen, by default for other people's messages.
-     */
-    Start(Alignment.CenterStart, Alignment.Start),
+    public companion object {
 
-    /**
-     * Represents the alignment at the end of the screen, by default for owned messages.
-     */
-    End(Alignment.CenterEnd, Alignment.End),
+        /**
+         * Represents the alignment at the start of the screen, by default for other people's messages.
+         */
+        public val Start: MessageAlignment = MessageAlignment(
+            itemAlignment = Alignment.CenterStart,
+            contentAlignment = Alignment.Start,
+            layoutDirection = MessageLayoutDirection.StartToEnd,
+        )
+
+        /**
+         * Represents the alignment at the end of the screen, by default for owned messages.
+         */
+        public val End: MessageAlignment = MessageAlignment(
+            itemAlignment = Alignment.CenterEnd,
+            contentAlignment = Alignment.End,
+            layoutDirection = MessageLayoutDirection.EndToStart,
+        )
+    }
+}
+
+public enum class MessageLayoutDirection {
+    StartToEnd,
+    EndToStart,
 }

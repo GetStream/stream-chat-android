@@ -176,7 +176,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
@@ -1179,17 +1178,6 @@ public interface ChatComponentFactory {
             onClosePoll = onClosePoll,
             onAddPollOption = onAddPollOption,
         )
-    }
-
-    /**
-     * The default trailing content of the message item.
-     * Usually an extra spacing at the end of the message item if the author is the current user.
-     */
-    @Composable
-    public fun RowScope.MessageItemTrailingContent(
-        messageItem: MessageItemState,
-    ) {
-        DefaultMessageItemTrailingContent(messageItem = messageItem)
     }
 
     /**
