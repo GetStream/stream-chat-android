@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments
+package io.getstream.chat.android.compose.ui.messages.attachments.permission
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -29,7 +29,7 @@ internal class RequiredPermissionTest : PaparazziComposeTest {
     val testCoroutineRule = TestCoroutineRule()
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.Companion.PIXEL_2)
 
     @Test
     fun `required storage permission`() {

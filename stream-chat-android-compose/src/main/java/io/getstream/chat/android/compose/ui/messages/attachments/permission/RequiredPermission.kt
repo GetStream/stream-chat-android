@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments
+package io.getstream.chat.android.compose.ui.messages.attachments.permission
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

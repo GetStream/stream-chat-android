@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments.factory
+package io.getstream.chat.android.compose.ui.messages.attachments.permission
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onActionClick Action invoked when the user click the action on the snackbar.
  */
 @Composable
-internal fun PermissionPermanentlyDeniedSnackBar(
+internal fun PermanentlyDeniedPermissionSnackBar(
     hostState: SnackbarHostState,
     onActionClick: () -> Unit,
 ) {

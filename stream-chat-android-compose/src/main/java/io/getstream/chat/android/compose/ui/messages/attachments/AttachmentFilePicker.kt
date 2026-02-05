@@ -55,8 +55,9 @@ import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPi
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.filesAccessAsState
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.PermanentlyDeniedPermissionSnackBar
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -117,7 +118,7 @@ internal fun AttachmentFilePicker(
             },
         )
         // Access permanently denied snackbar
-        PermissionPermanentlyDeniedSnackBar(
+        PermanentlyDeniedPermissionSnackBar(
             hostState = snackBarHostState,
             onActionClick = context::openSystemSettings,
         )

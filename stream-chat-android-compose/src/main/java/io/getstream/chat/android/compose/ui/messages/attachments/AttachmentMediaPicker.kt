@@ -43,8 +43,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.PermissionPermanentlyDeniedSnackBar
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.visualMediaAccessAsState
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.PermanentlyDeniedPermissionSnackBar
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.models.AttachmentType
@@ -92,7 +93,7 @@ internal fun AttachmentMediaPicker(
             onGrantPermissionClick = { permissionLauncher.launch(permissions) },
         )
         // Access permanently denied snackbar
-        PermissionPermanentlyDeniedSnackBar(
+        PermanentlyDeniedPermissionSnackBar(
             hostState = snackBarHostState,
             onActionClick = context::openSystemSettings,
         )
@@ -140,7 +141,9 @@ private fun VisualMediaAccessContent(
         }
 
         VisualMediaAccess.DENIED -> {
-            RequiredStoragePermission(onGrantPermissionClick = onGrantPermissionClick)
+            RequiredStoragePermission(
+                onGrantPermissionClick = onGrantPermissionClick,
+            )
         }
     }
 }
