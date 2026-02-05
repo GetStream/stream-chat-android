@@ -285,7 +285,7 @@ internal fun LazyItemScope.DefaultMessageItem(
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
 ) {
-    MessageContainer(
+    MessageItem(
         messageListItemState = messageListItemState,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,

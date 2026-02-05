@@ -100,7 +100,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
- * The default message container for all messages in the Conversation/Messages screen.
+ * The default message container for a regular message in the Conversation/Messages screen.
  *
  * It shows the avatar and the message details, which can have a header (reactions), the content which
  * can be a text message, file or image attachment, or a custom attachment and the footer, which can
@@ -131,7 +131,7 @@ import kotlin.math.roundToInt
 @Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun MessageItem(
+public fun MessageContainer(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
