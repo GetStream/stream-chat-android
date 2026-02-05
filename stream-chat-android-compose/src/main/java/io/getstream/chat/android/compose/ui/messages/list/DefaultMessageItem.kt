@@ -38,14 +38,12 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -62,6 +60,10 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
  *
+ * The content for different message item types is provided through [ChatTheme.componentFactory],
+ * allowing for customization of date separators, thread separators, system messages, moderated messages,
+ * regular messages, typing indicators, empty thread placeholders, unread separators, and start of channel items.
+ *
  * @param messageListItemState The state of the message list item.
  * @param reactionSorting The sorting of reactions for the message.
  * @param onLongItemClick Handler when the user long taps on an item.
@@ -75,14 +77,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
- * @param dateSeparatorContent Composable that represents date separators.
- * @param threadSeparatorContent Composable that represents thread separators.
- * @param systemMessageContent Composable that represents system messages.
- * @param messageItemContent Composable that represents regular messages.
- * @param typingIndicatorContent Composable that represents a typing indicator.
- * @param emptyThreadPlaceholderItemContent Composable that represents placeholders inside of an empty thread.
- * This content is disabled by default and can be enabled via [MessagesViewModelFactory.showDateSeparatorInEmptyThread]
- * or [MessageListController.showDateSeparatorInEmptyThread].
  */
 @Composable
 public fun LazyItemScope.MessageItem(
@@ -105,88 +99,42 @@ public fun LazyItemScope.MessageItem(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
-    dateSeparatorContent: @Composable LazyItemScope.(DateSeparatorItemState) -> Unit = { dateSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListDateSeparatorItemContent(dateSeparatorItem = dateSeparatorItem)
-        }
-    },
-    unreadSeparatorContent: @Composable LazyItemScope.(UnreadSeparatorItemState) -> Unit = { unreadSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListUnreadSeparatorItemContent(unreadSeparatorItem = unreadSeparatorItem)
-        }
-    },
-    threadSeparatorContent: @Composable LazyItemScope.(
-        ThreadDateSeparatorItemState,
-    ) -> Unit = { threadDateSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListThreadDateSeparatorItemContent(threadDateSeparatorItem = threadDateSeparatorItem)
-        }
-    },
-    systemMessageContent: @Composable LazyItemScope.(SystemMessageItemState) -> Unit = { systemMessageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListSystemItemContent(systemMessageItem = systemMessageItem)
-        }
-    },
-    moderatedMessageContent: @Composable LazyItemScope.(ModeratedMessageItemState) -> Unit = { moderatedMessageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListModeratedItemContent(moderatedMessageItem = moderatedMessageItem)
-        }
-    },
-    messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageContainer(
-                messageItem = messageItem,
-                reactionSorting = reactionSorting,
-                onLongItemClick = onLongItemClick,
-                onReactionsClick = onReactionsClick,
-                onThreadClick = onThreadClick,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-                onGiphyActionClick = onGiphyActionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = onUserAvatarClick,
-                onMessageLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onAddAnswer = onAddAnswer,
-                onReply = onReply,
-            )
-        }
-    },
-    typingIndicatorContent: @Composable LazyItemScope.(TypingItemState) -> Unit = { typingItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListTypingIndicatorItemContent(typingItem = typingItem)
-        }
-    },
-    emptyThreadPlaceholderItemContent: @Composable LazyItemScope.(
-        EmptyThreadPlaceholderItemState,
-    ) -> Unit = { emptyThreadPlaceholderItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListEmptyThreadPlaceholderItemContent(emptyThreadPlaceholderItem = emptyThreadPlaceholderItem)
-        }
-    },
-    startOfTheChannelItemState: @Composable LazyItemScope.(
-        StartOfTheChannelItemState,
-    ) -> Unit = { startOfTheChannelItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListStartOfTheChannelItemContent(startOfTheChannelItem = startOfTheChannelItem)
-        }
-    },
 ) {
-    when (messageListItemState) {
-        is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
-        is ThreadDateSeparatorItemState -> threadSeparatorContent(messageListItemState)
-        is SystemMessageItemState -> systemMessageContent(messageListItemState)
-        is ModeratedMessageItemState -> moderatedMessageContent(messageListItemState)
-        is MessageItemState -> messageItemContent(messageListItemState)
-        is TypingItemState -> typingIndicatorContent(messageListItemState)
-        is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
-        is UnreadSeparatorItemState -> unreadSeparatorContent(messageListItemState)
-        is StartOfTheChannelItemState -> startOfTheChannelItemState(messageListItemState)
+    with(ChatTheme.componentFactory) {
+        when (messageListItemState) {
+            is DateSeparatorItemState -> MessageListDateSeparatorItemContent(messageListItemState)
+            is ThreadDateSeparatorItemState -> MessageListThreadDateSeparatorItemContent(messageListItemState)
+            is SystemMessageItemState -> MessageListSystemItemContent(messageListItemState)
+            is ModeratedMessageItemState -> MessageListModeratedItemContent(messageListItemState)
+            is MessageItemState -> {
+                MessageContainer(
+                    messageItem = messageListItemState,
+                    reactionSorting = reactionSorting,
+                    onLongItemClick = onLongItemClick,
+                    onReactionsClick = onReactionsClick,
+                    onThreadClick = onThreadClick,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onUserAvatarClick = onUserAvatarClick,
+                    onMessageLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onAddAnswer = onAddAnswer,
+                    onReply = onReply,
+                )
+            }
+
+            is TypingItemState -> MessageListTypingIndicatorItemContent(messageListItemState)
+            is EmptyThreadPlaceholderItemState -> MessageListEmptyThreadPlaceholderItemContent(messageListItemState)
+            is UnreadSeparatorItemState -> MessageListUnreadSeparatorItemContent(messageListItemState)
+            is StartOfTheChannelItemState -> MessageListStartOfTheChannelItemContent(messageListItemState)
+        }
     }
 }
 
