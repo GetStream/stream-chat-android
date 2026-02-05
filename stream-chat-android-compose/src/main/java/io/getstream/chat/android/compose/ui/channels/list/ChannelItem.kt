@@ -48,7 +48,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
-import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.compose.R
