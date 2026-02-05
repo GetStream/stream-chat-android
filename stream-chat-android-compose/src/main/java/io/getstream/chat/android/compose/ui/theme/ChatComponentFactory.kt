@@ -120,7 +120,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInputOpti
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
@@ -1226,7 +1226,7 @@ public interface ChatComponentFactory {
         currentUser: User?,
         onGiphyActionClick: (GiphyAction) -> Unit,
     ) {
-        DefaultMessageGiphyContent(
+        GiphyMessageContent(
             message = message,
             currentUser = currentUser,
             onGiphyActionClick = onGiphyActionClick,
@@ -2894,11 +2894,10 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the content of a file attachment.
+     * Factory method for creating the content of file attachments in a message.
      *
      * @param modifier Modifier for styling the composable.
-     * @param attachmentState The state of the attachment, containing information about the file.
-     * [AttachmentPreviewHandler] and the clicked [Attachment].
+     * @param attachmentState The state of the attachment.
      */
     @Composable
     public fun FileAttachmentContent(
@@ -2913,6 +2912,29 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of Giphy attachments in a message.
+     *
+     * @param state The state of the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun GiphyAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the content of media attachments in a message.
+     *
+     * @param state The state of the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun MediaAttachmentContent(
         state: AttachmentState,

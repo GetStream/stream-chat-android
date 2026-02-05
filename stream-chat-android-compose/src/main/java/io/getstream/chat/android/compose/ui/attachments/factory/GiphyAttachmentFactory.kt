@@ -18,10 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 
 import android.content.Context
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
@@ -62,18 +59,7 @@ public class GiphyAttachmentFactory(
 ) : AttachmentFactory(
     type = Type.BuiltIn.GIPHY,
     canHandle = canHandle,
-    content = @Composable { modifier, state ->
-        GiphyAttachmentContent(
-            modifier = modifier
-                .wrapContentSize()
-                .testTag("Stream_GiphyContent"),
-            state = state,
-            giphyInfoType = giphyInfoType,
-            giphySizingMode = giphySizingMode,
-            contentScale = contentScale,
-            onItemClick = onItemClick,
-        )
-    },
+    content = { _, _ -> },
 ) {
     /**
      * Creates a new instance of [GiphyAttachmentFactory] with the default parameters.
