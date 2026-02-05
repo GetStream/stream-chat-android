@@ -1191,7 +1191,6 @@ public interface ChatComponentFactory {
     public fun RowScope.MessageSpacer(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageSpacer(messageItem = messageItem)
     }
 
     /**
