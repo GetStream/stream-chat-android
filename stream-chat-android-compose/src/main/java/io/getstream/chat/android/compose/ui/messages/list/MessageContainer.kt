@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
@@ -210,16 +211,19 @@ public fun MessageContainer(
                     .testTag("Stream_MessageCell"),
             ) {
                 with(ChatTheme.componentFactory) {
-                    MessageAuthor(
-                        messageItem = messageItem,
-                        onUserAvatarClick = onUserAvatarClick,
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f, fill = false),
-                    horizontalAlignment = messageAlignment.contentAlignment,
-                ) {
-                    with(ChatTheme.componentFactory) {
+                    when (messageAlignment) {
+                        MessageAlignment.Start -> MessageAuthor(
+                            messageItem = messageItem,
+                            onUserAvatarClick = onUserAvatarClick,
+                        )
+
+                        MessageAlignment.End -> MessageSpacer(messageItem)
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f, fill = false),
+                        horizontalAlignment = messageAlignment.contentAlignment,
+                    ) {
                         MessageTop(
                             messageItem = messageItem,
                             reactionSorting = reactionSorting,
@@ -243,11 +247,14 @@ public fun MessageContainer(
                         )
                         MessageBottom(messageItem = messageItem)
                     }
-                }
-                with(ChatTheme.componentFactory) {
-                    MessageSpacer(
-                        messageItem = messageItem,
-                    )
+
+                    when (messageAlignment) {
+                        MessageAlignment.Start -> MessageSpacer(messageItem)
+                        MessageAlignment.End -> MessageAuthor(
+                            messageItem = messageItem,
+                            onUserAvatarClick = onUserAvatarClick,
+                        )
+                    }
                 }
             }
         }
@@ -272,12 +279,12 @@ internal fun RowScope.DefaultMessageAuthor(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    @Suppress("ComplexCondition")
-    if (!messageItem.isMine && (
-            messageItem.showMessageFooter ||
-                messageItem.groupPosition == MessagePosition.BOTTOM ||
-                messageItem.groupPosition == MessagePosition.NONE
-            )
+    if (messageItem.isMine) {
+        // By default, the avatar is not show in outgoing messages
+        Spacer(modifier = Modifier.width(8.dp))
+    } else if (messageItem.showMessageFooter ||
+        messageItem.groupPosition == MessagePosition.BOTTOM ||
+        messageItem.groupPosition == MessagePosition.NONE
     ) {
         ChatTheme.componentFactory.UserAvatar(
             modifier = modifier
@@ -409,22 +416,6 @@ internal fun ColumnScope.DefaultMessageBottom(
     val spacerSize = if (position == MessagePosition.NONE || position == MessagePosition.BOTTOM) 4.dp else 2.dp
 
     Spacer(Modifier.size(spacerSize))
-}
-
-/**
- * Represents the default content shown at the end of the message list item.
- *
- * By default, we show an extra spacing at the end of the message list item.
- *
- * @param messageItem The message item to show the content for.
- */
-@Composable
-internal fun DefaultMessageSpacer(
-    messageItem: MessageItemState,
-) {
-    if (messageItem.isMine) {
-        Spacer(modifier = Modifier.width(8.dp))
-    }
 }
 
 /**
@@ -582,7 +573,8 @@ public fun RegularMessageContent(
     val message = messageItem.message
     val ownsMessage = messageItem.isMine
 
-    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
+    val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, messageAlignment)
     val messageBubbleColor = MessageStyling.backgroundColor(ownsMessage)
 
     val content = @Composable {
