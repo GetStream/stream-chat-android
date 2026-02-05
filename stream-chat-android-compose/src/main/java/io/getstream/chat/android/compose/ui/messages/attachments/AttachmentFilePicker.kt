@@ -67,6 +67,7 @@ import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
+@Suppress("LongMethod")
 @Composable
 internal fun AttachmentFilePicker(
     pickerMode: FilePickerMode,
@@ -77,9 +78,10 @@ internal fun AttachmentFilePicker(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-        factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
-    )
+    val processingViewModelFactory = remember(context) {
+        AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+    }
+    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(factory = processingViewModelFactory)
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->

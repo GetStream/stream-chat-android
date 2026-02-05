@@ -63,9 +63,10 @@ internal fun AttachmentMediaPicker(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-        factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
-    )
+    val processingViewModelFactory = remember(context) {
+        AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+    }
+    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(factory = processingViewModelFactory)
     val permissions = Permissions.visualMediaPermissions()
     val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
         if (value != VisualMediaAccess.DENIED) {
