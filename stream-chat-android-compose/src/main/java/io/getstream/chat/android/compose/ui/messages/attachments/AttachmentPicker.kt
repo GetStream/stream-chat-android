@@ -53,6 +53,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  *
  * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that manages picker state,
  * including the current mode, available attachments, and selection state.
+ * @param modifier The modifier to be applied to the picker container.
  * @param messageMode The current message mode ([MessageMode.Normal] or [MessageMode.MessageThread]).
  * Used to determine if poll creation is available (not available in threads).
  * @param onAttachmentItemSelected Called when a user taps an attachment item to select/deselect it.
@@ -67,6 +68,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 @Composable
 public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
+    modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = { item ->
         val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
@@ -96,7 +98,7 @@ public fun AttachmentPicker(
     BackHandler(onBack = dismissAction)
 
     Surface(
-        modifier = Modifier.testTag("Stream_AttachmentsPicker"),
+        modifier = modifier.testTag("Stream_AttachmentsPicker"),
         color = ChatTheme.colors.barsBackground,
     ) {
         if (ChatTheme.attachmentPickerConfig.useSystemPicker) {

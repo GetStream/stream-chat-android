@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
@@ -107,41 +106,40 @@ public fun AttachmentPickerMenu(
         enter = expandVertically(expandFrom = Alignment.Top),
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
-        Box(modifier = Modifier.height(menuHeight)) {
-            ChatTheme.componentFactory.AttachmentPicker(
-                attachmentsPickerViewModel = attachmentsPickerViewModel,
-                messageMode = messageMode,
-                onAttachmentItemSelected = { attachmentItem ->
-                    val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
-                        is FilePickerMode -> mode.allowMultipleSelection
-                        is GalleryPickerMode -> mode.allowMultipleSelection
-                        else -> true
+        ChatTheme.componentFactory.AttachmentPicker(
+            modifier = Modifier.height(menuHeight),
+            attachmentsPickerViewModel = attachmentsPickerViewModel,
+            messageMode = messageMode,
+            onAttachmentItemSelected = { attachmentItem ->
+                val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
+                    is FilePickerMode -> mode.allowMultipleSelection
+                    is GalleryPickerMode -> mode.allowMultipleSelection
+                    else -> true
+                }
+                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
+                attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
+                    composerViewModel.updateSelectedAttachments(attachments)
+                }
+            },
+            onAttachmentsSelected = { attachments ->
+                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                composerViewModel.addSelectedAttachments(attachments)
+            },
+            onAttachmentPickerAction = { action ->
+                when (action) {
+                    is AttachmentPickerPollCreation -> {
+                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                        composerViewModel.createPoll(action.pollConfig)
                     }
-                    attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
-                    attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                        composerViewModel.updateSelectedAttachments(attachments)
-                    }
-                },
-                onAttachmentsSelected = { attachments ->
-                    attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                    composerViewModel.addSelectedAttachments(attachments)
-                },
-                onAttachmentPickerAction = { action ->
-                    when (action) {
-                        is AttachmentPickerPollCreation -> {
-                            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                            composerViewModel.createPoll(action.pollConfig)
-                        }
 
-                        is AttachmentPickerCommandSelect -> {
-                            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                            composerViewModel.selectCommand(action.command)
-                        }
+                    is AttachmentPickerCommandSelect -> {
+                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                        composerViewModel.selectCommand(action.command)
                     }
-                    isShowingDialog = action is AttachmentPickerCreatePollClick
-                },
-                onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
-            )
-        }
+                }
+                isShowingDialog = action is AttachmentPickerCreatePollClick
+            },
+            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+        )
     }
 }

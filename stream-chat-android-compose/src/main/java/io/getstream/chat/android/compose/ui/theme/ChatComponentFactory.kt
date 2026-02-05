@@ -3592,6 +3592,7 @@ public interface ChatComponentFactory {
      * Override this to customize the overall picker layout. The picker automatically switches
      * between system picker and in-app picker based on [ChatTheme.attachmentPickerConfig].
      *
+     * @param modifier Modifier for styling.
      * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
      * @param messageMode Current message mode; affects poll availability (disabled in threads).
      * @param onAttachmentItemSelected Called when user taps an item to select/deselect it.
@@ -3601,6 +3602,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun AttachmentPicker(
+        modifier: Modifier,
         attachmentsPickerViewModel: AttachmentsPickerViewModel,
         messageMode: MessageMode,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -3609,6 +3611,7 @@ public interface ChatComponentFactory {
         onDismiss: () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker(
+            modifier = modifier,
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
             onAttachmentItemSelected = onAttachmentItemSelected,
