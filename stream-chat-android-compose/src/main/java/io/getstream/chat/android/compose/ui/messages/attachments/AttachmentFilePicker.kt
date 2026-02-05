@@ -52,15 +52,15 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.PermanentlyDeniedPermissionSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
@@ -79,9 +79,9 @@ internal fun AttachmentFilePicker(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val processingViewModelFactory = remember(context) {
-        AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
     }
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(factory = processingViewModelFactory)
+    val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->

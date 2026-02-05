@@ -41,13 +41,13 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.PermanentlyDeniedPermissionSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
@@ -64,9 +64,9 @@ internal fun AttachmentMediaPicker(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val processingViewModelFactory = remember(context) {
-        AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
     }
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(factory = processingViewModelFactory)
+    val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     val permissions = Permissions.visualMediaPermissions()
     val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
         if (value != VisualMediaAccess.DENIED) {

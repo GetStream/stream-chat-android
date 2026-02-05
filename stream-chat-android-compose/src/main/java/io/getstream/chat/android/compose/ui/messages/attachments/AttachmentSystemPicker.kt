@@ -55,14 +55,14 @@ import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMo
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -86,8 +86,8 @@ internal fun AttachmentSystemPicker(
     val context = LocalContext.current
     val pickerModes = ChatTheme.attachmentPickerConfig.modes
 
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-        factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
+    val processingViewModel = viewModel<AttachmentProcessingViewModel>(
+        factory = AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
     )
 
     val filePickerMode = remember(pickerModes) {
