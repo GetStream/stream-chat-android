@@ -56,7 +56,7 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 @Composable
 internal fun AttachmentMediaPicker(
-    @Suppress("UNUSED_PARAMETER") pickerMode: GalleryPickerMode, // Will be utilized in upcoming releases.
+    pickerMode: GalleryPickerMode,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
@@ -92,6 +92,7 @@ internal fun AttachmentMediaPicker(
             attachments = attachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
             onGrantPermissionClick = { permissionLauncher.launch(permissions) },
+            allowMultipleSelection = pickerMode.allowMultipleSelection,
         )
         // Access permanently denied snackbar
         PermanentlyDeniedPermissionSnackBar(
@@ -120,6 +121,7 @@ private fun VisualMediaAccessContent(
     attachments: List<AttachmentPickerItemState>,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     onGrantPermissionClick: () -> Unit,
+    allowMultipleSelection: Boolean,
 ) {
     when (visualMediaAccess) {
         VisualMediaAccess.FULL -> {
@@ -127,6 +129,7 @@ private fun VisualMediaAccessContent(
                 modifier = Modifier.padding(2.dp),
                 images = attachments,
                 onImageSelected = onAttachmentItemSelected,
+                allowMultipleSelection = allowMultipleSelection,
                 showAddMore = false,
             )
         }
@@ -136,6 +139,7 @@ private fun VisualMediaAccessContent(
                 modifier = Modifier.padding(2.dp),
                 images = attachments,
                 onImageSelected = onAttachmentItemSelected,
+                allowMultipleSelection = allowMultipleSelection,
                 showAddMore = true,
                 onAddMoreClick = onGrantPermissionClick,
             )
@@ -151,17 +155,17 @@ private fun VisualMediaAccessContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun AttachmentMediaPickerPreview() {
+private fun AttachmentMediaPickerSingleSelectionPreview() {
     ChatPreviewTheme {
-        AttachmentMediaPicker()
+        AttachmentMediaPickerSingleSelection()
     }
 }
 
 @Suppress("MagicNumber")
 @Composable
-internal fun AttachmentMediaPicker() {
+internal fun AttachmentMediaPickerSingleSelection() {
     AttachmentMediaPicker(
-        pickerMode = GalleryPickerMode(),
+        pickerMode = GalleryPickerMode(allowMultipleSelection = false),
         attachments = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
@@ -169,6 +173,37 @@ internal fun AttachmentMediaPicker() {
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
                 selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
+                    videoLength = 1_000
+                },
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentMediaPickerMultipleSelectionPreview() {
+    ChatPreviewTheme {
+        AttachmentMediaPickerMultipleSelection()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentMediaPickerMultipleSelection() {
+    AttachmentMediaPicker(
+        pickerMode = GalleryPickerMode(),
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(position = 2),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
