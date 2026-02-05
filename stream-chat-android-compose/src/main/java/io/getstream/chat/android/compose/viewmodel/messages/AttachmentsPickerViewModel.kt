@@ -153,35 +153,55 @@ public class AttachmentsPickerViewModel(
      * Triggered when an [AttachmentMetaData] is selected in the list.
      *
      * @param attachmentItem The selected item.
+     * @param allowMultipleSelection When `true`, multiple items can be selected. When `false`,
+     * only one item can be selected at a time. Defaults to `true`.
      */
-    public fun changeSelectedAttachments(attachmentItem: AttachmentPickerItemState) {
+    public fun changeSelectedAttachments(
+        attachmentItem: AttachmentPickerItemState,
+        allowMultipleSelection: Boolean = true,
+    ) {
         val itemIndex = attachments.indexOf(attachmentItem)
         if (itemIndex == -1) return
 
-        val currentItem = attachments[itemIndex]
-        val updatedAttachments = if (currentItem.selection is Selection.Selected) {
-            val removedPosition = currentItem.selection.position
-            attachments.mapIndexed { index, item ->
-                when {
-                    index == itemIndex -> item.copy(selection = Selection.Unselected)
-                    item.selection is Selection.Selected && item.selection.position > removedPosition ->
-                        item.copy(selection = Selection.Selected(position = item.selection.position - 1))
+        val isCurrentlySelected = attachments[itemIndex].isSelected
 
-                    else -> item
-                }
+        // Single-select: clicking already selected item is a no-op
+        if (!allowMultipleSelection && isCurrentlySelected) return
+
+        attachments = if (isCurrentlySelected) {
+            deselectAttachment(itemIndex)
+        } else {
+            selectAttachment(itemIndex, allowMultipleSelection)
+        }
+    }
+
+    private fun deselectAttachment(itemIndex: Int): List<AttachmentPickerItemState> {
+        val removedPosition = (attachments[itemIndex].selection as Selection.Selected).position
+        return attachments.mapIndexed { index, item ->
+            when {
+                index == itemIndex -> item.copy(selection = Selection.Unselected)
+                item.selection is Selection.Selected && item.selection.position > removedPosition ->
+                    item.copy(selection = Selection.Selected(position = item.selection.position - 1))
+                else -> item
+            }
+        }
+    }
+
+    private fun selectAttachment(itemIndex: Int, allowMultipleSelection: Boolean): List<AttachmentPickerItemState> {
+        return if (allowMultipleSelection) {
+            val nextPosition = attachments.count(AttachmentPickerItemState::isSelected) + 1
+            attachments.mapIndexed { index, item ->
+                if (index == itemIndex) item.copy(selection = Selection.Selected(position = nextPosition)) else item
             }
         } else {
-            val nextSelectionCount = attachments.count(AttachmentPickerItemState::isSelected) + 1
             attachments.mapIndexed { index, item ->
                 if (index == itemIndex) {
-                    item.copy(selection = Selection.Selected(position = nextSelectionCount))
+                    item.copy(selection = Selection.Selected(position = 1))
                 } else {
-                    item
+                    item.copy(selection = Selection.Unselected)
                 }
             }
         }
-
-        attachments = updatedAttachments
     }
 
     /**

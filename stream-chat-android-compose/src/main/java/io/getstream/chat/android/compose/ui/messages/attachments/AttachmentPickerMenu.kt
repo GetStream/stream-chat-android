@@ -34,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
@@ -67,6 +69,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @param composerViewModel The [MessageComposerViewModel] that receives selected attachments
  * and handles poll creation and command insertion.
  */
+@Suppress("LongMethod")
 @Composable
 public fun AttachmentPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
@@ -109,7 +112,12 @@ public fun AttachmentPickerMenu(
                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                 messageMode = messageMode,
                 onAttachmentItemSelected = { attachmentItem ->
-                    attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem)
+                    val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
+                        is FilePickerMode -> mode.allowMultipleSelection
+                        is GalleryPickerMode -> mode.allowMultipleSelection
+                        else -> true
+                    }
+                    attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
                     attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
                         composerViewModel.updateSelectedAttachments(attachments)
                     }

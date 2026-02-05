@@ -33,10 +33,19 @@ internal class AttachmentFilePickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun default() {
+    fun `single selection`() {
         snapshotWithDarkMode {
             ViewModelStore {
-                AttachmentFilePicker()
+                AttachmentFilePickerSingleSelection()
+            }
+        }
+    }
+
+    @Test
+    fun `multiple selection`() {
+        snapshotWithDarkMode {
+            ViewModelStore {
+                AttachmentFilePickerMultipleSelection()
             }
         }
     }

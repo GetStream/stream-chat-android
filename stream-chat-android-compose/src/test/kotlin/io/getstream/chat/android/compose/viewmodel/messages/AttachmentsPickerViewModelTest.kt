@@ -313,6 +313,37 @@ internal class AttachmentsPickerViewModelTest {
         assertEquals(Selection.Selected(position = 1), lastItem.selection)
     }
 
+    @Test
+    fun `Given single selection mode When selecting another item Should replace selection`() {
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentState(true)
+        viewModel.attachments = listOf(
+            AttachmentPickerItemState(imageAttachment1),
+            AttachmentPickerItemState(imageAttachment2),
+        )
+
+        viewModel.changeSelectedAttachments(viewModel.attachments.first(), allowMultipleSelection = false)
+        viewModel.changeSelectedAttachments(viewModel.attachments.last(), allowMultipleSelection = false)
+
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
+        assertEquals(Selection.Selected(position = 1), viewModel.attachments.last().selection)
+    }
+
+    @Test
+    fun `Given single selection mode When clicking selected item Should keep it selected`() {
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        viewModel.changeAttachmentState(true)
+        viewModel.attachments = listOf(AttachmentPickerItemState(imageAttachment1))
+
+        viewModel.changeSelectedAttachments(viewModel.attachments.first(), allowMultipleSelection = false)
+        viewModel.changeSelectedAttachments(viewModel.attachments.first(), allowMultipleSelection = false)
+
+        assertTrue(viewModel.attachments.first().isSelected)
+    }
+
     private fun mockChannelState(): ChannelState {
         val channel = randomChannel()
         return mock {

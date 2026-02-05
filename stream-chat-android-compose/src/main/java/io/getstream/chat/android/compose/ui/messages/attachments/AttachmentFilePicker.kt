@@ -70,7 +70,7 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 @Suppress("LongMethod")
 @Composable
 internal fun AttachmentFilePicker(
-    @Suppress("UNUSED_PARAMETER") pickerMode: FilePickerMode, // Will be utilized in upcoming releases.
+    pickerMode: FilePickerMode,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
@@ -110,6 +110,7 @@ internal fun AttachmentFilePicker(
                 FilesPicker(
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
+                    allowMultipleSelection = pickerMode.allowMultipleSelection,
                     onBrowseFilesResult = { uris ->
                         processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
                             showErrorIfNeeded(context, metadata)
@@ -259,17 +260,19 @@ private fun RequestAdditionalAccessButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun AttachmentFilePickerPreview() {
+private fun AttachmentFilePickerSingleSelectionPreview() {
     ChatPreviewTheme {
-        AttachmentFilePicker()
+        AttachmentFilePickerSingleSelection()
     }
 }
 
 @Suppress("MagicNumber")
 @Composable
-internal fun AttachmentFilePicker() {
+internal fun AttachmentFilePickerSingleSelection() {
     AttachmentFilePicker(
-        pickerMode = FilePickerMode(),
+        pickerMode = FilePickerMode(
+            allowMultipleSelection = false,
+        ),
         attachments = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
@@ -281,6 +284,41 @@ internal fun AttachmentFilePicker() {
                     size = 100_000
                 },
                 selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
+                    size = 1_000_000
+                },
+            ),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentFilePickerMultipleSelectionPreview() {
+    ChatPreviewTheme {
+        AttachmentFilePickerMultipleSelection()
+    }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AttachmentFilePickerMultipleSelection() {
+    AttachmentFilePicker(
+        pickerMode = FilePickerMode(),
+        attachments = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
+                    size = 10_000
+                },
+                selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
+                    size = 100_000
+                },
+                selection = Selection.Selected(position = 2),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {

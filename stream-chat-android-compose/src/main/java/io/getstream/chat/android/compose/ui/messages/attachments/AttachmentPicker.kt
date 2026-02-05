@@ -24,6 +24,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -66,8 +68,14 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     messageMode: MessageMode = MessageMode.Normal,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit =
-        attachmentsPickerViewModel::changeSelectedAttachments,
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = { item ->
+        val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
+            is FilePickerMode -> mode.allowMultipleSelection
+            is GalleryPickerMode -> mode.allowMultipleSelection
+            else -> true
+        }
+        attachmentsPickerViewModel.changeSelectedAttachments(item, allowMultipleSelection)
+    },
     onAttachmentsSelected: (List<Attachment>) -> Unit = {
         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
     },

@@ -53,7 +53,7 @@ internal class FileAttachmentFragment : Fragment() {
     private val storageHelper: StorageHelper = StorageHelper()
     private val permissionChecker: PermissionChecker = PermissionChecker()
     private val attachmentFilter: AttachmentFilter = AttachmentFilter()
-    private var activityResultLauncher: ActivityResultLauncher<Unit>? = null
+    private var activityResultLauncher: ActivityResultLauncher<Boolean>? = null
 
     /**
      * Style for the attachment picker dialog.
@@ -145,7 +145,7 @@ internal class FileAttachmentFragment : Fragment() {
             recentFilesTextView.text = style.recentFilesText
             recentFilesTextView.setTextStyle(style.recentFilesTextStyle)
             fileManagerImageView.setOnClickListener {
-                activityResultLauncher?.launch(Unit)
+                activityResultLauncher?.launch(true)
             }
             // Audio access label
             audioAccessTextView.text = style.allowAccessToAudioText

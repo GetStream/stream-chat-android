@@ -1487,9 +1487,11 @@ public final class io/getstream/chat/android/compose/ui/components/attachments/f
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/attachments/files/ComposableSingletons$FilesPickerKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/attachments/files/FilesPickerItemImageKt {
@@ -1497,7 +1499,7 @@ public final class io/getstream/chat/android/compose/ui/components/attachments/f
 }
 
 public final class io/getstream/chat/android/compose/ui/components/attachments/files/FilesPickerKt {
-	public static final fun FilesPicker (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun FilesPicker (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/attachments/images/ComposableSingletons$ImagesPickerKt {
@@ -2237,8 +2239,10 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/Com
 public final class io/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentFilePickerKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentFilePickerKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/ComposableSingletons$AttachmentMediaPickerKt {
@@ -4974,7 +4978,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public fun <init> (Lio/getstream/chat/android/compose/ui/util/StorageHelperWrapper;Lkotlinx/coroutines/flow/StateFlow;)V
 	public final fun changeAttachmentState (Z)V
 	public final fun changePickerMode (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode;)V
-	public final fun changeSelectedAttachments (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState;)V
+	public final fun changeSelectedAttachments (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState;Z)V
+	public static synthetic fun changeSelectedAttachments$default (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerItemState;ZILjava/lang/Object;)V
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getAttachmentsFromMetaData (Ljava/util/List;)Ljava/util/List;
 	public final fun getAttachmentsFromUris (Ljava/util/List;)Ljava/util/List;
