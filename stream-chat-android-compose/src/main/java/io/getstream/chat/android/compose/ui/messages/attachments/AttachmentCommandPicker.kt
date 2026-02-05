@@ -32,7 +32,7 @@ import io.getstream.chat.android.previewdata.PreviewCommandData
 
 @Composable
 internal fun AttachmentCommandPicker(
-    pickerMode: CommandPickerMode,
+    @Suppress("UNUSED_PARAMETER") pickerMode: CommandPickerMode, // Will be utilized in upcoming releases.
     commands: List<Command>,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
 ) {

@@ -56,7 +56,7 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 
 @Composable
 internal fun AttachmentMediaPicker(
-    pickerMode: GalleryPickerMode,
+    @Suppress("UNUSED_PARAMETER") pickerMode: GalleryPickerMode, // Will be utilized in upcoming releases.
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},

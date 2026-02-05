@@ -70,7 +70,7 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 @Suppress("LongMethod")
 @Composable
 internal fun AttachmentFilePicker(
-    pickerMode: FilePickerMode,
+    @Suppress("UNUSED_PARAMETER") pickerMode: FilePickerMode, // Will be utilized in upcoming releases.
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
