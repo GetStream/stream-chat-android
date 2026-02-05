@@ -86,8 +86,11 @@ internal fun AttachmentSystemPicker(
     val context = LocalContext.current
     val pickerModes = ChatTheme.attachmentPickerConfig.modes
 
+    val processingViewModelFactory = remember(context) {
+        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+    }
     val processingViewModel = viewModel<AttachmentProcessingViewModel>(
-        factory = AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
+        factory = processingViewModelFactory,
     )
 
     val filePickerMode = remember(pickerModes) {
