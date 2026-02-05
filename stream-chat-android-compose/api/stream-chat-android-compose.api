@@ -375,13 +375,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun isFullContent ()Z
-}
-
 public final class io/getstream/chat/android/compose/state/messages/attachments/CameraPickerMode : io/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode {
 	public static final field $stable I
 	public fun <init> ()V
@@ -413,28 +406,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/attachments/Commands : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Commands;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/util/Map;
-	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getExtraProperties ()Ljava/util/Map;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/state/messages/attachments/FilePickerMode : io/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode {
 	public static final field $stable I
 	public fun <init> ()V
@@ -445,14 +416,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/attachments/FilePickerMode;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/attachments/FilePickerMode;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowMultipleSelection ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/attachments/Files : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Files;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -473,22 +436,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/attachments/Images : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Images;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/attachments/MediaCapture : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/state/messages/attachments/MediaType : java/lang/Enum {
 	public static final field ImagesAndVideos Lio/getstream/chat/android/compose/state/messages/attachments/MediaType;
 	public static final field ImagesOnly Lio/getstream/chat/android/compose/state/messages/attachments/MediaType;
@@ -496,14 +443,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/messages/attachments/MediaType;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/messages/attachments/MediaType;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/attachments/Poll : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Poll;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/PollPickerMode : io/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode {
@@ -516,14 +455,6 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/attachments/PollPickerMode;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/attachments/PollPickerMode;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAutoShowCreateDialog ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/state/messages/attachments/System : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/System;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2363,15 +2294,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/Com
 	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode : java/lang/Enum {
-	public static final field PHOTO Lio/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode;
-	public static final field PHOTO_AND_VIDEO Lio/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode;
-	public static final field VIDEO Lio/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode;
-	public static fun values ()[Lio/getstream/chat/android/compose/ui/messages/attachments/PickerMediaMode;
-}
-
 public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerAction {
 }
 
@@ -2413,10 +2335,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public final fun getPollConfig ()Lio/getstream/chat/android/models/PollConfig;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/messages/attachments/media/CaptureMediaLauncherKt {
-	public static final fun rememberCaptureMediaLauncher (ZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Landroidx/activity/compose/ManagedActivityResultLauncher;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/permission/ComposableSingletons$RequiredPermissionKt {

@@ -162,15 +162,6 @@ private fun rememberCaptureMediaLauncher(
     file?.let(onResult)
 }
 
-/**
- * Define which media type will be allowed.
- */
-public enum class PickerMediaMode {
-    PHOTO,
-    VIDEO,
-    PHOTO_AND_VIDEO,
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun AttachmentCameraPickerPreview() {
