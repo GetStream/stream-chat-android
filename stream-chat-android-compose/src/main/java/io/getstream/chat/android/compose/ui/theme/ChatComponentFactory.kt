@@ -120,7 +120,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInputOpti
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
@@ -1226,7 +1226,7 @@ public interface ChatComponentFactory {
         currentUser: User?,
         onGiphyActionClick: (GiphyAction) -> Unit,
     ) {
-        DefaultMessageGiphyContent(
+        GiphyMessageContent(
             message = message,
             currentUser = currentUser,
             onGiphyActionClick = onGiphyActionClick,

@@ -107,25 +107,6 @@ public fun MessageContent(
 }
 
 /**
- * Represents the default ephemeral Giphy message content.
- *
- * @param message The message to show.
- * @param onGiphyActionClick Handler for Giphy actions.
- */
-@Composable
-internal fun DefaultMessageGiphyContent(
-    message: Message,
-    currentUser: User?,
-    onGiphyActionClick: (GiphyAction) -> Unit,
-) {
-    GiphyMessageContent(
-        message = message,
-        currentUser = currentUser,
-        onGiphyActionClick = onGiphyActionClick,
-    )
-}
-
-/**
  * Represents the default deleted message content.
  *
  * @param modifier Modifier for styling.
