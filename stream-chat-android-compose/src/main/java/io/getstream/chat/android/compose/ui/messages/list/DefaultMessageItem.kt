@@ -85,7 +85,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * or [MessageListController.showDateSeparatorInEmptyThread].
  */
 @Composable
-public fun LazyItemScope.MessageContainer(
+public fun LazyItemScope.MessageItem(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit = {},
@@ -366,7 +366,7 @@ internal fun DefaultMessageContainer(
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
 ) {
-    MessageItem(
+    MessageContainer(
         messageItem = messageItem,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
