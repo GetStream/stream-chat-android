@@ -30,18 +30,19 @@ public object PreviewPollData {
 
     public val option1: Option = Option(
         id = UUID.randomUUID().toString(),
-        text = "option1",
+        text = "Option 1",
     )
 
     public val option2: Option = Option(
         id = UUID.randomUUID().toString(),
-        text = "option2",
+        text = "Option 2",
     )
 
     public val option3: Option = Option(
         id = UUID.randomUUID().toString(),
-        text = "option3",
+        text = "Option 3",
     )
+    // TODO [G.] revert file
 
     public val poll1: Poll = Poll(
         id = UUID.randomUUID().toString(),

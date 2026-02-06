@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.messages.pollVoteCountText
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
@@ -202,7 +203,7 @@ private fun PollViewResultItem(
             }
 
             Text(
-                text = stringResource(id = R.string.stream_compose_poll_vote_counts, item.voteCount),
+                text = pollVoteCountText(item.voteCount),
                 color = ChatTheme.colors.textHighEmphasis,
                 fontSize = 16.sp,
             )

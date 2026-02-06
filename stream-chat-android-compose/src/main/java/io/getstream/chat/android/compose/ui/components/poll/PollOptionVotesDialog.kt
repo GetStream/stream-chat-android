@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -56,6 +55,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.messages.pollVoteCountText
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
@@ -183,7 +183,7 @@ private fun Content(
                             )
                         }
                         Text(
-                            text = stringResource(id = R.string.stream_compose_poll_vote_counts, state.voteCount),
+                            text = pollVoteCountText(state.voteCount),
                             color = ChatTheme.colors.textHighEmphasis,
                             fontSize = 16.sp,
                         )

@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.state.messages.MessageLayoutDirection
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyle
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults.secondaryOutline
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -108,6 +110,31 @@ internal object MessageStyling {
         }
     }
 
+    @Composable
+    fun pollStyle(outgoing: Boolean): PollStyle {
+        val colors = ChatTheme.colors
+
+        return if (outgoing) {
+            val outlineColor = colors.chatBorderOnChatOutgoing
+            PollStyle(
+                textColor = colors.chatTextOutgoing,
+                outlineColor = outlineColor,
+                progressColor = colors.chatPollProgressFillOutgoing,
+                trackColor = colors.chatPollProgressTrackOutgoing,
+                buttonStyle = secondaryOutline.copy(borderColor = outlineColor),
+            )
+        } else {
+            val outlineColor = colors.chatBorderOnChatIncoming
+            PollStyle(
+                textColor = colors.chatTextOutgoing,
+                outlineColor = outlineColor,
+                progressColor = colors.chatPollProgressFillIncoming,
+                trackColor = colors.chatPollProgressTrackIncoming,
+                buttonStyle = secondaryOutline.copy(borderColor = outlineColor),
+            )
+        }
+    }
+
     val contentPadding = StreamTokens.spacingXs
     val sectionsDistance = StreamTokens.spacingXs
     val messageSectionPadding = PaddingValues(
@@ -142,11 +169,11 @@ internal object MessageStyling {
         return when (position) {
             MessagePosition.TOP,
             MessagePosition.MIDDLE,
-            -> roundBubble
+                -> roundBubble
 
             MessagePosition.BOTTOM,
             MessagePosition.NONE,
-            -> when (layoutDirection) {
+                -> when (layoutDirection) {
                 MessageLayoutDirection.EndToStart -> rightPointingBubble
                 MessageLayoutDirection.StartToEnd -> leftPointingBubble
             }
@@ -157,5 +184,13 @@ internal object MessageStyling {
         val backgroundColor: Color,
         val indicatorColor: Color,
         val textColor: Color,
+    )
+
+    data class PollStyle(
+        val textColor: Color,
+        val outlineColor: Color,
+        val progressColor: Color,
+        val trackColor: Color,
+        val buttonStyle: StreamButtonStyle,
     )
 }
