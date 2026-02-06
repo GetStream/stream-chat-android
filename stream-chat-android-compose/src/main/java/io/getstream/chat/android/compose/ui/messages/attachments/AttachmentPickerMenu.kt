@@ -33,8 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
@@ -111,11 +109,7 @@ public fun AttachmentPickerMenu(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
             onAttachmentItemSelected = { attachmentItem ->
-                val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
-                    is FilePickerMode -> mode.allowMultipleSelection
-                    is GalleryPickerMode -> mode.allowMultipleSelection
-                    else -> true
-                }
+                val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
                 attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
                 attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
                     composerViewModel.updateSelectedAttachments(attachments)

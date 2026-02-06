@@ -24,8 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -70,13 +73,9 @@ public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = { item ->
-        val allowMultipleSelection = when (val mode = attachmentsPickerViewModel.pickerMode) {
-            is FilePickerMode -> mode.allowMultipleSelection
-            is GalleryPickerMode -> mode.allowMultipleSelection
-            else -> true
-        }
-        attachmentsPickerViewModel.changeSelectedAttachments(item, allowMultipleSelection)
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = { attachmentItem ->
+        val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
+        attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
     },
     onAttachmentsSelected: (List<Attachment>) -> Unit = {
         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
@@ -144,3 +143,17 @@ public fun AttachmentPicker(
         }
     }
 }
+
+/**
+ * A helper property to check if the current [AttachmentPickerMode] supports multiple selections.
+ *
+ * This will return:
+ * - `true` or `false` for [FilePickerMode] and [GalleryPickerMode], based on their `allowMultipleSelection` property.
+ * - `null` for other modes like [CameraPickerMode] or [PollPickerMode] that do not support this concept.
+ */
+internal val AttachmentPickerMode.allowMultipleSelection: Boolean?
+    get() = when (this) {
+        is FilePickerMode -> allowMultipleSelection
+        is GalleryPickerMode -> allowMultipleSelection
+        else -> null
+    }
