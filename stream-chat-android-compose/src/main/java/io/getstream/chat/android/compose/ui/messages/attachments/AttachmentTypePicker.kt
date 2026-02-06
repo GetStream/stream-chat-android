@@ -87,7 +87,7 @@ internal fun AttachmentTypePicker(
         trailingContent()
     }
     LaunchedEffect(modes) {
-        onModeSelected(modes.first())
+        modes.firstOrNull()?.let(onModeSelected)
     }
 }
 
