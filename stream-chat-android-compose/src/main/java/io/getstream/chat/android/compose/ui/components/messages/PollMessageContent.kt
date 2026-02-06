@@ -27,8 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -208,38 +206,30 @@ private fun PollMessageContent(
         )
     }
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .padding(
                 horizontal = 10.dp,
                 vertical = 12.dp,
             )
             .heightIn(max = heightMax.dp),
-        userScrollEnabled = false,
     ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 4.dp),
-                text = poll.name,
-                color = ChatTheme.colors.textHighEmphasis,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-            )
-        }
+        Text(
+            modifier = Modifier.padding(bottom = 4.dp),
+            text = poll.name,
+            color = ChatTheme.colors.textHighEmphasis,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+        )
 
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.getSubtitle(context),
-                color = ChatTheme.colors.textLowEmphasis,
-                fontSize = 12.sp,
-            )
-        }
+        Text(
+            modifier = Modifier.padding(bottom = 8.dp),
+            text = poll.getSubtitle(context),
+            color = ChatTheme.colors.textLowEmphasis,
+            fontSize = 12.sp,
+        )
 
-        items(
-            items = poll.options.take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS),
-            key = Option::id,
-        ) { option ->
+        poll.options.take(PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS).forEach { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
 
             PollOptionItem(
@@ -258,60 +248,49 @@ private fun PollMessageContent(
             )
         }
 
-        if (poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
-                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
-                )
-            }
+        if (poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS) {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
+                onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
+            )
         }
 
         if (poll.allowUserSuggestedOptions && !isClosed) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_suggest_option),
-                    onButtonClicked = { showDialog.value = true },
-                )
-            }
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_compose_poll_suggest_option),
+                onButtonClicked = { showDialog.value = true },
+            )
         }
 
         if (poll.allowAnswers) {
             if (poll.answers.isNotEmpty()) {
-                item {
-                    PollOptionButton(
-                        text = pluralStringResource(
-                            R.plurals.stream_ui_poll_action_view_comments,
-                            poll.answers.size,
-                            poll.answers.size,
-                        ),
-                        onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
-                    )
-                }
-            } else if (!poll.closed) {
-                item {
-                    PollOptionButton(
-                        text = stringResource(R.string.stream_compose_add_answer),
-                        onButtonClicked = { showAddAnswerDialog.value = true },
-                    )
-                }
-            }
-        }
-
-        item {
-            PollOptionButton(
-                text = stringResource(id = R.string.stream_compose_poll_view_result),
-                onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewResult) },
-            )
-        }
-
-        if (isMine && !isClosed) {
-            item {
                 PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_end_vote),
-                    onButtonClicked = { onClosePoll.invoke(poll.id) },
+                    text = pluralStringResource(
+                        R.plurals.stream_ui_poll_action_view_comments,
+                        poll.answers.size,
+                        poll.answers.size,
+                    ),
+                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
+                )
+            } else if (!poll.closed) {
+                PollOptionButton(
+                    text = stringResource(R.string.stream_compose_add_answer),
+                    onButtonClicked = { showAddAnswerDialog.value = true },
                 )
             }
+        }
+
+        PollOptionButton(
+            text = stringResource(id = R.string.stream_compose_poll_view_result),
+            onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewResult) },
+        )
+
+
+        if (isMine && !isClosed) {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_compose_poll_end_vote),
+                onButtonClicked = { onClosePoll.invoke(poll.id) },
+            )
         }
     }
 }
