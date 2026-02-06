@@ -19,10 +19,12 @@ package io.getstream.chat.android.ui.helper
 import android.content.Context
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.utils.extensions.asMention
@@ -94,16 +96,23 @@ private class DefaultMessagePreviewFormatter(
         } else {
             val sender = message.getSenderDisplayName(context, channel.isDirectMessaging())
 
-            // bold mentions of the current user
-            val currentUserMention = currentUser?.asMention(context)
-            val previewText: SpannableString =
-                displayedText.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
+            if (message.hasAudioRecording()) {
+                val voiceText = context.getString(R.string.stream_ui_message_audio_reply_info).italicize()
+                listOf(sender, voiceText)
+                    .filterNot { it.isNullOrEmpty() }
+                    .joinTo(SpannableStringBuilder(), ": ")
+            } else {
+                // bold mentions of the current user
+                val currentUserMention = currentUser?.asMention(context)
+                val previewText: SpannableString =
+                    displayedText.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
 
-            val attachmentsText: SpannableString? = message.getAttachmentsText()
+                val attachmentsText: SpannableString? = message.getAttachmentsText()
 
-            listOf(sender, previewText, attachmentsText)
-                .filterNot { it.isNullOrEmpty() }
-                .joinTo(SpannableStringBuilder(), ": ")
+                listOf(sender, previewText, attachmentsText)
+                    .filterNot { it.isNullOrEmpty() }
+                    .joinTo(SpannableStringBuilder(), ": ")
+            }
         }
     }
 }

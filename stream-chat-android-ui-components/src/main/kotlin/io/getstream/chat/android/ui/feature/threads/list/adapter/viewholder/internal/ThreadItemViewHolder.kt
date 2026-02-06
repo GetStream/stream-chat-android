@@ -20,6 +20,7 @@ import android.text.SpannableStringBuilder
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -34,6 +35,7 @@ import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
+import io.getstream.chat.android.ui.utils.extensions.italicize
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
@@ -133,6 +135,9 @@ internal class ThreadItemViewHolder(
     }
 
     private fun formatMessage(message: Message): CharSequence {
+        if (message.hasAudioRecording()) {
+            return itemView.context.getString(R.string.stream_ui_message_audio_reply_info).italicize()
+        }
         val attachmentsText = message.getAttachmentsText()
         val displayedText = message.getTranslatedText()
         val previewText = displayedText.trim()

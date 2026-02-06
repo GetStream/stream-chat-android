@@ -21,6 +21,7 @@ import android.text.Html
 import android.text.SpannableStringBuilder
 import android.util.AttributeSet
 import android.widget.FrameLayout
+import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -36,6 +37,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
+import io.getstream.chat.android.ui.utils.extensions.italicize
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MessagePreviewView : FrameLayout {
@@ -124,6 +126,9 @@ internal class MessagePreviewView : FrameLayout {
     }
 
     private fun formatMessagePreview(message: Message, currentUserMention: String?): CharSequence {
+        if (message.hasAudioRecording()) {
+            return context.getString(R.string.stream_ui_message_audio_reply_info).italicize()
+        }
         val attachmentsText = message.getAttachmentsText()
         val displayedText = message.getTranslatedText()
         val previewText = displayedText.trim().let {
