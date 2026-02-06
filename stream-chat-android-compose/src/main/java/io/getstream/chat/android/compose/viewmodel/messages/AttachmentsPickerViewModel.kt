@@ -97,8 +97,8 @@ public class AttachmentsPickerViewModel(
      *
      * @param pickerMode The currently selected picker mode.
      */
-    public fun changePickerMode(attachmentPickerMode: AttachmentPickerMode) {
-        this.pickerMode = attachmentPickerMode
+    public fun changePickerMode(pickerMode: AttachmentPickerMode) {
+        this.pickerMode = pickerMode
     }
 
     /**
