@@ -55,7 +55,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
- * Factory for creating components related to deleting messages for the current user.
+ * Factory for creating components related to location sharing.
  */
 class LocationComponentFactory(
     private val locationViewModelFactory: SharedLocationViewModelFactory?,
