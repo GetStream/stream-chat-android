@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_S
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -108,6 +109,7 @@ import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.internal.file.StreamFileManager
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -4694,6 +4696,8 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var pluginFactories: List<PluginFactory> = emptyList()
+        private var stateConfig: StateConfig = StateConfig()
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -4928,7 +4932,16 @@ internal constructor(
          * @param pluginFactories The factories to be added.
          */
         public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
-            this.pluginFactories.addAll(pluginFactories)
+            this.pluginFactories = pluginFactories.asList()
+        }
+
+        /**
+         * Specifies the state management configuration.
+         *
+         * @param config The state configuration to be used.
+         */
+        public fun stateConfig(config: StateConfig): Builder = apply {
+            stateConfig = config
         }
 
         /**
@@ -5071,6 +5084,11 @@ internal constructor(
             val database = ChatClientDatabase.build(appContext)
             val repository = ChatClientRepository.from(database)
 
+            val allPluginFactories = setupPluginFactories(
+                userProvided = pluginFactories,
+                stateConfig = stateConfig,
+            )
+
             return ChatClient(
                 config = config,
                 api = api,
@@ -5085,9 +5103,9 @@ internal constructor(
                 retryPolicy = retryPolicy,
                 appSettingsManager = appSettingsManager,
                 chatSocket = module.chatSocket,
-                pluginFactories = pluginFactories,
+                pluginFactories = allPluginFactories,
                 repositoryFactoryProvider = repositoryFactoryProvider
-                    ?: pluginFactories
+                    ?: allPluginFactories
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
@@ -5113,6 +5131,21 @@ internal constructor(
                     clientState = clientState,
                     scope = clientScope,
                 )
+            }
+        }
+
+        private fun setupPluginFactories(
+            userProvided: List<PluginFactory>,
+            stateConfig: StateConfig,
+        ): List<PluginFactory> {
+            return buildList {
+                // Mandatory plugins first
+                add(ThrottlingPluginFactory)
+                add(MessageDeliveredPluginFactory)
+                // Then user provided plugins
+                addAll(userProvided)
+                // Finally state plugin
+                add(StreamStatePluginFactory(stateConfig, appContext))
             }
         }
 
@@ -5144,16 +5177,6 @@ internal constructor(
     }
 
     public abstract class ChatClientBuilder @InternalStreamChatApi public constructor() {
-        /**
-         * Factories of plugins that will be added to the SDK.
-         *
-         * @see [Plugin]
-         * @see [PluginFactory]
-         */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(
-            ThrottlingPluginFactory,
-            MessageDeliveredPluginFactory,
-        )
 
         /**
          * Create a [ChatClient] instance based on the current configuration

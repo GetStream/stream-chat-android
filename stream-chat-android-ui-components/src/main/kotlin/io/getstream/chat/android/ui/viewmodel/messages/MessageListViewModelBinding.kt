@@ -19,10 +19,10 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView

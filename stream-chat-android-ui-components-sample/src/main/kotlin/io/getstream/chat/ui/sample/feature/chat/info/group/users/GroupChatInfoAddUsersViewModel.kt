@@ -24,6 +24,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.state.Event
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.models.Filters
@@ -31,8 +33,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull

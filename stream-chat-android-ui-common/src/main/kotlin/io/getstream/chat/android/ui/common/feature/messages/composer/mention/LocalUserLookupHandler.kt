@@ -17,9 +17,9 @@
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.state
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.QueryFilter
 import io.getstream.log.taggedLogger

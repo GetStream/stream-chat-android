@@ -22,6 +22,7 @@ import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -32,8 +33,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
@@ -98,19 +97,17 @@ class ChatInitializer(
 
         val offlinePlugin = StreamOfflinePluginFactory(context)
 
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = context,
+        val stateConfig = StateConfig(
+            backgroundSyncEnabled = false,
+            userPresence = true,
         )
 
         val client = ChatClient.Builder(apiKey, context)
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePlugin, statePluginFactory)
+            .withPlugins(offlinePlugin)
+            .stateConfig(stateConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .apply {
                 if (BuildConfig.DEBUG) {

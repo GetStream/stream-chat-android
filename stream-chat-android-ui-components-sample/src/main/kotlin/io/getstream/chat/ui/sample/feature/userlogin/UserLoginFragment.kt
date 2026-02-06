@@ -26,7 +26,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
-import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast

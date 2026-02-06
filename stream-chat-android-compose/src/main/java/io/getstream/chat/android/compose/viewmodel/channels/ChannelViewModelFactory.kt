@@ -19,12 +19,12 @@ package io.getstream.chat.android.compose.viewmodel.channels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandler
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 
 /**
  * Builds the factory that contains all the dependencies required for the Channels Screen.

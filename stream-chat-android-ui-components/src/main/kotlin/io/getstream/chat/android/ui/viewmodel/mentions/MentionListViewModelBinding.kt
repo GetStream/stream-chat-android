@@ -19,7 +19,7 @@
 package io.getstream.chat.android.ui.viewmodel.mentions
 
 import androidx.lifecycle.LifecycleOwner
-import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.client.api.state.EventObserver
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView
 
 /**

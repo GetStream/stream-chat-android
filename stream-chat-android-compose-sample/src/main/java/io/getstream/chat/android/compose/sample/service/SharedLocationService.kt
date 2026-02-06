@@ -28,8 +28,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.firebase.messaging.FirebaseMessaging
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.models.Location
-import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

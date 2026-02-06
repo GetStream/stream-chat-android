@@ -8,10 +8,10 @@ import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.client.api.event.ChatEventHandler
+import io.getstream.chat.android.client.api.event.DefaultChatEventHandler
+import io.getstream.chat.android.client.api.event.EventHandlingResult
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
