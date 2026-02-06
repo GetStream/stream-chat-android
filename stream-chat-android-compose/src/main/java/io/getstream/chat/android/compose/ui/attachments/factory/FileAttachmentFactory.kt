@@ -43,5 +43,4 @@ public class FileAttachmentFactory(
             onAttachmentRemoved = onAttachmentRemoved,
         )
     },
-    content = { _, _ -> },
 )

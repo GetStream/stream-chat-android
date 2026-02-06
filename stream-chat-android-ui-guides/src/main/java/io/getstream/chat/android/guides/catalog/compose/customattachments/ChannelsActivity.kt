@@ -24,10 +24,9 @@ import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
 
 /**
- * An Activity representing a self-contained channel list screen with custom attachment factories.
+ * An Activity representing a self-contained channel list screen with custom attachments.
  */
 class ChannelsActivity : AppCompatActivity() {
 
@@ -38,7 +37,10 @@ class ChannelsActivity : AppCompatActivity() {
         val defaultFactories = StreamAttachmentFactories.defaults()
 
         setContent {
-            ChatTheme(attachmentFactories = customFactories + defaultFactories) {
+            ChatTheme(
+                componentFactory = CustomChatComponentFactory,
+                attachmentFactories = customFactories + defaultFactories,
+            ) {
                 ChannelsScreen(
                     onChannelClick = { channel ->
                         startActivity(MessagesActivity.createIntent(this, channel.cid))

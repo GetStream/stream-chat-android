@@ -17,15 +17,11 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import android.content.Context
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
@@ -48,16 +44,6 @@ public class LinkAttachmentFactory(
 ) : AttachmentFactory(
     type = Type.BuiltIn.LINK,
     canHandle = canHandle,
-    content = @Composable { modifier, state ->
-        LinkAttachmentContent(
-            modifier = modifier
-                .width(ChatTheme.dimens.attachmentsContentLinkWidth)
-                .wrapContentHeight(),
-            state = state,
-            linkDescriptionMaxLines = linkDescriptionMaxLines,
-            onItemClick = onItemClick,
-        )
-    },
 ) {
 
     /**

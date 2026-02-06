@@ -52,7 +52,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.guides.R
-import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -74,6 +73,7 @@ class MessagesActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme(
+                componentFactory = CustomChatComponentFactory,
                 attachmentFactories = customFactories + defaultFactories,
             ) {
                 CustomMessagesScreen(

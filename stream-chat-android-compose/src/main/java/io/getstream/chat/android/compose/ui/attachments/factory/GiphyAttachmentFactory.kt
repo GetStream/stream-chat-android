@@ -59,7 +59,6 @@ public class GiphyAttachmentFactory(
 ) : AttachmentFactory(
     type = Type.BuiltIn.GIPHY,
     canHandle = canHandle,
-    content = { _, _ -> },
 ) {
     /**
      * Creates a new instance of [GiphyAttachmentFactory] with the default parameters.

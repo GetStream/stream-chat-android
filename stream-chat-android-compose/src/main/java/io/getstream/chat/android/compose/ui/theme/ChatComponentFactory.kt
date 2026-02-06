@@ -73,6 +73,8 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
@@ -89,6 +91,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
@@ -205,6 +208,7 @@ import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -2886,19 +2890,43 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the content of audio recording attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun AudioRecordAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        val viewModelFactory = remember {
+            AudioPlayerViewModelFactory(
+                getAudioPlayer = { ChatClient.instance().audioPlayer },
+                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
+            )
+        }
+        io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent(
+            modifier = modifier,
+            attachmentState = state,
+            viewModelFactory = viewModelFactory,
+        )
+    }
+
+    /**
      * Factory method for creating the content of file attachments in a message.
      *
-     * @param modifier Modifier for styling the composable.
-     * @param attachmentState The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
      */
     @Composable
     public fun FileAttachmentContent(
+        state: AttachmentState,
         modifier: Modifier,
-        attachmentState: AttachmentState,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState,
+            attachmentState = state,
             showFileSize = { true },
             onItemClick = ::onFileAttachmentContentItemClick,
         )
@@ -2907,7 +2935,7 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of Giphy attachments in a message.
      *
-     * @param state The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
      * @param modifier Modifier for styling.
      */
     @Composable
@@ -2922,9 +2950,26 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the content of link attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun LinkAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * Factory method for creating the content of media attachments in a message.
      *
-     * @param state The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
      * @param modifier Modifier for styling.
      */
     @Composable
@@ -2936,6 +2981,20 @@ public interface ChatComponentFactory {
             state = state,
             modifier = modifier,
         )
+    }
+
+    /**
+     * Factory method for creating the content of custom attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun CustomAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        UnsupportedAttachmentContent(modifier)
     }
 
     /**

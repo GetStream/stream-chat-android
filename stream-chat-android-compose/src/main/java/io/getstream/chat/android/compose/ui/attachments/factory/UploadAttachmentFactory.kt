@@ -16,14 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
@@ -40,13 +36,4 @@ public class UploadAttachmentFactory(
 ) : AttachmentFactory(
     type = Type.BuiltIn.UPLOAD,
     canHandle = canHandle,
-    content = @Composable { modifier, state ->
-        ChatTheme.componentFactory.FileUploadContent(
-            modifier = modifier
-                .wrapContentHeight()
-                .width(ChatTheme.dimens.attachmentsContentFileUploadWidth),
-            attachmentState = state,
-            onItemClick = onContentItemClick,
-        )
-    },
 )
