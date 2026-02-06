@@ -203,14 +203,14 @@ internal fun DefaultMessageContent(
             if (info.hasFiles) {
                 componentFactory.FileAttachmentContent(
                     modifier = Modifier,
-                    attachmentState = attachmentState,
+                    state = attachmentState,
                 )
             }
 
             if (info.hasRecordings) {
                 componentFactory.AudioRecordAttachmentContent(
                     modifier = Modifier,
-                    attachmentState = attachmentState,
+                    state = attachmentState,
                 )
             }
         }

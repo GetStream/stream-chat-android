@@ -2889,10 +2889,16 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of audio recording attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun AudioRecordAttachmentContent(
+        state: AttachmentState,
         modifier: Modifier,
-        attachmentState: AttachmentState,
     ) {
         val viewModelFactory = remember {
             AudioPlayerViewModelFactory(
@@ -2902,7 +2908,7 @@ public interface ChatComponentFactory {
         }
         io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState,
+            attachmentState = state,
             viewModelFactory = viewModelFactory,
         )
     }
@@ -2910,17 +2916,17 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of file attachments in a message.
      *
-     * @param modifier Modifier for styling the composable.
-     * @param attachmentState The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
      */
     @Composable
     public fun FileAttachmentContent(
+        state: AttachmentState,
         modifier: Modifier,
-        attachmentState: AttachmentState,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState,
+            attachmentState = state,
             showFileSize = { true },
             onItemClick = ::onFileAttachmentContentItemClick,
         )
@@ -2929,7 +2935,7 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the content of Giphy attachments in a message.
      *
-     * @param state The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
      * @param modifier Modifier for styling.
      */
     @Composable
@@ -2944,9 +2950,9 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the content of media attachments in a message.
+     * Factory method for creating the content of link attachments in a message.
      *
-     * @param state The state of the attachment.
+     * @param state State providing the context needed to render and handle interactions for the attachment.
      * @param modifier Modifier for styling.
      */
     @Composable
@@ -2960,6 +2966,12 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of media attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun MediaAttachmentContent(
         state: AttachmentState,
@@ -2971,6 +2983,12 @@ public interface ChatComponentFactory {
         )
     }
 
+    /**
+     * Factory method for creating the content of custom attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun CustomAttachmentContent(
         state: AttachmentState,
