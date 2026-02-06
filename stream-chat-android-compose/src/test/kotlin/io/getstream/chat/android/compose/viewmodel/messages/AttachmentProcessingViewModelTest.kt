@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments.factory
+package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -35,7 +35,7 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
-internal class AttachmentsProcessingViewModelTest {
+internal class AttachmentProcessingViewModelTest {
 
     @Test
     fun `Given URIs When processing attachments Should invoke callback with processed metadata`() = runTest {
@@ -57,7 +57,7 @@ internal class AttachmentsProcessingViewModelTest {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getAttachmentsMetadataFromUris(uris)) doReturn expectedMetadata
         }
-        val viewModel = AttachmentsProcessingViewModel(storageHelper)
+        val viewModel = AttachmentProcessingViewModel(storageHelper)
 
         var result: AttachmentsMetadataFromUris? = null
         viewModel.getAttachmentsMetadataFromUrisAsync(uris) { result = it }
@@ -85,7 +85,7 @@ internal class AttachmentsProcessingViewModelTest {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getFiles()) doReturn expectedFilesMetadata
         }
-        val viewModel = AttachmentsProcessingViewModel(storageHelper)
+        val viewModel = AttachmentProcessingViewModel(storageHelper)
 
         var result: List<AttachmentMetaData>? = null
         viewModel.getFilesAsync { result = it }
@@ -117,7 +117,7 @@ internal class AttachmentsProcessingViewModelTest {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getMedia()) doReturn expectedMediaMetadata
         }
-        val viewModel = AttachmentsProcessingViewModel(storageHelper)
+        val viewModel = AttachmentProcessingViewModel(storageHelper)
 
         var result: List<AttachmentMetaData>? = null
         viewModel.getMediaAsync { result = it }
@@ -130,29 +130,29 @@ internal class AttachmentsProcessingViewModelTest {
 
 @ExperimentalCoroutinesApi
 @ExtendWith(TestCoroutineExtension::class)
-internal class AttachmentsProcessingViewModelFactoryTest {
+internal class AttachmentProcessingViewModelFactoryTest {
 
     @Test
-    fun `create should return correct AttachmentsProcessingViewModel instance`() {
+    fun `create should return correct AttachmentProcessingViewModel instance`() {
         val storageHelper: StorageHelperWrapper = mock()
-        val factory = AttachmentsProcessingViewModelFactory(storageHelper)
+        val factory = AttachmentProcessingViewModelFactory(storageHelper)
 
-        val viewModel = factory.create(AttachmentsProcessingViewModel::class.java)
+        val viewModel = factory.create(AttachmentProcessingViewModel::class.java)
 
-        assertInstanceOf(AttachmentsProcessingViewModel::class.java, viewModel)
+        assertInstanceOf(AttachmentProcessingViewModel::class.java, viewModel)
     }
 
     @Test
     fun `create should throw IllegalArgumentException for unsupported ViewModel class`() {
         val storageHelper: StorageHelperWrapper = mock()
-        val factory = AttachmentsProcessingViewModelFactory(storageHelper)
+        val factory = AttachmentProcessingViewModelFactory(storageHelper)
 
         val exception = assertThrows<IllegalArgumentException> {
             factory.create(ViewModel::class.java)
         }
 
         assertEquals(
-            "AttachmentsProcessingViewModelFactory can only create instances of AttachmentsProcessingViewModel",
+            "AttachmentProcessingViewModelFactory can only create instances of AttachmentProcessingViewModel",
             exception.message,
         )
     }

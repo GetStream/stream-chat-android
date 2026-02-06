@@ -1438,7 +1438,7 @@ public data class MessageComposerViewStyle(
 
             val useDefaultSystemMediaPicker = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
-                false,
+                true,
             )
             val systemMediaPickerVisualMediaAllowMultiple = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaAllowMultiple,

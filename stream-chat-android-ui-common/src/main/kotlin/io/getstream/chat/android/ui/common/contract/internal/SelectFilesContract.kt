@@ -25,15 +25,15 @@ import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 @InternalStreamChatApi
-public class SelectFilesContract : ActivityResultContract<Unit, List<Uri>>() {
+public class SelectFilesContract : ActivityResultContract<Boolean, List<Uri>>() {
 
     override fun createIntent(
         context: Context,
-        input: Unit,
+        input: Boolean,
     ): Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         type = "*/*"
         addCategory(Intent.CATEGORY_OPENABLE)
-        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, input)
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): List<Uri> {

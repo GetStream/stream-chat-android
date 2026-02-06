@@ -32,7 +32,7 @@ internal class AttachmentCameraPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun default() {
+    fun `camera picker`() {
         snapshotWithDarkMode {
             AttachmentCameraPicker()
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments.factory
+package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
  * @param storageHelper The wrapper around storage helper functionality used to retrieve attachment
  * metadata from the device's storage system.
  */
-internal class AttachmentsProcessingViewModel(
+internal class AttachmentProcessingViewModel(
     private val storageHelper: StorageHelperWrapper,
 ) : ViewModel() {
 
@@ -99,27 +99,27 @@ internal data class AttachmentsMetadataFromUris(
 )
 
 /**
- * A [ViewModelProvider.Factory] for creating [AttachmentsProcessingViewModel] instances.
+ * A [androidx.lifecycle.ViewModelProvider.Factory] for creating [AttachmentProcessingViewModel] instances.
  *
  * @param storageHelper The helper used to access file metadata from storage.
  */
-internal class AttachmentsProcessingViewModelFactory(
+internal class AttachmentProcessingViewModelFactory(
     private val storageHelper: StorageHelperWrapper,
 ) : ViewModelProvider.Factory {
 
     /**
      * Creates a new instance of the given [ViewModel] class.
      *
-     * @param modelClass The class of the ViewModel to create. Must be [AttachmentsProcessingViewModel].
-     * @return A new instance of [AttachmentsProcessingViewModel].
-     * @throws IllegalArgumentException if [modelClass] is not [AttachmentsProcessingViewModel].
+     * @param modelClass The class of the ViewModel to create. Must be [AttachmentProcessingViewModel].
+     * @return A new instance of [AttachmentProcessingViewModel].
+     * @throws IllegalArgumentException if [modelClass] is not [AttachmentProcessingViewModel].
      */
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        require(modelClass == AttachmentsProcessingViewModel::class.java) {
-            "AttachmentsProcessingViewModelFactory can only create instances of AttachmentsProcessingViewModel"
+        require(modelClass == AttachmentProcessingViewModel::class.java) {
+            "AttachmentProcessingViewModelFactory can only create instances of AttachmentProcessingViewModel"
         }
 
-        return AttachmentsProcessingViewModel(storageHelper) as T
+        return AttachmentProcessingViewModel(storageHelper) as T
     }
 }

@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
@@ -51,7 +52,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 @Suppress("LongMethod")
 @Composable
 internal fun AttachmentPollPicker(
-    showCreateDialogOnInit: Boolean = true,
+    pickerMode: PollPickerMode,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
 ) {
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
@@ -59,8 +60,8 @@ internal fun AttachmentPollPicker(
         showCreateDialog = true
         onAttachmentPickerAction(AttachmentPickerCreatePollClick)
     }
-    LaunchedEffect(showCreateDialogOnInit) {
-        if (showCreateDialogOnInit) {
+    LaunchedEffect(pickerMode.autoShowCreateDialog) {
+        if (pickerMode.autoShowCreateDialog) {
             onCreatePollClick()
         }
     }
@@ -130,6 +131,6 @@ private fun AttachmentPollPickerPreview() {
 @Composable
 internal fun AttachmentPollPicker() {
     AttachmentPollPicker(
-        showCreateDialogOnInit = false,
+        pickerMode = PollPickerMode(autoShowCreateDialog = false),
     )
 }
