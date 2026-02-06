@@ -32,16 +32,23 @@ internal class AttachmentTypePickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun default() {
+    fun `in-app picker`() {
         snapshotWithDarkMode {
             AttachmentTypePicker()
         }
     }
 
     @Test
-    fun `default with polls`() {
+    fun `in-app picker with polls`() {
         snapshotWithDarkMode {
             AttachmentTypePickerWithPolls()
+        }
+    }
+
+    @Test
+    fun `in-app picker with commands`() {
+        snapshotWithDarkMode {
+            AttachmentTypePickerWithCommands()
         }
     }
 
@@ -56,6 +63,13 @@ internal class AttachmentTypePickerTest : PaparazziComposeTest {
     fun `system picker with polls`() {
         snapshotWithDarkMode {
             AttachmentTypeSystemPickerWithPolls()
+        }
+    }
+
+    @Test
+    fun `system picker with commands`() {
+        snapshotWithDarkMode {
+            AttachmentTypeSystemPickerWithCommands()
         }
     }
 }

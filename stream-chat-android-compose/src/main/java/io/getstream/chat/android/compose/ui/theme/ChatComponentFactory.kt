@@ -3839,7 +3839,6 @@ public interface ChatComponentFactory {
      *
      * @param channel Used to check channel capabilities for filtering available modes.
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
-     * @param commands Available commands for the command picker button.
      * @param attachments Current attachment state (used for state management).
      * @param onAttachmentPickerAction Called for poll creation and command selection.
      * @param onAttachmentsSubmitted Called when files are selected from system pickers.
@@ -3848,7 +3847,6 @@ public interface ChatComponentFactory {
     public fun AttachmentSystemPicker(
         channel: Channel,
         messageMode: MessageMode,
-        commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
@@ -3856,7 +3854,6 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
             channel = channel,
             messageMode = messageMode,
-            commands = commands,
             attachments = attachments,
             onAttachmentPickerAction = onAttachmentPickerAction,
             onAttachmentsSubmitted = onAttachmentsSubmitted,

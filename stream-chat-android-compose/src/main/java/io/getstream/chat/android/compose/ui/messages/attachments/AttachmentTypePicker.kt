@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.util.extensions.isPollEnabled
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 @Composable
@@ -180,6 +181,7 @@ private fun List<AttachmentPickerMode>.filterByCapabilities(
 ): List<AttachmentPickerMode> = filter { mode ->
     when (mode) {
         is PollPickerMode -> channel.isPollEnabled() && messageMode is MessageMode.Normal
+        is CommandPickerMode -> channel.config.commands.isNotEmpty()
         else -> true
     }
 }
@@ -257,6 +259,25 @@ internal fun AttachmentTypePickerWithPolls() {
 
 @Preview(showBackground = true)
 @Composable
+private fun AttachmentTypePickerWithCommandsPreview() {
+    ChatTheme {
+        AttachmentTypePickerWithCommands()
+    }
+}
+
+@Composable
+internal fun AttachmentTypePickerWithCommands() {
+    AttachmentTypePicker(
+        channel = Channel(
+            config = Config(commands = listOf(PreviewCommandData.command1)),
+        ),
+        messageMode = MessageMode.Normal,
+        selectedMode = CommandPickerMode,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
 private fun AttachmentTypeSystemPickerPreview() {
     ChatTheme {
         AttachmentTypeSystemPicker()
@@ -285,6 +306,24 @@ internal fun AttachmentTypeSystemPickerWithPolls() {
         channel = Channel(
             ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
             config = Config(pollsEnabled = true),
+        ),
+        messageMode = MessageMode.Normal,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentTypeSystemPickerWithCommandsPreview() {
+    ChatTheme {
+        AttachmentTypeSystemPickerWithCommands()
+    }
+}
+
+@Composable
+internal fun AttachmentTypeSystemPickerWithCommands() {
+    AttachmentTypeSystemPicker(
+        channel = Channel(
+            config = Config(commands = listOf(PreviewCommandData.command1)),
         ),
         messageMode = MessageMode.Normal,
     )

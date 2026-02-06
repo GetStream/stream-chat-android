@@ -64,7 +64,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessing
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -78,7 +80,6 @@ import java.io.File
 internal fun AttachmentSystemPicker(
     channel: Channel,
     messageMode: MessageMode,
-    commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
@@ -202,6 +203,7 @@ internal fun AttachmentSystemPicker(
     val commandPickerMode = remember(pickerModes) {
         pickerModes.filterIsInstance<CommandPickerMode>().firstOrNull()
     }
+    val commands = channel.config.commands
     if (showCommandsPickerDialog && commandPickerMode != null) {
         ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
             ChatTheme.componentFactory.AttachmentCommandPicker(
@@ -306,7 +308,43 @@ internal fun AttachmentSystemPicker() {
     AttachmentSystemPicker(
         channel = Channel(),
         messageMode = MessageMode.Normal,
-        commands = emptyList(),
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithPollsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithPolls()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithPolls() {
+    AttachmentSystemPicker(
+        channel = Channel(
+            ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
+            config = Config(pollsEnabled = true),
+        ),
+        messageMode = MessageMode.Normal,
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithCommandsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithCommands()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithCommands() {
+    AttachmentSystemPicker(
+        channel = Channel(config = Config(commands = listOf(PreviewCommandData.command1))),
+        messageMode = MessageMode.Normal,
         attachments = emptyList(),
     )
 }

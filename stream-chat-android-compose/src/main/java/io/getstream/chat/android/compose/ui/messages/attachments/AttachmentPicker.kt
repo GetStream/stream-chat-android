@@ -104,7 +104,6 @@ public fun AttachmentPicker(
             ChatTheme.componentFactory.AttachmentSystemPicker(
                 channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,
-                commands = attachmentsPickerViewModel.channel.config.commands,
                 attachments = attachmentsPickerViewModel.attachments,
                 onAttachmentPickerAction = onAttachmentPickerAction,
                 onAttachmentsSubmitted = { metaData ->
