@@ -123,8 +123,8 @@ public fun MessageInput(
     trailingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputTrailingContent(
             state = messageComposerState,
-            onSendClick = onSendClick,
             recordingActions = recordingActions,
+            onSendClick = onSendClick,
         )
     },
 ) {

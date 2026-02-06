@@ -164,7 +164,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultCo
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInputTrailingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
@@ -1794,19 +1793,19 @@ public interface ChatComponentFactory {
      * Used as part of [MessageComposerInput].
      *
      * @param state The current state of the message composer.
-     * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
+     * @param onSendClick The action to perform when the send button is clicked.
      */
     @Composable
     public fun MessageComposerInputTrailingContent(
         state: MessageComposerState,
-        onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
+        onSendClick: (String, List<Attachment>) -> Unit,
     ) {
-        DefaultMessageComposerInputTrailingContent(
-            messageComposerState = state,
-            onSendMessage = onSendClick,
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputTrailingContent(
+            state = state,
             recordingActions = recordingActions,
+            onSendClick = onSendClick,
         )
     }
 

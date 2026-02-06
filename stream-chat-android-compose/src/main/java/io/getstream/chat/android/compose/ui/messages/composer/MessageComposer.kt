@@ -174,11 +174,11 @@ public fun MessageComposer(
                 trailingContent = {
                     ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                         state = state,
+                        recordingActions = recordingActions,
                         onSendClick = { input, attachments ->
                             val message = viewModel.buildNewMessage(input, attachments)
                             onSendMessage(message)
                         },
-                        recordingActions = recordingActions,
                     )
                 },
             )
@@ -337,8 +337,8 @@ public fun MessageComposer(
                 trailingContent = {
                     ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                         state = state,
-                        onSendClick = onSendMessage,
                         recordingActions = recordingActions,
+                        onSendClick = onSendMessage,
                     )
                 },
             )
