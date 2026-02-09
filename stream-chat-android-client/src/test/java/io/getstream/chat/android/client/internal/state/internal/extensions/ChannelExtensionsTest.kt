@@ -30,9 +30,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
-import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import okio.buffer
 import okio.source
 import org.amshove.kluent.shouldBeEqualTo

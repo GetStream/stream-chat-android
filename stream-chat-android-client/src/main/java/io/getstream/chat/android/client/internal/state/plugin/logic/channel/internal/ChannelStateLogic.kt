@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.internal.state.message.attachments.inter
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
@@ -45,7 +46,6 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
-import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
