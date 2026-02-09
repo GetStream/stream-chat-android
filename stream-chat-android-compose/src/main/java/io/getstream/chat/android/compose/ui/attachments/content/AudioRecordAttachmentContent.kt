@@ -51,8 +51,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -187,6 +187,7 @@ public fun AudioRecordAttachmentContentItem(
 }
 
 @Composable
+@Suppress("LongMethod")
 internal fun AudioRecordAttachmentContentItemBase(
     modifier: Modifier = Modifier,
     attachment: Attachment,
@@ -335,7 +336,7 @@ internal fun AudioRecordAttachmentContentItemPreview() {
                 current = AudioPlayerState.CurrentAudioState(
                     isPlaying = true,
                     audioUri = previewUri,
-                    waveform = List(100) { rand.nextFloat() },
+                    waveform = List(size = 100) { rand.nextFloat() },
                 ),
                 getRecordingUri = Attachment::assetUrl,
             ),
