@@ -155,13 +155,6 @@ private fun CustomMessageComposer(
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .align(Alignment.CenterVertically),
-                label = {
-                    Text(
-                        modifier = Modifier.padding(start = 4.dp),
-                        text = "Type a message",
-                        color = ChatTheme.colors.textLowEmphasis,
-                    )
-                },
                 trailingContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
