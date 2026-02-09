@@ -160,7 +160,6 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
@@ -1419,7 +1418,6 @@ public interface ChatComponentFactory {
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
-        label: @Composable (MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
@@ -1443,7 +1441,6 @@ public interface ChatComponentFactory {
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
-            label = label,
             input = input,
             audioRecordingContent = audioRecordingContent,
             trailingContent = trailingContent,
@@ -1692,18 +1689,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default label of the message composer.
-     *
-     * Used by [MessageComposerInput].
-     *
-     * @param state The current state of the message composer.
-     */
-    @Composable
-    public fun MessageComposerLabel(state: MessageComposerState) {
-        DefaultComposerLabel(state)
-    }
-
-    /**
      * The default input of the message composer.
      *
      * @param state The current state of the message composer.
@@ -1726,7 +1711,6 @@ public interface ChatComponentFactory {
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
-        label: @Composable (MessageComposerState) -> Unit,
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
         leadingContent: @Composable RowScope.() -> Unit,
@@ -1740,7 +1724,6 @@ public interface ChatComponentFactory {
             onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            label = label,
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,

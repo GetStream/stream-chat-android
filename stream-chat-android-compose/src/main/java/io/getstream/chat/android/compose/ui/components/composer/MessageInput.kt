@@ -29,13 +29,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
@@ -58,6 +56,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * when the input changes.
  *
  * @param messageComposerState The state of the input.
+ * @param modifier Modifier for styling.
  * @param onValueChange Handler when the value changes.
  * @param onAttachmentRemoved Handler when the user removes a selected attachment.
  * @param onCancelAction Handler when the cancel action is clicked.
@@ -65,10 +64,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param onCancelLinkPreviewClick Handler when the cancel link preview button is clicked.
  * @param onSendClick Handler when the send button is clicked.
  * @param recordingActions The [AudioRecordingActions] to be applied to the input.
- * @param modifier Modifier for styling.
- * @param maxLines The number of lines that are allowed in the input.
- * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
- * @param label Composable that represents the label UI, when there's no input.
  * @param leadingContent The content to be displayed at the start of the input.
  * @param centerContent The content to be displayed in the center of the input (the text field).
  * @param trailingContent The content to be displayed at the end of the input.
@@ -76,6 +71,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 @Composable
 public fun MessageInput(
     messageComposerState: MessageComposerState,
+    modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
@@ -83,12 +79,6 @@ public fun MessageInput(
     onCancelLinkPreviewClick: (() -> Unit)? = null,
     onSendClick: (String, List<Attachment>) -> Unit = { _, _ -> },
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
-    modifier: Modifier = Modifier,
-    maxLines: Int = DefaultMessageInputMaxLines,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-    label: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerLabel(state = it)
-    },
     leadingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputLeadingContent(
             state = messageComposerState,
@@ -201,12 +191,6 @@ private fun MessageInputHeader(
         }
     }
 }
-
-/**
- * The default number of lines allowed in the input.
- * The message input will become scrollable after this threshold is exceeded.
- */
-private const val DefaultMessageInputMaxLines = 5
 
 @Preview
 @Composable

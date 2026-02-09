@@ -171,21 +171,6 @@ internal fun DefaultMessageComposerLeadingContent(
 
 private const val OpenAttachmentPickerButtonRotation = 225f
 
-@Composable
-internal fun DefaultComposerLabel(state: MessageComposerState) {
-    val text = if (state.canSendMessage()) {
-        stringResource(id = R.string.stream_compose_message_label)
-    } else {
-        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
-    }
-
-    Text(
-        text = text,
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.messageComposerTheme.inputField.textStyle,
-    )
-}
-
 @Suppress("LongParameterList")
 @Composable
 internal fun RowScope.DefaultMessageComposerInput(
@@ -195,7 +180,6 @@ internal fun RowScope.DefaultMessageComposerInput(
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     onCancelAction: () -> Unit,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
-    label: @Composable (MessageComposerState) -> Unit,
     onSendClick: (String, List<Attachment>) -> Unit,
     recordingActions: AudioRecordingActions,
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -222,7 +206,6 @@ internal fun RowScope.DefaultMessageComposerInput(
     if (!isRecording) {
         MessageInput(
             modifier = Modifier.weight(1f),
-            label = label,
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
