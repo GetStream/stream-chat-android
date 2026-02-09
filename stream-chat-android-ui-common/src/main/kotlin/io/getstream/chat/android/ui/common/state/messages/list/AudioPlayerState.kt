@@ -76,7 +76,7 @@ public data class AudioPlayerState(
             "playingSpeed=$playingSpeed, " +
             "waveform.size=${waveform.size}, " +
             "playingUriHash=${audioUri.hashCode()}, " +
-            "seekTo.size=${seekTo.size}" +
+            "seekTo.size=${seekTo.size}," +
             "speeds.size=${speeds.size}" +
             ")"
     }
