@@ -1480,19 +1480,17 @@ constructor(
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
-                with(dtoMapping) {
-                    io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
-                        filter = query.filter?.toMap(),
-                        sort = query.sort.toDto(),
-                        watch = query.watch,
-                        limit = query.limit,
-                        member_limit = query.memberLimit,
-                        next = query.next,
-                        participant_limit = query.participantLimit,
-                        prev = query.prev,
-                        reply_limit = query.replyLimit,
-                    )
-                },
+                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                    filter = query.filter?.toMap(),
+                    sort = query.sort.toDto(),
+                    watch = query.watch,
+                    limit = query.limit,
+                    member_limit = query.memberLimit,
+                    next = query.next,
+                    participant_limit = query.participantLimit,
+                    prev = query.prev,
+                    reply_limit = query.replyLimit,
+                ),
             ).mapDomain { response ->
                 QueryThreadsResult(
                     threads = response.threads.map { it.toDomain() },
