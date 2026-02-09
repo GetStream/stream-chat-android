@@ -234,7 +234,6 @@ import io.getstream.result.call.retry.RetryPolicy
 import io.getstream.result.call.share
 import io.getstream.result.call.toUnitCall
 import io.getstream.result.call.withPrecondition
-import io.getstream.result.flatMap
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.CoroutineScope
