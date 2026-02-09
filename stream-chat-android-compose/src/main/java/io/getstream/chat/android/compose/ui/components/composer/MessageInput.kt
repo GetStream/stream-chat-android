@@ -140,42 +140,54 @@ public fun MessageInput(
 
     val description = stringResource(id = R.string.stream_compose_cd_message_input)
 
-    TextField(
+    val shape = ChatTheme.shapes.inputField
+
+    Column(
         modifier = modifier
-            .semantics { contentDescription = description }
-            .testTag("Stream_ComposerInputField"),
-        value = value,
-        maxLines = maxLines,
-        onValueChange = onValueChange,
-        enabled = canSendMessage,
-        keyboardOptions = keyboardOptions,
-        visualTransformation = visualTransformation,
-        decorationBox = { innerTextField ->
-            Column(
-                modifier = Modifier.animateContentSize(alignment = Alignment.BottomStart),
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                MessageInputHeader(
-                    messageComposerState = messageComposerState,
-                    onAttachmentRemoved = onAttachmentRemoved,
-                    onLinkPreviewClick = onLinkPreviewClick,
-                    onCancelActionClick = onCancelAction,
-                    onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                )
+            .border(width = 1.dp, color = ChatTheme.colors.borders, shape = shape)
+            .then(
+                if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                    Modifier.shadow(6.dp, shape = shape)
+                } else {
+                    Modifier
+                },
+            )
+            .background(ChatTheme.colors.barsBackground)
+            .defaultMinSize(minHeight = 48.dp)
+            .animateContentSize(alignment = Alignment.BottomStart),
+        verticalArrangement = Arrangement.Bottom,
+    ) {
+        MessageInputHeader(
+            messageComposerState = messageComposerState,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onCancelActionClick = onCancelAction,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+        )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom,
-                ) {
-                    leadingContent()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            leadingContent()
 
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { contentDescription = description }
+                    .testTag("Stream_ComposerInputField"),
+                value = value,
+                maxLines = maxLines,
+                onValueChange = onValueChange,
+                enabled = canSendMessage,
+                keyboardOptions = keyboardOptions,
+                visualTransformation = visualTransformation,
+                decorationBox = { innerTextField ->
                     Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                start = StreamTokens.spacingMd,
-                                bottom = StreamTokens.spacingMd,
-                            ),
+                        modifier = Modifier.padding(
+                            start = StreamTokens.spacingMd,
+                            bottom = StreamTokens.spacingMd,
+                        ),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         innerTextField()
@@ -184,12 +196,12 @@ public fun MessageInput(
                             label(messageComposerState)
                         }
                     }
+                },
+            )
 
-                    trailingContent()
-                }
-            }
-        },
-    )
+            trailingContent()
+        }
+    }
 }
 
 @Composable
@@ -275,20 +287,9 @@ private fun TextField(
     }
 
     val theme = ChatTheme.messageComposerTheme.inputField
-    val shape = ChatTheme.shapes.inputField
 
     BasicTextField(
-        modifier = modifier
-            .border(width = 1.dp, color = ChatTheme.colors.borders, shape = shape)
-            .then(
-                if (ChatTheme.messageComposerFloatingStyleEnabled) {
-                    Modifier.shadow(6.dp, shape = shape)
-                } else {
-                    Modifier
-                },
-            )
-            .background(ChatTheme.colors.barsBackground)
-            .defaultMinSize(minHeight = 48.dp),
+        modifier = modifier,
         value = textState,
         onValueChange = {
             textState = it
