@@ -171,6 +171,13 @@ public fun MessageComposer(
                         state = state,
                     )
                 },
+                centerContent = { modifier ->
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        state = state,
+                        onValueChange = onValueChange,
+                        modifier = modifier,
+                    )
+                },
                 trailingContent = {
                     ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                         state = state,
@@ -332,6 +339,13 @@ public fun MessageComposer(
                 leadingContent = {
                     ChatTheme.componentFactory.MessageComposerInputLeadingContent(
                         state = state,
+                    )
+                },
+                centerContent = { modifier ->
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        state = state,
+                        onValueChange = onValueChange,
+                        modifier = modifier,
                     )
                 },
                 trailingContent = {

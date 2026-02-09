@@ -203,6 +203,13 @@ internal fun RowScope.DefaultMessageComposerInput(
             state = messageComposerState,
         )
     },
+    centerContent: @Composable (modifier: Modifier) -> Unit = { modifier ->
+        ChatTheme.componentFactory.MessageComposerInputCenterContent(
+            state = messageComposerState,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
+    },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputTrailingContent(
             state = messageComposerState,
@@ -225,6 +232,7 @@ internal fun RowScope.DefaultMessageComposerInput(
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
+            centerContent = centerContent,
             trailingContent = trailingContent,
         )
     }

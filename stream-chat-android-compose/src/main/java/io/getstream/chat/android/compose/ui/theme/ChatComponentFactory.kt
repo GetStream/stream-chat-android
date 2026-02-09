@@ -1715,6 +1715,7 @@ public interface ChatComponentFactory {
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.
+     * @param centerContent The center content of the message composer (the text field).
      * @param trailingContent The trailing content of the message composer.
      */
     @Composable
@@ -1729,6 +1730,7 @@ public interface ChatComponentFactory {
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
         leadingContent: @Composable RowScope.() -> Unit,
+        centerContent: @Composable (Modifier) -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         DefaultMessageComposerInput(
@@ -1742,6 +1744,7 @@ public interface ChatComponentFactory {
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
+            centerContent = centerContent,
             trailingContent = trailingContent,
         )
     }
@@ -1784,6 +1787,29 @@ public interface ChatComponentFactory {
     public fun MessageComposerInputLeadingContent(
         state: MessageComposerState,
     ) {
+    }
+
+    /**
+     * The default center content of the message composer input.
+     * Contains the text input field (BasicTextField) with label overlay.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onValueChange The action to perform when the input value changes.
+     * @param modifier The modifier to apply to the composable.
+     */
+    @Composable
+    public fun MessageComposerInputCenterContent(
+        state: MessageComposerState,
+        onValueChange: (String) -> Unit,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterContent(
+            state = state,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
     }
 
     /**

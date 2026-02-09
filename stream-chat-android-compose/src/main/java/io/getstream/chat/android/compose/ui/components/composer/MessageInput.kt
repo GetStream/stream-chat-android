@@ -22,7 +22,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -30,43 +29,19 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.LocalComposerLinkPreviewEnabled
-import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -74,8 +49,6 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.previewdata.PreviewAttachmentData
 import io.getstream.chat.android.previewdata.PreviewLinkData
 import io.getstream.chat.android.previewdata.PreviewMessageData
-import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -97,6 +70,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
  * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
  * @param label Composable that represents the label UI, when there's no input.
  * @param leadingContent The content to be displayed at the start of the input.
+ * @param centerContent The content to be displayed in the center of the input (the text field).
  * @param trailingContent The content to be displayed at the end of the input.
  */
 @Composable
@@ -120,6 +94,13 @@ public fun MessageInput(
             state = messageComposerState,
         )
     },
+    centerContent: @Composable (Modifier) -> Unit = { modifier ->
+        ChatTheme.componentFactory.MessageComposerInputCenterContent(
+            state = messageComposerState,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
+    },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputTrailingContent(
             state = messageComposerState,
@@ -128,32 +109,6 @@ public fun MessageInput(
         )
     },
 ) {
-    val value = messageComposerState.inputValue
-    val canSendMessage = messageComposerState.canSendMessage()
-
-    val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
-
-    val visualTransformation = MessageInputVisualTransformation(
-        inputFieldTheme = inputFieldTheme,
-        typography = ChatTheme.typography,
-        colors = ChatTheme.colors,
-        mentions = messageComposerState.selectedMentions,
-    )
-
-    // Manages the String ↔ TextFieldValue bridge for BasicTextField
-    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
-    if (textState.text != value) {
-        // Workaround to move cursor to the end after selecting a suggestion
-        LaunchedEffect(value) {
-            if (textState.text != value) {
-                textState = textState.copy(
-                    text = value,
-                    selection = TextRange(value.length),
-                )
-            }
-        }
-    }
-
     val shape = ChatTheme.shapes.inputField
     Column(
         modifier = modifier
@@ -184,43 +139,7 @@ public fun MessageInput(
         ) {
             leadingContent()
 
-            val description = stringResource(id = R.string.stream_compose_cd_message_input)
-
-            BasicTextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .semantics { contentDescription = description }
-                    .testTag("Stream_ComposerInputField"),
-                value = textState,
-                onValueChange = {
-                    textState = it
-                    if (value != it.text) {
-                        onValueChange(it.text)
-                    }
-                },
-                visualTransformation = visualTransformation,
-                textStyle = inputFieldTheme.textStyle,
-                cursorBrush = SolidColor(inputFieldTheme.cursorBrushColor),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier.padding(
-                            start = StreamTokens.spacingMd,
-                            bottom = StreamTokens.spacingMd,
-                        ),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        innerTextField()
-
-                        if (value.isEmpty()) {
-                            label(messageComposerState)
-                        }
-                    }
-                },
-                maxLines = maxLines,
-                singleLine = maxLines == 1,
-                enabled = canSendMessage,
-                keyboardOptions = keyboardOptions,
-            )
+            centerContent(Modifier.weight(1f))
 
             trailingContent()
         }
@@ -280,40 +199,6 @@ private fun MessageInputHeader(
                 )
             }
         }
-    }
-}
-
-/**
- * Visual transformation applied to the message input field.
- * Applies text styling, link styling, and mention styling to the input text.
- *
- * @param inputFieldTheme The theme for the input field.
- * @param typography The typography styles to be used.
- * @param colors The color palette to be used.
- * @param mentions The set of mentions to be styled in the input text.
- */
-private class MessageInputVisualTransformation(
-    val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
-    val colors: StreamColors,
-    val mentions: Set<Mention>,
-) : VisualTransformation {
-    override fun filter(text: AnnotatedString): TransformedText {
-        val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.body.fontStyle
-        val linkStyle = TextStyle(
-            color = colors.primaryAccent,
-            textDecoration = TextDecoration.Underline,
-        )
-        val transformed = buildAnnotatedInputText(
-            text = text.text,
-            textColor = textColor,
-            textFontStyle = fontStyle,
-            linkStyle = linkStyle,
-            mentions = mentions,
-            mentionStyleFactory = inputFieldTheme.mentionStyleFactory,
-        )
-        return TransformedText(transformed, OffsetMapping.Identity)
     }
 }
 
