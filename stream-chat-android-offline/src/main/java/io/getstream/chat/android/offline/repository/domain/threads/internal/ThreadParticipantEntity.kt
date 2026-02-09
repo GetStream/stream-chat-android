@@ -17,20 +17,13 @@
 package io.getstream.chat.android.offline.repository.domain.threads.internal
 
 import com.squareup.moshi.JsonClass
-import java.util.Date
 
 /**
  * Database entity for a Thread Participant.
  *
  * @param userId The ID of the user (thread participant).
- * @param threadId The ID of the thread.
- * @param createdAt The date when the user joined the thread.
- * @param lastReadAt The date when the user last read the thread.
  */
 @JsonClass(generateAdapter = true)
 internal data class ThreadParticipantEntity(
     val userId: String,
-    val threadId: String?,
-    val createdAt: Date?,
-    val lastReadAt: Date?,
 )

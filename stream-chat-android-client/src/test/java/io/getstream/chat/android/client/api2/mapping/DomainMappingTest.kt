@@ -120,7 +120,6 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -752,19 +751,13 @@ internal class DomainMappingTest {
             threadParticipants = listOf(
                 DownstreamThreadParticipantDto(
                     channel_cid = "messaging:123",
-                    thread_id = "thread1",
                     user_id = user1.id,
                     user = user1,
-                    created_at = Date(1591787071000),
-                    last_read_at = Date(1591787071588),
                 ),
                 DownstreamThreadParticipantDto(
                     channel_cid = "messaging:123",
-                    thread_id = "thread1",
                     user_id = user2.id,
                     user = user2,
-                    created_at = Date(1591787071000),
-                    last_read_at = Date(1591787071588),
                 ),
             ),
             draft = randomDownstreamDraftDto(
@@ -789,15 +782,9 @@ internal class DomainMappingTest {
             threadParticipants = listOf(
                 ThreadParticipant(
                     user = with(sut) { user1.toDomain() },
-                    threadId = "thread1",
-                    createdAt = Date(1591787071000),
-                    lastReadAt = Date(1591787071588),
                 ),
                 ThreadParticipant(
                     user = with(sut) { user2.toDomain() },
-                    threadId = "thread1",
-                    createdAt = Date(1591787071000),
-                    lastReadAt = Date(1591787071588),
                 ),
             ),
             lastMessageAt = downstreamThreadDto.last_message_at,

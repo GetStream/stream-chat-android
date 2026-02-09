@@ -978,7 +978,7 @@ public fun randomThread(
     createdByUserId: String = randomString(),
     createdBy: User = randomUser(id = createdByUserId),
     participantCount: Int = positiveRandomInt(),
-    threadParticipants: List<ThreadParticipant> = List(positiveRandomInt(5)) { ThreadParticipant(randomUser()) },
+    threadParticipants: List<ThreadParticipant> = List(positiveRandomInt(5)) { randomThreadParticipant() },
     lastMessageAt: Date = randomDate(),
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
@@ -1039,6 +1039,12 @@ public fun randomThreadInfo(
     title = title,
     channel = channel,
     threadParticipants = threadParticipants,
+)
+
+public fun randomThreadParticipant(
+    user: User = randomUser(),
+): ThreadParticipant = ThreadParticipant(
+    user = user,
 )
 
 public fun randomAppSettings(

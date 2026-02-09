@@ -89,11 +89,8 @@ internal object ThreadDtoTestData {
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
                 channel_cid = "messaging:123",
-                thread_id = "parent_msg_id",
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
-                created_at = Date(1591787071000),
-                last_read_at = Date(1591787071588),
             ),
         ),
         title = "Thread Title",
@@ -208,11 +205,8 @@ internal object ThreadDtoTestData {
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
                 channel_cid = "messaging:789",
-                thread_id = "parent_msg_id_3",
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
-                created_at = Date(1591787071000),
-                last_read_at = Date(1591787071588),
             ),
         ),
         last_message_at = Date(1591787071588),

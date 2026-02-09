@@ -50,9 +50,6 @@ internal class ThreadMapperTest {
             threadParticipants = entity.threadParticipants.map {
                 ThreadParticipant(
                     user = user,
-                    threadId = it.threadId,
-                    createdAt = it.createdAt,
-                    lastReadAt = it.lastReadAt,
                 )
             },
             lastMessageAt = entity.lastMessageAt,
@@ -89,9 +86,6 @@ internal class ThreadMapperTest {
             threadParticipants = thread.threadParticipants.map {
                 ThreadParticipantEntity(
                     userId = it.user.id,
-                    threadId = it.threadId,
-                    createdAt = it.createdAt,
-                    lastReadAt = it.lastReadAt,
                 )
             },
             lastMessageAt = thread.lastMessageAt,
