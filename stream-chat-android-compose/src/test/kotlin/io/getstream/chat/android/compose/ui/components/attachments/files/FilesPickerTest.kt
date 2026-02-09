@@ -28,9 +28,16 @@ internal class FilesPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `files picker items`() {
+    fun `single selection`() {
         snapshotWithDarkMode {
-            FilesPickerItems()
+            FilesPickerSingleSelection()
+        }
+    }
+
+    @Test
+    fun `multiple selection`() {
+        snapshotWithDarkMode {
+            FilesPickerMultipleSelection()
         }
     }
 }

@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -65,7 +64,6 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -80,6 +78,8 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInje
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
+import io.getstream.chat.android.compose.ui.components.common.PlayButton
+import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -97,6 +97,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -145,7 +146,7 @@ public fun MediaAttachmentContent(
     ) -> Unit = ::onMediaAttachmentContentItemClick,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
-            PlayButton()
+            PlayButton(PlayButtonSize.Medium)
         }
     },
 ) {
@@ -205,7 +206,7 @@ public fun MediaAttachmentContent(
     },
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
-            PlayButtonOverlay()
+            PlayButton(PlayButtonSize.Medium)
         }
     },
 ) {
@@ -217,7 +218,9 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
-    val attachments = remember(message.attachments) { message.attachments.filter { it.isImage() || it.isVideo() } }
+    val attachments = remember(message.attachments) {
+        message.attachments.filter { (it.isImage() || it.isVideo()) && !it.hasLink() }
+    }
 
     if (attachments.size == 1) {
         SingleMediaAttachment(
@@ -628,50 +631,6 @@ internal fun MediaAttachmentContentItem(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun PlayButtonOverlay() {
-    val colors = ChatTheme.colors
-    Box(
-        modifier = Modifier
-            .size(40.dp)
-            .background(colors.controlPlayControlBg, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.stream_compose_ic_play),
-            contentDescription = null,
-            tint = colors.controlPlayControlIcon,
-            modifier = Modifier.size(16.dp),
-        )
-    }
-}
-
-/**
- * A simple play button that is overlaid above
- * video attachments.
- *
- * @param modifier The modifier used for styling.
- * @param contentDescription Used to describe the content represented by this composable.
- */
-@Suppress("MagicNumber")
-@Composable
-internal fun PlayButton(
-    modifier: Modifier = Modifier,
-    contentDescription: String? = null,
-) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            modifier = Modifier.fillMaxSize(0.6f),
-            painter = painterResource(id = R.drawable.stream_compose_ic_play),
-            contentDescription = contentDescription,
-            tint = ChatTheme.colors.controlPlayControlIcon,
-        )
     }
 }
 

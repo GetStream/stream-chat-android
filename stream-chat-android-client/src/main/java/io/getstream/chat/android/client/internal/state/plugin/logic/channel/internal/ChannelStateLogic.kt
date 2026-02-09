@@ -45,6 +45,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.mergeFromEvent
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -958,6 +959,28 @@ internal class ChannelStateLogic(
     fun getPoll(pollId: String): Poll? = polls[pollId]
     fun updateMessageCount(channelMessageCount: Int) {
         updateChannelData { it?.copy(messageCount = channelMessageCount) }
+    }
+
+    /**
+     * Updates the lastMessageAt date in channel data based on the message.
+     * The update only happens if the message date is newer than the current lastMessageAt.
+     *
+     * @param message The message to extract the date from.
+     */
+    fun updateLastMessageAt(message: Message) {
+        val skipSystemMsg = mutableState.channelConfig.value.skipLastMsgUpdateForSystemMsgs
+        updateChannelData { channelData ->
+            val newLastMessageAt = calculateNewLastMessageAt(
+                message = message,
+                currentLastMessageAt = channelData?.lastMessageAt,
+                skipLastMsgUpdateForSystemMsgs = skipSystemMsg,
+            )
+            if (newLastMessageAt != channelData?.lastMessageAt) {
+                channelData?.copy(lastMessageAt = newLastMessageAt)
+            } else {
+                channelData
+            }
+        }
     }
 
     private companion object {

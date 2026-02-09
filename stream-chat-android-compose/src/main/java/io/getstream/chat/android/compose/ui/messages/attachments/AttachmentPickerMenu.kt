@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
@@ -41,13 +42,31 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
 /**
- * An attachments picker menu that expands and collapses.
+ * A container component that manages the attachment picker's visibility and animations.
  *
- * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] used to read state and
- * perform actions.
- * @param composerViewModel The [MessageComposerViewModel] used to read state and
- * perform actions.
+ * This composable wraps [AttachmentPicker] and handles:
+ * - Animated expand/collapse transitions when showing/hiding the picker
+ * - Keyboard coordination (hides keyboard when picker opens if configured)
+ * - Auto-dismiss when keyboard appears
+ * - Height configuration based on picker type (system vs in-app)
+ * - Integration between the attachment picker and message composer
+ *
+ * The picker visibility is controlled by [AttachmentsPickerViewModel.isShowingAttachments].
+ * Toggle it using [AttachmentsPickerViewModel.changeAttachmentState].
+ *
+ * This component is typically used within [MessagesScreen] and handles the complete flow of:
+ * 1. Displaying the attachment picker when triggered
+ * 2. Managing attachment selection
+ * 3. Adding selected attachments to the message composer
+ * 4. Creating polls when the poll action is triggered
+ * 5. Inserting commands when selected
+ *
+ * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] that controls picker visibility,
+ * manages attachment loading, and tracks selection state.
+ * @param composerViewModel The [MessageComposerViewModel] that receives selected attachments
+ * and handles poll creation and command insertion.
  */
+@Suppress("LongMethod")
 @Composable
 public fun AttachmentPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
@@ -76,7 +95,7 @@ public fun AttachmentPickerMenu(
     }
 
     val menuHeight = when {
-        ChatTheme.useDefaultSystemMediaPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
+        ChatTheme.attachmentPickerConfig.useSystemPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
         else -> ChatTheme.dimens.attachmentsPickerHeight
     }
 
@@ -85,11 +104,13 @@ public fun AttachmentPickerMenu(
         enter = expandVertically(expandFrom = Alignment.Top),
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
-        AttachmentPicker(
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
+        ChatTheme.componentFactory.AttachmentPicker(
             modifier = Modifier.height(menuHeight),
+            attachmentsPickerViewModel = attachmentsPickerViewModel,
+            messageMode = messageMode,
             onAttachmentItemSelected = { attachmentItem ->
-                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem)
+                val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
+                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
                 attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
                     composerViewModel.updateSelectedAttachments(attachments)
                 }
@@ -104,6 +125,7 @@ public fun AttachmentPickerMenu(
                         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                         composerViewModel.createPoll(action.pollConfig)
                     }
+
                     is AttachmentPickerCommandSelect -> {
                         attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                         composerViewModel.selectCommand(action.command)
@@ -111,7 +133,7 @@ public fun AttachmentPickerMenu(
                 }
                 isShowingDialog = action is AttachmentPickerCreatePollClick
             },
-            messageMode = messageMode,
+            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
         )
     }
 }

@@ -49,7 +49,7 @@ internal open class SubscriptionImpl(
     }
 
     final override fun onNext(event: ChatEvent) {
-        check(!isDisposed) { "Subscription already disposed, onNext should not be called on it" }
+        if (isDisposed) return
 
         if (filter(event)) {
             try {
@@ -78,7 +78,8 @@ internal class SuspendSubscription(
     }
 
     override fun onNext(event: ChatEvent) {
-        check(!isDisposed) { "Subscription already disposed, onNext should not be called on it" }
+        if (isDisposed) return
+
         scope.launch {
             if (filter(event)) {
                 listener?.onEvent(event)

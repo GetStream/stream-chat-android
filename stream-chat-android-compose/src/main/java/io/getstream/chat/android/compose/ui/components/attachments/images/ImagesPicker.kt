@@ -69,6 +69,8 @@ private val SelectionIndicatorSize = 24.dp
  * @param images The images the user can pick, to be rendered in a list.
  * @param onImageSelected Handler when the user clicks on any image item.
  * @param modifier Modifier for styling.
+ * @param allowMultipleSelection When `true`, shows selection position numbers. When `false`,
+ * shows a checkmark for single-select. Defaults to `true`.
  * @param itemContent Composable rendering an image/video item in the picker.
  * @param showAddMore Flag indicating the the "Add more" item should be shown at the beginning of the picker.
  * @param onAddMoreClick Action to be invoked when the user clicks on the "Add more" item.
@@ -79,10 +81,12 @@ public fun ImagesPicker(
     images: List<AttachmentPickerItemState>,
     onImageSelected: (AttachmentPickerItemState) -> Unit,
     modifier: Modifier = Modifier,
+    allowMultipleSelection: Boolean = true,
     itemContent: @Composable (AttachmentPickerItemState) -> Unit = { imageItem ->
         DefaultImagesPickerItem(
             imageItem = imageItem,
             onImageSelected = onImageSelected,
+            allowMultipleSelection = allowMultipleSelection,
         )
     },
     showAddMore: Boolean = false,
@@ -109,11 +113,14 @@ public fun ImagesPicker(
  *
  * @param imageItem The attachment item.
  * @param onImageSelected Handler when the user selects the image.
+ * @param allowMultipleSelection When `true`, shows selection position numbers. When `false`,
+ * shows a checkmark for single-select. Defaults to `true`.
  */
 @Composable
 internal fun DefaultImagesPickerItem(
     imageItem: AttachmentPickerItemState,
     onImageSelected: (AttachmentPickerItemState) -> Unit,
+    allowMultipleSelection: Boolean = true,
 ) {
     val attachmentMetaData = imageItem.attachmentMetaData
     val isVideo = attachmentMetaData.type == AttachmentType.VIDEO
@@ -148,6 +155,7 @@ internal fun DefaultImagesPickerItem(
                     .align(Alignment.TopEnd)
                     .padding(StreamTokens.spacingXs),
                 selection = imageItem.selection,
+                allowMultipleSelection = allowMultipleSelection,
             )
         } else {
             UnselectedIndicator(
@@ -172,6 +180,7 @@ internal fun DefaultImagesPickerItem(
 private fun SelectedIndicator(
     selection: Selection.Selected,
     modifier: Modifier = Modifier,
+    allowMultipleSelection: Boolean = true,
 ) {
     Box(
         modifier = modifier
@@ -187,11 +196,19 @@ private fun SelectedIndicator(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = selection.position.toString(),
-            color = ChatTheme.colors.badgeText,
-            style = ChatTheme.typography.numericExtraLarge,
-        )
+        if (allowMultipleSelection) {
+            Text(
+                text = selection.position.toString(),
+                color = ChatTheme.colors.badgeText,
+                style = ChatTheme.typography.numericExtraLarge,
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                contentDescription = null,
+                tint = ChatTheme.colors.badgeText,
+            )
+        }
     }
 }
 
@@ -283,22 +300,14 @@ private const val VideoFrameMillis: Long = 1000
 
 @Preview(showBackground = true)
 @Composable
-private fun ImagesPickerItemsPreview() {
+private fun ImagesPickerSingleSelectionPreview() {
     ChatTheme {
-        ImagesPicker(showAddMore = false)
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun ImagesPickerAddMorePreview() {
-    ChatTheme {
-        ImagesPicker(showAddMore = true)
+        ImagesPickerSingleSelection()
     }
 }
 
 @Composable
-internal fun ImagesPicker(showAddMore: Boolean) {
+internal fun ImagesPickerSingleSelection() {
     ImagesPicker(
         images = listOf(
             AttachmentPickerItemState(
@@ -315,6 +324,67 @@ internal fun ImagesPicker(showAddMore: Boolean) {
             ),
         ),
         onImageSelected = {},
-        showAddMore = showAddMore,
+        allowMultipleSelection = false,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ImagesPickerMultipleSelectionPreview() {
+    ChatTheme {
+        ImagesPickerMultipleSelection()
+    }
+}
+
+@Composable
+internal fun ImagesPickerMultipleSelection() {
+    ImagesPicker(
+        images = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(position = 2),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
+                    videoLength = VideoFrameMillis
+                },
+            ),
+        ),
+        onImageSelected = {},
+        allowMultipleSelection = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ImagesPickerAddMorePreview() {
+    ChatTheme {
+        ImagesPickerAddMore()
+    }
+}
+
+@Composable
+internal fun ImagesPickerAddMore() {
+    ImagesPicker(
+        images = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
+                    videoLength = VideoFrameMillis
+                },
+            ),
+        ),
+        onImageSelected = {},
+        showAddMore = true,
     )
 }

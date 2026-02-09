@@ -87,7 +87,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
- * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
  * while audio recording is in progress.
@@ -148,9 +147,6 @@ public fun MessageComposer(
             )
         }
     },
-    label: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerLabel(state = it)
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
@@ -159,7 +155,6 @@ public fun MessageComposer(
                 onAttachmentRemoved = onAttachmentRemoved,
                 onLinkPreviewClick = onLinkPreviewClick,
                 onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                label = label,
                 onCancel = onCancelAction,
                 onSendClick = { input, attachments ->
                     val message = viewModel.buildNewMessage(input, attachments)
@@ -171,14 +166,21 @@ public fun MessageComposer(
                         state = state,
                     )
                 },
+                centerContent = { modifier ->
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        state = state,
+                        onValueChange = onValueChange,
+                        modifier = modifier,
+                    )
+                },
                 trailingContent = {
                     ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                         state = state,
+                        recordingActions = recordingActions,
                         onSendClick = { input, attachments ->
                             val message = viewModel.buildNewMessage(input, attachments)
                             onSendMessage(message)
                         },
-                        recordingActions = recordingActions,
                     )
                 },
             )
@@ -226,7 +228,6 @@ public fun MessageComposer(
         onValueChange = onValueChange,
         onAttachmentRemoved = onAttachmentRemoved,
         onLinkPreviewClick = onLinkPreviewClick,
-        label = label,
     )
 }
 
@@ -253,7 +254,6 @@ public fun MessageComposer(
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
- * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
  * @param audioRecordingContent Customizable composable used for displaying audio recording information
  * while audio recording is in progress.
@@ -314,9 +314,6 @@ public fun MessageComposer(
             )
         }
     },
-    label: @Composable (MessageComposerState) -> Unit = {
-        ChatTheme.componentFactory.MessageComposerLabel(state = it)
-    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
@@ -326,7 +323,6 @@ public fun MessageComposer(
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
                 onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-                label = label,
                 onSendClick = onSendMessage,
                 recordingActions = recordingActions,
                 leadingContent = {
@@ -334,11 +330,18 @@ public fun MessageComposer(
                         state = state,
                     )
                 },
+                centerContent = { modifier ->
+                    ChatTheme.componentFactory.MessageComposerInputCenterContent(
+                        state = state,
+                        onValueChange = onValueChange,
+                        modifier = modifier,
+                    )
+                },
                 trailingContent = {
                     ChatTheme.componentFactory.MessageComposerInputTrailingContent(
                         state = state,
-                        onSendClick = onSendMessage,
                         recordingActions = recordingActions,
+                        onSendClick = onSendMessage,
                     )
                 },
             )

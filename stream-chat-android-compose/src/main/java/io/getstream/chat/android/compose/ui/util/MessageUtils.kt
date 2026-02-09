@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -68,9 +69,10 @@ private val fullSizeAttachmentTypes = setOf(
     AttachmentType.AUDIO_RECORDING,
 )
 
-/** @return If the message's only attachment should occupy the full message bubble */
-internal fun Message.shouldBeDisplayedAsFullSizeAttachment(): Boolean =
+/** @return If the message's attachment should occupy the full message bubble */
+internal fun Message.shouldBeDisplayedAsFullSizeAttachment(): Boolean = isGiphyEphemeral() || (
     text.isEmpty() && replyTo == null && attachments.size == 1 && attachments.first().type in fullSizeAttachmentTypes
+    )
 
 /**
  * @return If the message contains an attachment that is currently being uploaded.

@@ -18,22 +18,21 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Commands
-import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
-import io.getstream.chat.android.compose.state.messages.attachments.Poll
-import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 @Suppress("LongParameterList")
 @Composable
 internal fun AttachmentPickerContent(
-    attachmentsPickerMode: AttachmentsPickerMode,
+    pickerMode: AttachmentPickerMode?,
     commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
@@ -41,35 +40,39 @@ internal fun AttachmentPickerContent(
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
 ) {
-    when (attachmentsPickerMode) {
-        is Images -> AttachmentMediaPicker(
+    when (pickerMode) {
+        is GalleryPickerMode -> ChatTheme.componentFactory.AttachmentMediaPicker(
+            pickerMode = pickerMode,
             attachments = attachments,
             onAttachmentsChanged = onAttachmentsChanged,
             onAttachmentItemSelected = onAttachmentItemSelected,
         )
 
-        is Files -> AttachmentFilePicker(
+        is FilePickerMode -> ChatTheme.componentFactory.AttachmentFilePicker(
+            pickerMode = pickerMode,
             attachments = attachments,
             onAttachmentsChanged = onAttachmentsChanged,
             onAttachmentItemSelected = onAttachmentItemSelected,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
 
-        is MediaCapture -> AttachmentCameraPicker(
-            pickerMediaMode = PickerMediaMode.PHOTO_AND_VIDEO,
+        is CameraPickerMode -> ChatTheme.componentFactory.AttachmentCameraPicker(
+            pickerMode = pickerMode,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
 
-        is Poll -> AttachmentPollPicker(
+        is PollPickerMode -> ChatTheme.componentFactory.AttachmentPollPicker(
+            pickerMode = pickerMode,
             onAttachmentPickerAction = onAttachmentPickerAction,
         )
 
-        is Commands -> AttachmentCommandPicker(
+        is CommandPickerMode -> ChatTheme.componentFactory.AttachmentCommandPicker(
+            pickerMode = pickerMode,
             commands = commands,
             onAttachmentPickerAction = onAttachmentPickerAction,
         )
 
-        is System -> TODO()
-        is CustomPickerMode -> TODO()
+        // Custom modes are handled by overriding AttachmentPickerContent in ChatComponentFactory
+        else -> Unit
     }
 }

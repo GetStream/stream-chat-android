@@ -98,14 +98,6 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
-import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.BatchEvent
-import io.getstream.chat.android.client.internal.state.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.realType
-import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.internal.state.plugin.logic.querychannels.internal.QueryChannelsLogic
-import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.mergePartially
@@ -119,6 +111,17 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.mergeChannelFromEvent
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
+import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
+import io.getstream.chat.android.state.event.handler.internal.utils.realType
+import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
+import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.utils.internal.calculateNewLastMessageAt
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -551,10 +554,16 @@ internal class EventHandlerSequential(
                         logger.w { "[updateOfflineStorage] #new_message; (now channel found for ${event.cid})" }
                         continue
                     }
+                    val newLastMessageAt = calculateNewLastMessageAt(
+                        message = enrichedMessage,
+                        currentLastMessageAt = channel.lastMessageAt,
+                        skipLastMsgUpdateForSystemMsgs = channel.config.skipLastMsgUpdateForSystemMsgs,
+                    )
                     val updatedChannel = channel.copy(
                         hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
+                        lastMessageAt = newLastMessageAt,
                     )
                     batch.addChannel(updatedChannel)
                     // Update thread data in DB if the new message is added to a thread

@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,52 +46,58 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.Commands
-import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Files
-import io.getstream.chat.android.compose.state.messages.attachments.Images
-import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
-import io.getstream.chat.android.compose.state.messages.attachments.Poll
-import io.getstream.chat.android.compose.state.messages.attachments.System
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.MediaType
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsMetadataFromUris
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModel
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsProcessingViewModelFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
+import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.previewdata.PreviewCommandData
+import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
-import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+import java.io.File
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun AttachmentSystemPicker(
-    config: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     channel: Channel,
     messageMode: MessageMode,
-    commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
+    val pickerModes = ChatTheme.attachmentPickerConfig.modes
 
-    val processingViewModel = viewModel<AttachmentsProcessingViewModel>(
-        factory = AttachmentsProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext)),
+    val processingViewModelFactory = remember(context) {
+        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+    }
+    val processingViewModel = viewModel<AttachmentProcessingViewModel>(
+        factory = processingViewModelFactory,
     )
 
-    val filePickerLauncher = rememberFilePickerLauncher(config.filesAllowMultiple) { uris ->
+    val filePickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<FilePickerMode>().firstOrNull()
+    }
+    val filePickerLauncher = rememberFilePickerLauncher(filePickerMode) { uris ->
         if (uris.isNotEmpty()) {
             processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
                 showErrorIfNeeded(context, metadata)
@@ -99,7 +106,10 @@ internal fun AttachmentSystemPicker(
         }
     }
 
-    val mediaPickerLauncher = rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
+    val galleryPickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<GalleryPickerMode>().firstOrNull()
+    }
+    val mediaPickerLauncher = rememberVisualMediaPickerLauncher(galleryPickerMode) { uris ->
         if (uris.isNotEmpty()) {
             processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
                 showErrorIfNeeded(context, metadata)
@@ -108,15 +118,17 @@ internal fun AttachmentSystemPicker(
         }
     }
 
-    val captureMediaLauncher = rememberCaptureMediaLauncher(
-        photo = config.captureImageAllowed,
-        video = config.captureVideoAllowed,
-    ) { file ->
+    val captureMediaMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<CameraPickerMode>()
+            .map(CameraPickerMode::toCaptureMediaMode)
+            .firstOrNull()
+    }
+    val captureMediaLauncher = rememberCaptureMediaLauncher(captureMediaMode) { file ->
         val attachments = listOf(AttachmentMetaData(context, file))
         onAttachmentsSubmitted(attachments)
     }
     // Handling camera permission flow is only required if the host application has declared the permission.
-    val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
+    val requiresCameraPermission = remember { context.isPermissionDeclared(Manifest.permission.CAMERA) }
     val cameraPermissionState = if (requiresCameraPermission) {
         rememberPermissionState(Manifest.permission.CAMERA) { granted ->
             if (granted) captureMediaLauncher?.launch(Unit)
@@ -133,17 +145,19 @@ internal fun AttachmentSystemPicker(
 
     var showCommandsPickerDialog by remember { mutableStateOf(false) }
 
-    val visualMediaType = config.visualMediaType.toContractVisualMediaType()
-    val fileTypes = AttachmentFilter().getSupportedMimeTypes().toTypedArray()
+    val fileTypes = remember { AttachmentFilter().getSupportedMimeTypes().toTypedArray() }
 
-    AttachmentTypeSystemPicker(
+    ChatTheme.componentFactory.AttachmentTypeSystemPicker(
         channel = channel,
         messageMode = messageMode,
-        onPickerTypeClick = { attachmentPickerMode ->
+        onModeSelected = { attachmentPickerMode ->
             when (attachmentPickerMode) {
-                is Images -> mediaPickerLauncher.launch(PickVisualMediaRequest(visualMediaType))
+                is GalleryPickerMode -> {
+                    val mediaType = attachmentPickerMode.mediaType.toVisualMediaType()
+                    mediaPickerLauncher?.launch(PickVisualMediaRequest(mediaType))
+                }
 
-                is MediaCapture -> {
+                is CameraPickerMode -> {
                     if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
                         captureMediaLauncher?.launch(Unit)
                     } else if (cameraPermissionState.status.shouldShowRationale) {
@@ -153,24 +167,20 @@ internal fun AttachmentSystemPicker(
                     }
                 }
 
-                is Files -> filePickerLauncher.launch(fileTypes)
+                is FilePickerMode -> filePickerLauncher?.launch(fileTypes)
 
-                is Poll -> {
+                is PollPickerMode -> {
                     showCreatePollDialog = true
                     onAttachmentPickerAction(AttachmentPickerCreatePollClick)
                 }
 
-                is Commands -> showCommandsPickerDialog = true
+                is CommandPickerMode -> showCommandsPickerDialog = true
 
-                is System -> {
-                    // no-op
-                }
-
-                is CustomPickerMode -> {
-                    // no-op
-                }
+                // Custom modes are handled by customers
+                else -> Unit
             }
         },
+        trailingContent = {},
     )
 
     if (showCameraPermissionDialog) {
@@ -190,9 +200,14 @@ internal fun AttachmentSystemPicker(
         }
     }
 
-    if (showCommandsPickerDialog) {
+    val commandPickerMode = remember(pickerModes) {
+        pickerModes.filterIsInstance<CommandPickerMode>().firstOrNull()
+    }
+    val commands = channel.config.commands
+    if (showCommandsPickerDialog && commandPickerMode != null) {
         ModalBottomSheet(onDismissRequest = { showCommandsPickerDialog = false }) {
-            AttachmentCommandPicker(
+            ChatTheme.componentFactory.AttachmentCommandPicker(
+                pickerMode = commandPickerMode,
                 commands = commands,
                 onAttachmentPickerAction = { action ->
                     showCommandsPickerDialog = false
@@ -203,9 +218,19 @@ internal fun AttachmentSystemPicker(
     }
 }
 
+private fun MediaType.toVisualMediaType(): PickVisualMedia.VisualMediaType =
+    when (this) {
+        MediaType.ImagesOnly -> PickVisualMedia.ImageOnly
+        MediaType.VideosOnly -> PickVisualMedia.VideoOnly
+        MediaType.ImagesAndVideos -> PickVisualMedia.ImageAndVideo
+    }
+
 @Composable
-private fun rememberFilePickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) =
-    if (allowMultiple) {
+private fun rememberFilePickerLauncher(
+    filePickerMode: FilePickerMode?,
+    onResult: (List<Uri>) -> Unit,
+) = filePickerMode?.let {
+    if (filePickerMode.allowMultipleSelection) {
         rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
             onResult(uris)
         }
@@ -216,20 +241,35 @@ private fun rememberFilePickerLauncher(allowMultiple: Boolean, onResult: (List<U
             }
         }
     }
+}
 
 @Composable
-private fun rememberVisualMediaPickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) =
-    if (allowMultiple) {
+private fun rememberVisualMediaPickerLauncher(
+    galleryPickerMode: GalleryPickerMode?,
+    onResult: (List<Uri>) -> Unit,
+) = galleryPickerMode?.let {
+    if (galleryPickerMode.allowMultipleSelection) {
         rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
             onResult(uris)
         }
     } else {
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
             if (uri != null) {
                 onResult(listOf(uri))
             }
         }
     }
+}
+
+@Composable
+private fun rememberCaptureMediaLauncher(
+    mode: CaptureMediaContract.Mode?,
+    onResult: (File) -> Unit,
+) = mode?.let {
+    rememberLauncherForActivityResult(CaptureMediaContract(mode)) { file ->
+        file?.let(onResult)
+    }
+}
 
 private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
     if (metadata.uris.size != metadata.attachmentsMetadata.size) {
@@ -263,13 +303,48 @@ private fun AttachmentSystemPickerPreview() {
     }
 }
 
-@Suppress("MagicNumber")
 @Composable
 internal fun AttachmentSystemPicker() {
     AttachmentSystemPicker(
         channel = Channel(),
         messageMode = MessageMode.Normal,
-        commands = emptyList(),
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithPollsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithPolls()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithPolls() {
+    AttachmentSystemPicker(
+        channel = Channel(
+            ownCapabilities = setOf(ChannelCapabilities.SEND_POLL),
+            config = Config(pollsEnabled = true),
+        ),
+        messageMode = MessageMode.Normal,
+        attachments = emptyList(),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AttachmentSystemPickerWithCommandsPreview() {
+    ChatPreviewTheme {
+        AttachmentSystemPickerWithCommands()
+    }
+}
+
+@Composable
+internal fun AttachmentSystemPickerWithCommands() {
+    AttachmentSystemPicker(
+        channel = Channel(config = Config(commands = listOf(PreviewCommandData.command1))),
+        messageMode = MessageMode.Normal,
         attachments = emptyList(),
     )
 }
