@@ -610,7 +610,6 @@ private fun RecordingContent(
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
                         .padding(playbackTheme.waveformSliderPadding),
-                    style = playbackTheme.waveformSliderStyle,
                     waveformData = waveformData,
                     progress = currentProgress,
                     isPlaying = waveformPlaying,

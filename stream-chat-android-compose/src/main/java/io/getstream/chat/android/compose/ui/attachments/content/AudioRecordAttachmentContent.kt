@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -62,8 +63,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
@@ -169,10 +168,7 @@ public fun AudioRecordAttachmentContentItem(
         modifier = modifier,
         attachment = attachment,
         playerState = playerState,
-        waveformSliderStyle = WaveformSliderLayoutStyle(
-            height = 36.dp,
-            style = WaveformSliderStyle.defaultStyle(colors = colors),
-        ),
+        waveformHeight = 36.dp,
         outlineColor = outlineColor,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
@@ -192,7 +188,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     modifier: Modifier = Modifier,
     attachment: Attachment,
     playerState: AudioPlayerState,
-    waveformSliderStyle: WaveformSliderLayoutStyle,
+    waveformHeight: Dp,
     outlineColor: Color,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
@@ -232,9 +228,8 @@ internal fun AudioRecordAttachmentContentItemBase(
 
         StaticWaveformSlider(
             modifier = Modifier
-                .height(waveformSliderStyle.height)
+                .height(waveformHeight)
                 .weight(1f),
-            style = waveformSliderStyle.style,
             waveformData = waveform,
             progress = currentProgress,
             isPlaying = playing,

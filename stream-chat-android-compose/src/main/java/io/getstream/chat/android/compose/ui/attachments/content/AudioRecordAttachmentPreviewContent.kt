@@ -100,13 +100,12 @@ public fun AudioRecordAttachmentPreviewContentItem(
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
     val currentAttachment by rememberUpdatedState(attachment)
-    val theme = ChatTheme.messageComposerTheme.attachmentsPreview.audioRecording
     AudioRecordAttachmentContentItemBase(
         modifier = modifier,
         attachment = attachment,
         outlineColor = ChatTheme.colors.borderCorePrimary,
         playerState = playerState,
-        waveformSliderStyle = theme.waveformSliderStyle,
+        waveformHeight = 36.dp,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,

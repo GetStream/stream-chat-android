@@ -48,8 +48,6 @@ import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
 import io.getstream.chat.android.compose.ui.util.dragPointerInput
 import kotlin.random.Random
 
@@ -73,7 +71,6 @@ public fun StaticWaveformSlider(
     progress: Float,
     isPlaying: Boolean,
     modifier: Modifier = Modifier,
-    style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(),
     visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
     isThumbVisible: Boolean = true,
@@ -106,7 +103,6 @@ public fun StaticWaveformSlider(
         WaveformTrack(
             modifier = Modifier.fillMaxSize(),
             waveformData = waveformData,
-            style = style.trackerStyle,
             visibleBarLimit = visibleBarLimit,
             adjustBarWidthToLimit = adjustBarWidthToLimit,
             progress = progress,
@@ -115,7 +111,7 @@ public fun StaticWaveformSlider(
         // Draw the thumb
         if (isThumbVisible) {
             WaveformHandle(
-                color = if (isPlaying) style.trackerStyle.passedColor else style.trackerStyle.futureColor,
+                isPlaying = isPlaying,
                 progress = progress,
                 parentWidthPx = widthPx,
             )
@@ -128,10 +124,12 @@ private val handleBorderSize = 2.dp
 
 @Composable
 private fun BoxScope.WaveformHandle(
-    color: Color,
+    isPlaying: Boolean,
     progress: Float,
     parentWidthPx: Float,
 ) {
+    val colors = ChatTheme.colors
+    val color = if (isPlaying) colors.chatWaveformBarPlaying else colors.accentNeutral
     val thumbOffset = when (parentWidthPx > 0) {
         true -> with(LocalDensity.current) {
             val parentWidth = parentWidthPx.toDp()
@@ -149,22 +147,24 @@ private fun BoxScope.WaveformHandle(
             .offset(x = thumbOffset)
             .size(handleSize)
             .border(handleBorderSize, ChatTheme.colors.borderCoreOnAccent, CircleShape)
-            .background(color, CircleShape)
+            .background(color, CircleShape),
     )
 }
+
+private const val BarSpacingRatio = 0.5f
 
 @Composable
 internal fun WaveformTrack(
     modifier: Modifier = Modifier,
-    style: WaveformTrackStyle = WaveformTrackStyle.defaultStyle(),
     waveformData: List<Float> = emptyList(),
     visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
     progress: Float = 0f,
 ) {
-    // Ensure the spacing ratio is clamped between 0 and 1 (100% spacing would mean no bars)
-    val finalSpacingRatio = style.barSpacingRatio.coerceIn(0f, 1f)
+    val colors = ChatTheme.colors
     val finalProgress = progress.coerceIn(0f, 1f)
+    val progressColor = colors.chatWaveformBarPlaying
+    val trackColor = colors.chatWaveformBar
 
     val totalBars = when (adjustBarWidthToLimit) {
         true -> visibleBarLimit
@@ -178,7 +178,7 @@ internal fun WaveformTrack(
     Canvas(modifier = modifier) {
         val canvasW = size.width
         val canvasH = size.height
-        val spaceWidth = canvasW * finalSpacingRatio
+        val spaceWidth = canvasW * BarSpacingRatio
         val barsWidth = canvasW - spaceWidth
         val totalSpaces = totalBars - 1
         val barWidth = barsWidth / totalBars
@@ -192,7 +192,6 @@ internal fun WaveformTrack(
 
         // Precompute constant values outside the loop
         val startIdx = maxOf(0, waveformData.size - totalBars)
-        // StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }
         val minBarHeight = 4.dp.toPx()
         for (index in startIdx until waveformData.size) {
             val amplitude = waveformData[index]
@@ -210,7 +209,7 @@ internal fun WaveformTrack(
 
             // Draw the bar, color based on whether it is before or after the progress threshold
             drawRoundRect(
-                color = if (centerX < thresholdX) style.passedColor else style.futureColor,
+                color = if (centerX < thresholdX) progressColor else trackColor,
                 topLeft = topLeft,
                 cornerRadius = barCornerRadius,
                 size = barSize,
