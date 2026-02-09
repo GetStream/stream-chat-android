@@ -25,35 +25,31 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
@@ -63,6 +59,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
@@ -128,172 +126,144 @@ public fun LinkAttachmentContent(
         onLinkAttachmentContentClick(it.context, it.url)
     },
 ) {
-    val (message, isMine, onLongItemClick) = state
-
     val context = LocalContext.current
+    val message = state.message
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
+    val textColor = MessageStyling.textColor(outgoing = state.isMine)
 
     checkNotNull(attachment) {
         "Missing link attachment."
     }
 
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
-    val urlWithScheme = previewUrl?.addSchemeToUrlIfNeeded()
-
     checkNotNull(previewUrl) {
         "Missing preview URL."
     }
 
-    val errorMessage = stringResource(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
-
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
-            .background(getLinkBackgroundColor(isMine))
+            .background(getLinkBackgroundColor(state.isMine))
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    try {
-                        if (urlWithScheme != null) {
-                            onItemClick(
-                                LinkAttachmentClickData(
-                                    context = context,
-                                    url = urlWithScheme,
-                                    attachment = attachment,
-                                    message = message,
-                                ),
-                            )
-                        } else {
-                            Toast
-                                .makeText(context, errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                        }
-                    } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
-                        Toast
-                            .makeText(context, errorMessage, Toast.LENGTH_LONG)
-                            .show()
-                    }
+                    onItemClick(
+                        LinkAttachmentClickData(
+                            context = context,
+                            url = previewUrl.addSchemeToUrlIfNeeded(),
+                            attachment = attachment,
+                            message = message,
+                        ),
+                    )
                 },
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { state.onLongItemClick(message) },
             ),
     ) {
-        val imagePreviewUrl = attachment.imagePreviewUrl
-        if (imagePreviewUrl != null) {
-            LinkAttachmentImagePreview(attachment, isMine)
+        attachment.imagePreviewUrl?.let {
+            LinkAttachmentImagePreview(it)
         }
 
-        val title = attachment.title
-        if (title != null) {
-            LinkAttachmentTitle(title)
+        Spacer(Modifier.height(StreamTokens.spacingSm))
+
+        attachment.title?.let {
+            LinkAttachmentTitle(it, textColor)
         }
 
-        val description = attachment.text
-        if (description != null) {
-            LinkAttachmentDescription(description, linkDescriptionMaxLines)
+        attachment.text?.let {
+            LinkAttachmentDescription(it, linkDescriptionMaxLines, textColor)
         }
+
+        AttachmentLink(previewUrl, textColor)
     }
 }
 
 @Composable
-private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) {
-    val data = attachment.imagePreviewUrl
-    var maxWidth by remember { mutableStateOf(0.dp) }
-
-    Box(
-        modifier = Modifier.onSizeChanged { size -> maxWidth = size.width.dp },
-    ) {
-        val contentScale = ContentScale.FillWidth
-        StreamAsyncImage(
-            modifier = Modifier
-                .heightIn(max = 250.dp)
-                .clip(ChatTheme.shapes.attachment)
-                .testTag("Stream_LinkAttachmentPreview"),
-            data = data,
-            contentScale = contentScale,
-        ) { state ->
-            val painter = state.painter
-
-            if (painter == null) {
-                ShimmerProgressIndicator(
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                val intrinsicSize = painter.intrinsicSize
-                val aspectRatio = intrinsicSize.width / intrinsicSize.height
-
-                Image(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(aspectRatio),
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = contentScale,
-                )
-            }
-        }
-
-        val authorName = attachment.authorName
-
-        if (authorName != null) {
-            Text(
-                text = authorName,
-                color = ChatTheme.colors.primaryAccent,
-                maxLines = 1,
-                style = ChatTheme.typography.bodyBold,
-                fontSize = 16.sp,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier
-                    .widthIn(max = maxWidth / 2)
-                    .background(
-                        color = getLinkBackgroundColor(isMine),
-                        shape = ChatTheme.shapes.attachmentSiteLabel,
-                    )
-                    .padding(vertical = 6.dp, horizontal = 12.dp)
-                    .align(Alignment.BottomStart),
+private fun LinkAttachmentImagePreview(imageUrl: String) {
+    val contentScale = ContentScale.FillWidth
+    StreamAsyncImage(
+        modifier = Modifier
+            .heightIn(max = 144.dp)
+            .testTag("Stream_LinkAttachmentPreview"),
+        data = imageUrl,
+        contentScale = contentScale,
+    ) { state ->
+        when (val painter = state.painter) {
+            null -> ShimmerProgressIndicator(Modifier.fillMaxSize())
+            else -> Image(
+                modifier = Modifier.fillMaxSize(),
+                painter = painter,
+                contentDescription = null,
+                contentScale = contentScale,
             )
         }
     }
 }
 
 @Composable
-private fun LinkAttachmentTitle(text: String) {
+private fun LinkAttachmentTitle(text: String, color: Color) {
     Text(
         modifier = Modifier
-            .padding(start = 8.dp, end = 8.dp)
+            .padding(horizontal = StreamTokens.spacingSm)
             .testTag("Stream_LinkAttachmentTitle"),
         text = text,
-        style = ChatTheme.typography.bodyBold,
-        color = ChatTheme.colors.textHighEmphasis,
+        style = ChatTheme.typography.captionEmphasis,
+        color = color,
     )
 }
 
 @Composable
-private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLines: Int) {
+private fun LinkAttachmentDescription(description: String, maxLines: Int, color: Color) {
     Text(
         modifier = Modifier
             .padding(
-                start = 8.dp,
-                end = 8.dp,
-                bottom = 4.dp,
-                top = 2.dp,
+                start = StreamTokens.spacingSm,
+                end = StreamTokens.spacingSm,
+                top = StreamTokens.spacing2xs,
             )
             .testTag("Stream_LinkAttachmentDescription"),
         text = description,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textHighEmphasis,
-        maxLines = linkDescriptionMaxLines,
+        style = ChatTheme.typography.metadataDefault,
+        color = color,
+        maxLines = maxLines,
         overflow = TextOverflow.Ellipsis,
     )
 }
 
 @Composable
+private fun AttachmentLink(link: String, color: Color) {
+    Row(
+        modifier = Modifier.padding(
+            start = StreamTokens.spacingSm,
+            end = StreamTokens.spacingSm,
+            top = StreamTokens.spacing2xs,
+            bottom = StreamTokens.spacingSm,
+        ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_link),
+            contentDescription = null,
+            modifier = Modifier.size(StreamTokens.size12),
+            tint = color,
+        )
+        Text(
+            text = link,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(start = StreamTokens.spacing2xs),
+            style = ChatTheme.typography.metadataDefault,
+            color = color,
+        )
+    }
+}
+
+@Composable
 private fun getLinkBackgroundColor(isMine: Boolean): Color {
     return if (isMine) {
-        ChatTheme.ownMessageTheme.linkBackgroundColor
+        ChatTheme.colors.chatBgAttachmentOutgoing
     } else {
-        ChatTheme.otherMessageTheme.linkBackgroundColor
+        ChatTheme.colors.chatBgAttachmentIncoming
     }
 }
 
@@ -304,12 +274,15 @@ private fun getLinkBackgroundColor(isMine: Boolean): Color {
  * @param url The url of the link attachment being clicked.
  */
 internal fun onLinkAttachmentContentClick(context: Context, url: String) {
-    context.startActivity(
-        Intent(
-            Intent.ACTION_VIEW,
-            url.toUri(),
-        ),
-    )
+    try {
+        context.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+    } catch (_: ActivityNotFoundException) {
+        val errorMessage =
+            context.getString(R.string.stream_compose_message_list_error_cannot_open_link, url)
+        Toast
+            .makeText(context, errorMessage, Toast.LENGTH_LONG)
+            .show()
+    }
 }
 
 @Preview(showBackground = true)
@@ -338,7 +311,7 @@ internal fun LinkAttachmentContent() {
             state = AttachmentState(
                 message = Message(attachments = listOf(attachment)),
             ),
-            linkDescriptionMaxLines = 5,
+            linkDescriptionMaxLines = 2,
         )
     }
 }

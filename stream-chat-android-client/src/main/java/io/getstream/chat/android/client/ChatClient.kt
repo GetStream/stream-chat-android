@@ -108,6 +108,7 @@ import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -233,6 +234,7 @@ import io.getstream.result.call.retry.RetryPolicy
 import io.getstream.result.call.share
 import io.getstream.result.call.toUnitCall
 import io.getstream.result.call.withPrecondition
+import io.getstream.result.flatMap
 import io.getstream.result.flatMapSuspend
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.CoroutineScope
@@ -292,6 +294,7 @@ internal constructor(
     internal val messageReceiptManager: MessageReceiptManager,
 ) {
     private val logger by taggedLogger(TAG)
+    private val fileManager = StreamFileManager()
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     public val clientState: ClientState = mutableClientState
 
@@ -1480,6 +1483,40 @@ internal constructor(
             disconnectSuspend(true)
             Result.Success(Unit)
         }.doOnStart(clientScope) { setUserWithoutConnectingIfNeeded() }
+
+    /**
+     * Clears all cache and temporary files created by the Stream Chat SDK.
+     *
+     * This method removes:
+     * - All cached files from the default cache directory
+     * - All cached images from the image cache directory
+     * - All cached files during the upload/download process
+     * - All temporary files stored in external storage by the SDK (Photos and videos captured using the SDK)
+     *
+     * **Note**: This method does NOT clear database persistence. Use [clearPersistence] to clear
+     * database data, or call both methods if you need to clear all SDK data.
+     *
+     * **Note**: This method does NOT clear downloads made by the SDK to the file system. Those files are
+     * stored outside of the SDK's control and cannot be removed automatically.
+     *
+     * @param context The Android [Context] for accessing cache and external storage directories
+     * @return Executable async [Call] which performs the cleanup
+     */
+    @CheckResult
+    public fun clearCacheAndTemporaryFiles(context: Context): Call<Unit> =
+        CoroutineCall(clientScope) {
+            logger.d { "[clearCacheAndTemporaryFiles] Clearing all cache and temporary files" }
+            // Clear all cache directories
+            val cacheResult = fileManager.clearAllCache(context)
+            // Clear external (temporary) storage files - always run regardless of cache result
+            val externalStorageResult = fileManager.clearExternalStorage(context)
+            // Return the first failure if any, otherwise success
+            when {
+                cacheResult is Result.Failure -> cacheResult
+                externalStorageResult is Result.Failure -> externalStorageResult
+                else -> Result.Success(Unit)
+            }
+        }
 
     /**
      * Disconnect the current user, stop all observers and clear user data.

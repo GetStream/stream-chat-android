@@ -32,10 +32,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -49,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -61,6 +65,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -76,10 +81,15 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
+import io.getstream.chat.android.compose.ui.util.ifNotNull
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -87,7 +97,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.utils.extensions.hasLink
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -196,12 +205,11 @@ public fun MediaAttachmentContent(
     },
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
-            PlayButton()
+            PlayButtonOverlay()
         }
     },
 ) {
-    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = state
-    val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
+    val message = state.message
 
     // Prepare the image loader for the media gallery
     val imageLoader = LocalStreamImageLoader.current
@@ -209,49 +217,37 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
-    val attachments = message.attachments.filter {
-        !it.hasLink() && (it.isImage() || it.isVideo())
-    }
-    val attachmentCount = attachments.size
+    val attachments = remember(message.attachments) { message.attachments.filter { it.isImage() || it.isVideo() } }
 
-    val description = if (attachmentCount > 1) {
-        stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachmentCount)
+    if (attachments.size == 1) {
+        SingleMediaAttachment(
+            attachment = attachments.first(),
+            message = message,
+            modifier = modifier,
+            onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+            onLongItemClick = state.onLongItemClick,
+            skipEnrichUrl = skipEnrichUrl,
+            onContentItemClick = onItemClick,
+            overlayContent = itemOverlayContent,
+        )
     } else {
-        null
-    }
-
-    Row(
-        modifier
-            .semantics {
-                if (description != null) {
-                    contentDescription = description
-                }
-            }
-            .clip(ChatTheme.shapes.attachment),
-        horizontalArrangement = Arrangement.spacedBy(gridSpacing),
-    ) {
-        if (attachmentCount == 1) {
-            val attachment = attachments.first()
-
-            SingleMediaAttachment(
-                attachment = attachment,
-                message = message,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onLongItemClick = onLongItemClick,
-                skipEnrichUrl = skipEnrichUrl,
-                onContentItemClick = onItemClick,
-                overlayContent = itemOverlayContent,
-            )
-        } else {
-            MultipleMediaAttachments(
+        val gridSpacing = StreamTokens.spacing2xs
+        val description =
+            stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
+        Row(
+            modifier = modifier
+                .semantics { this.contentDescription = description }
+                .padding(MessageStyling.messageSectionPadding),
+            horizontalArrangement = Arrangement.spacedBy(gridSpacing),
+        ) {
+            MultipleMediaAttachmentsColumns(
                 attachments = attachments,
-                attachmentCount = attachmentCount,
                 gridSpacing = gridSpacing,
                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
                 message = message,
                 skipEnrichUrl = skipEnrichUrl,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+                onLongItemClick = state.onLongItemClick,
                 onContentItemClick = onItemClick,
                 itemOverlayContent = itemOverlayContent,
             )
@@ -278,6 +274,7 @@ public fun MediaAttachmentContent(
 internal fun SingleMediaAttachment(
     attachment: Attachment,
     message: Message,
+    modifier: Modifier,
     skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
@@ -299,9 +296,11 @@ internal fun SingleMediaAttachment(
         }
     }
 
+    val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     MediaAttachmentContentItem(
         attachment = attachment,
-        modifier = Modifier
+        modifier = modifier
+            .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
             .heightIn(
                 max = if (isVideo) {
                     ChatTheme.dimens.attachmentsContentVideoMaxHeight
@@ -317,6 +316,7 @@ internal fun SingleMediaAttachment(
                 },
             )
             .aspectRatio(ratio ?: EqualDimensionsRatio),
+        shape = if (shouldBeFullSize) null else ChatTheme.shapes.attachment,
         message = message,
         attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -331,7 +331,6 @@ internal fun SingleMediaAttachment(
  * Displays previews of multiple image and video attachment laid out in a grid.
  *
  * @param attachments The list of attachments that are to be previewed.
- * @param attachmentCount The number of attachments that are to be previewed.
  * @param gridSpacing Determines the spacing strategy between items.
  * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
  * in a group when previewing Media attachments in the message list.
@@ -347,9 +346,8 @@ internal fun SingleMediaAttachment(
  */
 @Suppress("LongParameterList", "LongMethod")
 @Composable
-internal fun RowScope.MultipleMediaAttachments(
+internal fun RowScope.MultipleMediaAttachmentsColumns(
     attachments: List<Attachment>,
-    attachmentCount: Int,
     gridSpacing: Dp,
     maximumNumberOfPreviewedItems: Int = 4,
     message: Message,
@@ -359,19 +357,88 @@ internal fun RowScope.MultipleMediaAttachments(
     onContentItemClick: (MediaAttachmentClickData) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
+    val totalPreviewCount = attachments.size.coerceAtMost(maximumNumberOfPreviewedItems)
+    val col1Count = totalPreviewCount / 2
+    val col2Count = totalPreviewCount - col1Count
+
+    val columnSizingModifier = Modifier
+        .weight(1f, fill = false)
+        .size(
+            width = ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2,
+            height = ChatTheme.dimens.attachmentsContentGroupPreviewHeight,
+        )
+
     Column(
-        modifier = Modifier
-            .weight(1f, fill = false)
-            .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
-            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight)
-            .testTag("Stream_MultipleMediaAttachmentsColumn"),
+        modifier = columnSizingModifier.testTag("Stream_MultipleMediaAttachmentsColumn"),
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
-        for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachmentCount) {
+        for (positionInColumn in 0 until col1Count) {
+            val shape = attachmentShape(
+                positionInColumn = positionInColumn,
+                isFirstColumn = true,
+                itemsInColumn = col1Count,
+            )
+            MediaAttachmentContentItem(
+                attachment = attachments[positionInColumn],
+                modifier = Modifier.weight(1f),
+                shape = shape,
+                message = message,
+                skipEnrichUrl = skipEnrichUrl,
+                attachmentPosition = positionInColumn,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onLongItemClick = onLongItemClick,
+                onItemClick = onContentItemClick,
+                overlayContent = itemOverlayContent,
+            )
+        }
+    }
+
+    Column(
+        modifier = columnSizingModifier,
+        verticalArrangement = Arrangement.spacedBy(gridSpacing),
+    ) {
+        for (positionInColumn in 0 until col2Count) {
+            val attachmentIndex = col1Count + positionInColumn
+            val attachment = attachments[attachmentIndex]
+            val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
+
+            val isLastVisibleSlot = attachmentIndex == maximumNumberOfPreviewedItems - 1
+            val hasHiddenItems = attachments.size > maximumNumberOfPreviewedItems
+
+            val shape = attachmentShape(
+                positionInColumn = positionInColumn,
+                isFirstColumn = false,
+                itemsInColumn = col2Count,
+            )
+
+            if (isLastVisibleSlot && hasHiddenItems) {
+                Box(modifier = Modifier.weight(1f)) {
+                    MediaAttachmentContentItem(
+                        attachment = attachment,
+                        shape = shape,
+                        message = message,
+                        skipEnrichUrl = skipEnrichUrl,
+                        attachmentPosition = attachmentIndex,
+                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                        onLongItemClick = onLongItemClick,
+                        onItemClick = onContentItemClick,
+                        overlayContent = itemOverlayContent,
+                    )
+
+                    if (!isUploading) {
+                        MediaAttachmentShowMoreOverlay(
+                            mediaCount = attachments.size,
+                            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+                            shape = shape,
+                            modifier = Modifier.align(Alignment.Center),
+                        )
+                    }
+                }
+            } else {
                 MediaAttachmentContentItem(
-                    attachment = attachments[attachmentIndex],
+                    attachment = attachment,
                     modifier = Modifier.weight(1f),
+                    shape = shape,
                     message = message,
                     skipEnrichUrl = skipEnrichUrl,
                     attachmentPosition = attachmentIndex,
@@ -383,57 +450,25 @@ internal fun RowScope.MultipleMediaAttachments(
             }
         }
     }
+}
 
-    Column(
-        modifier = Modifier
-            .weight(1f, fill = false)
-            .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
-            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
-        verticalArrangement = Arrangement.spacedBy(gridSpacing),
-    ) {
-        for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {
-            if (attachmentIndex < attachmentCount) {
-                val attachment = attachments[attachmentIndex]
-                val isUploading = attachment.uploadState is Attachment.UploadState.InProgress
-                val lastItemInColumnIndex = (maximumNumberOfPreviewedItems - 1) - (maximumNumberOfPreviewedItems % 2)
+private fun attachmentShape(
+    positionInColumn: Int,
+    isFirstColumn: Boolean,
+    itemsInColumn: Int,
+): RoundedCornerShape {
+    val outer = StreamTokens.radiusLg
+    val inner = StreamTokens.radiusMd
 
-                if (attachmentIndex == lastItemInColumnIndex && attachmentCount > maximumNumberOfPreviewedItems) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        MediaAttachmentContentItem(
-                            attachment = attachment,
-                            message = message,
-                            skipEnrichUrl = skipEnrichUrl,
-                            attachmentPosition = attachmentIndex,
-                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                            onLongItemClick = onLongItemClick,
-                            onItemClick = onContentItemClick,
-                            overlayContent = itemOverlayContent,
-                        )
+    val isFirstInColumn = positionInColumn == 0
+    val isLastInColumn = positionInColumn == itemsInColumn - 1
 
-                        if (!isUploading) {
-                            MediaAttachmentShowMoreOverlay(
-                                mediaCount = attachmentCount,
-                                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                                modifier = Modifier.align(Alignment.Center),
-                            )
-                        }
-                    }
-                } else {
-                    MediaAttachmentContentItem(
-                        attachment = attachment,
-                        modifier = Modifier.weight(1f),
-                        message = message,
-                        skipEnrichUrl = skipEnrichUrl,
-                        attachmentPosition = attachmentIndex,
-                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                        onLongItemClick = onLongItemClick,
-                        onItemClick = onContentItemClick,
-                        overlayContent = itemOverlayContent,
-                    )
-                }
-            }
-        }
-    }
+    return RoundedCornerShape(
+        topStart = if (isFirstColumn && isFirstInColumn) outer else inner,
+        topEnd = if (!isFirstColumn && isFirstInColumn) outer else inner,
+        bottomEnd = if (!isFirstColumn && isLastInColumn) outer else inner,
+        bottomStart = if (isFirstColumn && isLastInColumn) outer else inner,
+    )
 }
 
 /**
@@ -446,6 +481,7 @@ internal fun RowScope.MultipleMediaAttachments(
  * @param attachment The attachment that is previewed.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param shape Optional shape of the item.
  * @param onMediaGalleryPreviewResult The result of the activity used for propagating
  * actions such as media attachment selection, deletion, etc.
  * @param onLongItemClick Lambda that gets called when the item is long clicked.
@@ -462,6 +498,7 @@ internal fun MediaAttachmentContentItem(
     attachmentPosition: Int,
     attachment: Attachment,
     skipEnrichUrl: Boolean,
+    shape: Shape?,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
@@ -508,7 +545,7 @@ internal fun MediaAttachmentContentItem(
                     contentDescription = description
                 }
             }
-            .background(Color.Black)
+            .ifNotNull(shape, Modifier::clip)
             .fillMaxWidth()
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -544,7 +581,7 @@ internal fun MediaAttachmentContentItem(
 
         StreamAsyncImage(
             imageRequest = imageRequest,
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .background(backgroundColor),
             contentScale = ContentScale.Crop,
@@ -594,6 +631,24 @@ internal fun MediaAttachmentContentItem(
     }
 }
 
+@Composable
+private fun PlayButtonOverlay() {
+    val colors = ChatTheme.colors
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .background(colors.controlPlayControlBg, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_play),
+            contentDescription = null,
+            tint = colors.controlPlayControlIcon,
+            modifier = Modifier.size(16.dp),
+        )
+    }
+}
+
 /**
  * A simple play button that is overlaid above
  * video attachments.
@@ -607,20 +662,15 @@ internal fun PlayButton(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
 ) {
-    Column(
+    Box(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center,
+        contentAlignment = Alignment.Center,
     ) {
-        Image(
-            modifier = Modifier
-                .fillMaxSize(0.85f)
-                .alignBy { measured ->
-                    // emulated offset as seen in the design specs,
-                    // otherwise the button is visibly off to the start of the screen
-                    -(measured.measuredWidth * 1 / 6)
-                },
+        Icon(
+            modifier = Modifier.fillMaxSize(0.6f),
             painter = painterResource(id = R.drawable.stream_compose_ic_play),
             contentDescription = contentDescription,
+            tint = ChatTheme.colors.controlPlayControlIcon,
         )
     }
 }
@@ -638,6 +688,7 @@ internal fun PlayButton(
 internal fun MediaAttachmentShowMoreOverlay(
     mediaCount: Int,
     maximumNumberOfPreviewedItems: Int,
+    shape: Shape,
     modifier: Modifier = Modifier,
 ) {
     val remainingMediaCount = mediaCount - maximumNumberOfPreviewedItems
@@ -645,7 +696,7 @@ internal fun MediaAttachmentShowMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.showMoreOverlay),
+            .background(color = ChatTheme.colors.showMoreOverlay, shape = shape),
     ) {
         Text(
             modifier = modifier
@@ -747,6 +798,7 @@ internal fun SingleMediaAttachmentContent() {
         MediaAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
+                    text = "Hello",
                     attachments = listOf(
                         Attachment(
                             type = AttachmentType.IMAGE,
@@ -774,28 +826,27 @@ internal fun MultipleMediaAttachmentContent() {
         ColorImage(color = Color.Blue.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachments = listOf(
+            Attachment(
+                type = AttachmentType.VIDEO,
+                thumbUrl = "https://placekitten.com/100/100",
+            ),
+            Attachment(
+                type = AttachmentType.IMAGE,
+                imageUrl = "https://placekitten.com/200/200",
+            ),
+            Attachment(
+                type = AttachmentType.VIDEO,
+                thumbUrl = "https://placekitten.com/300/300",
+            ),
+            Attachment(
+                type = AttachmentType.IMAGE,
+                imageUrl = "https://placekitten.com/400/400",
+            ),
+        )
         MediaAttachmentContent(
             attachmentState = AttachmentState(
-                message = Message(
-                    attachments = listOf(
-                        Attachment(
-                            type = AttachmentType.VIDEO,
-                            thumbUrl = "https://placekitten.com/100/100",
-                        ),
-                        Attachment(
-                            type = AttachmentType.IMAGE,
-                            imageUrl = "https://placekitten.com/200/200",
-                        ),
-                        Attachment(
-                            type = AttachmentType.VIDEO,
-                            thumbUrl = "https://placekitten.com/300/300",
-                        ),
-                        Attachment(
-                            type = AttachmentType.IMAGE,
-                            imageUrl = "https://placekitten.com/400/400",
-                        ),
-                    ),
-                ),
+                message = Message(attachments = attachments),
             ),
         )
     }

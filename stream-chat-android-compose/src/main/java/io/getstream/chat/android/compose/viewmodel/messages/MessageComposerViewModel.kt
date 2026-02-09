@@ -154,6 +154,13 @@ public class MessageComposerViewModel(
     public fun dismissMessageActions(): Unit = messageComposerController.dismissMessageActions()
 
     /**
+     * @see [MessageComposerController.updateSelectedAttachments]
+     */
+    public fun updateSelectedAttachments(attachments: List<Attachment>) {
+        messageComposerController.updateSelectedAttachments(attachments)
+    }
+
+    /**
      * Stores the selected attachments from the attachment picker. These will be shown in the UI,
      * within the composer component. We upload and send these attachments once the user taps on the
      * send button.
@@ -280,6 +287,13 @@ public class MessageComposerViewModel(
     public fun seekRecordingTo(progress: Float): Unit = messageComposerController.seekRecordingTo(progress)
 
     public fun sendRecording(): Unit = messageComposerController.sendRecording()
+
+    /**
+     * @see [MessageComposerController.cancelLinkPreview]
+     */
+    public fun cancelLinkPreview() {
+        messageComposerController.cancelLinkPreview()
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

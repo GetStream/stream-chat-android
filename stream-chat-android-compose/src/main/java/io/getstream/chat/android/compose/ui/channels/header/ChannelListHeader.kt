@@ -37,15 +37,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -138,17 +137,13 @@ internal fun DefaultChannelHeaderLeadingContent(
     val size = Modifier.size(ChatTheme.dimens.channelAvatarSize)
 
     if (currentUser != null) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = size.testTag("Stream_UserAvatar"),
-            imageUrl = currentUser.image,
-            initials = currentUser.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.title3Bold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = currentUser.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = { onAvatarClick(currentUser) },
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = size
+                .clickable { onAvatarClick(currentUser) }
+                .testTag("Stream_UserAvatar"),
+            user = currentUser,
+            showIndicator = false,
+            showBorder = false,
         )
     } else {
         Spacer(modifier = size)

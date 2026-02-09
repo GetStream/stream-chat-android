@@ -21,7 +21,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -57,6 +59,20 @@ internal fun Message.getSenderDisplayName(
         currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
         else -> null
     }
+
+private val fullSizeAttachmentTypes = setOf(
+    AttachmentType.IMAGE,
+    AttachmentType.GIPHY,
+    AttachmentType.VIDEO,
+    AttachmentType.AUDIO,
+    AttachmentType.FILE,
+    AttachmentType.AUDIO_RECORDING,
+)
+
+/** @return If the message's attachment should occupy the full message bubble */
+internal fun Message.shouldBeDisplayedAsFullSizeAttachment(): Boolean = isGiphyEphemeral() || (
+    text.isEmpty() && replyTo == null && attachments.size == 1 && attachments.first().type in fullSizeAttachmentTypes
+    )
 
 /**
  * @return If the message contains an attachment that is currently being uploaded.

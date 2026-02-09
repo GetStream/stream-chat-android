@@ -89,10 +89,24 @@
     <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
-    <string name="stream_compose_quoted_message_image_tag">Picture</string>
+    <string name="stream_compose_quoted_message_audio_recording">Voice message (%s)</string>
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
-    <string name="stream_compose_quoted_message_file_tag">File</string>
-    <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
+    <string name="stream_compose_quoted_message_media">%d media</string>
+    <string name="stream_compose_quoted_message_reply_to">Reply to %s</string>
+    <string name="stream_compose_quoted_message_you">You</string>
+
+    <plurals name="stream_compose_quoted_message_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_images">
+        <item quantity="one">Photo</item>
+        <item quantity="other">%d photos</item>
+    </plurals>
+    <plurals name="stream_compose_quoted_message_videos">
+        <item quantity="one">Video</item>
+        <item quantity="other">%d videos</item>
+    </plurals>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>
@@ -138,7 +152,18 @@
     <string name="stream_compose_message_composer_hold_to_record">Hold to start, release to send.</string>
     <string name="stream_compose_audio_recording_preview">Voice message</string>
 
-    <string name="stream_compose_message_label">Send a message</string>
+    <!-- Attachment Picker -->
+    <string name="stream_compose_attachment_media_picker">Media</string>
+    <string name="stream_compose_attachment_file_picker">Files</string>
+    <string name="stream_compose_attachment_camera_picker">Camera</string>
+    <string name="stream_compose_attachment_camera_picker_content">Capture from the camera</string>
+    <string name="stream_compose_attachment_camera_picker_cta">Capture</string>
+    <string name="stream_compose_attachment_polls_picker">Polls</string>
+    <string name="stream_compose_attachment_poll_picker_content">Create a poll and let everyone vote</string>
+    <string name="stream_compose_attachment_poll_picker_cta">Create Poll</string>
+    <string name="stream_compose_attachment_commands_picker">Commands</string>
+
+    <string name="stream_compose_message_label">Message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
     <string name="stream_compose_record_audio_message">Record audio message</string>
@@ -162,7 +187,6 @@
     <string name="stream_compose_scroll_to_bottom">Scroll to bottom</string>
     <string name="stream_compose_new_message">New message</string>
     <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
-    <string name="stream_compose_grant_permission">Give permission</string>
     <string name="stream_compose_remaining_images_count">+%1$d</string>
     <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
     <string name="stream_compose_attachment_gallery_share">Share Image</string>

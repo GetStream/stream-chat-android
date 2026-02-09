@@ -21,18 +21,19 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -53,12 +56,17 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.applyIf
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.GiphyInfo
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 import io.getstream.chat.android.ui.common.utils.giphyInfo
@@ -146,7 +154,7 @@ public fun GiphyAttachmentContent(
 public fun GiphyAttachmentContent(
     state: AttachmentState,
     modifier: Modifier = Modifier,
-    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
     onItemClick: (GiphyAttachmentClickData) -> Unit = {
@@ -154,7 +162,7 @@ public fun GiphyAttachmentContent(
     },
 ) {
     val context = LocalContext.current
-    val (message, _, onLongItemClick) = state
+    val message = state.message
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
@@ -167,55 +175,19 @@ public fun GiphyAttachmentContent(
         "Missing preview URL."
     }
 
-    val density = LocalDensity.current
-
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
 
-    val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
-    val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
+    val giphyDimensions: DpSize = calculateSize(giphyInfo, giphySizingMode)
 
-    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
-    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
-
-    val giphyDimensions: DpSize by remember(key1 = giphyInfo) {
-        derivedStateOf {
-            if (giphyInfo != null) {
-                with(density) {
-                    val giphyWidth = giphyInfo.width.toDp()
-                    val giphyHeight = giphyInfo.height.toDp()
-
-                    when {
-                        giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
-                            DpSize(
-                                width = width.coerceIn(
-                                    minimumValue = null,
-                                    maximumValue = maxWidth,
-                                ),
-                                height = height.coerceIn(
-                                    minimumValue = null,
-                                    maximumValue = maxHeight,
-                                ),
-                            )
-                        }
-
-                        else -> calculateResultingDimensions(
-                            maxWidth = maxWidth,
-                            maxHeight = maxHeight,
-                            giphyWidth = giphyWidth,
-                            giphyHeight = giphyHeight,
-                        )
-                    }
-                }
-            } else {
-                DpSize(maxWidth, maxHeight)
-            }
-        }
-    }
-
+    val shouldBeFullSize = message.shouldBeDisplayedAsFullSizeAttachment()
     Box(
         modifier = modifier
+            .testTag("Stream_GiphyContent")
             .size(giphyDimensions)
-            .clip(ChatTheme.shapes.attachment)
+            .applyIf(!shouldBeFullSize) {
+                padding(MessageStyling.messageSectionPadding)
+                    .clip(ChatTheme.shapes.attachment)
+            }
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -229,7 +201,7 @@ public fun GiphyAttachmentContent(
                         ),
                     )
                 },
-                onLongClick = { onLongItemClick(message) },
+                onLongClick = { state.onLongItemClick(message) },
             ),
     ) {
         StreamAsyncImage(
@@ -239,15 +211,82 @@ public fun GiphyAttachmentContent(
             contentScale = contentScale,
         )
 
-        Image(
-            modifier = Modifier
+        GiphyLabel(
+            Modifier
                 .align(Alignment.BottomStart)
-                .padding(8.dp)
-                .width(64.dp)
-                .wrapContentHeight(),
-            painter = painterResource(R.drawable.stream_compose_giphy_label),
+                .padding(StreamTokens.spacingXs),
+        )
+    }
+}
+
+@Composable
+private fun calculateSize(
+    giphyInfo: GiphyInfo?,
+    giphySizingMode: GiphySizingMode,
+): DpSize {
+    val density = LocalDensity.current
+
+    val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
+    val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
+
+    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
+    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
+
+    val giphyDimensions: DpSize = remember(giphyInfo, density, maxWidth, width, maxHeight, height) {
+        if (giphyInfo != null) {
+            with(density) {
+                val giphyWidth = giphyInfo.width.toDp()
+                val giphyHeight = giphyInfo.height.toDp()
+
+                when {
+                    giphySizingMode == GiphySizingMode.FIXED_SIZE -> {
+                        DpSize(
+                            width = width.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxWidth,
+                            ),
+                            height = height.coerceIn(
+                                minimumValue = null,
+                                maximumValue = maxHeight,
+                            ),
+                        )
+                    }
+
+                    else -> calculateResultingDimensions(
+                        maxWidth = maxWidth,
+                        maxHeight = maxHeight,
+                        giphyWidth = giphyWidth,
+                        giphyHeight = giphyHeight,
+                    )
+                }
+            }
+        } else {
+            DpSize(maxWidth, maxHeight)
+        }
+    }
+    return giphyDimensions
+}
+
+@Composable
+private fun GiphyLabel(modifier: Modifier) {
+    val colors = ChatTheme.colors
+    Row(
+        modifier = modifier
+            .background(colors.badgeBgOverlay, RoundedCornerShape(StreamTokens.radiusLg))
+            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            modifier = Modifier.size(12.dp),
+            painter = painterResource(R.drawable.stream_ic_command_giphy),
             contentDescription = null,
             contentScale = ContentScale.Inside,
+        )
+        Text(
+            text = stringResource(R.string.stream_compose_giphy_label),
+            style = ChatTheme.typography.metadataEmphasis,
+            color = colors.badgeTextOnAccent,
         )
     }
 }
@@ -332,6 +371,7 @@ internal fun GiphyAttachmentContent() {
         GiphyAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(
+                    text = "Hello",
                     attachments = listOf(
                         Attachment(
                             titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",

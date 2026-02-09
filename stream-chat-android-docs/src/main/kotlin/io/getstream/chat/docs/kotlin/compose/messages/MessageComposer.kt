@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,11 +31,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.docs.R
 
 /**
@@ -84,7 +86,7 @@ private object MessageComposerUsageSnippet {
                         }
                     )
                 }
-            ) {
+            ) { contentPadding ->
                 // 5 - the rest of your UI
                 // ...
             }
@@ -115,15 +117,13 @@ private object MessageComposerHandlingActionsSnippet {
                 ChatTheme {
                     MessageComposer(
                         viewModel = viewModel,
-                        onSendMessage = { viewModel.sendMessage(it) },
-                        onAttachmentsClick = {},
-                        onCommandsClick = {},
-                        onValueChange = { viewModel.setMessageInput(it) },
-                        onAttachmentRemoved = { viewModel.removeSelectedAttachment(it) },
-                        onCancelAction = { viewModel.dismissMessageActions() },
-                        onMentionSelected = { viewModel.selectMention(it) },
-                        onCommandSelected = { viewModel.selectCommand(it) },
-                        onAlsoSendToChannelSelected = { viewModel.setAlsoSendToChannel(it) },
+                        onSendMessage = viewModel::sendMessage,
+                        onValueChange = viewModel::setMessageInput,
+                        onAttachmentRemoved = viewModel::removeSelectedAttachment,
+                        onCancelAction = viewModel::dismissMessageActions,
+                        onMentionSelected = viewModel::selectMention,
+                        onCommandSelected = viewModel::selectCommand,
+                        onAlsoSendToChannelSelected = viewModel::setAlsoSendToChannel,
                     )
                 }
             }
@@ -192,8 +192,16 @@ private object MessageComposerCustomizationSnippet {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
-                integrations = {},
+                leadingContent = {},
                 input = { inputState ->
+                    val onSendClick: (String, List<Attachment>) -> Unit = { text, attachments ->
+                        composerViewModel.sendMessage(
+                            message = composerViewModel.buildNewMessage(
+                                message = text,
+                                attachments = attachments
+                            )
+                        )
+                    }
                     MessageInput(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -202,7 +210,9 @@ private object MessageComposerCustomizationSnippet {
                         messageComposerState = inputState,
                         onValueChange = { composerViewModel.setMessageInput(it) },
                         onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                        onLinkPreviewClick = null,
+                        onCancelAction = { composerViewModel.dismissMessageActions() },
+                        onSendClick = onSendClick,
+                        recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                         label = { // create a custom label with an icon
                             Row(
                                 Modifier.wrapContentWidth(),
@@ -220,7 +230,7 @@ private object MessageComposerCustomizationSnippet {
                                 )
                             }
                         },
-                        innerTrailingContent = { // add a send button inside the input
+                        trailingContent = { // add a send button inside the input
                             Icon(
                                 modifier = Modifier
                                     .size(24.dp)
@@ -229,13 +239,7 @@ private object MessageComposerCustomizationSnippet {
                                         indication = ripple()
                                     ) {
                                         val state = composerViewModel.messageComposerState.value
-
-                                        composerViewModel.sendMessage(
-                                            composerViewModel.buildNewMessage(
-                                                state.inputValue,
-                                                state.attachments
-                                            )
-                                        )
+                                        onSendClick(state.inputValue, state.attachments)
                                     },
                                 painter = painterResource(id = R.drawable.stream_compose_ic_send),
                                 tint = ChatTheme.colors.primaryAccent,

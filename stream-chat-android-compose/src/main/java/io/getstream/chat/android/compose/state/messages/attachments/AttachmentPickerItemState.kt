@@ -19,13 +19,44 @@ package io.getstream.chat.android.compose.state.messages.attachments
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
- * Represents each attachment item in our attachment picker. Each item can be selected and has an
- * appropriate set of metadata to describe it.
+ * Represents the state of a single item in the attachment picker.
  *
- * @param attachmentMetaData The metadata for the item, holding the links, size, types, name etc.
- * @param isSelected If the item is selected or not.
+ * Each item displayed in the attachment picker (images, videos, files) is represented by this class,
+ * which holds both the metadata about the attachment and its current selection state.
+ *
+ * @param attachmentMetaData The metadata describing the attachment, including its URI, file name,
+ * size, MIME type, and other relevant information.
+ * @param selection The current selection state of the item. See [Selection] for possible states.
  */
 public data class AttachmentPickerItemState(
     val attachmentMetaData: AttachmentMetaData,
-    val isSelected: Boolean,
-)
+    val selection: Selection = Selection.Unselected,
+) {
+
+    /**
+     * Represents the selection state of an attachment picker item.
+     */
+    public sealed interface Selection {
+
+        /**
+         * Indicates that the attachment is selected.
+         *
+         * @param position The 1-based position of this attachment in the selection order.
+         * This is displayed as a badge on the item to show the selection order when
+         * multiple attachments are selected.
+         */
+        public data class Selected(val position: Int) : Selection
+
+        /**
+         * Indicates that the attachment is not selected.
+         */
+        public data object Unselected : Selection
+    }
+
+    /**
+     * Convenience property to check if this item is currently selected.
+     *
+     * @return `true` if the item is selected, `false` otherwise.
+     */
+    public val isSelected: Boolean get() = selection is Selection.Selected
+}

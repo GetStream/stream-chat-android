@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationConstants
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,6 +28,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,38 +39,30 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
@@ -136,7 +128,6 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
@@ -220,16 +211,16 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
-        ) {
+            containerColor = ChatTheme.colors.appBackground,
+        ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
 
             MessageList(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
-                    .fillMaxSize()
-                    .padding(it),
+                    .fillMaxSize(),
+                contentPadding = contentPadding,
                 viewModel = listViewModel,
-                messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 verticalArrangement = verticalArrangement,
@@ -283,11 +274,6 @@ public fun MessagesScreen(
             composerViewModel = composerViewModel,
             skipPushNotification = skipPushNotification,
             skipEnrichUrl = skipEnrichUrl,
-        )
-        AttachmentsPickerMenu(
-            listViewModel = listViewModel,
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            composerViewModel = composerViewModel,
         )
         MessageModerationDialog(
             listViewModel = listViewModel,
@@ -347,42 +333,39 @@ internal fun DefaultBottomBarContent(
     val attachmentsPickerViewModel =
         viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
-    MessageComposer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        viewModel = composerViewModel,
-        onAttachmentsClick = remember(attachmentsPickerViewModel) {
-            {
-                attachmentsPickerViewModel.changeAttachmentState(
-                    true,
-                )
-            }
-        },
-        onCommandsClick = remember(composerViewModel) {
-            {
-                composerViewModel.toggleCommandsVisibility()
-            }
-        },
-        onCancelAction = remember(listViewModel, composerViewModel) {
-            {
+    Column {
+        MessageComposer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            viewModel = composerViewModel,
+            isAttachmentPickerVisible = attachmentsPickerViewModel.isShowingAttachments,
+            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+            onAttachmentRemoved = { attachment ->
+                composerViewModel.removeSelectedAttachment(attachment)
+                attachmentsPickerViewModel.removeSelectedAttachment(attachment)
+            },
+            onCancelAction = {
                 listViewModel.dismissAllMessageActions()
                 composerViewModel.dismissMessageActions()
-            }
-        },
-        onLinkPreviewClick = onComposerLinkPreviewClick,
-        onSendMessage = remember(composerViewModel) {
-            {
-                    message ->
+            },
+            onLinkPreviewClick = onComposerLinkPreviewClick,
+            onSendMessage = { message ->
+                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,
                         skipEnrichUrl = skipEnrichUrl,
                     ),
                 )
-            }
-        },
-    )
+            },
+        )
+
+        AttachmentPickerMenu(
+            attachmentsPickerViewModel = attachmentsPickerViewModel,
+            composerViewModel = composerViewModel,
+        )
+    }
 }
 
 /**
@@ -622,95 +605,6 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 }
             },
             onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
-        )
-    }
-}
-
-/**
- * Contains the attachments picker menu wrapped inside
- * of an animated composable.
- *
- * @param attachmentsPickerViewModel The [AttachmentsPickerViewModel] used to read state and
- * perform actions.
- * @param composerViewModel The [MessageComposerViewModel] used to read state and
- * perform actions.
- */
-@Suppress("LongMethod")
-@Composable
-public fun BoxScope.AttachmentsPickerMenu(
-    listViewModel: MessageListViewModel,
-    attachmentsPickerViewModel: AttachmentsPickerViewModel,
-    composerViewModel: MessageComposerViewModel,
-) {
-    val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
-    val messageMode by composerViewModel.messageMode.collectAsStateWithLifecycle()
-
-    // Ensure keyboard is closed when the attachments picker is shown (if instructed by ChatTheme)
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
-    LaunchedEffect(isShowingAttachments) {
-        if (shouldCloseKeyboard && isShowingAttachments) {
-            keyboardController?.hide()
-        }
-    }
-
-    AnimatedVisibility(
-        visible = isShowingAttachments,
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)),
-    ) {
-        var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
-        val screenHeight = LocalConfiguration.current.screenHeightDp
-        val pickerHeight by animateDpAsState(
-            targetValue = when {
-                isFullScreenContent -> screenHeight.dp
-                ChatTheme.useDefaultSystemMediaPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
-                else -> ChatTheme.dimens.attachmentsPickerHeight
-            },
-            label = "full sized picker animation",
-        )
-
-        AttachmentsPicker(
-            attachmentsPickerViewModel = attachmentsPickerViewModel,
-            modifier = Modifier
-                .testTag("Stream_AttachmentsPicker")
-                .align(Alignment.BottomCenter)
-                .height(pickerHeight)
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween(),
-                    ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2),
-                    ),
-                ),
-            shape = if (isFullScreenContent) {
-                RoundedCornerShape(0.dp)
-            } else {
-                ChatTheme.shapes.bottomSheet
-            },
-            onAttachmentsSelected = remember(attachmentsPickerViewModel) {
-                {
-                        attachments ->
-                    attachmentsPickerViewModel.changeAttachmentState(false)
-                    composerViewModel.addSelectedAttachments(attachments)
-                }
-            },
-            onAttachmentPickerAction = { action ->
-                if (action is AttachmentPickerPollCreation) {
-                    composerViewModel.createPoll(action.pollConfig)
-                }
-            },
-            onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
-            onDismiss = remember(attachmentsPickerViewModel) {
-                {
-                    attachmentsPickerViewModel.changeAttachmentState(false)
-                    attachmentsPickerViewModel.dismissAttachments()
-                }
-            },
-            messageMode = messageMode,
         )
     }
 }

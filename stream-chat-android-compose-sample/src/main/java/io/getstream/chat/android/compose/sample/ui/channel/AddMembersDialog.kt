@@ -23,6 +23,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -170,8 +171,6 @@ private fun AddMembersContent(
     }
 }
 
-private const val GridColumnCount = 3
-
 @Composable
 private fun SearchResultItem(
     user: User,
@@ -184,9 +183,10 @@ private fun SearchResultItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             UserAvatar(
-                modifier = Modifier.aspectRatio(1f),
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clickable { onViewAction(AddMembersViewAction.UserClick(user)) },
                 user = user,
-                onClick = { onViewAction(AddMembersViewAction.UserClick(user)) },
             )
             Text(
                 text = user.name,

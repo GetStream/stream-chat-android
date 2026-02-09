@@ -44,7 +44,7 @@ public fun CoolDownIndicator(
     Box(
         modifier = modifier
             .size(48.dp)
-            .padding(12.dp)
+            .padding(8.dp)
             .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.disabled),
         contentAlignment = Alignment.Center,
     ) {

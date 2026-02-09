@@ -25,8 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
@@ -36,7 +34,6 @@ import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFa
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
@@ -60,7 +57,7 @@ public object StreamAttachmentFactories {
      * The default max length of the link attachments description. We limit this, because for some links the description
      * can be too long.
      */
-    private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 5
+    private const val DEFAULT_LINK_DESCRIPTION_MAX_LINES = 2
 
     /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
@@ -82,8 +79,6 @@ public object StreamAttachmentFactories {
      * @param onLinkContentItemClick Lambda called when a link attachment content item gets clicked.
      * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
-     * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
-     * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
@@ -116,11 +111,6 @@ public object StreamAttachmentFactories {
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClick,
-        showFileSize: (Attachment) -> Boolean = { true },
-        onFileContentItemClick: (
-            previewHandlers: List<AttachmentPreviewHandler>,
-            attachment: Attachment,
-        ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
@@ -143,14 +133,8 @@ public object StreamAttachmentFactories {
             contentScale = contentScale,
             onContentItemClick = onGiphyContentItemClick,
         ),
-        MediaAttachmentFactory(
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onMediaContentItemClick,
-        ),
-        FileAttachmentFactory(
-            showFileSize = showFileSize,
-            onContentItemClick = onFileContentItemClick,
-        ),
+        MediaAttachmentFactory(),
+        FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
 
@@ -160,7 +144,6 @@ public object StreamAttachmentFactories {
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
-        skipEnrichUrl: Boolean = false,
         onUploadContentItemClick: (
             Attachment,
             List<AttachmentPreviewHandler>,
@@ -171,23 +154,6 @@ public object StreamAttachmentFactories {
         onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {
             onGiphyAttachmentContentClick(it.context, it.url)
         },
-        onMediaContentItemClick: (MediaAttachmentClickData) -> Unit = {
-            onMediaAttachmentContentItemClick(
-                it.mediaGalleryPreviewLauncher,
-                it.message,
-                it.attachmentPosition,
-                it.videoThumbnailsEnabled,
-                it.downloadAttachmentUriGenerator,
-                it.downloadRequestInterceptor,
-                it.streamCdnImageResizing,
-                it.skipEnrichUrl,
-            )
-        },
-        showFileSize: (Attachment) -> Boolean = { true },
-        onFileContentItemClick: (
-            previewHandlers: List<AttachmentPreviewHandler>,
-            attachment: Attachment,
-        ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
@@ -210,23 +176,8 @@ public object StreamAttachmentFactories {
             contentScale = contentScale,
             onItemClick = onGiphyContentItemClick,
         ),
-        MediaAttachmentFactory(
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onMediaContentItemClick,
-        ),
-        FileAttachmentFactory(
-            showFileSize = showFileSize,
-            onContentItemClick = onFileContentItemClick,
-        ),
+        MediaAttachmentFactory(),
+        FileAttachmentFactory(),
         UnsupportedAttachmentFactory,
     ).filterNot { skipTypes.contains(it.type) }
-
-    /**
-     * Default quoted attachment factories we provide, which can transform image, file and link attachments.
-     *
-     * @return a [List] of various [AttachmentFactory] instances that provide different quoted attachments support.
-     */
-    public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
-        QuotedAttachmentFactory,
-    )
 }

@@ -41,7 +41,7 @@ class GiphyMessageComponentBrowserFragment : BaseMessagesComponentBrowserFragmen
                         ),
                     ),
                 ),
-                positions = listOf(MessagePosition.TOP, MessagePosition.BOTTOM),
+                position = MessagePosition.TOP,
                 isMine = true,
             ),
         )

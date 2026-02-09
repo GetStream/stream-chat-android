@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -28,7 +27,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -46,12 +44,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
@@ -63,7 +61,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.view.HapticFeedbackConstantsCompat
@@ -77,10 +74,11 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -97,7 +95,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -144,7 +141,6 @@ public fun MessageItem(
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
@@ -179,30 +175,10 @@ public fun MessageItem(
         }
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            with(ChatTheme.componentFactory) {
-                MessageItemCenterContent(
-                    messageItem = messageItem,
-                    onLongItemClick = onLongItemClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onAddAnswer = onAddAnswer,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                )
-            }
-        } else {
-            DefaultMessageItemCenterContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemCenterContent(
                 messageItem = messageItem,
                 onLongItemClick = onLongItemClick,
-                messageContentFactory = messageContentFactory,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onGiphyActionClick = onGiphyActionClick,
                 onQuotedMessageClick = onQuotedMessageClick,
@@ -272,9 +248,11 @@ public fun MessageItem(
             ownCapabilities = messageItem.ownCapabilities,
         )
 
+    // Remember the message to ensure updated values are captured in the onReply lambda
+    val replyMessage by rememberUpdatedState(message)
     SwipeToReply(
         modifier = modifier,
-        onReply = { onReply(message) },
+        onReply = { onReply(replyMessage) },
         isSwipeable = { isSwipable },
         swipeToReplyContent = swipeToReplyContent,
     ) {
@@ -328,21 +306,17 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
     @Suppress("ComplexCondition")
     if (!messageItem.isMine && (
             messageItem.showMessageFooter ||
-                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
-                messageItem.groupPosition.contains(MessagePosition.NONE)
+                messageItem.groupPosition == MessagePosition.BOTTOM ||
+                messageItem.groupPosition == MessagePosition.NONE
             )
     ) {
-        ChatTheme.componentFactory.Avatar(
-            modifier = modifier.testTag("Stream_UserAvatar"),
-            imageUrl = messageItem.message.user.image,
-            initials = messageItem.message.user.initials,
-            shape = ChatTheme.shapes.avatar,
-            textStyle = ChatTheme.typography.captionBold,
-            placeholderPainter = null,
-            errorPlaceholderPainter = null,
-            contentDescription = messageItem.message.user.name,
-            initialsAvatarOffset = DpOffset.Zero,
-            onClick = onUserAvatarClick,
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = modifier
+                .testTag("Stream_UserAvatar")
+                .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
+            user = messageItem.message.user,
+            showIndicator = false,
+            showBorder = false,
         )
     } else {
         Spacer(modifier = modifier)
@@ -442,45 +416,28 @@ internal fun DefaultMessageItemHeaderContent(
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory,
 ) {
     val message = messageItem.message
     when {
         message.isUploading() -> {
-            if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.MessageFooterUploadingContent(
-                    modifier = Modifier.align(End),
-                    messageItem = messageItem,
-                )
-            } else {
-                messageContentFactory.UploadingFooterContent(
-                    modifier = Modifier.align(End),
-                    messageItem = messageItem,
-                )
-            }
+            ChatTheme.componentFactory.MessageFooterUploadingContent(
+                modifier = Modifier.align(End),
+                messageItem = messageItem,
+            )
         }
 
         message.isDeleted() && !message.deletedForMe &&
             messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
-                    messageItem = messageItem,
-                )
-            } else {
-                messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
-            }
+            ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
+                messageItem = messageItem,
+            )
         }
 
-        else -> if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
-        } else {
-            messageContentFactory.MessageFooterContent(messageItem = messageItem)
-        }
+        else -> ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
     }
 
     val position = messageItem.groupPosition
-    val spacerSize =
-        if (position.contains(MessagePosition.NONE) || position.contains(MessagePosition.BOTTOM)) 4.dp else 2.dp
+    val spacerSize = if (position == MessagePosition.NONE || position == MessagePosition.BOTTOM) 4.dp else 2.dp
 
     Spacer(Modifier.size(spacerSize))
 }
@@ -522,7 +479,6 @@ internal fun DefaultMessageItemTrailingContent(
 public fun DefaultMessageItemCenterContent(
     modifier: Modifier = Modifier,
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -570,7 +526,6 @@ public fun DefaultMessageItemCenterContent(
         RegularMessageContent(
             modifier = finalModifier,
             messageItem = messageItem,
-            messageContentFactory = messageContentFactory,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -647,7 +602,6 @@ public fun EmojiMessageContent(
 public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -656,17 +610,14 @@ public fun RegularMessageContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
-    val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
-    val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
+    val messageBubbleColor = MessageStyling.backgroundColor(ownsMessage)
 
     val content = @Composable {
         MessageContent(
             message = message,
-            messageContentFactory = messageContentFactory,
             currentUser = messageItem.currentUser,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
@@ -682,8 +633,7 @@ public fun RegularMessageContent(
             message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = messageTheme.backgroundBorder,
-            contentPadding = messageTheme.contentPadding.values,
+            border = null,
             content = content,
         )
     } else {
@@ -693,8 +643,7 @@ public fun RegularMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                border = BorderStroke(1.dp, ChatTheme.colors.borders),
-                contentPadding = PaddingValues(),
+                border = null,
                 content = content,
             )
 
@@ -706,24 +655,6 @@ public fun RegularMessageContent(
                 message = message,
             )
         }
-    }
-}
-
-/**
- * Determines the shape of the message bubble based on the message position and ownership.
- *
- * @param position The position of the message in the group (top, middle, etc.).
- * @param ownsMessage Indicates if the current user owns the message.
- * @return A shape for the message bubble.
- */
-@Composable
-private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
-    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    return when {
-        position.contains(MessagePosition.TOP) -> theme.backgroundShapes.top
-        position.contains(MessagePosition.MIDDLE) -> theme.backgroundShapes.middle
-        position.contains(MessagePosition.BOTTOM) -> theme.backgroundShapes.bottom
-        else -> theme.backgroundShapes.none
     }
 }
 

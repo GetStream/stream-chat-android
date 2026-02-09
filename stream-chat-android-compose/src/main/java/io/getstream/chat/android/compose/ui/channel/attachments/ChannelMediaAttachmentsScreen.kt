@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +40,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -156,19 +154,15 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
         )
 
         @Suppress("MagicNumber")
-        UserAvatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(8.dp)
                 .fillMaxSize(.25f)
-                .aspectRatio(1f)
-                .background(
-                    color = Color.White,
-                    shape = ChatTheme.shapes.avatar,
-                )
-                .padding(1.dp),
+                .aspectRatio(1f),
             user = item.message.user,
-            showOnlineIndicator = false,
+            showIndicator = false,
+            showBorder = true,
         )
 
         if (item.attachment.isVideo()) {

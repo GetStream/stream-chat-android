@@ -232,7 +232,7 @@ private val LoadedMessageListState = MessageListState(
         ),
         MessageItemState(
             message = PreviewMessageData.message1,
-            groupPosition = listOf(MessagePosition.TOP),
+            groupPosition = MessagePosition.TOP,
             ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date1),

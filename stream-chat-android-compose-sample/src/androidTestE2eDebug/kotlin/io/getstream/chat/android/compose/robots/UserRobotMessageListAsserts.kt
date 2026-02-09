@@ -49,9 +49,9 @@ fun UserRobot.assertMessage(
     isClickable: Boolean = false,
 ): UserRobot {
     if (isDisplayed) {
-        val textLocator = if (isClickable) Message.clickableText else Message.text
-        assertEquals(text, textLocator.waitToAppear().waitForText(text).text)
-        assertTrue(textLocator.isDisplayed())
+        val textLocator = (if (isClickable) Message.clickableText else Message.text)
+            .text(text)
+        assertTrue(textLocator.waitToAppear().isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
         MessageListPage.MessageList.messages.findObjects().forEach {
@@ -140,11 +140,11 @@ fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false):
 }
 
 fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
+    val quotedMessageInList = Message.quotedMessage.hasAncestor(MessageListPage.MessageList.messages)
     if (isDisplayed) {
-        assertEquals(quote, Message.quotedMessage.waitToAppear().text)
-        assertTrue(Message.quotedMessageAvatar.isDisplayed())
+        assertEquals(quote, quotedMessageInList.waitToAppear().text)
     } else {
-        assertFalse(Message.quotedMessage.waitToDisappear().isDisplayed())
+        assertFalse(quotedMessageInList.waitToDisappear().isDisplayed())
     }
     assertMessage(text, isDisplayed = isDisplayed)
     return this
@@ -242,6 +242,12 @@ fun UserRobot.assertMentionWasApplied(): UserRobot {
     return this
 }
 
+fun UserRobot.assertComposerText(expectedText: String): UserRobot {
+    val actualText = Composer.inputField.waitToAppear().text
+    assertEquals(expectedText, actualText)
+    return this
+}
+
 fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
         assertTrue(MessageListPage.MessageList.scrollToBottomButton.waitToAppear().isDisplayed())
@@ -298,7 +304,9 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
 
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
-        assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        device.retryOnStaleObjectException {
+            assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        }
     } else {
         assertFalse(Message.giphy.waitToDisappear().isDisplayed())
     }

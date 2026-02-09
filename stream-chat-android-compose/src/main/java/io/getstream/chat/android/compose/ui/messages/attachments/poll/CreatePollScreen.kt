@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -38,6 +39,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
@@ -84,7 +86,7 @@ public fun CreatePollScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(rememberScrollState())
             .background(ChatTheme.colors.appBackground),
@@ -151,4 +153,17 @@ public fun CreatePollScreen(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun CreatePollScreenPreview() {
+    ChatTheme {
+        CreatePollScreen()
+    }
+}
+
+@Composable
+internal fun CreatePollScreen() {
+    CreatePollScreen {}
 }

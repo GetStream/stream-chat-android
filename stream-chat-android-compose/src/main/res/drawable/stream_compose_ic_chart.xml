@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="12dp"
+    android:viewportWidth="12"
+    android:viewportHeight="12">
+  <path
+      android:pathData="M4.625,10.125V6.875H2.375C2.099,6.875 1.875,7.099 1.875,7.375V9.625C1.875,9.901 2.099,10.125 2.375,10.125H4.625ZM4.625,10.125H7.375M4.625,10.125V2.375C4.625,2.099 4.849,1.875 5.125,1.875H6.875C7.151,1.875 7.375,2.099 7.375,2.375V10.125M7.375,10.125H9.875C10.013,10.125 10.125,10.013 10.125,9.875V4.875C10.125,4.599 9.901,4.375 9.625,4.375H7.375V10.125Z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.2"
+      android:fillColor="#00000000"
+      android:strokeColor="#384047"
+      android:strokeLineCap="square"/>
+</vector>

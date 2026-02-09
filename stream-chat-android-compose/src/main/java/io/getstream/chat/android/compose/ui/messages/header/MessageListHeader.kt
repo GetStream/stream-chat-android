@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
+import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
@@ -330,10 +331,13 @@ internal fun DefaultMessageListHeaderTrailingContent(
     onClick: (() -> Unit)?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
-        modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+        modifier = Modifier
+            .size(ChatTheme.dimens.channelAvatarSize)
+            .ifNotNull(onClick) { clickable(onClick = it) },
         channel = channel,
         currentUser = currentUser,
-        onClick = onClick,
+        showIndicator = false,
+        showBorder = false,
     )
 }
 

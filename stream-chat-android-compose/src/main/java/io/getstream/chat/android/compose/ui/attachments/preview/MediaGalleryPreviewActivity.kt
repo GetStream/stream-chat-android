@@ -44,6 +44,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
@@ -72,7 +73,6 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Result
@@ -209,7 +209,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        StreamFileUtil.clearStreamCache(context = applicationContext)
+        StreamFileManager().clearCache(applicationContext)
     }
 
     @Composable

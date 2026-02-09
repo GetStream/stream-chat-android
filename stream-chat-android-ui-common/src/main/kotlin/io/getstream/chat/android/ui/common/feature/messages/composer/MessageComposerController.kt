@@ -486,7 +486,7 @@ public class MessageComposerController(
         if (config.isDraftMessageEnabled) {
             channelDraftMessages.onEach {
                 if (it[channelCid] == null &&
-                    currentDraftId != null &&
+                    !currentDraftId.isNullOrEmpty() &&
                     messageMode.value is MessageMode.Normal
                 ) {
                     clearData()
@@ -495,7 +495,7 @@ public class MessageComposerController(
 
             threadDraftMessages.onEach {
                 if (it[parentMessageId] == null &&
-                    currentDraftId != null &&
+                    !currentDraftId.isNullOrEmpty() &&
                     messageMode.value is MessageMode.MessageThread
                 ) {
                     clearData()
@@ -588,14 +588,17 @@ public class MessageComposerController(
             is ThreadReply -> {
                 setMessageMode(MessageMode.MessageThread(messageAction.message))
             }
+
             is Reply -> {
                 messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
             }
+
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
+
             else -> {
                 // no op, custom user action
             }
@@ -612,6 +615,15 @@ public class MessageComposerController(
         }
 
         this.messageActions.value = emptySet()
+    }
+
+    /**
+     * Updates the selected attachments that are shown within the composer UI.
+     */
+    public fun updateSelectedAttachments(attachments: List<Attachment>) {
+        selectedAttachments.update { attachments }
+
+        handleValidationErrors()
     }
 
     /**
@@ -643,7 +655,7 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
-        selectedAttachments.value = selectedAttachments.value - attachment
+        selectedAttachments.value -= attachment
 
         handleValidationErrors()
     }
@@ -718,7 +730,10 @@ public class MessageComposerController(
             chatClient.sendMessage(
                 channelType,
                 channelId,
-                message.copy(showInChannel = isInThread && alsoSendToChannel.value),
+                message.copy(
+                    showInChannel = isInThread && alsoSendToChannel.value,
+                    skipEnrichUrl = linkPreviews.value.isEmpty(),
+                ),
             ).doOnResult(scope) { result ->
                 result.onSuccessSuspend { resultMessage ->
                     if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
@@ -1131,5 +1146,12 @@ public class MessageComposerController(
     private fun MessageMode.emptyDraftMessage(): DraftMessage = when (this) {
         is MessageMode.MessageThread -> DraftMessage(cid = channelCid, parentId = parentMessage.id)
         else -> DraftMessage(cid = channelCid)
+    }
+
+    /**
+     * Cancels any link preview.
+     */
+    public fun cancelLinkPreview() {
+        linkPreviews.value = emptyList()
     }
 }

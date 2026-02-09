@@ -53,7 +53,6 @@ import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
-import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerBox
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -63,9 +62,12 @@ import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -75,72 +77,16 @@ import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 
 /**
  * Represents the audio recording attachment content.
- */
-@Deprecated(
-    message = "Use AudioRecordAttachmentContent with 4 parameters instead",
-    replaceWith = ReplaceWith(
-        expression = "AudioRecordAttachmentContent(/* parameters */, getCurrentUserId = { /* your implementation */ })",
-        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
-    ),
-)
-@Composable
-public fun AudioRecordGroupContent(
-    modifier: Modifier = Modifier,
-    attachmentState: AttachmentState,
-    viewModelFactory: AudioPlayerViewModelFactory,
-) {
-    AudioRecordAttachmentContent(
-        modifier = modifier,
-        attachmentState = attachmentState,
-        viewModelFactory = viewModelFactory,
-    )
-}
-
-/**
- * Represents the audio recording attachment content item.
- */
-@Deprecated(
-    message = "Use AudioRecordAttachmentContentItem instead",
-    replaceWith = ReplaceWith(
-        expression = "AudioRecordAttachmentContentItem(/* parameters */)",
-        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
-    ),
-)
-@Composable
-public fun AudioRecordAttachmentContent(
-    modifier: Modifier = Modifier,
-    attachment: Attachment,
-    playerState: AudioPlayerState,
-    onPlayToggleClick: (Attachment) -> Unit,
-    onPlaySpeedClick: (Attachment) -> Unit,
-    onScrubberDragStart: (Attachment) -> Unit = {},
-    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
-) {
-    AudioRecordAttachmentContentItem(
-        modifier = modifier,
-        attachment = attachment,
-        playerState = playerState,
-        onPlayToggleClick = onPlayToggleClick,
-        onPlaySpeedClick = onPlaySpeedClick,
-        onThumbDragStart = onScrubberDragStart,
-        onThumbDragStop = onScrubberDragStop,
-    )
-}
-
-/**
- * Represents the audio recording attachment content.
  *
  * @param modifier Modifier for styling.
  * @param attachmentState The state of the attachment.
  * @param viewModelFactory The factory for creating the [AudioPlayerViewModel].
- * @param getCurrentUserId The function to get the current user ID.
  */
 @Composable
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
-    getCurrentUserId: () -> String? = { null },
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
@@ -152,13 +98,15 @@ public fun AudioRecordAttachmentContent(
 
     val playerState by viewModel.state.collectAsStateWithLifecycle()
 
-    val isMine = attachmentState.message.isMine(getCurrentUserId())
-    Column(modifier = modifier) {
+    val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
+    Column(
+        modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
+    ) {
         audioRecordings.forEach { audioRecording ->
             AudioRecordAttachmentContentItem(
                 attachment = audioRecording,
                 playerState = playerState,
-                isMine = isMine,
+                isMine = attachmentState.isMine,
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },

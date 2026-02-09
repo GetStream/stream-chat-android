@@ -142,13 +142,11 @@ public interface MentionStyleFactory {
  * Defines the theming options for the different composer actions.
  *
  * @param attachmentsButton The style for the attachments button.
- * @param commandsButton The style for the commands button.
  * @param sendButton The style for the send button.
  */
 @Immutable
 public data class ComposerActionsTheme(
     val attachmentsButton: IconContainerStyle,
-    val commandsButton: IconContainerStyle,
     val sendButton: IconContainerStyle,
 ) {
 
@@ -163,35 +161,25 @@ public data class ComposerActionsTheme(
         @Composable
         public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
             val attachmentsButton = IconContainerStyle(
-                size = ComponentSize(width = 32.dp, height = 32.dp),
+                size = ComponentSize(width = 48.dp, height = 48.dp),
                 padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                    tint = colors.textLowEmphasis,
-                    size = ComponentSize(width = 24.dp, height = 24.dp),
-                ),
-            )
-            val commandsButton = IconContainerStyle(
-                size = ComponentSize(width = 32.dp, height = 32.dp),
-                padding = ComponentPadding(0.dp),
-                icon = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                    tint = colors.textLowEmphasis,
-                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                    tint = colors.textHighEmphasis,
+                    size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
             val sendButton = IconContainerStyle(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(0.dp),
+                padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    tint = colors.textLowEmphasis,
-                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                    tint = colors.textHighEmphasis,
+                    size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
             return ComposerActionsTheme(
                 attachmentsButton = attachmentsButton,
-                commandsButton = commandsButton,
                 sendButton = sendButton,
             )
         }

@@ -23,9 +23,6 @@ public object AttachmentType {
     /** Image attachment type. */
     public const val IMAGE: String = "image"
 
-    /** Imgur attachment type. */
-    public const val IMGUR: String = "imgur"
-
     /** Giphy attachment type. */
     public const val GIPHY: String = "giphy"
 
@@ -35,22 +32,8 @@ public object AttachmentType {
     /** Audio attachment type. */
     public const val AUDIO: String = "audio"
 
-    /** Product attachment type. */
-    public const val PRODUCT: String = "product"
-
     /** File attachment type. */
     public const val FILE: String = "file"
-
-    /**
-     * @deprecated The attachment of type 'LINK' is not officially supported, and the Attachment.type can never have a
-     * value == 'link'.
-     */
-    @Deprecated(
-        message = "The attachment of type 'LINK' is not officially supported, and the Attachment.type can never have " +
-            "a value == 'link'",
-        level = DeprecationLevel.WARNING,
-    )
-    public const val LINK: String = "link"
 
     /** Audio recording (voice message) attachment type. */
     public const val AUDIO_RECORDING: String = "voiceRecording"

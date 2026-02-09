@@ -17,23 +17,36 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.attachment.isAudio
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Represents the default message content within the bubble that can show different UI based on the message state.
@@ -45,7 +58,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
  * @param onGiphyActionClick Handler for Giphy actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
- * @param messageContentFactory Factory for creating message content.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param giphyEphemeralContent Composable that represents the default Giphy message content.
  * @param deletedMessageContent Composable that represents the default content of a deleted message.
@@ -62,57 +74,29 @@ public fun MessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageGiphyContent(
-                message = message,
-                currentUser = currentUser,
-                onGiphyActionClick = onGiphyActionClick,
-            )
-        } else {
-            messageContentFactory.MessageGiphyContent(
-                message = message,
-                currentUser = currentUser,
-                onGiphyActionClick = onGiphyActionClick,
-            )
-        }
+        ChatTheme.componentFactory.MessageGiphyContent(
+            message = message,
+            currentUser = currentUser,
+            onGiphyActionClick = onGiphyActionClick,
+        )
     },
     deletedMessageContent: @Composable () -> Unit = {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageDeletedContent(
-                modifier = modifier,
-            )
-        } else {
-            messageContentFactory.MessageDeletedContent(
-                modifier = modifier,
-            )
-        }
+        ChatTheme.componentFactory.MessageDeletedContent(
+            modifier = modifier,
+        )
     },
     regularMessageContent: @Composable () -> Unit = {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageRegularContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-            )
-        } else {
-            DefaultMessageContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                messageContentFactory = messageContentFactory,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-            )
-        }
+        ChatTheme.componentFactory.MessageRegularContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
     },
 ) {
     when {
@@ -120,25 +104,6 @@ public fun MessageContent(
         message.isDeleted() -> deletedMessageContent()
         else -> regularMessageContent()
     }
-}
-
-/**
- * Represents the default ephemeral Giphy message content.
- *
- * @param message The message to show.
- * @param onGiphyActionClick Handler for Giphy actions.
- */
-@Composable
-internal fun DefaultMessageGiphyContent(
-    message: Message,
-    currentUser: User?,
-    onGiphyActionClick: (GiphyAction) -> Unit,
-) {
-    GiphyMessageContent(
-        message = message,
-        currentUser = currentUser,
-        onGiphyActionClick = onGiphyActionClick,
-    )
 }
 
 /**
@@ -171,71 +136,27 @@ internal fun DefaultMessageDeletedContent(
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param messageContentFactory Factory for creating message content.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  */
 @Composable
+@Suppress("LongMethod")
 internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
-    messageContentFactory: MessageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
+    val componentFactory = ChatTheme.componentFactory
+
     Column {
-        DefaultQuotedMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onQuotedMessageClick = onQuotedMessageClick,
-            messageContentFactory = messageContentFactory,
-        )
-        MessageAttachmentsContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-        )
-
-        if (message.text.isNotEmpty()) {
-            DefaultMessageTextContent(
-                message = message,
-                currentUser = currentUser,
-                messageContentFactory = messageContentFactory,
-                onLongItemClick = onLongItemClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-            )
-        }
-    }
-}
-
-/**
- * Represents the default quoted message content.
- *
- * @param message The message to show.
- * @param currentUser The currently logged in user.
- * @param onLongItemClick Handler when the item is long clicked.
- * @param onQuotedMessageClick Handler for quoted message click action.
- * @param messageContentFactory Factory for creating message content.
- */
-@Composable
-private fun DefaultQuotedMessageContent(
-    message: Message,
-    currentUser: User?,
-    onLongItemClick: (Message) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit,
-    messageContentFactory: MessageContentFactory,
-) {
-    if (messageContentFactory == MessageContentFactory.Deprecated) {
         val quotedMessage = message.replyTo
         if (quotedMessage != null) {
-            ChatTheme.componentFactory.MessageQuotedContent(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            componentFactory.MessageQuotedContent(
+                modifier = Modifier,
                 message = quotedMessage,
                 currentUser = currentUser,
                 replyMessage = message,
@@ -243,51 +164,112 @@ private fun DefaultQuotedMessageContent(
                 onQuotedMessageClick = onQuotedMessageClick,
             )
         }
-    } else {
-        messageContentFactory.QuotedMessageContent(
+
+        val attachmentState = AttachmentState(
             message = message,
-            currentUser = currentUser,
+            isMine = message.user.id == currentUser?.id,
             onLongItemClick = onLongItemClick,
-            onQuotedMessageClick = onQuotedMessageClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+        )
+        val info = message.rememberMessageInfo()
+
+        if (info.hasUploads) {
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        } else {
+            if (info.hasMedia) {
+                componentFactory.MediaAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
+            if (info.hasGiphys) {
+                componentFactory.GiphyAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
+            if (info.hasFiles) {
+                componentFactory.FileAttachmentContent(
+                    modifier = Modifier,
+                    attachmentState = attachmentState,
+                )
+            }
+
+            MessageAttachmentsContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            )
+        }
+
+        if (message.text.isNotEmpty()) {
+            componentFactory.MessageTextContent(
+                modifier = Modifier,
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        }
+
+        if ((!info.displaysFullSizeAttachment || info.hasFiles) && !info.hasUploads) {
+            Spacer(Modifier.height(MessageStyling.contentPadding))
+        }
+    }
+}
+
+@Composable
+private fun Message.rememberMessageInfo(): MessageContentInfo {
+    return remember(this) {
+        var hasFiles = false
+        var hasRecordings = false
+        var hasLinks = false
+        var hasMedia = false
+        var hasGiphys = false
+        var hasUnknown = false
+        var hasUploads = false
+
+        attachments.forEach {
+            hasUploads = hasUploads || it.isUploading()
+            when {
+                it.isFile() || it.isAudio() -> hasFiles = true
+                it.isAudioRecording() -> hasRecordings = true
+                it.hasLink() && !it.isGiphy() -> hasLinks = true
+                it.isGiphy() -> hasGiphys = true
+                it.isImage() || it.isVideo() -> hasMedia = true
+                else -> hasUnknown = true
+            }
+        }
+
+        MessageContentInfo(
+            hasFiles = hasFiles,
+            hasRecordings = hasRecordings,
+            hasLinks = hasLinks,
+            hasMedia = hasMedia,
+            hasGiphys = hasGiphys,
+            hasUnknown = hasUnknown,
+            hasUploads = hasUploads,
+            displaysFullSizeAttachment = shouldBeDisplayedAsFullSizeAttachment(),
         )
     }
 }
 
-/**
- * Represents the default message text content.
- *
- * @param message The message to show.
- * @param currentUser The currently logged in user.
- * @param onLongItemClick Handler when the item is long clicked.
- * @param messageContentFactory Factory for creating message content.
- * @param onUserMentionClick Handler for user mention click action.
- * @param onLinkClick Handler for clicking on a link in the message.
- */
-@Composable
-@Suppress("LongParameterList")
-private fun DefaultMessageTextContent(
-    message: Message,
-    currentUser: User?,
-    onLongItemClick: (Message) -> Unit,
-    messageContentFactory: MessageContentFactory,
-    onUserMentionClick: (User) -> Unit,
-    onLinkClick: ((Message, String) -> Unit)?,
-) {
-    if (messageContentFactory == MessageContentFactory.Deprecated) {
-        ChatTheme.componentFactory.MessageTextContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-        )
-    } else {
-        messageContentFactory.MessageTextContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-        )
-    }
-}
+private data class MessageContentInfo(
+    val hasFiles: Boolean,
+    val hasRecordings: Boolean,
+    val hasLinks: Boolean,
+    val hasMedia: Boolean,
+    val hasGiphys: Boolean,
+    val hasUnknown: Boolean,
+    val hasUploads: Boolean,
+    val displaysFullSizeAttachment: Boolean,
+)

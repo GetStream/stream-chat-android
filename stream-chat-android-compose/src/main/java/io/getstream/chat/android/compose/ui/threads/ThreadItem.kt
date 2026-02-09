@@ -49,9 +49,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.Timestamp
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -213,15 +211,11 @@ internal fun ThreadItemLatestReplyContent(
             ChatTheme.componentFactory.UserAvatar(
                 modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
                 user = latestReply.user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = latestReply.user.shouldShowOnlineIndicator(
+                showIndicator = latestReply.user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,
                     currentUser = currentUser,
                 ),
-                onlineIndicator = {
-                    DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
-                },
-                onClick = null,
+                showBorder = false,
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(

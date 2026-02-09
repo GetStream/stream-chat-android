@@ -23,10 +23,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,27 +31,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -65,9 +54,9 @@ import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActi
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
-import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -75,10 +64,9 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
@@ -155,15 +143,14 @@ class MessagesActivity : ComponentActivity() {
                 ),
             )
         val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
-        val attachmentsPickerTabFactories = AttachmentsPickerTabFactories.defaultFactories() +
-            LocationPickerTabFactory(viewModelFactory = SharedLocationViewModelFactory(cid))
+        val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
             shapes = shapes,
             typography = typography,
-            attachmentsPickerTabFactories = attachmentsPickerTabFactories,
-            componentFactory = CustomChatComponentFactory(),
+            attachmentPickerConfig = AttachmentPickerConfig(useSystemPicker = false),
+            componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
@@ -218,18 +205,26 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     fun MyCustomUi() {
-        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
         val currentMessagesState by listViewModel.currentMessagesState
         val selectedMessageState = currentMessagesState.selectedMessageState
-        val messageMode by composerViewModel.messageMode.collectAsState()
         val user by listViewModel.user.collectAsState()
         val lazyListState = rememberMessageListState()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .safeDrawingPadding()
+                .fillMaxSize(),
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
-                    MyCustomComposer()
+                    Column {
+                        MyCustomComposer()
+                        AttachmentPickerMenu(
+                            attachmentsPickerViewModel = attachmentsPickerViewModel,
+                            composerViewModel = composerViewModel,
+                        )
+                    }
                 },
             ) {
                 MessageList(
@@ -263,42 +258,6 @@ class MessagesActivity : ComponentActivity() {
                     onReply = { message ->
                         composerViewModel.performMessageAction(Reply(message))
                     },
-                )
-            }
-
-            if (isShowingAttachments) {
-                var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
-                val screenHeight = LocalConfiguration.current.screenHeightDp
-                val pickerHeight by animateDpAsState(
-                    targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
-                    label = "full sized picker animation",
-                )
-
-                AttachmentsPicker(
-                    attachmentsPickerViewModel = attachmentsPickerViewModel,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .height(pickerHeight),
-                    shape = if (isFullScreenContent) {
-                        RoundedCornerShape(0.dp)
-                    } else {
-                        ChatTheme.shapes.bottomSheet
-                    },
-                    onAttachmentsSelected = { attachments ->
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        composerViewModel.addSelectedAttachments(attachments)
-                    },
-                    onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
-                    onAttachmentPickerAction = { action ->
-                        if (action is AttachmentPickerPollCreation) {
-                            composerViewModel.createPoll(action.pollConfig)
-                        }
-                    },
-                    onDismiss = {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
-                    },
-                    messageMode = messageMode,
                 )
             }
 
@@ -377,31 +336,31 @@ class MessagesActivity : ComponentActivity() {
     @Composable
     fun MyCustomComposer() {
         MessageComposer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
             viewModel = composerViewModel,
-            integrations = {},
             input = { inputState ->
                 MessageInput(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(7f)
                         .padding(start = 8.dp),
                     messageComposerState = inputState,
                     onValueChange = { composerViewModel.setMessageInput(it) },
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
-                    onLinkPreviewClick = null,
+                    onCancelAction = {
+                        listViewModel.dismissAllMessageActions()
+                        composerViewModel.dismissMessageActions()
+                    },
+                    onSendClick = { input, attachments ->
+                        val message = composerViewModel.buildNewMessage(input, attachments)
+                        composerViewModel.sendMessage(message)
+                    },
+                    recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
                     label = {
-                        Row(
-                            Modifier.wrapContentWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Icon(
                                 painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                                 contentDescription = null,
+                                tint = ChatTheme.colors.textLowEmphasis,
                             )
-
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Type something",
@@ -409,32 +368,33 @@ class MessagesActivity : ComponentActivity() {
                             )
                         }
                     },
-                    innerTrailingContent = {
-                        Icon(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = ripple(),
-                                ) {
-                                    val state = composerViewModel.messageComposerState.value
-
-                                    composerViewModel.sendMessage(
-                                        composerViewModel.buildNewMessage(
-                                            state.inputValue,
-                                            state.attachments,
-                                        ),
-                                    )
-                                },
-                            painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                            tint = ChatTheme.colors.primaryAccent,
-                            contentDescription = null,
-                        )
-                    },
+                    trailingContent = { ComposerTrailingIcon() },
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
+            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
         )
+    }
+
+    @Composable
+    private fun ComposerTrailingIcon() {
+        IconButton(
+            onClick = {
+                val state = composerViewModel.messageComposerState.value
+                composerViewModel.sendMessage(
+                    composerViewModel.buildNewMessage(
+                        state.inputValue,
+                        state.attachments,
+                    ),
+                )
+            },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                tint = ChatTheme.colors.primaryAccent,
+                contentDescription = null,
+            )
+        }
     }
 
     companion object {

@@ -55,11 +55,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -67,7 +67,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
-import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 @Suppress("LongMethod", "MagicNumber")
 @Composable
@@ -209,17 +208,11 @@ internal fun PollAnswersItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             val user = answer.user?.takeIf { showAvatar }
             if (user != null) {
-                ChatTheme.componentFactory.Avatar(
-                    modifier = Modifier.size(20.dp),
-                    imageUrl = user.image,
-                    initials = user.initials,
-                    shape = ChatTheme.shapes.avatar,
-                    textStyle = ChatTheme.typography.captionBold,
-                    placeholderPainter = null,
-                    errorPlaceholderPainter = null,
-                    contentDescription = user.name,
-                    initialsAvatarOffset = DpOffset.Zero,
-                    onClick = null,
+                ChatTheme.componentFactory.UserAvatar(
+                    modifier = Modifier.size(AvatarSize.ExtraSmall),
+                    user = user,
+                    showIndicator = false,
+                    showBorder = false,
                 )
 
                 Text(

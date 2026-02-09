@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
+import androidx.compose.ui.Alignment
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerDefaultStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerDefaultStyleWithVisibleAttachmentPicker
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyle
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposerFloatingStyleWithVisibleAttachmentPicker
 import org.junit.Rule
 import org.junit.Test
 
@@ -32,27 +33,30 @@ internal class MessageComposerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `empty input`() {
-        snapshotWithDarkMode {
-            MessageComposer(
-                messageComposerState = MessageComposerState(
-                    ownCapabilities = ChannelCapabilities.toSet(),
-                ),
-                onSendMessage = { _, _ -> },
-            )
+    fun `default style`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerDefaultStyle()
         }
     }
 
     @Test
-    fun `text input`() {
-        snapshotWithDarkMode {
-            MessageComposer(
-                messageComposerState = MessageComposerState(
-                    inputValue = "Message text",
-                    ownCapabilities = ChannelCapabilities.toSet(),
-                ),
-                onSendMessage = { _, _ -> },
-            )
+    fun `default style with visible attachment picker`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerDefaultStyleWithVisibleAttachmentPicker()
+        }
+    }
+
+    @Test
+    fun `floating style`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyle()
+        }
+    }
+
+    @Test
+    fun `floating style with visible attachment picker`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerFloatingStyleWithVisibleAttachmentPicker()
         }
     }
 }

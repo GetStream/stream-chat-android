@@ -26,7 +26,29 @@ import io.getstream.chat.android.ui.helper.ViewStyle
 /**
  * Style for [AttachmentsPickerDialogFragment].
  *
- * @param useDefaultSystemMediaPicker If the system pickers should be used that does not require the `READ_MEDIA` permission.
+ * ## Permissions
+ *
+ * When using the in-app picker (`useDefaultSystemMediaPicker = false`), the following permissions must be declared
+ * in your app's `AndroidManifest.xml`:
+ *
+ * ```xml
+ * <!-- For Android 12 (API 32) and below -->
+ * <uses-permission
+ *     android:name="android.permission.READ_EXTERNAL_STORAGE"
+ *     android:maxSdkVersion="32" />
+ *
+ * <!-- For Android 13 (API 33) and above -->
+ * <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+ * <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+ * <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+ * ```
+ *
+ * When using the system picker (`useDefaultSystemMediaPicker = true`), no storage permissions are required as the
+ * system picker handles permissions internally.
+ *
+ * @param useDefaultSystemMediaPicker If the system pickers should be used. When `true` (default), uses the system's
+ * native file/media picker which does not require storage permissions. When `false`, uses the in-app picker which
+ * shows a grid of media files but requires storage permissions to be granted and declared in your manifest.
  * @param saveAttachmentsOnDismiss If the selected attachments should be saved when the dialog is dismissed.
  * @param attachmentsPickerBackgroundColor The background color of the picker.
  * @param allowAccessButtonTextStyle The text style used for all the buttons used to request required permissions.
@@ -74,7 +96,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param systemMediaPickerVisualMediaType The type of visual media that can be picked via the system media picker.
  */
 public data class AttachmentsPickerDialogStyle(
-    val useDefaultSystemMediaPicker: Boolean = false,
+    val useDefaultSystemMediaPicker: Boolean = true,
     val saveAttachmentsOnDismiss: Boolean,
     @ColorInt val attachmentsPickerBackgroundColor: Int,
     val allowAccessButtonTextStyle: TextStyle,
