@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.guides.catalog.compose.customattachments.factory
+package io.getstream.chat.android.guides.catalog.compose.customattachments
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,21 +37,28 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
+
+/**
+ * A custom [ChatComponentFactory] that adds support for date attachments.
+ */
+object CustomChatComponentFactory : ChatComponentFactory {
+    @Composable
+    override fun CustomAttachmentContent(state: AttachmentState, modifier: Modifier) {
+        if (state.message.attachments.any { it.type == "date" }) {
+            DateAttachmentContent(state, modifier)
+        }
+    }
+}
 
 /**
  * A custom [AttachmentFactory] that adds support for date attachments.
  */
 val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.type == "date" } },
-    content = @Composable { modifier, attachmentState ->
-        DateAttachmentContent(
-            modifier = modifier,
-            attachmentState = attachmentState,
-        )
-    },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
         DateAttachmentPreviewContent(
             modifier = modifier,

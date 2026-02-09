@@ -16,14 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.attachments.factory
 
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentPreviewContent
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.log.StreamLog
@@ -45,15 +41,6 @@ public class AudioRecordAttachmentFactory(
             modifier = modifier,
             attachments = attachments,
             onAttachmentRemoved = onAttachmentRemoved,
-            viewModelFactory = viewModelFactory,
-        )
-    },
-    content = @Composable { modifier, attachmentState ->
-        AudioRecordAttachmentContent(
-            modifier = modifier
-                .wrapContentHeight()
-                .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
-            attachmentState = attachmentState,
             viewModelFactory = viewModelFactory,
         )
     },
