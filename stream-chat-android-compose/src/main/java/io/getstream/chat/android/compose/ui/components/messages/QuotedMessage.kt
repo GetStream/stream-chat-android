@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,7 +32,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -55,8 +53,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileIconData
 import io.getstream.chat.android.compose.ui.components.attachments.files.FileTypeIcon
+import io.getstream.chat.android.compose.ui.components.common.PlayButton
+import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.StreamPrimitiveColors
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Message
@@ -222,7 +221,7 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )
-                VideoPlayIndicator()
+                PlayButton(PlayButtonSize.Small)
             }
         }
 
@@ -232,22 +231,6 @@ private fun QuotedMessageAttachmentPreview(body: QuotedMessageBody) {
                 data = body.previewIcon,
             )
         }
-    }
-}
-
-@Composable
-private fun VideoPlayIndicator() {
-    Box(
-        modifier = Modifier
-            .size(20.dp)
-            .background(StreamPrimitiveColors.baseBlack, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Image(
-            painter = painterResource(R.drawable.stream_compose_ic_play_solid),
-            contentDescription = null,
-            modifier = Modifier.size(10.dp),
-        )
     }
 }
 
