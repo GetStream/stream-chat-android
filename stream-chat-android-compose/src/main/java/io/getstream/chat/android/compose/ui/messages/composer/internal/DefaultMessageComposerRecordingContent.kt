@@ -86,7 +86,6 @@ import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordi
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
-import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.delay
@@ -353,11 +352,9 @@ internal fun DefaultAudioRecordPermissionRationale(
  */
 @Composable
 public fun DefaultMessageComposerRecordingContent(
-    messageComposerState: MessageComposerState,
+    recordingState: RecordingState,
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
 ) {
-    val recordingState = messageComposerState.recording
-
     val durationInMs = when (recordingState) {
         is RecordingState.Recording -> recordingState.durationInMs
         is RecordingState.Overview -> recordingState.durationInMs
@@ -528,7 +525,7 @@ private fun DefaultMessageComposerRecordingContent(
 }
 
 @Composable
-private fun RecordingContent(
+internal fun RecordingContent(
     modifier: Modifier = Modifier,
     durationInMs: Int = 0,
     waveformVisible: Boolean = true,
@@ -630,12 +627,12 @@ private fun RecordingContent(
 }
 
 @Composable
-private fun RecordingMicIcon() {
+internal fun RecordingMicIcon() {
     RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic)
 }
 
 @Composable
-private fun RecordingLockableIcon(
+internal fun RecordingLockableIcon(
     locked: Boolean,
 ) {
     if (locked) {
@@ -706,7 +703,7 @@ private fun RecordingSlideToCancelIndicator(
 }
 
 @Composable
-private fun RecordingControlButtons(
+internal fun RecordingControlButtons(
     isStopControlVisible: Boolean,
     onDeleteRecording: () -> Unit,
     onStopRecording: () -> Unit,
