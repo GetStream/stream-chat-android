@@ -205,6 +205,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
@@ -4513,24 +4514,11 @@ internal constructor(
 
     /**
      * Query threads matching [query] request.
-     * To obtain the full response including the pagination cursors, use [queryThreadsResult] instead.
      *
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    public fun queryThreads(
-        query: QueryThreadsRequest,
-    ): Call<List<Thread>> {
-        return queryThreadsResult(query).map { it.threads }
-    }
-
-    /**
-     * Query threads matching [query] request.
-     *
-     * @param query [QueryThreadsRequest] with query parameters to get matching users.
-     */
-    @CheckResult
-    public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
+    public fun queryThreads(query: QueryThreadsRequest): Call<QueryThreadsResult> {
         return api.queryThreads(query)
             .doOnStart(userScope) {
                 plugins.forEach { plugin ->
@@ -4575,7 +4563,7 @@ internal constructor(
         messageId: String,
         set: Map<String, Any> = emptyMap(),
         unset: List<String> = emptyList(),
-    ): Call<Thread> {
+    ): Call<ThreadInfo> {
         return api.partialUpdateThread(
             messageId = messageId,
             set = set,

@@ -36,6 +36,7 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Remi
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.DeliveryReceiptsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.ReadReceiptsEntity
@@ -278,7 +279,7 @@ internal fun randomThreadEntity(
     createdByUserId: String = randomString(),
     activeParticipantCount: Int = randomInt(),
     participantCount: Int = randomInt(),
-    threadParticipantIds: List<String> = emptyList(),
+    threadParticipants: List<ThreadParticipantEntity> = emptyList(),
     lastMessageAt: Date = randomDate(),
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
@@ -293,7 +294,7 @@ internal fun randomThreadEntity(
     createdByUserId = createdByUserId,
     activeParticipantCount = activeParticipantCount,
     participantCount = participantCount,
-    threadParticipantIds = threadParticipantIds,
+    threadParticipants = threadParticipants,
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,

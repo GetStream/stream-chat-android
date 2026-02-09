@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserMuteEntity
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -26,6 +27,7 @@ internal class ListConverter {
 
     private val stringListAdapter = moshi.adapter<List<String>>()
     private val channelUserReadListAdapter = moshi.adapter<List<ChannelUserReadEntity>>()
+    private val threadParticipantListAdapter = moshi.adapter<List<ThreadParticipantEntity>>()
     private val userMuteListAdapter = moshi.adapter<List<UserMuteEntity>>()
 
     @TypeConverter
@@ -51,6 +53,18 @@ internal class ListConverter {
     @TypeConverter
     fun fromReadList(entities: List<ChannelUserReadEntity>?): String? =
         channelUserReadListAdapter.toJson(entities)
+
+    @TypeConverter
+    fun toThreadParticipantList(data: String?): List<ThreadParticipantEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
+        }
+        return threadParticipantListAdapter.fromJson(data)
+    }
+
+    @TypeConverter
+    fun fromThreadParticipantList(entities: List<ThreadParticipantEntity>?): String? =
+        threadParticipantListAdapter.toJson(entities)
 
     @TypeConverter
     fun toUserMuteList(data: String?): List<UserMuteEntity>? {

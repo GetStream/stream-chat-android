@@ -97,13 +97,13 @@ internal class ChatClientStateCalls(
     }
 
     /**
-     * Runs the [ChatClient.queryThreadsResult] operation with the provided [QueryThreadsRequest], and returns the
+     * Runs the [ChatClient.queryThreads] operation with the provided [QueryThreadsRequest], and returns the
      * [QueryThreadsState].
      *
      * @param request The [QueryThreadsRequest] used to perform the query threads operation.
      */
     internal suspend fun queryThreads(request: QueryThreadsRequest): QueryThreadsState {
-        chatClient.queryThreadsResult(request).launch(scope)
+        chatClient.queryThreads(request).launch(scope)
         return deferredState
             .await()
             .queryThreads(request.filter, request.sort)

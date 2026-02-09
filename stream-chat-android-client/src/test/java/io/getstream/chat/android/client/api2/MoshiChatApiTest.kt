@@ -111,6 +111,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
+import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -2111,7 +2112,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#partialUpdateThreadInput")
-    fun testPartialUpdateThread(call: RetrofitCall<ThreadResponse>, expected: KClass<*>) = runTest {
+    fun testPartialUpdateThread(call: RetrofitCall<ThreadInfoResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<ThreadsApi>()
         whenever(api.partialUpdateThread(any(), any())).doReturn(call)

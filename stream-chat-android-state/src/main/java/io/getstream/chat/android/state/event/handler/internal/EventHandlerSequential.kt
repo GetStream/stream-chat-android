@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -82,6 +83,7 @@ import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
+import io.getstream.chat.android.client.extensions.internal.applyThreadInfoUpdate
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
 import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
@@ -768,6 +770,12 @@ internal class EventHandlerSequential(
                             ?.markAsUnreadByUser(event.user, event.createdAt)
                             ?.let(batch::addThread)
                     }
+                }
+                is ThreadUpdatedEvent -> {
+                    // Update thread in offline storage when it is partially updated (title or custom data)
+                    threadFromPendingUpdateOrRepo(batch, event.thread.parentMessageId)
+                        ?.applyThreadInfoUpdate(event.thread)
+                        ?.let(batch::addThread)
                 }
                 is GlobalUserBannedEvent -> {
                     batch.addUser(event.user.copy(banned = true))

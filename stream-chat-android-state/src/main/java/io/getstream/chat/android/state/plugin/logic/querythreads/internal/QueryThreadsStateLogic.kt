@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.logic.querythreads.internal
 
+import io.getstream.chat.android.client.extensions.internal.applyThreadInfoUpdate
 import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
 import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
 import io.getstream.chat.android.client.extensions.internal.updateParent
@@ -200,6 +201,18 @@ internal class QueryThreadsStateLogic(
     internal fun markThreadAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt: Date) {
         val thread = mutableState.threadMap[threadInfo.parentMessageId] ?: return
         val updatedThread = thread.markAsReadByUser(threadInfo, user, createdAt)
+        mutableState.upsertThreads(listOf(updatedThread))
+    }
+
+    /**
+     * Updates a thread with the info from a `thread.updated` event.
+     * This is triggered when a thread is partially updated via the API (e.g. title or custom data changes).
+     *
+     * @param threadInfo The [ThreadInfo] holding the updated thread data.
+     */
+    internal fun updateThreadFromEvent(threadInfo: ThreadInfo) {
+        val thread = mutableState.threadMap[threadInfo.parentMessageId] ?: return
+        val updatedThread = thread.applyThreadInfoUpdate(threadInfo)
         mutableState.upsertThreads(listOf(updatedThread))
     }
 

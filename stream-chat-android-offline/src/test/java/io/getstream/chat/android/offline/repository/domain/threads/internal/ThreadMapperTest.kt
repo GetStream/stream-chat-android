@@ -47,7 +47,14 @@ internal class ThreadMapperTest {
             createdBy = user,
             activeParticipantCount = entity.activeParticipantCount,
             participantCount = entity.participantCount,
-            threadParticipants = entity.threadParticipantIds.map { ThreadParticipant(user) },
+            threadParticipants = entity.threadParticipants.map {
+                ThreadParticipant(
+                    user = user,
+                    threadId = it.threadId,
+                    createdAt = it.createdAt,
+                    lastReadAt = it.lastReadAt,
+                )
+            },
             lastMessageAt = entity.lastMessageAt,
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
@@ -79,7 +86,14 @@ internal class ThreadMapperTest {
             createdByUserId = thread.createdByUserId,
             activeParticipantCount = thread.activeParticipantCount,
             participantCount = thread.participantCount,
-            threadParticipantIds = thread.threadParticipants.map { it.user.id },
+            threadParticipants = thread.threadParticipants.map {
+                ThreadParticipantEntity(
+                    userId = it.user.id,
+                    threadId = it.threadId,
+                    createdAt = it.createdAt,
+                    lastReadAt = it.lastReadAt,
+                )
+            },
             lastMessageAt = thread.lastMessageAt,
             createdAt = thread.createdAt,
             updatedAt = thread.updatedAt,

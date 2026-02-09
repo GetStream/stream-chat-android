@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.offline.repository.domain.threads.internal
 
-import androidx.compose.runtime.Immutable
+import com.squareup.moshi.JsonClass
 import java.util.Date
 
 /**
- * Model holding info about a thread participant.
+ * Database entity for a Thread Participant.
  *
- * @param user The [User] as a thread participant (not always delivered).
+ * @param userId The ID of the user (thread participant).
  * @param threadId The ID of the thread.
  * @param createdAt The date when the user joined the thread.
  * @param lastReadAt The date when the user last read the thread.
  */
-@Immutable
-public data class ThreadParticipant(
-    override val user: User,
-    val threadId: String? = null,
-    val createdAt: Date? = null,
-    val lastReadAt: Date? = null,
-) : UserEntity
+@JsonClass(generateAdapter = true)
+internal data class ThreadParticipantEntity(
+    val userId: String,
+    val threadId: String?,
+    val createdAt: Date?,
+    val lastReadAt: Date?,
+)

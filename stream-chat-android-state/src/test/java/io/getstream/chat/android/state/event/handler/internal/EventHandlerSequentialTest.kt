@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.test.randomPollDeletedEvent
+import io.getstream.chat.android.client.test.randomThreadUpdatedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
@@ -52,6 +53,8 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomThread
+import io.getstream.chat.android.randomThreadInfo
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -80,14 +83,14 @@ internal class EventHandlerSequentialTest {
     @MethodSource("unreadCountArguments")
     internal fun `GlobalState should be updated with proper unreadCount and channelUnreadCount values`(
         events: List<ChatEvent>,
-        initialTotalunreadCount: Int,
+        initialTotalUnreadCount: Int,
         initialChannelUnreadCount: Int,
         prepareFixture: Fixture.() -> Unit,
         expectedTotalUnreadCount: Int,
         expectedChannelUnreadCount: Int,
     ) = runTest {
         val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
-            setTotalUnreadCount(initialTotalunreadCount)
+            setTotalUnreadCount(initialTotalUnreadCount)
             setChannelUnreadCount(initialChannelUnreadCount)
         }
         val handler = Fixture()
@@ -149,6 +152,61 @@ internal class EventHandlerSequentialTest {
         handler.handleEvents(event)
         // then
         verify(repos).deletePoll(event.poll.id)
+    }
+
+    @Test
+    fun `When handling ThreadUpdatedEvent, The thread should be updated in local storage`() = runTest {
+        // given
+        val cid = randomCID()
+        val parentMessageId = randomString()
+        val existingThread = randomThread(
+            cid = cid,
+            parentMessageId = parentMessageId,
+            title = "Original Title",
+        )
+        val updatedThreadInfo = randomThreadInfo(
+            cid = cid,
+            parentMessageId = parentMessageId,
+            title = "Updated Title",
+        )
+        val event = randomThreadUpdatedEvent(cid = cid, thread = updatedThreadInfo)
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        whenever(repos.selectThread(parentMessageId)) doReturn existingThread
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        val expectedUpdatedThread = existingThread.copy(
+            title = "Updated Title",
+            updatedAt = updatedThreadInfo.updatedAt,
+            extraData = updatedThreadInfo.extraData,
+        )
+        verify(repos).insertThreads(listOf(expectedUpdatedThread))
+    }
+
+    @Test
+    fun `When handling ThreadUpdatedEvent for non-existing thread, No thread should be inserted`() = runTest {
+        // given
+        val cid = randomCID()
+        val threadInfo = randomThreadInfo(cid = cid, title = "Updated Title")
+        val event = randomThreadUpdatedEvent(cid = cid, thread = threadInfo)
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn emptyList()
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        whenever(repos.selectThread(any())) doReturn null
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        verify(repos).insertThreads(emptyList())
     }
 
     @ParameterizedTest

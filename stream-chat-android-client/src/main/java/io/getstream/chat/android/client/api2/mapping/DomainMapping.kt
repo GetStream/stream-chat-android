@@ -793,12 +793,14 @@ internal class DomainMapping(
             createdByUserId = created_by_user_id,
             deletedAt = deleted_at,
             lastMessageAt = last_message_at,
-            parentMessage = parent_message?.toDomain(),
+            parentMessage = parent_message?.toDomain(channel?.toChannelInfo()),
             parentMessageId = parent_message_id,
             participantCount = participant_count ?: 0,
             replyCount = reply_count ?: 0,
             title = title,
             updatedAt = updated_at,
+            channel = channel?.toDomain(),
+            threadParticipants = thread_participants.orEmpty().map { it.toDomain() },
             extraData = extraData,
         )
 
@@ -806,7 +808,10 @@ internal class DomainMapping(
      * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
      */
     internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
-        user = user.toDomain(),
+        user = user?.toDomain() ?: User(id = user_id),
+        threadId = thread_id,
+        createdAt = created_at,
+        lastReadAt = last_read_at,
     )
 
     /**

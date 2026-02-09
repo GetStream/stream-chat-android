@@ -120,6 +120,7 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -740,6 +741,7 @@ internal class DomainMappingTest {
         assertEquals(expected, searchWarning)
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
@@ -750,13 +752,19 @@ internal class DomainMappingTest {
             threadParticipants = listOf(
                 DownstreamThreadParticipantDto(
                     channel_cid = "messaging:123",
-                    user = user1,
+                    thread_id = "thread1",
                     user_id = user1.id,
+                    user = user1,
+                    created_at = Date(1591787071000),
+                    last_read_at = Date(1591787071588),
                 ),
                 DownstreamThreadParticipantDto(
                     channel_cid = "messaging:123",
-                    user = user2,
+                    thread_id = "thread1",
                     user_id = user2.id,
+                    user = user2,
+                    created_at = Date(1591787071000),
+                    last_read_at = Date(1591787071588),
                 ),
             ),
             draft = randomDownstreamDraftDto(
@@ -779,8 +787,18 @@ internal class DomainMappingTest {
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
             threadParticipants = listOf(
-                ThreadParticipant(user = with(sut) { user1.toDomain() }),
-                ThreadParticipant(user = with(sut) { user2.toDomain() }),
+                ThreadParticipant(
+                    user = with(sut) { user1.toDomain() },
+                    threadId = "thread1",
+                    createdAt = Date(1591787071000),
+                    lastReadAt = Date(1591787071588),
+                ),
+                ThreadParticipant(
+                    user = with(sut) { user2.toDomain() },
+                    threadId = "thread1",
+                    createdAt = Date(1591787071000),
+                    lastReadAt = Date(1591787071588),
+                ),
             ),
             lastMessageAt = downstreamThreadDto.last_message_at,
             createdAt = downstreamThreadDto.created_at,
@@ -814,12 +832,14 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadInfoDto.created_by_user_id,
             deletedAt = downstreamThreadInfoDto.deleted_at,
             lastMessageAt = downstreamThreadInfoDto.last_message_at,
-            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain() },
+            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
             parentMessageId = downstreamThreadInfoDto.parent_message_id,
             participantCount = downstreamThreadInfoDto.participant_count ?: 0,
             replyCount = downstreamThreadInfoDto.reply_count ?: 0,
             title = downstreamThreadInfoDto.title,
             updatedAt = downstreamThreadInfoDto.updated_at,
+            channel = with(sut) { downstreamThreadInfoDto.channel?.toDomain() },
+            threadParticipants = with(sut) { downstreamThreadInfoDto.thread_participants.orEmpty().map { it.toDomain() } },
             extraData = downstreamThreadInfoDto.extraData,
         )
         assertEquals(expected, threadInfo)

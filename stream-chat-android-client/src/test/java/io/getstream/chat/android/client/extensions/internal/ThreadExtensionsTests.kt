@@ -421,6 +421,97 @@ internal class ThreadExtensionsTests {
     }
 
     @Test
+    fun `applyThreadInfoUpdate should update title extraData and updatedAt`() {
+        // given
+        val newUpdatedAt = Date(now.time + 5000)
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 5,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = null,
+            lastMessageAt = Date(now.time + 3000),
+            parentMessage = parentMessage.copy(text = "Updated parent"),
+            parentMessageId = "parent1",
+            participantCount = 5,
+            replyCount = 10,
+            title = "Updated Title",
+            updatedAt = newUpdatedAt,
+            extraData = mapOf("color" to "blue", "priority" to 1),
+        )
+
+        // when
+        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+
+        // then
+        result.title shouldBeEqualTo "Updated Title"
+        result.updatedAt shouldBeEqualTo newUpdatedAt
+        result.extraData shouldBeEqualTo mapOf("color" to "blue", "priority" to 1)
+    }
+
+    @Test
+    fun `applyThreadInfoUpdate should not update non-updatable fields`() {
+        // given
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 99,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = Date(now.time + 9000),
+            lastMessageAt = Date(now.time + 3000),
+            parentMessage = parentMessage.copy(text = "Different parent"),
+            parentMessageId = "parent1",
+            participantCount = 99,
+            replyCount = 99,
+            title = "New Title",
+            updatedAt = Date(now.time + 5000),
+            extraData = mapOf("key" to "value"),
+        )
+
+        // when
+        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+
+        // then
+        // These fields should NOT be overwritten
+        result.activeParticipantCount shouldBeEqualTo baseThread.activeParticipantCount
+        result.participantCount shouldBeEqualTo baseThread.participantCount
+        result.lastMessageAt shouldBeEqualTo baseThread.lastMessageAt
+        result.parentMessage shouldBeEqualTo baseThread.parentMessage
+        result.deletedAt shouldBeEqualTo baseThread.deletedAt
+        result.latestReplies shouldBeEqualTo baseThread.latestReplies
+        result.read shouldBeEqualTo baseThread.read
+    }
+
+    @Test
+    fun `applyThreadInfoUpdate should not update when thread info parent message id does not match`() {
+        // given
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 3,
+            cid = "channel1",
+            createdAt = now,
+            createdBy = user1,
+            createdByUserId = "user1",
+            deletedAt = null,
+            lastMessageAt = now,
+            parentMessage = parentMessage,
+            parentMessageId = "wrong_parent",
+            participantCount = 3,
+            replyCount = 2,
+            title = "Updated Title",
+            updatedAt = now,
+            extraData = mapOf("key" to "value"),
+        )
+
+        // when
+        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+
+        // then
+        result shouldBeEqualTo baseThread
+    }
+
+    @Test
     fun `markAsUnreadByUser should increment unread messages count`() {
         // given
         val updatedUser = user2.copy(name = "Updated User 2")

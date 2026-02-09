@@ -1021,6 +1021,8 @@ public fun randomThreadInfo(
     deletedAt: Date? = randomDateOrNull(),
     replyCount: Int = positiveRandomInt(),
     title: String = randomString(),
+    channel: Channel? = null,
+    threadParticipants: List<ThreadParticipant> = emptyList(),
 ): ThreadInfo = ThreadInfo(
     activeParticipantCount = activeParticipantCount,
     cid = cid,
@@ -1035,6 +1037,8 @@ public fun randomThreadInfo(
     deletedAt = deletedAt,
     replyCount = replyCount,
     title = title,
+    channel = channel,
+    threadParticipants = threadParticipants,
 )
 
 public fun randomAppSettings(

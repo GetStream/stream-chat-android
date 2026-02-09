@@ -148,6 +148,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
@@ -1539,7 +1540,7 @@ constructor(
      * @param set The fields to set.
      * @param unset The fields to unset.
      */
-    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Thread> {
+    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<ThreadInfo> {
         return threadsApi.partialUpdateThread(
             messageId = messageId,
             body = PartialUpdateThreadRequest(

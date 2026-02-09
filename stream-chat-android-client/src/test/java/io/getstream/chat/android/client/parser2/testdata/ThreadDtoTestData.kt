@@ -45,8 +45,11 @@ internal object ThreadDtoTestData {
           "thread_participants": [
             {
               "channel_cid": "messaging:123",
+              "thread_id": "parent_msg_id",
+              "user_id": "user1",
               "user": ${UserDtoTestData.downstreamJson},
-              "user_id": "user1"
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "last_read_at": "2020-06-10T11:04:31.588Z"
             }
           ],
           "title": "Thread Title",
@@ -86,8 +89,11 @@ internal object ThreadDtoTestData {
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
                 channel_cid = "messaging:123",
-                user = UserDtoTestData.downstreamUser,
+                thread_id = "parent_msg_id",
                 user_id = "user1",
+                user = UserDtoTestData.downstreamUser,
+                created_at = Date(1591787071000),
+                last_read_at = Date(1591787071588),
             ),
         ),
         title = "Thread Title",
@@ -158,19 +164,30 @@ internal object ThreadDtoTestData {
     @Language("JSON")
     val downstreamThreadInfoJson =
         """{
-          "active_participant_count": 4,
           "channel_cid": "messaging:789",
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "created_by": ${UserDtoTestData.downstreamJson},
-          "created_by_user_id": "user3",
-          "deleted_at": null,
-          "last_message_at": "2020-06-10T11:04:31.588Z",
-          "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
+          "channel": ${ChannelDtoTestData.downstreamJsonWithoutExtraData},
           "parent_message_id": "parent_msg_id_3",
-          "participant_count": 8,
+          "parent_message": ${MessageDtoTestData.downstreamJsonWithoutExtraData},
+          "created_by_user_id": "user3",
+          "created_by": ${UserDtoTestData.downstreamJson},
           "reply_count": 15,
-          "title": "Thread Info Title",
+          "participant_count": 8,
+          "active_participant_count": 4,
+          "thread_participants": [
+            {
+              "channel_cid": "messaging:789",
+              "thread_id": "parent_msg_id_3",
+              "user_id": "user1",
+              "user": ${UserDtoTestData.downstreamJson},
+              "created_at": "2020-06-10T11:04:31.000Z",
+              "last_read_at": "2020-06-10T11:04:31.588Z"
+            }
+          ],
+          "last_message_at": "2020-06-10T11:04:31.588Z",
+          "created_at": "2020-06-10T11:04:31.000Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
+          "deleted_at": null,
+          "title": "Thread Info Title",
           "extraData": {
             "info_key1": "info_value1",
             "info_key2": false
@@ -179,19 +196,30 @@ internal object ThreadDtoTestData {
         }"""
 
     val downstreamThreadInfo = DownstreamThreadInfoDto(
-        active_participant_count = 4,
         channel_cid = "messaging:789",
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_user_id = "user3",
-        deleted_at = null,
-        last_message_at = Date(1591787071588),
-        parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
+        channel = ChannelDtoTestData.downstreamChannelWithoutExtraData,
         parent_message_id = "parent_msg_id_3",
-        participant_count = 8,
+        parent_message = MessageDtoTestData.downstreamMessageWithoutExtraData,
+        created_by_user_id = "user3",
+        created_by = UserDtoTestData.downstreamUser,
         reply_count = 15,
-        title = "Thread Info Title",
+        participant_count = 8,
+        active_participant_count = 4,
+        thread_participants = listOf(
+            DownstreamThreadParticipantDto(
+                channel_cid = "messaging:789",
+                thread_id = "parent_msg_id_3",
+                user_id = "user1",
+                user = UserDtoTestData.downstreamUser,
+                created_at = Date(1591787071000),
+                last_read_at = Date(1591787071588),
+            ),
+        ),
+        last_message_at = Date(1591787071588),
+        created_at = Date(1591787071000),
         updated_at = Date(1591787071588),
+        deleted_at = null,
+        title = "Thread Info Title",
         extraData = mapOf(
             "extraData" to mapOf(
                 "info_key1" to "info_value1",
@@ -204,35 +232,39 @@ internal object ThreadDtoTestData {
     @Language("JSON")
     val downstreamThreadInfoJsonWithoutExtraData =
         """{
-          "active_participant_count": 1,
           "channel_cid": "messaging:000",
-          "created_at": "2020-06-10T11:04:31.000Z",
-          "created_by": ${UserDtoTestData.downstreamJson},
-          "created_by_user_id": "user4",
-          "deleted_at": null,
-          "last_message_at": null,
-          "parent_message": null,
+          "channel": null,
           "parent_message_id": "parent_msg_id_4",
-          "participant_count": 1,
+          "parent_message": null,
+          "created_by_user_id": "user4",
+          "created_by": ${UserDtoTestData.downstreamJson},
           "reply_count": 0,
-          "title": "Minimal Thread Info",
-          "updated_at": "2020-06-10T11:04:31.588Z"
+          "participant_count": 1,
+          "active_participant_count": 1,
+          "thread_participants": [],
+          "last_message_at": null,
+          "created_at": "2020-06-10T11:04:31.000Z",
+          "updated_at": "2020-06-10T11:04:31.588Z",
+          "deleted_at": null,
+          "title": "Minimal Thread Info"
         }"""
 
     val downstreamThreadInfoWithoutExtraData = DownstreamThreadInfoDto(
-        active_participant_count = 1,
         channel_cid = "messaging:000",
-        created_at = Date(1591787071000),
-        created_by = UserDtoTestData.downstreamUser,
-        created_by_user_id = "user4",
-        deleted_at = null,
-        last_message_at = null,
-        parent_message = null,
+        channel = null,
         parent_message_id = "parent_msg_id_4",
-        participant_count = 1,
+        parent_message = null,
+        created_by_user_id = "user4",
+        created_by = UserDtoTestData.downstreamUser,
         reply_count = 0,
-        title = "Minimal Thread Info",
+        participant_count = 1,
+        active_participant_count = 1,
+        thread_participants = emptyList(),
+        last_message_at = null,
+        created_at = Date(1591787071000),
         updated_at = Date(1591787071588),
+        deleted_at = null,
+        title = "Minimal Thread Info",
         extraData = emptyMap(),
     )
 }
