@@ -131,17 +131,30 @@ public fun MessageInput(
     val value = messageComposerState.inputValue
     val canSendMessage = messageComposerState.canSendMessage()
 
+    val inputFieldTheme = ChatTheme.messageComposerTheme.inputField
+
     val visualTransformation = MessageInputVisualTransformation(
-        inputFieldTheme = ChatTheme.messageComposerTheme.inputField,
+        inputFieldTheme = inputFieldTheme,
         typography = ChatTheme.typography,
         colors = ChatTheme.colors,
         mentions = messageComposerState.selectedMentions,
     )
 
-    val description = stringResource(id = R.string.stream_compose_cd_message_input)
+    // Manages the String ↔ TextFieldValue bridge for BasicTextField
+    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    if (textState.text != value) {
+        // Workaround to move cursor to the end after selecting a suggestion
+        LaunchedEffect(value) {
+            if (textState.text != value) {
+                textState = textState.copy(
+                    text = value,
+                    selection = TextRange(value.length),
+                )
+            }
+        }
+    }
 
     val shape = ChatTheme.shapes.inputField
-
     Column(
         modifier = modifier
             .border(width = 1.dp, color = ChatTheme.colors.borders, shape = shape)
@@ -171,17 +184,23 @@ public fun MessageInput(
         ) {
             leadingContent()
 
-            TextField(
+            val description = stringResource(id = R.string.stream_compose_cd_message_input)
+
+            BasicTextField(
                 modifier = Modifier
                     .weight(1f)
                     .semantics { contentDescription = description }
                     .testTag("Stream_ComposerInputField"),
-                value = value,
-                maxLines = maxLines,
-                onValueChange = onValueChange,
-                enabled = canSendMessage,
-                keyboardOptions = keyboardOptions,
+                value = textState,
+                onValueChange = {
+                    textState = it
+                    if (value != it.text) {
+                        onValueChange(it.text)
+                    }
+                },
                 visualTransformation = visualTransformation,
+                textStyle = inputFieldTheme.textStyle,
+                cursorBrush = SolidColor(inputFieldTheme.cursorBrushColor),
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier.padding(
@@ -197,6 +216,10 @@ public fun MessageInput(
                         }
                     }
                 },
+                maxLines = maxLines,
+                singleLine = maxLines == 1,
+                enabled = canSendMessage,
+                keyboardOptions = keyboardOptions,
             )
 
             trailingContent()
@@ -258,54 +281,6 @@ private fun MessageInputHeader(
             }
         }
     }
-}
-
-@Suppress("LongParameterList")
-@Composable
-private fun TextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier,
-    enabled: Boolean,
-    maxLines: Int,
-    keyboardOptions: KeyboardOptions,
-    visualTransformation: VisualTransformation,
-    decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
-) {
-    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
-
-    if (textState.text != value) {
-        // Workaround to move cursor to the end after selecting a suggestion
-        LaunchedEffect(value) {
-            if (textState.text != value) {
-                textState = textState.copy(
-                    text = value,
-                    selection = TextRange(value.length),
-                )
-            }
-        }
-    }
-
-    val theme = ChatTheme.messageComposerTheme.inputField
-
-    BasicTextField(
-        modifier = modifier,
-        value = textState,
-        onValueChange = {
-            textState = it
-            if (value != it.text) {
-                onValueChange(it.text)
-            }
-        },
-        visualTransformation = visualTransformation,
-        textStyle = theme.textStyle,
-        cursorBrush = SolidColor(theme.cursorBrushColor),
-        decorationBox = { innerTextField -> decorationBox(innerTextField) },
-        maxLines = maxLines,
-        singleLine = maxLines == 1,
-        enabled = enabled,
-        keyboardOptions = keyboardOptions,
-    )
 }
 
 /**
