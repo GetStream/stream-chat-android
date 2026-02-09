@@ -163,6 +163,7 @@ public fun AudioRecordAttachmentContentItem(
     val currentAttachment by rememberUpdatedState(attachment)
     val colors = ChatTheme.colors
     val outlineColor = if (isMine) colors.chatBorderOnChatOutgoing else colors.chatBorderOnChatIncoming
+    val textColor = MessageStyling.textColor(isMine, colors)
 
     AudioRecordAttachmentContentItemBase(
         modifier = modifier,
@@ -170,6 +171,7 @@ public fun AudioRecordAttachmentContentItem(
         playerState = playerState,
         waveformHeight = 36.dp,
         outlineColor = outlineColor,
+        textColor = textColor,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
@@ -190,6 +192,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     playerState: AudioPlayerState,
     waveformHeight: Dp,
     outlineColor: Color,
+    textColor: Color,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
@@ -247,12 +250,7 @@ internal fun AudioRecordAttachmentContentItemBase(
             },
         )
 
-        val timerTextColor =
-            if (playing) {
-                ChatTheme.colors.accentPrimary
-            } else {
-                ChatTheme.colors.chatTextIncoming
-            }
+        val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
         PlaybackTimerText(
             progress = currentProgress,
             durationInMs = currentAttachment.durationInMs,

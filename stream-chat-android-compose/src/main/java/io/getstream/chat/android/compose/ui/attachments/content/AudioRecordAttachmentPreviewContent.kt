@@ -104,6 +104,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
         modifier = modifier,
         attachment = attachment,
         outlineColor = ChatTheme.colors.borderCorePrimary,
+        textColor = ChatTheme.colors.chatTextOutgoing,
         playerState = playerState,
         waveformHeight = 36.dp,
         onPlayToggleClick = onPlayToggleClick,
