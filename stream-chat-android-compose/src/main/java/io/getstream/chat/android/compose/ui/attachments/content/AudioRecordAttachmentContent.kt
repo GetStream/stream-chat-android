@@ -237,6 +237,8 @@ internal fun AudioRecordAttachmentContentItemBase(
             style = waveformSliderStyle.style,
             waveformData = waveform,
             progress = currentProgress,
+            isPlaying = playing,
+            visibleBarLimit = 20,
             onDragStart = {
                 currentProgress = it
                 onThumbDragStart(currentAttachment)

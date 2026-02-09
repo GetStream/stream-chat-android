@@ -17,10 +17,8 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -39,7 +37,6 @@ public data class WaveformSliderLayoutStyle(
  * Represents the style for the waveform slider.
  */
 public data class WaveformSliderStyle(
-    val thumbStyle: WaveformThumbStyle,
     val trackerStyle: WaveformTrackStyle,
 ) {
 
@@ -52,42 +49,7 @@ public data class WaveformSliderStyle(
                 else -> StreamColors.defaultColors()
             },
         ): WaveformSliderStyle = WaveformSliderStyle(
-            thumbStyle = WaveformThumbStyle.defaultStyle(colors = colors),
             trackerStyle = WaveformTrackStyle.defaultStyle(colors = colors),
-        )
-    }
-}
-
-// TODO [G.] what to do with this -> Keep? Delete and let customers pass a composable for the thumb? Something else?
-/**
- * Represents the style for the waveform thumb.
- */
-public data class WaveformThumbStyle(
-    val widthDefault: Dp,
-    val widthPressed: Dp,
-    val backgroundColor: Color,
-    val backgroundShape: Shape,
-    val borderColor: Color,
-    val borderShape: Shape,
-    val borderWidth: Dp,
-) {
-
-    public companion object {
-
-        @Composable
-        public fun defaultStyle(
-            colors: StreamColors = when (isSystemInDarkTheme()) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
-            },
-        ): WaveformThumbStyle = WaveformThumbStyle(
-            widthDefault = 0.dp,
-            widthPressed = 0.dp,
-            backgroundColor = Color.White,
-            backgroundShape = RoundedCornerShape(5.dp),
-            borderColor = Color.LightGray,
-            borderShape = RoundedCornerShape(5.dp),
-            borderWidth = 1.dp,
         )
     }
 }

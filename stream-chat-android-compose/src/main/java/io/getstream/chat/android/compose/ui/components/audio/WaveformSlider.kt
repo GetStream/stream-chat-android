@@ -20,14 +20,15 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,63 +47,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformThumbStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
 import io.getstream.chat.android.compose.ui.util.dragPointerInput
 import kotlin.random.Random
-
-/**
- * A slider that displays a waveform and allows the user to seek through it.
- *
- * @param modifier Modifier for styling.
- * @param waveformData The waveform data to display.
- * @param style The style for the waveform slider.
- * @param visibleBarLimit The number of bars to display at once.
- * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
- * @param progress The current progress of the waveform.
- * @param isThumbVisible Whether to display the thumb.
- * @param onDragStart Callback when the user starts dragging the thumb.
- * @param onDragStop Callback when the user stops dragging the thumb.
- */
-@Composable
-public fun WaveformSlider(
-    modifier: Modifier = Modifier,
-    style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(),
-    waveformData: List<Float>,
-    visibleBarLimit: Int = 100,
-    adjustBarWidthToLimit: Boolean = false,
-    progress: Float,
-    isThumbVisible: Boolean = true,
-    onDragStart: (Float) -> Unit = {},
-    onDrag: (Float) -> Unit = {},
-    onDragStop: (Float) -> Unit = {},
-) {
-    var currentProgress by remember { mutableFloatStateOf(progress) }
-    LaunchedEffect(progress) { currentProgress = progress }
-
-    StaticWaveformSlider(
-        modifier = modifier,
-        style = style,
-        waveformData = waveformData,
-        visibleBarLimit = visibleBarLimit,
-        adjustBarWidthToLimit = adjustBarWidthToLimit,
-        progress = currentProgress,
-        isThumbVisible = isThumbVisible,
-        onDragStart = {
-            currentProgress = it
-            onDragStart(it)
-        },
-        onDrag = {
-            currentProgress = it
-            onDrag(it)
-        },
-        onDragStop = {
-            currentProgress = it
-            onDragStop(it)
-        },
-    )
-}
 
 /**
  * A slider that displays a waveform.
@@ -120,20 +69,20 @@ public fun WaveformSlider(
  */
 @Composable
 public fun StaticWaveformSlider(
+    waveformData: List<Float>,
+    progress: Float,
+    isPlaying: Boolean,
     modifier: Modifier = Modifier,
     style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(),
-    waveformData: List<Float>,
     visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
-    progress: Float,
     isThumbVisible: Boolean = true,
     onDragStart: (Float) -> Unit = {},
     onDrag: (Float) -> Unit = {},
     onDragStop: (Float) -> Unit = {},
 ) {
-    val currentProcess by rememberUpdatedState(progress)
+    val currentProgress by rememberUpdatedState(progress)
     var widthPx by remember { mutableFloatStateOf(0f) }
-    var pressed by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -143,15 +92,13 @@ public fun StaticWaveformSlider(
             .dragPointerInput(
                 enabled = isThumbVisible,
                 onDragStart = {
-                    pressed = true
                     onDragStart(it.toHorizontalProgress(widthPx))
                 },
                 onDrag = {
                     onDrag(it.toHorizontalProgress(widthPx))
                 },
                 onDragStop = {
-                    pressed = false
-                    onDragStop(it?.toHorizontalProgress(widthPx) ?: currentProcess)
+                    onDragStop(it?.toHorizontalProgress(widthPx) ?: currentProgress)
                 },
             ),
     ) {
@@ -167,9 +114,8 @@ public fun StaticWaveformSlider(
 
         // Draw the thumb
         if (isThumbVisible) {
-            WaveformThumb(
-                style = style.thumbStyle,
-                pressed = pressed,
+            WaveformHandle(
+                color = if (isPlaying) style.trackerStyle.passedColor else style.trackerStyle.futureColor,
                 progress = progress,
                 parentWidthPx = widthPx,
             )
@@ -177,36 +123,33 @@ public fun StaticWaveformSlider(
     }
 }
 
+private val handleSize = 14.dp
+private val handleBorderSize = 2.dp
+
 @Composable
-private fun WaveformThumb(
-    modifier: Modifier = Modifier,
-    style: WaveformThumbStyle = WaveformThumbStyle.defaultStyle(),
-    pressed: Boolean = false,
+private fun BoxScope.WaveformHandle(
+    color: Color,
     progress: Float,
     parentWidthPx: Float,
 ) {
-    val thumbWidth = when (pressed) {
-        true -> style.widthPressed
-        else -> style.widthDefault
-    }
-
     val thumbOffset = when (parentWidthPx > 0) {
         true -> with(LocalDensity.current) {
             val parentWidth = parentWidthPx.toDp()
             val center = parentWidth * progress
-            val left = center - (thumbWidth / 2)
-            left.coerceIn(0.dp, parentWidth - thumbWidth)
+            val left = center - (handleSize / 2)
+            left.coerceIn(-handleBorderSize, parentWidth - handleSize)
         }
+
         else -> 0.dp
     }
 
     Box(
-        modifier = modifier
-            .offset(thumbOffset)
-            .fillMaxHeight()
-            .width(thumbWidth)
-            .background(style.backgroundColor, style.backgroundShape)
-            .border(style.borderWidth, style.borderColor, style.borderShape),
+        modifier = Modifier
+            .align(Alignment.CenterStart)
+            .offset(x = thumbOffset)
+            .size(handleSize)
+            .border(handleBorderSize, ChatTheme.colors.borderCoreOnAccent, CircleShape)
+            .background(color, CircleShape)
     )
 }
 
@@ -280,10 +223,7 @@ internal fun WaveformTrack(
 @Composable
 internal fun WaveformSeekBarPreview() {
     val rand = Random(50)
-    val waveform = mutableListOf<Float>()
-    for (i in 0..50) {
-        waveform.add(rand.nextFloat())
-    }
+    val waveform = List(50) { rand.nextFloat() }
 
     ChatPreviewTheme {
         Box(
@@ -293,12 +233,13 @@ internal fun WaveformSeekBarPreview() {
                 .background(Color.Cyan),
             contentAlignment = Alignment.Center,
         ) {
-            WaveformSlider(
+            StaticWaveformSlider(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp),
                 waveformData = waveform,
                 progress = 0.0f,
+                isPlaying = true,
             )
         }
     }
