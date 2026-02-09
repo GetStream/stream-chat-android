@@ -43,7 +43,7 @@ import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.models.Attachment
 
 /**
- * A custom [AttachmentFactory] that adds support for date attachments.
+ * A custom [ChatComponentFactory] that adds support for date attachments.
  */
 object CustomChatComponentFactory : ChatComponentFactory {
     @Composable
