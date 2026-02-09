@@ -151,7 +151,6 @@ public fun FileAttachmentItem(
     }
 }
 
-// TODO [G.] semantic value?
 private val fileAttachmentShape = RoundedCornerShape(StreamTokens.radiusLg)
 
 /**
