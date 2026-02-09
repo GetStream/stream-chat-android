@@ -160,11 +160,9 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInputTrailingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
@@ -1420,7 +1418,6 @@ public interface ChatComponentFactory {
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
-        label: @Composable (MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
@@ -1444,7 +1441,6 @@ public interface ChatComponentFactory {
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
-            label = label,
             input = input,
             audioRecordingContent = audioRecordingContent,
             trailingContent = trailingContent,
@@ -1693,18 +1689,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default label of the message composer.
-     *
-     * Used by [MessageComposerInput].
-     *
-     * @param state The current state of the message composer.
-     */
-    @Composable
-    public fun MessageComposerLabel(state: MessageComposerState) {
-        DefaultComposerLabel(state)
-    }
-
-    /**
      * The default input of the message composer.
      *
      * @param state The current state of the message composer.
@@ -1716,6 +1700,7 @@ public interface ChatComponentFactory {
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.
+     * @param centerContent The center content of the message composer (the text field).
      * @param trailingContent The trailing content of the message composer.
      */
     @Composable
@@ -1726,10 +1711,10 @@ public interface ChatComponentFactory {
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
-        label: @Composable (MessageComposerState) -> Unit,
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
         leadingContent: @Composable RowScope.() -> Unit,
+        centerContent: @Composable (Modifier) -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         DefaultMessageComposerInput(
@@ -1739,10 +1724,10 @@ public interface ChatComponentFactory {
             onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            label = label,
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
+            centerContent = centerContent,
             trailingContent = trailingContent,
         )
     }
@@ -1788,25 +1773,48 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default center content of the message composer input.
+     * Contains the text input field (BasicTextField) with label overlay.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onValueChange The action to perform when the input value changes.
+     * @param modifier The modifier to apply to the composable.
+     */
+    @Composable
+    public fun MessageComposerInputCenterContent(
+        state: MessageComposerState,
+        onValueChange: (String) -> Unit,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterContent(
+            state = state,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default trailing content of the message composer.
      * Shown at the end of the composer input.
      *
      * Used as part of [MessageComposerInput].
      *
      * @param state The current state of the message composer.
-     * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
+     * @param onSendClick The action to perform when the send button is clicked.
      */
     @Composable
     public fun MessageComposerInputTrailingContent(
         state: MessageComposerState,
-        onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
+        onSendClick: (String, List<Attachment>) -> Unit,
     ) {
-        DefaultMessageComposerInputTrailingContent(
-            messageComposerState = state,
-            onSendMessage = onSendClick,
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputTrailingContent(
+            state = state,
             recordingActions = recordingActions,
+            onSendClick = onSendClick,
         )
     }
 
