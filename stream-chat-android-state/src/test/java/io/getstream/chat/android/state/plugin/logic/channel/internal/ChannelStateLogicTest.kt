@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
@@ -54,6 +55,7 @@ import io.getstream.result.Error
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -1095,6 +1097,101 @@ internal class ChannelStateLogicTest {
         verify(mutableState).setLoadingOlderMessages(false)
         verify(mutableState).setLoadingNewerMessages(false)
     }
+
+    // region updateLastMessageAt tests
+    // Note: Core logic for calculating lastMessageAt is tested in ChannelUtilsTest.
+    // These tests verify the integration with ChannelStateLogic.
+
+    @Test
+    fun `Given newer message, When updateLastMessageAt is called, Then updateChannelData is called with new date`() {
+        // given
+        val initialDate = Date(100L)
+        val messageDate = Date(200L)
+        _channelData.value = _channelData.value.copy(lastMessageAt = initialDate)
+        _channelConfig.value = Config()
+
+        var updatedChannelData: ChannelData? = null
+        whenever(mutableState.updateChannelData(any<(ChannelData?) -> ChannelData?>())) doAnswer { invocation ->
+            val updateFn = invocation.getArgument<(ChannelData?) -> ChannelData?>(0)
+            updatedChannelData = updateFn(_channelData.value)
+        }
+
+        val message = randomMessage(
+            createdAt = messageDate,
+            createdLocallyAt = null,
+            type = MessageType.REGULAR,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateLastMessageAt(message)
+
+        // then
+        verify(mutableState).updateChannelData(any())
+        assertEquals(messageDate, updatedChannelData?.lastMessageAt)
+    }
+
+    @Test
+    fun `Given system message, When updateLastMessageAt is called, Then reads skipLastMsgUpdateForSystemMsgs from config`() {
+        // given - config has skipLastMsgUpdateForSystemMsgs = true
+        val initialDate = Date(100L)
+        val messageDate = Date(200L)
+        _channelData.value = _channelData.value.copy(lastMessageAt = initialDate)
+        _channelConfig.value = Config(skipLastMsgUpdateForSystemMsgs = true)
+
+        var updatedChannelData: ChannelData? = null
+        whenever(mutableState.updateChannelData(any<(ChannelData?) -> ChannelData?>())) doAnswer { invocation ->
+            val updateFn = invocation.getArgument<(ChannelData?) -> ChannelData?>(0)
+            updatedChannelData = updateFn(_channelData.value)
+        }
+
+        val message = randomMessage(
+            createdAt = messageDate,
+            createdLocallyAt = null,
+            type = MessageType.SYSTEM,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateLastMessageAt(message)
+
+        // then - system message should be skipped, so lastMessageAt stays the same
+        verify(mutableState).updateChannelData(any())
+        assertEquals(initialDate, updatedChannelData?.lastMessageAt)
+    }
+
+    @Test
+    fun `Given older message, When updateLastMessageAt is called, Then lastMessageAt is not changed`() {
+        // given
+        val initialDate = Date(200L)
+        val messageDate = Date(100L) // Older than current
+        _channelData.value = _channelData.value.copy(lastMessageAt = initialDate)
+        _channelConfig.value = Config()
+
+        var updatedChannelData: ChannelData? = null
+        whenever(mutableState.updateChannelData(any<(ChannelData?) -> ChannelData?>())) doAnswer { invocation ->
+            val updateFn = invocation.getArgument<(ChannelData?) -> ChannelData?>(0)
+            updatedChannelData = updateFn(_channelData.value)
+        }
+
+        val message = randomMessage(
+            createdAt = messageDate,
+            createdLocallyAt = null,
+            type = MessageType.REGULAR,
+            shadowed = false,
+            parentId = null,
+        )
+
+        // when
+        channelStateLogic.updateLastMessageAt(message)
+
+        // then - lastMessageAt should stay the same (no update)
+        assertEquals(initialDate, updatedChannelData?.lastMessageAt)
+    }
+
+    // endregion
 
     companion object {
 

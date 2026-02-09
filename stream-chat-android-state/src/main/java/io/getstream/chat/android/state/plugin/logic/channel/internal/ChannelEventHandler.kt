@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -132,6 +132,8 @@ internal class ChannelEventHandler(
                 }
                 // Update message count
                 event.channelMessageCount?.let(stateLogic::updateMessageCount)
+                // Update lastMessageAt
+                stateLogic.updateLastMessageAt(event.message)
             }
 
             is NotificationMessageNewEvent -> {
@@ -144,6 +146,8 @@ internal class ChannelEventHandler(
                 if (!event.message.shadowed) {
                     stateLogic.setHidden(false)
                 }
+                // Update lastMessageAt
+                stateLogic.updateLastMessageAt(event.message)
             }
 
             is MessageUpdatedEvent -> {
@@ -224,9 +228,14 @@ internal class ChannelEventHandler(
                 stateLogic.removeMessagesBefore(event.createdAt)
                 stateLogic.deleteChannel(event.createdAt)
             }
-
-            is ChannelTruncatedEvent -> stateLogic.removeMessagesBefore(event.createdAt, event.message)
-            is NotificationChannelTruncatedEvent -> stateLogic.removeMessagesBefore(event.createdAt)
+            is ChannelTruncatedEvent -> {
+                stateLogic.removeMessagesBefore(event.createdAt, event.message)
+                stateLogic.updateChannelData(event)
+            }
+            is NotificationChannelTruncatedEvent -> {
+                stateLogic.removeMessagesBefore(event.createdAt)
+                stateLogic.updateChannelData(event)
+            }
             // Typing events
             is TypingStartEvent -> stateLogic.setTyping(event.user.id, event)
             is TypingStopEvent -> stateLogic.setTyping(event.user.id, null)

@@ -186,6 +186,7 @@ internal class DomainMapping(
             membership = membership?.toDomain(),
             activeLiveLocations = active_live_locations.map { it.toDomain() },
             messageCount = message_count,
+            lastMessageAt = last_message_at,
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)

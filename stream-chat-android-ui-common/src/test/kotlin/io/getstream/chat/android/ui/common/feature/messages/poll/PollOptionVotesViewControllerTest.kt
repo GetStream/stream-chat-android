@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewAction.LoadMoreRequested
-import io.getstream.chat.android.ui.common.feature.messages.poll.PollOptionVotesViewEvent.LoadError
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
