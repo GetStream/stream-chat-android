@@ -44,12 +44,8 @@ internal object ThreadDtoTestData {
           "reply_count": 10,
           "thread_participants": [
             {
-              "channel_cid": "messaging:123",
-              "thread_id": "parent_msg_id",
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson},
-              "created_at": "2020-06-10T11:04:31.000Z",
-              "last_read_at": "2020-06-10T11:04:31.588Z"
+              "user": ${UserDtoTestData.downstreamJson}
             }
           ],
           "title": "Thread Title",
@@ -88,7 +84,6 @@ internal object ThreadDtoTestData {
         reply_count = 10,
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
-                channel_cid = "messaging:123",
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
             ),
@@ -172,12 +167,8 @@ internal object ThreadDtoTestData {
           "active_participant_count": 4,
           "thread_participants": [
             {
-              "channel_cid": "messaging:789",
-              "thread_id": "parent_msg_id_3",
               "user_id": "user1",
-              "user": ${UserDtoTestData.downstreamJson},
-              "created_at": "2020-06-10T11:04:31.000Z",
-              "last_read_at": "2020-06-10T11:04:31.588Z"
+              "user": ${UserDtoTestData.downstreamJson}
             }
           ],
           "last_message_at": "2020-06-10T11:04:31.588Z",
@@ -204,7 +195,6 @@ internal object ThreadDtoTestData {
         active_participant_count = 4,
         thread_participants = listOf(
             DownstreamThreadParticipantDto(
-                channel_cid = "messaging:789",
                 user_id = "user1",
                 user = UserDtoTestData.downstreamUser,
             ),

@@ -442,7 +442,7 @@ internal class ThreadExtensionsTests {
         )
 
         // when
-        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
 
         // then
         result.title shouldBeEqualTo "Updated Title"
@@ -471,7 +471,7 @@ internal class ThreadExtensionsTests {
         )
 
         // when
-        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
 
         // then
         // These fields should NOT be overwritten
@@ -505,7 +505,7 @@ internal class ThreadExtensionsTests {
         )
 
         // when
-        val result = baseThread.applyThreadInfoUpdate(threadInfo)
+        val result = baseThread.applyThreadUpdatedEventChanges(threadInfo)
 
         // then
         result shouldBeEqualTo baseThread

@@ -83,7 +83,7 @@ import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
-import io.getstream.chat.android.client.extensions.internal.applyThreadInfoUpdate
+import io.getstream.chat.android.client.extensions.internal.applyThreadUpdatedEventChanges
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
 import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
@@ -774,7 +774,7 @@ internal class EventHandlerSequential(
                 is ThreadUpdatedEvent -> {
                     // Update thread in offline storage when it is partially updated (title or custom data)
                     threadFromPendingUpdateOrRepo(batch, event.thread.parentMessageId)
-                        ?.applyThreadInfoUpdate(event.thread)
+                        ?.applyThreadUpdatedEventChanges(event.thread)
                         ?.let(batch::addThread)
                 }
                 is GlobalUserBannedEvent -> {

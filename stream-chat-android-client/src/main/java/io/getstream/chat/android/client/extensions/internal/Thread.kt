@@ -132,13 +132,15 @@ public fun Thread.markAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt
  * Applies the updated thread info from a `thread.updated` event to this [Thread].
  * The `thread.updated` event is emitted when a thread is partially updated via the API.
  *
+ * **IMPORTANT: Use only to update the Thread data from a `thread.updated` event.**
+ *
  * Only `title` and `extraData` (custom data) can be updated via the `UpdateThreadPartial` endpoint.
  * The `updatedAt` timestamp is also applied as it reflects the server-managed update time.
  *
  * @param threadInfo The [ThreadInfo] holding the updated thread data.
  */
 @InternalStreamChatApi
-public fun Thread.applyThreadInfoUpdate(threadInfo: ThreadInfo): Thread {
+public fun Thread.applyThreadUpdatedEventChanges(threadInfo: ThreadInfo): Thread {
     // Skip update if [threadInfo] is not related to this Thread
     if (this.parentMessageId != threadInfo.parentMessageId) return this
     return this.copy(

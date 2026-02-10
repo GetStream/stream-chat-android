@@ -750,12 +750,10 @@ internal class DomainMappingTest {
             createdBy = user1,
             threadParticipants = listOf(
                 DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
                     user_id = user1.id,
                     user = user1,
                 ),
                 DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
                     user_id = user2.id,
                     user = user2,
                 ),

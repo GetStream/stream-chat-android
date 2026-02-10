@@ -110,14 +110,12 @@ internal data class DownstreamThreadInfoDto(
 /**
  * The DTO for Thread Participant.
  *
- * @param channel_cid The channel CID.
  * @param user_id The ID of the user (thread participant).
  * @param user The user as the thread participant. (Note: It is not always delivered, sometimes we only get the ID of
  * the user - [user_id]).
  */
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadParticipantDto(
-    val channel_cid: String,
     val user_id: String,
     val user: DownstreamUserDto?,
 )
