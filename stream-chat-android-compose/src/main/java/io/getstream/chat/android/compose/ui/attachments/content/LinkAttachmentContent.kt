@@ -129,7 +129,6 @@ public fun LinkAttachmentContent(
     if (state.message.attachments.size == 1) {
         FullSizeLinkAttachmentContent(
             modifier = baseModifier,
-            onItemClick = onItemClick,
             previewUrl = previewUrl,
             attachment = attachment,
             textColor = textColor,
@@ -137,7 +136,6 @@ public fun LinkAttachmentContent(
     } else {
         CompactLinkAttachmentContent(
             modifier = baseModifier,
-            onItemClick = onItemClick,
             previewUrl = previewUrl,
             attachment = attachment,
             textColor = textColor,
@@ -148,7 +146,6 @@ public fun LinkAttachmentContent(
 @Composable
 private fun FullSizeLinkAttachmentContent(
     modifier: Modifier,
-    onItemClick: (LinkAttachmentClickData) -> Unit,
     previewUrl: String,
     attachment: Attachment,
     textColor: Color,
@@ -198,7 +195,6 @@ private fun FullSizeLinkAttachmentContent(
 private fun CompactLinkAttachmentContent(
     modifier: Modifier,
     attachment: Attachment,
-    onItemClick: (LinkAttachmentClickData) -> Unit,
     previewUrl: String,
     textColor: Color,
 ) {
