@@ -80,7 +80,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param state - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
