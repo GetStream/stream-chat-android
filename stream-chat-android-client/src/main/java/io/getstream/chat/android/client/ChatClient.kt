@@ -1568,6 +1568,10 @@ internal constructor(
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout()
+        // Set initializationState to NOT_INITIALIZED BEFORE clearing plugins to prevent race condition.
+        // This ensures the StatePlugin extension methods don't access the plugin during disconnect.
+        mutableClientState.setInitializationState(InitializationState.NOT_INITIALIZED)
+
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()

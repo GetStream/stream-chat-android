@@ -21,7 +21,6 @@ import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.randomChannel
-import io.getstream.chat.android.randomMessage
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -49,8 +48,6 @@ internal class QueryChannelsSortTest {
         @JvmStatic
         fun sortArguments() = lastUpdatedSortArguments() +
             lastMessageAtSortArguments() +
-            lastMessageAtWithBothTimestampsSortArguments() +
-            lastMessageAtWithMixedTimestampsSortArguments() +
             updatedAtSortArguments() +
             createdAtSortArguments() +
             memberCountSortArguments() +
@@ -70,14 +67,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -86,14 +76,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
             sortArguments(
@@ -102,14 +85,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -118,19 +94,11 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
         )
 
-        @Suppress("LongMethod")
         @JvmStatic
         fun lastMessageAtSortArguments() = listOf(
             sortArguments(
@@ -138,14 +106,7 @@ internal class QueryChannelsSortTest {
                 querySort = QuerySortByField.ascByName("lastMessageAt"),
             ) {
                 randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -153,14 +114,7 @@ internal class QueryChannelsSortTest {
                 querySort = QuerySortByField.descByName("lastMessageAt"),
             ) {
                 randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
             sortArguments(
@@ -168,14 +122,7 @@ internal class QueryChannelsSortTest {
                 querySort = QuerySortByField.ascByName("last_message_at"),
             ) {
                 randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -183,152 +130,7 @@ internal class QueryChannelsSortTest {
                 querySort = QuerySortByField.descByName("last_message_at"),
             ) {
                 randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = null,
-                            createdAt = dateWithOffset(offsetSeconds = -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-        )
-
-        @Suppress("LongMethod")
-        @JvmStatic
-        fun lastMessageAtWithBothTimestampsSortArguments() = listOf(
-            sortArguments(
-                testName = "Sorting by lastMessageAt field reference in ascending order " +
-                    "prioritizing createdLocallyAt over createdAt",
-                querySort = QuerySortByField.ascByName("lastMessageAt"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = dateWithOffset(offsetSeconds = it),
-                            createdAt = dateWithOffset(offsetSeconds = 100 - it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by lastMessageAt field reference in descending order " +
-                    "prioritizing createdLocallyAt over createdAt",
-                querySort = QuerySortByField.descByName("lastMessageAt"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = dateWithOffset(offsetSeconds = -it),
-                            createdAt = dateWithOffset(offsetSeconds = it - 100),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by last_message_at field name in ascending order " +
-                    "prioritizing createdLocallyAt over createdAt",
-                querySort = QuerySortByField.ascByName("last_message_at"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = dateWithOffset(offsetSeconds = it),
-                            createdAt = dateWithOffset(offsetSeconds = 100 - it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by last_message_at field name in descending order " +
-                    "prioritizing createdLocallyAt over createdAt",
-                querySort = QuerySortByField.descByName("last_message_at"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = dateWithOffset(offsetSeconds = -it),
-                            createdAt = dateWithOffset(offsetSeconds = it - 100),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-        )
-
-        @Suppress("LongMethod")
-        @JvmStatic
-        fun lastMessageAtWithMixedTimestampsSortArguments() = listOf(
-            sortArguments(
-                testName = "Sorting by lastMessageAt field reference in ascending order with " +
-                    "mixed createdLocallyAt and createdAt",
-                querySort = QuerySortByField.ascByName("lastMessageAt"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = if (it % 2 == 0) dateWithOffset(offsetSeconds = it) else null,
-                            createdAt = dateWithOffset(offsetSeconds = if (it % 2 == 0) 100 else it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by lastMessageAt field reference in descending order with " +
-                    "mixed createdLocallyAt and createdAt",
-                querySort = QuerySortByField.descByName("lastMessageAt"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = if (it % 2 == 0) dateWithOffset(offsetSeconds = -it) else null,
-                            createdAt = dateWithOffset(offsetSeconds = if (it % 2 == 0) -100 else -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by last_message_at field name in ascending order with " +
-                    "mixed createdLocallyAt and createdAt",
-                querySort = QuerySortByField.ascByName("last_message_at"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = if (it % 2 == 0) dateWithOffset(offsetSeconds = it) else null,
-                            createdAt = dateWithOffset(offsetSeconds = if (it % 2 == 0) 100 else it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
-                )
-            },
-            sortArguments(
-                testName = "Sorting by last_message_at field name in descending order with " +
-                    "mixed createdLocallyAt and createdAt",
-                querySort = QuerySortByField.descByName("last_message_at"),
-            ) {
-                randomChannel(
-                    messages = listOf(
-                        randomMessage(
-                            createdLocallyAt = if (it % 2 == 0) dateWithOffset(offsetSeconds = -it) else null,
-                            createdAt = dateWithOffset(offsetSeconds = if (it % 2 == 0) -100 else -it),
-                            parentId = null,
-                        ),
-                    ),
-                    isInsideSearch = false,
+                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
         )

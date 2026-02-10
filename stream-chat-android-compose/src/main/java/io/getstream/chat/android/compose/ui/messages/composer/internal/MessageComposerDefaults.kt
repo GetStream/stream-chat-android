@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
-import android.Manifest
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
@@ -40,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -57,10 +54,8 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
-import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 @Composable
 internal fun DefaultMessageComposerHeaderContent(
@@ -176,21 +171,6 @@ internal fun DefaultMessageComposerLeadingContent(
 
 private const val OpenAttachmentPickerButtonRotation = 225f
 
-@Composable
-internal fun DefaultComposerLabel(state: MessageComposerState) {
-    val text = if (state.canSendMessage()) {
-        stringResource(id = R.string.stream_compose_message_label)
-    } else {
-        stringResource(id = R.string.stream_compose_cannot_send_messages_label)
-    }
-
-    Text(
-        text = text,
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.messageComposerTheme.inputField.textStyle,
-    )
-}
-
 @Suppress("LongParameterList")
 @Composable
 internal fun RowScope.DefaultMessageComposerInput(
@@ -200,7 +180,6 @@ internal fun RowScope.DefaultMessageComposerInput(
     onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     onCancelAction: () -> Unit,
     onCancelLinkPreviewClick: (() -> Unit)? = null,
-    label: @Composable (MessageComposerState) -> Unit,
     onSendClick: (String, List<Attachment>) -> Unit,
     recordingActions: AudioRecordingActions,
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -208,11 +187,18 @@ internal fun RowScope.DefaultMessageComposerInput(
             state = messageComposerState,
         )
     },
+    centerContent: @Composable (modifier: Modifier) -> Unit = { modifier ->
+        ChatTheme.componentFactory.MessageComposerInputCenterContent(
+            state = messageComposerState,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
+    },
     trailingContent: @Composable RowScope.() -> Unit = {
         ChatTheme.componentFactory.MessageComposerInputTrailingContent(
             state = messageComposerState,
-            onSendClick = onSendClick,
             recordingActions = recordingActions,
+            onSendClick = onSendClick,
         )
     },
 ) {
@@ -220,7 +206,6 @@ internal fun RowScope.DefaultMessageComposerInput(
     if (!isRecording) {
         MessageInput(
             modifier = Modifier.weight(1f),
-            label = label,
             messageComposerState = messageComposerState,
             onValueChange = onValueChange,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -230,58 +215,9 @@ internal fun RowScope.DefaultMessageComposerInput(
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
+            centerContent = centerContent,
             trailingContent = trailingContent,
         )
-    }
-}
-
-@Composable
-internal fun DefaultMessageComposerInputTrailingContent(
-    messageComposerState: MessageComposerState,
-    onSendMessage: (String, List<Attachment>) -> Unit,
-    recordingActions: AudioRecordingActions,
-) {
-    val inputText = messageComposerState.inputValue
-    val coolDownTime = messageComposerState.coolDownTime
-    val validationErrors = messageComposerState.validationErrors
-    val attachments = messageComposerState.attachments
-    val isInEditMode = messageComposerState.action is Edit
-
-    // Show cooldown indicator if applicable
-    if (coolDownTime > 0 && !isInEditMode) {
-        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
-            modifier = Modifier,
-            coolDownTime = coolDownTime,
-        )
-        return
-    }
-
-    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
-    val canSendMessage = messageComposerState.canSendMessage()
-    val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
-    val isRecording = messageComposerState.recording !is RecordingState.Idle
-
-    val shouldShowSendButton = canSendMessage && isInputValid && !isRecording
-    val shouldShowRecordButton = isRecordingEnabled && !shouldShowSendButton
-
-    val actionButton = when {
-        shouldShowSendButton -> "send"
-        shouldShowRecordButton -> "record"
-        else -> null
-    }
-
-    Crossfade(targetState = actionButton) { button ->
-        when (button) {
-            "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
-                onClick = { onSendMessage(inputText, attachments) },
-            )
-
-            "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
-                state = messageComposerState.recording,
-                recordingActions = recordingActions,
-            )
-        }
     }
 }
 

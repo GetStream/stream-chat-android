@@ -74,7 +74,6 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
-import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
@@ -614,7 +613,7 @@ public fun RegularMessageContent(
     val ownsMessage = messageItem.isMine
 
     val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
-    val messageBubbleColor = getMessageBubbleColor(ownsMessage, message = message)
+    val messageBubbleColor = MessageStyling.backgroundColor(ownsMessage)
 
     val content = @Composable {
         MessageContent(

@@ -153,6 +153,7 @@ internal class ChannelMapperTest {
             watchers = watchers,
             watcherCount = channelEntity.watcherCount,
             team = channelEntity.team,
+            lastMessageAt = channelEntity.lastMessageAt,
             ownCapabilities = channelEntity.ownCapabilities,
             membership = membership,
             draftMessage = draftMessage,

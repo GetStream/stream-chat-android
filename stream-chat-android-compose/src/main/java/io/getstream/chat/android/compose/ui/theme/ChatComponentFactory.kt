@@ -73,15 +73,25 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
@@ -120,7 +130,7 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInputOpti
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
-import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
@@ -147,14 +157,12 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Defa
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
-import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInputTrailingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
@@ -197,6 +205,9 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -224,6 +235,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
@@ -1226,7 +1238,7 @@ public interface ChatComponentFactory {
         currentUser: User?,
         onGiphyActionClick: (GiphyAction) -> Unit,
     ) {
-        DefaultMessageGiphyContent(
+        GiphyMessageContent(
             message = message,
             currentUser = currentUser,
             onGiphyActionClick = onGiphyActionClick,
@@ -1406,7 +1418,6 @@ public interface ChatComponentFactory {
         mentionPopupContent: @Composable (List<User>) -> Unit,
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
-        label: @Composable (MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
         audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
@@ -1430,7 +1441,6 @@ public interface ChatComponentFactory {
             mentionPopupContent = mentionPopupContent,
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
-            label = label,
             input = input,
             audioRecordingContent = audioRecordingContent,
             trailingContent = trailingContent,
@@ -1679,18 +1689,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default label of the message composer.
-     *
-     * Used by [MessageComposerInput].
-     *
-     * @param state The current state of the message composer.
-     */
-    @Composable
-    public fun MessageComposerLabel(state: MessageComposerState) {
-        DefaultComposerLabel(state)
-    }
-
-    /**
      * The default input of the message composer.
      *
      * @param state The current state of the message composer.
@@ -1702,6 +1700,7 @@ public interface ChatComponentFactory {
      * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
      * @param leadingContent The leading content of the message composer.
+     * @param centerContent The center content of the message composer (the text field).
      * @param trailingContent The trailing content of the message composer.
      */
     @Composable
@@ -1712,10 +1711,10 @@ public interface ChatComponentFactory {
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
         onCancelLinkPreviewClick: (() -> Unit)?,
-        label: @Composable (MessageComposerState) -> Unit,
         onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
         leadingContent: @Composable RowScope.() -> Unit,
+        centerContent: @Composable (Modifier) -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
         DefaultMessageComposerInput(
@@ -1725,10 +1724,10 @@ public interface ChatComponentFactory {
             onCancelAction = onCancel,
             onLinkPreviewClick = onLinkPreviewClick,
             onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            label = label,
             onSendClick = onSendClick,
             recordingActions = recordingActions,
             leadingContent = leadingContent,
+            centerContent = centerContent,
             trailingContent = trailingContent,
         )
     }
@@ -1774,25 +1773,48 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default center content of the message composer input.
+     * Contains the text input field (BasicTextField) with label overlay.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     * @param onValueChange The action to perform when the input value changes.
+     * @param modifier The modifier to apply to the composable.
+     */
+    @Composable
+    public fun MessageComposerInputCenterContent(
+        state: MessageComposerState,
+        onValueChange: (String) -> Unit,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputCenterContent(
+            state = state,
+            onValueChange = onValueChange,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default trailing content of the message composer.
      * Shown at the end of the composer input.
      *
      * Used as part of [MessageComposerInput].
      *
      * @param state The current state of the message composer.
-     * @param onSendClick The action to perform when the send button is clicked.
      * @param recordingActions The actions to control the audio recording.
+     * @param onSendClick The action to perform when the send button is clicked.
      */
     @Composable
     public fun MessageComposerInputTrailingContent(
         state: MessageComposerState,
-        onSendClick: (String, List<Attachment>) -> Unit,
         recordingActions: AudioRecordingActions,
+        onSendClick: (String, List<Attachment>) -> Unit,
     ) {
-        DefaultMessageComposerInputTrailingContent(
-            messageComposerState = state,
-            onSendMessage = onSendClick,
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerInputTrailingContent(
+            state = state,
             recordingActions = recordingActions,
+            onSendClick = onSendClick,
         )
     }
 
@@ -2758,24 +2780,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default 'Send' button in the attachments picker.
-     * Shown as ">" icon in the attachments picker header, enabled when there is at least one selected attachment.
-     *
-     * @param hasPickedAttachments If there are any attachments picked.
-     * @param onClick The click handler for the button.
-     */
-    @Composable
-    public fun AttachmentsPickerSendButton(
-        hasPickedAttachments: Boolean,
-        onClick: () -> Unit,
-    ) {
-        DefaultAttachmentsPickerSendButton(
-            hasPickedAttachments = hasPickedAttachments,
-            onClick = onClick,
-        )
-    }
-
-    /**
      * The default content shown when swiping to reply to a message.
      */
     @Composable
@@ -2894,25 +2898,88 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the content of a file attachment.
+     * Factory method for creating the content of audio recording attachments in a message.
      *
-     * @param modifier Modifier for styling the composable.
-     * @param attachmentState The state of the attachment, containing information about the file.
-     * [AttachmentPreviewHandler] and the clicked [Attachment].
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun AudioRecordAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        val viewModelFactory = remember {
+            AudioPlayerViewModelFactory(
+                getAudioPlayer = { ChatClient.instance().audioPlayer },
+                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
+            )
+        }
+        io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent(
+            modifier = modifier,
+            attachmentState = state,
+            viewModelFactory = viewModelFactory,
+        )
+    }
+
+    /**
+     * Factory method for creating the content of file attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
      */
     @Composable
     public fun FileAttachmentContent(
+        state: AttachmentState,
         modifier: Modifier,
-        attachmentState: AttachmentState,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState,
+            attachmentState = state,
             showFileSize = { true },
             onItemClick = ::onFileAttachmentContentItemClick,
         )
     }
 
+    /**
+     * Factory method for creating the content of Giphy attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun GiphyAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the content of link attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun LinkAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the content of media attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
     @Composable
     public fun MediaAttachmentContent(
         state: AttachmentState,
@@ -2922,6 +2989,20 @@ public interface ChatComponentFactory {
             state = state,
             modifier = modifier,
         )
+    }
+
+    /**
+     * Factory method for creating the content of custom attachments in a message.
+     *
+     * @param state State providing the context needed to render and handle interactions for the attachment.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun CustomAttachmentContent(
+        state: AttachmentState,
+        modifier: Modifier,
+    ) {
+        UnsupportedAttachmentContent(modifier)
     }
 
     /**
@@ -3549,6 +3630,300 @@ public interface ChatComponentFactory {
                 navigationIconContentColor = ChatTheme.colors.textHighEmphasis,
                 actionIconContentColor = ChatTheme.colors.textHighEmphasis,
             ),
+        )
+    }
+
+    /**
+     * Container component that manages the attachment picker's visibility and animations.
+     *
+     * Override this to customize the picker container behavior, including animations,
+     * keyboard coordination, and composer integration.
+     *
+     * @param attachmentsPickerViewModel Controls picker visibility and manages attachment state.
+     * @param composerViewModel Receives selected attachments and handles poll/command actions.
+     */
+    @Composable
+    public fun AttachmentPickerMenu(
+        attachmentsPickerViewModel: AttachmentsPickerViewModel,
+        composerViewModel: MessageComposerViewModel,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu(
+            attachmentsPickerViewModel = attachmentsPickerViewModel,
+            composerViewModel = composerViewModel,
+        )
+    }
+
+    /**
+     * Main attachment picker component with mode tabs and content area.
+     *
+     * Override this to customize the overall picker layout. The picker automatically switches
+     * between system picker and in-app picker based on [ChatTheme.attachmentPickerConfig].
+     *
+     * @param modifier Modifier for styling.
+     * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
+     * @param messageMode Current message mode; affects poll availability (disabled in threads).
+     * @param onAttachmentItemSelected Called when user taps an item to select/deselect it.
+     * @param onAttachmentsSelected Called when attachments are confirmed for sending.
+     * @param onAttachmentPickerAction Called for special actions (poll creation, command selection).
+     * @param onDismiss Called when the picker should close.
+     */
+    @Composable
+    public fun AttachmentPicker(
+        modifier: Modifier,
+        attachmentsPickerViewModel: AttachmentsPickerViewModel,
+        messageMode: MessageMode,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+        onAttachmentsSelected: (List<Attachment>) -> Unit,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker(
+            modifier = modifier,
+            attachmentsPickerViewModel = attachmentsPickerViewModel,
+            messageMode = messageMode,
+            onAttachmentItemSelected = onAttachmentItemSelected,
+            onAttachmentsSelected = onAttachmentsSelected,
+            onAttachmentPickerAction = onAttachmentPickerAction,
+            onDismiss = onDismiss,
+        )
+    }
+
+    /**
+     * Tab bar for the in-app attachment picker showing toggle buttons for each mode.
+     *
+     * Override this to customize the tab bar appearance or add custom tabs. The available
+     * modes are determined by [ChatTheme.attachmentPickerConfig.modes].
+     *
+     * @param channel Used to check channel capabilities (e.g., polls enabled).
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param selectedMode The currently active mode (highlighted tab).
+     * @param onModeSelected Called when user taps a tab to switch modes.
+     * @param trailingContent Slot for adding custom content after the mode buttons.
+     */
+    @Composable
+    public fun AttachmentTypePicker(
+        channel: Channel,
+        messageMode: MessageMode,
+        selectedMode: AttachmentPickerMode?,
+        onModeSelected: (AttachmentPickerMode) -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypePicker(
+            channel = channel,
+            messageMode = messageMode,
+            selectedMode = selectedMode,
+            onModeSelected = onModeSelected,
+            trailingContent = trailingContent,
+        )
+    }
+
+    /**
+     * Button bar for the system attachment picker showing action buttons for each mode.
+     *
+     * Unlike [AttachmentTypePicker], each button directly launches the corresponding system picker
+     * rather than switching to an in-app content view. No storage permissions are required.
+     *
+     * @param channel Used to check channel capabilities (e.g., polls enabled).
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param onModeSelected Called when user taps a button to launch a system picker.
+     * @param trailingContent Slot for adding custom content after the mode buttons.
+     */
+    @Composable
+    public fun AttachmentTypeSystemPicker(
+        channel: Channel,
+        messageMode: MessageMode,
+        onModeSelected: (AttachmentPickerMode) -> Unit,
+        trailingContent: @Composable RowScope.() -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentTypeSystemPicker(
+            channel = channel,
+            messageMode = messageMode,
+            onModeSelected = onModeSelected,
+            trailingContent = trailingContent,
+        )
+    }
+
+    /**
+     * Content router that displays the appropriate picker UI based on the current mode.
+     *
+     * Override this to add support for custom [AttachmentPickerMode] implementations or
+     * to customize how modes are rendered.
+     *
+     * @param pickerMode The currently active mode; determines which picker UI to show.
+     * @param commands Available slash commands for [CommandPickerMode].
+     * @param attachments Current attachment items loaded for gallery/file modes.
+     * @param onAttachmentsChanged Called when the attachment list needs updating (e.g., after loading).
+     * @param onAttachmentItemSelected Called when user selects/deselects an attachment.
+     * @param onAttachmentPickerAction Called for mode-specific actions (poll creation, command selection).
+     * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
+     */
+    @Composable
+    public fun AttachmentPickerContent(
+        pickerMode: AttachmentPickerMode?,
+        commands: List<Command>,
+        attachments: List<AttachmentPickerItemState>,
+        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerContent(
+            pickerMode = pickerMode,
+            commands = commands,
+            attachments = attachments,
+            onAttachmentsChanged = onAttachmentsChanged,
+            onAttachmentItemSelected = onAttachmentItemSelected,
+            onAttachmentPickerAction = onAttachmentPickerAction,
+            onAttachmentsSubmitted = onAttachmentsSubmitted,
+        )
+    }
+
+    /**
+     * Grid picker for selecting images and videos from device storage.
+     *
+     * Shows a scrollable grid of media thumbnails with selection badges. Requires storage
+     * permissions to display content.
+     *
+     * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
+     * @param attachments Media items to display in the grid.
+     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
+     */
+    @Composable
+    public fun AttachmentMediaPicker(
+        pickerMode: GalleryPickerMode,
+        attachments: List<AttachmentPickerItemState>,
+        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker(
+            pickerMode = pickerMode,
+            attachments = attachments,
+            onAttachmentsChanged = onAttachmentsChanged,
+            onAttachmentItemSelected = onAttachmentItemSelected,
+        )
+    }
+
+    /**
+     * Camera capture interface for taking photos or recording videos.
+     *
+     * Displays a button that launches the device camera. Captured media is automatically
+     * submitted as an attachment.
+     *
+     * @param pickerMode Configuration for camera capture (photo, video, or both).
+     * @param onAttachmentsSubmitted Called with the captured media metadata.
+     */
+    @Composable
+    public fun AttachmentCameraPicker(
+        pickerMode: CameraPickerMode,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCameraPicker(
+            pickerMode = pickerMode,
+            onAttachmentsSubmitted = onAttachmentsSubmitted,
+        )
+    }
+
+    /**
+     * List picker for selecting files from device storage.
+     *
+     * Shows a scrollable list of files (documents, audio, etc.) with file type icons,
+     * names, and sizes. Requires storage permissions to display content.
+     *
+     * @param pickerMode Configuration for the file picker (multi-select).
+     * @param attachments File items to display in the list.
+     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
+     * @param onAttachmentsSubmitted Called when files are picked via system file browser.
+     */
+    @Composable
+    public fun AttachmentFilePicker(
+        pickerMode: FilePickerMode,
+        attachments: List<AttachmentPickerItemState>,
+        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentFilePicker(
+            pickerMode = pickerMode,
+            attachments = attachments,
+            onAttachmentsChanged = onAttachmentsChanged,
+            onAttachmentItemSelected = onAttachmentItemSelected,
+            onAttachmentsSubmitted = onAttachmentsSubmitted,
+        )
+    }
+
+    /**
+     * Poll creation entry point in the attachment picker.
+     *
+     * Shows a button or automatically opens the poll creation dialog based on [PollPickerMode.autoShowCreateDialog].
+     * Poll creation is only available when the channel has the "polls" capability.
+     *
+     * @param pickerMode Configuration for poll picker behavior.
+     * @param onAttachmentPickerAction Called with [AttachmentPickerPollCreation] when a poll is created,
+     * or [AttachmentPickerCreatePollClick] when the create button is tapped.
+     */
+    @Composable
+    public fun AttachmentPollPicker(
+        pickerMode: PollPickerMode,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker(
+            pickerMode = pickerMode,
+            onAttachmentPickerAction = onAttachmentPickerAction,
+        )
+    }
+
+    /**
+     * Slash command picker showing available commands.
+     *
+     * Displays a scrollable list of commands configured for the channel (e.g., /giphy, /mute).
+     * Tapping a command inserts it into the message composer.
+     *
+     * @param pickerMode The command picker mode configuration.
+     * @param commands Available commands from the channel configuration.
+     * @param onAttachmentPickerAction Called with [AttachmentPickerCommandSelect] when a command is selected.
+     */
+    @Composable
+    public fun AttachmentCommandPicker(
+        pickerMode: CommandPickerMode,
+        commands: List<Command>,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCommandPicker(
+            pickerMode = pickerMode,
+            commands = commands,
+            onAttachmentPickerAction = onAttachmentPickerAction,
+        )
+    }
+
+    /**
+     * System picker variant that uses native OS pickers instead of in-app UI.
+     *
+     * Shows a row of buttons that launch system pickers (photo picker, file browser, camera).
+     * This variant does not require storage permissions since it uses system intents.
+     * Used when [ChatTheme.attachmentPickerConfig.useSystemPicker] is `true`.
+     *
+     * @param channel Used to check channel capabilities for filtering available modes.
+     * @param messageMode Used to filter modes (e.g., polls disabled in threads).
+     * @param attachments Current attachment state (used for state management).
+     * @param onAttachmentPickerAction Called for poll creation and command selection.
+     * @param onAttachmentsSubmitted Called when files are selected from system pickers.
+     */
+    @Composable
+    public fun AttachmentSystemPicker(
+        channel: Channel,
+        messageMode: MessageMode,
+        attachments: List<AttachmentPickerItemState>,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
+            channel = channel,
+            messageMode = messageMode,
+            attachments = attachments,
+            onAttachmentPickerAction = onAttachmentPickerAction,
+            onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
 }

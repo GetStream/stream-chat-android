@@ -31,7 +31,6 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,8 +46,6 @@ internal class QueryChannelsMutableState(
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
 ) : QueryChannelsState {
-
-    private val logger by taggedLogger("Chat:QueryChannelsState")
 
     internal var rawChannels: Map<String, Channel>?
         get() = _channels?.value

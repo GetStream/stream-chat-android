@@ -50,22 +50,30 @@ public fun resolveVisualMediaAccessState(context: Context): VisualMediaAccess {
     val isPermissionGranted = { permission: String ->
         ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
     }
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-        isPermissionGranted(READ_MEDIA_IMAGES) &&
-        isPermissionGranted(READ_MEDIA_VIDEO)
-    ) {
-        // Full access on Android 13 (API level 33) or higher
-        VisualMediaAccess.FULL
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
-        isPermissionGranted(READ_MEDIA_VISUAL_USER_SELECTED)
-    ) {
-        // Partial access on Android 14 (API level 34) or higher
-        VisualMediaAccess.PARTIAL
-    } else if (isPermissionGranted(READ_EXTERNAL_STORAGE)) {
-        // Full access up to Android 12 (API level 32)
-        VisualMediaAccess.FULL
-    } else {
-        // Access denied
-        VisualMediaAccess.DENIED
+    return when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            isPermissionGranted(READ_MEDIA_IMAGES) &&
+            isPermissionGranted(READ_MEDIA_VIDEO)
+        -> {
+            // Full access on Android 13 (API level 33) or higher
+            VisualMediaAccess.FULL
+        }
+
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+            isPermissionGranted(READ_MEDIA_VISUAL_USER_SELECTED)
+        -> {
+            // Partial access on Android 14 (API level 34) or higher
+            VisualMediaAccess.PARTIAL
+        }
+
+        isPermissionGranted(READ_EXTERNAL_STORAGE) -> {
+            // Full access up to Android 12 (API level 32)
+            VisualMediaAccess.FULL
+        }
+
+        else -> {
+            // Access denied
+            VisualMediaAccess.DENIED
+        }
     }
 }

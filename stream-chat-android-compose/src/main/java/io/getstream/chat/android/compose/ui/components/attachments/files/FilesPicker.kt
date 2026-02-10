@@ -32,6 +32,8 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,6 +62,9 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onItemSelected Handler when the user clicks on any file item.
  * @param onBrowseFilesResult Handler when the user clicks on the browse more files action.
  * @param modifier Modifier for styling.
+ * @param allowMultipleSelection When `true`, users can select multiple files. When `false`,
+ * only single file selection is allowed. Defaults to `true`.
+ * @param itemContent Composable for rendering individual file items.
  */
 @Composable
 public fun FilesPicker(
@@ -67,14 +72,18 @@ public fun FilesPicker(
     onItemSelected: (AttachmentPickerItemState) -> Unit,
     onBrowseFilesResult: (List<Uri>) -> Unit,
     modifier: Modifier = Modifier,
+    allowMultipleSelection: Boolean = true,
     itemContent: @Composable (AttachmentPickerItemState) -> Unit = {
         DefaultFilesPickerItem(
             fileItem = it,
             onItemSelected = onItemSelected,
+            allowMultipleSelection = allowMultipleSelection,
         )
     },
 ) {
-    val fileSelectContract = rememberLauncherForActivityResult(contract = SelectFilesContract()) {
+    val fileSelectContract = rememberLauncherForActivityResult(
+        contract = SelectFilesContract(),
+    ) {
         onBrowseFilesResult(it)
     }
 
@@ -98,7 +107,7 @@ public fun FilesPicker(
                         tint = ChatTheme.colors.primaryAccent,
                     )
                 },
-                onClick = { fileSelectContract.launch(Unit) },
+                onClick = { fileSelectContract.launch(allowMultipleSelection) },
             )
         }
 
@@ -113,11 +122,14 @@ public fun FilesPicker(
  *
  * @param fileItem File to render.
  * @param onItemSelected Handler when the item is selected.
+ * @param allowMultipleSelection When `true`, shows a checkbox for multi-select. When `false`,
+ * shows a radio button for single-select. Defaults to `true`.
  */
 @Composable
 internal fun DefaultFilesPickerItem(
     fileItem: AttachmentPickerItemState,
     onItemSelected: (AttachmentPickerItemState) -> Unit,
+    allowMultipleSelection: Boolean = true,
 ) {
     Row(
         Modifier
@@ -127,19 +139,31 @@ internal fun DefaultFilesPickerItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(contentAlignment = Alignment.Center) {
-            // TODO use a Canvas maybe to draw this UI, instead of using a checkbox.
-            Checkbox(
-                checked = fileItem.isSelected,
-                onCheckedChange = null,
-                colors = CheckboxDefaults.colors(
-                    checkedColor = ChatTheme.colors.primaryAccent,
-                    uncheckedColor = ChatTheme.colors.disabled,
-                    checkmarkColor = Color.White,
-                    disabledCheckedColor = ChatTheme.colors.disabled,
-                    disabledUncheckedColor = ChatTheme.colors.disabled,
-                    disabledIndeterminateColor = ChatTheme.colors.disabled,
-                ),
-            )
+            if (allowMultipleSelection) {
+                Checkbox(
+                    checked = fileItem.isSelected,
+                    onCheckedChange = null,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = ChatTheme.colors.primaryAccent,
+                        uncheckedColor = ChatTheme.colors.disabled,
+                        checkmarkColor = Color.White,
+                        disabledCheckedColor = ChatTheme.colors.disabled,
+                        disabledUncheckedColor = ChatTheme.colors.disabled,
+                        disabledIndeterminateColor = ChatTheme.colors.disabled,
+                    ),
+                )
+            } else {
+                RadioButton(
+                    selected = fileItem.isSelected,
+                    onClick = null,
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = ChatTheme.colors.primaryAccent,
+                        unselectedColor = ChatTheme.colors.disabled,
+                        disabledSelectedColor = ChatTheme.colors.disabled,
+                        disabledUnselectedColor = ChatTheme.colors.disabled,
+                    ),
+                )
+            }
         }
 
         FilesPickerItemImage(
@@ -171,27 +195,63 @@ internal fun DefaultFilesPickerItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun FilesPickerItemsPreview() {
+private fun FilesPickerSingleSelectionPreview() {
     ChatTheme {
-        FilesPickerItems()
+        FilesPickerSingleSelection()
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
-internal fun FilesPickerItems() {
-    Column {
-        DefaultFilesPickerItem(
-            fileItem = AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF),
+internal fun FilesPickerSingleSelection() {
+    FilesPicker(
+        files = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
+                    size = 10_000
+                },
             ),
-            onItemSelected = {},
-        )
-        DefaultFilesPickerItem(
-            fileItem = AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC).apply {
+                    size = 100_000
+                },
                 selection = Selection.Selected(position = 1),
             ),
-            onItemSelected = {},
-        )
+        ),
+        onItemSelected = {},
+        onBrowseFilesResult = {},
+        allowMultipleSelection = false,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FilesPickerMultipleSelectionPreview() {
+    ChatTheme {
+        FilesPickerMultipleSelection()
     }
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun FilesPickerMultipleSelection() {
+    FilesPicker(
+        files = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
+                    size = 10_000
+                },
+                selection = Selection.Selected(position = 1),
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC).apply {
+                    size = 100_000
+                },
+                selection = Selection.Selected(position = 2),
+            ),
+        ),
+        onItemSelected = {},
+        onBrowseFilesResult = {},
+        allowMultipleSelection = true,
+    )
 }

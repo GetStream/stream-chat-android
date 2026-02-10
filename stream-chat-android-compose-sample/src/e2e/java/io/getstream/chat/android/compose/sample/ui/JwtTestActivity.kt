@@ -188,9 +188,9 @@ class JwtTestActivity : AppCompatActivity() {
 
             OkHttpClient().newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    throw Exception("Failed to fetch token: ${response.code}")
+                    return@withContext ""
                 }
-                response.body?.string() ?: throw Exception("Empty response body")
+                response.body?.string() ?: ""
             }
         }
     }

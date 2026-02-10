@@ -18,7 +18,6 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -63,6 +62,7 @@ import java.util.Date
  * @param messageCount The total number of messages in the channel.
  * @param pushPreference Channel-specific push preferences (if set).
  * @param filterTags The list of filter tags applied to the channel.
+ * @param lastMessageAt Date/time of the last message sent.
  */
 @Immutable
 public data class Channel(
@@ -107,17 +107,9 @@ public data class Channel(
     val messageCount: Int? = null,
     val pushPreference: PushPreference? = null,
     val filterTags: List<String> = emptyList(),
+    val lastMessageAt: Date? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
-
-    /**
-     * The date of the last message sent.
-     */
-    val lastMessageAt: Date? = if (isInsideSearch) {
-        cachedLatestMessages.lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
-    } else {
-        messages.lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
-    }
 
     /**
      * The channel id in the format messaging:123.
@@ -215,6 +207,7 @@ public data class Channel(
         private var messageCount: Int? = null
         private var pushPreference: PushPreference? = null
         private var filterTags: List<String> = emptyList()
+        private var lastMessageAt: Date? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -250,6 +243,7 @@ public data class Channel(
             messageCount = channel.messageCount
             pushPreference = channel.pushPreference
             filterTags = channel.filterTags
+            lastMessageAt = channel.lastMessageAt
             extraData = channel.extraData
         }
 
@@ -276,31 +270,40 @@ public data class Channel(
         public fun withHiddenMessagesBefore(hiddenMessagesBefore: Date?): Builder = apply {
             this.hiddenMessagesBefore = hiddenMessagesBefore
         }
+
         public fun withCooldown(cooldown: Int): Builder = apply { this.cooldown = cooldown }
         public fun withPinnedMessages(pinnedMessages: List<Message>): Builder = apply {
             this.pinnedMessages = pinnedMessages
         }
+
         public fun withOwnCapabilities(ownCapabilities: Set<String>): Builder = apply {
             this.ownCapabilities = ownCapabilities
         }
+
         public fun withMembership(membership: Member?): Builder = apply { this.membership = membership }
         public fun withCachedLatestMessages(cachedLatestMessages: List<Message>): Builder = apply {
             this.cachedLatestMessages = cachedLatestMessages
         }
+
         public fun withIsInsideSearch(isInsideSearch: Boolean): Builder = apply { this.isInsideSearch = isInsideSearch }
         public fun withDraftMessage(draftMessage: DraftMessage?): Builder = apply {
             this.draft = draftMessage
         }
+
         public fun withActiveLiveLocations(activeLiveLocations: List<Location>): Builder = apply {
             this.activeLiveLocations = activeLiveLocations
         }
+
         public fun withMessageCount(messageCount: Int?): Builder = apply {
             this.messageCount = messageCount
         }
+
         public fun withPushPreference(pushPreference: PushPreference?): Builder = apply {
             this.pushPreference = pushPreference
         }
+
         public fun withFilterTags(filterTags: List<String>): Builder = apply { this.filterTags = filterTags }
+        public fun withLastMessageAt(lastMessageAt: Date?): Builder = apply { this.lastMessageAt = lastMessageAt }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -344,6 +347,7 @@ public data class Channel(
             messageCount = messageCount,
             pushPreference = pushPreference,
             filterTags = filterTags,
+            lastMessageAt = lastMessageAt,
             extraData = extraData,
         )
     }
@@ -373,6 +377,7 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         messageCount = that.messageCount ?: messageCount,
+        lastMessageAt = that.lastMessageAt,
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -409,5 +414,6 @@ public fun Channel.toChannelData(): ChannelData {
         draft = draftMessage,
         messageCount = messageCount,
         pushPreference = pushPreference,
+        lastMessageAt = lastMessageAt,
     )
 }

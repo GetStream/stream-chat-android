@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSorted
+import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -1038,6 +1039,27 @@ internal class ChannelStateImpl(
     fun setMessageCount(count: Int) {
         updateChannelData { current ->
             current?.copy(messageCount = count)
+        }
+    }
+
+    /**
+     * Updates the channel `lastMessageAt` with the new [message].
+     *
+     * @param message The [Message] to use to update the channel `lastMessageAt` property.
+     */
+    fun updateLastMessageAt(message: Message) {
+        val skipSystemMsg = _channelConfig.value.skipLastMsgUpdateForSystemMsgs
+        updateChannelData { channelData ->
+            val newLastMessageAt = calculateNewLastMessageAt(
+                message = message,
+                currentLastMessageAt = channelData?.lastMessageAt,
+                skipLastMsgUpdateForSystemMsgs = skipSystemMsg,
+            )
+            if (newLastMessageAt != channelData?.lastMessageAt) {
+                channelData?.copy(lastMessageAt = newLastMessageAt)
+            } else {
+                channelData
+            }
         }
     }
 

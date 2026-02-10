@@ -33,10 +33,28 @@ internal class AttachmentSystemPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun default() {
+    fun `system picker`() {
         snapshotWithDarkMode {
             ViewModelStore {
                 AttachmentSystemPicker()
+            }
+        }
+    }
+
+    @Test
+    fun `system picker with polls`() {
+        snapshotWithDarkMode {
+            ViewModelStore {
+                AttachmentSystemPickerWithPolls()
+            }
+        }
+    }
+
+    @Test
+    fun `system picker with commands`() {
+        snapshotWithDarkMode {
+            ViewModelStore {
+                AttachmentSystemPickerWithCommands()
             }
         }
     }

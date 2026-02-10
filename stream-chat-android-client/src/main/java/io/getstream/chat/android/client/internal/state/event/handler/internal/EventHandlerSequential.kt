@@ -108,6 +108,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.querychannel
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
@@ -233,7 +234,7 @@ internal class EventHandlerSequential(
     private fun handleUserMessagesDeletedEvent(event: UserMessagesDeletedEvent) {
         if (event.cid != null) {
             // if cid is present, the event applies to that channel only
-            val (channelType, channelId) = event.cid!!.cidToTypeAndId()
+            val (channelType, channelId) = event.cid.cidToTypeAndId()
             if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                 val channelLogic: ChannelLogic = logicRegistry.channel(
                     channelType = channelType,
@@ -551,10 +552,16 @@ internal class EventHandlerSequential(
                         logger.w { "[updateOfflineStorage] #new_message; (now channel found for ${event.cid})" }
                         continue
                     }
+                    val newLastMessageAt = calculateNewLastMessageAt(
+                        message = enrichedMessage,
+                        currentLastMessageAt = channel.lastMessageAt,
+                        skipLastMsgUpdateForSystemMsgs = channel.config.skipLastMsgUpdateForSystemMsgs,
+                    )
                     val updatedChannel = channel.copy(
                         hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
                         messageCount = event.channelMessageCount ?: channel.messageCount,
+                        lastMessageAt = newLastMessageAt,
                     )
                     batch.addChannel(updatedChannel)
                     // Update thread data in DB if the new message is added to a thread

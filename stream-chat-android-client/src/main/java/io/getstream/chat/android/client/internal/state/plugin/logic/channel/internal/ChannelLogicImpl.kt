@@ -189,6 +189,10 @@ internal class ChannelLogicImpl(
         stateImpl.upsertMessage(message)
     }
 
+    override fun updateLastMessageAt(message: Message) {
+        stateImpl.updateLastMessageAt(message)
+    }
+
     override fun deleteMessage(message: Message) {
         stateImpl.deleteMessage(message.id)
     }

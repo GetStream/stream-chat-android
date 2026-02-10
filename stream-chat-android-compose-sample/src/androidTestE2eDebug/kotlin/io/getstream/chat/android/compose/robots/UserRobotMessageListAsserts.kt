@@ -304,7 +304,9 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
 
 fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
     if (isDisplayed) {
-        assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        device.retryOnStaleObjectException {
+            assertTrue(Message.giphy.waitToAppear().isDisplayed())
+        }
     } else {
         assertFalse(Message.giphy.waitToDisappear().isDisplayed())
     }

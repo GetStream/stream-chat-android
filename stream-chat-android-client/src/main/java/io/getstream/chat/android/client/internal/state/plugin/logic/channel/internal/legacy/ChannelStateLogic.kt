@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.internal.state.plugin.logic.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
@@ -980,6 +981,28 @@ internal class ChannelStateLogic(
 
     fun updateMessageCount(channelMessageCount: Int) {
         updateChannelData { it?.copy(messageCount = channelMessageCount) }
+    }
+
+    /**
+     * Updates the lastMessageAt date in channel data based on the message.
+     * The update only happens if the message date is newer than the current lastMessageAt.
+     *
+     * @param message The message to extract the date from.
+     */
+    fun updateLastMessageAt(message: Message) {
+        val skipSystemMsg = mutableState.channelConfig.value.skipLastMsgUpdateForSystemMsgs
+        updateChannelData { channelData ->
+            val newLastMessageAt = calculateNewLastMessageAt(
+                message = message,
+                currentLastMessageAt = channelData?.lastMessageAt,
+                skipLastMsgUpdateForSystemMsgs = skipSystemMsg,
+            )
+            if (newLastMessageAt != channelData?.lastMessageAt) {
+                channelData?.copy(lastMessageAt = newLastMessageAt)
+            } else {
+                channelData
+            }
+        }
     }
 
     private companion object {

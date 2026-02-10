@@ -154,6 +154,8 @@ internal class ChannelEventHandlerImpl(
                 }
                 // Update message count
                 event.channelMessageCount?.let(state::setMessageCount)
+                // Update last message at
+                state.updateLastMessageAt(enrichedMessage)
                 // Insert the message into the appropriate message list
                 if (state.insideSearch.value) {
                     state.upsertCachedMessage(enrichedMessage)
@@ -173,6 +175,8 @@ internal class ChannelEventHandlerImpl(
                 if (!event.message.shadowed) {
                     state.setHidden(false)
                 }
+                // Update last message at
+                state.updateLastMessageAt(event.message)
                 // Insert the message into the appropriate message list
                 if (state.insideSearch.value) {
                     state.upsertCachedMessage(event.message)

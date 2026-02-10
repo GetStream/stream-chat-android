@@ -148,6 +148,10 @@ internal class ChannelLogicLegacyImpl(
         stateLogic.upsertMessage(message)
     }
 
+    override fun updateLastMessageAt(message: Message) {
+        stateLogic.updateLastMessageAt(message)
+    }
+
     override fun deleteMessage(message: Message) {
         logger.d { "[deleteMessage] message.id: ${message.id}, message.text: ${message.text}" }
         stateLogic.deleteMessage(message)

@@ -51,13 +51,13 @@ import io.getstream.chat.android.compose.ui.util.ifNotNull
 @Composable
 internal fun StreamTextButton(
     onClick: () -> Unit,
+    text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     style: StreamButtonStyle = StreamButtonStyleDefaults.primarySolid,
     size: StreamButtonSize = StreamButtonSize.Medium,
     leadingIcon: Painter? = null,
     trailingIcon: Painter? = null,
-    text: String,
 ) {
     StreamButton(
         onClick = onClick,

@@ -40,10 +40,6 @@ public open class AttachmentFactory(
             onAttachmentRemoved: (Attachment) -> Unit,
         ) -> Unit
     )? = null,
-    public val content: @Composable (
-        modifier: Modifier,
-        attachmentState: AttachmentState,
-    ) -> Unit,
     public val textFormatter: (attachments: Attachment) -> String = {
         it.title ?: it.name ?: it.fallback ?: ""
     },

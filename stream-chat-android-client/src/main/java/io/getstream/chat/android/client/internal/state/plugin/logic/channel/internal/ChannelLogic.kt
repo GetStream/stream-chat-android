@@ -113,6 +113,13 @@ internal interface ChannelLogic {
     fun upsertMessage(message: Message)
 
     /**
+     * Updates the channel `lastMessageAt` with the new [message].
+     *
+     * @param message The [Message] to use to update the channel `lastMessageAt` property.
+     */
+    fun updateLastMessageAt(message: Message)
+
+    /**
      * Deletes the given [message] from the channel's state.
      *
      * @param message The [Message] to delete.

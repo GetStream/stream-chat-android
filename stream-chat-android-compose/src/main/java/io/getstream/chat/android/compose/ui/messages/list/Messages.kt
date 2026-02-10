@@ -137,7 +137,8 @@ public fun Messages(
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
-    val messages = messagesState.messageItems // Using rememberUpdatedState to ensure we have the latest value in the LoadMoreHandler effect below
+    val messages = messagesState.messageItems
+    // Using rememberUpdatedState to ensure we have the latest value in the LoadMoreHandler effect below
     val endOfOldMessages by rememberUpdatedState(messagesState.endOfOldMessagesReached)
     val endOfNewMessages = messagesState.endOfNewMessagesReached
     val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
