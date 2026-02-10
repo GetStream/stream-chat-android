@@ -32,10 +32,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -286,7 +284,7 @@ internal fun SingleMediaAttachment(
 ) {
     val isVideo = attachment.isVideo()
     // Depending on the CDN, images might not contain their original dimensions
-    val ratio: Float? by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
+    val ratio: Float by remember(key1 = attachment.originalWidth, key2 = attachment.originalHeight) {
         derivedStateOf {
             val width = attachment.originalWidth?.toFloat()
             val height = attachment.originalHeight?.toFloat()
@@ -294,7 +292,7 @@ internal fun SingleMediaAttachment(
             if (width != null && height != null) {
                 width / height
             } else {
-                null
+                EqualDimensionsRatio
             }
         }
     }
@@ -304,21 +302,10 @@ internal fun SingleMediaAttachment(
         attachment = attachment,
         modifier = modifier
             .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
-            .heightIn(
-                max = if (isVideo) {
-                    ChatTheme.dimens.attachmentsContentVideoMaxHeight
-                } else {
-                    ChatTheme.dimens.attachmentsContentImageMaxHeight
-                },
-            )
-            .width(
-                if (isVideo) {
-                    ChatTheme.dimens.attachmentsContentVideoWidth
-                } else {
-                    ChatTheme.dimens.attachmentsContentImageWidth
-                },
-            )
-            .aspectRatio(ratio ?: EqualDimensionsRatio),
+            .size(
+                width = singleMediaAttachmentWidth(isVideo),
+                height = singleMediaAttachmentHeight(isVideo, ratio),
+            ),
         shape = if (shouldBeFullSize) null else ChatTheme.shapes.attachment,
         message = message,
         attachmentPosition = 0,
@@ -699,6 +686,36 @@ public data class MediaAttachmentClickData internal constructor(
 )
 
 /**
+ * Retrieves the width for a single-media attachment.
+ *
+ * @param isVideo true if "video", false if "image".
+ */
+@Composable
+private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
+    ChatTheme.dimens.attachmentsContentVideoWidth
+} else {
+    ChatTheme.dimens.attachmentsContentImageWidth
+}
+
+/**
+ * Calculates the actual single-media attachment height, based on the configurable width, maxHeight and the aspectRatio.
+ *
+ * @param isVideo true if "video", false if "image".
+ * @param aspectRatio the desired aspect ratio.
+ */
+@Composable
+private fun singleMediaAttachmentHeight(isVideo: Boolean, aspectRatio: Float): Dp {
+    val width = singleMediaAttachmentWidth(isVideo)
+    val maxHeight = if (isVideo) {
+        ChatTheme.dimens.attachmentsContentVideoMaxHeight
+    } else {
+        ChatTheme.dimens.attachmentsContentImageMaxHeight
+    }
+    val heightAccordingAspectRatio = width / aspectRatio
+    return minOf(heightAccordingAspectRatio, maxHeight)
+}
+
+/**
  * Produces the same height as the width of the
  * Composable when calling [Modifier.aspectRatio].
  */
@@ -762,6 +779,8 @@ internal fun SingleMediaAttachmentContent() {
                         Attachment(
                             type = AttachmentType.IMAGE,
                             imageUrl = "https://placekitten.com/200/300",
+                            originalWidth = 200,
+                            originalHeight = 150,
                         ),
                     ),
                 ),
