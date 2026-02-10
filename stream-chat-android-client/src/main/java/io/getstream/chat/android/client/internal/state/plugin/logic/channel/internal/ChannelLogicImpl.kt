@@ -275,6 +275,7 @@ internal class ChannelLogicImpl(
         // Reset messages
         if (messageLimit > 0) {
             stateImpl.setMessages(channel.messages)
+            stateImpl.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
         // Add pinned messages
         stateImpl.addPinnedMessages(channel.pinnedMessages)
