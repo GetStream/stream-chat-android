@@ -98,9 +98,13 @@ public interface AudioPlayer {
     public fun startSeek(audioHash: Int)
 
     /**
-     * Changes the speed of reproduction. Options are 1x, 1.5x and 2x
+     * Changes the speed of reproduction for the specified audio track.
+     * Cycles through: 1x -> 1.5x -> 2x -> 1x
+     *
+     * @param audioHash the identifier of the audio track
+     * @return the new speed
      */
-    public fun changeSpeed()
+    public fun changeSpeed(audioHash: Int): Float
 
     /**
      * Current speed of reproduction. Options are 1x, 1.5x and 2x
