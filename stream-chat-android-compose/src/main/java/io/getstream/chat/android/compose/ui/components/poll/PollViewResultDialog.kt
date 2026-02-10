@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +61,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
@@ -202,7 +204,7 @@ private fun PollViewResultItem(
             }
 
             Text(
-                text = stringResource(id = R.string.stream_compose_poll_vote_counts, item.voteCount),
+                text = pluralStringResource(stream_compose_poll_vote_counts, item.voteCount, item.voteCount),
                 color = ChatTheme.colors.textHighEmphasis,
                 fontSize = 16.sp,
             )

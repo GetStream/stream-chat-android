@@ -108,6 +108,27 @@ internal object MessageStyling {
         }
     }
 
+    @Composable
+    fun pollStyle(outgoing: Boolean): PollStyle {
+        val colors = ChatTheme.colors
+
+        return if (outgoing) {
+            PollStyle(
+                textColor = colors.chatTextOutgoing,
+                outlineColor = colors.chatBorderOnChatOutgoing,
+                progressColor = colors.chatPollProgressFillOutgoing,
+                trackColor = colors.chatPollProgressTrackOutgoing,
+            )
+        } else {
+            PollStyle(
+                textColor = colors.chatTextOutgoing,
+                outlineColor = colors.chatBorderOnChatIncoming,
+                progressColor = colors.chatPollProgressFillIncoming,
+                trackColor = colors.chatPollProgressTrackIncoming,
+            )
+        }
+    }
+
     val contentPadding = StreamTokens.spacingXs
     val sectionsDistance = StreamTokens.spacingXs
     val messageSectionPadding = PaddingValues(
@@ -157,5 +178,12 @@ internal object MessageStyling {
         val backgroundColor: Color,
         val indicatorColor: Color,
         val textColor: Color,
+    )
+
+    data class PollStyle(
+        val textColor: Color,
+        val outlineColor: Color,
+        val progressColor: Color,
+        val trackColor: Color,
     )
 }

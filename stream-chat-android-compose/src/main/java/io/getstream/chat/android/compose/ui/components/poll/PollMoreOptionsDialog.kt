@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.messages.PollItemCheckBox
+import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
@@ -237,10 +237,10 @@ private fun PollMoreOptionItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (!poll.closed) {
-            PollItemCheckBox(
+            RadioCheck(
                 modifier = Modifier.padding(end = 8.dp),
                 checked = checked,
-                onCheckChanged = { enabled ->
+                onCheckedChange = { enabled ->
                     if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
                         onCastVote.invoke()
                     } else if (!enabled) {

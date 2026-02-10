@@ -256,7 +256,11 @@
     <string name="stream_compose_poll_answers">Poll Comments</string>
     <string name="stream_compose_add_answer">Add a Comment</string>
     <string name="stream_compose_edit_answer">Update Comment</string>
-    <string name="stream_compose_poll_vote_counts" translatable="false">%d votes</string>
+    <plurals name="stream_compose_poll_vote_counts">
+        <item quantity="one">%d vote</item>
+        <item quantity="other">%d votes</item>
+    </plurals>
+
     <string name="stream_compose_poll_created_preview" translatable="false">📊 Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview" translatable="false">📊 Poll closed: %s</string>
 
