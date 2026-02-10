@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -106,7 +105,12 @@ private fun HoldRecordContent(
                 .height(playbackTheme.height),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            RecordingSlideToCancelIndicator(state.holdOffset())
+            RecordingSlideToCancelIndicator(
+                holdControlsOffset = IntOffset(
+                    x = state.offsetX.toInt().coerceAtMost(0),
+                    y = state.offsetY.toInt().coerceAtMost(0),
+                ),
+            )
         }
     }
 }
@@ -227,48 +231,13 @@ private fun MicIndicatorIcon() {
     }
 }
 
-/** Extracts the hold offset from a [RecordingState], clamped to non-positive values. */
-private fun RecordingState.holdOffset(): IntOffset = when (this) {
-    is RecordingState.Hold -> IntOffset(
-        x = offsetX.toInt().coerceAtMost(maximumValue = 0),
-        y = offsetY.toInt().coerceAtMost(maximumValue = 0),
-    )
-    else -> IntOffset.Zero
-}
-
-/**
- * Renders the floating mic and lock icons as Popups during Hold/Locked states.
- * Positioned relative to the parent layout's trailing edge.
- */
+/** Floating lock icon that follows the drag offset during Hold, or snaps above controls when Locked. */
 @Composable
-internal fun RecordingFloatingIcons(recordingState: RecordingState) {
-    val isLocked = recordingState is RecordingState.Locked
-    val holdControlsOffset = recordingState.holdOffset()
-
+internal fun FloatingLockIcon(
+    isLocked: Boolean,
+    holdControlsOffset: IntOffset,
+) {
     val density = LocalDensity.current
-
-    // Floating mic icon (only while holding, not locked)
-    if (!isLocked) {
-        val micBaseWidth = ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
-        val micFloatingWidth = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic.size.width
-        val micBaseOffset = remember {
-            with(density) {
-                IntOffset(
-                    x = ((micFloatingWidth - micBaseWidth) / 2).toPx().toInt(),
-                    y = 0,
-                )
-            }
-        }
-        Popup(
-            offset = micBaseOffset + holdControlsOffset,
-            properties = PopupProperties(clippingEnabled = false),
-            alignment = Alignment.CenterEnd,
-        ) {
-            RecordingMicIcon()
-        }
-    }
-
-    // Lock/locked icon
     val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playback.height
     val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
     val totalContentHeight = playbackHeight + controlsHeight
@@ -288,11 +257,6 @@ internal fun RecordingFloatingIcons(recordingState: RecordingState) {
     ) {
         RecordingLockableIcon(locked = isLocked)
     }
-}
-
-@Composable
-private fun RecordingMicIcon() {
-    RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic)
 }
 
 @Composable
@@ -364,10 +328,9 @@ private fun RecordingSlideToCancelIndicator(
 
 @Composable
 internal fun RecordingControlButtons(
-    recordingState: RecordingState,
+    isStopVisible: Boolean,
     recordingActions: AudioRecordingActions,
 ) {
-    val isStopVisible = recordingState is RecordingState.Locked
     val sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete
     val theme = ChatTheme.messageComposerTheme.audioRecording.controls
     Row(

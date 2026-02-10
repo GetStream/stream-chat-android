@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
-import android.os.SystemClock
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -30,13 +32,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
@@ -45,17 +53,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerInputChange
-import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -66,9 +74,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
@@ -79,13 +87,21 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Unified voice recording component that handles both the mic button gesture lifecycle
@@ -113,13 +129,63 @@ internal fun AudioRecordButton(
     modifier: Modifier = Modifier,
 ) {
     val isRecording = recordingState !is RecordingState.Idle
-    val isMicVisible = recordingState is RecordingState.Idle || recordingState is RecordingState.Hold
     val showControls = recordingState is RecordingState.Locked || recordingState is RecordingState.Overview
     val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
 
-    // When recording, fill the available width so the recording content (timer, waveform,
-    // slide-to-cancel) takes the space freed by the hidden center content in MessageInput.
-    // When idle, wrap to the mic button size.
+    // --- Floating button state (hoisted so isMicVisible keeps the anchor stable) ---
+    val isHolding = recordingState is RecordingState.Hold
+    var isReturning by remember { mutableStateOf(false) }
+
+    // Detect Hold→Idle transition: spring-back only to Idle; when locking, just disappear.
+    val prevHolding = remember { mutableStateOf(false) }
+    if (prevHolding.value && !isHolding) {
+        isReturning = recordingState is RecordingState.Idle
+    }
+    prevHolding.value = isHolding
+
+    val floatingActive = isHolding || isReturning
+
+    // Keep mic button sized during spring-back so the Popup anchor stays stable.
+    val isMicVisible = recordingState is RecordingState.Idle || isHolding || isReturning
+
+    val holdOffset = if (recordingState is RecordingState.Hold) {
+        IntOffset(
+            x = recordingState.offsetX.toInt().coerceAtMost(0),
+            y = recordingState.offsetY.toInt().coerceAtMost(0),
+        )
+    } else {
+        IntOffset.Zero
+    }
+
+    // --- Floating button animation (owned here so isReturning is set directly) ---
+    val floatingOffsetX = remember { Animatable(0f) }
+    val floatingOffsetY = remember { Animatable(0f) }
+
+    if (isHolding) {
+        LaunchedEffect(holdOffset) {
+            floatingOffsetX.snapTo(holdOffset.x.toFloat())
+            floatingOffsetY.snapTo(holdOffset.y.toFloat())
+        }
+    }
+
+    LaunchedEffect(isReturning) {
+        if (isReturning) {
+            try {
+                coroutineScope {
+                    launch { floatingOffsetX.animateTo(0f, spring()) }
+                    launch { floatingOffsetY.animateTo(0f, spring()) }
+                }
+            } finally {
+                isReturning = false
+            }
+        }
+    }
+
+    // When recording, fill the available width so the recording content takes
+    // the space freed by the hidden center content in MessageInput.
+    // During spring-back (isReturning) the layout reverts to idle immediately;
+    // only the floating Popup animates — this avoids height conflicts with
+    // MessageInput's own animateContentSize and center-content toggling.
     Column(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
         Row(verticalAlignment = Alignment.Bottom) {
             if (isRecording) {
@@ -134,63 +200,60 @@ internal fun AudioRecordButton(
                 isVisible = isMicVisible,
                 recordingState = recordingState,
                 recordingActions = recordingActions,
+                floatingActive = floatingActive,
+                floatingOffset = IntOffset(
+                    x = floatingOffsetX.value.roundToInt(),
+                    y = floatingOffsetY.value.roundToInt(),
+                ),
             )
         }
 
         if (showControls) {
             RecordingControlButtons(
-                recordingState = recordingState,
+                isStopVisible = recordingState is RecordingState.Locked,
                 recordingActions = recordingActions,
             )
         }
 
         if (showFloatingIcons) {
-            RecordingFloatingIcons(recordingState)
+            FloatingLockIcon(
+                isLocked = recordingState is RecordingState.Locked,
+                holdControlsOffset = holdOffset,
+            )
         }
     }
 }
 
-/**
- * The mic button handles the full gesture lifecycle:
- * - Press → start recording.
- * - Hold + drag left → slide-to-cancel.
- * - Hold + drag up → lock recording.
- * - Short tap (< threshold) → cancel + show "hold to record" hint.
- * - Long hold + release → send recording.
- *
- * Stays full-size during the hold gesture so the layout doesn't shift and pointer
- * coordinates remain stable. Collapses only after the gesture ends (lock/cancel/send).
- */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MicButton(
     isVisible: Boolean,
     recordingState: RecordingState,
     recordingActions: AudioRecordingActions,
+    floatingActive: Boolean,
+    floatingOffset: IntOffset,
     modifier: Modifier = Modifier,
 ) {
-    var showHint by remember { mutableStateOf(false) }
     var isFingerDown by remember { mutableStateOf(false) }
     var pressOffset by remember { mutableStateOf(Offset.Zero) }
-    var micSize by remember { mutableStateOf(IntSize.Zero) }
 
     val permissionState = rememberAudioRecordPermission()
-
+    val hint = rememberRecordingHint()
     val interactionSource = remember { MutableInteractionSource() }
-    val isPressed = isFingerDown || showHint
     val currentState by rememberUpdatedState(recordingState)
 
     val density = LocalDensity.current
-    val cancelThresholdPx = with(density) {
-        ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx()
-    }
-    val lockThresholdPx = with(density) {
-        ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
-    }
+    val gestureConfig = RecordingGestureConfig(
+        cancelThresholdPx = with(density) {
+            ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx()
+        },
+        lockThresholdPx = with(density) {
+            ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
+        },
+    )
 
-    // Show ripple while finger is down or hint is visible
-    LaunchedEffect(isPressed) {
-        if (isPressed) {
+    LaunchedEffect(isFingerDown) {
+        if (isFingerDown) {
             val press = PressInteraction.Press(pressOffset)
             interactionSource.emit(press)
             try {
@@ -201,116 +264,176 @@ private fun MicButton(
         }
     }
 
-    MicButtonLayout(
-        isVisible = isVisible,
-        micSize = micSize,
-        interactionSource = interactionSource,
-        showHint = showHint,
-        modifier = modifier,
-        onSizeChanged = { micSize = it },
-        onDismissHint = { showHint = false },
-        onGesture = {
-            awaitEachGesture {
-                val down = awaitFirstDown()
-                down.consume()
-                pressOffset = down.position
-                isFingerDown = true
-
-                // Gate recording behind RECORD_AUDIO permission
-                if (permissionState?.status?.shouldShowRationale == true) {
-                    permissionState.showRationale()
-                } else if (permissionState?.status?.isGranted == false) {
-                    permissionState.launchPermissionRequest()
-                } else {
-                    handleRecordingGesture(
-                        down = down,
-                        micSize = micSize,
-                        cancelThresholdPx = cancelThresholdPx,
-                        lockThresholdPx = lockThresholdPx,
-                        currentState = { currentState },
-                        recordingActions = recordingActions,
-                        onShowHint = { showHint = true },
-                    )
-                }
-
-                isFingerDown = false
-            }
-        },
-    )
-}
-
-@Composable
-private fun MicButtonLayout(
-    isVisible: Boolean,
-    micSize: IntSize,
-    interactionSource: MutableInteractionSource,
-    showHint: Boolean,
-    modifier: Modifier = Modifier,
-    onSizeChanged: (IntSize) -> Unit,
-    onDismissHint: () -> Unit,
-    onGesture: suspend PointerInputScope.() -> Unit,
-) {
     val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
     Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .run { if (isVisible) size(style.size) else size(0.dp) }
-                .padding(style.padding)
-                .onSizeChanged(onSizeChanged)
-                .clip(CircleShape)
-                .indication(
-                    interactionSource,
-                    ripple(
-                        bounded = true,
-                        radius = with(density) { micSize.height.toDp() / 2 },
-                    ),
-                )
                 .semantics { contentDescription = buttonDescription }
-                .pointerInput(Unit, onGesture),
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        val down = awaitFirstDown()
+                        down.consume()
+                        pressOffset = down.position
+                        isFingerDown = true
+                        hint.dismiss()
+
+                        if (permissionState.gateRecording()) {
+                            handleRecordingGesture(
+                                down = down,
+                                config = gestureConfig,
+                                currentState = { currentState },
+                                recordingActions = recordingActions,
+                                onShowHint = { hint.show() },
+                            )
+                        }
+
+                        isFingerDown = false
+                    }
+                },
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                modifier = Modifier
-                    .mirrorRtl(layoutDirection = layoutDirection)
-                    .size(style.icon.size)
-                    .testTag("Stream_ComposerRecordAudioButton"),
-                painter = style.icon.painter,
-                contentDescription = stringResource(R.string.stream_compose_record_audio_message),
-            )
+            if (isVisible && !floatingActive) {
+                MicButtonVisual(
+                    interactionSource = interactionSource,
+                    modifier = Modifier.matchParentSize(),
+                )
+            }
         }
 
-        if (showHint) {
-            HoldToRecordPopup(
-                offset = micSize.height,
-                onDismissRequest = onDismissHint,
-            )
+        if (floatingActive) {
+            Popup(
+                offset = floatingOffset,
+                alignment = Alignment.TopStart,
+                properties = PopupProperties(clippingEnabled = false),
+            ) {
+                MicButtonVisual(
+                    interactionSource = interactionSource,
+                    isPressed = true,
+                    modifier = Modifier.size(style.size),
+                )
+            }
         }
+
+        SnackbarPopup(
+            hostState = hint.snackbarHostState,
+            snackbar = { AudioRecordingSnackbar(it) },
+        )
     }
 }
 
-private const val HoldToRecordThresholdMs = 1_000L
+private const val PressedOverlayAlpha = 0.12f
+
+@Composable
+private fun MicButtonVisual(
+    interactionSource: MutableInteractionSource,
+    isPressed: Boolean = false,
+    modifier: Modifier = Modifier,
+) {
+    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
+    val layoutDirection = LocalLayoutDirection.current
+    Box(
+        modifier = modifier
+            .padding(style.padding)
+            .clip(CircleShape)
+            .indication(
+                interactionSource = interactionSource,
+                indication = ripple(),
+            )
+            .then(
+                if (isPressed) {
+                    Modifier.background(
+                        ChatTheme.colors.textPrimary.copy(alpha = PressedOverlayAlpha),
+                    )
+                } else {
+                    Modifier
+                },
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .mirrorRtl(layoutDirection = layoutDirection)
+                .size(style.icon.size)
+                .testTag("Stream_ComposerRecordAudioButton"),
+            painter = style.icon.painter,
+            contentDescription = stringResource(R.string.stream_compose_record_audio_message),
+        )
+    }
+}
+
+private class RecordingHintState(
+    val snackbarHostState: SnackbarHostState,
+    private val scope: CoroutineScope,
+    private val message: String,
+) {
+    fun show() {
+        scope.launch {
+            snackbarHostState.showSnackbar(message, duration = SnackbarDuration.Short)
+        }
+    }
+
+    fun dismiss() {
+        snackbarHostState.currentSnackbarData?.dismiss()
+    }
+}
+
+@Composable
+private fun rememberRecordingHint(): RecordingHintState {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val message = stringResource(R.string.stream_compose_message_composer_hold_to_record)
+    return remember(snackbarHostState, scope, message) {
+        RecordingHintState(snackbarHostState, scope, message)
+    }
+}
+
+private class RecordingGestureConfig(
+    val cancelThresholdPx: Float,
+    val lockThresholdPx: Float,
+)
+
+private const val HoldToRecordThresholdMs = 400L
+private const val AxisLockThresholdPx = 10f
+
+private enum class DragAxis { Horizontal, Vertical }
 
 /**
- * Handles the drag gesture loop after recording has started.
+ * Handles the full gesture lifecycle:
+ * 1. Waits for [HoldToRecordThresholdMs] — if the user releases before that, it's a tap → [onShowHint].
+ * 2. Once the threshold is reached, starts recording and tracks drag for cancel / lock / send.
+ *
+ * Drag is axis-locked: once the first significant movement picks a direction
+ * (left → cancel, up → lock), the offset is constrained to that axis.
  */
 private suspend fun AwaitPointerEventScope.handleRecordingGesture(
     down: PointerInputChange,
-    micSize: IntSize,
-    cancelThresholdPx: Float,
-    lockThresholdPx: Float,
+    config: RecordingGestureConfig,
     currentState: () -> RecordingState,
     recordingActions: AudioRecordingActions,
     onShowHint: () -> Unit,
 ) {
-    val holdStartTime = SystemClock.elapsedRealtime()
-    val startOffset = down.position.minus(
-        Offset(micSize.width.toFloat(), micSize.height.toFloat()),
-    )
+    // Phase 1: Wait for hold threshold. If released early, treat as tap.
+    val releasedBeforeThreshold = withTimeoutOrNull(HoldToRecordThresholdMs) {
+        while (true) {
+            val event = awaitDragOrCancellation(down.id) ?: return@withTimeoutOrNull
+            if (!event.pressed) return@withTimeoutOrNull
+            event.consume()
+        }
+    } != null
+
+    if (releasedBeforeThreshold) {
+        onShowHint()
+        return
+    }
+
+    // Phase 2: Threshold reached — start recording and handle drag.
+    val startOffset = down.position
     recordingActions.onStartRecording(Offset.Zero)
+
+    var dragAxis: DragAxis? = null
 
     while (true) {
         if (currentState() is RecordingState.Locked) break
@@ -318,26 +441,35 @@ private suspend fun AwaitPointerEventScope.handleRecordingGesture(
         val dragEvent = awaitDragOrCancellation(down.id)
         if (dragEvent == null || !dragEvent.pressed) {
             if (currentState() !is RecordingState.Locked) {
-                val holdDuration = SystemClock.elapsedRealtime() - holdStartTime
-                if (holdDuration < HoldToRecordThresholdMs) {
-                    recordingActions.onCancelRecording()
-                    onShowHint()
-                } else {
-                    recordingActions.onSendRecording()
-                }
+                recordingActions.onSendRecording()
             }
             break
         }
 
         dragEvent.consume()
-        val diffOffset = dragEvent.position.minus(startOffset)
+        val rawDiff = dragEvent.position.minus(startOffset)
+
+        // Lock axis on first significant movement.
+        if (dragAxis == null) {
+            val absX = abs(rawDiff.x)
+            val absY = abs(rawDiff.y)
+            if (absX > AxisLockThresholdPx || absY > AxisLockThresholdPx) {
+                dragAxis = if (absX > absY) DragAxis.Horizontal else DragAxis.Vertical
+            }
+        }
+
+        val diffOffset = when (dragAxis) {
+            DragAxis.Horizontal -> Offset(rawDiff.x, 0f)
+            DragAxis.Vertical -> Offset(0f, rawDiff.y)
+            null -> Offset.Zero
+        }
         recordingActions.onHoldRecording(diffOffset)
 
-        if (diffOffset.x <= -cancelThresholdPx) {
+        if (diffOffset.x <= -config.cancelThresholdPx) {
             recordingActions.onCancelRecording()
             break
         }
-        if (diffOffset.y <= -lockThresholdPx) {
+        if (diffOffset.y <= -config.lockThresholdPx) {
             recordingActions.onLockRecording()
             break
         }
@@ -391,6 +523,23 @@ private class AudioRecordPermission(
 )
 
 /**
+ * Returns `true` if the recording can proceed (permission granted or not applicable).
+ * Otherwise, triggers the appropriate permission request or rationale dialog and returns `false`.
+ */
+@OptIn(ExperimentalPermissionsApi::class)
+private fun AudioRecordPermission?.gateRecording(): Boolean = when {
+    this?.status?.shouldShowRationale == true -> {
+        showRationale()
+        false
+    }
+    this?.status?.isGranted == false -> {
+        launchPermissionRequest()
+        false
+    }
+    else -> true
+}
+
+/**
  * A popup anchored at [Alignment.BottomCenter] that auto-dismisses after [dismissTimeoutMs].
  */
 @Composable
@@ -413,34 +562,30 @@ private fun TimedPopup(
     }
 }
 
+private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
+
 @Composable
-private fun HoldToRecordPopup(
-    offset: Int,
-    onDismissRequest: () -> Unit,
-) {
-    TimedPopup(offsetY = offset, onDismissRequest = onDismissRequest) {
-        val theme = ChatTheme.messageComposerTheme.audioRecording.holdToRecord
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(theme.containerPadding),
-            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
-            shape = theme.containerShape,
-            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
+private fun AudioRecordingSnackbar(data: SnackbarData) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = StreamTokens.spacingMd),
+        contentAlignment = Alignment.Center,
+    ) {
+        Surface(
+            modifier = Modifier.shadow(4.dp, shape = SnackbarShape),
+            shape = SnackbarShape,
+            color = ChatTheme.colors.backgroundCoreInverse,
+            contentColor = ChatTheme.colors.textOnAccent,
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(theme.contentHeight)
-                    .padding(theme.contentPadding),
-                contentAlignment = Alignment.CenterStart,
-            ) {
-                Text(
-                    style = theme.textStyle,
-                    text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
-                )
-            }
+            Text(
+                modifier = Modifier.padding(
+                    horizontal = StreamTokens.spacingMd,
+                    vertical = StreamTokens.spacingSm,
+                ),
+                text = data.visuals.message,
+                style = ChatTheme.typography.bodyDefault,
+            )
         }
     }
 }
