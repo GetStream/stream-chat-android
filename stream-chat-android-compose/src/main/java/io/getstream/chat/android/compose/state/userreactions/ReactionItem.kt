@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state.reactionoptions
+package io.getstream.chat.android.compose.state.userreactions
 
-import io.getstream.chat.android.compose.state.userreactions.ReactionItem
+import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
 
+// TODO [G.] unify reaction packages
 /**
- * UI representation of selectable reactions.
+ * UI data representing a reaction.
  *
- * @param item The reaction item that represents the reaction.
- * @param isSelected Whether this reaction is selected or not.
+ * @param type The string representation of the reaction.
+ * @param emoji The emoji character the [type] maps to, if any.
+ * @see [ReactionEmojiFactory]
  */
-public data class ReactionOptionItemState(
-    public val item: ReactionItem,
-    public val isSelected: Boolean,
+public data class ReactionItem(
+    public val type: String,
+    public val emoji: String?,
 )

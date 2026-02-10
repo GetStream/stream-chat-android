@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -61,7 +61,7 @@ public fun ReactionsPicker(
     overlayColor: Color = ChatTheme.colors.overlay,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
+    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageReactionPickerHeaderContent(Modifier, message, onMessageAction, onDismiss)

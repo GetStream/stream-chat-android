@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.state.reactionoptions
+package io.getstream.chat.android.compose.state.messages
 
 import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 
 /**
- * UI representation of selectable reactions.
+ * Representation of a message reaction, holding all information required to render the reaction.
  *
  * @param item The reaction item that represents the reaction.
- * @param isSelected Whether this reaction is selected or not.
+ * @param count The number of reactions of this type in the message.
  */
-public data class ReactionOptionItemState(
+public data class MessageReactionItemState(
     public val item: ReactionItem,
-    public val isSelected: Boolean,
+    public val count: Int,
 )

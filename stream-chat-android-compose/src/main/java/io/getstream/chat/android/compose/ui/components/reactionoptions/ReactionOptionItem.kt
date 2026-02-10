@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -36,10 +36,13 @@ public fun ReactionOptionItem(
     option: ReactionOptionItemState,
     modifier: Modifier = Modifier,
 ) {
-    Image(
-        modifier = modifier.testTag("Stream_Reaction_${option.type}"),
-        painter = option.painter,
-        contentDescription = option.type,
+    ChatTheme.componentFactory.ReactionToggle(
+        type = option.item.type,
+        emoji = option.item.emoji,
+        size = ReactionToggleSize.Medium,
+        checked = option.isSelected,
+        onCheckedChange = null,
+        modifier = modifier.testTag("Stream_Reaction_${option.item.type}"),
     )
 }
 
@@ -50,7 +53,7 @@ public fun ReactionOptionItem(
 @Composable
 private fun ReactionOptionItemNotSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption1())
+        ReactionOptionItem(option = PreviewReactionData.reactionOption1())
     }
 }
 
@@ -61,6 +64,6 @@ private fun ReactionOptionItemNotSelectedPreview() {
 @Composable
 private fun ReactionOptionItemSelectedPreview() {
     ChatTheme {
-        ReactionOptionItem(option = PreviewReactionOptionData.reactionOption2())
+        ReactionOptionItem(option = PreviewReactionData.reactionOption2())
     }
 }

@@ -20,16 +20,28 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
-internal class ReactionPushEmojiFactoryTest {
+internal class ReactionEmojiFactoryTest {
 
     @Test
     fun `test defaultFactory provides correct emojis`() {
-        val factory = ReactionPushEmojiFactory.defaultFactory()
+        val factory = ReactionEmojiFactory.defaultFactory()
         assertEquals("👍", factory.emojiCode(ReactionDefaults.THUMBS_UP))
         assertEquals("❤️", factory.emojiCode(ReactionDefaults.LOVE))
         assertEquals("😂", factory.emojiCode(ReactionDefaults.LOL))
         assertEquals("😮", factory.emojiCode(ReactionDefaults.WUT))
         assertEquals("👎", factory.emojiCode(ReactionDefaults.THUMBS_DOWN))
         assertNull(factory.emojiCode("unknown_reaction"))
+    }
+
+    @Test
+    fun `test defaultFactory returns emoji reaction type as emojiCode`() {
+        val factory = ReactionEmojiFactory.defaultFactory()
+        assertEquals("🎉", factory.emojiCode("🎉"))
+    }
+
+    @Test
+    fun `test defaultFactory returns null for non-emoji non-default reaction`() {
+        val factory = ReactionEmojiFactory.defaultFactory()
+        assertNull(factory.emojiCode("custom_reaction"))
     }
 }

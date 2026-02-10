@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -121,8 +120,9 @@ class LocationComponentFactory(
     }
 
     @Composable
-    override fun ColumnScope.MessageContent(
+    override fun MessageContent(
         messageItem: MessageItemState,
+        modifier: Modifier,
         onLongItemClick: (Message) -> Unit,
         onPollUpdated: (Message, Poll) -> Unit,
         onCastVote: (Message, Poll, Option) -> Unit,
@@ -141,7 +141,7 @@ class LocationComponentFactory(
         if (message.hasSharedLocation() && !message.isDeleted()) {
             val location = requireNotNull(message.sharedLocation)
             SharedLocationItem(
-                modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth),
+                modifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth),
                 message = message,
                 location = location,
                 onMapClick = { url -> onLinkClick?.invoke(message, url) },
@@ -151,6 +151,7 @@ class LocationComponentFactory(
             with(delegate) {
                 MessageContent(
                     messageItem = messageItem,
+                    modifier = modifier,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onQuotedMessageClick = onQuotedMessageClick,

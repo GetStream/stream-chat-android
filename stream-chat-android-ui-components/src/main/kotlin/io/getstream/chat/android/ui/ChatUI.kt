@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui
 
 import android.content.Context
+import io.getstream.chat.android.ui.ChatUI.attachmentFactoryManager
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
@@ -25,7 +26,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -132,8 +133,8 @@ public object ChatUI {
      * Allows overriding default emojis for reactions in push notifications.
      */
     @JvmStatic
-    public var reactionPushEmojiFactory: ReactionPushEmojiFactory by lazyVar {
-        ReactionPushEmojiFactory.defaultFactory()
+    public var reactionEmojiFactory: ReactionEmojiFactory by lazyVar {
+        ReactionEmojiFactory.defaultFactory()
     }
 
     /**

@@ -1144,13 +1144,13 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Image
 	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory {
-	public static final field Companion Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory$Companion;
+public abstract interface class io/getstream/chat/android/ui/common/helper/ReactionEmojiFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/common/helper/ReactionEmojiFactory$Companion;
 	public abstract fun emojiCode (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory$Companion {
-	public final fun defaultFactory ()Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory;
+public final class io/getstream/chat/android/ui/common/helper/ReactionEmojiFactory$Companion {
+	public final fun defaultFactory ()Lio/getstream/chat/android/ui/common/helper/ReactionEmojiFactory;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/TimeProvider : kotlin/jvm/functions/Function0 {
@@ -2970,6 +2970,7 @@ public final class io/getstream/chat/android/ui/common/utils/EmojiUtil {
 	public final fun getEmojiCount (Lio/getstream/chat/android/models/Message;)I
 	public final fun isEmojiOnly (Lio/getstream/chat/android/models/Message;)Z
 	public final fun isSingleEmoji (Lio/getstream/chat/android/models/Message;)Z
+	public final fun isSingleEmoji (Ljava/lang/String;)Z
 }
 
 public final class io/getstream/chat/android/ui/common/utils/ExpandableList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {

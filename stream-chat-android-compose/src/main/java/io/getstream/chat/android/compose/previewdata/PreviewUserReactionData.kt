@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
-import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.previewdata.PreviewUserData
 
@@ -27,40 +25,34 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  */
 internal object PreviewUserReactionData {
 
-    @Composable
     fun user1Reaction() = UserReactionItemState(
+        reaction = ReactionItem(type = "like", emoji = "👍"),
         user = PreviewUserData.user1,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-        type = "like",
+        isSelected = false,
     )
 
-    @Composable
     fun user2Reaction() = UserReactionItemState(
+        reaction = ReactionItem(type = "love", emoji = "❤️"),
         user = PreviewUserData.user2,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_love_selected),
-        type = "love",
+        isSelected = false,
     )
 
-    @Composable
     fun user3Reaction() = UserReactionItemState(
+        reaction = ReactionItem(type = "wow", emoji = "😮"),
         user = PreviewUserData.user3,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_wut),
-        type = "wow",
+        isSelected = false,
     )
 
-    @Composable
     fun user4Reaction() = UserReactionItemState(
+        reaction = ReactionItem(type = "sad", emoji = "👎"),
         user = PreviewUserData.user4,
-        painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_down_selected),
-        type = "sad",
+        isSelected = false,
     )
 
-    @Composable
     fun oneUserReaction() = listOf(
         user1Reaction(),
     )
 
-    @Composable
     fun manyUserReactions() = listOf(
         user1Reaction(),
         user2Reaction(),

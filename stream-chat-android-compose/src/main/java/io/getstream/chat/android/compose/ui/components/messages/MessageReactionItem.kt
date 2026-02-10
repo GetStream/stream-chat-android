@@ -16,29 +16,30 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
-import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.previewdata.PreviewReactionData
+import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Represents a small message reaction item.
  *
- * @param option The reaction option state, holding all information required to render the icon.
+ * @param state The reaction option state, holding all information required to render the emoji.
  * @param modifier for styling.
  */
 @Composable
 public fun MessageReactionItem(
-    option: ReactionOptionItemState,
+    state: MessageReactionItemState,
     modifier: Modifier = Modifier,
 ) {
-    Image(
+    ChatTheme.componentFactory.ReactionIcon(
+        type = state.item.type,
+        emoji = state.item.emoji,
+        size = ReactionIconSize.Small,
         modifier = modifier,
-        painter = option.painter,
-        contentDescription = null,
     )
 }
 
@@ -49,7 +50,7 @@ public fun MessageReactionItem(
 @Composable
 public fun MessageReactionItemSelectedPreview() {
     ChatTheme {
-        MessageReactionItem(option = PreviewReactionOptionData.reactionOption2())
+        MessageReactionItem(state = PreviewReactionData.messageReaction2())
     }
 }
 
@@ -60,6 +61,6 @@ public fun MessageReactionItemSelectedPreview() {
 @Composable
 public fun MessageReactionItemNotSelectedPreview() {
     ChatTheme {
-        MessageReactionItem(option = PreviewReactionOptionData.reactionOption1())
+        MessageReactionItem(state = PreviewReactionData.messageReaction1())
     }
 }

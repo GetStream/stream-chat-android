@@ -16,18 +16,17 @@
 
 package io.getstream.chat.android.compose.state.userreactions
 
-import androidx.compose.ui.graphics.painter.Painter
 import io.getstream.chat.android.models.User
 
 /**
  * UI representation of user reaction.
  *
+ * @param reaction The reaction item that represents the reaction.
  * @param user The user who left the reaction.
- * @param painter The icon of the reaction.
- * @param type The string representation of the reaction.
+ * @param isSelected Whether this reaction is selected or not.
  */
 public data class UserReactionItemState(
+    public val reaction: ReactionItem,
     public val user: User,
-    public val painter: Painter,
-    public val type: String,
+    public val isSelected: Boolean,
 )

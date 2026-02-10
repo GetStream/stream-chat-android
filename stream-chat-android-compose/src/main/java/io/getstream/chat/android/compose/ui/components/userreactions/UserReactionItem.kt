@@ -16,16 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components.userreactions
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -37,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.list.isStartAlignment
@@ -52,7 +51,8 @@ public fun UserReactionItem(
     item: UserReactionItemState,
     modifier: Modifier = Modifier,
 ) {
-    val (user, painter, type) = item
+    val componentFactory = ChatTheme.componentFactory
+    val user = item.user
 
     Column(
         modifier = modifier,
@@ -63,21 +63,22 @@ public fun UserReactionItem(
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 
         Box(modifier = Modifier.width(64.dp)) {
-            ChatTheme.componentFactory.UserAvatar(
+            componentFactory.UserAvatar(
                 modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize),
                 user = user,
                 showIndicator = false,
                 showBorder = false,
             )
 
-            Image(
+            componentFactory.ReactionToggle(
+                type = item.reaction.type,
+                emoji = item.reaction.emoji,
+                size = ReactionToggleSize.Medium,
+                checked = false,
+                onCheckedChange = null,
                 modifier = Modifier
-                    .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
-                    .size(ChatTheme.dimens.userReactionItemIconSize)
-                    .padding(4.dp)
+                    .background(shape = CircleShape, color = ChatTheme.colors.barsBackground)
                     .align(alignment),
-                painter = painter,
-                contentDescription = type,
             )
         }
 

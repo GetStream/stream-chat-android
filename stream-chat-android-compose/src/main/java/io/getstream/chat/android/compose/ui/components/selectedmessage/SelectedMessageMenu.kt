@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -65,7 +65,7 @@ public fun SelectedMessageMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
+    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {

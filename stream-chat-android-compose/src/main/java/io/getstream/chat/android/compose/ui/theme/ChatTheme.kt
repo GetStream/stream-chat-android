@@ -31,7 +31,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
@@ -54,7 +53,6 @@ import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
-import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -66,7 +64,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
@@ -123,10 +121,7 @@ public val LocalMessageComposerFloatingStyleEnabled: ProvidableCompositionLocal<
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
-    error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalReactionPushEmojiFactory = compositionLocalOf<ReactionPushEmojiFactory> {
+private val LocalReactionEmojiFactory = compositionLocalOf<ReactionEmojiFactory> {
     error("No reaction push emoji factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
@@ -273,8 +268,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
- * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
- * @param reactionPushEmojiFactory Used to create an emoji code for a given reaction type (used for push notifications).
+ * @param reactionEmojiFactory Used to create an emoji code for a given reaction type (used for push notifications).
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
@@ -329,8 +323,7 @@ public fun ChatTheme(
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
-    reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
-    reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),
+    reactionEmojiFactory: ReactionEmojiFactory = ReactionEmojiFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
     pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
@@ -402,8 +395,7 @@ public fun ChatTheme(
         LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
-        LocalReactionIconFactory provides reactionIconFactory,
-        LocalReactionPushEmojiFactory provides reactionPushEmojiFactory,
+        LocalReactionEmojiFactory provides reactionEmojiFactory,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalPollSwitchItemFactory provides pollSwitchItemFactory,
@@ -536,20 +528,12 @@ public object ChatTheme {
         get() = LocalAttachmentPreviewHandlers.current
 
     /**
-     * Retrieves the current reaction icon factory at the call site's position in the hierarchy.
-     */
-    public val reactionIconFactory: ReactionIconFactory
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalReactionIconFactory.current
-
-    /**
      * Retrieves the current reaction push emoji factory at the call site's position in the hierarchy.
      */
-    public val reactionPushEmojiFactory: ReactionPushEmojiFactory
+    public val reactionEmojiFactory: ReactionEmojiFactory
         @Composable
         @ReadOnlyComposable
-        get() = LocalReactionPushEmojiFactory.current
+        get() = LocalReactionEmojiFactory.current
 
     /**
      * Retrieves the current [ReactionOptionsTheme] at the call site's position in the hierarchy.

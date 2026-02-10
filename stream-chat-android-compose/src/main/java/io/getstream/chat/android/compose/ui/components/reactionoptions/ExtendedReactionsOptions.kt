@@ -28,8 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -49,12 +50,13 @@ private const val DefaultNumberOfColumns = 5
  */
 @ExperimentalFoundationApi
 @Composable
+// TODO [G.]
 public fun ExtendedReactionsOptions(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
+    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         with(ChatTheme.componentFactory) {
             ExtendedReactionMenuOptionItem(
@@ -65,19 +67,19 @@ public fun ExtendedReactionsOptions(
         }
     },
 ) {
-    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
-    val options = reactionTypes.entries.map { (type, reactionIcon) ->
-        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
+    val options = reactionTypes.entries.map { (type, emoji) ->
         ReactionOptionItemState(
-            painter = reactionIcon.getPainter(isSelected),
-            type = type,
-            emojiCode = pushEmojiFactory.emojiCode(type),
+            item = ReactionItem(
+                type = type,
+                emoji = emoji,
+            ),
+            isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
         )
     }
 
     LazyVerticalGrid(modifier = modifier, columns = cells) {
         items(options) { item ->
-            key(item.type) {
+            key(item.item.type) {
                 this@LazyVerticalGrid.itemContent(item)
             }
         }

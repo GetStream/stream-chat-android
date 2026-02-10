@@ -175,6 +175,31 @@ internal class EmojiUtilTest {
     }
 
     @Test
+    fun `isSingleEmoji(String) should return true for single emoji`() {
+        Assertions.assertTrue(EmojiUtil.isSingleEmoji("😀"))
+    }
+
+    @Test
+    fun `isSingleEmoji(String) should return false for multiple emojis`() {
+        Assertions.assertFalse(EmojiUtil.isSingleEmoji("😀😃"))
+    }
+
+    @Test
+    fun `isSingleEmoji(String) should return false for plain text`() {
+        Assertions.assertFalse(EmojiUtil.isSingleEmoji("like"))
+    }
+
+    @Test
+    fun `isSingleEmoji(String) should return false for empty string`() {
+        Assertions.assertFalse(EmojiUtil.isSingleEmoji(""))
+    }
+
+    @Test
+    fun `isSingleEmoji(String) should return false for text with emoji`() {
+        Assertions.assertFalse(EmojiUtil.isSingleEmoji("Hello 😀"))
+    }
+
+    @Test
     fun `getEmojiCount should return 0 for text without emoji`() {
         // Given
         val message = randomMessage(

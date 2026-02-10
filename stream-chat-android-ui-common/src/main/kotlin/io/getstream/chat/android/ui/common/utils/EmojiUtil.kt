@@ -42,6 +42,15 @@ public object EmojiUtil {
     }
 
     /**
+     * Checks whether the given text is a single emoji.
+     *
+     * @param text The text to check.
+     */
+    public fun isSingleEmoji(text: String): Boolean {
+        return text.isNotBlank() && text.replaceFirst(EMOJI_REGEX, "").isEmpty()
+    }
+
+    /**
      * Counts the number of emoji inside a message.
      *
      * @return The number of emojis inside a message.
