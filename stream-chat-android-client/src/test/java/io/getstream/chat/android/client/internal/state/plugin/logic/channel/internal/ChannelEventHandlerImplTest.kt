@@ -221,6 +221,16 @@ internal class ChannelEventHandlerImplTest {
         verify(state).addPinnedMessage(message)
     }
 
+    @Test
+    fun `When NewMessageEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNewMessageEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(state).updateLastMessageAt(message)
+    }
+
     // endregion
 
     // region NotificationMessageNewEvent tests
@@ -281,6 +291,16 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).addPinnedMessage(message)
+    }
+
+    @Test
+    fun `When NotificationMessageNewEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNotificationMessageNewEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(state).updateLastMessageAt(message)
     }
 
     // endregion

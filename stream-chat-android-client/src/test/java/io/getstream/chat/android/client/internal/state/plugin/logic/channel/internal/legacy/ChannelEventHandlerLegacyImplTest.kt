@@ -178,6 +178,16 @@ internal class ChannelEventHandlerLegacyImplTest {
         verify(stateLogic).updateMessageCount(messageCount)
     }
 
+    @Test
+    fun `When NewMessageEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNewMessageEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(stateLogic).updateLastMessageAt(message)
+    }
+
     // MessageUpdatedEvent tests
     @Test
     fun `When MessageUpdatedEvent is handled, Then message is updated with enriched poll and replyTo`() {
@@ -321,6 +331,16 @@ internal class ChannelEventHandlerLegacyImplTest {
         verify(stateLogic, never()).upsertMessage(message)
         verify(stateLogic).updateCurrentUserRead(event.createdAt, message)
         verify(stateLogic).setHidden(false)
+    }
+
+    @Test
+    fun `When NotificationMessageNewEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNotificationMessageNewEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(stateLogic).updateLastMessageAt(message)
     }
 
     // NotificationThreadMessageNewEvent tests
