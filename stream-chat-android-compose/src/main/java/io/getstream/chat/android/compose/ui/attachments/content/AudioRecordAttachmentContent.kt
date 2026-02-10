@@ -16,21 +16,18 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,8 +38,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -53,27 +53,25 @@ import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerBox
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ComponentPadding
-import io.getstream.chat.android.compose.ui.theme.ComponentSize
-import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
-import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.applyIf
-import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
+import kotlin.random.Random
 
 /**
  * Represents the audio recording attachment content.
@@ -101,9 +99,16 @@ public fun AudioRecordAttachmentContent(
     val shouldBeFullSize = attachmentState.message.shouldBeDisplayedAsFullSizeAttachment()
     Column(
         modifier = modifier.applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) },
+        verticalArrangement = Arrangement.spacedBy(MessageStyling.sectionsDistance),
     ) {
         audioRecordings.forEach { audioRecording ->
             AudioRecordAttachmentContentItem(
+                modifier = Modifier.applyIf(!shouldBeFullSize) {
+                    background(
+                        MessageStyling.attachmentBackgroundColor(attachmentState.isMine),
+                        RoundedCornerShape(StreamTokens.radiusLg),
+                    )
+                },
                 attachment = audioRecording,
                 playerState = playerState,
                 isMine = attachmentState.isMine,
@@ -156,54 +161,42 @@ public fun AudioRecordAttachmentContentItem(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
     val currentAttachment by rememberUpdatedState(attachment)
-    val theme = when (isMine) {
-        true -> ChatTheme.ownMessageTheme.audioRecording
-        else -> ChatTheme.otherMessageTheme.audioRecording
-    }
+    val colors = ChatTheme.colors
+    val outlineColor = if (isMine) colors.chatBorderOnChatOutgoing else colors.chatBorderOnChatIncoming
+    val textColor = MessageStyling.textColor(isMine, colors)
+
     AudioRecordAttachmentContentItemBase(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         attachment = attachment,
         playerState = playerState,
-        size = theme.size,
-        padding = theme.padding,
-        playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
-        timerStyle = theme.timerStyle,
-        waveformSliderStyle = theme.waveformSliderStyle,
+        waveformHeight = 36.dp,
+        outlineColor = outlineColor,
+        textColor = textColor,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
-        tailContent = { isPlaying ->
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(width = theme.tailWidth),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (isPlaying) {
-                    val speed = playerState.current.playingSpeed
-                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(currentAttachment) }
-                } else {
-                    ContentTypeIcon(theme.contentTypeIcon)
-                }
+        tailContent = {
+            val speed = playerState.speeds.getOrDefault(attachment.audioHash, 1f)
+            SpeedButton(speed = speed, outlineColor = outlineColor) {
+                onPlaySpeedClick(currentAttachment)
             }
         },
     )
 }
 
 @Composable
+@Suppress("LongMethod")
 internal fun AudioRecordAttachmentContentItemBase(
     modifier: Modifier = Modifier,
     attachment: Attachment,
     playerState: AudioPlayerState,
-    size: ComponentSize,
-    padding: ComponentPadding,
-    playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
-    timerStyle: TextContainerStyle,
-    waveformSliderStyle: WaveformSliderLayoutStyle,
+    waveformHeight: Dp,
+    outlineColor: Color,
+    textColor: Color,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
-    tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
+    tailContent: @Composable () -> Unit = {},
 ) {
     val attachmentUrl = playerState.getRecordingUri(attachment)
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
@@ -216,81 +209,91 @@ internal fun AudioRecordAttachmentContentItemBase(
     } ?: emptyList()
 
     val currentAttachment by rememberUpdatedState(attachment)
-    Surface(
+    Row(
         modifier = modifier
-            .padding(2.dp),
-        color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment,
+            .defaultMinSize(minHeight = 64.dp)
+            .fillMaxWidth()
+            .padding(
+                top = StreamTokens.spacingXs,
+                bottom = StreamTokens.spacingXs,
+                start = StreamTokens.spacingXs,
+                end = StreamTokens.spacingSm,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
     ) {
-        Row(
-            modifier = Modifier
-                .size(size)
-                .padding(padding),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(currentAttachment) }
-
-            var currentProgress by remember { mutableFloatStateOf(trackProgress) }
-            LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
-
-            PlaybackTimerBox(currentProgress, currentAttachment.durationInMs, timerStyle)
-
-            StaticWaveformSlider(
-                modifier = Modifier
-                    .height(waveformSliderStyle.height)
-                    .weight(1f),
-                style = waveformSliderStyle.style,
-                waveformData = waveform,
-                progress = currentProgress,
-                onDragStart = {
-                    currentProgress = it
-                    onThumbDragStart(currentAttachment)
-                },
-                onDrag = {
-                    currentProgress = it
-                },
-                onDragStop = {
-                    currentProgress = it
-                    onThumbDragStop(currentAttachment, it)
-                },
-            )
-
-            tailContent(playing)
+        PlaybackToggleButton(playing = playing, outlineColor = outlineColor) {
+            onPlayToggleClick(currentAttachment)
         }
+
+        var currentProgress by remember { mutableFloatStateOf(trackProgress) }
+        LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
+
+        StaticWaveformSlider(
+            modifier = Modifier
+                .height(waveformHeight)
+                .weight(1f),
+            waveformData = waveform,
+            progress = currentProgress,
+            isPlaying = playing,
+            visibleBarLimit = 20,
+            onDragStart = {
+                currentProgress = it
+                onThumbDragStart(currentAttachment)
+            },
+            onDrag = {
+                currentProgress = it
+            },
+            onDragStop = {
+                currentProgress = it
+                onThumbDragStop(currentAttachment, it)
+            },
+        )
+
+        val timerTextColor = if (playing) ChatTheme.colors.accentPrimary else textColor
+        PlaybackTimerText(
+            progress = currentProgress,
+            durationInMs = currentAttachment.durationInMs,
+            color = timerTextColor,
+            countdown = true,
+        )
+
+        tailContent()
     }
 }
 
 /**
  * Represents the playback toggle button.
  *
- * @param style The style for the toggle button.
  * @param onClick The callback for when the button is clicked.
  */
 @Composable
 internal fun PlaybackToggleButton(
-    style: IconContainerStyle,
+    playing: Boolean,
+    outlineColor: Color,
     onClick: () -> Unit = {},
 ) {
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = CircleShape,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-    ) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier
-                .size(style.size)
-                .padding(style.padding),
-        ) {
-            Icon(
-                painter = style.icon.painter,
-                modifier = Modifier.size(style.icon.size),
-                contentDescription = null,
-                tint = style.icon.tint,
-            )
+    val icon =
+        if (playing) {
+            painterResource(id = R.drawable.stream_compose_ic_pause)
+        } else {
+            painterResource(id = R.drawable.stream_compose_ic_play)
         }
+
+    StreamButton(
+        onClick = onClick,
+        style = StreamButtonStyleDefaults.secondaryOutline.copy(borderColor = outlineColor),
+        modifier = Modifier.padding(StreamTokens.spacing2xs),
+    ) {
+        Icon(
+            painter = icon,
+            modifier = Modifier.size(20.dp),
+            contentDescription = null,
+        )
     }
 }
+
+private val speedButtonShape = RoundedCornerShape(StreamTokens.radiusLg)
 
 /**
  * Represents the speed button.
@@ -298,61 +301,37 @@ internal fun PlaybackToggleButton(
 @Composable
 private fun SpeedButton(
     speed: Float,
-    style: TextContainerStyle,
+    outlineColor: Color,
     onClick: () -> Unit,
 ) {
-    Card(
-        onClick = onClick,
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        shape = CircleShape,
+    Text(
+        text = when (speed.isInt()) {
+            true -> "x${speed.toInt()}"
+            else -> "x$speed"
+        },
+        style = ChatTheme.typography.metadataEmphasis,
         modifier = Modifier
-            .size(style.size),
-        colors = CardDefaults.cardColors(containerColor = style.backgroundColor),
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = when (speed.isInt()) {
-                    true -> "x${speed.toInt()}"
-                    else -> "x$speed"
-                },
-                style = style.textStyle,
-            )
-        }
-    }
-}
-
-/**
- * Represents the content type icon.
- */
-@Composable
-private fun ContentTypeIcon(style: IconStyle) {
-    Icon(
-        modifier = Modifier
-            .size(style.size),
-        painter = style.painter,
-        contentDescription = null,
-        tint = style.tint,
+            .border(1.dp, outlineColor, speedButtonShape)
+            .clip(speedButtonShape)
+            .clickable(onClick = onClick)
+            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 internal fun AudioRecordAttachmentContentItemPreview() {
-    val attachment = Attachment(type = "audio_recording")
-
     ChatPreviewTheme {
+        val rand = Random(1)
+        val previewUri = "preview://audio"
+
         AudioRecordAttachmentContentItem(
-            modifier = Modifier
-                .width(250.dp)
-                .height(60.dp),
-            attachment = attachment,
+            attachment = Attachment(type = "audio_recording", assetUrl = previewUri),
             playerState = AudioPlayerState(
                 current = AudioPlayerState.CurrentAudioState(
-                    audioUri = attachment.assetUrl.orEmpty(),
                     isPlaying = true,
+                    audioUri = previewUri,
+                    waveform = List(size = 100) { rand.nextFloat() },
                 ),
                 getRecordingUri = Attachment::assetUrl,
             ),

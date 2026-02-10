@@ -29,8 +29,6 @@ import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 
 /**
  * Represents the theming for the audio recording attachment.
@@ -40,7 +38,6 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  * @param playButton The style for the play button.
  * @param pauseButton The style for the pause button.
  * @param timerStyle The style for the timer component.
- * @param waveformSliderStyle The style for the waveform slider.
  */
 public data class AudioRecordingAttachmentPreviewTheme(
     public val size: ComponentSize,
@@ -48,7 +45,6 @@ public data class AudioRecordingAttachmentPreviewTheme(
     public val playButton: IconContainerStyle,
     public val pauseButton: IconContainerStyle,
     public val timerStyle: TextContainerStyle,
-    public val waveformSliderStyle: WaveformSliderLayoutStyle,
 ) {
 
     public companion object {
@@ -99,10 +95,6 @@ public data class AudioRecordingAttachmentPreviewTheme(
                     textStyle = typography.body.copy(
                         color = colors.textLowEmphasis,
                     ),
-                ),
-                waveformSliderStyle = WaveformSliderLayoutStyle(
-                    height = 36.dp,
-                    style = WaveformSliderStyle.defaultStyle(colors = colors),
                 ),
             )
         }

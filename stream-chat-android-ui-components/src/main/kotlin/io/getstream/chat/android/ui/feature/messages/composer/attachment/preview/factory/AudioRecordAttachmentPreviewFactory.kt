@@ -159,7 +159,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
             }
 
             setOnSpeedButtonClickListener {
-                audioPlayer.changeSpeed()
+                audioPlayer.changeSpeed(hashCode)
             }
 
             setOnSeekbarMoveListeners({

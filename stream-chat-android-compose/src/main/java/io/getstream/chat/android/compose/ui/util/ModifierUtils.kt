@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,7 +52,7 @@ internal fun Modifier.padding(padding: ComponentPadding): Modifier {
 internal fun Modifier.size(size: ComponentSize): Modifier = when {
     size.width == Dp.Infinity && size.height == Dp.Infinity -> this.fillMaxSize()
     size.width == Dp.Infinity -> this.fillMaxWidth().height(size.height)
-    size.height == Dp.Infinity -> this.fillMaxSize().width(size.width)
+    size.height == Dp.Infinity -> this.fillMaxHeight().width(size.width)
     size.width == Dp.Unspecified -> this.height(size.height)
     size.height == Dp.Unspecified -> this.width(size.width)
     else -> this.composeSize(width = size.width, height = size.height)

@@ -417,7 +417,6 @@ fun UserRobot.assertFile(isDisplayed: Boolean, count: Int = 1): UserRobot {
     if (isDisplayed) {
         assertEquals(count, Message.fileName.waitForCount(count).size)
         assertEquals(count, Message.fileSize.findObjects().size)
-        assertEquals(count, Message.fileDownloadButton.findObjects().size)
         assertEquals(count, Message.fileImage.waitForCount(count).size)
         if (count > 1) {
             assertTrue(Message.columnWithMultipleFileAttachments.isDisplayed())
@@ -426,7 +425,6 @@ fun UserRobot.assertFile(isDisplayed: Boolean, count: Int = 1): UserRobot {
         assertFalse(Message.fileName.waitToDisappear().isDisplayed())
         assertFalse(Message.fileSize.isDisplayed())
         assertFalse(Message.fileImage.isDisplayed())
-        assertFalse(Message.fileDownloadButton.isDisplayed())
     }
     return this
 }
