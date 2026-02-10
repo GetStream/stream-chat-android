@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import android.Manifest
 import android.os.SystemClock
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -26,10 +27,18 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,9 +51,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -55,8 +69,13 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -64,10 +83,9 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.awaitCancellation
-import kotlin.math.abs
-
-private const val HOLD_TO_RECORD_THRESHOLD_MS = 1_000L
+import kotlinx.coroutines.delay
 
 /**
  * Unified voice recording component that handles both the mic button gesture lifecycle
@@ -96,76 +114,19 @@ internal fun AudioRecordButton(
 ) {
     val isRecording = recordingState !is RecordingState.Idle
     val isMicVisible = recordingState is RecordingState.Idle || recordingState is RecordingState.Hold
+    val showControls = recordingState is RecordingState.Locked || recordingState is RecordingState.Overview
+    val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
 
-    // --- Extract recording state for child composables ---
-
-    val durationInMs = when (recordingState) {
-        is RecordingState.Recording -> recordingState.durationInMs
-        is RecordingState.Overview -> recordingState.durationInMs
-        else -> 0
-    }
-
-    val waveformVisible = recordingState is RecordingState.Locked || recordingState is RecordingState.Overview
-    val waveformData = when (recordingState) {
-        is RecordingState.Recording -> recordingState.waveform
-        is RecordingState.Overview -> recordingState.waveform
-        else -> emptyList()
-    }
-    val waveformThumbVisible = recordingState is RecordingState.Overview
-    val waveformPlaying = recordingState is RecordingState.Overview && recordingState.isPlaying
-    val waveformProgress = when (recordingState) {
-        is RecordingState.Overview -> recordingState.playingProgress
-        is RecordingState.Locked -> 1f
-        else -> 0f
-    }
-
-    val slideToCancelVisible = recordingState is RecordingState.Hold
-
-    val holdControlsVisible = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
-    val holdControlsLocked = recordingState is RecordingState.Locked
-    val holdControlsOffset = when (recordingState) {
-        is RecordingState.Hold -> IntOffset(
-            x = recordingState.offsetX.toInt().coerceAtMost(maximumValue = 0),
-            y = recordingState.offsetY.toInt().coerceAtMost(maximumValue = 0),
-        )
-        else -> IntOffset.Zero
-    }
-
-    val recordingControlsVisible = recordingState is RecordingState.Locked || recordingState is RecordingState.Overview
-    val recordingStopControlVisible = recordingState is RecordingState.Locked
-
-    // --- Slide-to-cancel progress ---
-
-    val density = LocalDensity.current
-    val cancelThresholdX = with(density) {
-        ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx().toInt()
-    }
-    val cancelOffsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0).toFloat()
-    val slideToCancelProgress = (cancelOffsetX / cancelThresholdX).coerceIn(0f, 1f)
-
-    // --- Layout ---
     // When recording, fill the available width so the recording content (timer, waveform,
-    // slide-to-cancel) takes the space freed by the hidden center content.
-    // The Spacer(weight=1f) in MessageInput absorbs whatever is left (zero when we fillMaxWidth).
+    // slide-to-cancel) takes the space freed by the hidden center content in MessageInput.
     // When idle, wrap to the mic button size.
-
     Column(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
         Row(verticalAlignment = Alignment.Bottom) {
             if (isRecording) {
-                RecordingContent(
+                AudioRecordContent(
+                    recordingState = recordingState,
+                    recordingActions = recordingActions,
                     modifier = Modifier.weight(1f),
-                    durationInMs = durationInMs,
-                    waveformVisible = waveformVisible,
-                    waveformThumbVisible = waveformThumbVisible,
-                    waveformData = waveformData,
-                    waveformPlaying = waveformPlaying,
-                    waveformProgress = waveformProgress,
-                    slideToCancelVisible = slideToCancelVisible,
-                    slideToCancelProgress = slideToCancelProgress,
-                    holdControlsOffset = holdControlsOffset,
-                    onToggleRecordingPlayback = recordingActions.onToggleRecordingPlayback,
-                    onSliderDragStart = recordingActions.onRecordingSliderDragStart,
-                    onSliderDragStop = recordingActions.onRecordingSliderDragStop,
                 )
             }
 
@@ -176,59 +137,15 @@ internal fun AudioRecordButton(
             )
         }
 
-        if (recordingControlsVisible) {
+        if (showControls) {
             RecordingControlButtons(
-                isStopControlVisible = recordingStopControlVisible,
-                onDeleteRecording = recordingActions.onDeleteRecording,
-                onStopRecording = recordingActions.onStopRecording,
-                onCompleteRecording = recordingActions.onCompleteRecording,
+                recordingState = recordingState,
+                recordingActions = recordingActions,
             )
         }
 
-        // Floating icons (rendered as Popups, positioned relative to this Column)
-        if (holdControlsVisible) {
-            if (!holdControlsLocked) {
-                val micBaseWidth = ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
-                val micFloatingWidth = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic.size.width
-                val micBaseOffset = remember {
-                    with(density) {
-                        IntOffset(
-                            x = ((micFloatingWidth - micBaseWidth) / 2).toPx().toInt(),
-                            y = 0,
-                        )
-                    }
-                }
-                val micOffset = micBaseOffset + holdControlsOffset
-
-                Popup(
-                    offset = micOffset,
-                    properties = PopupProperties(clippingEnabled = false),
-                    alignment = Alignment.CenterEnd,
-                ) {
-                    RecordingMicIcon()
-                }
-            }
-
-            val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playback.height
-            val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
-            val totalContentHeight = playbackHeight + controlsHeight
-            val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset
-            val lockOffset = with(density) {
-                IntOffset(
-                    x = -edgeOffset.x.toPx().toInt(),
-                    y = when (holdControlsLocked) {
-                        true -> -totalContentHeight.toPx().toInt() - edgeOffset.y.toPx().toInt()
-                        else -> -playbackHeight.toPx().toInt() - edgeOffset.y.toPx().toInt() + holdControlsOffset.y
-                    },
-                )
-            }
-
-            Popup(
-                offset = lockOffset,
-                alignment = Alignment.BottomEnd,
-            ) {
-                RecordingLockableIcon(locked = holdControlsLocked)
-            }
+        if (showFloatingIcons) {
+            RecordingFloatingIcons(recordingState)
         }
     }
 }
@@ -244,6 +161,7 @@ internal fun AudioRecordButton(
  * Stays full-size during the hold gesture so the layout doesn't shift and pointer
  * coordinates remain stable. Collapses only after the gesture ends (lock/cancel/send).
  */
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun MicButton(
     isVisible: Boolean,
@@ -255,6 +173,8 @@ private fun MicButton(
     var isFingerDown by remember { mutableStateOf(false) }
     var pressOffset by remember { mutableStateOf(Offset.Zero) }
     var micSize by remember { mutableStateOf(IntSize.Zero) }
+
+    val permissionState = rememberAudioRecordPermission()
 
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed = isFingerDown || showHint
@@ -281,7 +201,57 @@ private fun MicButton(
         }
     }
 
+    MicButtonLayout(
+        isVisible = isVisible,
+        micSize = micSize,
+        interactionSource = interactionSource,
+        showHint = showHint,
+        modifier = modifier,
+        onSizeChanged = { micSize = it },
+        onDismissHint = { showHint = false },
+        onGesture = {
+            awaitEachGesture {
+                val down = awaitFirstDown()
+                down.consume()
+                pressOffset = down.position
+                isFingerDown = true
+
+                // Gate recording behind RECORD_AUDIO permission
+                if (permissionState?.status?.shouldShowRationale == true) {
+                    permissionState.showRationale()
+                } else if (permissionState?.status?.isGranted == false) {
+                    permissionState.launchPermissionRequest()
+                } else {
+                    handleRecordingGesture(
+                        down = down,
+                        micSize = micSize,
+                        cancelThresholdPx = cancelThresholdPx,
+                        lockThresholdPx = lockThresholdPx,
+                        currentState = { currentState },
+                        recordingActions = recordingActions,
+                        onShowHint = { showHint = true },
+                    )
+                }
+
+                isFingerDown = false
+            }
+        },
+    )
+}
+
+@Composable
+private fun MicButtonLayout(
+    isVisible: Boolean,
+    micSize: IntSize,
+    interactionSource: MutableInteractionSource,
+    showHint: Boolean,
+    modifier: Modifier = Modifier,
+    onSizeChanged: (IntSize) -> Unit,
+    onDismissHint: () -> Unit,
+    onGesture: suspend PointerInputScope.() -> Unit,
+) {
     val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
+    val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
@@ -290,7 +260,7 @@ private fun MicButton(
             modifier = Modifier
                 .run { if (isVisible) size(style.size) else size(0.dp) }
                 .padding(style.padding)
-                .onSizeChanged { micSize = it }
+                .onSizeChanged(onSizeChanged)
                 .clip(CircleShape)
                 .indication(
                     interactionSource,
@@ -300,58 +270,7 @@ private fun MicButton(
                     ),
                 )
                 .semantics { contentDescription = buttonDescription }
-                .pointerInput(Unit) {
-                    awaitEachGesture {
-                        val down = awaitFirstDown()
-                        down.consume()
-                        pressOffset = down.position
-                        isFingerDown = true
-
-                        // TODO: Add RECORD_AUDIO permission check before starting recording
-                        val holdStartTime = SystemClock.elapsedRealtime()
-                        val startOffset = down.position.minus(
-                            Offset(micSize.width.toFloat(), micSize.height.toFloat()),
-                        )
-                        recordingActions.onStartRecording(Offset.Zero)
-
-                        while (true) {
-                            // Break if recording was locked by the ViewModel
-                            if (currentState is RecordingState.Locked) break
-
-                            val dragEvent = awaitDragOrCancellation(down.id)
-                            if (dragEvent == null || !dragEvent.pressed) {
-                                // Finger lifted or cancelled — check hold duration.
-                                // The state can change during awaitDragOrCancellation, so re-check.
-                                @Suppress("KotlinConstantConditions")
-                                if (currentState !is RecordingState.Locked) {
-                                    val holdDuration = SystemClock.elapsedRealtime() - holdStartTime
-                                    if (holdDuration < HOLD_TO_RECORD_THRESHOLD_MS) {
-                                        recordingActions.onCancelRecording()
-                                        showHint = true
-                                    } else {
-                                        recordingActions.onSendRecording()
-                                    }
-                                }
-                                break
-                            }
-
-                            dragEvent.consume()
-                            val diffOffset = dragEvent.position.minus(startOffset)
-                            recordingActions.onHoldRecording(diffOffset)
-
-                            if (diffOffset.x <= -cancelThresholdPx) {
-                                recordingActions.onCancelRecording()
-                                break
-                            }
-                            if (diffOffset.y <= -lockThresholdPx) {
-                                recordingActions.onLockRecording()
-                                break
-                            }
-                        }
-
-                        isFingerDown = false
-                    }
-                },
+                .pointerInput(Unit, onGesture),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
@@ -365,10 +284,208 @@ private fun MicButton(
         }
 
         if (showHint) {
-            DefaultHoldToRecordPopup(
+            HoldToRecordPopup(
                 offset = micSize.height,
-                onDismissRequest = { showHint = false },
+                onDismissRequest = onDismissHint,
             )
+        }
+    }
+}
+
+private const val HoldToRecordThresholdMs = 1_000L
+
+/**
+ * Handles the drag gesture loop after recording has started.
+ */
+private suspend fun AwaitPointerEventScope.handleRecordingGesture(
+    down: PointerInputChange,
+    micSize: IntSize,
+    cancelThresholdPx: Float,
+    lockThresholdPx: Float,
+    currentState: () -> RecordingState,
+    recordingActions: AudioRecordingActions,
+    onShowHint: () -> Unit,
+) {
+    val holdStartTime = SystemClock.elapsedRealtime()
+    val startOffset = down.position.minus(
+        Offset(micSize.width.toFloat(), micSize.height.toFloat()),
+    )
+    recordingActions.onStartRecording(Offset.Zero)
+
+    while (true) {
+        if (currentState() is RecordingState.Locked) break
+
+        val dragEvent = awaitDragOrCancellation(down.id)
+        if (dragEvent == null || !dragEvent.pressed) {
+            if (currentState() !is RecordingState.Locked) {
+                val holdDuration = SystemClock.elapsedRealtime() - holdStartTime
+                if (holdDuration < HoldToRecordThresholdMs) {
+                    recordingActions.onCancelRecording()
+                    onShowHint()
+                } else {
+                    recordingActions.onSendRecording()
+                }
+            }
+            break
+        }
+
+        dragEvent.consume()
+        val diffOffset = dragEvent.position.minus(startOffset)
+        recordingActions.onHoldRecording(diffOffset)
+
+        if (diffOffset.x <= -cancelThresholdPx) {
+            recordingActions.onCancelRecording()
+            break
+        }
+        if (diffOffset.y <= -lockThresholdPx) {
+            recordingActions.onLockRecording()
+            break
+        }
+    }
+}
+
+/**
+ * Wrapper around Accompanist's [rememberPermissionState] that returns `null` in
+ * preview / Paparazzi environments (where there is no Activity context).
+ */
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun rememberAudioRecordPermission(): AudioRecordPermission? {
+    if (LocalInspectionMode.current) return null
+
+    var showRationale by remember { mutableStateOf(false) }
+    if (showRationale) {
+        AudioRecordPermissionRationale(
+            onDismissRequest = { showRationale = false },
+        )
+    }
+
+    var showDenied by remember { mutableStateOf(false) }
+    val state = rememberPermissionState(Manifest.permission.RECORD_AUDIO) { granted ->
+        showDenied = !granted
+    }
+    if (showDenied) {
+        SimpleDialog(
+            title = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_title),
+            message = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_message),
+            onDismiss = { showDenied = false },
+            onPositiveAction = { showDenied = false },
+            showDismissButton = false,
+        )
+    }
+
+    return remember(state) {
+        AudioRecordPermission(
+            status = state.status,
+            launchPermissionRequest = { state.launchPermissionRequest() },
+            showRationale = { showRationale = true },
+        )
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private class AudioRecordPermission(
+    val status: PermissionStatus,
+    val launchPermissionRequest: () -> Unit,
+    val showRationale: () -> Unit,
+)
+
+/**
+ * A popup anchored at [Alignment.BottomCenter] that auto-dismisses after [dismissTimeoutMs].
+ */
+@Composable
+private fun TimedPopup(
+    offsetY: Int,
+    dismissTimeoutMs: Long = 1000L,
+    onDismissRequest: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    LaunchedEffect(Unit) {
+        delay(dismissTimeoutMs)
+        onDismissRequest()
+    }
+    Popup(
+        onDismissRequest = onDismissRequest,
+        offset = IntOffset(0, -offsetY),
+        alignment = Alignment.BottomCenter,
+    ) {
+        content()
+    }
+}
+
+@Composable
+private fun HoldToRecordPopup(
+    offset: Int,
+    onDismissRequest: () -> Unit,
+) {
+    TimedPopup(offsetY = offset, onDismissRequest = onDismissRequest) {
+        val theme = ChatTheme.messageComposerTheme.audioRecording.holdToRecord
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(theme.containerPadding),
+            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
+            shape = theme.containerShape,
+            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(theme.contentHeight)
+                    .padding(theme.contentPadding),
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                Text(
+                    style = theme.textStyle,
+                    text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AudioRecordPermissionRationale(
+    onDismissRequest: () -> Unit,
+) {
+    val theme = ChatTheme.messageComposerTheme.audioRecording.permissionRationale
+    val offsetY = with(LocalDensity.current) { theme.containerBottomOffset.toPx().toInt() }
+    TimedPopup(offsetY = offsetY, onDismissRequest = onDismissRequest) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(theme.containerPadding),
+            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
+            shape = theme.containerShape,
+            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(theme.contentHeight)
+                    .padding(theme.contentPadding),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    style = theme.textStyle,
+                    text = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_message),
+                )
+                Spacer(modifier = Modifier.width(theme.contentSpace))
+                val context = LocalContext.current
+                TextButton(
+                    modifier = Modifier,
+                    onClick = { context.openSystemSettings() },
+                ) {
+                    Text(
+                        style = theme.buttonTextStyle,
+                        text = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
+                            .uppercase(),
+                    )
+                }
+            }
         }
     }
 }

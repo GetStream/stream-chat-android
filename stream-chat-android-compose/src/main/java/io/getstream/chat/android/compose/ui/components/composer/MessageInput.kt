@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,7 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 
 /**
  * Input field for the Messages/Conversation screen. Allows label customization, as well as handlers
@@ -129,7 +131,12 @@ public fun MessageInput(
         ) {
             leadingContent()
 
-            centerContent(Modifier.weight(1f))
+            val isRecording = messageComposerState.recording !is RecordingState.Idle
+            if (!isRecording) {
+                centerContent(Modifier.weight(1f))
+            } else {
+                Spacer(Modifier.weight(1f))
+            }
 
             trailingContent()
         }
