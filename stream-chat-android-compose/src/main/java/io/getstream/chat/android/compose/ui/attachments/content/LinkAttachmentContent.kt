@@ -110,7 +110,7 @@ public fun LinkAttachmentContent(
         modifier = modifier
             .padding(MessageStyling.messageSectionPadding)
             .clip(ChatTheme.shapes.attachment)
-            .background(getLinkBackgroundColor(state.isMine))
+            .background(MessageStyling.attachmentBackgroundColor(state.isMine))
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -222,15 +222,6 @@ private fun AttachmentLink(link: String, color: Color) {
             style = ChatTheme.typography.metadataDefault,
             color = color,
         )
-    }
-}
-
-@Composable
-private fun getLinkBackgroundColor(isMine: Boolean): Color {
-    return if (isMine) {
-        ChatTheme.colors.chatBgAttachmentOutgoing
-    } else {
-        ChatTheme.colors.chatBgAttachmentIncoming
     }
 }
 

@@ -47,7 +47,6 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
 import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -211,12 +210,6 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
-private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
-    error("No OwnMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
-    error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
     error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -305,8 +298,6 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
- * @param ownMessageTheme Theme of the current user messages.
- * @param otherMessageTheme Theme of the other users messages.
  * @param messageDateSeparatorTheme Theme of the message date separator.
  * @param messageUnreadSeparatorTheme Theme of the message unread separator.
  * @param messageComposerTheme Theme of the message composer.
@@ -368,18 +359,6 @@ public fun ChatTheme(
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
-    ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
-        isInDarkMode = isInDarkMode,
-        typography = typography,
-        shapes = shapes,
-        colors = colors,
-    ),
-    otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
-        isInDarkMode = isInDarkMode,
-        typography = typography,
-        shapes = shapes,
-        colors = colors,
-    ),
     messageDateSeparatorTheme: MessageDateSeparatorTheme = MessageDateSeparatorTheme.defaultTheme(
         typography = typography,
         colors = colors,
@@ -435,8 +414,6 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
-        LocalOwnMessageTheme provides ownMessageTheme,
-        LocalOtherMessageTheme provides otherMessageTheme,
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
         LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
         LocalMessageComposerTheme provides messageComposerTheme,
@@ -707,38 +684,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReadCountEnabled.current
-
-    /**
-     * Retrieves the current own [MessageTheme] at the call site's position in the hierarchy.
-     */
-    public val ownMessageTheme: MessageTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalOwnMessageTheme.current
-
-    /**
-     * Retrieves the current own [FileAttachmentTheme] at the call site's position in the hierarchy.
-     */
-    public val ownFileAttachmentTheme: FileAttachmentTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = ownMessageTheme.fileAttachmentTheme
-
-    /**
-     * Retrieves the current other [MessageTheme] at the call site's position in the hierarchy.
-     */
-    public val otherMessageTheme: MessageTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalOtherMessageTheme.current
-
-    /**
-     * Retrieves the current other [FileAttachmentTheme] at the call site's position in the hierarchy.
-     */
-    public val otherFileAttachmentTheme: FileAttachmentTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = otherMessageTheme.fileAttachmentTheme
 
     /**
      * Retrieves the current [MessageDateSeparatorTheme] at the call site's position in the hierarchy.

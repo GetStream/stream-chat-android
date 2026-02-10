@@ -189,6 +189,7 @@ public data class StreamColors(
     public val borderCoreDefault: Color,
     public val borderCoreOnAccent: Color,
     public val borderCoreOnDark: Color,
+    public val borderCoreOpacity25: Color,
     public val borderCoreSurfaceSubtle: Color,
     public val borderCorePrimary: Color,
     public val borderUtilityDisabled: Color,
@@ -230,9 +231,11 @@ public data class StreamColors(
     public val buttonSecondaryText: Color = textPrimary,
     public val buttonSecondaryTextOnAccent: Color = textPrimary,
     public val chatBgIncoming: Color,
-    public val chatBgOutgoing: Color,
+    public val chatBgOutgoing: Color = brand100,
     public val chatBgAttachmentIncoming: Color,
     public val chatBgAttachmentOutgoing: Color,
+    public val chatBorderOnChatIncoming: Color,
+    public val chatBorderOnChatOutgoing: Color = brand300,
     public val chatReplyIndicatorIncoming: Color,
     public val chatReplyIndicatorOutgoing: Color,
     public val chatTextIncoming: Color = textPrimary,
@@ -240,6 +243,8 @@ public data class StreamColors(
     public val chatTextLink: Color = accentPrimary,
     public val chatTextMention: Color = chatTextLink,
     public val chatTextTimestamp: Color = textTertiary,
+    public val chatWaveformBar: Color = borderCoreOpacity25,
+    public val chatWaveformBarPlaying: Color = accentPrimary,
     public val controlPlayControlBg: Color = accentBlack,
     public val controlPlayControlIcon: Color = textOnAccent,
     public val controlRemoveBg: Color,
@@ -300,6 +305,7 @@ public data class StreamColors(
             borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
             borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreOpacity25 = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
             borderCorePrimary = StreamPrimitiveColors.blue600,
             borderCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
             borderUtilityDisabled = StreamPrimitiveColors.slate200,
@@ -332,9 +338,9 @@ public data class StreamColors(
             avatarPaletteText4 = StreamPrimitiveColors.purple800,
             avatarPaletteText5 = StreamPrimitiveColors.yellow800,
             chatBgIncoming = StreamPrimitiveColors.slate100,
-            chatBgOutgoing = StreamPrimitiveColors.blue100,
             chatBgAttachmentIncoming = StreamPrimitiveColors.slate200,
             chatBgAttachmentOutgoing = StreamPrimitiveColors.blue200,
+            chatBorderOnChatIncoming = StreamPrimitiveColors.slate300,
             chatReplyIndicatorIncoming = StreamPrimitiveColors.slate400,
             chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue400,
             controlRemoveBg = StreamPrimitiveColors.slate900,
@@ -391,6 +397,7 @@ public data class StreamColors(
             borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
             borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
             borderCoreOnDark = StreamPrimitiveColors.baseWhite,
+            borderCoreOpacity25 = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
             borderCorePrimary = StreamPrimitiveColors.blue300,
             borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral700,
             borderUtilityDisabled = StreamPrimitiveColors.neutral800,
@@ -425,9 +432,9 @@ public data class StreamColors(
             avatarPaletteText4 = StreamPrimitiveColors.purple100,
             avatarPaletteText5 = StreamPrimitiveColors.yellow100,
             chatBgIncoming = StreamPrimitiveColors.neutral800,
-            chatBgOutgoing = StreamPrimitiveColors.blue800,
             chatBgAttachmentIncoming = StreamPrimitiveColors.neutral700,
             chatBgAttachmentOutgoing = StreamPrimitiveColors.blue700,
+            chatBorderOnChatIncoming = StreamPrimitiveColors.slate600,
             chatReplyIndicatorIncoming = StreamPrimitiveColors.neutral500,
             chatReplyIndicatorOutgoing = StreamPrimitiveColors.blue300,
             controlRemoveBg = StreamPrimitiveColors.neutral800,
@@ -476,6 +483,7 @@ internal object StreamPrimitiveColors {
     val slate100 = Color(0xFFF2F4F6)
     val slate150 = Color(0xFFD5DBE1)
     val slate200 = Color(0xFFE2E6EA)
+    val slate300 = Color(0xFFA3ACBA)
     val slate400 = Color(0xFFB8BEC4)
     val slate500 = Color(0xFF687385)
     val slate600 = Color(0xFF838990)

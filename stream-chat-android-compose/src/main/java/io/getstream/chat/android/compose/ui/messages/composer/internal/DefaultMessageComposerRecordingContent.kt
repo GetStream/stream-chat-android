@@ -594,7 +594,8 @@ private fun RecordingContent(
         PlaybackTimerText(
             progress = currentProgress,
             durationInMs = durationInMs,
-            style = playbackTheme.timerTextStyle,
+            color = ChatTheme.colors.textPrimary,
+            countdown = false,
         )
 
         Box(
@@ -609,12 +610,12 @@ private fun RecordingContent(
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
                         .padding(playbackTheme.waveformSliderPadding),
-                    style = playbackTheme.waveformSliderStyle,
                     waveformData = waveformData,
+                    progress = currentProgress,
+                    isPlaying = waveformPlaying,
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,
-                    progress = currentProgress,
                     onDragStart = { currentProgress = it.also(onSliderDragStart) },
                     onDrag = { currentProgress = it },
                     onDragStop = { currentProgress = it.also(onSliderDragStop) },

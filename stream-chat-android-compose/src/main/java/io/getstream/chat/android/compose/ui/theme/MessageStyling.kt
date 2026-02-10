@@ -60,6 +60,12 @@ internal object MessageStyling {
         typography.bodyDefault.copy(color = colors.chatTextLink)
 
     @Composable
+    fun attachmentBackgroundColor(outgoing: Boolean): Color = when {
+        outgoing -> ChatTheme.colors.chatBgAttachmentOutgoing
+        else -> ChatTheme.colors.chatBgAttachmentIncoming
+    }
+
+    @Composable
     fun timestampStyle(): TextStyle {
         return ChatTheme.typography.metadataDefault.copy(color = ChatTheme.colors.chatTextTimestamp)
     }
