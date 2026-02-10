@@ -57,6 +57,13 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `compact link attachment content`() {
+        snapshotWithDarkMode {
+            LinkAttachmentContent(howMany = 2)
+        }
+    }
+
+    @Test
     fun `image attachment preview content`() {
         snapshotWithDarkModeRow {
             ImageAttachmentPreviewContent()
