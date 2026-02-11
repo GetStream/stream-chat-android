@@ -68,7 +68,8 @@ import kotlin.math.max
  * latest user info retrieved from different, unrelated operations.
  * @property mutedUsers A [StateFlow] providing the list of muted users.
  * @property liveLocations A [StateFlow] providing the active live locations.
- * @property messageLimit The initial limit specifying how many of the latest messages should be kept in memory.
+ * @property messageLimit The initial limit specifying how many of the visible messages should be kept in memory. If
+ * null, no limit is enforced.
  */
 @Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 internal class ChannelStateImpl(
@@ -1097,6 +1098,11 @@ internal class ChannelStateImpl(
 
     // region Users
 
+    /**
+     * Updates the user presence information across all relevant state (members, watchers, messages, channel data).
+     *
+     * @param user The [User] with updated presence information.
+     */
     fun upsertUserPresence(user: User) {
         // Update members state
         _members.update { current ->
@@ -1356,6 +1362,12 @@ internal class ChannelStateImpl(
         messagesWithPolls[poll.id] = linkedMessages
     }
 
+    /**
+     * Updates the read states for the channel.
+     * Preserves local state for the current user if it's more recent than the server data.
+     *
+     * @param reads The list of [ChannelUserRead] states to update.
+     */
     fun updateReads(reads: List<ChannelUserRead>) {
         val currentUserRead = read.value
         // Root cause fix: When updating reads from server data, we should preserve local state

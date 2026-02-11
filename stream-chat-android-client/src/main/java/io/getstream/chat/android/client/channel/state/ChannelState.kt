@@ -117,6 +117,7 @@ public interface ChannelState {
     /** Channel config data */
     public val channelConfig: StateFlow<Config>
 
+    /** If the channel is currently showing messages around a specific message (e.g., from a deep link or search). */
     public val insideSearch: StateFlow<Boolean>
 
     /** The date of the last message sent by the current user. */

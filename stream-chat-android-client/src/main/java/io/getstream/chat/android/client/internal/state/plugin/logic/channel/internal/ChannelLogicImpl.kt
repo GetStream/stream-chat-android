@@ -39,6 +39,25 @@ import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 
+/**
+ * Default implementation of [ChannelLogic] that manages channel state and handles channel operations.
+ *
+ * This class is responsible for:
+ * - Loading channel data from the local database and remote API
+ * - Managing message pagination (loading older/newer messages, loading around a specific message)
+ * - Handling channel events and updating state accordingly
+ * - Managing channel members, watchers, and read states
+ *
+ * @param cid The unique identifier for the channel in the format "type:id".
+ * @param messagesUpdateLogic The logic for managing channel message updates.
+ * @param repository The repository for accessing persisted channel and message data.
+ * @param stateImpl The mutable channel state implementation.
+ * @param mutableGlobalState The global mutable state shared across channels.
+ * @param userPresence Whether to subscribe to user presence event
+ * @param coroutineScope The coroutine scope for launching asynchronous operations.
+ * @param getCurrentUserId A function that returns the current user's ID, or null if not available.
+ * @param now A function that returns the current time in milliseconds.
+ */
 @Suppress("TooManyFunctions", "LongParameterList")
 internal class ChannelLogicImpl(
     override val cid: String,
