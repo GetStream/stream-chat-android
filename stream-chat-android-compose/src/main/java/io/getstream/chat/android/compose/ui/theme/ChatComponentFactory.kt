@@ -173,7 +173,6 @@ import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHe
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageAuthor
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
@@ -1009,7 +1008,7 @@ public interface ChatComponentFactory {
      * message bubble, and reactions.
      */
     @Composable
-    public fun LazyItemScope.MessageContainer(
+    public fun MessageContainer(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -1030,7 +1029,7 @@ public interface ChatComponentFactory {
         onAddAnswer: (Message, Poll, String) -> Unit,
         onReply: (Message) -> Unit,
     ) {
-        DefaultMessageContainer(
+        io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
             onPollUpdated = onPollUpdated,
