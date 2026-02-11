@@ -54,7 +54,7 @@ internal fun ContextualMenu(
 
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(StreamTokens.radiusLg),
+        shape = RoundedCornerShape(StreamTokens.radiusMd),
         color = colors.backgroundElevationElevation2,
         shadowElevation = StreamTokens.elevation3,
         border = BorderStroke(StreamTokens.borderStrokeSubtle, colors.borderCoreSurfaceSubtle),
@@ -101,6 +101,7 @@ internal fun ContextualMenuItem(
 
         Text(
             text = label,
+            style = ChatTheme.typography.bodyEmphasis,
             color = textColor,
             modifier = Modifier.weight(1f),
         )

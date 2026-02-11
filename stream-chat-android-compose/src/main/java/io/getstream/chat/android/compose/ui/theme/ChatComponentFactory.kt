@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -121,6 +120,7 @@ import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -2195,46 +2195,14 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageMenuOptionsItem(
-        modifier: Modifier,
         option: MessageOptionItemState,
         onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     ) {
-        val title = stringResource(id = option.title)
-        // Not using directly the [MessageOptionsItem] because
-        // that one contains our default behavior which is not overridable.
-        MenuOptionItem(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(ChatTheme.dimens.messageOptionsItemHeight),
-            title = title,
-            titleColor = option.titleColor,
-            leadingIcon = {
-                MessageMenuOptionsItemLeadingContent(modifier, option)
-            },
+        ContextualMenuItem(
+            label = stringResource(id = option.title),
+            leadingIcon = option.iconPainter,
+            destructive = option.destructive,
             onClick = { onMessageOptionSelected(option) },
-            style = ChatTheme.typography.body,
-            itemHeight = 56.dp,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        )
-    }
-
-    /**
-     * Factory method for creating the leading icon of the Message options menu item.
-     * This is the icon that appears on the left side of the message option.
-     *
-     * @param option The message option state.
-     */
-    @Composable
-    public fun MessageMenuOptionsItemLeadingContent(
-        modifier: Modifier,
-        option: MessageOptionItemState,
-    ) {
-        Icon(
-            modifier = modifier.padding(horizontal = 16.dp),
-            painter = option.iconPainter,
-            tint = option.iconColor,
-            contentDescription = null,
         )
     }
 
@@ -2388,9 +2356,7 @@ public interface ChatComponentFactory {
         showMoreReactionsIcon: Int,
     ) {
         ReactionOptions(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
+            modifier = modifier,
             reactionTypes = reactionTypes,
             showMoreReactionsIcon = showMoreReactionsIcon,
             onReactionOptionSelected = {

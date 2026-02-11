@@ -94,9 +94,8 @@ class MessageInfoComponentFactory : ChatComponentFactory {
         val allOptions = listOf(
             MessageOptionItemState(
                 title = R.string.message_option_message_info,
-                titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = rememberVectorPainter(Icons.Outlined.Info),
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
                 action = CustomAction(message, mapOf("message_info" to true)),
             ),
         ) + messageOptions

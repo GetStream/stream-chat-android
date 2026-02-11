@@ -86,9 +86,8 @@ class DeleteMessageForMeComponentFactory(
                         add(
                             MessageOptionItemState(
                                 title = R.string.message_option_delete_for_me,
-                                titleColor = ChatTheme.colors.errorAccent,
                                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
-                                iconColor = ChatTheme.colors.errorAccent,
+                                destructive = true,
                                 action = CustomAction(message, mapOf("delete_for_me" to true)),
                             ),
                         )
