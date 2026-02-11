@@ -137,7 +137,7 @@ public class StateRegistry(
             ChannelStateImpl(
                 channelType = channelType,
                 channelId = channelId,
-                currentUser = userStateFlow.value!!,
+                currentUser = userStateFlow,
                 latestUsers = latestUsers,
                 mutedUsers = mutedUsers,
                 liveLocations = activeLiveLocations,
@@ -224,7 +224,7 @@ public class StateRegistry(
         queryChannels.clear()
         legacyChannels.forEach { it.value.destroy() }
         legacyChannels.clear()
-        // channels.forEach { it.value.destroy() } // TODO: Implement this
+        channels.forEach { it.value.destroy() }
         channels.clear()
         queryThreads.forEach { it.value.destroy() }
         queryThreads.clear()
@@ -252,7 +252,7 @@ public class StateRegistry(
         val removed = if (useLegacyChannelState) {
             legacyChannels.remove(channelType to channelId)?.destroy()
         } else {
-            // channels.remove(channelType to channelId)?.destroy() // TODO: Implement this
+            channels.remove(channelType to channelId)?.destroy()
         }
         logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }
     }
