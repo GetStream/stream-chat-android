@@ -25,14 +25,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,7 +81,6 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param state - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
  * @param modifier Modifier for styling.
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
@@ -87,15 +89,11 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 public fun LinkAttachmentContent(
     state: AttachmentState,
     modifier: Modifier = Modifier,
-    linkDescriptionMaxLines: Int = 2,
     onItemClick: (LinkAttachmentClickData) -> Unit = {
         onLinkAttachmentContentClick(it.context, it.url)
     },
 ) {
-    val context = LocalContext.current
-    val message = state.message
-    val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
-    val textColor = MessageStyling.textColor(outgoing = state.isMine)
+    val attachment = state.message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
 
     checkNotNull(attachment) {
         "Missing link attachment."
@@ -106,52 +104,138 @@ public fun LinkAttachmentContent(
         "Missing preview URL."
     }
 
-    Column(
-        modifier = modifier
-            .padding(MessageStyling.messageSectionPadding)
-            .clip(ChatTheme.shapes.attachment)
-            .background(MessageStyling.attachmentBackgroundColor(state.isMine))
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {
-                    onItemClick(
-                        LinkAttachmentClickData(
-                            context = context,
-                            url = previewUrl.addSchemeToUrlIfNeeded(),
-                            attachment = attachment,
-                            message = message,
-                        ),
-                    )
-                },
-                onLongClick = { state.onLongItemClick(message) },
-            ),
-    ) {
+    val context = LocalContext.current
+    val textColor = MessageStyling.textColor(outgoing = state.isMine)
+    val baseModifier = modifier
+        .padding(MessageStyling.messageSectionPadding)
+        .fillMaxWidth()
+        .clip(ChatTheme.shapes.attachment)
+        .background(MessageStyling.attachmentBackgroundColor(state.isMine))
+        .combinedClickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+            onClick = {
+                onItemClick(
+                    LinkAttachmentClickData(
+                        context = context,
+                        url = previewUrl.addSchemeToUrlIfNeeded(),
+                        attachment = attachment,
+                        message = state.message,
+                    ),
+                )
+            },
+            onLongClick = { state.onLongItemClick(state.message) },
+        )
+
+    if (state.message.attachments.size == 1) {
+        FullSizeLinkAttachmentContent(
+            modifier = baseModifier,
+            previewUrl = previewUrl,
+            attachment = attachment,
+            textColor = textColor,
+        )
+    } else {
+        CompactLinkAttachmentContent(
+            modifier = baseModifier,
+            previewUrl = previewUrl,
+            attachment = attachment,
+            textColor = textColor,
+        )
+    }
+}
+
+@Composable
+private fun FullSizeLinkAttachmentContent(
+    modifier: Modifier,
+    previewUrl: String,
+    attachment: Attachment,
+    textColor: Color,
+) {
+    Column(modifier = modifier) {
         attachment.imagePreviewUrl?.let {
-            LinkAttachmentImagePreview(it)
+            LinkAttachmentImagePreview(it, Modifier.heightIn(max = 144.dp))
         }
 
         Spacer(Modifier.height(StreamTokens.spacingSm))
 
         attachment.title?.let {
-            LinkAttachmentTitle(it, textColor)
+            LinkAttachmentTitle(
+                text = it,
+                color = textColor,
+                modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
+            )
         }
 
         attachment.text?.let {
-            LinkAttachmentDescription(it, linkDescriptionMaxLines, textColor)
+            LinkAttachmentDescription(
+                description = it,
+                maxLines = 2,
+                color = textColor,
+                modifier = Modifier.padding(
+                    start = StreamTokens.spacingSm,
+                    end = StreamTokens.spacingSm,
+                    top = StreamTokens.spacing2xs,
+                ),
+            )
         }
 
-        AttachmentLink(previewUrl, textColor)
+        AttachmentLink(
+            link = previewUrl,
+            color = textColor,
+            modifier = Modifier.padding(
+                start = StreamTokens.spacingSm,
+                end = StreamTokens.spacingSm,
+                top = StreamTokens.spacing2xs,
+                bottom = StreamTokens.spacingSm,
+            ),
+        )
     }
 }
 
 @Composable
-private fun LinkAttachmentImagePreview(imageUrl: String) {
-    val contentScale = ContentScale.FillWidth
+private fun CompactLinkAttachmentContent(
+    modifier: Modifier,
+    attachment: Attachment,
+    previewUrl: String,
+    textColor: Color,
+) {
+    Row(
+        modifier = modifier.padding(
+            top = StreamTokens.spacingXs,
+            bottom = StreamTokens.spacingXs,
+            start = StreamTokens.spacingXs,
+            end = StreamTokens.spacingSm,
+        ),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+    ) {
+        attachment.imagePreviewUrl?.let {
+            LinkAttachmentImagePreview(
+                imageUrl = it,
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(StreamTokens.radiusMd)),
+            )
+        }
+
+        Column {
+            attachment.title?.let {
+                LinkAttachmentTitle(it, textColor)
+            }
+
+            attachment.text?.let {
+                LinkAttachmentDescription(it, maxLines = 1, color = textColor)
+            }
+
+            AttachmentLink(previewUrl, textColor)
+        }
+    }
+}
+
+@Composable
+private fun LinkAttachmentImagePreview(imageUrl: String, modifier: Modifier) {
+    val contentScale = ContentScale.Crop
     StreamAsyncImage(
-        modifier = Modifier
-            .heightIn(max = 144.dp)
-            .testTag("Stream_LinkAttachmentPreview"),
+        modifier = modifier.testTag("Stream_LinkAttachmentPreview"),
         data = imageUrl,
         contentScale = contentScale,
     ) { state ->
@@ -168,11 +252,9 @@ private fun LinkAttachmentImagePreview(imageUrl: String) {
 }
 
 @Composable
-private fun LinkAttachmentTitle(text: String, color: Color) {
+private fun LinkAttachmentTitle(text: String, color: Color, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier
-            .padding(horizontal = StreamTokens.spacingSm)
-            .testTag("Stream_LinkAttachmentTitle"),
+        modifier = modifier.testTag("Stream_LinkAttachmentTitle"),
         text = text,
         style = ChatTheme.typography.captionEmphasis,
         color = color,
@@ -180,15 +262,9 @@ private fun LinkAttachmentTitle(text: String, color: Color) {
 }
 
 @Composable
-private fun LinkAttachmentDescription(description: String, maxLines: Int, color: Color) {
+private fun LinkAttachmentDescription(description: String, maxLines: Int, color: Color, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier
-            .padding(
-                start = StreamTokens.spacingSm,
-                end = StreamTokens.spacingSm,
-                top = StreamTokens.spacing2xs,
-            )
-            .testTag("Stream_LinkAttachmentDescription"),
+        modifier = modifier.testTag("Stream_LinkAttachmentDescription"),
         text = description,
         style = ChatTheme.typography.metadataDefault,
         color = color,
@@ -198,14 +274,9 @@ private fun LinkAttachmentDescription(description: String, maxLines: Int, color:
 }
 
 @Composable
-private fun AttachmentLink(link: String, color: Color) {
+private fun AttachmentLink(link: String, color: Color, modifier: Modifier = Modifier) {
     Row(
-        modifier = Modifier.padding(
-            start = StreamTokens.spacingSm,
-            end = StreamTokens.spacingSm,
-            top = StreamTokens.spacing2xs,
-            bottom = StreamTokens.spacingSm,
-        ),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -245,31 +316,40 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
 
 @Preview(showBackground = true)
 @Composable
-private fun LinkAttachmentContentPreview() {
+private fun FullSizeLinkAttachmentContentPreview() {
     ChatTheme {
-        LinkAttachmentContent()
+        LinkAttachmentContent(1)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CompactLinkAttachmentContentPreview() {
+    ChatTheme {
+        LinkAttachmentContent(2)
     }
 }
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-internal fun LinkAttachmentContent() {
+internal fun LinkAttachmentContent(howMany: Int) {
     val previewHandler = AsyncImagePreviewHandler {
         ColorImage(color = Color.Cyan.toArgb(), width = 200, height = 150)
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        val attachment = Attachment(
-            titleLink = "Link",
-            title = "Title",
-            text = LongDescription,
-            imageUrl = "Image",
-            authorName = "Author",
-        )
+        val attachments = List(howMany) {
+            Attachment(
+                titleLink = "Link $it",
+                title = "Title $it",
+                text = LongDescription,
+                imageUrl = "Image $it",
+                authorName = "Author $it",
+            )
+        }
         LinkAttachmentContent(
             state = AttachmentState(
-                message = Message(attachments = listOf(attachment)),
+                message = Message(attachments = attachments),
             ),
-            linkDescriptionMaxLines = 2,
         )
     }
 }
