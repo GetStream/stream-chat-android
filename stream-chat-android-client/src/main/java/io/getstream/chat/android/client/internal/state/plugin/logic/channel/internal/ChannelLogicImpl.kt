@@ -25,8 +25,10 @@ import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
+import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -41,6 +43,7 @@ import java.util.Date
 internal class ChannelLogicImpl(
     override val cid: String,
     override val messagesUpdateLogic: ChannelMessagesUpdateLogic,
+    private val repository: RepositoryFacade,
     private val stateImpl: ChannelStateImpl,
     private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
@@ -59,7 +62,19 @@ internal class ChannelLogicImpl(
     )
 
     override suspend fun updateStateFromDatabase(query: QueryChannelRequest) {
-        // TODO: Implement additionally
+        if (query.isNotificationUpdate) return
+        if (query.isFilteringMessages()) return
+        // Populate from DB ONLY if loading latest messages
+        val channel = fetchOfflineChannel(cid, query) ?: return
+        updateDataForChannel(
+            channel = channel,
+            messageLimit = query.messagesLimit(),
+            // Note: The following arguments are NOT used. But they are kept for backwards compatibility.
+            shouldRefreshMessages = query.shouldRefresh,
+            scrollUpdate = false,
+            isNotificationUpdate = query.isNotificationUpdate,
+            isChannelsStateUpdate = true,
+        )
     }
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
@@ -374,5 +389,14 @@ internal class ChannelLogicImpl(
                 stateImpl.trimNewestMessages()
             }
         }
+    }
+
+    private suspend fun fetchOfflineChannel(cid: String, request: QueryChannelRequest): Channel? {
+        // Fetch channel data from DB
+        val channel = repository.selectChannel(cid) ?: return null
+        // Fetch messages for the channel
+        val messages = repository.selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
+        // Enrich the channel with messages
+        return channel.copy(messages = messages)
     }
 }

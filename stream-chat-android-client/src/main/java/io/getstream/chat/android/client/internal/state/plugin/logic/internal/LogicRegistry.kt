@@ -303,6 +303,7 @@ internal class LogicRegistry internal constructor(
             ChannelLogicImpl(
                 cid = "$type:$id",
                 messagesUpdateLogic = messagesUpdateLogic,
+                repository = repos,
                 stateImpl = state,
                 mutableGlobalState = mutableGlobalState,
                 userPresence = userPresence,
