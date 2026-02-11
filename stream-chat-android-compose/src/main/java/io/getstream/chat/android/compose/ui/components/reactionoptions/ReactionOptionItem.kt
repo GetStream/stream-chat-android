@@ -39,7 +39,7 @@ public fun ReactionOptionItem(
     ChatTheme.componentFactory.ReactionToggle(
         type = option.item.type,
         emoji = option.item.emoji,
-        size = ReactionToggleSize.Medium,
+        size = ReactionToggleSize.Large,
         checked = option.isSelected,
         onCheckedChange = null,
         modifier = modifier.testTag("Stream_Reaction_${option.item.type}"),

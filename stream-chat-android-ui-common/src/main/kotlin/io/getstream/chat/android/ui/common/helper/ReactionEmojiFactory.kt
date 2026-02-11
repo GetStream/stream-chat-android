@@ -48,7 +48,7 @@ public fun interface ReactionEmojiFactory {
      */
     public fun emojiCode(type: String): String?
 
-    public companion object Companion {
+    public companion object {
         /**
          * Builds the default reaction emoji factory that provides emoji codes for the default reaction types.
          *

@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
  * @param emoji The emoji character the [type] maps to, if any.
  * @see [ReactionEmojiFactory]
  */
+// TODO [G.] is this class needed?
 public data class ReactionItem(
     public val type: String,
     public val emoji: String?,

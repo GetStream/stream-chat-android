@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components.reactionoptions
+package io.getstream.chat.android.compose.ui.components.selectedmessage
 
-import androidx.annotation.DrawableRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.compose.R
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.models.Reaction
 
@@ -39,23 +43,20 @@ import io.getstream.chat.android.models.Reaction
  * @param modifier Modifier for styling.
  * @param numberOfReactionsShown The maximum number of reactions shown before the show more reactions button is
  * displayed.
- * @param horizontalArrangement Used for changing the arrangement.
  * @param reactionTypes All available reactions.
- * @param showMoreReactionsIcon Drawable resource used for the show more button.
- * @param itemContent Composable that allows the user to customize the individual items shown in [ReactionOptions].
- * @param showMore Composable that allows the user to customize the show more button.
  */
 @Composable
-public fun ReactionOptions(
+// TODO [G.] move file
+public fun MessageMenuHeader(
     ownReactions: List<Reaction>,
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
     numberOfReactionsShown: Int = DefaultNumberOfReactionsShown,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
-    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
 ) {
+    val componentFactory = ChatTheme.componentFactory
+    val colors = ChatTheme.colors
     val options = reactionTypes.entries.map { (type, emoji) ->
         ReactionOptionItemState(
             item = ReactionItem(type = type, emoji = emoji),
@@ -64,41 +65,40 @@ public fun ReactionOptions(
     }
 
     Row(
-        modifier = modifier,
-        horizontalArrangement = horizontalArrangement,
+        modifier = modifier
+            .background(colors.backgroundElevationElevation2, CircleShape)
+            .border(1.dp, colors.borderCoreDefault, CircleShape)
+            .padding(StreamTokens.spacing2xs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         options.take(numberOfReactionsShown).forEach { option ->
-            key(option.item.type) {
-                with(ChatTheme.componentFactory) {
-                    ReactionMenuOptionItem(
-                        modifier = Modifier,
-                        option = option,
-                        onReactionOptionSelected = onReactionOptionSelected,
-                    )
-                }
-            }
+            componentFactory.ReactionMenuOptionItem(
+                modifier = Modifier,
+                option = option,
+                onReactionOptionSelected = onReactionOptionSelected,
+            )
         }
 
         if (options.size > numberOfReactionsShown) {
-            with(ChatTheme.componentFactory) {
-                ReactionMenuShowMore(Modifier, onShowMoreReactionsSelected, showMoreReactionsIcon)
-            }
+            componentFactory.ReactionMenuShowMore(Modifier, onShowMoreReactionsSelected)
         }
     }
 }
 
 /**
- * Preview of [ReactionOptions] with a single item selected.
+ * Preview of [MessageMenuHeader] with a single item selected.
  */
 @Preview(showBackground = true, name = "ReactionOptions Preview")
 @Composable
-private fun ReactionOptionsPreview() {
+private fun MessageMenuHeaderPreview() {
     ChatTheme {
         val reactionType = ReactionEmoji.defaultReactions.keys.firstOrNull()
 
         if (reactionType != null) {
-            ReactionOptions(
+            MessageMenuHeader(
                 ownReactions = listOf(Reaction(reactionType)),
+                numberOfReactionsShown = 4,
                 onReactionOptionSelected = {},
                 onShowMoreReactionsSelected = {},
             )
@@ -109,4 +109,4 @@ private fun ReactionOptionsPreview() {
 /**
  * The default maximum number of reactions shown before the show more button.
  */
-private const val DefaultNumberOfReactionsShown = 5
+private const val DefaultNumberOfReactionsShown = 3

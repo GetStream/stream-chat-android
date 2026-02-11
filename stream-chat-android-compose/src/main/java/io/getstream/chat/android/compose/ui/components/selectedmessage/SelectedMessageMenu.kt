@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.activity.compose.BackHandler
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,6 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -63,7 +61,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
  * @param shape Changes the shape of [SelectedMessageMenu].
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
- * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param currentUser The currently logged-in user, used to build the message preview.
  * @param onDismiss Handler called when the menu is dismissed.
  */
@@ -78,7 +75,6 @@ public fun SelectedMessageMenu(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
-    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {
@@ -107,7 +103,6 @@ public fun SelectedMessageMenu(
                 ownCapabilities = ownCapabilities,
                 onShowMore = onShowMoreReactionsSelected,
                 reactionTypes = reactionTypes,
-                showMoreReactionsIcon = showMoreReactionsIcon,
             )
         }
 

@@ -117,6 +117,9 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -140,10 +143,10 @@ import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomBu
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
@@ -2147,7 +2150,6 @@ public interface ChatComponentFactory {
      * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onMessageAction Callback for when a message action is clicked.
      * @param reactionTypes The reaction types.
-     * @param showMoreReactionsIcon The icon to show for the "Show more reactions" option.
      */
     @Composable
     public fun MessageMenuHeaderContent(
@@ -2157,16 +2159,23 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
+        // TODO [G.] this should be part of ReactionEmojiFactory. But is that even the place or the best name for it?
+        //  also this map is not good enough. string -> string i mean. there might be types with no emoji
         reactionTypes: Map<String, String>,
-        showMoreReactionsIcon: Int,
     ) {
-        ReactionMenuOptions(
+        MessageMenuHeader(
             modifier = modifier,
-            message = message,
             reactionTypes = reactionTypes,
-            onMessageAction = onMessageAction,
+            onReactionOptionSelected = {
+                onMessageAction(
+                    React(
+                        reaction = Reaction(messageId = message.id, type = it.item.type, emojiCode = it.item.emoji),
+                        message = message,
+                    ),
+                )
+            },
             onShowMoreReactionsSelected = onShowMore,
-            showMoreReactionsIcon = showMoreReactionsIcon,
+            ownReactions = message.ownReactions,
         )
     }
 
@@ -2306,16 +2315,30 @@ public interface ChatComponentFactory {
         reactionTypes: Map<String, String>,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        ReactionMenuOptions(
-            modifier = modifier,
-            message = message,
-            reactionTypes = reactionTypes,
-            onMessageAction = onMessageAction,
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            showMoreReactionsIcon = showMoreReactionsIcon,
-        )
+        // TODO [G.] should be its own component
+        Row(modifier) {
+            reactionTypes.forEach { (type, emoji) ->
+                ReactionToggle(
+                    type = type,
+                    emoji = emoji,
+                    size = ReactionToggleSize.Large,
+                    checked = message.ownReactions.any { it.type == type },
+                    onCheckedChange = {
+                        onMessageAction(
+                            React(
+                                reaction = Reaction(messageId = message.id, type = type, emojiCode = emoji),
+                                message = message,
+                            ),
+                        )
+                    },
+                    modifier = Modifier
+                )
+                // TODO [G.] onShowMoreReactionsSelected -> but probably this is not applicable to the new designs
+                //  because there's a scrollable row
+                // TODO [G.] maybe it's better to redesign the Reactions menu before the rest
+            }
+        }
     }
 
     /**
@@ -2335,40 +2358,6 @@ public interface ChatComponentFactory {
                 .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
                 .padding(vertical = 16.dp),
             items = userReactions,
-        )
-    }
-
-    /**
-     * Factory method for the reaction options in the menu.
-     *
-     * @param message The selected message.
-     * @param reactionTypes The reaction types.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     */
-    @Composable
-    public fun ReactionMenuOptions(
-        modifier: Modifier,
-        message: Message,
-        reactionTypes: Map<String, String>,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
-    ) {
-        ReactionOptions(
-            modifier = modifier,
-            reactionTypes = reactionTypes,
-            showMoreReactionsIcon = showMoreReactionsIcon,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.item.type, emojiCode = it.item.emoji),
-                        message = message,
-                    ),
-                )
-            },
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownReactions = message.ownReactions,
         )
     }
 
@@ -2398,22 +2387,22 @@ public interface ChatComponentFactory {
      * Factory method for creating the reactions menu more option.
      *
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     * @param showMoreReactionsIcon The icon for the show more reactions option.
      */
     @Composable
     public fun ReactionMenuShowMore(
         modifier: Modifier,
         onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        Icon(
-            modifier = modifier.clickable(bounded = false) {
-                onShowMoreReactionsSelected()
-            },
-            painter = painterResource(id = showMoreReactionsIcon),
-            contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
-            tint = ChatTheme.colors.textLowEmphasis,
-        )
+        StreamButton(
+            onClick = onShowMoreReactionsSelected,
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            size = StreamButtonSize.Small,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.stream_compose_ic_plus),
+                contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
+            )
+        }
     }
 
     /**

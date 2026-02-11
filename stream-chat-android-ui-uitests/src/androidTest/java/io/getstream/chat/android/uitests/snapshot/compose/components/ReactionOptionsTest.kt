@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 
@@ -24,7 +24,7 @@ class ReactionOptionsTest : ComposeScreenshotTest() {
 
     @Test
     fun reactionOptions() = runScreenshotTest {
-        ReactionOptions(
+        MessageMenuHeader(
             ownReactions = emptyList(),
             onReactionOptionSelected = {},
             onShowMoreReactionsSelected = {},
