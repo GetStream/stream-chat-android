@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -107,6 +108,7 @@ public fun LinkAttachmentContent(
     val textColor = MessageStyling.textColor(outgoing = state.isMine)
     val baseModifier = modifier
         .padding(MessageStyling.messageSectionPadding)
+        .fillMaxWidth()
         .clip(ChatTheme.shapes.attachment)
         .background(MessageStyling.attachmentBackgroundColor(state.isMine))
         .combinedClickable(
