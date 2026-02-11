@@ -161,6 +161,7 @@ internal class ChannelEventHandlerImpl(
                     state.upsertCachedMessage(enrichedMessage)
                 } else {
                     state.upsertMessage(enrichedMessage)
+                    state.trimOldestMessages()
                 }
                 // Insert pinned message if needed
                 if (enrichedMessage.isPinned(now)) {
@@ -182,6 +183,7 @@ internal class ChannelEventHandlerImpl(
                     state.upsertCachedMessage(event.message)
                 } else {
                     state.upsertMessage(event.message)
+                    state.trimOldestMessages()
                 }
                 // Insert pinned message if needed
                 if (event.message.isPinned(now)) {
@@ -237,6 +239,7 @@ internal class ChannelEventHandlerImpl(
                         state.upsertCachedMessage(event.message)
                     } else {
                         state.upsertMessage(event.message)
+                        state.trimOldestMessages()
                     }
                 }
             }

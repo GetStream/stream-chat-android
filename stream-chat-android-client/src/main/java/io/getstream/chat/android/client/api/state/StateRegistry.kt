@@ -130,6 +130,9 @@ public class StateRegistry(
     }
 
     internal fun channelState(channelType: String, channelId: String): ChannelStateImpl {
+        val baseMessageLimit = messageLimitConfig.channelMessageLimits
+            .find { it.channelType == channelType }
+            ?.baseLimit
         return channels.getOrPut(channelType to channelId) {
             ChannelStateImpl(
                 channelType = channelType,
@@ -138,7 +141,7 @@ public class StateRegistry(
                 latestUsers = latestUsers,
                 mutedUsers = mutedUsers,
                 liveLocations = activeLiveLocations,
-                // TODO; Add message limit config
+                messageLimit = baseMessageLimit,
             )
         }
     }

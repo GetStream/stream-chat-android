@@ -66,7 +66,6 @@ internal class ChannelLogicImpl(
         when {
             query.filteringOlderMessages() -> stateImpl.setLoadingOlderMessages(true)
             query.isFilteringNewerMessages() -> stateImpl.setLoadingNewerMessages(true)
-            !query.isFilteringMessages() -> stateImpl.resetMessageLimit()
         }
     }
 
@@ -132,7 +131,6 @@ internal class ChannelLogicImpl(
                 Error.GenericError("Another request to watch this channel is in progress. Ignoring this request.")
             return Result.Failure(error)
         }
-        stateImpl.resetMessageLimit()
         val request = QueryChannelPaginationRequest(limit)
             .toWatchChannelRequest(userPresence)
             .apply {
@@ -274,6 +272,7 @@ internal class ChannelLogicImpl(
         stateImpl.setChannelConfig(channel.config)
         // Reset messages
         if (messageLimit > 0) {
+            // TODO: Check case when unhiding a channel: watchAndAdd doesn't return the newest message
             stateImpl.setMessages(channel.messages)
             stateImpl.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
@@ -361,6 +360,7 @@ internal class ChannelLogicImpl(
             query.isFilteringNewerMessages() -> {
                 // Loading newer messages - upsert
                 stateImpl.upsertMessages(channel.messages)
+                stateImpl.trimOldestMessages()
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
                     stateImpl.clearCachedLatestMessages()
@@ -371,6 +371,7 @@ internal class ChannelLogicImpl(
             query.filteringOlderMessages() -> {
                 // Loading older messages - prepend
                 stateImpl.upsertMessages(channel.messages)
+                stateImpl.trimNewestMessages()
             }
         }
     }

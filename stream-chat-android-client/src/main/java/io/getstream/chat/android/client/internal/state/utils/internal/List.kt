@@ -32,6 +32,19 @@ package io.getstream.chat.android.client.internal.state.utils.internal
  * limitations under the License.
  */
 
+/**
+ * Updates elements in the list that match the given [filter] by applying the [update] function.
+ * Elements that don't match the filter remain unchanged.
+ *
+ * @param filter A predicate function that determines whether an element should be updated.
+ * @param update A function that takes an element and returns its updated version.
+ * @return A new list containing the updated elements. Elements that did not match the filter are
+ *   included unchanged.
+ */
+internal inline fun <T> List<T>.updateIf(filter: (T) -> Boolean, update: (T) -> T): List<T> = map {
+    if (filter(it)) update(it) else it
+}
+
 private fun <T> MutableList<T>.toImmutableList(): List<T> {
     return this.toList()
 }
@@ -115,4 +128,30 @@ internal fun <T, ID> List<T>.upsertSorted(
         // Element doesn't exist - insert at correct position
         this.toMutableList().insertSorted(element, comparator)
     }
+}
+
+/**
+ * Upserts an element into a sorted list and enforces a maximum size, keeping the last [maxSize]
+ * elements (newest by comparator order).
+ *
+ * This function combines [upsertSorted] with a size constraint. After the upsert operation,
+ * if the resulting list exceeds [maxSize], the oldest elements (those at the beginning of the
+ * sorted list) are removed to maintain the size limit.
+ *
+ * @param T The type of elements in the list.
+ * @param ID The type of the unique identifier for elements.
+ * @param element The element to insert or use for updating an existing element.
+ * @param maxSize The maximum number of elements to retain. Must be positive.
+ * @param idSelector A function that extracts a unique identifier from an element.
+ * @param comparator The comparator used to determine the sort order.
+ * @return A new sorted list containing at most [maxSize] elements, with the newest elements retained.
+ */
+internal fun <T, ID> List<T>.upsertSortedBounded(
+    element: T,
+    maxSize: Int,
+    idSelector: (T) -> ID,
+    comparator: Comparator<in T>,
+): List<T> {
+    val result = upsertSorted(element, idSelector, comparator)
+    return if (result.size > maxSize) result.takeLast(maxSize) else result
 }

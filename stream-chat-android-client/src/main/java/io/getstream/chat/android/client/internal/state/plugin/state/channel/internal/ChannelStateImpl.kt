@@ -25,9 +25,13 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.CACHED_LATEST_MESSAGES_LIMIT
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.TRIM_BUFFER
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
+import io.getstream.chat.android.client.internal.state.utils.internal.updateIf
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSorted
+import io.getstream.chat.android.client.internal.state.utils.internal.upsertSortedBounded
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
 import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.Channel
@@ -52,21 +56,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
-import kotlin.comparisons.compareBy
 import kotlin.math.max
 
 /**
-* Default implementation of the [ChannelState].
-*
-* @property channelType The type of the channel.
-* @property channelId The ID of the channel.
-* @property currentUser The currently logged in user.
-* @property latestUsers A [StateFlow] providing the latest users map. Used to enrich the members/watcher data with the
-* latest user info retrieved from different, unrelated operations.
-* @property mutedUsers A [StateFlow] providing the list of muted users.
-* @property liveLocations A [StateFlow] providing the active live locations.
-*/
-@Suppress("LargeClass", "TooManyFunctions")
+ * Default implementation of the [ChannelState].
+ *
+ * @property channelType The type of the channel.
+ * @property channelId The ID of the channel.
+ * @property currentUser The currently logged in user.
+ * @property latestUsers A [StateFlow] providing the latest users map. Used to enrich the members/watcher data with the
+ * latest user info retrieved from different, unrelated operations.
+ * @property mutedUsers A [StateFlow] providing the list of muted users.
+ * @property liveLocations A [StateFlow] providing the active live locations.
+ * @property messageLimit The initial limit specifying how many of the latest messages should be kept in memory.
+ */
+@Suppress("LargeClass", "LongParameterList", "TooManyFunctions")
 internal class ChannelStateImpl(
     override val channelType: String,
     override val channelId: String,
@@ -74,6 +78,7 @@ internal class ChannelStateImpl(
     private val latestUsers: StateFlow<Map<String, User>>,
     private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
+    private val messageLimit: Int?,
 ) : ChannelState {
 
     override val cid: String = "$channelType:$channelId"
@@ -141,10 +146,8 @@ internal class ChannelStateImpl(
         it.mapValues { entry -> entry.value.toList() }
     }
 
-    // TODO: Add user enrichment
     override val messages: StateFlow<List<Message>> = _messages.asStateFlow()
 
-    // TODO: Add user enrichment
     override val pinnedMessages: StateFlow<List<Message>> = _pinnedMessages.asStateFlow()
 
     override val messagesState: StateFlow<MessagesState> = combineStates(_loading, _messages) { loading, messages ->
@@ -319,6 +322,8 @@ internal class ChannelStateImpl(
 
     /**
      * Upserts a single message into the cached latest messages state.
+     * The cached messages are bounded to [CACHED_LATEST_MESSAGES_LIMIT] to prevent unbounded growth
+     * while the user is in search mode.
      *
      * @param message The message to upsert.
      */
@@ -340,10 +345,11 @@ internal class ChannelStateImpl(
             registerPollForMessage(poll, message.id)
         }
 
-        // Insert or update the message in the sorted list
+        // Insert or update the message in the sorted list with a hard limit
         _cachedLatestMessages.update { current ->
-            current.upsertSorted(
+            current.upsertSortedBounded(
                 element = message,
+                maxSize = CACHED_LATEST_MESSAGES_LIMIT,
                 idSelector = Message::id,
                 comparator = compareBy { it.getCreatedAtOrNull() },
             )
@@ -1093,24 +1099,20 @@ internal class ChannelStateImpl(
 
     fun upsertUserPresence(user: User) {
         // Update members state
-        val updatedMembers = _members.value.map { member ->
-            if (member.getUserId() == user.id) {
-                member.copy(user = user)
-            } else {
-                member
-            }
+        _members.update { current ->
+            current.updateIf(
+                filter = { member -> member.getUserId() == user.id },
+                update = { member -> member.copy(user = user) },
+            )
         }
-        _members.value = updatedMembers
 
         // Update watchers state
-        val updatedWatchers = _watchers.value.map { watcher ->
-            if (watcher.id == user.id) {
-                user
-            } else {
-                watcher
-            }
+        _watchers.update { current ->
+            current.updateIf(
+                filter = { watcher -> watcher.id == user.id },
+                update = { _ -> user },
+            )
         }
-        _watchers.value = updatedWatchers
 
         // Update channel data createdBy if needed
         val currentChannelData = _channelData.value
@@ -1118,7 +1120,25 @@ internal class ChannelStateImpl(
             _channelData.value = currentChannelData.copy(createdBy = user)
         }
 
-        // TODO: Update messages if needed (kinda overhead but probably necessary)
+        // Update messages state
+        _messages.update { current ->
+            current.updateIf(
+                filter = { message -> message.user.id == user.id },
+                update = { message -> message.copy(user = user) },
+            )
+        }
+        _cachedLatestMessages.update { current ->
+            current.updateIf(
+                filter = { message -> message.user.id == user.id },
+                update = { message -> message.copy(user = user) },
+            )
+        }
+        _pinnedMessages.update { current ->
+            current.updateIf(
+                filter = { message -> message.user.id == user.id },
+                update = { message -> message.copy(user = user) },
+            )
+        }
     }
 
     // endregion
@@ -1181,7 +1201,6 @@ internal class ChannelStateImpl(
      */
     fun setLoadingOlderMessages(loadingOlderMessages: Boolean) {
         _loadingOlderMessages.value = loadingOlderMessages
-        // TODO: Consider messageLimit handling
     }
 
     /**
@@ -1212,10 +1231,54 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Resets the current message limit to the [baseMessageLimit].
+     * Trims messages from the oldest end if the limit is exceeded.
+     * Call after loading newer messages or receiving new messages via WebSocket while at the end of the list.
+     *
+     * When trimming occurs:
+     * - [endOfOlderMessages] is set to `false` since the oldest messages are no longer available.
      */
-    fun resetMessageLimit() {
-        // TODO: Not yet implemented
+    fun trimOldestMessages() {
+        applyMessageLimitIfNeeded(TrimDirection.FROM_OLDEST)
+    }
+
+    /**
+     * Trims messages from the newest end if the limit is exceeded.
+     * Call after loading older messages.
+     *
+     * When trimming occurs:
+     * - [endOfNewerMessages] is set to `false` since the newest messages are no longer available.
+     * - [insideSearch] is set to `true` since we're no longer viewing the latest messages.
+     * - The current messages are cached before trimming to preserve them for later retrieval.
+     */
+    fun trimNewestMessages() {
+        applyMessageLimitIfNeeded(TrimDirection.FROM_NEWEST)
+    }
+
+    /**
+     * Applies the message limit by trimming messages from the specified direction.
+     * Updates pagination flags accordingly.
+     *
+     * @param direction The direction from which to trim messages.
+     */
+    private fun applyMessageLimitIfNeeded(direction: TrimDirection) {
+        val limit = messageLimit ?: return
+        val currentSize = _messages.value.size
+        if (currentSize <= limit + TRIM_BUFFER) return
+
+        when (direction) {
+            TrimDirection.FROM_OLDEST -> {
+                _messages.update { it.takeLast(limit) }
+                _endOfOlderMessages.value = false
+            }
+
+            TrimDirection.FROM_NEWEST -> {
+                // Cache the latest messages before trimming to preserve them for later
+                cacheLatestMessages()
+                _messages.update { it.take(limit) }
+                _endOfNewerMessages.value = false
+                _insideSearch.value = true
+            }
+        }
     }
 
     /**
@@ -1351,5 +1414,32 @@ internal class ChannelStateImpl(
             // Server data is more recent, use it
             serverRead
         }
+    }
+
+    /**
+     * Specifies the direction from which messages should be trimmed when the limit is exceeded.
+     */
+    private enum class TrimDirection {
+        /** Trim oldest messages (beginning of the sorted list). */
+        FROM_OLDEST,
+
+        /** Trim newest messages (end of the sorted list). */
+        FROM_NEWEST,
+    }
+
+    private companion object {
+        /**
+         * Hard limit for cached latest messages to prevent unbounded memory growth while in search mode.
+         * When the user is viewing messages around a specific message (e.g., from a deep link or search),
+         * new incoming messages are cached here. This limit ensures memory usage stays bounded even if
+         * the user remains in search mode for an extended period in an active channel.
+         */
+        private const val CACHED_LATEST_MESSAGES_LIMIT = 25
+
+        /**
+         * Buffer to avoid trimming too frequently. Messages are only trimmed when the count exceeds
+         * [messageLimit] + [TRIM_BUFFER].
+         */
+        private const val TRIM_BUFFER = 30
     }
 }
