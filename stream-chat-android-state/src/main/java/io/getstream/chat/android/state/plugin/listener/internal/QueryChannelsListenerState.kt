@@ -62,13 +62,14 @@ internal class QueryChannelsListenerState(
     }
 
     private companion object {
+
         private fun QueryChannelsRequest.toPagination(): AnyChannelPaginationRequest =
             QueryChannelsPaginationRequest(
                 sort = querySort,
                 channelLimit = limit,
                 channelOffset = offset,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
+                messageLimit = messageLimit ?: 10,
+                memberLimit = memberLimit ?: 30,
             ).toAnyChannelPaginationRequest()
     }
 }
