@@ -67,7 +67,7 @@ internal class LogicRegistry internal constructor(
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
     private val now: () -> Long,
-    private val useLegacyChannelLogic: Boolean = true,
+    private val useLegacyChannelLogic: Boolean,
 ) : ChannelStateLogicProvider {
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =

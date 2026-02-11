@@ -306,7 +306,7 @@ internal class ChannelLogicImpl(
         stateImpl.setChannelConfig(channel.config)
         // Reset messages
         if (messageLimit > 0) {
-            // TODO: Check case when unhiding a channel: watchAndAdd doesn't return the newest message
+            // TODO: Check case when unhiding a channel: add doesn't return the newest message (overrides the message.new from cache)
             stateImpl.setMessages(channel.messages)
             stateImpl.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
