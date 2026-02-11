@@ -1186,7 +1186,7 @@ public interface ChatComponentFactory {
     ) {
         ClusteredMessageReactions(
             modifier = params.modifier,
-            options = params.reactions,
+            reactions = params.reactions,
             onClick = params.onClick?.let { onClick -> { onClick(params.message) } },
         )
     }

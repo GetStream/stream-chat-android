@@ -45,22 +45,22 @@ import io.getstream.chat.android.compose.ui.util.ifNotNull
 /**
  * Represents a reaction bubble with a list of reactions this message has.
  *
- * @param options The list of reactions to display.
+ * @param reactions The list of reactions to display.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun ClusteredMessageReactions(
-    options: List<MessageReactionItemState>,
+    reactions: List<MessageReactionItemState>,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
     val description = pluralStringResource(
         R.plurals.stream_ui_message_list_semantics_message_reactions,
-        options.size,
-        options.size,
+        reactions.size,
+        reactions.size,
     )
     val colors = ChatTheme.colors
-    val count = options.sumOf(MessageReactionItemState::count)
+    val count = reactions.sumOf(MessageReactionItemState::count)
 
     Row(
         modifier = modifier
@@ -75,7 +75,7 @@ public fun ClusteredMessageReactions(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
-        options.forEach { option ->
+        reactions.forEach { option ->
             ChatTheme.componentFactory.MessageReactionItem(
                 params = MessageReactionItemParams(state = option),
             )
@@ -90,18 +90,86 @@ public fun ClusteredMessageReactions(
     }
 }
 
-@Preview
+/**
+ * Represents a segmented reaction layout where each reaction gets its own pill with an individual count.
+ *
+ * @param reactions The list of reactions to display.
+ * @param modifier Modifier for styling.
+ * @param onClick Handler when the user taps on the reaction pills.
+ */
 @Composable
-private fun OneMessageReactionPreview() {
-    ChatTheme {
-        ClusteredMessageReactions(options = PreviewReactionData.oneReaction())
+public fun SegmentedMessageReactions(
+    reactions: List<MessageReactionItemState>,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    val description = pluralStringResource(
+        R.plurals.stream_ui_message_list_semantics_message_reactions,
+        reactions.size,
+        reactions.size,
+    )
+    val colors = ChatTheme.colors
+
+    Row(
+        modifier = modifier.semantics {
+            testTag = "Stream_MessageReaction"
+            contentDescription = description
+        },
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        reactions.forEach { option ->
+            Row(
+                modifier = Modifier
+                    .background(colors.barsBackground, CircleShape)
+                    .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
+                    .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
+                    .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+            ) {
+                ChatTheme.componentFactory.MessageReactionItem(
+                    params = MessageReactionItemParams(state = option),
+                )
+                if (option.count > 1) {
+                    Text(
+                        text = option.count.toString(),
+                        style = ChatTheme.typography.numericMedium,
+                        color = colors.textPrimary,
+                    )
+                }
+            }
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ManyMessageReactionsPreview() {
+private fun SingleClusteredMessageReactionsPreview() {
     ChatTheme {
-        ClusteredMessageReactions(options = PreviewReactionData.manyReactions())
+        ClusteredMessageReactions(reactions = PreviewReactionData.oneReaction())
+    }
+}
+
+@Preview
+@Composable
+private fun MultipleClusteredMessageReactionsPreview() {
+    ChatTheme {
+        ClusteredMessageReactions(reactions = PreviewReactionData.manyReactions())
+    }
+}
+
+@Preview
+@Composable
+private fun SingleSegmentedMessageReactionsPreview() {
+    ChatTheme {
+        SegmentedMessageReactions(reactions = PreviewReactionData.oneReaction())
+    }
+}
+
+@Preview
+@Composable
+private fun MultipleSegmentedMessageReactionsPreview() {
+    ChatTheme {
+        SegmentedMessageReactions(reactions = PreviewReactionData.manyReactions())
     }
 }
