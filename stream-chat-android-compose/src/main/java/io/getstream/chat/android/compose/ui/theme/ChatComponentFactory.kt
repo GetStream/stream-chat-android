@@ -2097,6 +2097,7 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         SelectedMessageMenu(
             modifier = modifier,
@@ -2106,6 +2107,7 @@ public interface ChatComponentFactory {
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMore,
             onDismiss = onDismiss,
+            currentUser = currentUser,
         )
     }
 
@@ -2117,6 +2119,7 @@ public interface ChatComponentFactory {
      * @param messageOptions List of message options.
      * @param ownCapabilities The capabilities of the current user.
      */
+    // TODO [G.] unused? also check similar things
     @Composable
     public fun MessageMenuCenterContent(
         modifier: Modifier,

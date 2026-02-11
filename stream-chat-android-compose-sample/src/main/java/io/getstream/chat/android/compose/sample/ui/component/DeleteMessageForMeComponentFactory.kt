@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -62,6 +63,7 @@ class DeleteMessageForMeComponentFactory(
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         val chatClient = ChatClient.instance()
 
@@ -127,6 +129,7 @@ class DeleteMessageForMeComponentFactory(
             onMessageAction = extendedOnMessageAction,
             onShowMore = onShowMore,
             onDismiss = onDismiss,
+            currentUser = currentUser,
         )
     }
 

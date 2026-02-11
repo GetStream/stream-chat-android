@@ -87,6 +87,7 @@ class MessageInfoComponentFactory : ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         var showMessageInfoDialog by remember { mutableStateOf(false) }
 
@@ -139,6 +140,7 @@ class MessageInfoComponentFactory : ChatComponentFactory {
                 onMessageAction = extendedOnMessageAction,
                 onShowMore = onShowMore,
                 onDismiss = onDismiss,
+                currentUser = currentUser,
             )
         }
     }

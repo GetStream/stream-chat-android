@@ -22,6 +22,8 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -458,22 +460,12 @@ private fun BoxScope.MessagesScreenMenus(
 
     AnimatedVisibility(
         visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
+        enter = fadeIn() + scaleIn(initialScale = 0.95f),
+        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)) +
+            scaleOut(targetScale = 0.95f, animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
         ChatTheme.componentFactory.MessageMenu(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween(),
-                    ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                    ),
-                ),
+            modifier = Modifier,
             messageOptions = messageOptions,
             message = selectedMessage,
             ownCapabilities = ownCapabilities,
@@ -497,6 +489,7 @@ private fun BoxScope.MessagesScreenMenus(
                 }
             },
             onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+            currentUser = user,
         )
     }
 

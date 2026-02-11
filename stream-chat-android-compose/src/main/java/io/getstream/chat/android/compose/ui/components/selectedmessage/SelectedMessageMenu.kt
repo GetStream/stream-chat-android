@@ -16,28 +16,43 @@
 
 package io.getstream.chat.android.compose.ui.components.selectedmessage
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
+import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
  * Represents the options user can take after selecting a message.
+ *
+ * The selected message is shown in a centered pop-out overlay with a dark background,
+ * reactions above it and a flat options list below.
  *
  * @param message The selected message.
  * @param messageOptions The available message options within the menu.
@@ -50,10 +65,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
  * @param overlayColor The color applied to the overlay.
  * @param reactionTypes The available reactions within the menu.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
+ * @param currentUser The currently logged-in user, used to build the message preview.
  * @param onDismiss Handler called when the menu is dismissed.
- * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
- * @param centerContent The content shown at the center of the [SelectedMessageMenu] dialog.
- * By Default [MessageOptions].
  */
 @Composable
 public fun SelectedMessageMenu(
@@ -67,38 +80,68 @@ public fun SelectedMessageMenu(
     overlayColor: Color = ChatTheme.colors.overlay,
     reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
+    currentUser: User? = null,
     onDismiss: () -> Unit = {},
-    headerContent: @Composable ColumnScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
-            if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
-                MessageMenuHeaderContent(
-                    modifier = Modifier,
-                    message = message,
-                    messageOptions = messageOptions,
-                    onMessageAction = onMessageAction,
-                    ownCapabilities = ownCapabilities,
-                    onShowMore = onShowMoreReactionsSelected,
-                    reactionTypes = reactionTypes,
-                    showMoreReactionsIcon = showMoreReactionsIcon,
-                )
-            }
-        }
-    },
-    centerContent: @Composable ColumnScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageMenuOptions(Modifier, message, messageOptions, { onMessageAction(it.action) })
-        }
-    },
 ) {
-    SimpleMenu(
-        modifier = modifier,
-        shape = shape,
-        overlayColor = overlayColor,
-        onDismiss = onDismiss,
-        headerContent = headerContent,
-        centerContent = centerContent,
-    )
+    Column(
+        modifier = modifier
+            .background(overlayColor)
+            .fillMaxSize()
+            .clickable(
+                onClick = onDismiss,
+                indication = null,
+                interactionSource = null,
+            )
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 8.dp),
+        verticalArrangement = Arrangement.Center,
+    ) {
+        // Reactions
+        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+        if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
+            ChatTheme.componentFactory.MessageMenuHeaderContent(
+                modifier = Modifier,
+                message = message,
+                messageOptions = messageOptions,
+                onMessageAction = onMessageAction,
+                ownCapabilities = ownCapabilities,
+                onShowMore = onShowMoreReactionsSelected,
+                reactionTypes = reactionTypes,
+                showMoreReactionsIcon = showMoreReactionsIcon,
+            )
+        }
+
+        val messageItemState = MessageItemState(
+            message = message,
+            isMine = message.user.id == currentUser?.id,
+            currentUser = currentUser,
+            ownCapabilities = ownCapabilities,
+            showMessageFooter = true,
+        )
+        MessageContainer(
+            modifier = Modifier.disablePointerEvents(),
+            messageItem = messageItemState,
+            reactionSorting = ReactionSortingByLastReactionAt,
+            onLongItemClick = {},
+        )
+
+        // Options
+        ChatTheme.componentFactory.MessageMenuOptions(
+            modifier = Modifier,
+            message = message,
+            options = messageOptions,
+            onMessageOptionSelected = { onMessageAction(it.action) })
+    }
+
+    BackHandler(enabled = true, onBack = onDismiss)
+}
+
+private fun Modifier.disablePointerEvents(): Modifier = pointerInput(Unit) {
+    awaitPointerEventScope {
+        while (true) {
+            awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
+        }
+    }
 }
 
 /**
