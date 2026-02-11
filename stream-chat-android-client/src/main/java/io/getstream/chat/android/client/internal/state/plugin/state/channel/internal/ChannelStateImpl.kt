@@ -442,22 +442,39 @@ internal class ChannelStateImpl(
      * @param userId The ID of the user whose messages should be deleted.
      * @param hard If true, messages are hard deleted; if false, they are soft deleted (marked as deleted).
      * @param deletedAt The timestamp to set for soft-deleted messages.
+     * TODO: Manually test this
      */
     fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
-        // TODO: Optimize this logic by running the query once per message set
-        val messagesFromUser = _messages.value.filter { it.user.id == userId } +
-            _cachedLatestMessages.value.filter { it.user.id == userId } +
-            _pinnedMessages.value.filter { it.user.id == userId }
-        if (messagesFromUser.isEmpty()) return
         if (hard) {
-            // Delete messages from state
-            val ids = messagesFromUser.map { it.id }.toSet()
-            deleteMessages(ids)
+            // Hard delete: filter out user messages per message set
+            _messages.update { current ->
+                current.filterNot { it.user.id == userId }
+            }
+            _cachedLatestMessages.update { current ->
+                current.filterNot { it.user.id == userId }
+            }
+            _pinnedMessages.update { current ->
+                current.filterNot { it.user.id == userId }
+            }
         } else {
-            // Mark messages as deleted (soft delete)
-            for (message in messagesFromUser) {
-                val deletedMessage = message.copy(deletedAt = deletedAt)
-                updateMessage(deletedMessage)
+            // Soft delete: mark user messages as deleted per message set
+            _messages.update { current ->
+                current.updateIf(
+                    filter = { it.user.id == userId },
+                    update = { it.copy(deletedAt = deletedAt) },
+                )
+            }
+            _cachedLatestMessages.update { current ->
+                current.updateIf(
+                    filter = { it.user.id == userId },
+                    update = { it.copy(deletedAt = deletedAt) },
+                )
+            }
+            _pinnedMessages.update { current ->
+                current.updateIf(
+                    filter = { it.user.id == userId },
+                    update = { it.copy(deletedAt = deletedAt) },
+                )
             }
         }
     }
