@@ -94,7 +94,7 @@ public data class StateConfig @JvmOverloads constructor(
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(hours = 12),
     public val now: () -> Long = { System.currentTimeMillis() },
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
-    public val useLegacyChannelLogic: Boolean = false,
+    public val useLegacyChannelLogic: Boolean = true,
 )
 
 /**
