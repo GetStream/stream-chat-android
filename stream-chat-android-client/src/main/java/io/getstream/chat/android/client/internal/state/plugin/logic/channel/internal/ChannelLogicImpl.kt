@@ -377,7 +377,6 @@ internal class ChannelLogicImpl(
                 // Loading messages around a specific message:
                 // 1. Cache the current messages (for access to latest messages) (unless already inside search)
                 // 2. Replace the active messages with the loaded ones
-                // TODO: Consider merging with existing messages if an intersection is found
                 if (stateImpl.insideSearch.value) {
                     // We are currently around a message, don't cache the latest messages, just replace the active set
                     // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the

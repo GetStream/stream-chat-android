@@ -63,7 +63,7 @@ import kotlin.math.max
  *
  * @property channelType The type of the channel.
  * @property channelId The ID of the channel.
- * @property currentUser The currently logged in user.
+ * @property currentUser A [StateFlow] providing the currently logged in user.
  * @property latestUsers A [StateFlow] providing the latest users map. Used to enrich the members/watcher data with the
  * latest user info retrieved from different, unrelated operations.
  * @property mutedUsers A [StateFlow] providing the list of muted users.
@@ -75,7 +75,7 @@ import kotlin.math.max
 internal class ChannelStateImpl(
     override val channelType: String,
     override val channelId: String,
-    private val currentUser: User, // TODO: Check if we can rely on user being always up to date (ex. switchUser)
+    private val currentUser: StateFlow<User?>,
     private val latestUsers: StateFlow<Map<String, User>>,
     private val mutedUsers: StateFlow<List<Mute>>,
     private val liveLocations: StateFlow<List<Location>>,
@@ -176,8 +176,8 @@ internal class ChannelStateImpl(
         reads.values.sortedBy(ChannelUserRead::lastRead)
     }
 
-    override val read: StateFlow<ChannelUserRead?> = _reads.mapState { reads ->
-        reads[currentUser.id]
+    override val read: StateFlow<ChannelUserRead?> = combineStates(_reads, currentUser) { reads, currentUser ->
+        currentUser?.id?.let { reads[it] }
     }
 
     override val unreadCount: StateFlow<Int> = read.mapState { read ->
@@ -225,7 +225,7 @@ internal class ChannelStateImpl(
     override val lastSentMessageDate: StateFlow<Date?> = combineStates(channelConfig, messages) { config, messages ->
         // TODO: Optimize this logic, we don't need to scan all messages every time
         messages
-            .filter { it.user.id == currentUser.id }
+            .filter { it.user.id == currentUser.value?.id }
             .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
     }
 
@@ -860,6 +860,37 @@ internal class ChannelStateImpl(
     }
 
     /**
+     * Updates the read states for the channel.
+     * Preserves local state for the current user if it's more recent than the server data.
+     *
+     * @param reads The list of [ChannelUserRead] states to update.
+     */
+    fun updateReads(reads: List<ChannelUserRead>) {
+        val currentUserRead = read.value
+        // Root cause fix: When updating reads from server data, we should preserve local state
+        // if it's more recent (has a newer lastReceivedEventDate). This prevents stale server
+        // data from overwriting recent local updates, which happens when:
+        // 1. Hidden channels receive messages (server doesn't track unread counts for hidden channels)
+        // 2. Race conditions where updateCurrentUserRead() has updated local state but a concurrent
+        //    query channels update calls updateReads() with stale server data
+        // 3. When visible channels work correctly, server data is more recent, so it's used
+        val readsToUpsert = if (currentUserRead != null) {
+            reads.map { serverRead ->
+                if (serverRead.getUserId() == currentUser.value?.id) {
+                    mergeCurrentUserRead(currentUserRead, serverRead)
+                } else {
+                    serverRead
+                }
+            }
+        } else {
+            reads
+        }
+        _reads.update { current ->
+            current + readsToUpsert.associateBy(ChannelUserRead::getUserId)
+        }
+    }
+
+    /**
      * Updates the reads state for the current user based on a received event.
      * Handles `message.new` and `notification.message_new` events.
      *
@@ -885,7 +916,7 @@ internal class ChannelStateImpl(
             return
         }
         // Skip update for messages from current user
-        val isFromCurrentUser = message.user.id == currentUser.id
+        val isFromCurrentUser = message.user.id == currentUser.value?.id
         if (isFromCurrentUser) {
             processedMessageIds.put(message.id, true)
             return
@@ -1310,9 +1341,10 @@ internal class ChannelStateImpl(
     /**
      * Caches the latest messages for the channel.
      * Call when calling `Jump to message` to preserve the current latest messages.
+     * Only the last [CACHED_LATEST_MESSAGES_LIMIT] messages are cached to prevent unbounded memory growth.
      */
     fun cacheLatestMessages() {
-        _cachedLatestMessages.value = _messages.value
+        _cachedLatestMessages.value = _messages.value.takeLast(CACHED_LATEST_MESSAGES_LIMIT)
     }
 
     /**
@@ -1325,9 +1357,64 @@ internal class ChannelStateImpl(
 
     // endregion
 
+    // region Destroy
+
+    /**
+     * Resets all state to default/empty values.
+     * This clears the data held by the channel state without nullifying the flows themselves,
+     * allowing collectors to continue receiving (empty) updates until they are cancelled.
+     */
+    fun destroy() {
+        // Messages
+        _repliedMessage.value = null
+        _quotedMessagesMap.value = emptyMap()
+        _messages.value = emptyList()
+        _cachedLatestMessages.value = emptyList()
+        _pinnedMessages.value = emptyList()
+        _oldMessages.value = emptyList()
+
+        // Watchers
+        _watcherCount.value = 0
+        _watchers.value = emptyList()
+
+        // Typing events
+        _typing.value = TypingEvent(channelId, emptyList())
+
+        // Read state
+        _reads.value = emptyMap()
+
+        // Members
+        _memberCount.value = 0
+        _members.value = emptyList()
+
+        // Channel data
+        _channelData.value = null
+        _hidden.value = false
+        _muted.value = false
+        _channelConfig.value = Config()
+
+        // Non-channel states
+        _loading.value = false
+        _loadingOlderMessages.value = false
+        _loadingNewerMessages.value = false
+        _endOfOlderMessages.value = false
+        _endOfNewerMessages.value = true
+        _recoveryNeeded = false
+        _insideSearch.value = false
+        lastStartTypingEvent = null
+        keystrokeParentMessageId = null
+
+        // Clear non-StateFlow mutable state
+        messagesWithPolls.clear()
+        polls.clear()
+        processedMessageIds.evictAll()
+    }
+
+    // endregion
+
     private fun shouldIgnoreUpsertion(message: Message): Boolean {
         // Skip messages from other shadow banned users
-        val isFromCurrentUser = message.user.id == currentUser.id
+        val isFromCurrentUser = message.user.id == currentUser.value?.id
         val isFromShadowBannedUser = message.shadowed
         if (!isFromCurrentUser && isFromShadowBannedUser) {
             return true
@@ -1360,37 +1447,6 @@ internal class ChannelStateImpl(
         polls[poll.id] = poll
         val linkedMessages = messagesWithPolls[poll.id].orEmpty() + messageId
         messagesWithPolls[poll.id] = linkedMessages
-    }
-
-    /**
-     * Updates the read states for the channel.
-     * Preserves local state for the current user if it's more recent than the server data.
-     *
-     * @param reads The list of [ChannelUserRead] states to update.
-     */
-    fun updateReads(reads: List<ChannelUserRead>) {
-        val currentUserRead = read.value
-        // Root cause fix: When updating reads from server data, we should preserve local state
-        // if it's more recent (has a newer lastReceivedEventDate). This prevents stale server
-        // data from overwriting recent local updates, which happens when:
-        // 1. Hidden channels receive messages (server doesn't track unread counts for hidden channels)
-        // 2. Race conditions where updateCurrentUserRead() has updated local state but a concurrent
-        //    query channels update calls updateReads() with stale server data
-        // 3. When visible channels work correctly, server data is more recent, so it's used
-        val readsToUpsert = if (currentUserRead != null) {
-            reads.map { serverRead ->
-                if (serverRead.getUserId() == currentUser.id) {
-                    mergeCurrentUserRead(currentUserRead, serverRead)
-                } else {
-                    serverRead
-                }
-            }
-        } else {
-            reads
-        }
-        _reads.update { current ->
-            current + readsToUpsert.associateBy(ChannelUserRead::getUserId)
-        }
     }
 
     /**
