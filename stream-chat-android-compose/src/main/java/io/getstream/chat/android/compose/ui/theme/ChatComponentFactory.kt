@@ -1005,6 +1005,7 @@ public interface ChatComponentFactory {
     public fun MessageContainer(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
+        modifier: Modifier,
         onPollUpdated: (Message, Poll) -> Unit,
         onCastVote: (Message, Poll, Option) -> Unit,
         onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -1026,6 +1027,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
+            modifier = modifier,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,

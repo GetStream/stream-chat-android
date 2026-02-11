@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -83,6 +82,8 @@ public fun SelectedMessageMenu(
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {
+    val componentFactory = ChatTheme.componentFactory
+
     Column(
         modifier = modifier
             .background(overlayColor)
@@ -96,10 +97,9 @@ public fun SelectedMessageMenu(
             .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        // Reactions
-        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
-        if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
-            ChatTheme.componentFactory.MessageMenuHeaderContent(
+        val canLeaveReaction = ChannelCapabilities.SEND_REACTION in ownCapabilities
+        if (canLeaveReaction && ChatTheme.reactionOptionsTheme.areReactionOptionsVisible) {
+            componentFactory.MessageMenuHeaderContent(
                 modifier = Modifier,
                 message = message,
                 messageOptions = messageOptions,
@@ -118,15 +118,31 @@ public fun SelectedMessageMenu(
             ownCapabilities = ownCapabilities,
             showMessageFooter = true,
         )
-        MessageContainer(
+        componentFactory.MessageContainer(
             modifier = Modifier.disablePointerEvents(),
             messageItem = messageItemState,
             reactionSorting = ReactionSortingByLastReactionAt,
+            onPollUpdated = { _, _ -> },
+            onCastVote = { _, _, _ -> },
+            onRemoveVote = { _, _, _ -> },
+            selectPoll = { _, _, _ -> },
+            onClosePoll = {},
+            onAddPollOption = { _, _ -> },
             onLongItemClick = {},
+            onThreadClick = {},
+            onReactionsClick = {},
+            onGiphyActionClick = {},
+            onMediaGalleryPreviewResult = {},
+            onQuotedMessageClick = {},
+            onUserAvatarClick = null,
+            onMessageLinkClick = null,
+            onUserMentionClick = {},
+            onAddAnswer = { _, _, _ -> },
+            onReply = {},
         )
 
         // Options
-        ChatTheme.componentFactory.MessageMenuOptions(
+        componentFactory.MessageMenuOptions(
             modifier = Modifier,
             message = message,
             options = messageOptions,
