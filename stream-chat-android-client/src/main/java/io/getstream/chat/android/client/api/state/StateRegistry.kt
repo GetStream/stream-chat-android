@@ -63,7 +63,7 @@ public class StateRegistry(
     private val now: () -> Long,
     private val scope: CoroutineScope,
     private val messageLimitConfig: MessageLimitConfig,
-    private val useLegacyChannelState: Boolean = true,
+    private val useLegacyChannelState: Boolean,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
