@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,32 +35,23 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
-import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingFloatingIconStyle
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlin.math.abs
 
 @Composable
-internal fun AudioRecordContent(
+internal fun AudioRecordingContent(
     recordingState: RecordingState,
     recordingActions: AudioRecordingActions,
     modifier: Modifier = Modifier,
@@ -231,70 +220,6 @@ private fun MicIndicatorIcon() {
     }
 }
 
-/** Floating lock icon that follows the drag offset during Hold, or snaps above controls when Locked. */
-@Composable
-internal fun FloatingLockIcon(
-    isLocked: Boolean,
-    holdControlsOffset: IntOffset,
-) {
-    val density = LocalDensity.current
-    val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playback.height
-    val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
-    val totalContentHeight = playbackHeight + controlsHeight
-    val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset
-    val lockOffset = with(density) {
-        IntOffset(
-            x = -edgeOffset.x.toPx().toInt(),
-            y = when (isLocked) {
-                true -> -totalContentHeight.toPx().toInt() - edgeOffset.y.toPx().toInt()
-                else -> -playbackHeight.toPx().toInt() - edgeOffset.y.toPx().toInt() + holdControlsOffset.y
-            },
-        )
-    }
-    Popup(
-        offset = lockOffset,
-        alignment = Alignment.BottomEnd,
-    ) {
-        RecordingLockableIcon(locked = isLocked)
-    }
-}
-
-@Composable
-private fun RecordingLockableIcon(
-    locked: Boolean,
-) {
-    if (locked) {
-        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.locked)
-    } else {
-        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lock)
-    }
-}
-
-@Composable
-private fun RecordingFloatingIcon(
-    style: AudioRecordingFloatingIconStyle,
-) {
-    Card(
-        modifier = Modifier
-            .size(style.size)
-            .padding(style.padding),
-        shape = style.backgroundShape,
-        colors = CardDefaults.cardColors(containerColor = style.backgroundColor),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Icon(
-                painter = style.icon.painter,
-                contentDescription = null,
-                modifier = Modifier.size(style.icon.size),
-                tint = style.icon.tint,
-            )
-        }
-    }
-}
-
 @Composable
 private fun RecordingSlideToCancelIndicator(
     holdControlsOffset: IntOffset,
@@ -325,141 +250,3 @@ private fun RecordingSlideToCancelIndicator(
         Spacer(modifier = Modifier.width(theme.marginEnd))
     }
 }
-
-@Composable
-internal fun RecordingControlButtons(
-    isStopVisible: Boolean,
-    recordingActions: AudioRecordingActions,
-) {
-    val sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete
-    val theme = ChatTheme.messageComposerTheme.audioRecording.controls
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(theme.height),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ControlIconButton(
-            style = theme.deleteButton,
-            tag = "Stream_ComposerDeleteAudioRecordingButton",
-            onClick = recordingActions.onDeleteRecording,
-        )
-        if (isStopVisible) {
-            Spacer(modifier = Modifier.weight(1f))
-            ControlIconButton(
-                style = theme.stopButton,
-                tag = "Stream_ComposerStopAudioRecordingButton",
-                onClick = recordingActions.onStopRecording,
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        ControlIconButton(
-            style = theme.completeButton,
-            tag = "Stream_ComposerCompleteAudioRecordingButton",
-            onClick = { recordingActions.onCompleteRecording(sendOnComplete) },
-        )
-    }
-}
-
-@Composable
-private fun ControlIconButton(
-    style: IconContainerStyle,
-    tag: String,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier
-            .semantics { testTag = tag }
-            .size(style.size)
-            .padding(style.padding)
-            .focusable(true),
-    ) {
-        Icon(
-            painter = style.icon.painter,
-            contentDescription = null,
-            modifier = Modifier.size(style.icon.size),
-            tint = style.icon.tint,
-        )
-    }
-}
-
-@Preview(showBackground = true, heightDp = 200)
-@Composable
-private fun AudioRecordContentHoldPreview() {
-    ChatPreviewTheme {
-        AudioRecordContentHold()
-    }
-}
-
-@Composable
-internal fun AudioRecordContentHold() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = BottomCenter,
-    ) {
-        AudioRecordButton(
-            recordingState = RecordingState.Hold(
-                durationInMs = PreviewDurationInMs,
-                waveform = PreviewWaveformData,
-            ),
-            recordingActions = AudioRecordingActions.None,
-        )
-    }
-}
-
-@Preview(showBackground = true, heightDp = 200)
-@Composable
-private fun AudioRecordContentLockedPreview() {
-    ChatPreviewTheme {
-        AudioRecordContentLocked()
-    }
-}
-
-@Composable
-internal fun AudioRecordContentLocked() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = BottomCenter,
-    ) {
-        AudioRecordButton(
-            recordingState = RecordingState.Locked(
-                durationInMs = PreviewDurationInMs,
-                waveform = PreviewWaveformData,
-            ),
-            recordingActions = AudioRecordingActions.None,
-        )
-    }
-}
-
-@Preview(showBackground = true, heightDp = 200)
-@Composable
-private fun AudioRecordContentOverviewPreview() {
-    ChatPreviewTheme {
-        AudioRecordContentOverview()
-    }
-}
-
-@Composable
-internal fun AudioRecordContentOverview() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = BottomCenter,
-    ) {
-        AudioRecordButton(
-            recordingState = RecordingState.Overview(
-                durationInMs = PreviewDurationInMs,
-                waveform = PreviewWaveformData,
-                attachment = Attachment(),
-            ),
-            recordingActions = AudioRecordingActions.None,
-        )
-    }
-}
-
-private const val PreviewDurationInMs = 120_000
-
-@Suppress("MagicNumber")
-private val PreviewWaveformData = (0..10).map {
-    listOf(0.5f, 0.8f, 0.3f, 0.6f, 0.4f, 0.7f, 0.2f, 0.9f, 0.1f)
-}.flatten()

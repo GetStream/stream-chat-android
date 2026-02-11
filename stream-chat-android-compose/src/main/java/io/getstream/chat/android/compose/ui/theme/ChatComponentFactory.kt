@@ -162,7 +162,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
@@ -1880,7 +1880,7 @@ public interface ChatComponentFactory {
         state: RecordingState,
         recordingActions: AudioRecordingActions,
     ) {
-        AudioRecordButton(
+        AudioRecordingButton(
             recordingState = state,
             recordingActions = recordingActions,
         )

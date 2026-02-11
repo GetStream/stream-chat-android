@@ -22,29 +22,29 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class AudioRecordContentTest : PaparazziComposeTest {
+internal class AudioRecordingButtonTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `content hold`() {
+    fun `button hold`() {
         snapshotWithDarkMode {
-            AudioRecordContentHold()
+            AudioRecordingButtonHold()
         }
     }
 
     @Test
-    fun `content locked`() {
+    fun `button locked`() {
         snapshotWithDarkMode {
-            AudioRecordContentLocked()
+            AudioRecordingButtonLocked()
         }
     }
 
     @Test
-    fun `content overview`() {
+    fun `button overview`() {
         snapshotWithDarkMode {
-            AudioRecordContentOverview()
+            AudioRecordingButtonOverview()
         }
     }
 }
