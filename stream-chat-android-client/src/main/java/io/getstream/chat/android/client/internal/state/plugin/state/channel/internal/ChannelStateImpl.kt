@@ -121,7 +121,7 @@ internal class ChannelStateImpl(
     private val _loadingOlderMessages = MutableStateFlow(false)
     private val _loadingNewerMessages = MutableStateFlow(false)
     private val _endOfOlderMessages = MutableStateFlow(false)
-    private val _endOfNewerMessages = MutableStateFlow(false)
+    private val _endOfNewerMessages = MutableStateFlow(true)
     private var _recoveryNeeded = false
     private val _insideSearch = MutableStateFlow(false)
     private var lastStartTypingEvent: Date? = null
