@@ -35,13 +35,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
-import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionProvider
 
 /**
  * Component for rendering reaction emoji toggles.
  *
  * @param type The string representation of the reaction.
- * @param emoji The emoji character the [type] maps to, if any. See [ReactionEmojiFactory].
+ * @param emoji The emoji character the [type] maps to, if any. See [ReactionProvider].
  * @param size The size of the reaction toggle.
  * @param checked Whether the toggle is checked.
  * @param onCheckedChange Callback when the checked state of the toggle changes.

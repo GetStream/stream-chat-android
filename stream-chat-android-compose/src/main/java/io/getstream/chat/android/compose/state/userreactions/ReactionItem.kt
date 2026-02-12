@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.state.userreactions
 
-import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionProvider
 
 // TODO [G.] unify reaction packages
 /**
@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
  *
  * @param type The string representation of the reaction.
  * @param emoji The emoji character the [type] maps to, if any.
- * @see [ReactionEmojiFactory]
+ * @see [ReactionProvider]
  */
 // TODO [G.] is this class needed?
 public data class ReactionItem(

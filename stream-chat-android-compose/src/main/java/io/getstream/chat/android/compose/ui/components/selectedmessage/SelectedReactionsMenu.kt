@@ -27,14 +27,13 @@ import io.getstream.chat.android.compose.state.userreactions.UserReactionItemSta
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewReactionData
 import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionProvider
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 
 /**
@@ -65,7 +64,7 @@ public fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
+    reactionTypes: Map<String, String> = ChatTheme.reactionProvider.availableReactions,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
         val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
@@ -89,7 +88,7 @@ public fun SelectedReactionsMenu(
                 userReactions = buildUserReactionItems(
                     message = message,
                     currentUser = currentUser,
-                    emojiFactory = ChatTheme.reactionEmojiFactory,
+                    emojiFactory = ChatTheme.reactionProvider,
                 ),
             )
         }
@@ -114,7 +113,7 @@ public fun SelectedReactionsMenu(
 private fun buildUserReactionItems(
     message: Message,
     currentUser: User?,
-    emojiFactory: ReactionEmojiFactory,
+    emojiFactory: ReactionProvider,
 ): List<UserReactionItemState> {
     return message.latestReactions.mapNotNull {
         val user = it.user ?: return@mapNotNull null

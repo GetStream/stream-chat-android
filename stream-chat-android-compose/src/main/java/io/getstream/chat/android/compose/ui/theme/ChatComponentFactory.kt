@@ -226,7 +226,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
-import io.getstream.chat.android.ui.common.helper.ReactionEmojiFactory
+import io.getstream.chat.android.ui.common.helper.ReactionProvider
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
@@ -2159,7 +2159,7 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
-        // TODO [G.] this should be part of ReactionEmojiFactory. But is that even the place or the best name for it?
+        // TODO [G.] this should be part of ReactionProvider. But is that even the place or the best name for it?
         //  also this map is not good enough. string -> string i mean. there might be types with no emoji
         reactionTypes: Map<String, String>,
     ) {
@@ -2221,7 +2221,7 @@ public interface ChatComponentFactory {
      * Factory method for creating a reaction icon. By default, it only displays the emoji.
      *
      * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionEmojiFactory].
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionProvider].
      * @param size The size of the reaction button.
      * @param modifier Modifier for styling.
      */
@@ -2244,7 +2244,7 @@ public interface ChatComponentFactory {
      * Factory method for creating a reaction toggle. By default, it only displays the emoji.
      *
      * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionEmojiFactory].
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionProvider].
      * @param size The size of the reaction button.
      * @param checked Whether the toggle is checked.
      * @param onCheckedChange Callback when the checked state of the toggle changes.

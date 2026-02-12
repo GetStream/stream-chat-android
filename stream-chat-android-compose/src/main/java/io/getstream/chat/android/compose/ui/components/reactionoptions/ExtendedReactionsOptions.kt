@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -56,7 +55,7 @@ public fun ExtendedReactionsOptions(
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
-    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
+    reactionTypes: Map<String, String> = ChatTheme.reactionProvider.availableReactions,
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         with(ChatTheme.componentFactory) {
             ExtendedReactionMenuOptionItem(

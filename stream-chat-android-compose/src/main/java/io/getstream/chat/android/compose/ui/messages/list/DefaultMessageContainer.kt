@@ -286,7 +286,7 @@ private fun rememberMessageReactions(message: Message, sorting: ReactionSorting)
     if (message.isDeleted()) {
         null
     } else {
-        val emojiFactory = ChatTheme.reactionEmojiFactory
+        val emojiFactory = ChatTheme.reactionProvider
         remember(message.ownReactions, message.reactionGroups) {
             message.reactionGroups
                 .entries

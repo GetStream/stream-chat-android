@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -74,7 +73,7 @@ public fun SelectedMessageMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
+    reactionTypes: Map<String, String> = ChatTheme.reactionProvider.availableReactions,
     currentUser: User? = null,
     onDismiss: () -> Unit = {},
 ) {

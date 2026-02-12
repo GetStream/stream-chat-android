@@ -89,7 +89,7 @@ public fun MessageListViewModel.bindView(
     }
     view.setMessageRetryHandler { onEvent(RetryMessage(it)) }
     view.setMessageReactionHandler { message, reactionType ->
-        val emojiCode = ChatUI.reactionEmojiFactory.emojiCode(reactionType)
+        val emojiCode = ChatUI.reactionProvider.emojiCode(reactionType)
         onEvent(MessageReaction(message, reactionType, emojiCode))
     }
     view.setMessageReplyHandler { cid, message -> onEvent(ReplyMessage(cid, message)) }

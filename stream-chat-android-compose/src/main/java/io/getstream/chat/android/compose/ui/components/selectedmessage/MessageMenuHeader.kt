@@ -31,7 +31,6 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.state.userreactions.ReactionItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.ReactionEmoji
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -53,7 +52,7 @@ public fun MessageMenuHeader(
     onShowMoreReactionsSelected: () -> Unit,
     modifier: Modifier = Modifier,
     numberOfReactionsShown: Int = DefaultNumberOfReactionsShown,
-    reactionTypes: Map<String, String> = ReactionEmoji.defaultReactions,
+    reactionTypes: Map<String, String> = ChatTheme.reactionProvider.availableReactions,
 ) {
     val componentFactory = ChatTheme.componentFactory
     val colors = ChatTheme.colors
@@ -93,7 +92,7 @@ public fun MessageMenuHeader(
 @Composable
 private fun MessageMenuHeaderPreview() {
     ChatTheme {
-        val reactionType = ReactionEmoji.defaultReactions.keys.firstOrNull()
+        val reactionType = ChatTheme.reactionProvider.availableReactions.keys.firstOrNull()
 
         if (reactionType != null) {
             MessageMenuHeader(
