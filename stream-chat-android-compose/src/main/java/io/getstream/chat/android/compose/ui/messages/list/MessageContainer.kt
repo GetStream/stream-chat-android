@@ -345,20 +345,19 @@ internal fun DefaultMessageTop(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val iconFactory = ChatTheme.reactionIconFactory
-        val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
+        val resolver = ChatTheme.reactionResolver
+        val supported = resolver.supportedReactions
         message.reactionGroups
-            .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
-            ?.toList()
-            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
+            ?.entries
+            ?.filter { it.key in supported }
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.value, o2.value) }
             ?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
-                val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
-                    painter = reactionIcon.getPainter(isSelected),
                     type = type,
-                    emojiCode = pushEmojiFactory.emojiCode(type),
+                    isSelected = isSelected,
+                    emojiCode = resolver.emojiCode(type),
                 )
             }?.let { reactions ->
                 ChatTheme.componentFactory.MessageReactions(

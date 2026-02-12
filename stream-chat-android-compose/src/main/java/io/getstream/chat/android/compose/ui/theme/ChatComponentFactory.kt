@@ -65,6 +65,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -133,7 +134,6 @@ import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDe
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
-import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
@@ -142,7 +142,6 @@ import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
@@ -204,7 +203,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemReplyToContent
 import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -228,7 +227,6 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
-import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
@@ -919,9 +917,9 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.messageListItemModifier(): Modifier =
-        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
-        // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
         if (LocalInspectionMode.current) {
+            // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+            // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
             Modifier
         } else {
             Modifier.animateItem()
@@ -1222,16 +1220,16 @@ public interface ChatComponentFactory {
     public fun RowScope.MessageReactionItem(
         params: MessageReactionItemParams,
     ) {
-        MessageReactionItem(
+        ChatTheme.componentFactory.ReactionIcon(
+            type = params.state.type,
+            emoji = params.state.emojiCode,
+            size = ReactionIconSize.Small,
             modifier = params.modifier
                 .semantics {
                     testTag = "Stream_MessageReaction_${params.state.type}"
                     contentDescription = params.state.type
                 }
-                .size(20.dp)
-                .padding(2.dp)
                 .align(Alignment.CenterVertically),
-            option = params.state,
         )
     }
 
@@ -2168,7 +2166,6 @@ public interface ChatComponentFactory {
      * @param ownCapabilities The capabilities of the current user.
      * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onMessageAction Callback for when a message action is clicked.
-     * @param reactionTypes The reaction types.
      * @param showMoreReactionsIcon The icon to show for the "Show more reactions" option.
      */
     @Composable
@@ -2179,13 +2176,11 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
-        reactionTypes: Map<String, ReactionIcon>,
         showMoreReactionsIcon: Int,
     ) {
         ReactionMenuOptions(
             modifier = modifier,
             message = message,
-            reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMore,
             showMoreReactionsIcon = showMoreReactionsIcon,
@@ -2266,7 +2261,7 @@ public interface ChatComponentFactory {
      * Factory method for creating a reaction icon. By default, it only displays the emoji.
      *
      * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionResolver].
      * @param size The size of the reaction button.
      * @param modifier Modifier for styling.
      */
@@ -2289,7 +2284,7 @@ public interface ChatComponentFactory {
      * Factory method for creating a reaction toggle. By default, it only displays the emoji.
      *
      * @param type The string representation of the reaction.
-     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionResolver].
      * @param size The size of the reaction button.
      * @param checked Whether the toggle is checked.
      * @param onCheckedChange Callback when the checked state of the toggle changes.
@@ -2349,7 +2344,6 @@ public interface ChatComponentFactory {
      * Factory method for creating the header content of the SelectedReactionsMenu.
      *
      * @param message The selected message.
-     * @param reactionTypes The reaction types.
      * @param onMessageAction Callback for when a message action is clicked.
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
      */
@@ -2357,7 +2351,6 @@ public interface ChatComponentFactory {
     public fun ReactionsMenuHeaderContent(
         modifier: Modifier,
         message: Message,
-        reactionTypes: Map<String, ReactionIcon>,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
         showMoreReactionsIcon: Int,
@@ -2365,7 +2358,6 @@ public interface ChatComponentFactory {
         ReactionMenuOptions(
             modifier = modifier,
             message = message,
-            reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMoreReactionsSelected,
             showMoreReactionsIcon = showMoreReactionsIcon,
@@ -2396,7 +2388,6 @@ public interface ChatComponentFactory {
      * Factory method for the reaction options in the menu.
      *
      * @param message The selected message.
-     * @param reactionTypes The reaction types.
      * @param onMessageAction Callback for when a message action is clicked.
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
      */
@@ -2404,7 +2395,6 @@ public interface ChatComponentFactory {
     public fun ReactionMenuOptions(
         modifier: Modifier,
         message: Message,
-        reactionTypes: Map<String, ReactionIcon>,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
         showMoreReactionsIcon: Int,
@@ -2413,7 +2403,6 @@ public interface ChatComponentFactory {
             modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-            reactionTypes = reactionTypes,
             showMoreReactionsIcon = showMoreReactionsIcon,
             onReactionOptionSelected = {
                 onMessageAction(
@@ -2441,12 +2430,13 @@ public interface ChatComponentFactory {
         option: ReactionOptionItemState,
         onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     ) {
-        ReactionOptionItem(
-            modifier = modifier
-                .clickable(bounded = false) {
-                    onReactionOptionSelected(option)
-                },
-            option = option,
+        ReactionToggle(
+            type = option.type,
+            emoji = option.emojiCode,
+            size = ReactionToggleSize.Medium,
+            checked = option.isSelected,
+            onCheckedChange = { onReactionOptionSelected(option) },
+            modifier = modifier.testTag("Stream_Reaction_${option.type}"),
         )
     }
 
@@ -2483,13 +2473,11 @@ public interface ChatComponentFactory {
     public fun ExtendedReactionsMenuOptions(
         modifier: Modifier,
         message: Message,
-        reactionTypes: Map<String, ReactionIcon>,
         onMessageAction: (MessageAction) -> Unit,
     ) {
         ExtendedReactionsOptions(
             modifier = modifier
                 .fillMaxWidth(),
-            reactionTypes = reactionTypes,
             onReactionOptionSelected = {
                 onMessageAction(
                     React(
@@ -2570,7 +2558,6 @@ public interface ChatComponentFactory {
      * @param modifier The modifier
      * @param message The selected message.
      * @param onMessageAction Callback for when a message action is clicked.
-     * @param reactionTypes The reaction types.
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
@@ -2578,13 +2565,11 @@ public interface ChatComponentFactory {
         modifier: Modifier,
         message: Message,
         onMessageAction: (MessageAction) -> Unit,
-        reactionTypes: Map<String, ReactionIcon>,
         onDismiss: () -> Unit,
     ) {
         ExtendedReactionsMenuOptions(
             modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
             message = message,
-            reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
         )
     }
