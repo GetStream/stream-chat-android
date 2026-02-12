@@ -270,6 +270,7 @@ internal class LogicRegistry internal constructor(
     fun clear() {
         queryChannels.clear()
         channels.clear()
+        queryThreads.clear()
         threads.clear()
         mutableGlobalState.destroy()
     }
