@@ -188,7 +188,7 @@ public fun MessageList(
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
         with(ChatTheme.componentFactory) {
-            MessageListItemContainer(
+            MessageItem(
                 messageListItem = messageListItem,
                 reactionSorting = reactionSorting,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -244,7 +244,7 @@ public fun MessageList(
 }
 
 /**
- * The default message container item.
+ * The default message item component, which renders each [MessageListItemState]'s subtype.
  *
  * @param messageListItemState The state of the message list item.
  * @param reactionSorting The sorting of the reactions.
@@ -264,7 +264,7 @@ public fun MessageList(
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun LazyItemScope.DefaultMessageContainer(
+internal fun LazyItemScope.DefaultMessageItem(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -285,7 +285,7 @@ internal fun LazyItemScope.DefaultMessageContainer(
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
 ) {
-    MessageContainer(
+    MessageItem(
         messageListItemState = messageListItemState,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
@@ -443,7 +443,7 @@ public fun MessageList(
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
         with(ChatTheme.componentFactory) {
-            MessageListItemContainer(
+            MessageItem(
                 messageListItem = messageListItem,
                 reactionSorting = reactionSorting,
                 onPollUpdated = onPollUpdated,
