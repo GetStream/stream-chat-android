@@ -7,29 +7,39 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
+import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.docs.R
 
 /**
  * [Providing Custom Reactions](https://getstream.io/chat/docs/sdk/android/compose/guides/providing-custom-reactions/)
  */
 private object ProvidingCustomReactionsSnippet {
 
-    class MessagesActivity : AppCompatActivity() {
+    /**
+     * Implement [ReactionResolver] to customize which reactions are available and what emoji each
+     * type maps to. Implement [ChatComponentFactory] if you want to render non-emoji reactions for
+     * specific reaction types. Pass both to [ChatTheme].
+     */
+    class CustomReactionsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
             setContent {
-                // Provide a factory with custom reactions
-                ChatTheme(reactionIconFactory = CustomReactionIconFactory()) {
+                ChatTheme(
+                    reactionResolver = CustomReactionResolver(),
+                    componentFactory = ImageReactionComponentFactory(),
+                ) {
                     MessagesScreen(
                         viewModelFactory = MessagesViewModelFactory(
                             context = this,
@@ -46,59 +56,64 @@ private object ProvidingCustomReactionsSnippet {
             private const val KEY_CHANNEL_ID = "channelId"
 
             fun createIntent(context: Context, channelId: String): Intent {
-                return Intent(context, MessagesActivity::class.java).apply {
+                return Intent(context, CustomReactionsActivity::class.java).apply {
                     putExtra(KEY_CHANNEL_ID, channelId)
                 }
             }
         }
     }
 
-    class CustomReactionIconFactory : ReactionIconFactory {
+    /** Custom resolver that provides emoji codes for custom reaction types. */
+    class CustomReactionResolver : ReactionResolver {
 
-        override fun isReactionSupported(type: String): Boolean {
-            return supportedReactions.contains(type)
-        }
+        override val supportedReactions: Set<String> = linkedSetOf(
+            THUMBS_UP,
+            THUMBS_DOWN,
+            MOOD_GOOD,
+            MOOD_BAD,
+            HAHA,
+        )
 
-        @Composable
-        override fun createReactionIcon(type: String): ReactionIcon {
-            return when (type) {
-                THUMBS_UP -> ReactionIcon(
-                    painter = painterResource(R.drawable.ic_thumb_up),
-                    selectedPainter = painterResource(R.drawable.ic_thumb_up_selected)
-                )
-                THUMBS_DOWN -> ReactionIcon(
-                    painter = painterResource(R.drawable.ic_thumb_down),
-                    selectedPainter = painterResource(R.drawable.ic_thumb_down_selected)
-                )
-                MOOD_GOOD -> ReactionIcon(
-                    painter = painterResource(R.drawable.ic_mood_good),
-                    selectedPainter = painterResource(R.drawable.ic_mood_good_selected)
-                )
-                MOOD_BAD -> ReactionIcon(
-                    painter = painterResource(R.drawable.ic_mood_bad),
-                    selectedPainter = painterResource(R.drawable.ic_mood_bad_selected)
-                )
-                else -> throw IllegalArgumentException("Unsupported reaction type")
-            }
-        }
-
-        @Composable
-        override fun createReactionIcons(): Map<String, ReactionIcon> {
-            return supportedReactions.associateWith { createReactionIcon(it) }
+        override fun emojiCode(type: String): String? = when (type) {
+            THUMBS_UP -> "👍"
+            THUMBS_DOWN -> "👎"
+            MOOD_GOOD -> "😀"
+            MOOD_BAD -> "😞"
+            HAHA -> "😂"
+            else -> null
         }
 
         companion object {
-            private const val THUMBS_UP: String = "thumbs_up"
-            private const val THUMBS_DOWN: String = "thumbs_down"
-            private const val MOOD_GOOD: String = "mood_good"
-            private const val MOOD_BAD: String = "mood_bad"
+            const val THUMBS_UP: String = "thumbs_up"
+            const val THUMBS_DOWN: String = "thumbs_down"
+            const val MOOD_GOOD: String = "mood_good"
+            const val MOOD_BAD: String = "mood_bad"
+            const val HAHA: String = "haha"
+        }
+    }
 
-            private val supportedReactions = setOf(
-                THUMBS_UP,
-                THUMBS_DOWN,
-                MOOD_GOOD,
-                MOOD_BAD
-            )
+    /**
+     * Renders a drawable image for the "haha" reaction type, and falls back to the default
+     * emoji rendering for all other types.
+     */
+    class ImageReactionComponentFactory : ChatComponentFactory {
+
+        @Composable
+        override fun ReactionIcon(
+            type: String,
+            emoji: String?,
+            size: ReactionIconSize,
+            modifier: Modifier,
+        ) {
+            if (type == CustomReactionResolver.HAHA) {
+                Image(
+                    painter = painterResource(R.drawable.stream_compose_ic_reaction_lol),
+                    contentDescription = type,
+                    modifier = modifier,
+                )
+            } else {
+                super.ReactionIcon(type, emoji, size, modifier)
+            }
         }
     }
 }

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.userreactions
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,9 +33,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.list.isStartAlignment
@@ -52,13 +51,12 @@ public fun UserReactionItem(
     item: UserReactionItemState,
     modifier: Modifier = Modifier,
 ) {
-    val (user, painter, type) = item
+    val (user, type, isMine, emojiCode) = item
 
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        val isMine = user.id == ChatClient.instance().getCurrentUser()?.id
         val isStartAlignment = ChatTheme.messageOptionsUserReactionAlignment.isStartAlignment(isMine)
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 
@@ -70,14 +68,14 @@ public fun UserReactionItem(
                 showBorder = false,
             )
 
-            Image(
+            ChatTheme.componentFactory.ReactionIcon(
+                type = type,
+                emoji = emojiCode,
+                size = ReactionIconSize.Small,
                 modifier = Modifier
+                    .align(alignment)
                     .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
-                    .size(ChatTheme.dimens.userReactionItemIconSize)
-                    .padding(4.dp)
-                    .align(alignment),
-                painter = painter,
-                contentDescription = type,
+                    .padding(4.dp),
             )
         }
 

@@ -20,7 +20,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
@@ -28,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -41,7 +39,6 @@ import io.getstream.chat.android.models.Reaction
  * @param numberOfReactionsShown The maximum number of reactions shown before the show more reactions button is
  * displayed.
  * @param horizontalArrangement Used for changing the arrangement.
- * @param reactionTypes All available reactions.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param itemContent Composable that allows the user to customize the individual items shown in [ReactionOptions].
  * By default shows individual reactions.
@@ -55,12 +52,11 @@ public fun ReactionOptions(
     modifier: Modifier = Modifier,
     numberOfReactionsShown: Int = DefaultNumberOfReactionsShown,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         with(ChatTheme.componentFactory) {
             ReactionMenuOptionItem(
-                modifier = Modifier.size(ChatTheme.dimens.reactionOptionItemIconSize),
+                modifier = Modifier,
                 option = option,
                 onReactionOptionSelected = onReactionOptionSelected,
             )
@@ -75,14 +71,13 @@ public fun ReactionOptions(
         }
     },
 ) {
-    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
-    val options = reactionTypes.entries.map { (type, reactionIcon) ->
-        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
-        val painter = reactionIcon.getPainter(isSelected)
+    val resolver = ChatTheme.reactionResolver
+    val options = resolver.supportedReactions.map { type ->
+        val isSelected = ownReactions.any { it.type == type }
         ReactionOptionItemState(
-            painter = painter,
             type = type,
-            emojiCode = pushEmojiFactory.emojiCode(type),
+            isSelected = isSelected,
+            emojiCode = resolver.emojiCode(type),
         )
     }
 
@@ -109,7 +104,7 @@ public fun ReactionOptions(
 @Composable
 private fun ReactionOptionsPreview() {
     ChatTheme {
-        val reactionType = ChatTheme.reactionIconFactory.createReactionIcons().keys.firstOrNull()
+        val reactionType = ChatTheme.reactionResolver.supportedReactions.firstOrNull()
 
         if (reactionType != null) {
             ReactionOptions(

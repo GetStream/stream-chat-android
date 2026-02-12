@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -50,7 +49,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [SelectedReactionsMenu].
  * @param overlayColor The color applied to the overlay.
- * @param reactionTypes The available reactions within the menu.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedReactionsMenu] dialog.
@@ -67,7 +65,6 @@ public fun SelectedReactionsMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -78,7 +75,6 @@ public fun SelectedReactionsMenu(
                 ReactionsMenuHeaderContent(
                     modifier = Modifier,
                     message = message,
-                    reactionTypes = reactionTypes,
                     onMessageAction = onMessageAction,
                     onShowMoreReactionsSelected = onShowMoreReactionsSelected,
                     showMoreReactionsIcon = showMoreReactionsIcon,
@@ -119,19 +115,19 @@ private fun buildUserReactionItems(
     message: Message,
     currentUser: User?,
 ): List<UserReactionItemState> {
-    val iconFactory = ChatTheme.reactionIconFactory
+    val resolver = ChatTheme.reactionResolver
+    val supported = resolver.supportedReactions
     return message.latestReactions
-        .filter { it.user != null && iconFactory.isReactionSupported(it.type) }
+        .filter { it.user != null && it.type in supported }
         .map {
             val user = requireNotNull(it.user)
             val type = it.type
-            val isMine = currentUser?.id == user.id
-            val painter = iconFactory.createReactionIcon(type).getPainter(isMine)
 
             UserReactionItemState(
                 user = user,
-                painter = painter,
                 type = type,
+                isMine = currentUser?.id == user.id,
+                emojiCode = resolver.emojiCode(type),
             )
         }
 }
