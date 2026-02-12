@@ -71,12 +71,18 @@ public class StorageHelperWrapper(
     /**
      * Loads attachment files from the provided metadata, so that we can upload them.
      *
+     * The original content [URI][android.net.Uri] from each [AttachmentMetaData] is stored
+     * under [EXTRA_SOURCE_URI] in [Attachment.extraData], so consumers can reliably identify
+     * the source file after the attachment is created.
+     *
      * @param metaData The list of attachment meta data that we transform.
      * @return List of [Attachment]s with files prepared for uploading.
      */
     private fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
         return metaData.map {
             val fileFromUri = storageHelper.getCachedFileFromUri(context, it)
+            val extra = it.uri?.let { uri -> it.extraData + (EXTRA_SOURCE_URI to uri.toString()) }
+                ?: it.extraData
 
             Attachment(
                 upload = fileFromUri,
@@ -84,9 +90,17 @@ public class StorageHelperWrapper(
                 name = it.title ?: fileFromUri?.name ?: "",
                 fileSize = it.size.toInt(),
                 mimeType = it.mimeType,
-                extraData = it.extraData,
+                extraData = extra,
             )
         }
+    }
+
+    internal companion object {
+        /**
+         * Key in [Attachment.extraData] holding the original content URI string
+         * from the device's [MediaStore][android.provider.MediaStore].
+         */
+        internal const val EXTRA_SOURCE_URI: String = "io.getstream.sourceUri"
     }
 
     /**

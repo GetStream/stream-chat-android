@@ -128,7 +128,7 @@ public fun AttachmentPicker(
                         pickerMode = pickerMode,
                         commands = attachmentsPickerViewModel.channel.config.commands,
                         attachments = attachmentsPickerViewModel.attachments,
-                        onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                        onAttachmentsChanged = { attachmentsPickerViewModel.onAttachmentsLoaded(it) },
                         onAttachmentItemSelected = onAttachmentItemSelected,
                         onAttachmentPickerAction = onAttachmentPickerAction,
                         onAttachmentsSubmitted = { metaDataList ->
