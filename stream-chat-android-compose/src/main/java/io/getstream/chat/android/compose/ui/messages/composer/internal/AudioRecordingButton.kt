@@ -61,8 +61,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -278,6 +281,7 @@ private fun MicButtonGestureArea(
     val permissionState = rememberAudioRecordingPermission()
     val hint = rememberRecordingHint()
     val currentState by rememberUpdatedState(recordingState)
+    val hapticFeedback = LocalHapticFeedback.current
 
     val density = LocalDensity.current
     val gestureConfig = RecordingGestureConfig(
@@ -311,7 +315,7 @@ private fun MicButtonGestureArea(
                             down = down,
                             config = gestureConfig,
                             currentState = { currentState },
-                            recordingActions = recordingActions,
+                            recordingActions = recordingActions.withHapticOnStart(hapticFeedback),
                             onShowHint = { hint.show() },
                         )
                     }
@@ -567,6 +571,19 @@ private fun ControlIconButton(
         )
     }
 }
+
+/**
+ * Returns a copy of [AudioRecordingActions] whose [AudioRecordingActions.onStartRecording] also
+ * triggers [HapticFeedbackType.LongPress] via [hapticFeedback].
+ */
+private fun AudioRecordingActions.withHapticOnStart(
+    hapticFeedback: HapticFeedback,
+): AudioRecordingActions = copy(
+    onStartRecording = { offset ->
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
+        onStartRecording(offset)
+    },
+)
 
 private const val PreviewDurationInMs = 120_000
 

@@ -37,9 +37,6 @@ internal class RecordingGestureConfig(
     val lockThresholdPx: Float,
 )
 
-private const val HoldToRecordThresholdMs = 400L
-private const val AxisLockThresholdPx = 10f
-
 private enum class DragAxis { Horizontal, Vertical }
 
 /**
@@ -61,7 +58,7 @@ private enum class DragResult {
 
 /**
  * Handles the full gesture lifecycle:
- * 1. Waits for [HoldToRecordThresholdMs] — if the user releases before that,
+ * 1. Waits for the platform long-press timeout — if the user releases before that,
  *    it's a tap → [onShowHint].
  * 2. Once the threshold is reached, starts recording and tracks drag for cancel / lock / send.
  *
@@ -94,13 +91,13 @@ internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
 }
 
 /**
- * Waits for [HoldToRecordThresholdMs]. Returns `true` if the user held long enough,
+ * Waits for the platform long-press timeout. Returns `true` if the user held long enough,
  * `false` if they released early (tap).
  */
 private suspend fun AwaitPointerEventScope.awaitHoldThreshold(
     down: PointerInputChange,
 ): Boolean {
-    val releasedEarly = withTimeoutOrNull(HoldToRecordThresholdMs) {
+    val releasedEarly = withTimeoutOrNull(viewConfiguration.longPressTimeoutMillis) {
         while (true) {
             val event = awaitDragOrCancellation(down.id) ?: return@withTimeoutOrNull
             if (!event.pressed) return@withTimeoutOrNull
@@ -123,6 +120,7 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
 ): DragResult {
     val startPosition = down.position
     var dragAxis: DragAxis? = null
+    val touchSlop = viewConfiguration.touchSlop
 
     while (true) {
         if (currentState() is RecordingState.Locked) return DragResult.AlreadyLocked
@@ -132,7 +130,7 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
 
         dragEvent.consume()
         val rawDiff = dragEvent.position.minus(startPosition)
-        dragAxis = dragAxis ?: resolveAxis(rawDiff)
+        dragAxis = dragAxis ?: resolveAxis(rawDiff, touchSlop)
 
         val constrained = constrainToAxis(rawDiff, dragAxis)
         onDragOffset(constrained)
@@ -143,13 +141,13 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
 }
 
 /**
- * Determines the drag axis once the first significant movement exceeds [AxisLockThresholdPx].
+ * Determines the drag axis once the first significant movement exceeds [touchSlop].
  * Returns `null` if the movement is still too small.
  */
-private fun resolveAxis(rawDiff: Offset): DragAxis? {
+private fun resolveAxis(rawDiff: Offset, touchSlop: Float): DragAxis? {
     val absX = abs(rawDiff.x)
     val absY = abs(rawDiff.y)
-    if (absX <= AxisLockThresholdPx && absY <= AxisLockThresholdPx) return null
+    if (absX <= touchSlop && absY <= touchSlop) return null
     return if (absX > absY) DragAxis.Horizontal else DragAxis.Vertical
 }
 
