@@ -145,6 +145,8 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedR
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
@@ -227,6 +229,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
+import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
@@ -2254,7 +2257,60 @@ public interface ChatComponentFactory {
         )
     }
 
-    // REGION: Reaction menu and items
+    // REGION: Reactions
+
+    /**
+     * Factory method for creating a reaction icon. By default, it only displays the emoji.
+     *
+     * @param type The string representation of the reaction.
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param size The size of the reaction button.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun ReactionIcon(
+        type: String,
+        emoji: String?,
+        size: ReactionIconSize,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.components.reactions.ReactionIcon(
+            type = type,
+            emoji = emoji,
+            size = size,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating a reaction toggle. By default, it only displays the emoji.
+     *
+     * @param type The string representation of the reaction.
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param size The size of the reaction button.
+     * @param checked Whether the toggle is checked.
+     * @param onCheckedChange Callback when the checked state of the toggle changes.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun ReactionToggle(
+        type: String,
+        emoji: String?,
+        size: ReactionToggleSize,
+        checked: Boolean,
+        onCheckedChange: ((Boolean) -> Unit)?,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.components.reactions.ReactionToggle(
+            type = type,
+            emoji = emoji,
+            size = size,
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = modifier,
+        )
+    }
+
     /**
      * Factory method for creating the full content of the SelectedReactionsMenu.
      *
