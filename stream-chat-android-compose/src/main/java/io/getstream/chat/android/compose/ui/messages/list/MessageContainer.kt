@@ -16,79 +16,126 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.BottomEnd
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.view.HapticFeedbackConstantsCompat
+import io.getstream.chat.android.client.utils.message.belongsToThread
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPinned
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.ui.components.messages.MessageContent
+import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
+import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.ifNotNull
+import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
+import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
+import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
-import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
-import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
-import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
-import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
-import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
-import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import kotlinx.coroutines.launch
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 /**
- * Represents the message item container that allows us to customize each type of item in the MessageList.
+ * The default message container for a regular message in the Conversation/Messages screen.
  *
- * @param messageListItemState The state of the message list item.
- * @param reactionSorting The sorting of reactions for the message.
- * @param onLongItemClick Handler when the user long taps on an item.
+ * It shows the avatar and the message details, which can have a header (reactions), the content which
+ * can be a text message, file or image attachment, or a custom attachment and the footer, which can
+ * be a deleted message footer (if we own the message) or the default footer, which contains a timestamp
+ * or the thread information.
+ *
+ * It also allows for long click and thread click events.
+ *
+ * @param messageItem The message item to show, which holds the message and the group position, if the message is in
+ * a group of messages from the same user.
+ * @param reactionSorting The sorting for the reactions, if we have any.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param modifier Modifier for styling.
  * @param onReactionsClick Handler when the user taps on message reactions.
- * @param onThreadClick Handler when the user taps on a thread within a message item.
- * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onCastVote Handler for casting a vote on an option.
+ * @param onRemoveVote Handler for removing a vote on an option.
+ * @param selectPoll Handler for selecting a poll.
+ * @param onAddAnswer Handler for adding an answer to a poll.
  * @param onClosePoll Handler for closing a poll.
- * @param onPollUpdated Handler for updating a poll.
+ * @param onAddPollOption Handler for adding a poll option.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
- * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
- * @param dateSeparatorContent Composable that represents date separators.
- * @param threadSeparatorContent Composable that represents thread separators.
- * @param systemMessageContent Composable that represents system messages.
- * @param messageItemContent Composable that represents regular messages.
- * @param typingIndicatorContent Composable that represents a typing indicator.
- * @param emptyThreadPlaceholderItemContent Composable that represents placeholders inside of an empty thread.
- * This content is disabled by default and can be enabled via [MessagesViewModelFactory.showDateSeparatorInEmptyThread]
- * or [MessageListController.showDateSeparatorInEmptyThread].
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
+@Suppress("LongMethod")
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun LazyItemScope.MessageContainer(
-    messageListItemState: MessageListItemState,
+public fun MessageContainer(
+    messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
-    onLongItemClick: (Message) -> Unit = {},
+    onLongItemClick: (Message) -> Unit,
+    modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
@@ -100,290 +147,572 @@ public fun LazyItemScope.MessageContainer(
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onUserAvatarClick: ((User) -> Unit)? = null,
+    onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onReply: (Message) -> Unit = {},
-    dateSeparatorContent: @Composable LazyItemScope.(DateSeparatorItemState) -> Unit = { dateSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListDateSeparatorItemContent(dateSeparatorItem = dateSeparatorItem)
-        }
-    },
-    unreadSeparatorContent: @Composable LazyItemScope.(UnreadSeparatorItemState) -> Unit = { unreadSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListUnreadSeparatorItemContent(unreadSeparatorItem = unreadSeparatorItem)
-        }
-    },
-    threadSeparatorContent: @Composable LazyItemScope.(
-        ThreadDateSeparatorItemState,
-    ) -> Unit = { threadDateSeparatorItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListThreadDateSeparatorItemContent(threadDateSeparatorItem = threadDateSeparatorItem)
-        }
-    },
-    systemMessageContent: @Composable LazyItemScope.(SystemMessageItemState) -> Unit = { systemMessageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListSystemItemContent(systemMessageItem = systemMessageItem)
-        }
-    },
-    moderatedMessageContent: @Composable LazyItemScope.(ModeratedMessageItemState) -> Unit = { moderatedMessageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListModeratedItemContent(moderatedMessageItem = moderatedMessageItem)
-        }
-    },
-    messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListItemContent(
-                messageItem = messageItem,
-                reactionSorting = reactionSorting,
-                onLongItemClick = onLongItemClick,
-                onReactionsClick = onReactionsClick,
-                onThreadClick = onThreadClick,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-                onGiphyActionClick = onGiphyActionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = onUserAvatarClick,
-                onMessageLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onAddAnswer = onAddAnswer,
-                onReply = onReply,
-            )
-        }
-    },
-    typingIndicatorContent: @Composable LazyItemScope.(TypingItemState) -> Unit = { typingItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListTypingIndicatorItemContent(typingItem = typingItem)
-        }
-    },
-    emptyThreadPlaceholderItemContent: @Composable LazyItemScope.(
-        EmptyThreadPlaceholderItemState,
-    ) -> Unit = { emptyThreadPlaceholderItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListEmptyThreadPlaceholderItemContent(emptyThreadPlaceholderItem = emptyThreadPlaceholderItem)
-        }
-    },
-    startOfTheChannelItemState: @Composable LazyItemScope.(
-        StartOfTheChannelItemState,
-    ) -> Unit = { startOfTheChannelItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListStartOfTheChannelItemContent(startOfTheChannelItem = startOfTheChannelItem)
-        }
-    },
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
-    when (messageListItemState) {
-        is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
-        is ThreadDateSeparatorItemState -> threadSeparatorContent(messageListItemState)
-        is SystemMessageItemState -> systemMessageContent(messageListItemState)
-        is ModeratedMessageItemState -> moderatedMessageContent(messageListItemState)
-        is MessageItemState -> messageItemContent(messageListItemState)
-        is TypingItemState -> typingIndicatorContent(messageListItemState)
-        is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
-        is UnreadSeparatorItemState -> unreadSeparatorContent(messageListItemState)
-        is StartOfTheChannelItemState -> startOfTheChannelItemState(messageListItemState)
-    }
-}
+    val message = messageItem.message
+    val focusState = messageItem.focusState
+    val haptic = LocalHapticFeedback.current
 
-/**
- * Represents a date separator item that shows whenever messages are too far apart in time.
- *
- * @param dateSeparator The data used to show the separator text.
- */
-@Composable
-internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
-    Box(
-        modifier = Modifier
-            .semantics(mergeDescendants = true) {}
-            .fillMaxWidth(),
-        contentAlignment = Alignment.Center,
+    val clickModifier = Modifier.combinedClickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = { if (message.belongsToThread()) onThreadClick(message) },
+        onLongClick = {
+            if (!message.isDeleted() && !message.isUploading()) {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                onLongItemClick(message)
+            }
+        },
+    )
+
+    val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
+        true -> ChatTheme.colors.highlight
+        else -> ChatTheme.colors.highlight.copy(alpha = 0f) // Ensures a smooth fade-out without unwanted color shifts.
+    }
+
+    val color by animateColorAsState(
+        targetValue = backgroundColor,
+        animationSpec = tween(durationMillis = HighlightFadeOutDurationMillis),
+    )
+
+    val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
+    val description = stringResource(id = R.string.stream_compose_cd_message_item)
+    val isSwipable = ChatTheme.messageOptionsTheme.optionVisibility
+        .canReplyToMessage(
+            message = message,
+            ownCapabilities = messageItem.ownCapabilities,
+        )
+
+    // Remember the message to ensure updated values are captured in the onReply lambda
+    val replyMessage by rememberUpdatedState(message)
+    SwipeToReply(
+        modifier = modifier,
+        onReply = { onReply(replyMessage) },
+        isSwipeable = { isSwipable },
     ) {
-        Surface(
+        Box(
             modifier = Modifier
-                .padding(vertical = 8.dp),
-            color = ChatTheme.messageDateSeparatorTheme.backgroundColor,
-            shape = RoundedCornerShape(16.dp),
+                .testTag("Stream_MessageItem")
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(color = color)
+                .semantics { contentDescription = description },
+            contentAlignment = messageAlignment.itemAlignment,
         ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 2.dp, horizontal = 16.dp)
-                    .testTag("Stream_MessageDateSeparator"),
-                text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
-                style = ChatTheme.messageDateSeparatorTheme.textStyle,
-            )
+            Row(
+                modifier
+                    .wrapContentWidth()
+                    .then(clickModifier)
+                    .testTag("Stream_MessageCell"),
+            ) {
+                with(ChatTheme.componentFactory) {
+                    MessageAuthor(
+                        messageItem = messageItem,
+                        onUserAvatarClick = onUserAvatarClick,
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f, fill = false),
+                    horizontalAlignment = messageAlignment.contentAlignment,
+                ) {
+                    with(ChatTheme.componentFactory) {
+                        MessageTop(
+                            messageItem = messageItem,
+                            reactionSorting = reactionSorting,
+                            onReactionsClick = onReactionsClick,
+                        )
+                        MessageContent(
+                            messageItem = messageItem,
+                            onLongItemClick = onLongItemClick,
+                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                            onGiphyActionClick = onGiphyActionClick,
+                            onQuotedMessageClick = onQuotedMessageClick,
+                            onLinkClick = onLinkClick,
+                            onUserMentionClick = onUserMentionClick,
+                            onPollUpdated = onPollUpdated,
+                            onCastVote = onCastVote,
+                            onRemoveVote = onRemoveVote,
+                            selectPoll = selectPoll,
+                            onAddAnswer = onAddAnswer,
+                            onClosePoll = onClosePoll,
+                            onAddPollOption = onAddPollOption,
+                        )
+                        MessageBottom(messageItem = messageItem)
+                    }
+                }
+                with(ChatTheme.componentFactory) {
+                    MessageSpacer(
+                        messageItem = messageItem,
+                    )
+                }
+            }
         }
     }
 }
 
 /**
- * Represents an unread separator item that shows whenever there are unread messages in the channel.
+ * Represents the default author content for a message.
  *
- * @param unreadSeparatorItemState The data used to show the separator text.
+ * By default, we show a user avatar if the message doesn't belong to the current user.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param onUserAvatarClick Handler when the user taps on the avatar.
  */
 @Composable
-internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
-    Box(
-        modifier = Modifier
-            .semantics(mergeDescendants = true) {
-                testTag = "Stream_UnreadMessagesBadge"
-            }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)
-            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
-        contentAlignment = Alignment.Center,
+internal fun RowScope.DefaultMessageAuthor(
+    messageItem: MessageItemState,
+    onUserAvatarClick: (() -> Unit)? = null,
+) {
+    val modifier = Modifier
+        .padding(start = 8.dp, end = 8.dp)
+        .size(24.dp)
+        .align(Alignment.Bottom)
+
+    @Suppress("ComplexCondition")
+    if (!messageItem.isMine && (
+            messageItem.showMessageFooter ||
+                messageItem.groupPosition == MessagePosition.BOTTOM ||
+                messageItem.groupPosition == MessagePosition.NONE
+            )
     ) {
-        Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
-            text = LocalContext.current.resources.getString(
-                R.string.stream_compose_message_list_unread_separator,
-            ),
-            style = ChatTheme.messageUnreadSeparatorTheme.textStyle,
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = modifier
+                .testTag("Stream_UserAvatar")
+                .ifNotNull(onUserAvatarClick) { clickable(onClick = it) },
+            user = messageItem.message.user,
+            showIndicator = false,
+            showBorder = false,
         )
+    } else {
+        Spacer(modifier = modifier)
     }
 }
 
 /**
- * Represents a thread separator item that is displayed in thread mode to separate a parent message
- * from thread replies.
+ * Represents the default top content inside the message bubble.
  *
- * @param threadSeparator The data used to show the separator text.
- */
-@Composable
-internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
-    val backgroundGradient = Brush.verticalGradient(
-        listOf(
-            ChatTheme.colors.threadSeparatorGradientStart,
-            ChatTheme.colors.threadSeparatorGradientEnd,
-        ),
-    )
-    val replyCount = threadSeparator.replyCount
-
-    Box(
-        modifier = Modifier
-            .semantics(mergeDescendants = true) {}
-            .fillMaxWidth()
-            .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding)
-            .background(brush = backgroundGradient),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding)
-                .testTag("Stream_RepliesCount"),
-            text = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_thread_separator,
-                replyCount,
-                replyCount,
-            ),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
-        )
-    }
-}
-
-/**
- * The default System message content.
+ * By default, we show if the message is pinned and thread labels.
  *
- * A system message is a message generated by a system event, such as updating the channel or muting a user.
- *
- * @param systemMessageState The system message item to show.
- */
-@Composable
-internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemState) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp),
-        text = systemMessageState.message.text,
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.footnoteBold,
-        textAlign = TextAlign.Center,
-    )
-}
-
-/**
- * The default Moderated message content.
- *
- * @param moderatedMessageItemState The moderated message item.
- */
-@Composable
-internal fun DefaultMessageModeratedContent(moderatedMessageItemState: ModeratedMessageItemState) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp, horizontal = 16.dp),
-        text = moderatedMessageItemState.message.text
-            .takeUnless { it.isBlank() }
-            ?: stringResource(id = R.string.stream_compose_message_moderated),
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.footnoteBold,
-        textAlign = TextAlign.Center,
-    )
-}
-
-/**
- * The default message item content.
- *
- * @param messageItem The message item to show.
- * @param onLongItemClick Handler when the user long taps on an item.
+ * @param messageItem The message item to show the content for.
+ * @param reactionSorting The sorting for the reactions, if we have any.
  * @param onReactionsClick Handler when the user taps on message reactions.
- * @param onThreadClick Handler when the user clicks on the message thread.
- * @param onCastVote Handler for casting a vote on an option.
- * @param onRemoveVote Handler for removing a vote on an option.
- * @param onClosePoll Handler for closing a poll.
- * @param onGiphyActionClick Handler when the user selects a Giphy action.
+ */
+@Suppress("LongMethod")
+@Composable
+internal fun DefaultMessageTop(
+    messageItem: MessageItemState,
+    reactionSorting: ReactionSorting,
+    onReactionsClick: (Message) -> Unit = {},
+) {
+    val message = messageItem.message
+    val currentUser = messageItem.currentUser
+
+    if (message.isPinned(ChatTheme.timeProvider)) {
+        val pinnedByUser = if (message.pinnedBy?.id == currentUser?.id) {
+            stringResource(id = R.string.stream_compose_message_list_you)
+        } else {
+            message.pinnedBy?.name
+        }
+
+        val pinnedByText = if (pinnedByUser != null) {
+            stringResource(id = R.string.stream_compose_pinned_to_channel_by, pinnedByUser)
+        } else {
+            null
+        }
+
+        MessageHeaderLabel(
+            painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
+            text = pinnedByText,
+        )
+    }
+
+    if (message.showInChannel) {
+        val alsoSendToChannelTextRes = if (messageItem.isInThread) {
+            R.string.stream_compose_also_sent_to_channel
+        } else {
+            R.string.stream_compose_replied_to_thread
+        }
+
+        MessageHeaderLabel(
+            painter = painterResource(id = R.drawable.stream_compose_ic_thread),
+            text = stringResource(alsoSendToChannelTextRes),
+        )
+    }
+
+    if (!message.isDeleted()) {
+        val ownReactions = message.ownReactions
+        val iconFactory = ChatTheme.reactionIconFactory
+        val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
+        message.reactionGroups
+            .filter { iconFactory.isReactionSupported(it.key) }
+            .takeIf { it.isNotEmpty() }
+            ?.toList()
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
+            ?.map { (type, _) ->
+                val isSelected = ownReactions.any { it.type == type }
+                val reactionIcon = iconFactory.createReactionIcon(type)
+                ReactionOptionItemState(
+                    painter = reactionIcon.getPainter(isSelected),
+                    type = type,
+                    emojiCode = pushEmojiFactory.emojiCode(type),
+                )
+            }?.let { reactions ->
+                ChatTheme.componentFactory.MessageReactions(
+                    params = MessageReactionsParams(
+                        message = message,
+                        reactions = reactions,
+                        onClick = onReactionsClick,
+                    ),
+                )
+            }
+    }
+}
+
+/**
+ * Represents the default bottom content inside the message bubble.
+ *
+ * By default, the following can be shown:
+ * - uploading status
+ * - thread participants
+ * - message timestamp
+ *
+ * @param messageItem The message item to show the content for.
+ */
+@Composable
+internal fun ColumnScope.DefaultMessageBottom(
+    messageItem: MessageItemState,
+) {
+    val message = messageItem.message
+    when {
+        message.isUploading() -> {
+            ChatTheme.componentFactory.MessageFooterUploadingContent(
+                modifier = Modifier.align(End),
+                messageItem = messageItem,
+            )
+        }
+
+        message.isDeleted() && !message.deletedForMe &&
+            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
+            ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
+                messageItem = messageItem,
+            )
+        }
+
+        else -> ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
+    }
+
+    val position = messageItem.groupPosition
+    val spacerSize = if (position == MessagePosition.NONE || position == MessagePosition.BOTTOM) 4.dp else 2.dp
+
+    Spacer(Modifier.size(spacerSize))
+}
+
+/**
+ * Represents the default content shown at the end of the message list item.
+ *
+ * By default, we show an extra spacing at the end of the message list item.
+ *
+ * @param messageItem The message item to show the content for.
+ */
+@Composable
+internal fun DefaultMessageSpacer(
+    messageItem: MessageItemState,
+) {
+    if (messageItem.isMine) {
+        Spacer(modifier = Modifier.width(8.dp))
+    }
+}
+
+/**
+ * Represents the default content inside the message bubble.
+ *
+ * By default, we show a message bubble with attachments or emoji stickers if message is emoji only.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
- * @param onUserAvatarClick Handler when users avatar is clicked.
- * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ * @param onCastVote Handler when a user cast a vote on an option.
+ * @param onRemoveVote Handler when a user cast a remove on an option.
+ * @param onClosePoll Handler when a user close a poll.
+ * @param onAddPollOption Handler when a user add a poll option.
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun DefaultMessageItem(
+public fun DefaultMessageContent(
+    modifier: Modifier = Modifier,
     messageItem: MessageItemState,
-    reactionSorting: ReactionSorting,
-    onLongItemClick: (Message) -> Unit,
-    onReactionsClick: (Message) -> Unit = {},
-    onThreadClick: (Message) -> Unit,
-    onGiphyActionClick: (GiphyAction) -> Unit,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
-    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
+    onUserMentionClick: (User) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
-    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit,
-    onUserAvatarClick: (() -> Unit)?,
-    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
-    onUserMentionClick: (User) -> Unit = {},
-    onReply: (Message) -> Unit = {},
+    onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
-    MessageItem(
-        messageItem = messageItem,
-        reactionSorting = reactionSorting,
-        onLongItemClick = onLongItemClick,
-        onReactionsClick = onReactionsClick,
-        onThreadClick = onThreadClick,
-        onPollUpdated = onPollUpdated,
-        onCastVote = onCastVote,
-        onRemoveVote = onRemoveVote,
-        selectPoll = selectPoll,
-        onClosePoll = onClosePoll,
-        onAddPollOption = onAddPollOption,
-        onGiphyActionClick = onGiphyActionClick,
-        onQuotedMessageClick = onQuotedMessageClick,
-        onUserAvatarClick = onUserAvatarClick,
-        onLinkClick = onLinkClick,
-        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-        onUserMentionClick = onUserMentionClick,
-        onAddAnswer = onAddAnswer,
-        onReply = onReply,
-    )
+    val finalModifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    if (messageItem.message.isPoll() && !messageItem.message.isDeleted()) {
+        val poll = messageItem.message.poll
+        LaunchedEffect(key1 = poll) {
+            if (poll != null) {
+                onPollUpdated.invoke(messageItem.message, poll)
+            }
+        }
+
+        PollMessageContent(
+            modifier = finalModifier,
+            messageItem = messageItem,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
+            onLongItemClick = onLongItemClick,
+            onAddAnswer = onAddAnswer,
+        )
+    } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
+        EmojiMessageContent(
+            modifier = finalModifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
+    } else {
+        RegularMessageContent(
+            modifier = finalModifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
+    }
 }
+
+/**
+ * Message content when the message consists only of emoji.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onMediaGalleryPreviewResult Handler used when the user selects an option in the Media Gallery Preview screen.
+ */
+@Composable
+public fun EmojiMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+) {
+    val message = messageItem.message
+
+    if (!messageItem.isErrorOrFailed()) {
+        MessageContent(
+            message = message,
+            currentUser = messageItem.currentUser,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
+    } else {
+        Box(modifier = modifier) {
+            MessageContent(
+                message = message,
+                currentUser = messageItem.currentUser,
+                onLongItemClick = onLongItemClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+            )
+
+            ChatTheme.componentFactory.MessageFailedIcon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd),
+                message = message,
+            )
+        }
+    }
+}
+
+/**
+ * Message content for messages which consist of more than just emojis.
+ *
+ * @param messageItem The message item to show the content for.
+ * @param modifier Modifier for styling.
+ * @param onLongItemClick Handler when the user selects a message, on long tap.
+ * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
+ * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ */
+@Composable
+public fun RegularMessageContent(
+    messageItem: MessageItemState,
+    modifier: Modifier = Modifier,
+    onLongItemClick: (Message) -> Unit = {},
+    onGiphyActionClick: (GiphyAction) -> Unit = {},
+    onQuotedMessageClick: (Message) -> Unit = {},
+    onLinkClick: ((Message, String) -> Unit)? = null,
+    onUserMentionClick: (User) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+) {
+    val message = messageItem.message
+    val ownsMessage = messageItem.isMine
+
+    val messageBubbleShape = MessageStyling.shape(messageItem.groupPosition, outgoing = ownsMessage)
+    val messageBubbleColor = MessageStyling.backgroundColor(ownsMessage)
+
+    val content = @Composable {
+        MessageContent(
+            message = message,
+            currentUser = messageItem.currentUser,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
+    }
+    if (!messageItem.isErrorOrFailed()) {
+        ChatTheme.componentFactory.MessageBubble(
+            modifier = modifier,
+            message = message,
+            shape = messageBubbleShape,
+            color = messageBubbleColor,
+            border = null,
+            content = content,
+        )
+    } else {
+        Box(modifier = modifier) {
+            ChatTheme.componentFactory.MessageBubble(
+                modifier = Modifier.padding(end = 12.dp),
+                message = message,
+                shape = messageBubbleShape,
+                color = messageBubbleColor,
+                border = null,
+                content = content,
+            )
+
+            ChatTheme.componentFactory.MessageFailedIcon(
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(BottomEnd)
+                    .testTag("Stream_MessageFailedIcon"),
+                message = message,
+            )
+        }
+    }
+}
+
+/**
+ * Represent a swipe to reply content.
+ *
+ * The swipe-to-reply content is provided through [ChatTheme.componentFactory].
+ *
+ * @param modifier Modifier for styling.
+ * @param onReply Handler when the user swipes to reply.
+ * @param isSwipeable Handler to determine if the message is swipeable.
+ * @param content The swipeable content to show when not swiping to reply.
+ */
+@Suppress("LongMethod")
+@Composable
+private fun SwipeToReply(
+    modifier: Modifier = Modifier,
+    onReply: () -> Unit = {},
+    isSwipeable: () -> Boolean = { true },
+    content: @Composable () -> Unit,
+) {
+    var swipeToReplyWidth by remember { mutableFloatStateOf(0f) }
+    var rowWidth by remember { mutableFloatStateOf(0f) }
+    val offset = remember { Animatable(initialValue = 0f) }
+    val scope = rememberCoroutineScope()
+    val view = LocalView.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .onSizeChanged { swipeToReplyWidth = it.width.toFloat() }
+                .offset {
+                    val roundToInt = swipeToReplyWidth.roundToInt()
+                    IntOffset(
+                        x = (offset.value.roundToInt() - roundToInt)
+                            .coerceIn(-roundToInt, roundToInt),
+                        y = 0,
+                    )
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            with(ChatTheme.componentFactory) {
+                SwipeToReplyContent()
+            }
+        }
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .onSizeChanged { rowWidth = it.width.toFloat() }
+                .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }
+                .pointerInput(swipeToReplyWidth) {
+                    if (isSwipeable()) {
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { change, dragAmount ->
+                                // Only consume if horizontal drag dominates vertical
+                                if (change.positionChange().x.absoluteValue > change.positionChange().y.absoluteValue) {
+                                    scope.launch {
+                                        val newOffset = (offset.value + dragAmount)
+                                            .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
+                                        offset.snapTo(newOffset)
+                                    }
+                                } else {
+                                    change.consume()
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    if (offset.value >= swipeToReplyWidth) {
+                                        view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
+                                        onReply()
+                                    }
+                                    offset.animateTo(0f)
+                                }
+                            },
+                        )
+                    }
+                },
+        ) {
+            content()
+        }
+    }
+}
+
+/**
+ * Represents the time the highlight fade out transition will take.
+ */
+public const val HighlightFadeOutDurationMillis: Int = 2000
