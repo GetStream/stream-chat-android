@@ -2672,7 +2672,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/list/DefaultMessageContainerKt {
+public final class io/getstream/chat/android/compose/ui/messages/list/MessageContainerKt {
 	public static final field HighlightFadeOutDurationMillis I
 	public static final fun DefaultMessageContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
 	public static final fun EmojiMessageContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
@@ -2680,7 +2680,7 @@ public final class io/getstream/chat/android/compose/ui/messages/list/DefaultMes
 	public static final fun RegularMessageContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/list/DefaultMessageItemKt {
+public final class io/getstream/chat/android/compose/ui/messages/list/MessageItemKt {
 	public static final fun MessageItem (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
 }
 
