@@ -198,7 +198,7 @@ public class AttachmentsPickerViewModel(
     public fun getSelectedAttachments(): List<Attachment> {
         val allSelected = (mediaAttachments + fileAttachments)
             .filter(AttachmentPickerItemState::isSelected)
-            .deduplicateByUri()
+            .distinctBy { it.attachmentMetaData.uri }
             .map(AttachmentPickerItemState::attachmentMetaData)
         return storageHelper.getAttachmentsForUpload(allSelected)
     }
@@ -416,18 +416,6 @@ public class AttachmentsPickerViewModel(
                     }
                 },
             )
-        }
-
-        /**
-         * Removes duplicate items that share the same [URI][AttachmentMetaData.uri],
-         * keeping the first occurrence.
-         */
-        private fun List<AttachmentPickerItemState>.deduplicateByUri(): List<AttachmentPickerItemState> {
-            val seen = mutableSetOf<Uri>()
-            return filter { item ->
-                val uri = item.attachmentMetaData.uri
-                uri == null || seen.add(uri)
-            }
         }
     }
 }
