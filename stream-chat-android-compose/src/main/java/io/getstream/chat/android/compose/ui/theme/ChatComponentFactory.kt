@@ -1900,6 +1900,28 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The content displayed in the message composer while the user is holding to record audio.
+     *
+     * Shows a mic indicator icon, a live recording timer, and a "slide to cancel" hint that follows
+     * the user's drag gesture.
+     *
+     * Override this method to provide a fully custom hold-to-record UI.
+     *
+     * @param state The current [RecordingState.Hold] containing the recording duration and drag offset.
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingHoldContent(
+        state: RecordingState.Hold,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingHoldContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default avatar component that displays an image from a URL or falls back to a placeholder.
      * This component serves as the foundational UI for all avatar types.
      *

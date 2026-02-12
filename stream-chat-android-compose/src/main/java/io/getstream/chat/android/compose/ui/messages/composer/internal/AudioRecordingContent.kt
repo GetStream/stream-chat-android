@@ -57,7 +57,10 @@ internal fun AudioRecordingContent(
     modifier: Modifier = Modifier,
 ) {
     when (recordingState) {
-        is RecordingState.Hold -> HoldRecordContent(recordingState, modifier)
+        is RecordingState.Hold -> ChatTheme.componentFactory.MessageComposerAudioRecordingHoldContent(
+            state = recordingState,
+            modifier = modifier,
+        )
         is RecordingState.Locked -> LockedRecordContent(recordingState, modifier)
         is RecordingState.Overview -> OverviewRecordContent(recordingState, recordingActions, modifier)
         is RecordingState.Complete,
@@ -68,7 +71,7 @@ internal fun AudioRecordingContent(
 
 /** Finger-down state: timer counts up while the slide-to-cancel hint follows the drag. */
 @Composable
-private fun HoldRecordContent(
+internal fun MessageComposerAudioRecordingHoldContent(
     state: RecordingState.Hold,
     modifier: Modifier = Modifier,
 ) {
