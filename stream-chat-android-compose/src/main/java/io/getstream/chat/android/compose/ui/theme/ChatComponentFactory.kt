@@ -163,6 +163,7 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingPermissionRationale
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
@@ -1883,6 +1884,22 @@ public interface ChatComponentFactory {
         AudioRecordingButton(
             recordingState = state,
             recordingActions = recordingActions,
+        )
+    }
+
+    /**
+     * The default permission rationale component displayed when the audio recording permission needs explanation.
+     *
+     * Shown as a timed popup anchored at the bottom of the composer, with a message and a "Settings" button.
+     *
+     * @param onDismissRequest Called when the popup should be dismissed (e.g. after timeout or user interaction).
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingPermissionRationale(
+        onDismissRequest: () -> Unit,
+    ) {
+        AudioRecordingPermissionRationale(
+            onDismissRequest = onDismissRequest,
         )
     }
 

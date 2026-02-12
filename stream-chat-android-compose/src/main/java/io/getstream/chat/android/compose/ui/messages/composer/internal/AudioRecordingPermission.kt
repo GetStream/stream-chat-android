@@ -74,7 +74,7 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
 
     var showRationale by remember { mutableStateOf(false) }
     if (showRationale) {
-        AudioRecordingPermissionRationale(
+        ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(
             onDismissRequest = { showRationale = false },
         )
     }
@@ -150,7 +150,7 @@ private fun TimedPopup(
 }
 
 @Composable
-private fun AudioRecordingPermissionRationale(
+internal fun AudioRecordingPermissionRationale(
     onDismissRequest: () -> Unit,
 ) {
     val theme = ChatTheme.messageComposerTheme.audioRecording.permissionRationale
