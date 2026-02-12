@@ -176,10 +176,10 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageSpacer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTop
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
@@ -1182,14 +1182,16 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default trailing content of the message item.
-     * Usually an extra spacing at the end of the message item if the author is the current user.
+     * The empty space in the message item opposite to the message bubble.
+     * For example, for outgoing messages, by default the spacer is placed before the bubble.
+     *
+     * @param messageItem The message item to show the spacer for.
      */
     @Composable
-    public fun RowScope.MessageItemTrailingContent(
+    public fun RowScope.MessageSpacer(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageItemTrailingContent(messageItem = messageItem)
+        DefaultMessageSpacer(messageItem = messageItem)
     }
 
     /**

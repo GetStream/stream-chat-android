@@ -245,7 +245,7 @@ public fun MessageContainer(
                     }
                 }
                 with(ChatTheme.componentFactory) {
-                    MessageItemTrailingContent(
+                    MessageSpacer(
                         messageItem = messageItem,
                     )
                 }
@@ -419,7 +419,7 @@ internal fun ColumnScope.DefaultMessageBottom(
  * @param messageItem The message item to show the content for.
  */
 @Composable
-internal fun DefaultMessageItemTrailingContent(
+internal fun DefaultMessageSpacer(
     messageItem: MessageItemState,
 ) {
     if (messageItem.isMine) {
