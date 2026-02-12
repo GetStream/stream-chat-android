@@ -1922,6 +1922,28 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The content displayed in the message composer when the recording is locked (finger released while
+     * recording continues).
+     *
+     * Shows a mic indicator icon, a live recording timer, and a growing waveform visualization.
+     *
+     * Override this method to provide a fully custom locked-recording UI.
+     *
+     * @param state The current [RecordingState.Locked] containing the recording duration and waveform data.
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingLockedContent(
+        state: RecordingState.Locked,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingLockedContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default avatar component that displays an image from a URL or falls back to a placeholder.
      * This component serves as the foundational UI for all avatar types.
      *
