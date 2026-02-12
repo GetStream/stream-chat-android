@@ -4856,6 +4856,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerMode;
 	public final fun getSelectedAttachments ()Ljava/util/List;
 	public final fun isShowingAttachments ()Z
+	public final fun onAttachmentsLoaded (Ljava/util/List;)V
 	public final fun removeSelectedAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun setAttachments (Ljava/util/List;)V
 	public final fun toggleAttachmentState ()V
