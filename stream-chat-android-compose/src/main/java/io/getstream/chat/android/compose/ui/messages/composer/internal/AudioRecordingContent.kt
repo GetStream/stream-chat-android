@@ -61,7 +61,10 @@ internal fun AudioRecordingContent(
             state = recordingState,
             modifier = modifier,
         )
-        is RecordingState.Locked -> LockedRecordContent(recordingState, modifier)
+        is RecordingState.Locked -> ChatTheme.componentFactory.MessageComposerAudioRecordingLockedContent(
+            state = recordingState,
+            modifier = modifier,
+        )
         is RecordingState.Overview -> OverviewRecordContent(recordingState, recordingActions, modifier)
         is RecordingState.Complete,
         is RecordingState.Idle,
@@ -109,7 +112,7 @@ internal fun MessageComposerAudioRecordingHoldContent(
 
 /** Recording locked (finger released): waveform grows as recording continues. */
 @Composable
-private fun LockedRecordContent(
+internal fun MessageComposerAudioRecordingLockedContent(
     state: RecordingState.Locked,
     modifier: Modifier = Modifier,
 ) {
