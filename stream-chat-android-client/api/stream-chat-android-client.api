@@ -919,7 +919,6 @@ public abstract interface class io/getstream/chat/android/client/api/state/Query
 
 public final class io/getstream/chat/android/client/api/state/StateRegistry {
 	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;Lio/getstream/chat/android/client/api/MessageLimitConfig;Z)V
-	public synthetic fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;Lio/getstream/chat/android/client/api/MessageLimitConfig;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/client/api/state/QueryChannelsState;

@@ -118,7 +118,6 @@ internal class ChannelStateLegacyImpl(
     override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages!!
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages!!
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
-
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
     override val messageCount: StateFlow<Int?> = _channelData!!.mapState { it?.messageCount }
     override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->

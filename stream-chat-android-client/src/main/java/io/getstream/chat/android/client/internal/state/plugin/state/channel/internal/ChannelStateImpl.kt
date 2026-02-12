@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.internal.state.plugin.state.channel.inte
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl.Companion.TRIM_BUFFER
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
+import io.getstream.chat.android.client.internal.state.utils.internal.mergeSorted
 import io.getstream.chat.android.client.internal.state.utils.internal.updateIf
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSorted
 import io.getstream.chat.android.client.internal.state.utils.internal.upsertSortedBounded
@@ -165,9 +166,7 @@ internal class ChannelStateImpl(
     override val watcherCount: StateFlow<Int> = _watcherCount.asStateFlow()
 
     override val watchers: StateFlow<List<User>> = combineStates(_watchers, latestUsers) { watchers, users ->
-        watchers
-            .updateUsers(users)
-            .sortedBy(User::createdAt)
+        watchers.updateUsers(users)
     }
 
     override val typing: StateFlow<TypingEvent> = _typing.asStateFlow()
@@ -259,7 +258,6 @@ internal class ChannelStateImpl(
     }
 
     override fun getMessageById(id: String): Message? {
-        // TODO: Can we optimize the usages of this lookup, by doing the lookup + update in one pass?
         return _messages.value.find { it.id == id }
             ?: _cachedLatestMessages.value.find { it.id == id }
             ?: _pinnedMessages.value.find { it.id == id }
@@ -273,51 +271,58 @@ internal class ChannelStateImpl(
      * @param messages The list of messages to set.
      */
     fun setMessages(messages: List<Message>) {
-        _messages.value = emptyList()
-        upsertMessages(messages)
+        val messagesToSet = messages.filterNot { shouldIgnoreUpsertion(it) }
+        for (message in messagesToSet) {
+            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+            message.poll?.let { registerPollForMessage(it, message.id) }
+        }
+        _messages.value = messagesToSet
     }
 
     /**
      * Upserts a single message into the current state.
+     * Uses optimized single-element upsert with binary search insertion.
      *
      * @param message The message to upsert.
      */
     fun upsertMessage(message: Message) {
-        upsertMessages(listOf(message))
+        if (shouldIgnoreUpsertion(message)) return
+        message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+        message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+        message.poll?.let { registerPollForMessage(it, message.id) }
+        _messages.update { current ->
+            current.upsertSorted(
+                element = message,
+                idSelector = Message::id,
+                comparator = MESSAGE_COMPARATOR,
+            )
+        }
     }
 
     /**
      * Upserts the list of messages into the current state.
+     * Uses optimized batch merge for O(n + m) time complexity with single emission.
      *
-     * @param messages The list of messages to upsert.
+     * **Precondition:** [messages] must be sorted by `createdAt` ascending.
+     * This is guaranteed when messages come from API responses or database queries.
+     *
+     * @param messages The list of messages to upsert (must be sorted by createdAt).
      */
     fun upsertMessages(messages: List<Message>) {
-        for (message in messages) {
-            // Check if the message should be ignored for upsertion
-            if (shouldIgnoreUpsertion(message)) {
-                continue
-            }
-
-            // Store QuotedMessage reference (if available)
-            val quotedMessage = message.replyTo
-            if (quotedMessage != null) {
-                addQuotedMessage(quotedMessage.id, message.id)
-            }
-
-            // Link message with poll (if available)
-            val poll = message.poll
-            if (poll != null) {
-                registerPollForMessage(poll, message.id)
-            }
-
-            // Insert or update the message in the sorted list
-            _messages.update { current ->
-                current.upsertSorted(
-                    element = message,
-                    idSelector = Message::id,
-                    comparator = compareBy { it.getCreatedAtOrNull() },
-                )
-            }
+        val messagesToUpsert = messages.filterNot { shouldIgnoreUpsertion(it) }
+        if (messagesToUpsert.isEmpty()) return
+        for (message in messagesToUpsert) {
+            message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+            message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+            message.poll?.let { registerPollForMessage(it, message.id) }
+        }
+        _messages.update { current ->
+            current.mergeSorted(
+                other = messagesToUpsert,
+                idSelector = Message::id,
+                comparator = MESSAGE_COMPARATOR,
+            )
         }
     }
 
@@ -329,30 +334,16 @@ internal class ChannelStateImpl(
      * @param message The message to upsert.
      */
     fun upsertCachedMessage(message: Message) {
-        // Check if the message should be ignored for upsertion
-        if (shouldIgnoreUpsertion(message)) {
-            return
-        }
-
-        // Store QuotedMessage reference (if available)
-        val quotedMessage = message.replyTo
-        if (quotedMessage != null) {
-            addQuotedMessage(quotedMessage.id, message.id)
-        }
-
-        // Link message with poll (if available)
-        val poll = message.poll
-        if (poll != null) {
-            registerPollForMessage(poll, message.id)
-        }
-
-        // Insert or update the message in the sorted list with a hard limit
+        if (shouldIgnoreUpsertion(message)) return
+        message.replyTo?.let { addQuotedMessage(it.id, message.id) }
+        message.replyMessageId?.let { addQuotedMessage(it, message.id) }
+        message.poll?.let { registerPollForMessage(it, message.id) }
         _cachedLatestMessages.update { current ->
             current.upsertSortedBounded(
                 element = message,
                 maxSize = CACHED_LATEST_MESSAGES_LIMIT,
                 idSelector = Message::id,
-                comparator = compareBy { it.getCreatedAtOrNull() },
+                comparator = MESSAGE_COMPARATOR,
             )
         }
     }
@@ -363,33 +354,21 @@ internal class ChannelStateImpl(
      * @param message The message to update.
      */
     fun updateMessage(message: Message) {
-        // Update message list
-        val index = _messages.value.indexOfFirst { it.id == message.id }
-        if (index >= 0) {
-            _messages.update { current ->
-                val mutableList = current.toMutableList()
-                mutableList[index] = message
-                mutableList.toList()
-            }
-        }
-        // Update cached latest messages list
-        val cachedIndex = _cachedLatestMessages.value.indexOfFirst { it.id == message.id }
-        if (cachedIndex >= 0) {
-            _cachedLatestMessages.update { current ->
-                val mutableList = current.toMutableList()
-                mutableList[cachedIndex] = message
-                mutableList.toList()
-            }
-        }
-        // Update pinned messages list
-        val pinnedIndex = _pinnedMessages.value.indexOfFirst { it.id == message.id }
-        if (pinnedIndex >= 0) {
-            _pinnedMessages.update { current ->
-                val mutableList = current.toMutableList()
-                mutableList[pinnedIndex] = message
-                mutableList.toList()
-            }
-        }
+        updateMessageById(message.id) { message }
+    }
+
+    /**
+     * Finds a message by ID and updates it using the provided transform function.
+     * Only calls update on message sets that contain the message, avoiding unnecessary
+     * StateFlow emissions.
+     *
+     * @param id The ID of the message to update.
+     * @param transform A function that takes the existing message and returns the updated message.
+     */
+    fun updateMessageById(id: String, transform: (Message) -> Message) {
+        _messages.update { it.updateIf({ msg -> msg.id == id }, transform) }
+        _cachedLatestMessages.update { it.updateIf({ msg -> msg.id == id }, transform) }
+        _pinnedMessages.update { it.updateIf({ msg -> msg.id == id }, transform) }
     }
 
     /**
@@ -398,7 +377,17 @@ internal class ChannelStateImpl(
      *
      * @param id The ID of the message to delete.
      */
-    fun deleteMessage(id: String) = deleteMessages(setOf(id))
+    fun deleteMessage(id: String) {
+        _messages.update { current ->
+            current.filterNot { id == it.id }
+        }
+        _cachedLatestMessages.update { current ->
+            current.filterNot { id == it.id }
+        }
+        _pinnedMessages.update { current ->
+            current.filterNot { id == it.id }
+        }
+    }
 
     /**
      * Removes all messages created before the specified date.
@@ -408,19 +397,17 @@ internal class ChannelStateImpl(
      */
     fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
         _messages.update { current ->
-            current.filter { message ->
-                message.wasCreatedAfter(date)
+            if (current.all { it.wasCreatedAfter(date) }) {
+                current
+            } else {
+                current.filter { it.wasCreatedAfter(date) }
             }
         }
         _cachedLatestMessages.update { current ->
-            current.filter { message ->
-                message.wasCreatedAfter(date)
-            }
+            current.filter { message -> message.wasCreatedAfter(date) }
         }
         _pinnedMessages.update { current ->
-            current.filter { message ->
-                message.wasCreatedAfter(date)
-            }
+            current.filter { message -> message.wasCreatedAfter(date) }
         }
         systemMessage?.let(::upsertMessage)
     }
@@ -428,7 +415,8 @@ internal class ChannelStateImpl(
     /**
      * Hides all messages created before the specified date.
      * This is an alias for [removeMessagesBefore].
-     * TODO: Verify is this is required.
+     *
+     * **Note: Kept for backwards compatibility**
      *
      * @param date The cutoff date; messages created before this date will be hidden.
      */
@@ -442,13 +430,15 @@ internal class ChannelStateImpl(
      * @param userId The ID of the user whose messages should be deleted.
      * @param hard If true, messages are hard deleted; if false, they are soft deleted (marked as deleted).
      * @param deletedAt The timestamp to set for soft-deleted messages.
-     * TODO: Manually test this
      */
     fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
         if (hard) {
-            // Hard delete: filter out user messages per message set
             _messages.update { current ->
-                current.filterNot { it.user.id == userId }
+                if (current.none { it.user.id == userId }) {
+                    current
+                } else {
+                    current.filterNot { it.user.id == userId }
+                }
             }
             _cachedLatestMessages.update { current ->
                 current.filterNot { it.user.id == userId }
@@ -509,32 +499,26 @@ internal class ChannelStateImpl(
      * @param quotedMessage The message whose quoting messages should be updated.
      */
     fun updateQuotedMessageReferences(quotedMessage: Message) {
+        val quotingMessageIds = _quotedMessagesMap.value[quotedMessage.id]
+        if (quotingMessageIds.isNullOrEmpty()) return
+
         _messages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessage.id || message.replyMessageId == quotedMessage.id) {
-                    message.copy(replyTo = quotedMessage)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = quotedMessage) },
+            )
         }
         _cachedLatestMessages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessage.id || message.replyMessageId == quotedMessage.id) {
-                    message.copy(replyTo = quotedMessage)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = quotedMessage) },
+            )
         }
         _pinnedMessages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessage.id || message.replyMessageId == quotedMessage.id) {
-                    message.copy(replyTo = quotedMessage)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = quotedMessage) },
+            )
         }
     }
 
@@ -544,32 +528,30 @@ internal class ChannelStateImpl(
      * @param quotedMessageId The ID of the quoted message to remove references for.
      */
     fun deleteQuotedMessageReferences(quotedMessageId: String) {
+        val quotingMessageIds = _quotedMessagesMap.value[quotedMessageId]
+        if (quotingMessageIds.isNullOrEmpty()) {
+            // Still clean up the map entry even if empty
+            _quotedMessagesMap.update { current -> current - quotedMessageId }
+            return
+        }
+
         _messages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessageId || message.replyMessageId == quotedMessageId) {
-                    message.copy(replyTo = null)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = null) },
+            )
         }
         _cachedLatestMessages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessageId || message.replyMessageId == quotedMessageId) {
-                    message.copy(replyTo = null)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = null) },
+            )
         }
         _pinnedMessages.update { current ->
-            current.map { message ->
-                if (message.replyTo?.id == quotedMessageId || message.replyMessageId == quotedMessageId) {
-                    message.copy(replyTo = null)
-                } else {
-                    message
-                }
-            }
+            current.updateIf(
+                filter = { it.id in quotingMessageIds },
+                update = { it.copy(replyTo = null) },
+            )
         }
         _quotedMessagesMap.update { current ->
             current - quotedMessageId
@@ -593,26 +575,23 @@ internal class ChannelStateImpl(
      * @param pinnedMessages The list of pinned messages to add.
      */
     fun addPinnedMessages(pinnedMessages: List<Message>) {
+        if (pinnedMessages.isEmpty()) return
         for (pinnedMessage in pinnedMessages) {
-            // Link message with poll (if available)
-            val poll = pinnedMessage.poll
-            if (poll != null) {
-                registerPollForMessage(poll, pinnedMessage.id)
-            }
-
-            // Store QuotedMessage reference (if available)
-            val quotedMessage = pinnedMessage.replyTo
-            if (quotedMessage != null) {
-                addQuotedMessage(quotedMessage.id, pinnedMessage.id)
-            }
-
-            _pinnedMessages.update { current ->
-                current.upsertSorted(
+            pinnedMessage.poll?.let { registerPollForMessage(it, pinnedMessage.id) }
+            pinnedMessage.replyTo?.let { addQuotedMessage(it.id, pinnedMessage.id) }
+            pinnedMessage.replyMessageId?.let { addQuotedMessage(it, pinnedMessage.id) }
+        }
+        _pinnedMessages.update { current ->
+            var result = current
+            // Upsert sorted each pinned message separately - there is no guarantee that the list is pre-sorted
+            for (pinnedMessage in pinnedMessages) {
+                result = result.upsertSorted(
                     element = pinnedMessage,
                     idSelector = Message::id,
                     comparator = compareBy { it.pinnedAt },
                 )
             }
+            result
         }
     }
 
@@ -622,8 +601,13 @@ internal class ChannelStateImpl(
      * @param messageId The ID of the pinned message to delete.
      */
     fun deletePinnedMessage(messageId: String) {
+        // This method can be called frequently, but rarely updates the state. So do a pre-check for existence.
         _pinnedMessages.update { current ->
-            current.filterNot { it.id == messageId }
+            if (current.none { it.id == messageId }) {
+                current
+            } else {
+                current.filterNot { it.id == messageId }
+            }
         }
     }
 
@@ -646,17 +630,10 @@ internal class ChannelStateImpl(
         shadow: Boolean,
     ) {
         _members.update { current ->
-            current.map { member ->
-                if (member.user.id == memberId) {
-                    member.copy(
-                        banned = banned,
-                        banExpires = expiry,
-                        shadowBanned = shadow,
-                    )
-                } else {
-                    member
-                }
-            }
+            current.updateIf(
+                filter = { it.user.id == memberId },
+                update = { it.copy(banned = banned, banExpires = expiry, shadowBanned = shadow) },
+            )
         }
     }
 
@@ -1436,7 +1413,6 @@ internal class ChannelStateImpl(
         if (!isFromCurrentUser && isFromShadowBannedUser) {
             return true
         }
-
         // Skip thread replies that are not shown in channel
         // Note: If we add `threads` handling directly in the channel state,
         // we would need to handle them separately
@@ -1446,18 +1422,6 @@ internal class ChannelStateImpl(
             return true
         }
         return false
-    }
-
-    private fun deleteMessages(ids: Set<String>) {
-        _messages.update { current ->
-            current.filterNot { ids.contains(it.id) }
-        }
-        _cachedLatestMessages.update { current ->
-            current.filterNot { ids.contains(it.id) }
-        }
-        _pinnedMessages.update { current ->
-            current.filterNot { ids.contains(it.id) }
-        }
     }
 
     private fun registerPollForMessage(poll: Poll, messageId: String) {
@@ -1526,5 +1490,11 @@ internal class ChannelStateImpl(
          * [messageLimit] + [TRIM_BUFFER].
          */
         private const val TRIM_BUFFER = 30
+
+        /**
+         * Comparator for sorting messages by creation date (ascending).
+         * Used for maintaining sorted order in message lists.
+         */
+        private val MESSAGE_COMPARATOR: Comparator<Message> = compareBy { it.getCreatedAtOrNull() }
     }
 }

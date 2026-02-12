@@ -192,17 +192,18 @@ internal class ChannelEventHandlerImpl(
             }
 
             is MessageUpdatedEvent -> {
-                // 1. Enrich with own_reactions (not present in the event)
-                // 2. Enrich with own poll (workaround for backend not sending poll in message.updated event)
+                // Get original message for enrichment
                 val originalMessage = state.getMessageById(event.message.id)
-                val poll = event.message.poll ?: originalMessage?.poll
-                val enrichedMessage = enrichWithOwnReactions(event.message)
-                    .copy(poll = poll)
-                // 3. Update message in state
+                // Enrich with own_reactions and poll (not present in the event)
+                val enrichedMessage = event.message.copy(
+                    poll = event.message.poll ?: originalMessage?.poll,
+                    ownReactions = originalMessage?.ownReactions ?: event.message.ownReactions,
+                )
+                // Update message in state
                 state.updateMessage(enrichedMessage)
-                // 4. Update Quoted Messages references
+                // Update Quoted Messages references
                 state.updateQuotedMessageReferences(enrichedMessage)
-                // 5. Handle Pinned status
+                // Handle Pinned status
                 if (event.message.isPinned(now)) {
                     state.addPinnedMessage(enrichedMessage)
                 } else {
@@ -244,10 +245,9 @@ internal class ChannelEventHandlerImpl(
                 }
             }
             // Reaction events
-            // TODO: Rework the reaction events handling logic
-            is ReactionNewEvent -> updateMessage(event.message)
-            is ReactionUpdateEvent -> updateMessage(event.message)
-            is ReactionDeletedEvent -> updateMessage(event.message)
+            is ReactionNewEvent -> updateMessageWithReaction(event.message)
+            is ReactionUpdateEvent -> updateMessageWithReaction(event.message)
+            is ReactionDeletedEvent -> updateMessageWithReaction(event.message)
             // Member events
             is MemberAddedEvent -> {
                 state.addMember(event.member)
@@ -375,22 +375,21 @@ internal class ChannelEventHandlerImpl(
     }
 
     private fun updateReminder(messageId: String, reminder: MessageReminder) {
-        val message = state.getMessageById(messageId) ?: return
-        val updatedMessage = message.copy(reminder = reminder.toMessageReminderInfo())
-        state.updateMessage(updatedMessage)
+        state.updateMessageById(messageId) { message ->
+            message.copy(reminder = reminder.toMessageReminderInfo())
+        }
     }
 
     private fun deleteReminder(messageId: String) {
-        val message = state.getMessageById(messageId) ?: return
-        val updatedMessage = message.copy(reminder = null)
-        state.updateMessage(updatedMessage)
+        state.updateMessageById(messageId) { message ->
+            message.copy(reminder = null)
+        }
     }
 
-    private fun updateMessage(message: Message) {
-        val oldMessage = state.getMessageById(message.id) ?: return
-        val ownReactions = oldMessage.ownReactions
-        val enrichedMessage = message.copy(ownReactions = ownReactions)
-        state.updateMessage(enrichedMessage)
+    private fun updateMessageWithReaction(message: Message) {
+        state.updateMessageById(message.id) { oldMessage ->
+            message.copy(ownReactions = oldMessage.ownReactions)
+        }
     }
 
     private fun enrichWithOwnReactions(message: Message): Message {

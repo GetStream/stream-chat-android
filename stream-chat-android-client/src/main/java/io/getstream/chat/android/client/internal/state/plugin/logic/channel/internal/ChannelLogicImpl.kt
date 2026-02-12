@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateImpl
@@ -34,7 +35,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.toChannelData
-import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
@@ -159,12 +159,6 @@ internal class ChannelLogicImpl(
     }
 
     override suspend fun watch(limit: Int, userPresence: Boolean): Result<Channel> {
-        if (stateImpl.loading.value) {
-            // TODO: This is currently never reached - we never call setLoading(true) before this
-            val error =
-                Error.GenericError("Another request to watch this channel is in progress. Ignoring this request.")
-            return Result.Failure(error)
-        }
         val request = QueryChannelPaginationRequest(limit)
             .toWatchChannelRequest(userPresence)
             .apply {
@@ -306,7 +300,8 @@ internal class ChannelLogicImpl(
         stateImpl.setChannelConfig(channel.config)
         // Reset messages
         if (messageLimit > 0) {
-            // TODO: Check case when unhiding a channel: add doesn't return the newest message (overrides the message.new from cache)
+            // TODO: Check case when unhiding a channel: add doesn't return the newest message
+            //  (overrides the message.new from cache)
             stateImpl.setMessages(channel.messages)
             stateImpl.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
@@ -413,7 +408,9 @@ internal class ChannelLogicImpl(
         // Fetch channel data from DB
         val channel = repository.selectChannel(cid) ?: return null
         // Fetch messages for the channel
-        val messages = repository.selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
+        val messages = repository
+            .selectMessagesForChannel(cid, request.toAnyChannelPaginationRequest())
+            .sortedBy { it.getCreatedAtOrNull() }
         // Enrich the channel with messages
         return channel.copy(messages = messages)
     }

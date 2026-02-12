@@ -36,13 +36,26 @@ package io.getstream.chat.android.client.internal.state.utils.internal
  * Updates elements in the list that match the given [filter] by applying the [update] function.
  * Elements that don't match the filter remain unchanged.
  *
+ * This implementation uses lazy allocation - if no elements match the filter, the original list
+ * reference is returned without any allocation. This is important for StateFlow usage where
+ * returning the same reference prevents unnecessary emissions.
+ *
  * @param filter A predicate function that determines whether an element should be updated.
  * @param update A function that takes an element and returns its updated version.
- * @return A new list containing the updated elements. Elements that did not match the filter are
- *   included unchanged.
+ * @return The original list if no elements match the filter, or a new list with updated elements.
  */
-internal inline fun <T> List<T>.updateIf(filter: (T) -> Boolean, update: (T) -> T): List<T> = map {
-    if (filter(it)) update(it) else it
+internal inline fun <T> List<T>.updateIf(filter: (T) -> Boolean, update: (T) -> T): List<T> {
+    var result: MutableList<T>? = null
+    for (i in indices) {
+        val item = this[i]
+        if (filter(item)) {
+            if (result == null) {
+                result = toMutableList()
+            }
+            result[i] = update(item)
+        }
+    }
+    return result ?: this
 }
 
 private fun <T> MutableList<T>.toImmutableList(): List<T> {
@@ -154,4 +167,73 @@ internal fun <T, ID> List<T>.upsertSortedBounded(
 ): List<T> {
     val result = upsertSorted(element, idSelector, comparator)
     return if (result.size > maxSize) result.takeLast(maxSize) else result
+}
+
+/**
+ * Merges two sorted arrays while maintaining the sort order and handling duplicates.
+ *
+ * This function combines two pre-sorted lists into a single sorted list while resolving duplicate
+ * elements. When duplicate elements are detected (elements with the same ID as determined by
+ * [idSelector]), the element from the [other] list takes precedence.
+ *
+ * **Note:** Both lists must be pre-sorted according to the provided [comparator]. If either list is
+ * not sorted, the behavior is undefined.
+ *
+ * @param T The type of elements in the lists.
+ * @param other The second sorted list to merge with this list.
+ * @param idSelector A function that extracts a unique identifier from an element. This is used to
+ *   detect duplicate elements across the two lists.
+ * @param comparator The comparator that both lists are sorted by and used for merging.
+ * @return A new sorted list containing all elements from both lists, with duplicates resolved by
+ *   taking elements from the [other] list.
+ */
+internal fun <T> List<T>.mergeSorted(
+    other: List<T>,
+    idSelector: (T) -> String,
+    comparator: Comparator<in T>,
+): List<T> {
+    // Create a set of IDs from the other list for quick duplicate detection
+    val otherIds = other.mapTo(mutableSetOf(), idSelector)
+
+    // Filter this list to exclude elements that exist in other (by ID)
+    val filteredThis = this.filterNot { idSelector(it) in otherIds }
+
+    // Now merge the filtered list with other using standard merge algorithm
+    val result = mutableListOf<T>()
+    var i = 0
+    var j = 0
+
+    while (i < filteredThis.size && j < other.size) {
+        val thisElement = filteredThis[i]
+        val otherElement = other[j]
+        val comparison = comparator.compare(thisElement, otherElement)
+
+        when {
+            comparison <= 0 -> {
+                // thisElement comes before or is equal to otherElement
+                result.add(thisElement)
+                i++
+            }
+
+            else -> {
+                // otherElement comes before thisElement
+                result.add(otherElement)
+                j++
+            }
+        }
+    }
+
+    // Add remaining elements from filteredThis
+    while (i < filteredThis.size) {
+        result.add(filteredThis[i])
+        i++
+    }
+
+    // Add remaining elements from other
+    while (j < other.size) {
+        result.add(other[j])
+        j++
+    }
+
+    return result.toImmutableList()
 }
