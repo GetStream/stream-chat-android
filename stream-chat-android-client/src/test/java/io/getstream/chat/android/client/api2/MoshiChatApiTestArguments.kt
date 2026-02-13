@@ -804,7 +804,7 @@ internal object MoshiChatApiTestArguments {
             ).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ThreadInfoResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun pollResponseArguments() = listOf(

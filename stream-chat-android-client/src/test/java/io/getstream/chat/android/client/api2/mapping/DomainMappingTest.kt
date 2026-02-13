@@ -740,7 +740,6 @@ internal class DomainMappingTest {
         assertEquals(expected, searchWarning)
     }
 
-    @Suppress("LongMethod")
     @Test
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
@@ -749,19 +748,11 @@ internal class DomainMappingTest {
             createdByUserId = user1.id,
             createdBy = user1,
             threadParticipants = listOf(
-                DownstreamThreadParticipantDto(
-                    user_id = user1.id,
-                    user = user1,
-                ),
-                DownstreamThreadParticipantDto(
-                    user_id = user2.id,
-                    user = user2,
-                ),
+                DownstreamThreadParticipantDto(user_id = user1.id, user = user1),
+                DownstreamThreadParticipantDto(user_id = user2.id, user = user2),
             ),
             draft = randomDownstreamDraftDto(
-                message = randomDownstreamDraftMessageDto(
-                    text = "Draft message",
-                ),
+                message = randomDownstreamDraftMessageDto(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
         )
@@ -778,12 +769,8 @@ internal class DomainMappingTest {
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
             threadParticipants = listOf(
-                ThreadParticipant(
-                    user = with(sut) { user1.toDomain() },
-                ),
-                ThreadParticipant(
-                    user = with(sut) { user2.toDomain() },
-                ),
+                ThreadParticipant(user = with(sut) { user1.toDomain() }),
+                ThreadParticipant(user = with(sut) { user2.toDomain() }),
             ),
             lastMessageAt = downstreamThreadDto.last_message_at,
             createdAt = downstreamThreadDto.created_at,
@@ -796,9 +783,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draft = with(sut) {
-                downstreamThreadDto.draft?.toDomain()
-            },
+            draft = with(sut) { downstreamThreadDto.draft?.toDomain() },
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)
