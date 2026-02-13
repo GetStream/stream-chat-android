@@ -33,7 +33,7 @@ class AndroidIntroduction {
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 
-        // Step 3 - Authenticate and connect the user
+        // Step 2 - Authenticate and connect the user
         val user = User(
             id = "summer-brook-2",
             name = "Paranoid Android",
