@@ -296,7 +296,6 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun stateConfig (Lio/getstream/chat/android/client/api/StateConfig;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun uploadAttachmentsNetworkType (Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/transformer/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun withPlugins ([Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withRepositoryFactoryProvider (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
 

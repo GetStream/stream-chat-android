@@ -17,12 +17,14 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Location
 import io.getstream.result.Result
 
 /**
  * Listener for live location sharing requests.
  */
+@InternalStreamChatApi
 public interface LiveLocationListener {
 
     /**

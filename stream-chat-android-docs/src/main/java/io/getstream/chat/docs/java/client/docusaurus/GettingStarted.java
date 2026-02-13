@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.java.client.docusaurus;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -31,14 +30,6 @@ public class GettingStarted {
                 ChatClient chatClient = ChatClient.instance();  // Returns the singleton instance
             }
         }
-    }
-
-    public void addingAPlugin(String apiKey, Context context) {
-        new ChatClient.Builder(apiKey, context)
-                .withPlugins(
-                        //Add the desired plugin factories here
-                )
-                .build();
     }
 
     public void connectingAUser() {
