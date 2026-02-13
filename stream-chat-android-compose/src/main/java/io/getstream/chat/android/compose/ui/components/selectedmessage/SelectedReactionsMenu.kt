@@ -116,11 +116,9 @@ private fun buildUserReactionItems(
     currentUser: User?,
 ): List<UserReactionItemState> {
     val resolver = ChatTheme.reactionResolver
-    val supported = resolver.supportedReactions
     return message.latestReactions
-        .filter { it.user != null && it.type in supported }
-        .map {
-            val user = requireNotNull(it.user)
+        .mapNotNull {
+            val user = it.user ?: return@mapNotNull null
             val type = it.type
 
             UserReactionItemState(
