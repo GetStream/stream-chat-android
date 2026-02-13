@@ -43,7 +43,7 @@ private enum class DragAxis { Horizontal, Vertical }
  * Terminal outcome of the recording drag gesture.
  */
 private enum class DragResult {
-    /** Finger lifted — caller should send the recording if not already locked. */
+    /** Finger lifted — caller should complete the recording if not already locked. */
     Released,
 
     /** Dragged past the cancel threshold. */
@@ -65,11 +65,13 @@ private enum class DragResult {
  * Drag is axis-locked: once the first significant movement picks a direction
  * (left → cancel, up → lock), the offset is constrained to that axis.
  */
+@Suppress("LongParameterList")
 internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
     down: PointerInputChange,
     config: RecordingGestureConfig,
     currentState: () -> RecordingState,
     recordingActions: AudioRecordingActions,
+    sendOnComplete: Boolean,
     onShowHint: () -> Unit,
 ) {
     if (!awaitHoldThreshold(down)) {
@@ -82,7 +84,7 @@ internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
     val result = awaitDragResult(down, config, currentState, recordingActions.onHoldRecording)
     when (result) {
         DragResult.Released -> {
-            if (currentState() !is RecordingState.Locked) recordingActions.onSendRecording()
+            if (currentState() !is RecordingState.Locked) recordingActions.onCompleteRecording(sendOnComplete)
         }
         DragResult.Cancel -> recordingActions.onCancelRecording()
         DragResult.Lock -> recordingActions.onLockRecording()

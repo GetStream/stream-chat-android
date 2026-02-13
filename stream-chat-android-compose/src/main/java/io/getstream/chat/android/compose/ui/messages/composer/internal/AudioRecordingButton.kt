@@ -283,19 +283,16 @@ private fun MicButtonGestureArea(
     val currentState by rememberUpdatedState(recordingState)
     val hapticFeedback = LocalHapticFeedback.current
 
+    val audioRecordingTheme = ChatTheme.messageComposerTheme.audioRecording
     val density = LocalDensity.current
     val gestureConfig = RecordingGestureConfig(
-        cancelThresholdPx = with(density) {
-            ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx()
-        },
-        lockThresholdPx = with(density) {
-            ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
-        },
+        cancelThresholdPx = with(density) { audioRecordingTheme.slideToCancel.threshold.toPx() },
+        lockThresholdPx = with(density) { audioRecordingTheme.floatingIcons.lockThreshold.toPx() },
     )
 
     PressInteractionEffect(isFingerDown, pressOffset, interactionSource)
 
-    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
+    val style = audioRecordingTheme.recordButton
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
     Box(
@@ -316,6 +313,7 @@ private fun MicButtonGestureArea(
                             config = gestureConfig,
                             currentState = { currentState },
                             recordingActions = recordingActions.withHapticOnStart(hapticFeedback),
+                            sendOnComplete = audioRecordingTheme.sendOnComplete,
                             onShowHint = { hint.show() },
                         )
                     }
