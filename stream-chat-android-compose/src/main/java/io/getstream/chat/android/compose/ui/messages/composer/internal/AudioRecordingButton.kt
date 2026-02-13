@@ -21,7 +21,6 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.indication
@@ -68,6 +67,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -82,7 +82,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingFloatingIconStyle
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
@@ -147,7 +146,7 @@ internal fun AudioRecordingButton(
         }
 
         if (showControls) {
-            RecordingControlButtons(
+            ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
                 isStopVisible = recordingState is RecordingState.Locked,
                 recordingActions = recordingActions,
             )
@@ -459,7 +458,7 @@ private fun FloatingLockIcon(
 ) {
     val density = LocalDensity.current
     val playbackHeight = 48.dp
-    val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
+    val controlsHeight = 48.dp
     val totalContentHeight = playbackHeight + controlsHeight
     val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset
     val lockOffset = with(density) {
@@ -512,60 +511,52 @@ private fun RecordingFloatingIcon(style: AudioRecordingFloatingIconStyle) {
     }
 }
 
+/** Control buttons (delete, stop, complete) shown during locked and overview recording states. */
 @Composable
-private fun RecordingControlButtons(
+internal fun MessageComposerAudioRecordingControlsContent(
     isStopVisible: Boolean,
     recordingActions: AudioRecordingActions,
 ) {
-    val theme = ChatTheme.messageComposerTheme.audioRecording.controls
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(theme.height),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ControlIconButton(
-            style = theme.deleteButton,
-            tag = "Stream_ComposerDeleteAudioRecordingButton",
+        IconButton(
             onClick = recordingActions.onDeleteRecording,
-        )
-        if (isStopVisible) {
-            Spacer(modifier = Modifier.weight(1f))
-            ControlIconButton(
-                style = theme.stopButton,
-                tag = "Stream_ComposerStopAudioRecordingButton",
-                onClick = recordingActions.onStopRecording,
+            modifier = Modifier.semantics { testTag = "Stream_ComposerDeleteAudioRecordingButton" },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_delete),
+                contentDescription = null,
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
+        if (isStopVisible) {
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = recordingActions.onStopRecording,
+                modifier = Modifier.semantics { testTag = "Stream_ComposerStopAudioRecordingButton" },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.errorAccent,
+                )
+            }
+        }
         Spacer(modifier = Modifier.weight(1f))
-        ControlIconButton(
-            style = theme.completeButton,
-            tag = "Stream_ComposerConfirmAudioRecordingButton",
+        IconButton(
             onClick = recordingActions.onConfirmRecording,
-        )
-    }
-}
-
-@Composable
-private fun ControlIconButton(
-    style: IconContainerStyle,
-    tag: String,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier
-            .semantics { testTag = tag }
-            .size(style.size)
-            .padding(style.padding)
-            .focusable(true),
-    ) {
-        Icon(
-            painter = style.icon.painter,
-            contentDescription = null,
-            modifier = Modifier.size(style.icon.size),
-            tint = style.icon.tint,
-        )
+            modifier = Modifier.semantics { testTag = "Stream_ComposerConfirmAudioRecordingButton" },
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
+                contentDescription = null,
+                tint = ChatTheme.colors.primaryAccent,
+            )
+        }
     }
 }
 
