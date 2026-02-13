@@ -20,8 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

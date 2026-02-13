@@ -11,23 +11,21 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
-import io.getstream.chat.android.models.querysort.QuerySorter;
+import io.getstream.chat.android.client.api.state.ChatClientExtensions;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
-import io.getstream.chat.android.state.extensions.ChatClientExtensions;
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 import kotlinx.coroutines.flow.StateFlow;
 
 public class AndroidIntroduction {
@@ -41,16 +39,11 @@ public class AndroidIntroduction {
         // Step 1 - Set up the OfflinePlugin for offline storage
         StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(applicationContext);
 
-        StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
-                new StatePluginConfig(true, true),
-                applicationContext
-        );
-
         // Step 2 - Set up the client, together with offline plugin, for API calls
         ChatClient client = new ChatClient.Builder(apiKey, applicationContext)
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
-                .withPlugins(offlinePluginFactory, streamStatePluginFactory)
+                .withPlugins(offlinePluginFactory)
                 .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
                 .build();
 

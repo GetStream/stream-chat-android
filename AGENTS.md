@@ -15,9 +15,8 @@ This project delivers **Stream Chat Android**, a modular SDK spanning low-level 
 - Testing: JUnit4/5, Mockito-Kotlin, Turbine, Robolectric, Espresso, Paparazzi, Shot
 
 ## Project structure
-- `stream-chat-android-client/` – core API client, REST/WebSocket, plugin hooks
+- `stream-chat-android-client/` – core API client, REST/WebSocket, plugin hooks, state container
 - `stream-chat-android-offline/` – persistence, sync, caching, retry workers
-- `stream-chat-android-state/` – state container shared by UI layers
 - `stream-chat-android-ui-common/` – theming, assets, shared UI helpers
 - `stream-chat-android-compose/` & `stream-chat-android-ui-components/` – Compose and XML UI kits
 - `*-sample/`, `stream-chat-android-ui-uitests/`, `stream-chat-android-test/` – samples, integration, and shared test harnesses

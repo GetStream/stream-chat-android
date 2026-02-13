@@ -8,8 +8,8 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.client.api.state.queryChannelsAsState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

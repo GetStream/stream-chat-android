@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -31,7 +32,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType

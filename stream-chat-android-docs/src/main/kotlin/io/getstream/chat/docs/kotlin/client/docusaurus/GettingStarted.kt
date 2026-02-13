@@ -6,10 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.User
-import io.getstream.result.Result
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.result.Result
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/overview/">Getting Started</a>
@@ -40,42 +38,13 @@ class GettingStarted {
             .build()
     }
 
-    fun addingTheStatePlugin(apiKey: String, context: Context) {
-        // Create a state plugin factory
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                // Enables/disables background sync which syncs user actions performed while offline
-                backgroundSyncEnabled = false,
-                // Enables tracking online states for users
-                userPresence = true
-            ),
-            appContext = context
-        )
-
-        ChatClient.Builder(apiKey, context)
-            // Add the state plugin to the chat client
-            .withPlugins(statePluginFactory)
-            .build()
-    }
-
     fun addingTheOfflinePlugin(apiKey: String, context: Context) {
         // Create an offline plugin factory
         val offlinePluginFactory = StreamOfflinePluginFactory(appContext = context)
 
-        // Create a state plugin factory
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                // Enables/disables background synchronization when push notifications are received
-                backgroundSyncEnabled = false,
-                // Enables tracking online states for users
-                userPresence = true,
-            ),
-            appContext = context
-        )
-
         ChatClient.Builder(apiKey, context)
             // Add both the state and offline plugin factories to the chat client
-            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .withPlugins(offlinePluginFactory)
             .build()
     }
 

@@ -18,6 +18,17 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.ThreadState
+import io.getstream.chat.android.client.api.state.awaitRepliesAsState
+import io.getstream.chat.android.client.api.state.cancelEphemeralMessage
+import io.getstream.chat.android.client.api.state.getMessageUsingCache
+import io.getstream.chat.android.client.api.state.getRepliesAsState
+import io.getstream.chat.android.client.api.state.globalState
+import io.getstream.chat.android.client.api.state.loadMessageById
+import io.getstream.chat.android.client.api.state.loadMessagesAroundId
+import io.getstream.chat.android.client.api.state.loadNewerMessages
+import io.getstream.chat.android.client.api.state.loadNewestMessages
+import io.getstream.chat.android.client.api.state.loadOlderMessages
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -56,17 +67,6 @@ import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.state.extensions.awaitRepliesAsState
-import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
-import io.getstream.chat.android.state.extensions.getMessageUsingCache
-import io.getstream.chat.android.state.extensions.getRepliesAsState
-import io.getstream.chat.android.state.extensions.globalState
-import io.getstream.chat.android.state.extensions.loadMessageById
-import io.getstream.chat.android.state.extensions.loadMessagesAroundId
-import io.getstream.chat.android.state.extensions.loadNewerMessages
-import io.getstream.chat.android.state.extensions.loadNewestMessages
-import io.getstream.chat.android.state.extensions.loadOlderMessages
-import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser

@@ -51,7 +51,7 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    api(project(":stream-chat-android-state"))
+    api(project(":stream-chat-android-client"))
 
     implementation(libs.stream.log)
     implementation(libs.stream.push.permissions.snackbar)
