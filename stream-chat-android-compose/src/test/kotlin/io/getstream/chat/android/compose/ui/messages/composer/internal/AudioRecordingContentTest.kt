@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test

@@ -19,6 +19,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -58,11 +59,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -218,6 +221,26 @@ private fun rememberFloatingMicState(recordingState: RecordingState): FloatingMi
     )
 }
 
+/**
+ * Animates a pop-in scale from [FloatingIconInitialScale] to `1f` with a bouncy spring.
+ *
+ * Shared by both the floating mic and the floating lock Popups so they enter consistently.
+ * Returns `1f` immediately in inspection mode so Paparazzi snapshots and previews capture the
+ * final state without running the animation.
+ */
+@Composable
+private fun rememberEntranceScale(): Float {
+    if (LocalInspectionMode.current) return 1f
+    val scale = remember { Animatable(FloatingIconInitialScale) }
+    LaunchedEffect(Unit) {
+        scale.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        )
+    }
+    return scale.value
+}
+
 @Composable
 private fun MicButton(
     isVisible: Boolean,
@@ -244,10 +267,16 @@ private fun MicButton(
                 alignment = Alignment.TopStart,
                 properties = PopupProperties(clippingEnabled = false),
             ) {
+                val entranceScale = rememberEntranceScale()
                 MicButtonVisual(
                     interactionSource = interactionSource,
                     isPressed = true,
-                    modifier = Modifier.size(MicButtonSize),
+                    modifier = Modifier
+                        .size(MicButtonSize)
+                        .graphicsLayer {
+                            scaleX = entranceScale
+                            scaleY = entranceScale
+                        },
                 )
             }
         }
@@ -424,6 +453,9 @@ private val RecordingRowHeight = 48.dp
 /** Height of the control-buttons row (delete, stop, complete). */
 private val ControlsRowHeight = 48.dp
 
+/** Starting scale for the pop-in entrance animation of floating icons. */
+private const val FloatingIconInitialScale = 0.5f
+
 /** Horizontal margin between the lock icon and the content's end edge. */
 private val LockIconMarginEnd = 4.dp
 
@@ -475,6 +507,9 @@ private fun FloatingLockIcon(
             y = -(contentHeight + LockIconMarginTop).roundToPx() + if (isLocked) 0 else dragOffsetY,
         )
     }
+
+    val entranceScale = rememberEntranceScale()
+
     Popup(offset = offset, alignment = Alignment.BottomEnd) {
         val iconRes = if (isLocked) {
             R.drawable.stream_compose_ic_mic_locked
@@ -485,6 +520,10 @@ private fun FloatingLockIcon(
             painter = painterResource(id = iconRes),
             contentDescription = null,
             tint = Color.Unspecified,
+            modifier = Modifier.graphicsLayer {
+                scaleX = entranceScale
+                scaleY = entranceScale
+            },
         )
     }
 }
