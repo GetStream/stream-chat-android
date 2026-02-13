@@ -126,6 +126,7 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
@@ -161,12 +162,10 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
@@ -1425,7 +1424,6 @@ public interface ChatComponentFactory {
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
-        audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
@@ -1448,7 +1446,6 @@ public interface ChatComponentFactory {
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
             input = input,
-            audioRecordingContent = audioRecordingContent,
             trailingContent = trailingContent,
         )
     }
@@ -1723,7 +1720,8 @@ public interface ChatComponentFactory {
         centerContent: @Composable (Modifier) -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
-        DefaultMessageComposerInput(
+        MessageInput(
+            modifier = Modifier.weight(1f),
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -1882,21 +1880,10 @@ public interface ChatComponentFactory {
         state: RecordingState,
         recordingActions: AudioRecordingActions,
     ) {
-        DefaultAudioRecordButton(state, recordingActions)
-    }
-
-    /**
-     * Default composable used for displaying audio recording information while audio recording is in progress.
-     *
-     * @param state The current state of the message composer.
-     * @param recordingActions The actions to control the audio recording.
-     */
-    @Composable
-    public fun RowScope.MessageComposerAudioRecordingContent(
-        state: MessageComposerState,
-        recordingActions: AudioRecordingActions,
-    ) {
-        DefaultMessageComposerRecordingContent(state, recordingActions)
+        AudioRecordingButton(
+            recordingState = state,
+            recordingActions = recordingActions,
+        )
     }
 
     /**

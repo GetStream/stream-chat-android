@@ -173,7 +173,7 @@ internal class AudioRecordingController(
         }
     }
 
-    suspend fun startRecording(offset: Pair<Float, Float>? = null) {
+    suspend fun startRecording() {
         val state = this.recordingState.value
         if (state !is RecordingState.Idle) {
             logger.w { "[startRecording] rejected (state is not Idle): $state" }
@@ -202,7 +202,7 @@ internal class AudioRecordingController(
             setState(RecordingState.Locked(0, emptyList()))
             return
         }
-        setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
+        setState(RecordingState.Hold())
     }
 
     fun holdRecording(offset: Pair<Float, Float>? = null) {

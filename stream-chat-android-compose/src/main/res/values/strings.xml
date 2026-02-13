@@ -149,7 +149,7 @@
 
     <!-- Audio Recording -->
     <string name="stream_compose_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_compose_message_composer_hold_to_record">Hold to start, release to send.</string>
+    <string name="stream_compose_message_composer_hold_to_record">Hold to record. Release to send</string>
     <string name="stream_compose_audio_recording_preview">Voice message</string>
 
     <!-- Attachment Picker -->

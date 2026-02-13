@@ -72,6 +72,8 @@ import io.getstream.chat.android.compose.R
  * @param backgroundCoreDisabled Used for disabled background in components like buttons.
  * @param backgroundCoreSurface Used for surface background in components like buttons.
  * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
+ * @param backgroundCoreInverse Used for elevated, transient, or high-attention UI surfaces that
+ * sit on top of the default app background.
  * @param backgroundElevationElevation0 Used for base elevation surface backgrounds.
  * @param borderCoreImage Used for image frame border treatment.
  * @param borderCoreDefault Used for default border color.
@@ -184,6 +186,7 @@ public data class StreamColors(
     public val backgroundCoreDisabled: Color,
     public val backgroundCoreSurface: Color,
     public val backgroundCoreSurfaceSubtle: Color,
+    public val backgroundCoreInverse: Color,
     public val backgroundElevationElevation0: Color,
     public val borderCoreImage: Color,
     public val borderCoreDefault: Color,
@@ -297,6 +300,7 @@ public data class StreamColors(
             backgroundCoreDisabled = StreamPrimitiveColors.slate200,
             backgroundCoreSurface = StreamPrimitiveColors.slate100,
             backgroundCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
+            backgroundCoreInverse = StreamPrimitiveColors.slate900,
             backgroundElevationElevation0 = StreamPrimitiveColors.baseWhite,
             backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
             badgeBgInverse = StreamPrimitiveColors.baseBlack,
@@ -385,12 +389,13 @@ public data class StreamColors(
 
             accentBlack = StreamPrimitiveColors.baseBlack,
             accentError = StreamPrimitiveColors.red400,
-            backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral800,
             accentNeutral = StreamPrimitiveColors.neutral500,
             accentPrimary = StreamPrimitiveColors.blue400,
             accentSuccess = StreamPrimitiveColors.green400,
             backgroundCoreDisabled = StreamPrimitiveColors.slate800,
             backgroundCoreSurface = StreamPrimitiveColors.neutral700,
+            backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral800,
+            backgroundCoreInverse = StreamPrimitiveColors.neutral50,
             backgroundElevationElevation0 = StreamPrimitiveColors.baseBlack,
             backgroundElevationElevation2 = StreamPrimitiveColors.neutral800,
             borderCoreDefault = StreamPrimitiveColors.neutral600,

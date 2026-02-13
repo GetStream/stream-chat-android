@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -40,14 +39,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.LocalMessageComposerFloatingStyleEnabled
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
+import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -58,7 +56,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
-import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
@@ -88,8 +85,6 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param audioRecordingContent Customizable composable used for displaying audio recording information
- * while audio recording is in progress.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
  */
@@ -108,7 +103,10 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
-    recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(viewModel),
+    recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
+        viewModel = viewModel,
+        sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+    ),
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageComposerHeaderContent(
@@ -186,14 +184,6 @@ public fun MessageComposer(
             )
         }
     },
-    audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerAudioRecordingContent(
-                state = it,
-                recordingActions = recordingActions,
-            )
-        }
-    },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
@@ -220,7 +210,6 @@ public fun MessageComposer(
         commandPopupContent = commandPopupContent,
         leadingContent = leadingContent,
         input = input,
-        audioRecordingContent = audioRecordingContent,
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
@@ -255,8 +244,6 @@ public fun MessageComposer(
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param leadingContent The content shown at the start of the message composer.
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
- * @param audioRecordingContent Customizable composable used for displaying audio recording information
- * while audio recording is in progress.
  * @param trailingContent Customizable composable that represents the trailing content of the composer, send button
  * by default.
  */
@@ -347,14 +334,6 @@ public fun MessageComposer(
             )
         }
     },
-    audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerAudioRecordingContent(
-                state = it,
-                recordingActions = recordingActions,
-            )
-        }
-    },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         ChatTheme.componentFactory.MessageComposerTrailingContent(
             state = it,
@@ -366,8 +345,6 @@ public fun MessageComposer(
     val mentionSuggestions = messageComposerState.mentionSuggestions
     val commandSuggestions = messageComposerState.commandSuggestions
     val snackbarHostState = remember { SnackbarHostState() }
-
-    val isRecording = messageComposerState.recording !is RecordingState.Idle
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -402,10 +379,6 @@ public fun MessageComposer(
 
                 input(messageComposerState)
 
-                if (isRecording) {
-                    audioRecordingContent(messageComposerState)
-                }
-
                 trailingContent(messageComposerState)
             }
 
@@ -413,7 +386,7 @@ public fun MessageComposer(
         }
 
         if (snackbarHostState.currentSnackbarData != null) {
-            SnackbarPopup(snackbarHostState = snackbarHostState)
+            SnackbarPopup(hostState = snackbarHostState)
         }
 
         if (mentionSuggestions.isNotEmpty()) {
@@ -505,20 +478,6 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-}
-
-/**
- * A snackbar wrapped inside of a popup allowing it be
- * displayed above the Composable it's anchored to.
- *
- * @param snackbarHostState The state of the snackbar host. Contains
- * the snackbar data necessary to display the snackbar.
- */
-@Composable
-private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
-    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
-        SnackbarHost(hostState = snackbarHostState)
     }
 }
 

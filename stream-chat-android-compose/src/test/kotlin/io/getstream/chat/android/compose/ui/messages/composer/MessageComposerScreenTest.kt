@@ -117,7 +117,7 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             }
         }
 
-        composeTestRule.onNodeWithText("00:00").assertExists()
+        composeTestRule.onNodeWithText("02:00").assertExists()
         composeTestRule.onNodeWithText("Slide to cancel").assertExists()
     }
 }

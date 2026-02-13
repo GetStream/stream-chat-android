@@ -36,17 +36,24 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
 import io.getstream.chat.android.ui.common.state.messages.MessageInput
+import io.getstream.result.Result
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.io.File
 import java.util.Date
 
 internal class MessageComposerControllerTest {
@@ -228,6 +235,32 @@ internal class MessageComposerControllerTest {
         assertEquals(MessageInput.Source.MentionSelected, controller.messageInput.value.source)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Given idle state When startRecording is called Then delegates to media recorder`() = runTest {
+        // Given
+        val mockFile: File = mock()
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenMediaRecorderStartSuccess(mockFile)
+        val controller = fixture.get()
+
+        // When
+        controller.startRecording()
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.mediaRecorder).startAudioRecording(
+            any<String>(),
+            any<Long>(),
+            any<Boolean>(),
+        )
+    }
+
     @Test
     fun `Given no attachments When updateSelectedAttachments called Then attachments are set`() = runTest {
         // Given
@@ -264,6 +297,7 @@ internal class MessageComposerControllerTest {
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
+        val mediaRecorder: StreamMediaRecorder = mock()
 
         fun givenAppSettings(appSettings: AppSettings = defaultAppSettings()) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
@@ -288,6 +322,12 @@ internal class MessageComposerControllerTest {
 
         fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
             whenever(chatClient.audioPlayer) doReturn audioPlayer
+        }
+
+        fun givenMediaRecorderStartSuccess(file: File) = apply {
+            whenever(
+                mediaRecorder.startAudioRecording(any<String>(), any<Long>(), any<Boolean>()),
+            ) doReturn Result.Success(file)
         }
 
         fun givenClientState(user: User) = apply {
@@ -323,7 +363,7 @@ internal class MessageComposerControllerTest {
                 channelCid = cid,
                 chatClient = chatClient,
                 channelState = MutableStateFlow(channelState),
-                mediaRecorder = mock(),
+                mediaRecorder = mediaRecorder,
                 userLookupHandler = mock(),
                 fileToUri = mock(),
                 globalState = MutableStateFlow(globalState),

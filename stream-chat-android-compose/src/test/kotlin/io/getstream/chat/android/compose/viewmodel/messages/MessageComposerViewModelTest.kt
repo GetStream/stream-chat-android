@@ -385,6 +385,16 @@ internal class MessageComposerViewModelTest {
             viewModel.input.value `should be equal to` "@Custom Mention "
         }
 
+    @Test
+    fun `Given message composer When startRecording is called Then delegates to controller`() {
+        val controller: MessageComposerController = mock()
+        val viewModel = MessageComposerViewModel(controller)
+
+        viewModel.startRecording()
+
+        verify(controller).startRecording()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",

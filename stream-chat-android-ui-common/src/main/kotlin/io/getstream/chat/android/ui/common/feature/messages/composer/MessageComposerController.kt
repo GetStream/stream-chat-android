@@ -899,9 +899,9 @@ public class MessageComposerController(
      * Starts audio recording and moves [MessageComposerState.recording] state
      * from [RecordingState.Idle] to [RecordingState.Hold].
      */
-    public fun startRecording(offset: Pair<Float, Float>? = null) {
+    public fun startRecording() {
         scope.launch {
-            audioRecordingController.startRecording(offset)
+            audioRecordingController.startRecording()
         }
     }
 
