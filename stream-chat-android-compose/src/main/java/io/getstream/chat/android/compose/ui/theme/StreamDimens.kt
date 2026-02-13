@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
  * @param attachmentsContentUnsupportedWidth The width of unsupported attachments in the message list.
  * @param threadSeparatorVerticalPadding The vertical content padding inside thread separator item.
  * @param threadSeparatorTextVerticalPadding The vertical padding inside thread separator text.
- * @param messageOptionsItemHeight The height of a message option item.
  * @param suggestionListMaxHeight The maximum height of the suggestion list popup.
  * @param suggestionListPadding The outer padding of the suggestion list popup.
  * @param suggestionListElevation THe elevation of the suggestion list popup.
@@ -109,7 +108,6 @@ public data class StreamDimens(
     public val attachmentsContentUnsupportedWidth: Dp,
     public val threadSeparatorVerticalPadding: Dp,
     public val threadSeparatorTextVerticalPadding: Dp,
-    public val messageOptionsItemHeight: Dp,
     public val suggestionListMaxHeight: Dp,
     public val suggestionListPadding: Dp,
     public val suggestionListElevation: Dp,
@@ -173,7 +171,6 @@ public data class StreamDimens(
             attachmentsContentUnsupportedWidth = 250.dp,
             threadSeparatorVerticalPadding = 8.dp,
             threadSeparatorTextVerticalPadding = 2.dp,
-            messageOptionsItemHeight = 40.dp,
             suggestionListMaxHeight = 256.dp,
             suggestionListPadding = 8.dp,
             suggestionListElevation = 4.dp,

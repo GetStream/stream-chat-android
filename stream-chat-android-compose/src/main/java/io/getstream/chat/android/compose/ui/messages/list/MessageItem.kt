@@ -110,6 +110,7 @@ public fun LazyItemScope.MessageItem(
                 MessageContainer(
                     messageItem = messageListItemState,
                     reactionSorting = reactionSorting,
+                    modifier = Modifier,
                     onLongItemClick = onLongItemClick,
                     onReactionsClick = onReactionsClick,
                     onThreadClick = onThreadClick,

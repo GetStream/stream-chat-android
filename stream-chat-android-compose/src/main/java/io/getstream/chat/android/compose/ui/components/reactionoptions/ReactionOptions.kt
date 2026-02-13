@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.components.reactionoptions
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
@@ -40,9 +39,6 @@ import io.getstream.chat.android.models.Reaction
  * displayed.
  * @param horizontalArrangement Used for changing the arrangement.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
- * @param itemContent Composable that allows the user to customize the individual items shown in [ReactionOptions].
- * By default shows individual reactions.
- * @param showMore Composable that allows the user to customize the show more button.
  */
 @Composable
 public fun ReactionOptions(
@@ -53,23 +49,6 @@ public fun ReactionOptions(
     numberOfReactionsShown: Int = DefaultNumberOfReactionsShown,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
-    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
-        with(ChatTheme.componentFactory) {
-            ReactionMenuOptionItem(
-                modifier = Modifier,
-                option = option,
-                onReactionOptionSelected = onReactionOptionSelected,
-            )
-        }
-    },
-    showMore: @Composable RowScope.(
-        onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
-    ) -> Unit = { par1, par2 ->
-        with(ChatTheme.componentFactory) {
-            ReactionMenuShowMore(Modifier, par1, par2)
-        }
-    },
 ) {
     val resolver = ChatTheme.reactionResolver
     val options = resolver.supportedReactions.map { type ->
@@ -87,12 +66,20 @@ public fun ReactionOptions(
     ) {
         options.take(numberOfReactionsShown).forEach { option ->
             key(option.type) {
-                itemContent(option)
+                with(ChatTheme.componentFactory) {
+                    ReactionMenuOptionItem(
+                        modifier = Modifier,
+                        option = option,
+                        onReactionOptionSelected = onReactionOptionSelected,
+                    )
+                }
             }
         }
 
         if (options.size > numberOfReactionsShown) {
-            showMore(onShowMoreReactionsSelected, showMoreReactionsIcon)
+            with(ChatTheme.componentFactory) {
+                ReactionMenuShowMore(Modifier, onShowMoreReactionsSelected, showMoreReactionsIcon)
+            }
         }
     }
 }

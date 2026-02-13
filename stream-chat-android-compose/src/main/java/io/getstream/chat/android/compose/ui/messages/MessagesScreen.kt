@@ -22,6 +22,8 @@ import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
@@ -55,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
@@ -226,8 +227,7 @@ public fun MessagesScreen(
                 verticalArrangement = verticalArrangement,
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
-                    {
-                            message ->
+                    { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         listViewModel.openMessageThread(message)
                     }
@@ -237,8 +237,7 @@ public fun MessagesScreen(
                 onUserMentionClick = onUserMentionClick,
                 onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
-                    {
-                            result ->
+                    { result ->
                         when (result?.resultType) {
                             MediaGalleryPreviewResultType.QUOTE -> {
                                 val message = listViewModel.getMessageById(result.messageId)
@@ -448,38 +447,34 @@ private fun BoxScope.MessagesScreenMenus(
         ownCapabilities = ownCapabilities,
     )
 
-    var messageOptions by remember {
-        mutableStateOf<List<MessageOptionItemState>>(emptyList())
-    }
-
-    if (newMessageOptions.isNotEmpty()) {
+    // Cache the last valid state so it remains visible during the exit animation.
+    var cachedMessage by remember { mutableStateOf(selectedMessage) }
+    var cachedOwnCapabilities by remember { mutableStateOf(ownCapabilities) }
+    var cachedUser by remember { mutableStateOf(user) }
+    var messageOptions by remember { mutableStateOf(newMessageOptions) }
+    if (selectedMessage.id.isNotEmpty()) {
+        cachedMessage = selectedMessage
+        cachedOwnCapabilities = ownCapabilities
+        cachedUser = user
         messageOptions = newMessageOptions
     }
 
     AnimatedVisibility(
         visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
+        enter = fadeIn() + scaleIn(initialScale = 0.95f),
+        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)) +
+            scaleOut(
+                targetScale = 0.95f,
+                animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+            ),
     ) {
         ChatTheme.componentFactory.MessageMenu(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween(),
-                    ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                    ),
-                ),
+            modifier = Modifier,
             messageOptions = messageOptions,
-            message = selectedMessage,
-            ownCapabilities = ownCapabilities,
+            message = cachedMessage,
+            ownCapabilities = cachedOwnCapabilities,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -497,6 +492,7 @@ private fun BoxScope.MessagesScreenMenus(
                 }
             },
             onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
+            currentUser = cachedUser,
         )
     }
 
@@ -506,8 +502,7 @@ private fun BoxScope.MessagesScreenMenus(
             currentUser = user,
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -576,8 +571,7 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 ),
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {
-                {
-                        action ->
+                { action ->
                     action.updateMessage(
                         action.message.copy(
                             skipPushNotification = skipPushNotification,
@@ -623,8 +617,7 @@ public fun MessageModerationDialog(
             ),
             onDismissRequest = remember(listViewModel) { { listViewModel.removeOverlay() } },
             onDialogOptionInteraction = remember(listViewModel, composerViewModel) {
-                {
-                        message, action ->
+                { message, action ->
                     when (action) {
                         DeleteMessage -> listViewModel.deleteMessage(message = message, true)
                         EditMessage -> composerViewModel.performMessageAction(Edit(message))

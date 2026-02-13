@@ -16,15 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.components.messageoptions
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.ui.components.common.ContextualMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.canBlockUser
 import io.getstream.chat.android.compose.util.extensions.canCopyMessage
@@ -56,34 +54,25 @@ import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 
 /**
- * Displays all available [MessageOptionItem]s.
+ * Displays all [MessageOptionItemState]s.
  *
  * @param options List of available options.
  * @param onMessageOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
- * @param itemContent Composable that allows the user to customize the individual items shown in [MessageOptions].
- * By default shows individual message items.
+ * By default, it shows individual message items.
  */
 @Composable
 public fun MessageOptions(
     options: List<MessageOptionItemState>,
     onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
-    itemContent: @Composable ColumnScope.(MessageOptionItemState) -> Unit = { option ->
-        with(ChatTheme.componentFactory) {
-            MessageMenuOptionsItem(
-                modifier = Modifier,
+) {
+    ContextualMenu(modifier) {
+        options.forEach { option ->
+            ChatTheme.componentFactory.MessageMenuOptionsItem(
                 option = option,
                 onMessageOptionSelected = onMessageOptionSelected,
             )
-        }
-    },
-) {
-    Column(modifier = modifier) {
-        options.forEach { option ->
-            key(option.action) {
-                itemContent(option)
-            }
         }
     }
 }
@@ -118,8 +107,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_resend_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
                 action = Resend(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -129,8 +117,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
                 action = Reply(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -140,8 +127,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
                 action = ThreadReply(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -151,8 +137,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_mark_as_unread,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),
                 action = MarkAsUnread(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -162,8 +147,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
                 action = Copy(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -173,8 +157,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
                 action = Edit(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -184,8 +167,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_flag_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
                 action = Flag(selectedMessage),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -201,8 +183,7 @@ public fun defaultMessageOptionsState(
                         R.drawable.stream_compose_ic_pin
                     },
                 ),
-                iconColor = ChatTheme.colors.textLowEmphasis,
-                titleColor = ChatTheme.colors.textHighEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -223,8 +204,7 @@ public fun defaultMessageOptionsState(
                 title = title,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
                 action = action,
-                iconColor = ChatTheme.colors.textLowEmphasis,
-                titleColor = ChatTheme.colors.textHighEmphasis,
+                destructive = false,
             )
         } else {
             null
@@ -234,8 +214,7 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
                 action = Delete(selectedMessage),
-                iconColor = ChatTheme.colors.errorAccent,
-                titleColor = ChatTheme.colors.errorAccent,
+                destructive = true,
             )
         } else {
             null
