@@ -153,7 +153,7 @@ internal class QueryChannelsStateLogic(
         )
         channels.map { channel ->
             coroutineScope.async {
-                logicRegistry.channelState(channel.type, channel.id).updateDataForChannel(
+                logicRegistry.channel(channel.type, channel.id).updateDataForChannel(
                     channel = channel,
                     messageLimit = channel.messages.size,
                     isChannelsStateUpdate = true,

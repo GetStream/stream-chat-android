@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMembers
@@ -34,14 +34,9 @@ import org.mockito.kotlin.verify
 internal class QueryMembersListenerStateTest {
     private val channelType = randomString()
     private val channelId = randomString()
-    private val channelStateLogic: ChannelStateLogic = mock()
+    private val channelLogic = mock<ChannelLogic>()
     private val logicRegistry: LogicRegistry = mock {
-        on(
-            it.channelState(
-                channelType = eq(channelType),
-                channelId = eq(channelId),
-            ),
-        ) doReturn channelStateLogic
+        on(it.channel(eq(channelType), eq(channelId))) doReturn channelLogic
     }
     private val queryMembersListenerState = QueryMembersListenerState(logicRegistry)
 
@@ -60,7 +55,7 @@ internal class QueryMembersListenerStateTest {
             members = randomMembers(),
         )
 
-        verify(channelStateLogic).upsertMembers(members)
+        verify(channelLogic).upsertMembers(members)
     }
 
     @Test
@@ -76,6 +71,6 @@ internal class QueryMembersListenerStateTest {
             members = randomMembers(),
         )
 
-        verify(channelStateLogic, never()).upsertMembers(any())
+        verify(channelLogic, never()).upsertMembers(any())
     }
 }

@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.TimeDuration
 
 /**
- * Provides a configuration for [io.getstream.chat.android.state.plugin.internal.StatePlugin].
+ * Provides a configuration for the state layer.
  *
  * @param backgroundSyncEnabled Controls whether the SDK performs background synchronization when push notifications
  * are received. When enabled (default: `true`), the SDK automatically syncs messages in the background when a push
@@ -75,6 +75,11 @@ import io.getstream.chat.android.models.TimeDuration
  * exceeds the configured limit (plus a buffer), older messages are automatically trimmed from the in-memory state.
  * By default, no limits are applied, meaning all messages are kept in memory. See [MessageLimitConfig] and
  * [ChannelMessageLimit] for configuration details.
+ *
+ * @param useLegacyChannelLogic When set to true, the SDK uses the legacy channel state management logic for
+ * handling channel updates and events. This may be necessary for compatibility with existing implementations.
+ * When set to false, the SDK employs the new channel state management logic, which includes optimizations and
+ * performance improvements. Default is true.
  */
 public data class StateConfig @JvmOverloads constructor(
     @Deprecated(
@@ -89,6 +94,7 @@ public data class StateConfig @JvmOverloads constructor(
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(hours = 12),
     public val now: () -> Long = { System.currentTimeMillis() },
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
+    public val useLegacyChannelLogic: Boolean = true,
 )
 
 /**

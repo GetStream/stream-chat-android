@@ -16,23 +16,18 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.api.state.StateRegistry
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
-import kotlin.collections.map
 
 /**
- * [MarkAllReadListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [MarkAllReadListener] implementation for
+ * [io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin].
  * Marks all active channels as read if needed.
  *
+ *
  * @param logic [LogicRegistry]
- * @param state [StateRegistry]
  */
-internal class MarkAllReadListenerState(
-    private val logic: LogicRegistry,
-    private val state: StateRegistry,
-) : MarkAllReadListener {
+internal class MarkAllReadListenerState(private val logic: LogicRegistry) : MarkAllReadListener {
 
     /**
      * Marks all active channels as read if needed.
@@ -40,9 +35,8 @@ internal class MarkAllReadListenerState(
      * @see [LogicRegistry.getActiveChannelsLogic]
      */
     override suspend fun onMarkAllReadRequest() {
-        logic.getActiveChannelsLogic().map { channel ->
-            val (channelType, channelId) = channel.cid.cidToTypeAndId()
-            state.markChannelAsRead(channelType = channelType, channelId = channelId)
+        logic.getActiveChannelsLogic().forEach { channel ->
+            channel.markRead()
         }
     }
 }

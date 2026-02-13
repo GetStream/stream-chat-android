@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -54,15 +53,15 @@ import java.util.concurrent.atomic.AtomicInteger
  * @property latestUsers Flow holding the latest updated users.
  * @property activeLiveLocations Flow holding the latest live locations.
  * @property baseMessageLimit The initial limit specifying how many of the latest messages should be kept in memory. If
- * provided, the [ChannelMutableState] will try to keep the number of messages in memory below this limit. Inserting new
- * messages in the channel (ex. from `message.new` event) will remove the oldest messages if the limit is exceeded. When
- * older messages are loaded (ex. by scrolling upwards), the limit is increased by a factor of [LIMIT_MULTIPLIER] if the
- * number of messages in the channel exceeds the limit. This ensures that the channel limit is not exceeded when loading
- * older messages. However, this means that the [baseMessageLimit] is not guaranteed to be the maximum number of
+ * provided, the [ChannelStateLegacyImpl] will try to keep the number of messages in memory below this limit. Inserting
+ * new messages in the channel (ex. from `message.new` event) will remove the oldest messages if the limit is exceeded.
+ * When older messages are loaded (ex. by scrolling upwards), the limit is increased by a factor of [LIMIT_MULTIPLIER]
+ * if the number of messages in the channel exceeds the limit. This ensures that the channel limit is not exceeded when
+ * loading older messages. However, this means that the [baseMessageLimit] is not guaranteed to be the maximum number of
  * messages in the channel.
  * @property now Function providing the current time in milliseconds. Used to determine if a message is pinned or not.
  */
-internal class ChannelMutableState(
+internal class ChannelStateLegacyImpl(
     override val channelType: String,
     override val channelId: String,
     private val userFlow: StateFlow<User?>,
@@ -118,7 +117,6 @@ internal class ChannelMutableState(
     override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages!!
     override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages!!
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
-
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
     override val messageCount: StateFlow<Int?> = _channelData!!.mapState { it?.messageCount }
     override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->
@@ -736,7 +734,7 @@ internal class ChannelMutableState(
         }
     }
 
-    private companion object {
+    private companion object Companion {
         private val seqGenerator = AtomicInteger()
 
         private const val TRIM_BUFFER = 30

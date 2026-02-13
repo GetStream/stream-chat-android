@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -137,7 +138,8 @@ public fun Messages(
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
-    val endOfOldMessages = messagesState.endOfOldMessagesReached
+    // Using rememberUpdatedState to ensure we have the latest value in the LoadMoreHandler effect below
+    val endOfOldMessages by rememberUpdatedState(messagesState.endOfOldMessagesReached)
     val endOfNewMessages = messagesState.endOfNewMessagesReached
     val isLoadingMoreNewMessages = messagesState.isLoadingNewerMessages
     val isLoadingMoreOldMessages = messagesState.isLoadingOlderMessages
@@ -223,6 +225,18 @@ public fun Messages(
         if (!endOfOldMessages) {
             onMessagesStartReached()
         }
+    }
+
+    // Handle edge case: list content doesn't fill the screen but there are older messages to load.
+    // This can happen when the message list is cleared and replaced with only a few messages (after a re-watch).
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.layoutInfo.totalItemsCount to lazyListState.canScrollForward }
+            .distinctUntilChanged()
+            .collect { (totalItems, canScrollForward) ->
+                if (totalItems > 0 && !canScrollForward && !endOfOldMessages) {
+                    onMessagesStartReached()
+                }
+            }
     }
 
     // Loads more (newer) messages when the user scrolls to the bottom of the list.

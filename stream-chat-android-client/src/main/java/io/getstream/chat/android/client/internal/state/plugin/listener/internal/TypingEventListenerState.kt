@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.EventType
 import io.getstream.result.Error
@@ -26,14 +26,14 @@ import io.getstream.result.Result
 import java.util.Date
 
 /**
- * [TypingEventListenerState] implementation for [StatePlugin].
+ * [TypingEventListenerState] implementation for
+ * [io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin].
+ *
  * Handles and sends typing events such as when user starts or stop typing a message.
  *
- * @param state [StateRegistry] having state of the offline plugin.
+ * @param logic The [LogicRegistry] instance to retrieve various logics.
  */
-internal class TypingEventListenerState(
-    private val state: StateRegistry,
-) : TypingEventListener {
+internal class TypingEventListenerState(private val logic: LogicRegistry) : TypingEventListener {
 
     /**
      * Method called before original api request is invoked. If this methods returns [Result.Failure],
@@ -55,14 +55,16 @@ internal class TypingEventListenerState(
         extraData: Map<Any, Any>,
         eventTime: Date,
     ): Result<Unit> {
-        val channelState = state.mutableChannel(channelType, channelId)
+        val channelLogic = logic.channel(channelType, channelId)
         return when (eventType) {
             EventType.TYPING_START -> {
-                onTypingStartPrecondition(channelState, eventTime)
+                onTypingStartPrecondition(channelLogic, eventTime)
             }
+
             EventType.TYPING_STOP -> {
-                onTypingStopPrecondition(channelState)
+                onTypingStopPrecondition(channelLogic)
             }
+
             else -> Result.Success(Unit)
         }
     }
@@ -74,12 +76,13 @@ internal class TypingEventListenerState(
      * and there should be a typing start event ([EventType.TYPING_START]) sent before [EventType.TYPING_STOP]
      * can be sent.
      *
-     * @param channelState State of the channel.
+     * @param channelLogic Logic for managing the channel state.
      */
-    private fun onTypingStopPrecondition(channelState: ChannelMutableState): Result<Unit> {
-        return if (!channelState.channelConfig.value.typingEventsEnabled) {
+
+    private fun onTypingStopPrecondition(channelLogic: ChannelLogic): Result<Unit> {
+        return if (!channelLogic.typingEventsEnabled()) {
             Result.Failure(Error.GenericError("Typing events are not enabled"))
-        } else if (channelState.lastStartTypingEvent == null) {
+        } else if (channelLogic.getLastStartTypingEvent() == null) {
             Result.Failure(
                 Error.GenericError(
                     "lastStartTypingEvent is null. " +
@@ -97,18 +100,18 @@ internal class TypingEventListenerState(
      * To send start typing event ([EventType.TYPING_START]), typing events must be enabled
      * and there should be a delay of 3 seconds between two subsequents typing start event ([EventType.TYPING_START]).
      *
-     * @param channelState State of the channel.
+     * @param channelLogic Logic for managing the channel state.
      * @param eventTime Time of this event.
      */
-    private fun onTypingStartPrecondition(channelState: ChannelMutableState, eventTime: Date): Result<Unit> {
-        return if (!channelState.channelConfig.value.typingEventsEnabled) {
+    private fun onTypingStartPrecondition(channelLogic: ChannelLogic, eventTime: Date): Result<Unit> {
+        return if (!channelLogic.typingEventsEnabled()) {
             Result.Failure(Error.GenericError("Typing events are not enabled"))
-        } else if (channelState.lastStartTypingEvent != null &&
-            eventTime.time - channelState.lastStartTypingEvent!!.time < TYPING_DELAY
+        } else if (channelLogic.getLastStartTypingEvent() != null &&
+            eventTime.time - channelLogic.getLastStartTypingEvent()!!.time < TYPING_DELAY
         ) {
             Result.Failure(
                 Error.GenericError(
-                    "Last typing event was sent at ${channelState.lastStartTypingEvent}. " +
+                    "Last typing event was sent at ${channelLogic.getLastStartTypingEvent()}. " +
                         "There must be a delay of $TYPING_DELAY_SECS seconds before sending new event",
                 ),
             )
@@ -135,12 +138,12 @@ internal class TypingEventListenerState(
         extraData: Map<Any, Any>,
         eventTime: Date,
     ) {
-        val channelState = state.mutableChannel(channelType, channelId)
+        val channelLogic = logic.channel(channelType, channelId)
 
         if (eventType == EventType.TYPING_START) {
-            channelState.lastStartTypingEvent = eventTime
+            channelLogic.setLastStartTypingEvent(eventTime)
         } else if (eventType == EventType.TYPING_STOP) {
-            channelState.lastStartTypingEvent = null
+            channelLogic.setLastStartTypingEvent(null)
         }
     }
 
@@ -165,13 +168,14 @@ internal class TypingEventListenerState(
         eventTime: Date,
     ) {
         if (result is Result.Success) {
-            val channelState = state.mutableChannel(channelType, channelId)
+            val channelLogic = logic.channel(channelType, channelId)
 
             when (eventType) {
                 EventType.TYPING_START ->
-                    channelState.keystrokeParentMessageId =
-                        extraData[ARG_TYPING_PARENT_ID] as? String
-                EventType.TYPING_STOP -> channelState.keystrokeParentMessageId = null
+                    channelLogic.setKeystrokeParentMessageId(extraData[ARG_TYPING_PARENT_ID] as? String)
+
+                EventType.TYPING_STOP ->
+                    channelLogic.setKeystrokeParentMessageId(null)
             }
         }
     }

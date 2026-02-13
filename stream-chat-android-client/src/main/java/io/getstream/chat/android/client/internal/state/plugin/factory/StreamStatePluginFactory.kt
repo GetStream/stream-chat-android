@@ -101,13 +101,15 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState
 
         val stateRegistry = StateRegistry(
-            clientState.user,
-            repositoryFacade.observeLatestUsers(),
-            mutableGlobalState.activeLiveLocations,
-            scope.coroutineContext.job,
-            config.now,
-            scope,
-            config.messageLimitConfig,
+            userStateFlow = clientState.user,
+            latestUsers = repositoryFacade.observeLatestUsers(),
+            activeLiveLocations = mutableGlobalState.activeLiveLocations,
+            job = scope.coroutineContext.job,
+            now = config.now,
+            scope = scope,
+            messageLimitConfig = config.messageLimitConfig,
+            mutedUsers = mutableGlobalState.muted,
+            useLegacyChannelState = config.useLegacyChannelLogic,
         )
 
         val isQueryingFree = MutableStateFlow(true)
@@ -121,6 +123,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             coroutineScope = scope,
             now = config.now,
+            useLegacyChannelLogic = config.useLegacyChannelLogic,
         )
 
         chatClient.logicRegistry = logic

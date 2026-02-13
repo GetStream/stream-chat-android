@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
@@ -33,9 +33,7 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.internal.state.event.handler.internal.utils.toChannelUserRead
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelEventHandler
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.test.randomAnswerCastedEvent
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomChannelHiddenEvent
@@ -99,14 +97,14 @@ import org.mockito.kotlin.whenever
 import java.util.Date
 
 @Suppress("LargeClass")
-internal class ChannelEventHandlerTest {
+internal class ChannelEventHandlerLegacyImplTest {
 
     private val cid = randomCID()
     private val currentUserId = randomString()
     private lateinit var stateLogic: ChannelStateLogic
     private lateinit var getCurrentUserId: () -> String?
-    private lateinit var mutableState: ChannelMutableState
-    private lateinit var handler: ChannelEventHandler
+    private lateinit var mutableState: ChannelStateLegacyImpl
+    private lateinit var handler: ChannelEventHandlerLegacyImpl
 
     @BeforeEach
     fun setUp() {
@@ -118,7 +116,7 @@ internal class ChannelEventHandlerTest {
             on(it.visibleMessages) doReturn MutableStateFlow(emptyMap())
         }
         whenever(stateLogic.writeChannelState()).thenReturn(mutableState)
-        handler = ChannelEventHandler(cid, stateLogic, getCurrentUserId)
+        handler = ChannelEventHandlerLegacyImpl(cid, stateLogic, getCurrentUserId)
     }
 
     // NewMessageEvent tests
@@ -178,6 +176,16 @@ internal class ChannelEventHandlerTest {
         handler.handle(event)
 
         verify(stateLogic).updateMessageCount(messageCount)
+    }
+
+    @Test
+    fun `When NewMessageEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNewMessageEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(stateLogic).updateLastMessageAt(message)
     }
 
     // MessageUpdatedEvent tests
@@ -323,6 +331,16 @@ internal class ChannelEventHandlerTest {
         verify(stateLogic, never()).upsertMessage(message)
         verify(stateLogic).updateCurrentUserRead(event.createdAt, message)
         verify(stateLogic).setHidden(false)
+    }
+
+    @Test
+    fun `When NotificationMessageNewEvent is handled, Then lastMessageAt is updated`() {
+        val message = randomMessage()
+        val event = randomNotificationMessageNewEvent(cid = cid, message = message)
+
+        handler.handle(event)
+
+        verify(stateLogic).updateLastMessageAt(message)
     }
 
     // NotificationThreadMessageNewEvent tests

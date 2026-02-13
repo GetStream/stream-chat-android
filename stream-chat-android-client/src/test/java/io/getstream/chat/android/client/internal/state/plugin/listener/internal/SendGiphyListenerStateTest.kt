@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
@@ -43,10 +42,7 @@ internal class SendGiphyListenerStateTest {
     @Test
     fun `when sending giphy and request succeeds, message should be upserted to channel, threads, and thread`() =
         runTest {
-            val channelStateLogic: ChannelStateLogic = mock()
-            val channelLogic: ChannelLogic = mock {
-                on(it.stateLogic) doReturn channelStateLogic
-            }
+            val channelLogic: ChannelLogic = mock()
 
             val threadsLogic: QueryThreadsLogic = mock()
             val activeThreadsLogic = listOf(threadsLogic)
@@ -64,17 +60,14 @@ internal class SendGiphyListenerStateTest {
 
             sendGiphyListenerState.onGiphySendResult(randomCID(), Result.Success(testMessage))
 
-            verify(channelStateLogic).upsertMessage(testMessage)
+            verify(channelLogic).upsertMessage(testMessage)
             verify(threadsLogic).upsertMessage(testMessage)
             verify(threadStateLogic).upsertMessage(testMessage)
         }
 
     @Test
     fun `when sending giphy and request fails, nothing should be upserted`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -90,7 +83,7 @@ internal class SendGiphyListenerStateTest {
 
         sendGiphyListenerState.onGiphySendResult(randomCID(), Result.Failure(Error.GenericError("")))
 
-        verify(channelStateLogic, never()).upsertMessage(any())
+        verify(channelLogic, never()).upsertMessage(any())
         verify(threadsLogic, never()).upsertMessage(any())
         verify(threadStateLogic, never()).upsertMessage(any())
     }

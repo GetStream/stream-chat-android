@@ -16,24 +16,23 @@
 
 package io.getstream.chat.android.client.internal.state.events
 
-import io.getstream.chat.android.client.api.MessageLimitConfig
-import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.internal.state.plugin.listener.internal.TypingEventListenerState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.EventType
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
 
 @ExperimentalCoroutinesApi
@@ -49,7 +48,7 @@ internal class TypingEventsTest {
 
     @Test
     fun `When typing events are disabled Should not pass precondition`() = runTest {
-        val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+        val (sut, _) = Fixture()
             .givenTypingEventsDisabled(channelType, channelId)
             .get()
 
@@ -65,7 +64,7 @@ internal class TypingEventsTest {
     @Test
     fun `When a user started typing Then subsequent keystroke events within a certain interval should not be sent to the server`() =
         runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            val (sut, _) = Fixture()
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
@@ -104,7 +103,7 @@ internal class TypingEventsTest {
     @Test
     fun `When stop typing event is sent without sending start typing event before Should not send event to the server`() =
         runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            val (sut, _) = Fixture()
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
@@ -120,7 +119,7 @@ internal class TypingEventsTest {
     @Test
     fun `When stop typing event is sent after sending start typing event before Should send event to the server`() =
         runTest {
-            val (sut, _) = Fixture(testCoroutines.scope, randomUser())
+            val (sut, _) = Fixture()
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
@@ -152,7 +151,7 @@ internal class TypingEventsTest {
     @Test
     fun `When sending start typing event Should update lastStartTypeEvent`() =
         runTest {
-            val (sut, stateRegistry) = Fixture(testCoroutines.scope, randomUser())
+            val (sut, logicRegistry) = Fixture()
                 .givenTypingEventsEnabled(channelType, channelId)
                 .get()
 
@@ -165,42 +164,38 @@ internal class TypingEventsTest {
                 eventTime,
             )
 
-            stateRegistry.mutableChannel(channelType, channelId).lastStartTypingEvent `should be equal to` eventTime
+            logicRegistry.channel(channelType, channelId).getLastStartTypingEvent() `should be equal to` eventTime
         }
 
-    private class Fixture(scope: CoroutineScope, user: User) {
-        private val stateRegistry = StateRegistry(
-            job = mock(),
-            scope = scope,
-            now = { System.currentTimeMillis() },
-            userStateFlow = MutableStateFlow(user),
-            latestUsers = MutableStateFlow(emptyMap()),
-            activeLiveLocations = MutableStateFlow(emptyList()),
-            messageLimitConfig = MessageLimitConfig(),
-        )
+    private class Fixture {
+
+        private var lastStartTypingEvent: Date? = null
+        private val channelLogic: ChannelLogic = mock()
+        private val logicRegistry: LogicRegistry = mock()
+
+        init {
+            whenever(channelLogic.setLastStartTypingEvent(any())).thenAnswer { answer ->
+                lastStartTypingEvent = answer.getArgument(0)
+            }
+            whenever(channelLogic.getLastStartTypingEvent()).thenAnswer {
+                lastStartTypingEvent
+            }
+        }
 
         fun givenTypingEventsDisabled(channelType: String, channelId: String): Fixture {
-            val channelState = stateRegistry.mutableChannel(channelType, channelId)
-            channelState.setChannelConfig(
-                channelState.channelConfig.value.copy(
-                    typingEventsEnabled = false,
-                ),
-            )
+            whenever(channelLogic.typingEventsEnabled()).doReturn(false)
+            whenever(logicRegistry.channel(channelType, channelId)).doReturn(channelLogic)
             return this
         }
 
         fun givenTypingEventsEnabled(channelType: String, channelId: String): Fixture {
-            val channelState = stateRegistry.mutableChannel(channelType, channelId)
-            channelState.setChannelConfig(
-                channelState.channelConfig.value.copy(
-                    typingEventsEnabled = true,
-                ),
-            )
+            whenever(channelLogic.typingEventsEnabled()).doReturn(true)
+            whenever(logicRegistry.channel(channelType, channelId)).doReturn(channelLogic)
             return this
         }
 
-        fun get(): Pair<TypingEventListener, StateRegistry> {
-            return TypingEventListenerState(state = stateRegistry) to stateRegistry
+        fun get(): Pair<TypingEventListener, LogicRegistry> {
+            return TypingEventListenerState(logicRegistry) to logicRegistry
         }
     }
 }

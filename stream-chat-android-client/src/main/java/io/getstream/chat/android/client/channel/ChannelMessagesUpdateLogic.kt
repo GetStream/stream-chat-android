@@ -25,16 +25,7 @@ public interface ChannelMessagesUpdateLogic {
 
     public fun upsertMessage(message: Message)
 
-    public fun upsertMessages(
-        messages: List<Message>,
-        shouldRefreshMessages: Boolean = false,
-    )
+    public fun channelState(): ChannelState
 
-    public fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean)
-
-    public fun delsertPinnedMessage(message: Message)
-
-    public fun listenForChannelState(): ChannelState
-
-    public fun replyMessage(repliedMessage: Message?)
+    public fun setRepliedMessage(repliedMessage: Message?)
 }

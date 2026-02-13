@@ -50,7 +50,7 @@ public class UploadAttachmentsWorker(
     @Suppress("TooGenericExceptionCaught")
     @InternalStreamChatApi
     public suspend fun uploadAttachmentsForMessage(messageId: String): Result<Unit> {
-        val message = channelStateLogic?.listenForChannelState()?.getMessageById(messageId)
+        val message = channelStateLogic?.channelState()?.getMessageById(messageId)
             ?: messageRepository.selectMessage(messageId)
 
         return try {
@@ -181,7 +181,7 @@ public class UploadAttachmentsWorker(
         }
 
         private fun updateAttachmentUploadState(messageId: String, uploadId: String, newState: Attachment.UploadState) {
-            val message = channelStateLogic.listenForChannelState().messages.value.firstOrNull { it.id == messageId }
+            val message = channelStateLogic.channelState().messages.value.firstOrNull { it.id == messageId }
             if (message != null) {
                 val newAttachments = message.attachments.map { attachment ->
                     if (attachment.uploadId == uploadId) {
