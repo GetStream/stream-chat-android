@@ -109,7 +109,7 @@
 
     <!-- Audio Recording -->
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_ui_message_composer_hold_to_record">Hold to start, release to send.</string>
+    <string name="stream_ui_message_composer_hold_to_record">Hold to record. Release to send</string>
 
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>

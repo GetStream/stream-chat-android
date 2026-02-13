@@ -16,6 +16,11 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -24,18 +29,33 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 
 /**
- * Calculates the position of the suggestion list [Popup] on the screen.
+ * A snackbar wrapped inside of a popup allowing it be displayed above the Composable it's anchored to.
+ *
+ * @param hostState The state of this component to read and show Snackbars accordingly
+ * @param snackbar The Snackbar to be shown at the appropriate time
+ * with appearance based on the SnackbarData provided as a param
  */
-internal class AboveAnchorPopupPositionProvider : PopupPositionProvider {
+@Composable
+internal fun SnackbarPopup(
+    hostState: SnackbarHostState,
+    snackbar: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
+) {
+    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
+        SnackbarHost(
+            hostState = hostState,
+            snackbar = snackbar,
+        )
+    }
+}
+
+internal object AboveAnchorPopupPositionProvider : PopupPositionProvider {
     override fun calculatePosition(
         anchorBounds: IntRect,
         windowSize: IntSize,
         layoutDirection: LayoutDirection,
         popupContentSize: IntSize,
-    ): IntOffset {
-        return IntOffset(
-            x = 0,
-            y = anchorBounds.top - popupContentSize.height,
-        )
-    }
+    ) = IntOffset(
+        x = 0,
+        y = anchorBounds.top - popupContentSize.height,
+    )
 }
