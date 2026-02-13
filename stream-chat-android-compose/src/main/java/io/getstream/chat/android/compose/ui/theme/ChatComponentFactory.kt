@@ -50,6 +50,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -1985,6 +1986,23 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingControlsContent(
             isStopVisible = isStopVisible,
             recordingActions = recordingActions,
+        )
+    }
+
+    /**
+     * The "Hold to record" instructional hint displayed as a snackbar when the user taps
+     * the record button without holding.
+     *
+     * Override this method to provide a custom recording hint UI.
+     *
+     * @param data The [SnackbarData] containing the hint message and dismiss action.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingHint(
+        data: SnackbarData,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingHint(
+            data = data,
         )
     }
 

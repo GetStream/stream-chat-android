@@ -332,7 +332,7 @@ private fun MicButtonGestureArea(
 
     SnackbarPopup(
         hostState = hint.snackbarHostState,
-        snackbar = { AudioRecordingSnackbar(it) },
+        snackbar = { ChatTheme.componentFactory.MessageComposerAudioRecordingHint(it) },
     )
 }
 
@@ -424,8 +424,9 @@ private fun rememberRecordingHint(): RecordingHintState {
 
 private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
 
+/** "Hold to record" instructional hint shown as a snackbar. */
 @Composable
-private fun AudioRecordingSnackbar(data: SnackbarData) {
+internal fun MessageComposerAudioRecordingHint(data: SnackbarData) {
     Box(
         modifier = Modifier
             .fillMaxWidth()

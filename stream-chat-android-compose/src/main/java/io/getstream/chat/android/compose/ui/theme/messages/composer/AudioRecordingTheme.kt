@@ -44,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * @property showRecordButtonOverSend Shows the record button over the send button.
  * @property recordButton The style for the record button.
  * @property floatingIcons The theme for the floating icons.
- * @property holdToRecord The theme for the hold to record component.
  * @property permissionRationale The theme for the permission rationale component.
  */
 public data class AudioRecordingTheme(
@@ -53,7 +52,6 @@ public data class AudioRecordingTheme(
     val showRecordButtonOverSend: Boolean,
     val recordButton: IconContainerStyle,
     val floatingIcons: AudioRecordingFloatingIconsTheme,
-    val holdToRecord: AudioRecordingHoldToRecordTheme,
     val permissionRationale: AudioRecordingPermissionRationaleTheme,
 ) {
 
@@ -124,22 +122,6 @@ public data class AudioRecordingTheme(
                     lockThreshold = 96.dp,
                     lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
                 ),
-                holdToRecord = AudioRecordingHoldToRecordTheme(
-                    containerElevation = 2.dp,
-                    containerPadding = ComponentPadding(horizontal = 8.dp, vertical = 16.dp),
-                    containerColor = colorResource(
-                        when (isInDarkMode) {
-                            true -> R.color.stream_compose_white_85
-                            else -> R.color.stream_compose_black_85
-                        },
-                    ),
-                    containerShape = RoundedCornerShape(16.dp),
-                    contentHeight = 48.dp,
-                    contentPadding = ComponentPadding(horizontal = 16.dp),
-                    textStyle = typography.bodyBold.copy(
-                        color = colors.textHighEmphasisInverse,
-                    ),
-                ),
                 permissionRationale = AudioRecordingPermissionRationaleTheme(
                     containerElevation = 2.dp,
                     containerPadding = ComponentPadding(horizontal = 8.dp),
@@ -200,27 +182,6 @@ public data class AudioRecordingFloatingIconsTheme(
     val locked: AudioRecordingFloatingIconStyle,
     val lockThreshold: Dp,
     val lockEdgeOffset: ComponentOffset,
-)
-
-/**
- * Represents the theme for the hold to record component.
- *
- * @property containerElevation The elevation of the container.
- * @property containerColor The color of the container.
- * @property containerShape The shape of the container.
- * @property containerPadding The padding of the container.
- * @property contentHeight The height of the content.
- * @property contentPadding The padding of the content.
- * @property textStyle The text style.
- */
-public data class AudioRecordingHoldToRecordTheme(
-    val containerElevation: Dp,
-    val containerColor: Color,
-    val containerShape: Shape,
-    val containerPadding: ComponentPadding,
-    val contentHeight: Dp,
-    val contentPadding: ComponentPadding,
-    val textStyle: TextStyle,
 )
 
 /**
