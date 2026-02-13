@@ -257,6 +257,7 @@ public data class StreamColors(
     public val chatTextTimestamp: Color = textTertiary,
     public val chatWaveformBar: Color = borderCoreOpacity25,
     public val chatWaveformBarPlaying: Color = accentPrimary,
+    public val chipText: Color = brand900,
     public val controlPlayControlBg: Color = accentBlack,
     public val controlPlayControlIcon: Color = textOnAccent,
     public val controlRadioCheckBgSelected: Color,

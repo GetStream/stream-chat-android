@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
+import io.getstream.chat.android.compose.ui.components.selectedmessage.ReactionsMenuContent
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -45,6 +45,7 @@ internal class SelectedReactionsMenuTest : PaparazziComposeTest {
             currentUser = PreviewUserData.user1,
             selectedMessage = PreviewMessageData.message1.copy(
                 latestReactions = PreviewReactionData.oneReaction,
+                reactionGroups = PreviewReactionData.oneReactionGroup,
             ),
         )
     }
@@ -55,6 +56,7 @@ internal class SelectedReactionsMenuTest : PaparazziComposeTest {
             currentUser = PreviewUserData.user1,
             selectedMessage = PreviewMessageData.message1.copy(
                 latestReactions = PreviewReactionData.manyReaction,
+                reactionGroups = PreviewReactionData.manyReactionGroups,
             ),
         )
     }
@@ -66,7 +68,7 @@ internal class SelectedReactionsMenuTest : PaparazziComposeTest {
     ) {
         snapshot(isInDarkMode = inDarkMode) {
             Box(modifier = Modifier.fillMaxSize()) {
-                SelectedReactionsMenu(
+                ReactionsMenuContent(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     message = selectedMessage,
                     currentUser = currentUser,

@@ -27,6 +27,7 @@ internal object PreviewUserReactionData {
     fun user1Reaction() = UserReactionItemState(
         user = PreviewUserData.user1,
         type = "like",
+        isMine = true,
         emojiCode = "👍",
     )
 
@@ -46,16 +47,5 @@ internal object PreviewUserReactionData {
         user = PreviewUserData.user4,
         type = "sad",
         emojiCode = "👎",
-    )
-
-    fun oneUserReaction() = listOf(
-        user1Reaction(),
-    )
-
-    fun manyUserReactions() = listOf(
-        user1Reaction(),
-        user2Reaction(),
-        user3Reaction(),
-        user4Reaction(),
     )
 }
