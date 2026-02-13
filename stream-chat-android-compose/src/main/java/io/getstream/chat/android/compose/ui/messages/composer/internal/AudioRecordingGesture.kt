@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
@@ -37,12 +38,14 @@ internal class RecordingGestureConfig(
     val lockThresholdPx: Float,
 )
 
-private enum class DragAxis { Horizontal, Vertical }
+@VisibleForTesting
+internal enum class DragAxis { Horizontal, Vertical }
 
 /**
  * Terminal outcome of the recording drag gesture.
  */
-private enum class DragResult {
+@VisibleForTesting
+internal enum class DragResult {
     /** Finger lifted — caller should complete the recording if not already locked. */
     Released,
 
@@ -80,14 +83,7 @@ internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
     recordingActions.onStartRecording()
 
     val result = awaitDragResult(down, config, currentState, recordingActions.onHoldRecording)
-    when (result) {
-        DragResult.Released -> {
-            if (currentState() !is RecordingState.Locked) recordingActions.onConfirmRecording()
-        }
-        DragResult.Cancel -> recordingActions.onCancelRecording()
-        DragResult.Lock -> recordingActions.onLockRecording()
-        DragResult.AlreadyLocked -> Unit
-    }
+    handleDragResult(result, currentState, recordingActions)
 }
 
 /**
@@ -135,8 +131,7 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
         val constrained = constrainToAxis(rawDiff, dragAxis)
         onDragOffset(constrained)
 
-        if (constrained.x <= -config.cancelThresholdPx) return DragResult.Cancel
-        if (constrained.y <= -config.lockThresholdPx) return DragResult.Lock
+        evaluateDragThreshold(constrained, config)?.let { return it }
     }
 }
 
@@ -144,7 +139,8 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
  * Determines the drag axis once the first significant movement exceeds [touchSlop].
  * Returns `null` if the movement is still too small.
  */
-private fun resolveAxis(rawDiff: Offset, touchSlop: Float): DragAxis? {
+@VisibleForTesting
+internal fun resolveAxis(rawDiff: Offset, touchSlop: Float): DragAxis? {
     val absX = abs(rawDiff.x)
     val absY = abs(rawDiff.y)
     if (absX <= touchSlop && absY <= touchSlop) return null
@@ -154,8 +150,47 @@ private fun resolveAxis(rawDiff: Offset, touchSlop: Float): DragAxis? {
 /**
  * Constrains a raw offset to the given [axis]. Returns [Offset.Zero] if no axis is locked yet.
  */
-private fun constrainToAxis(rawDiff: Offset, axis: DragAxis?): Offset = when (axis) {
+@VisibleForTesting
+internal fun constrainToAxis(rawDiff: Offset, axis: DragAxis?): Offset = when (axis) {
     DragAxis.Horizontal -> Offset(rawDiff.x, 0f)
     DragAxis.Vertical -> Offset(0f, rawDiff.y)
     null -> Offset.Zero
+}
+
+/**
+ * Returns a terminal [DragResult] when the constrained offset crosses a gesture threshold,
+ * or `null` if the drag is still within bounds.
+ *
+ * Cancel (horizontal) is evaluated before lock (vertical), so a simultaneous breach favours cancel.
+ */
+@VisibleForTesting
+internal fun evaluateDragThreshold(
+    constrained: Offset,
+    config: RecordingGestureConfig,
+): DragResult? = when {
+    constrained.x <= -config.cancelThresholdPx -> DragResult.Cancel
+    constrained.y <= -config.lockThresholdPx -> DragResult.Lock
+    else -> null
+}
+
+/**
+ * Dispatches the appropriate recording action for the given [result].
+ *
+ * On [DragResult.Released] the recording is confirmed only when the current state is **not**
+ * already [RecordingState.Locked] (the lock UI handles its own send flow).
+ */
+@VisibleForTesting
+internal fun handleDragResult(
+    result: DragResult,
+    currentState: () -> RecordingState,
+    recordingActions: AudioRecordingActions,
+) {
+    when (result) {
+        DragResult.Released -> {
+            if (currentState() !is RecordingState.Locked) recordingActions.onConfirmRecording()
+        }
+        DragResult.Cancel -> recordingActions.onCancelRecording()
+        DragResult.Lock -> recordingActions.onLockRecording()
+        DragResult.AlreadyLocked -> Unit
+    }
 }
