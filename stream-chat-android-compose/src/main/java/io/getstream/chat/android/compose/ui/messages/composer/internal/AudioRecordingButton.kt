@@ -458,7 +458,7 @@ private fun FloatingLockIcon(
     holdControlsOffset: IntOffset,
 ) {
     val density = LocalDensity.current
-    val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playback.height
+    val playbackHeight = 48.dp
     val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
     val totalContentHeight = playbackHeight + controlsHeight
     val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset

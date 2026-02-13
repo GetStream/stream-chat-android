@@ -1944,6 +1944,31 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The content displayed in the message composer when the recording is stopped and the user
+     * can scrub the waveform and play back before sending.
+     *
+     * Shows a play/pause button, a timer, and an interactive waveform scrubber.
+     *
+     * Override this method to provide a fully custom recording-overview UI.
+     *
+     * @param state The current [RecordingState.Overview] containing waveform data and playback progress.
+     * @param recordingActions Actions to control playback (toggle play/pause, drag start/stop).
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingOverviewContent(
+        state: RecordingState.Overview,
+        recordingActions: AudioRecordingActions,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingOverviewContent(
+            state = state,
+            recordingActions = recordingActions,
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default avatar component that displays an image from a URL or falls back to a placeholder.
      * This component serves as the foundational UI for all avatar types.
      *

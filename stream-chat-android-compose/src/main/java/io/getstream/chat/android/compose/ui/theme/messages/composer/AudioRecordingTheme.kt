@@ -44,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * @property showRecordButtonOverSend Shows the record button over the send button.
  * @property recordButton The style for the record button.
  * @property floatingIcons The theme for the floating icons.
- * @property playback The theme for the audio recording playback component.
  * @property controls The theme for the audio recording controls component.
  * @property holdToRecord The theme for the hold to record component.
  * @property permissionRationale The theme for the permission rationale component.
@@ -55,7 +54,6 @@ public data class AudioRecordingTheme(
     val showRecordButtonOverSend: Boolean,
     val recordButton: IconContainerStyle,
     val floatingIcons: AudioRecordingFloatingIconsTheme,
-    val playback: AudioRecordingPlaybackTheme,
     val controls: AudioRecordingControlsTheme,
     val holdToRecord: AudioRecordingHoldToRecordTheme,
     val permissionRationale: AudioRecordingPermissionRationaleTheme,
@@ -127,28 +125,6 @@ public data class AudioRecordingTheme(
                     ),
                     lockThreshold = 96.dp,
                     lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
-                ),
-                playback = AudioRecordingPlaybackTheme(
-                    height = 48.dp,
-                    playButton = IconContainerStyle(
-                        size = ComponentSize.square(32.dp),
-                        padding = ComponentPadding.all(4.dp),
-                        icon = IconStyle(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                            tint = colors.primaryAccent,
-                            size = ComponentSize.square(24.dp),
-                        ),
-                    ),
-                    pauseButton = IconContainerStyle(
-                        size = ComponentSize.square(32.dp),
-                        padding = ComponentPadding.all(4.dp),
-                        icon = IconStyle(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_pause),
-                            tint = colors.primaryAccent,
-                            size = ComponentSize.square(24.dp),
-                        ),
-                    ),
-                    waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
                 ),
                 controls = AudioRecordingControlsTheme(
                     height = 48.dp,
@@ -277,21 +253,6 @@ public data class AudioRecordingHoldToRecordTheme(
     val contentHeight: Dp,
     val contentPadding: ComponentPadding,
     val textStyle: TextStyle,
-)
-
-/**
- * Represents the theme for the audio recording playback component.
- *
- * @property height The height of the playback component.
- * @property playButton The style for the play button.
- * @property pauseButton The style for the pause button.
- * @property waveformSliderPadding The padding for the waveform slider.
- */
-public data class AudioRecordingPlaybackTheme(
-    val height: Dp,
-    val playButton: IconContainerStyle,
-    val pauseButton: IconContainerStyle,
-    val waveformSliderPadding: ComponentPadding,
 )
 
 /**
