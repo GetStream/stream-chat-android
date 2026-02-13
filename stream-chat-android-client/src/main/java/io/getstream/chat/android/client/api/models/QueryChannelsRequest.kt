@@ -28,16 +28,16 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  * @property offset Pagination offset.
  * @property limit Number of channels to be returned by this query channels request.
  * @property querySort [QuerySorter] Sort specification for api queries.
- * @property messageLimit Number of messages in the response.
- * @property memberLimit Number of members in the response.
+ * @property messageLimit Number of messages in the response. When `null`, the server-side default is used.
+ * @property memberLimit Number of members in the response. When `null`, the server-side default is used.
  */
 public data class QueryChannelsRequest(
     public val filter: FilterObject,
     public var offset: Int = 0,
     public var limit: Int,
     public val querySort: QuerySorter<Channel> = QuerySortByField(),
-    public var messageLimit: Int = 0,
-    public var memberLimit: Int = 1,
+    public var messageLimit: Int? = null,
+    public var memberLimit: Int? = null,
 ) : ChannelRequest<QueryChannelsRequest> {
 
     override var state: Boolean = true
