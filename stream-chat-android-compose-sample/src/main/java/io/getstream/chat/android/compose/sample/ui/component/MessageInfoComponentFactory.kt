@@ -87,15 +87,15 @@ class MessageInfoComponentFactory : ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         var showMessageInfoDialog by remember { mutableStateOf(false) }
 
         val allOptions = listOf(
             MessageOptionItemState(
                 title = R.string.message_option_message_info,
-                titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = rememberVectorPainter(Icons.Outlined.Info),
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                destructive = false,
                 action = CustomAction(message, mapOf("message_info" to true)),
             ),
         ) + messageOptions
@@ -139,6 +139,7 @@ class MessageInfoComponentFactory : ChatComponentFactory {
                 onMessageAction = extendedOnMessageAction,
                 onShowMore = onShowMore,
                 onDismiss = onDismiss,
+                currentUser = currentUser,
             )
         }
     }

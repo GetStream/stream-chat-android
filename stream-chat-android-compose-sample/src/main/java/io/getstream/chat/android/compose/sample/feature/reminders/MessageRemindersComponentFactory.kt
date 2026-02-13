@@ -32,9 +32,9 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.component.DeleteMessageForMeComponentFactory
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
@@ -96,6 +96,7 @@ class MessageRemindersComponentFactory(
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         val remindMeOption = remindMeOption(message)
         val saveForLaterOption = saveForLaterOption(message)
@@ -167,6 +168,7 @@ class MessageRemindersComponentFactory(
             onMessageAction = extendedAction,
             onShowMore = onShowMore,
             onDismiss = onDismiss,
+            currentUser = currentUser,
         )
     }
 
@@ -190,9 +192,8 @@ class MessageRemindersComponentFactory(
         }
         return MessageOptionItemState(
             title = title,
-            titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(icon),
-            iconColor = ChatTheme.colors.textLowEmphasis,
+            destructive = false,
             action = CustomAction(message, mapOf(ACTION_TYPE to actionType)),
         )
     }
@@ -217,9 +218,8 @@ class MessageRemindersComponentFactory(
         }
         return MessageOptionItemState(
             title = title,
-            titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(icon),
-            iconColor = ChatTheme.colors.textLowEmphasis,
+            destructive = false,
             action = CustomAction(message, mapOf(ACTION_TYPE to actionType)),
         )
     }

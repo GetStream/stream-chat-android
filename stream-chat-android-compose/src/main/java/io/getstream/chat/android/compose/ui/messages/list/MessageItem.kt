@@ -25,9 +25,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -107,10 +114,20 @@ public fun LazyItemScope.MessageItem(
             is SystemMessageItemState -> MessageListSystemItemContent(messageListItemState)
             is ModeratedMessageItemState -> MessageListModeratedItemContent(messageListItemState)
             is MessageItemState -> {
+                val selectedMessageBounds = LocalMessageBounds.current
+                var layoutCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 MessageContainer(
                     messageItem = messageListItemState,
                     reactionSorting = reactionSorting,
-                    onLongItemClick = onLongItemClick,
+                    modifier = Modifier.onGloballyPositioned { layoutCoords = it },
+                    onLongItemClick = { message ->
+                        layoutCoords?.let { coords ->
+                            if (coords.isAttached) {
+                                selectedMessageBounds?.value = coords.boundsInWindow()
+                            }
+                        }
+                        onLongItemClick(message)
+                    },
                     onReactionsClick = onReactionsClick,
                     onThreadClick = onThreadClick,
                     onPollUpdated = onPollUpdated,

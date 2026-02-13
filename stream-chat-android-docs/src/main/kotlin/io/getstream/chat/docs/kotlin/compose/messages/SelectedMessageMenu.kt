@@ -6,12 +6,10 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -191,8 +189,6 @@ private object SelectedMessageMenuCustomizationSnippet {
                                 // The capabilities the user has in a given channel
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                                 message = selectedMessage,
-                                // Assign a different shape to the Composable element
-                                shape = ChatTheme.shapes.attachment,
                                 onMessageAction = { action ->
                                     // Handle message action
                                 },
@@ -202,21 +198,6 @@ private object SelectedMessageMenuCustomizationSnippet {
                                 onDismiss = {
                                     // Handle dismiss
                                 },
-                                // Custom header content
-                                headerContent = {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .background(
-                                                shape = ChatTheme.shapes.avatar,
-                                                color = ChatTheme.colors.infoAccent
-                                            )
-                                            .padding(horizontal = 8.dp),
-                                        style = ChatTheme.typography.body,
-                                        color = ChatTheme.colors.textHighEmphasis,
-                                        text = "Available Message Options"
-                                    )
-                                }
                             )
                         }
                     }

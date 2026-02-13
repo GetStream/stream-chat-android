@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -62,6 +63,7 @@ class DeleteMessageForMeComponentFactory(
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         val chatClient = ChatClient.instance()
 
@@ -84,9 +86,8 @@ class DeleteMessageForMeComponentFactory(
                         add(
                             MessageOptionItemState(
                                 title = R.string.message_option_delete_for_me,
-                                titleColor = ChatTheme.colors.errorAccent,
                                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
-                                iconColor = ChatTheme.colors.errorAccent,
+                                destructive = true,
                                 action = CustomAction(message, mapOf("delete_for_me" to true)),
                             ),
                         )
@@ -127,6 +128,7 @@ class DeleteMessageForMeComponentFactory(
             onMessageAction = extendedOnMessageAction,
             onShowMore = onShowMore,
             onDismiss = onDismiss,
+            currentUser = currentUser,
         )
     }
 
