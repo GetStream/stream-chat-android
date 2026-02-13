@@ -125,7 +125,7 @@ import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicato
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
-import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
+import io.getstream.chat.android.compose.ui.components.messages.AdaptiveMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
@@ -1192,7 +1192,7 @@ public interface ChatComponentFactory {
     public fun MessageReactions(
         params: MessageReactionsParams,
     ) {
-        ClusteredMessageReactions(
+        AdaptiveMessageReactions(
             modifier = params.modifier,
             reactions = params.reactions,
             onClick = params.onClick?.let { onClick -> { onClick(params.message) } },
