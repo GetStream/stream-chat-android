@@ -51,7 +51,7 @@ import java.util.Date
  * @param cid The unique identifier for the channel in the format "type:id".
  * @param messagesUpdateLogic The logic for managing channel message updates.
  * @param repository The repository for accessing persisted channel and message data.
- * @param stateImpl The mutable channel state implementation.
+ * @param state The mutable channel state implementation.
  * @param mutableGlobalState The global mutable state shared across channels.
  * @param userPresence Whether to subscribe to user presence event
  * @param coroutineScope The coroutine scope for launching asynchronous operations.
@@ -63,7 +63,7 @@ internal class ChannelLogicImpl(
     override val cid: String,
     override val messagesUpdateLogic: ChannelMessagesUpdateLogic,
     private val repository: RepositoryFacade,
-    private val stateImpl: ChannelStateImpl,
+    private val state: ChannelStateImpl,
     private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val coroutineScope: CoroutineScope,
@@ -73,7 +73,7 @@ internal class ChannelLogicImpl(
 
     private val eventHandler = ChannelEventHandlerImpl(
         cid = cid,
-        state = stateImpl,
+        state = state,
         globalState = mutableGlobalState,
         coroutineScope = coroutineScope,
         getCurrentUserId = getCurrentUserId,
@@ -98,8 +98,8 @@ internal class ChannelLogicImpl(
 
     override fun setPaginationDirection(query: QueryChannelRequest) {
         when {
-            query.filteringOlderMessages() -> stateImpl.setLoadingOlderMessages(true)
-            query.isFilteringNewerMessages() -> stateImpl.setLoadingNewerMessages(true)
+            query.filteringOlderMessages() -> state.setLoadingOlderMessages(true)
+            query.isFilteringNewerMessages() -> state.setLoadingNewerMessages(true)
         }
     }
 
@@ -114,46 +114,46 @@ internal class ChannelLogicImpl(
                 // Update pagination/recovery state only if it's not a notification update
                 // (from LoadNotificationDataWorker) and a limit is set (otherwise we are not loading messages)
                 if (!isNotificationUpdate && limit != 0) {
-                    stateImpl.setRecoveryNeeded(false)
+                    state.setRecoveryNeeded(false)
                     updatePaginationEnd(query, endReached)
                 }
 
                 // Update channel data
                 val channelData = channel.toChannelData()
-                stateImpl.updateChannelData {
+                state.updateChannelData {
                     // Enrich own_capabilities
                     if (channelData.ownCapabilities.isEmpty()) {
-                        channelData.copy(ownCapabilities = stateImpl.channelData.value.ownCapabilities)
+                        channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
                     } else {
                         channelData
                     }
                 }
                 // Update member/watcher data
-                stateImpl.setMemberCount(channel.memberCount)
-                stateImpl.upsertMembers(channel.members)
-                stateImpl.upsertWatchers(channel.watchers, channel.watcherCount)
+                state.setMemberCount(channel.memberCount)
+                state.upsertMembers(channel.members)
+                state.upsertWatchers(channel.watchers, channel.watcherCount)
                 // Update reads
-                stateImpl.updateReads(channel.read)
+                state.updateReads(channel.read)
                 // Update config
-                stateImpl.setChannelConfig(channel.config)
+                state.setChannelConfig(channel.config)
                 // Update messages
                 if (limit > 0) {
                     updateMessages(query, channel)
                 }
                 // Add pinned messages
-                stateImpl.addPinnedMessages(channel.pinnedMessages)
+                state.addPinnedMessages(channel.pinnedMessages)
                 // Update loading states
-                stateImpl.setLoadingOlderMessages(false)
-                stateImpl.setLoadingNewerMessages(false)
+                state.setLoadingOlderMessages(false)
+                state.setLoadingNewerMessages(false)
             }
 
             is Result.Failure -> {
                 // Mark the channel as needing recovery if the error is not permanent
                 val isPermanent = result.value.isPermanent()
-                stateImpl.setRecoveryNeeded(recoveryNeeded = !isPermanent)
+                state.setRecoveryNeeded(recoveryNeeded = !isPermanent)
                 // Reset loading states
-                stateImpl.setLoadingOlderMessages(false)
-                stateImpl.setLoadingNewerMessages(false)
+                state.setLoadingOlderMessages(false)
+                state.setLoadingNewerMessages(false)
             }
         }
     }
@@ -168,7 +168,7 @@ internal class ChannelLogicImpl(
     }
 
     override suspend fun loadAfter(messageId: String, limit: Int): Result<Channel> {
-        stateImpl.setLoadingNewerMessages(true)
+        state.setLoadingNewerMessages(true)
         val request = QueryChannelPaginationRequest(limit)
             .apply {
                 messageFilterValue = messageId
@@ -179,7 +179,7 @@ internal class ChannelLogicImpl(
     }
 
     override suspend fun loadBefore(messageId: String?, limit: Int): Result<Channel> {
-        stateImpl.setLoadingOlderMessages(true)
+        state.setLoadingOlderMessages(true)
         val messageId = messageId ?: getOldestMessage()?.id
         val request = QueryChannelPaginationRequest(limit)
             .apply {
@@ -208,63 +208,63 @@ internal class ChannelLogicImpl(
     }
 
     override fun getMessage(messageId: String): Message? {
-        return stateImpl.getMessageById(messageId)
+        return state.getMessageById(messageId)
     }
 
     override fun upsertMessage(message: Message) {
-        stateImpl.upsertMessage(message)
+        state.upsertMessage(message)
     }
 
     override fun updateLastMessageAt(message: Message) {
-        stateImpl.updateLastMessageAt(message)
+        state.updateLastMessageAt(message)
     }
 
     override fun deleteMessage(message: Message) {
-        stateImpl.deleteMessage(message.id)
+        state.deleteMessage(message.id)
     }
 
     override fun upsertMembers(members: List<Member>) {
-        stateImpl.upsertMembers(members)
+        state.upsertMembers(members)
     }
 
     override fun setHidden(hidden: Boolean) {
-        stateImpl.setHidden(hidden)
+        state.setHidden(hidden)
     }
 
     override fun hideMessagesBefore(date: Date) {
-        stateImpl.hideMessagesBefore(date)
+        state.hideMessagesBefore(date)
     }
 
     override fun removeMessagesBefore(date: Date) {
-        stateImpl.removeMessagesBefore(date, systemMessage = null)
+        state.removeMessagesBefore(date, systemMessage = null)
     }
 
     override fun setPushPreference(preference: PushPreference) {
-        stateImpl.setPushPreference(preference)
+        state.setPushPreference(preference)
     }
 
     override fun setRepliedMessage(message: Message?) {
-        stateImpl.setRepliedMessage(message)
+        state.setRepliedMessage(message)
     }
 
     override fun markRead(): Boolean {
-        return stateImpl.markRead()
+        return state.markRead()
     }
 
     override fun typingEventsEnabled(): Boolean {
-        return stateImpl.channelConfig.value.typingEventsEnabled
+        return state.channelConfig.value.typingEventsEnabled
     }
 
     override fun getLastStartTypingEvent(): Date? {
-        return stateImpl.getLastStartTypingEvent()
+        return state.getLastStartTypingEvent()
     }
 
     override fun setLastStartTypingEvent(date: Date?) {
-        stateImpl.setLastStartTypingEvent(date)
+        state.setLastStartTypingEvent(date)
     }
 
     override fun setKeystrokeParentMessageId(messageId: String?) {
-        stateImpl.setKeystrokeParentMessageId(messageId)
+        state.setKeystrokeParentMessageId(messageId)
     }
 
     override fun updateDataForChannel(
@@ -282,34 +282,32 @@ internal class ChannelLogicImpl(
 
         // Update channel data
         val channelData = channel.toChannelData()
-        stateImpl.updateChannelData {
+        state.updateChannelData {
             // Enrich own_capabilities
             if (channelData.ownCapabilities.isEmpty()) {
-                channelData.copy(ownCapabilities = stateImpl.channelData.value.ownCapabilities)
+                channelData.copy(ownCapabilities = state.channelData.value.ownCapabilities)
             } else {
                 channelData
             }
         }
         // Update member/watcher data
-        stateImpl.setMemberCount(channel.memberCount)
-        stateImpl.upsertMembers(channel.members)
-        stateImpl.upsertWatchers(channel.watchers, channel.watcherCount)
+        state.setMemberCount(channel.memberCount)
+        state.upsertMembers(channel.members)
+        state.upsertWatchers(channel.watchers, channel.watcherCount)
         // Update reads
-        stateImpl.updateReads(channel.read)
+        state.updateReads(channel.read)
         // Update channel config
-        stateImpl.setChannelConfig(channel.config)
+        state.setChannelConfig(channel.config)
         // Reset messages
         if (messageLimit > 0) {
-            // TODO: Check case when unhiding a channel: add doesn't return the newest message
-            //  (overrides the message.new from cache)
-            stateImpl.setMessages(channel.messages)
-            stateImpl.setEndOfOlderMessages(channel.messages.size < messageLimit)
+            state.setMessages(channel.messages)
+            state.setEndOfOlderMessages(channel.messages.size < messageLimit)
         }
         // Add pinned messages
-        stateImpl.addPinnedMessages(channel.pinnedMessages)
+        state.addPinnedMessages(channel.pinnedMessages)
         // Update loading states
-        stateImpl.setLoadingOlderMessages(false)
-        stateImpl.setLoadingNewerMessages(false)
+        state.setLoadingOlderMessages(false)
+        state.setLoadingNewerMessages(false)
     }
 
     override fun handleEvents(events: List<ChatEvent>) {
@@ -330,7 +328,7 @@ internal class ChannelLogicImpl(
     }
 
     private fun getOldestMessage(): Message? {
-        val messages = stateImpl.messages.value
+        val messages = state.messages.value
         return messages.firstOrNull()
     }
 
@@ -338,21 +336,21 @@ internal class ChannelLogicImpl(
         when {
             // Querying the newest messages (no pagination applied)
             !query.isFilteringMessages() -> {
-                stateImpl.setEndOfOlderMessages(endReached)
-                stateImpl.setEndOfNewerMessages(true)
+                state.setEndOfOlderMessages(endReached)
+                state.setEndOfNewerMessages(true)
             }
             // Querying messages around a specific message - no way to know if we reached the end
             query.isFilteringAroundIdMessages() -> {
-                stateImpl.setEndOfOlderMessages(false)
-                stateImpl.setEndOfNewerMessages(false)
+                state.setEndOfOlderMessages(false)
+                state.setEndOfNewerMessages(false)
             }
             // Querying older messages and reached the end
             query.filteringOlderMessages() && endReached -> {
-                stateImpl.setEndOfOlderMessages(true)
+                state.setEndOfOlderMessages(true)
             }
             // Querying newer messages and reached the end
             query.isFilteringNewerMessages() && endReached -> {
-                stateImpl.setEndOfNewerMessages(true)
+                state.setEndOfNewerMessages(true)
             }
         }
     }
@@ -363,43 +361,43 @@ internal class ChannelLogicImpl(
                 // Loading newest messages (no pagination):
                 // 1. Clear any cached latest messages (we are replacing the whole list)
                 // 2. Replace the active messages with the loaded ones
-                stateImpl.clearCachedLatestMessages()
-                stateImpl.setMessages(channel.messages)
-                stateImpl.setInsideSearch(false)
+                state.clearCachedLatestMessages()
+                state.setMessages(channel.messages)
+                state.setInsideSearch(false)
             }
 
             query.isFilteringAroundIdMessages() -> {
                 // Loading messages around a specific message:
                 // 1. Cache the current messages (for access to latest messages) (unless already inside search)
                 // 2. Replace the active messages with the loaded ones
-                if (stateImpl.insideSearch.value) {
+                if (state.insideSearch.value) {
                     // We are currently around a message, don't cache the latest messages, just replace the active set
                     // Otherwise, the cached message set will wrongly hold the previous "around" set, instead of the
                     // latest messages
-                    stateImpl.setMessages(channel.messages)
+                    state.setMessages(channel.messages)
                 } else {
                     // We are currently showing the latest messages, cache them first, then replace the active set
-                    stateImpl.cacheLatestMessages()
-                    stateImpl.setMessages(channel.messages)
-                    stateImpl.setInsideSearch(true)
+                    state.cacheLatestMessages()
+                    state.setMessages(channel.messages)
+                    state.setInsideSearch(true)
                 }
             }
 
             query.isFilteringNewerMessages() -> {
                 // Loading newer messages - upsert
-                stateImpl.upsertMessages(channel.messages)
-                stateImpl.trimOldestMessages()
+                state.upsertMessages(channel.messages)
+                state.trimOldestMessages()
                 val endReached = query.messagesLimit() > channel.messages.size
                 if (endReached) {
-                    stateImpl.clearCachedLatestMessages()
-                    stateImpl.setInsideSearch(false)
+                    state.clearCachedLatestMessages()
+                    state.setInsideSearch(false)
                 }
             }
 
             query.filteringOlderMessages() -> {
                 // Loading older messages - prepend
-                stateImpl.upsertMessages(channel.messages)
-                stateImpl.trimNewestMessages()
+                state.upsertMessages(channel.messages)
+                state.trimNewestMessages()
             }
         }
     }

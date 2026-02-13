@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.TimeDuration
 
 /**
- * Provides a configuration for [io.getstream.chat.android.state.plugin.internal.StatePlugin].
+ * Provides a configuration for the state layer.
  *
  * @param backgroundSyncEnabled Controls whether the SDK performs background synchronization when push notifications
  * are received. When enabled (default: `true`), the SDK automatically syncs messages in the background when a push

@@ -31,7 +31,6 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.result.Error
 import kotlinx.coroutines.flow.transformWhile
 
@@ -81,8 +80,6 @@ object ChatHelper {
             },
         )
 
-        val offlinePlugin = StreamOfflinePluginFactory(context)
-
         val stateConfig = StateConfig(
             backgroundSyncEnabled = false,
             userPresence = true,
@@ -92,7 +89,6 @@ object ChatHelper {
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .withPlugins(offlinePlugin)
             .stateConfig(stateConfig)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)

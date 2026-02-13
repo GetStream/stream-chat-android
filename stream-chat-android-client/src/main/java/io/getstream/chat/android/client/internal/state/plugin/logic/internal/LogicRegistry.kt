@@ -305,7 +305,7 @@ internal class LogicRegistry internal constructor(
                 cid = "$type:$id",
                 messagesUpdateLogic = messagesUpdateLogic,
                 repository = repos,
-                stateImpl = state,
+                state = state,
                 mutableGlobalState = mutableGlobalState,
                 userPresence = userPresence,
                 coroutineScope = coroutineScope,

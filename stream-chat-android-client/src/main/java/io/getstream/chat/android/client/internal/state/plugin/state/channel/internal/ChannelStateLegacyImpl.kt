@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.client.internal.state.utils.internal.combineStates
 import io.getstream.chat.android.client.internal.state.utils.internal.mapState
 import io.getstream.chat.android.client.utils.message.isDeleted

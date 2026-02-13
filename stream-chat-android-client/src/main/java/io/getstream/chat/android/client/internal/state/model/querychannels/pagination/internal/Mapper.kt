@@ -17,9 +17,7 @@
 package io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.models.FilterObject
 
 internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {
     val originalRequest = this
@@ -29,17 +27,6 @@ internal fun QueryChannelsPaginationRequest.toAnyChannelPaginationRequest(): Any
         this.messageLimit = originalRequest.messageLimit
         this.sort = originalRequest.sort
     }
-}
-
-internal fun QueryChannelsPaginationRequest.toQueryChannelsRequest(
-    filter: FilterObject,
-    userPresence: Boolean,
-): QueryChannelsRequest {
-    var request = QueryChannelsRequest(filter, channelOffset, channelLimit, sort, messageLimit, memberLimit)
-    if (userPresence) {
-        request = request.withPresence()
-    }
-    return request.withWatch()
 }
 
 internal fun QueryChannelRequest.toAnyChannelPaginationRequest(): AnyChannelPaginationRequest {

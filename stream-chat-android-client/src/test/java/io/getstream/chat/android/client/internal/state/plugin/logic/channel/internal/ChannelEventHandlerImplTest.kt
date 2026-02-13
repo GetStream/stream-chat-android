@@ -71,6 +71,7 @@ import io.getstream.chat.android.client.test.randomVoteCastedEvent
 import io.getstream.chat.android.client.test.randomVoteChangedEvent
 import io.getstream.chat.android.client.test.randomVoteRemovedEvent
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
@@ -90,10 +91,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -582,19 +587,20 @@ internal class ChannelEventHandlerImplTest {
     fun `When ReactionNewEvent is handled, Then message is updated with preserved ownReactions`() {
         val ownReactions = listOf(randomReaction())
         val message = randomMessage(ownReactions = ownReactions)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
         val event = randomReactionNewEvent(cid = cid, message = message)
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(ownReactions = ownReactions))
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertEquals(ownReactions, result.ownReactions)
     }
 
     @Test
     fun `When ReactionUpdateEvent is handled, Then message is updated`() {
         val ownReactions = listOf(randomReaction())
         val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = ownReactions)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
         val event = ReactionUpdateEvent(
             type = EventType.REACTION_UPDATED,
             createdAt = randomDate(),
@@ -609,14 +615,16 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(ownReactions = ownReactions))
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertEquals(ownReactions, result.ownReactions)
     }
 
     @Test
     fun `When ReactionDeletedEvent is handled, Then message is updated`() {
         val ownReactions = listOf(randomReaction())
         val message = randomMessage(latestReactions = listOf(randomReaction()), ownReactions = ownReactions)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
         val event = ReactionDeletedEvent(
             type = EventType.REACTION_DELETED,
             createdAt = randomDate(),
@@ -631,18 +639,10 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(ownReactions = ownReactions))
-    }
-
-    @Test
-    fun `When ReactionNewEvent is handled for non-existing message, Then message is not updated`() {
-        val message = randomMessage()
-        whenever(state.getMessageById(message.id)).thenReturn(null)
-        val event = randomReactionNewEvent(cid = cid, message = message)
-
-        handler.handle(event)
-
-        verify(state, never()).updateMessage(any())
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertEquals(ownReactions, result.ownReactions)
     }
 
     // endregion
@@ -1213,23 +1213,13 @@ internal class ChannelEventHandlerImplTest {
         val message = randomMessage()
         val reminder = randomMessageReminder(message = message)
         val event = randomReminderCreatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
-    }
-
-    @Test
-    fun `When ReminderCreatedEvent is handled for non-existing message, Then message is not updated`() {
-        val message = randomMessage()
-        val reminder = randomMessageReminder(message = message)
-        val event = randomReminderCreatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(state.getMessageById(message.id)).thenReturn(null)
-
-        handler.handle(event)
-
-        verify(state, never()).updateMessage(any())
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertEquals(reminder.toMessageReminderInfo(), result.reminder)
     }
 
     @Test
@@ -1237,33 +1227,26 @@ internal class ChannelEventHandlerImplTest {
         val message = randomMessage()
         val reminder = randomMessageReminder(message = message)
         val event = randomReminderUpdatedEvent(cid = cid, messageId = message.id, reminder = reminder)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertEquals(reminder.toMessageReminderInfo(), result.reminder)
     }
 
     @Test
     fun `When ReminderDeletedEvent is handled, Then message reminder is removed`() {
         val message = randomMessage()
         val event = randomReminderDeletedEvent(cid = cid, messageId = message.id)
-        whenever(state.getMessageById(message.id)).thenReturn(message)
 
         handler.handle(event)
 
-        verify(state).updateMessage(message.copy(reminder = null))
-    }
-
-    @Test
-    fun `When ReminderDeletedEvent is handled for non-existing message, Then message is not updated`() {
-        val message = randomMessage()
-        val event = randomReminderDeletedEvent(cid = cid, messageId = message.id)
-        whenever(state.getMessageById(message.id)).thenReturn(null)
-
-        handler.handle(event)
-
-        verify(state, never()).updateMessage(any())
+        val captor = argumentCaptor<(Message) -> Message>()
+        verify(state).updateMessageById(eq(message.id), captor.capture())
+        val result = captor.firstValue(message)
+        assertNull(result.reminder)
     }
 
     // endregion

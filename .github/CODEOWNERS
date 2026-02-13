@@ -9,7 +9,6 @@ stream-chat-android-docs       @GetStream/android-developers
 stream-chat-android-client                  @GetStream/android-developers
 stream-chat-android-client-test             @GetStream/android-developers
 stream-chat-android-core                    @GetStream/android-developers
-stream-chat-android-offline                 @GetStream/android-developers
 stream-chat-android-pushprovider-firebase   @GetStream/android-developers
 stream-chat-android-pushprovider-huawei     @GetStream/android-developers
 stream-chat-android-pushprovider-xiaomi     @GetStream/android-developers

@@ -118,6 +118,7 @@ public class ChannelInfoMemberViewController(
                         filter = Filters.distinct(listOf(memberId, currentUserId)),
                         querySort = QuerySortByField.descByName("last_updated"),
                         messageLimit = 0,
+                        memberLimit = 1,
                         limit = 1,
                     ),
                 ).await()

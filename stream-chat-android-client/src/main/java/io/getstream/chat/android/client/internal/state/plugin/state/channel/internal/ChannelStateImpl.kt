@@ -222,7 +222,6 @@ internal class ChannelStateImpl(
     override val insideSearch: StateFlow<Boolean> = _insideSearch.asStateFlow()
 
     override val lastSentMessageDate: StateFlow<Date?> = combineStates(channelConfig, messages) { config, messages ->
-        // TODO: Optimize this logic, we don't need to scan all messages every time
         messages
             .filter { it.user.id == currentUser.value?.id }
             .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)

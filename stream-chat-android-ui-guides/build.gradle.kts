@@ -49,7 +49,6 @@ tasks.withType<KotlinCompile> {
 }
 
 dependencies {
-    implementation(project(":stream-chat-android-offline"))
     implementation(project(":stream-chat-android-ui-components"))
     implementation(project(":stream-chat-android-compose"))
 
