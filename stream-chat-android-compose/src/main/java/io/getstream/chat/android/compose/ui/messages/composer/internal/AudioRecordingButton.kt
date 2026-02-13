@@ -562,16 +562,16 @@ private val PreviewWaveformData = (0..10).map {
 @Composable
 private fun AudioRecordingButtonIdlePreview() {
     ChatPreviewTheme {
-        Box(
-            modifier = Modifier.size(80.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            AudioRecordingButton(
-                recordingState = RecordingState.Idle,
-                recordingActions = AudioRecordingActions.None,
-            )
-        }
+        AudioRecordingButtonIdle()
     }
+}
+
+@Composable
+internal fun AudioRecordingButtonIdle() {
+    AudioRecordingButton(
+        recordingState = RecordingState.Idle,
+        recordingActions = AudioRecordingActions.None,
+    )
 }
 
 @Preview(showBackground = true, heightDp = 200)
