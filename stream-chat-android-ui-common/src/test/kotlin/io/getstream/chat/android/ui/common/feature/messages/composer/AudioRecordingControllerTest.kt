@@ -84,21 +84,6 @@ internal class AudioRecordingControllerTest {
     }
 
     @Test
-    fun `Given Idle state When startRecording with offset is called Then state transitions to Hold with offset`() = runTest {
-        // Given
-        val offset = Pair(10f, 20f)
-        whenever(mockMediaRecorder.startAudioRecording(any<String>(), any<Long>(), any<Boolean>())) doReturn Result.Success(mockFile)
-
-        // When
-        controller.startRecording(offset)
-
-        // Then
-        val state = controller.recordingState.value
-        assertTrue(state is RecordingState.Hold)
-        assertEquals(offset, (state as RecordingState.Hold).offset)
-    }
-
-    @Test
     fun `Given non-Idle state When startRecording is called Then state remains unchanged`() = runTest {
         // Given
         whenever(mockMediaRecorder.startAudioRecording(any<String>(), any<Long>(), any<Boolean>())) doReturn Result.Success(mockFile)

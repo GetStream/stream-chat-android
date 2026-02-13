@@ -356,7 +356,10 @@ class MessagesActivity : ComponentActivity() {
                         val message = composerViewModel.buildNewMessage(input, attachments)
                         composerViewModel.sendMessage(message)
                     },
-                    recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
+                    recordingActions = AudioRecordingActions.defaultActions(
+                        viewModel = composerViewModel,
+                        sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                    ),
                     centerContent = { modifier -> ComposerTextInput(modifier, composerState) },
                     trailingContent = { ComposerTrailingIcon() },
                 )

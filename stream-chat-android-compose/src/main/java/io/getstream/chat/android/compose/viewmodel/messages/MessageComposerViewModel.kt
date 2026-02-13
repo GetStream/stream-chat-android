@@ -268,7 +268,7 @@ public class MessageComposerViewModel(
      */
     public fun clearData(): Unit = messageComposerController.clearData()
 
-    public fun startRecording(offset: Pair<Float, Float>): Unit = messageComposerController.startRecording(offset)
+    public fun startRecording(): Unit = messageComposerController.startRecording()
 
     public fun holdRecording(offset: Pair<Float, Float>): Unit = messageComposerController.holdRecording(offset)
 

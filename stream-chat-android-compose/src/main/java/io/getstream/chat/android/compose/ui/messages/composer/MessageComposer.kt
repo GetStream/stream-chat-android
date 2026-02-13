@@ -103,7 +103,10 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
-    recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(viewModel),
+    recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
+        viewModel = viewModel,
+        sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+    ),
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageComposerHeaderContent(

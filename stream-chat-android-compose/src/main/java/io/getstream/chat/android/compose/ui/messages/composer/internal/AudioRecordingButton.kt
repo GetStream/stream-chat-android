@@ -283,16 +283,19 @@ private fun MicButtonGestureArea(
     val currentState by rememberUpdatedState(recordingState)
     val hapticFeedback = LocalHapticFeedback.current
 
-    val audioRecordingTheme = ChatTheme.messageComposerTheme.audioRecording
     val density = LocalDensity.current
     val gestureConfig = RecordingGestureConfig(
-        cancelThresholdPx = with(density) { audioRecordingTheme.slideToCancel.threshold.toPx() },
-        lockThresholdPx = with(density) { audioRecordingTheme.floatingIcons.lockThreshold.toPx() },
+        cancelThresholdPx = with(density) {
+            ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx()
+        },
+        lockThresholdPx = with(density) {
+            ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
+        },
     )
 
     PressInteractionEffect(isFingerDown, pressOffset, interactionSource)
 
-    val style = audioRecordingTheme.recordButton
+    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
     Box(
@@ -313,7 +316,6 @@ private fun MicButtonGestureArea(
                             config = gestureConfig,
                             currentState = { currentState },
                             recordingActions = recordingActions.withHapticOnStart(hapticFeedback),
-                            sendOnComplete = audioRecordingTheme.sendOnComplete,
                             onShowHint = { hint.show() },
                         )
                     }
@@ -517,7 +519,6 @@ private fun RecordingControlButtons(
     isStopVisible: Boolean,
     recordingActions: AudioRecordingActions,
 ) {
-    val sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete
     val theme = ChatTheme.messageComposerTheme.audioRecording.controls
     Row(
         modifier = Modifier
@@ -541,8 +542,8 @@ private fun RecordingControlButtons(
         Spacer(modifier = Modifier.weight(1f))
         ControlIconButton(
             style = theme.completeButton,
-            tag = "Stream_ComposerCompleteAudioRecordingButton",
-            onClick = { recordingActions.onCompleteRecording(sendOnComplete) },
+            tag = "Stream_ComposerConfirmAudioRecordingButton",
+            onClick = recordingActions.onConfirmRecording,
         )
     }
 }
@@ -577,9 +578,9 @@ private fun ControlIconButton(
 private fun AudioRecordingActions.withHapticOnStart(
     hapticFeedback: HapticFeedback,
 ): AudioRecordingActions = copy(
-    onStartRecording = { offset ->
+    onStartRecording = {
         hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-        onStartRecording(offset)
+        onStartRecording()
     },
 )
 

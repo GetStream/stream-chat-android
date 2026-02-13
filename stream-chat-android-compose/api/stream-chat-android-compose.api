@@ -2579,30 +2579,28 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Messag
 public final class io/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions$Companion;
-	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
-	public final fun component1 ()Lkotlin/jvm/functions/Function1;
+	public fun <init> (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public final fun component1 ()Lkotlin/jvm/functions/Function0;
 	public final fun component10 ()Lkotlin/jvm/functions/Function1;
-	public final fun component11 ()Lkotlin/jvm/functions/Function0;
 	public final fun component2 ()Lkotlin/jvm/functions/Function1;
 	public final fun component3 ()Lkotlin/jvm/functions/Function0;
 	public final fun component4 ()Lkotlin/jvm/functions/Function0;
 	public final fun component5 ()Lkotlin/jvm/functions/Function0;
 	public final fun component6 ()Lkotlin/jvm/functions/Function0;
-	public final fun component7 ()Lkotlin/jvm/functions/Function1;
+	public final fun component7 ()Lkotlin/jvm/functions/Function0;
 	public final fun component8 ()Lkotlin/jvm/functions/Function0;
 	public final fun component9 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public final fun copy (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getOnCancelRecording ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnCompleteRecording ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnConfirmRecording ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnDeleteRecording ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnHoldRecording ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnLockRecording ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnRecordingSliderDragStart ()Lkotlin/jvm/functions/Function1;
 	public final fun getOnRecordingSliderDragStop ()Lkotlin/jvm/functions/Function1;
-	public final fun getOnSendRecording ()Lkotlin/jvm/functions/Function0;
-	public final fun getOnStartRecording ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnStartRecording ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnStopRecording ()Lkotlin/jvm/functions/Function0;
 	public final fun getOnToggleRecordingPlayback ()Lkotlin/jvm/functions/Function0;
 	public fun hashCode ()I
@@ -2610,7 +2608,7 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/action
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions$Companion {
-	public final fun defaultActions (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public final fun defaultActions (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Z)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
 	public final fun getNone ()Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
 }
 
@@ -4889,7 +4887,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun setMessageInput (Ljava/lang/String;)V
 	public final fun setMessageMode (Lio/getstream/chat/android/ui/common/state/messages/MessageMode;)V
 	public final fun setTypingUpdatesBuffer (Lio/getstream/chat/android/ui/common/utils/typing/TypingUpdatesBuffer;)V
-	public final fun startRecording (Lkotlin/Pair;)V
+	public final fun startRecording ()V
 	public final fun stopRecording ()V
 	public final fun toggleCommandsVisibility ()V
 	public final fun toggleRecordingPlayback ()V

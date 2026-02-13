@@ -60,18 +60,16 @@ private enum class DragResult {
  * Handles the full gesture lifecycle:
  * 1. Waits for the platform long-press timeout — if the user releases before that,
  *    it's a tap → [onShowHint].
- * 2. Once the threshold is reached, starts recording and tracks drag for cancel / lock / send.
+ * 2. Once the threshold is reached, starts recording and tracks drag for cancel / lock / confirm.
  *
  * Drag is axis-locked: once the first significant movement picks a direction
  * (left → cancel, up → lock), the offset is constrained to that axis.
  */
-@Suppress("LongParameterList")
 internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
     down: PointerInputChange,
     config: RecordingGestureConfig,
     currentState: () -> RecordingState,
     recordingActions: AudioRecordingActions,
-    sendOnComplete: Boolean,
     onShowHint: () -> Unit,
 ) {
     if (!awaitHoldThreshold(down)) {
@@ -79,12 +77,12 @@ internal suspend fun AwaitPointerEventScope.handleRecordingGesture(
         return
     }
 
-    recordingActions.onStartRecording(Offset.Zero)
+    recordingActions.onStartRecording()
 
     val result = awaitDragResult(down, config, currentState, recordingActions.onHoldRecording)
     when (result) {
         DragResult.Released -> {
-            if (currentState() !is RecordingState.Locked) recordingActions.onCompleteRecording(sendOnComplete)
+            if (currentState() !is RecordingState.Locked) recordingActions.onConfirmRecording()
         }
         DragResult.Cancel -> recordingActions.onCancelRecording()
         DragResult.Lock -> recordingActions.onLockRecording()
