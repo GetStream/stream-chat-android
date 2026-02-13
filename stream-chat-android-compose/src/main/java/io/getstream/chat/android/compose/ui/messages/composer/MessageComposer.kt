@@ -105,7 +105,7 @@ public fun MessageComposer(
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(
         viewModel = viewModel,
-        sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+        sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
     ),
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {

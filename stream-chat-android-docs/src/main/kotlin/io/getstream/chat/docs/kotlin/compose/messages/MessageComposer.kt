@@ -220,7 +220,7 @@ private object MessageComposerCustomizationSnippet {
                         onSendClick = onSendClick,
                         recordingActions = AudioRecordingActions.defaultActions(
                             viewModel = composerViewModel,
-                            sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                            sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
                         ),
                         centerContent = { modifier ->
                             // create a custom text field

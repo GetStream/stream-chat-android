@@ -3250,6 +3250,20 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun messageListItemModifier (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/ChatConfig {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;)Lio/getstream/chat/android/compose/ui/theme/ChatConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ChatConfig;Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChatConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getComposer ()Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/theme/ChatTheme;
@@ -3262,6 +3276,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public final fun getChannelOptionsTheme (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/ChannelOptionsTheme;
 	public final fun getColors (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public final fun getComponentFactory (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;
+	public final fun getConfig (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/ChatConfig;
 	public final fun getDateFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public final fun getDimens (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public final fun getDurationFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/ui/common/helper/DurationFormatter;
@@ -3299,7 +3314,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
-	public static final fun ChatTheme (ZZZZLio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerConfig;ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Lio/getstream/chat/android/compose/ui/theme/StreamRippleConfiguration;Lio/getstream/chat/android/ui/common/model/UserPresence;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionOptionsTheme;Lio/getstream/chat/android/compose/ui/util/MessagePreviewIconFactory;Lio/getstream/chat/android/compose/ui/util/PollSwitchItemFactory;ZLio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/ui/common/helper/TimeProvider;Lio/getstream/chat/android/ui/common/helper/DurationFormatter;Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/SearchResultNameFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/compose/ui/theme/MessageOptionsTheme;Lio/getstream/chat/android/compose/ui/theme/ChannelOptionsTheme;Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;ZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageUnreadSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lio/getstream/chat/android/compose/ui/theme/StreamKeyboardBehaviour;Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;IIIIIII)V
+	public static final fun ChatTheme (ZLio/getstream/chat/android/compose/ui/theme/ChatConfig;ZZZLio/getstream/chat/android/compose/state/messages/attachments/AttachmentPickerConfig;ZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Lio/getstream/chat/android/compose/ui/theme/StreamRippleConfiguration;Lio/getstream/chat/android/ui/common/model/UserPresence;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;Lio/getstream/chat/android/ui/common/helper/ReactionPushEmojiFactory;Lio/getstream/chat/android/compose/ui/theme/ReactionOptionsTheme;Lio/getstream/chat/android/compose/ui/util/MessagePreviewIconFactory;Lio/getstream/chat/android/compose/ui/util/PollSwitchItemFactory;ZLio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/ui/common/helper/TimeProvider;Lio/getstream/chat/android/ui/common/helper/DurationFormatter;Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/SearchResultNameFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/compose/ui/theme/MessageOptionsTheme;Lio/getstream/chat/android/compose/ui/theme/ChannelOptionsTheme;Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;ZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageUnreadSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lio/getstream/chat/android/compose/ui/theme/StreamKeyboardBehaviour;Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;IIIIIII)V
 	public static final fun getLocalAttachmentPickerConfig ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 	public static final fun getLocalComponentFactory ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 	public static final fun getLocalComposerLinkPreviewEnabled ()Landroidx/compose/runtime/ProvidableCompositionLocal;
@@ -3419,6 +3434,22 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposerActionsThe
 	public final fun defaultTheme (Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/ComposerConfig {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ZZ)V
+	public synthetic fun <init> (ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun copy (ZZ)Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComposerConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAudioRecordingEnabled ()Z
+	public final fun getAudioRecordingSendOnComplete ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme$Companion;
@@ -3493,17 +3524,15 @@ public final class io/getstream/chat/android/compose/ui/theme/MentionStyleFactor
 public final class io/getstream/chat/android/compose/ui/theme/MessageComposerTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme$Companion;
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)V
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;
-	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
-	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
-	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getActionsTheme ()Lio/getstream/chat/android/compose/ui/theme/ComposerActionsTheme;
 	public final fun getAttachmentsPreview ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
-	public final fun getAudioRecording ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 	public final fun getInputField ()Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -4149,25 +4178,6 @@ public final class io/getstream/chat/android/compose/ui/theme/TextContainerStyle
 	public final fun getTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion;
-	public fun <init> (ZZ)V
-	public final fun component1 ()Z
-	public final fun component2 ()Z
-	public final fun copy (ZZ)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getEnabled ()Z
-	public final fun getSendOnComplete ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion {
-	public final fun defaultTheme ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme {

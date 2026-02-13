@@ -153,7 +153,7 @@ private fun CustomMessageComposer(
                 onSendClick = onSendClick,
                 recordingActions = AudioRecordingActions.defaultActions(
                     viewModel = composerViewModel,
-                    sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                    sendOnComplete = ChatTheme.config.composer.audioRecordingSendOnComplete,
                 ),
                 modifier = Modifier
                     .padding(horizontal = 10.dp)

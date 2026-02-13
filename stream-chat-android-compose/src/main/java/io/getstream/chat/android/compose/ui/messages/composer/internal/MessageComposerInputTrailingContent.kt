@@ -52,7 +52,7 @@ internal fun MessageComposerInputTrailingContent(
     }
 
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
