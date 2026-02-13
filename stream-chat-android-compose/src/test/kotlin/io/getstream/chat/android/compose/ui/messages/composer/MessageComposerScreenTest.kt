@@ -22,8 +22,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
+import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.randomCommand
@@ -109,10 +110,9 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
             MutableStateFlow(MessageComposerState(recording = recording))
 
         composeTestRule.setContent {
-            val messageComposerTheme = MessageComposerTheme.defaultTheme().let {
-                it.copy(audioRecording = it.audioRecording.copy(enabled = true))
-            }
-            ChatTheme(messageComposerTheme = messageComposerTheme) {
+            ChatTheme(
+                config = ChatConfig(composer = ComposerConfig(audioRecordingEnabled = true)),
+            ) {
                 MessageComposer(viewModel = mockViewModel)
             }
         }
