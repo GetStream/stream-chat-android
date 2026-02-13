@@ -38,8 +38,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -78,14 +80,17 @@ internal fun MessageComposerAudioRecordingHoldContent(
     state: RecordingState.Hold,
     modifier: Modifier = Modifier,
 ) {
-    val playbackTheme = ChatTheme.messageComposerTheme.audioRecording.playback
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(playbackTheme.height),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        MicIndicatorIcon()
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+            contentDescription = null,
+            tint = ChatTheme.colors.errorAccent,
+        )
 
         PlaybackTimerText(
             progress = 1f,
@@ -95,9 +100,7 @@ internal fun MessageComposerAudioRecordingHoldContent(
         )
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(playbackTheme.height),
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd,
         ) {
             RecordingSlideToCancelIndicator(
@@ -230,8 +233,7 @@ private fun MicIndicatorIcon() {
 private fun RecordingSlideToCancelIndicator(
     holdControlsOffset: IntOffset,
 ) {
-    val theme = ChatTheme.messageComposerTheme.audioRecording.slideToCancel
-    val cancelThresholdPx = with(LocalDensity.current) { theme.threshold.toPx() }
+    val cancelThresholdPx = with(LocalDensity.current) { SlideToCancelThreshold.toPx() }
     val dragX = abs(holdControlsOffset.x.coerceAtMost(0)).toFloat()
     val progress = (dragX / cancelThresholdPx).coerceIn(0f, 1f)
 
@@ -240,19 +242,20 @@ private fun RecordingSlideToCancelIndicator(
             .alpha(1f - progress)
             .offset { IntOffset(holdControlsOffset.x.coerceAtMost(0), 0) },
     ) {
-        val iconStyle = theme.iconStyle
         Icon(
-            modifier = Modifier.size(iconStyle.size),
-            painter = iconStyle.painter,
-            tint = iconStyle.tint,
+            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
+            tint = ChatTheme.colors.textLowEmphasis,
             contentDescription = null,
         )
 
         Text(
             text = stringResource(id = R.string.stream_compose_message_composer_slide_to_cancel),
             modifier = Modifier.align(Alignment.CenterVertically),
-            style = theme.textStyle,
+            style = ChatTheme.typography.body.copy(color = ChatTheme.colors.textLowEmphasis),
         )
-        Spacer(modifier = Modifier.width(theme.marginEnd))
+        Spacer(modifier = Modifier.width(96.dp))
     }
 }
+
+/** Drag distance at which the recording is cancelled. */
+internal val SlideToCancelThreshold = 96.dp
