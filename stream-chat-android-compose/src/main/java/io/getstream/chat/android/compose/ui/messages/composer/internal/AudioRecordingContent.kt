@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,7 +48,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlin.math.abs
 
@@ -68,7 +66,11 @@ internal fun AudioRecordingContent(
             state = recordingState,
             modifier = modifier,
         )
-        is RecordingState.Overview -> OverviewRecordContent(recordingState, recordingActions, modifier)
+        is RecordingState.Overview -> ChatTheme.componentFactory.MessageComposerAudioRecordingOverviewContent(
+            state = recordingState,
+            recordingActions = recordingActions,
+            modifier = modifier,
+        )
         is RecordingState.Complete,
         is RecordingState.Idle,
         -> Unit
@@ -158,7 +160,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
 
 /** Recording stopped: user can scrub the waveform and play back before sending. */
 @Composable
-private fun OverviewRecordContent(
+internal fun MessageComposerAudioRecordingOverviewContent(
     state: RecordingState.Overview,
     recordingActions: AudioRecordingActions,
     modifier: Modifier = Modifier,
@@ -168,26 +170,24 @@ private fun OverviewRecordContent(
         currentProgress = state.playingProgress
     }
 
-    val playbackTheme = ChatTheme.messageComposerTheme.audioRecording.playback
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(playbackTheme.height),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val btnStyle = if (state.isPlaying) playbackTheme.pauseButton else playbackTheme.playButton
+        val playbackIcon = if (state.isPlaying) {
+            R.drawable.stream_compose_ic_pause
+        } else {
+            R.drawable.stream_compose_ic_play
+        }
         IconButton(
             onClick = recordingActions.onToggleRecordingPlayback,
-            modifier = Modifier
-                .size(btnStyle.size)
-                .padding(btnStyle.padding)
-                .focusable(true),
         ) {
             Icon(
-                painter = btnStyle.icon.painter,
+                painter = painterResource(id = playbackIcon),
                 contentDescription = null,
-                modifier = Modifier.size(btnStyle.size),
-                tint = btnStyle.icon.tint,
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
 
@@ -201,7 +201,7 @@ private fun OverviewRecordContent(
         StaticWaveformSlider(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(playbackTheme.waveformSliderPadding),
+                .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
             waveformData = state.waveform,
             progress = currentProgress,
             isPlaying = state.isPlaying,
