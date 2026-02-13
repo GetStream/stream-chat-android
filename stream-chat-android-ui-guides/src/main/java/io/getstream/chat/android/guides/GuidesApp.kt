@@ -18,26 +18,22 @@ package io.getstream.chat.android.guides
 
 import android.app.Application
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
 class GuidesApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = this,
+        val stateConfig = StateConfig(
+            backgroundSyncEnabled = false,
+            userPresence = true,
         )
 
         ChatClient.Builder("qx5us2v6xvmh", this)
-            .withPlugins(statePluginFactory)
+            .stateConfig(stateConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .logLevel(ChatLogLevel.NOTHING)
             .build()

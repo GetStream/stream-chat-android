@@ -19,12 +19,12 @@ package io.getstream.chat.android.compose.viewmodel.channels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandler
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 
 /**
  * Builds the factory that contains all the dependencies required for the Channels Screen.
@@ -35,7 +35,9 @@ import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandl
  * @param filters The base filters used to filter out channels.
  * @param channelLimit How many channels we fetch per page.
  * @param memberLimit How many members are fetched for each channel item when loading channels.
+ * When `null`, the server-side default is used.
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
+ * When `null`, the server-side default is used.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
 public class ChannelViewModelFactory(
@@ -43,8 +45,8 @@ public class ChannelViewModelFactory(
     private val querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
     private val filters: FilterObject? = null,
     private val channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
-    private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
+    private val memberLimit: Int? = null,
+    private val messageLimit: Int? = null,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     private val isDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {

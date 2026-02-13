@@ -37,6 +37,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +46,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -72,7 +75,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -85,8 +87,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
@@ -142,7 +146,6 @@ class MessagesActivity : ComponentActivity() {
                     mentionStyleFactory = CustomMentionStyleFactory(colors.primaryAccent),
                 ),
             )
-        val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
@@ -167,7 +170,6 @@ class MessagesActivity : ComponentActivity() {
             messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                 optionVisibility = MessageOptionItemVisibility(),
             ),
-            ownMessageTheme = ownMessageTheme,
         ) {
             SetupContent()
         }
@@ -335,6 +337,7 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     fun MyCustomComposer() {
+        val composerState by composerViewModel.messageComposerState.collectAsState()
         MessageComposer(
             viewModel = composerViewModel,
             input = { inputState ->
@@ -343,7 +346,7 @@ class MessagesActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .padding(start = 8.dp),
                     messageComposerState = inputState,
-                    onValueChange = { composerViewModel.setMessageInput(it) },
+                    onValueChange = composerViewModel::setMessageInput,
                     onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                     onCancelAction = {
                         listViewModel.dismissAllMessageActions()
@@ -354,25 +357,43 @@ class MessagesActivity : ComponentActivity() {
                         composerViewModel.sendMessage(message)
                     },
                     recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
-                    label = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
-                                contentDescription = null,
-                                tint = ChatTheme.colors.textLowEmphasis,
-                            )
-                            Text(
-                                modifier = Modifier.padding(start = 4.dp),
-                                text = "Type something",
-                                color = ChatTheme.colors.textLowEmphasis,
-                            )
-                        }
-                    },
+                    centerContent = { modifier -> ComposerTextInput(modifier, composerState) },
                     trailingContent = { ComposerTrailingIcon() },
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
             onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+        )
+    }
+
+    @Composable
+    private fun ComposerTextInput(
+        modifier: Modifier,
+        composerState: MessageComposerState,
+    ) {
+        OutlinedTextField(
+            modifier = modifier,
+            value = composerState.inputValue,
+            onValueChange = composerViewModel::setMessageInput,
+            placeholder = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
+                        contentDescription = null,
+                        tint = ChatTheme.colors.textLowEmphasis,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp),
+                        text = "Type something",
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
+            },
+            enabled = composerState.canSendMessage(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color.Transparent,
+                unfocusedBorderColor = Color.Transparent,
+            ),
         )
     }
 

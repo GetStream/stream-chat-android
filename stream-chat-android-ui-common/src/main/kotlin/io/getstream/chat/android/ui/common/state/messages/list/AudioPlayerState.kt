@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Attachment
  *
  * @property current The ongoing state of the audio player.
  * @property seekTo The seekTo state of the audio player.
+ * @property speeds The playback speeds state of the audio player (keyed by audio hash).
  * @property getRecordingUri A function that returns the URI of the recording.
  */
 @Immutable
@@ -34,6 +35,7 @@ import io.getstream.chat.android.models.Attachment
 public data class AudioPlayerState(
     val current: CurrentAudioState = CurrentAudioState(),
     val seekTo: IntFloatMap = intFloatMapOf(),
+    val speeds: IntFloatMap = intFloatMapOf(),
     val getRecordingUri: (Attachment) -> String?,
 ) {
 
@@ -74,7 +76,8 @@ public data class AudioPlayerState(
             "playingSpeed=$playingSpeed, " +
             "waveform.size=${waveform.size}, " +
             "playingUriHash=${audioUri.hashCode()}, " +
-            "seekTo.size=${seekTo.size}" +
+            "seekTo.size=${seekTo.size}," +
+            "speeds.size=${speeds.size}" +
             ")"
     }
 }

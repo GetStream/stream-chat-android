@@ -28,7 +28,7 @@ import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
-import io.getstream.chat.android.state.utils.Event as EventWrapper
+import io.getstream.chat.android.client.api.state.Event as EventWrapper
 
 class AddGroupChannelSelectNameViewModel : ViewModel() {
 

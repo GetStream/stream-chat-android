@@ -414,7 +414,8 @@ private class RecordingFileAttachmentViewHolder(
         }
 
         setOnSpeedButtonClickListener {
-            audioPlayer.changeSpeed()
+            val audioHash = attachment?.audioHash ?: 0
+            audioPlayer.changeSpeed(audioHash)
         }
 
         setOnSeekbarMoveListeners({

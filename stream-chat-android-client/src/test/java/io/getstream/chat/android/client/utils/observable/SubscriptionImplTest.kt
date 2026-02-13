@@ -127,19 +127,19 @@ internal class SubscriptionImplTest {
     }
 
     @Test
-    fun `onNext should throw IllegalStateException if subscription is already disposed`() {
+    fun `onNext should not deliver event if subscription is already disposed`() {
+        val mockListener = mock<ChatEventListener<ChatEvent>>()
         val subscription = SubscriptionImpl(
             filter = { true },
-            listener = mock(),
+            listener = mockListener,
         ).apply {
             dispose()
         }
 
         val event = mock<ChatEvent>()
+        subscription.onNext(event)
 
-        assertThrows<IllegalStateException> {
-            subscription.onNext(event)
-        }
+        verify(mockListener, never()).onEvent(event)
     }
 
     @Test

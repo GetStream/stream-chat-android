@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
@@ -26,7 +27,6 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.log.taggedLogger
 import io.getstream.result.onErrorSuspend
@@ -118,6 +118,7 @@ public class ChannelInfoMemberViewController(
                         filter = Filters.distinct(listOf(memberId, currentUserId)),
                         querySort = QuerySortByField.descByName("last_updated"),
                         messageLimit = 0,
+                        memberLimit = 1,
                         limit = 1,
                     ),
                 ).await()

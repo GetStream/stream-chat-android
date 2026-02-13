@@ -11,22 +11,20 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
-import io.getstream.chat.android.models.querysort.QuerySorter;
+import io.getstream.chat.android.client.api.state.ChatClientExtensions;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.client.channel.state.ChannelState;
 import io.getstream.chat.android.client.extensions.FlowExtensions;
 import io.getstream.chat.android.client.logger.ChatLogLevel;
 import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Message;
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
 import io.getstream.chat.android.models.User;
-import io.getstream.chat.android.state.extensions.ChatClientExtensions;
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 import kotlinx.coroutines.flow.StateFlow;
 
 public class AndroidIntroduction {
@@ -37,21 +35,15 @@ public class AndroidIntroduction {
     public void chatClient(Context applicationContext) {
         String apiKey = "{{ api_key }}";
         String token = "{{ chat_user_token }}";
-        // Step 1 - Set up the StatePlugin for state management
-        StreamStatePluginFactory streamStatePluginFactory = new StreamStatePluginFactory(
-                new StatePluginConfig(true, true),
-                applicationContext
-        );
 
-        // Step 2 - Set up the client, together with the state plugin, for API calls
+        // Step 1 - Set up the client
         ChatClient client = new ChatClient.Builder(apiKey, applicationContext)
                 // Change log level
                 .logLevel(ChatLogLevel.ALL)
-                .withPlugins(streamStatePluginFactory)
                 .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
                 .build();
 
-        // Step 3 - Authenticate and connect the user
+        // Step 2 - Authenticate and connect the user
         User user = new User.Builder()
                 .withId("summer-brook-2")
                 .withName("Paranoid Android")

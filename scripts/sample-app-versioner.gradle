@@ -1,5 +1,3 @@
-import io.getstream.chat.android.Configuration
-
 static Boolean gitIsAvailable() {
     try {
         "git --version".execute()
@@ -10,7 +8,7 @@ static Boolean gitIsAvailable() {
 }
 def isCI = System.getenv('CI')
 ext["sampleAppVersionCode"] = 1
-ext["sampleAppVersionName"] = Configuration.versionName
+ext["sampleAppVersionName"] = version
 if (isCI && gitIsAvailable()) {
     gitVersioner {
         def branches = ['develop', 'main', 'release']

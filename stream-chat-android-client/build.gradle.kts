@@ -1,5 +1,3 @@
-import com.vanniktech.maven.publish.AndroidSingleVariantLibrary
-import io.getstream.chat.android.Configuration
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -9,8 +7,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.androidx.baseline.profile)
-    alias(libs.plugins.maven.publish)
-    alias(libs.plugins.dokka)
 }
 
 android {
@@ -112,11 +108,13 @@ dependencies {
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(libs.stream.result)
     testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.androidx.test.core)
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.lifecycle.runtime.testing)
     testImplementation(libs.androidx.work.testing)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.moshi.kotlin)
     testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
@@ -131,25 +129,11 @@ dependencies {
 
     // Instrumentation tests
     androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.androidx.test.espresso.core)
     androidTestImplementation(libs.androidx.test.junit)
 
     detektPlugins(libs.detekt.formatting)
 
     baselineProfile(project(":stream-chat-android-benchmark"))
-}
-
-mavenPublishing {
-    coordinates(
-        groupId = Configuration.artifactGroup,
-        artifactId = "stream-chat-android-client",
-        version = rootProject.version.toString(),
-    )
-    configure(
-        AndroidSingleVariantLibrary(
-            variant = "release",
-            sourcesJar = true,
-            publishJavadocJar = true,
-        ),
-    )
 }

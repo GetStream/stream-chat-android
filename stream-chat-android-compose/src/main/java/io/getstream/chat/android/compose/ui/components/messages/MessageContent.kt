@@ -38,7 +38,7 @@ import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
@@ -174,11 +174,9 @@ internal fun DefaultMessageContent(
         val info = message.rememberMessageInfo()
 
         if (info.hasUploads) {
-            MessageAttachmentsContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            FileUploadContent(
+                modifier = Modifier,
+                attachmentState = attachmentState,
             )
         } else {
             if (info.hasMedia) {
@@ -195,18 +193,32 @@ internal fun DefaultMessageContent(
                 )
             }
 
-            if (info.hasFiles) {
-                componentFactory.FileAttachmentContent(
+            if (info.hasLinks) {
+                componentFactory.LinkAttachmentContent(
                     modifier = Modifier,
-                    attachmentState = attachmentState,
+                    state = attachmentState,
                 )
             }
 
-            MessageAttachmentsContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            if (info.hasFiles) {
+                componentFactory.FileAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+
+            if (info.hasRecordings) {
+                componentFactory.AudioRecordAttachmentContent(
+                    modifier = Modifier,
+                    state = attachmentState,
+                )
+            }
+        }
+
+        if (info.hasUnknown) {
+            componentFactory.CustomAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
             )
         }
 
@@ -221,7 +233,7 @@ internal fun DefaultMessageContent(
             )
         }
 
-        if ((!info.displaysFullSizeAttachment || info.hasFiles) && !info.hasUploads) {
+        if (!info.displaysFullSizeAttachment && !info.hasUploads) {
             Spacer(Modifier.height(MessageStyling.contentPadding))
         }
     }

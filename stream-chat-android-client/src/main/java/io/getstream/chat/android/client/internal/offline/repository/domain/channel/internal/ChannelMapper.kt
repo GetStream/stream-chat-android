@@ -92,6 +92,7 @@ internal suspend fun ChannelEntity.toModel(
     watchers = watcherIds.map { getUser(it) },
     watcherCount = watcherCount,
     team = team,
+    lastMessageAt = lastMessageAt,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
     draftMessage = getDraftMessage(channelId),

@@ -16,17 +16,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -38,6 +42,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.docs.R
 
 /**
@@ -187,6 +192,7 @@ private object MessageComposerCustomizationSnippet {
 
         @Composable
         fun MyCustomComposer() {
+            val composerState by composerViewModel.messageComposerState.collectAsState()
             MessageComposer(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,22 +219,31 @@ private object MessageComposerCustomizationSnippet {
                         onCancelAction = { composerViewModel.dismissMessageActions() },
                         onSendClick = onSendClick,
                         recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
-                        label = { // create a custom label with an icon
-                            Row(
-                                Modifier.wrapContentWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Email,
-                                    contentDescription = null
-                                )
-
-                                Text(
-                                    modifier = Modifier.padding(start = 4.dp),
-                                    text = "Type something",
-                                    color = ChatTheme.colors.textLowEmphasis
-                                )
-                            }
+                        centerContent = { modifier ->
+                            // create a custom text field
+                            OutlinedTextField(
+                                modifier = modifier,
+                                value = composerState.inputValue,
+                                onValueChange = composerViewModel::setMessageInput,
+                                placeholder = {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            imageVector = Icons.Default.Email,
+                                            contentDescription = null
+                                        )
+                                        Text(
+                                            modifier = Modifier.padding(start = 4.dp),
+                                            text = "Type something",
+                                            color = ChatTheme.colors.textLowEmphasis
+                                        )
+                                    }
+                                },
+                                enabled = composerState.canSendMessage(),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = Color.Transparent,
+                                    unfocusedBorderColor = Color.Transparent,
+                                ),
+                            )
                         },
                         trailingContent = { // add a send button inside the input
                             Icon(

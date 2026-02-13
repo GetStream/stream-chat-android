@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.client.api.OfflineConfig
+import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -110,6 +111,7 @@ import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.internal.file.StreamFileManager
 import io.getstream.chat.android.client.internal.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
@@ -1567,6 +1569,10 @@ internal constructor(
         logger.d { "[disconnectUserSuspend] userId: '$userId', flushPersistence: $flushPersistence" }
 
         notifications.onLogout()
+        // Set initializationState to NOT_INITIALIZED BEFORE clearing plugins to prevent race condition.
+        // This ensures the StatePlugin extension methods don't access the plugin during disconnect.
+        mutableClientState.setInitializationState(InitializationState.NOT_INITIALIZED)
+
         plugins.forEach { it.onUserDisconnected() }
         plugins = emptyList()
         userStateService.onLogout()
@@ -4695,8 +4701,8 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var pluginFactories: List<PluginFactory> = emptyList()
         private var offlineConfig: OfflineConfig = OfflineConfig()
+        private var stateConfig: StateConfig = StateConfig()
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
@@ -4925,13 +4931,13 @@ internal constructor(
         }
 
         /**
-         * Sets the plugin factories to be used by the client, in addition to the default ones.
+         * Adds plugins factories to be used by the client.
          * @see [PluginFactory]
          *
          * @param pluginFactories The factories to be added.
          */
         public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
-            this.pluginFactories = pluginFactories.toList()
+            this.pluginFactories = pluginFactories.asList()
         }
 
         /**
@@ -4941,6 +4947,15 @@ internal constructor(
          */
         public fun offlineConfig(offlineConfig: OfflineConfig): Builder = apply {
             this.offlineConfig = offlineConfig
+        }
+
+        /**
+         * Specifies the state management configuration.
+         *
+         * @param config The state configuration to be used.
+         */
+        public fun stateConfig(config: StateConfig): Builder = apply {
+            stateConfig = config
         }
 
         /**
@@ -5086,6 +5101,7 @@ internal constructor(
             val allPluginFactories = setupPluginFactories(
                 userProvided = pluginFactories,
                 offlineConfig = offlineConfig,
+                stateConfig = stateConfig,
             )
 
             return ChatClient(
@@ -5136,17 +5152,20 @@ internal constructor(
         private fun setupPluginFactories(
             userProvided: List<PluginFactory>,
             offlineConfig: OfflineConfig,
+            stateConfig: StateConfig,
         ): List<PluginFactory> {
             return buildList {
                 // Mandatory plugins first
                 add(ThrottlingPluginFactory)
                 add(MessageDeliveredPluginFactory)
-                // Then user provided plugins
-                addAll(userProvided)
-                // Finally offline plugin if enabled
+                // State plugin
+                add(StreamStatePluginFactory(stateConfig, appContext))
+                // Offline plugin (if enabled)
                 if (offlineConfig.enabled) {
                     add(StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes))
                 }
+                // Then user provided plugins
+                addAll(userProvided)
             }
         }
 

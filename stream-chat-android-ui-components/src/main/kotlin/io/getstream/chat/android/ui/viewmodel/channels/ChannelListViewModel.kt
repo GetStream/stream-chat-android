@@ -24,7 +24,15 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.state.ChannelsStateData
+import io.getstream.chat.android.client.api.state.Event
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.QueryChannelsState
+import io.getstream.chat.android.client.api.state.globalState
+import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.api.state.queryChannelsAsState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
@@ -35,14 +43,6 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
-import io.getstream.chat.android.state.extensions.globalStateFlow
-import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
-import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.utils.extensions.EXTRA_DATA_MUTED
@@ -77,7 +77,9 @@ import kotlinx.coroutines.launch
  * @param sort Defines the ordering of the channels.
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
+ * When `null`, the server-side default is used.
  * @param memberLimit The number of members to fetch per channel.
+ * When `null`, the server-side default is used.
  * @param isDraftMessagesEnabled Enables or disables draft messages.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param chatClient Entry point for all low-level operations.
@@ -88,8 +90,8 @@ public class ChannelListViewModel(
     private val filter: FilterObject? = null,
     private val sort: QuerySorter<Channel> = DEFAULT_SORT,
     private val limit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
-    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int? = null,
+    private val memberLimit: Int? = null,
     private val isDraftMessagesEnabled: Boolean,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -105,7 +107,9 @@ public class ChannelListViewModel(
      * @param sort Defines the ordering of the channels.
      * @param limit The maximum number of channels to fetch.
      * @param messageLimit The number of messages to fetch for each channel.
+     * When `null`, the server-side default is used.
      * @param memberLimit The number of members to fetch per channel.
+     * When `null`, the server-side default is used.
      * @param isDraftMessagesEnabled Enables or disables draft messages.
      * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
      * @param chatClient Entry point for all low-level operations.
@@ -116,8 +120,8 @@ public class ChannelListViewModel(
         filter: FilterObject? = null,
         sort: QuerySorter<Channel> = DEFAULT_SORT,
         limit: Int = DEFAULT_CHANNEL_LIMIT,
-        messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
-        memberLimit: Int = DEFAULT_MEMBER_LIMIT,
+        messageLimit: Int? = null,
+        memberLimit: Int? = null,
         isDraftMessagesEnabled: Boolean = true,
         chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
         chatClient: ChatClient = ChatClient.instance(),
@@ -551,15 +555,5 @@ public class ChannelListViewModel(
          * Default value of number of channels to return when querying channels.
          */
         internal const val DEFAULT_CHANNEL_LIMIT = 30
-
-        /**
-         * Default value of the number of messages to include in each channel when querying channels.
-         */
-        internal const val DEFAULT_MESSAGE_LIMIT = 1
-
-        /**
-         * Default value of the number of members to include in each channel when querying channels.
-         */
-        internal const val DEFAULT_MEMBER_LIMIT = 30
     }
 }

@@ -26,6 +26,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.deliveredReadsOf
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
@@ -297,7 +298,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessageTimeLabel.text =
             lastMessage
                 ?.takeUnless { draftMessage != null }
-                ?.let { ChatUI.dateFormatter.formatDate(channel.lastMessageAt) }
+                ?.let { ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrNull()) }
                 ?: ""
         lastMessageLabel.text =
             draftMessage?.text
