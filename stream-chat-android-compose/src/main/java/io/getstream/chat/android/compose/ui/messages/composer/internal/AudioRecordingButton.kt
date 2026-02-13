@@ -334,6 +334,11 @@ private fun MicButtonGestureArea(
         hostState = hint.snackbarHostState,
         snackbar = { ChatTheme.componentFactory.MessageComposerAudioRecordingHint(it) },
     )
+
+    SnackbarPopup(
+        hostState = permissionState.rationaleSnackbarHostState,
+        snackbar = { ChatTheme.componentFactory.MessageComposerAudioRecordingPermissionRationale(it) },
+    )
 }
 
 /** Emits press/release interactions on [interactionSource] while [isFingerDown] is true. */

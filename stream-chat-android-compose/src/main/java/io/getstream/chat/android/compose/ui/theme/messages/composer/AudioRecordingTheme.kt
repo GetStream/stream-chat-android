@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -44,7 +43,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * @property showRecordButtonOverSend Shows the record button over the send button.
  * @property recordButton The style for the record button.
  * @property floatingIcons The theme for the floating icons.
- * @property permissionRationale The theme for the permission rationale component.
  */
 public data class AudioRecordingTheme(
     val enabled: Boolean,
@@ -52,7 +50,6 @@ public data class AudioRecordingTheme(
     val showRecordButtonOverSend: Boolean,
     val recordButton: IconContainerStyle,
     val floatingIcons: AudioRecordingFloatingIconsTheme,
-    val permissionRationale: AudioRecordingPermissionRationaleTheme,
 ) {
 
     public companion object {
@@ -122,28 +119,6 @@ public data class AudioRecordingTheme(
                     lockThreshold = 96.dp,
                     lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
                 ),
-                permissionRationale = AudioRecordingPermissionRationaleTheme(
-                    containerElevation = 2.dp,
-                    containerPadding = ComponentPadding(horizontal = 8.dp),
-                    containerColor = colorResource(
-                        when (isInDarkMode) {
-                            true -> R.color.stream_compose_white_85
-                            else -> R.color.stream_compose_black_85
-                        },
-                    ),
-                    containerShape = RoundedCornerShape(4.dp),
-                    containerBottomOffset = 16.dp,
-                    contentHeight = 64.dp,
-                    contentSpace = 8.dp,
-                    contentPadding = ComponentPadding(start = 16.dp, end = 8.dp),
-                    textStyle = typography.body.copy(
-                        color = colors.textHighEmphasisInverse,
-                    ),
-                    buttonTextStyle = typography.bodyBold.copy(
-                        color = colors.primaryAccent,
-                    ),
-                ),
-
             )
         }
     }
@@ -182,31 +157,4 @@ public data class AudioRecordingFloatingIconsTheme(
     val locked: AudioRecordingFloatingIconStyle,
     val lockThreshold: Dp,
     val lockEdgeOffset: ComponentOffset,
-)
-
-/**
- * Represents the theme for the permission rationale component.
- *
- * @property containerElevation The elevation of the container.
- * @property containerColor The color of the container.
- * @property containerShape The shape of the container.
- * @property containerPadding The padding of the container.
- * @property containerBottomOffset The bottom offset of the container.
- * @property contentHeight The height of the content.
- * @property contentSpace The space between the content.
- * @property contentPadding The padding of the content.
- * @property textStyle The text style.
- * @property buttonTextStyle The text style for the button.
- */
-public data class AudioRecordingPermissionRationaleTheme(
-    val containerElevation: Dp,
-    val containerColor: Color,
-    val containerShape: Shape,
-    val containerPadding: ComponentPadding,
-    val containerBottomOffset: Dp,
-    val contentHeight: Dp,
-    val contentSpace: Dp,
-    val contentPadding: ComponentPadding,
-    val textStyle: TextStyle,
-    val buttonTextStyle: TextStyle,
 )
