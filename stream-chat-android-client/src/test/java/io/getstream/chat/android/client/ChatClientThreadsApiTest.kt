@@ -24,19 +24,19 @@ import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomQueryThreadsResult
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomThread
+import io.getstream.chat.android.randomThreadInfo
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
-import org.mockito.Mockito.spy
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 /**
@@ -50,17 +50,14 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
         val query = Mother.randomQueryThreadsRequest()
         val result = randomQueryThreadsResult()
         val plugin = mock<Plugin>()
-        val sut = spy(
-            Fixture()
-                .givenPlugin(plugin)
-                .givenQueryThreadsResult(RetroSuccess(result).toRetrofitCall())
-                .get(),
-        )
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenQueryThreadsResult(RetroSuccess(result).toRetrofitCall())
+            .get()
         // when
         val actual = sut.queryThreads(query).await()
         // then
-        verifySuccess(actual, result.threads)
-        verify(sut).queryThreadsResult(query)
+        verifySuccess(actual, result)
         val inOrder = Mockito.inOrder(plugin)
         inOrder.verify(plugin).onQueryThreadsPrecondition(query)
         inOrder.verify(plugin).onQueryThreadsRequest(query)
@@ -71,43 +68,6 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
     fun queryThreadsError() = runTest {
         // given
         val query = Mother.randomQueryThreadsRequest()
-        val errorCode = positiveRandomInt()
-        val sut = spy(
-            Fixture()
-                .givenQueryThreadsResult(RetroError<QueryThreadsResult>(errorCode).toRetrofitCall())
-                .get(),
-        )
-        // when
-        val actual = sut.queryThreads(query).await()
-        // then
-        verifyNetworkError(actual, errorCode)
-        verify(sut).queryThreadsResult(query)
-    }
-
-    @Test
-    fun queryThreadsResultSuccess() = runTest {
-        // given
-        val query = Mother.randomQueryThreadsRequest()
-        val result = randomQueryThreadsResult()
-        val plugin = mock<Plugin>()
-        val sut = Fixture()
-            .givenPlugin(plugin)
-            .givenQueryThreadsResult(RetroSuccess(result).toRetrofitCall())
-            .get()
-        // when
-        val actual = sut.queryThreadsResult(query).await()
-        // then
-        verifySuccess(actual, result)
-        val inOrder = Mockito.inOrder(plugin)
-        inOrder.verify(plugin).onQueryThreadsPrecondition(query)
-        inOrder.verify(plugin).onQueryThreadsRequest(query)
-        inOrder.verify(plugin).onQueryThreadsResult(Result.Success(result), query)
-    }
-
-    @Test
-    fun queryThreadsResultError() = runTest {
-        // given
-        val query = Mother.randomQueryThreadsRequest()
         val plugin = mock<Plugin>()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
@@ -115,7 +75,7 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
             .givenQueryThreadsResult(RetroError<QueryThreadsResult>(errorCode).toRetrofitCall())
             .get()
         // when
-        val actual = sut.queryThreadsResult(query).await()
+        val actual = sut.queryThreads(query).await()
         // then
         verifyNetworkError(actual, errorCode)
         val inOrder = Mockito.inOrder(plugin)
@@ -158,7 +118,7 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
         val messageId = randomString()
         val set = emptyMap<String, Any>()
         val unset = emptyList<String>()
-        val thread = randomThread(parentMessageId = messageId)
+        val thread = randomThreadInfo(parentMessageId = messageId)
         val sut = Fixture()
             .givenUpdateThreadResult(RetroSuccess(thread).toRetrofitCall())
             .get()
@@ -176,7 +136,7 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
         val unset = emptyList<String>()
         val errorCode = positiveRandomInt()
         val sut = Fixture()
-            .givenUpdateThreadResult(RetroError<Thread>(errorCode).toRetrofitCall())
+            .givenUpdateThreadResult(RetroError<ThreadInfo>(errorCode).toRetrofitCall())
             .get()
         // when
         val actual = sut.partialUpdateThread(messageId, set, unset).await()
@@ -194,7 +154,7 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
             whenever(api.getThread(any(), any())).thenReturn(call)
         }
 
-        fun givenUpdateThreadResult(call: Call<Thread>) = apply {
+        fun givenUpdateThreadResult(call: Call<ThreadInfo>) = apply {
             whenever(api.partialUpdateThread(any(), any(), any())).thenReturn(call)
         }
 

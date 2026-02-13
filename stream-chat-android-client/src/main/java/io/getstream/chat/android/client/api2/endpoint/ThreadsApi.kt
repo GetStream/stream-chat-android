@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
+import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
@@ -53,9 +54,12 @@ internal interface ThreadsApi {
         @QueryMap options: Map<String, String>,
     ): RetrofitCall<ThreadResponse>
 
+    /**
+     * [REST documentation](https://getstream.github.io/protocol/#/product%3Achat/UpdateThreadPartial)
+     */
     @PATCH("/threads/{message_id}")
     fun partialUpdateThread(
         @Path("message_id") messageId: String,
         @Body body: PartialUpdateThreadRequest,
-    ): RetrofitCall<ThreadResponse>
+    ): RetrofitCall<ThreadInfoResponse>
 }

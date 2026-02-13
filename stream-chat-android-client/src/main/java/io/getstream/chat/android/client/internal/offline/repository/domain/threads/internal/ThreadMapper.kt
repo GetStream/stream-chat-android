@@ -35,7 +35,7 @@ internal fun Thread.toEntity() = ThreadEntity(
     createdByUserId = createdByUserId,
     activeParticipantCount = activeParticipantCount,
     participantCount = participantCount,
-    threadParticipantIds = threadParticipants.map { it.user.id },
+    threadParticipants = threadParticipants.map { it.toEntity() },
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -63,9 +63,7 @@ internal suspend fun ThreadEntity.toModel(
     createdBy = getUser(createdByUserId),
     activeParticipantCount = activeParticipantCount,
     participantCount = participantCount,
-    threadParticipants = threadParticipantIds.map { userId ->
-        ThreadParticipant(user = getUser(userId))
-    },
+    threadParticipants = threadParticipants.map { it.toModel(getUser) },
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -75,4 +73,20 @@ internal suspend fun ThreadEntity.toModel(
     latestReplies = latestReplyIds.mapNotNull { getMessage(it) },
     draft = getDraftMessage(parentMessageId),
     extraData = extraData,
+)
+
+/**
+ * Maps a domain [ThreadParticipant] model to a database [ThreadParticipantEntity] model.
+ */
+internal fun ThreadParticipant.toEntity() = ThreadParticipantEntity(
+    userId = user.id,
+)
+
+/**
+ * Maps a database [ThreadParticipantEntity] model to a domain [ThreadParticipant] model.
+ */
+internal suspend fun ThreadParticipantEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+) = ThreadParticipant(
+    user = getUser(userId),
 )

@@ -59,6 +59,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
@@ -583,7 +584,7 @@ internal interface ChatApi {
         messageId: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<Thread>
+    ): Call<ThreadInfo>
 
     @CheckResult
     fun createPoll(pollConfig: PollConfig): Call<Poll>

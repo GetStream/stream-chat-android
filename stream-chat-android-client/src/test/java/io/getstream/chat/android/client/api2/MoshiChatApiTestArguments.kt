@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
+import io.getstream.chat.android.client.api2.model.response.ThreadInfoResponse
 import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
@@ -509,7 +510,7 @@ internal object MoshiChatApiTestArguments {
     fun getThreadInput() = threadResponseArguments()
 
     @JvmStatic
-    fun partialUpdateThreadInput() = threadResponseArguments()
+    fun partialUpdateThreadInput() = threadInfoResponseArguments()
 
     @JvmStatic
     fun castPollVoteInput() = pollVoteResponseArguments()
@@ -791,6 +792,19 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<ThreadResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun threadInfoResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(
+                ThreadInfoResponse(
+                    thread = Mother.randomDownstreamThreadInfoDto(),
+                    duration = randomString(),
+                ),
+            ).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<ThreadInfoResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     private fun pollResponseArguments() = listOf(

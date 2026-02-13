@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Thread
@@ -163,6 +164,8 @@ internal class QueryThreadsLogic(
             // (Potentially) Informs about reading of a thread
             is MessageReadEvent -> markThreadAsRead(event)
             is NotificationMarkReadEvent -> markThreadAsRead(event)
+            // Updates the thread when it is partially updated via the API (e.g. title or custom data changes)
+            is ThreadUpdatedEvent -> stateLogic.updateThreadFromEvent(event.thread)
             // (Potentially) Updates/Inserts a message in a thread
             is NewMessageEvent -> updateParentOrReply(event.message)
             is MessageUpdatedEvent -> updateParentOrReply(event.message)

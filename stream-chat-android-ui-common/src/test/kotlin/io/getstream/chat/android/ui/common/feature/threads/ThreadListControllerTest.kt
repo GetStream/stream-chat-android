@@ -189,16 +189,16 @@ internal class ThreadListControllerTest {
         }
 
         fun givenQueryThreadsRequest(query: QueryThreadsRequest) = apply {
-            whenever(mockChatClient.queryThreadsResult(query)) doReturn
+            whenever(mockChatClient.queryThreads(query)) doReturn
                 mock<Call<QueryThreadsResult>>()
         }
 
         fun verifyQueryThreadsResult(query: QueryThreadsRequest) = apply {
-            verify(mockChatClient).queryThreadsResult(query)
+            verify(mockChatClient).queryThreads(query)
         }
 
         fun verifyNeverQueryThreadsResult(query: QueryThreadsRequest) = apply {
-            verify(mockChatClient, never()).queryThreadsResult(query)
+            verify(mockChatClient, never()).queryThreads(query)
         }
 
         fun get(

@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ThreadUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -140,6 +141,7 @@ import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.ReminderCreatedEvent
 import io.getstream.chat.android.client.events.ReminderDeletedEvent
 import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
@@ -205,6 +207,7 @@ internal class EventMapping(
             is NotificationMarkUnreadEventDto -> toDomain()
             is NotificationMessageNewEventDto -> toDomain()
             is NotificationThreadMessageNewEventDto -> toDomain()
+            is ThreadUpdatedEventDto -> toDomain()
             is NotificationMutesUpdatedEventDto -> toDomain()
             is NotificationRemovedFromChannelEventDto -> toDomain()
             is ReactionDeletedEventDto -> toDomain()
@@ -680,6 +683,21 @@ internal class EventMapping(
             message = message.toDomain(channel.toChannelInfo()),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
+        )
+    }
+
+    /**
+     * Transforms [ThreadUpdatedEventDto] to [ThreadUpdatedEvent].
+     */
+    private fun ThreadUpdatedEventDto.toDomain(): ThreadUpdatedEvent = with(domainMapping) {
+        ThreadUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            thread = thread.toDomain(),
         )
     }
 

@@ -32,7 +32,7 @@ internal data class ThreadEntity(
     val createdByUserId: String,
     val activeParticipantCount: Int,
     val participantCount: Int,
-    val threadParticipantIds: List<String>,
+    val threadParticipants: List<ThreadParticipantEntity>,
     val lastMessageAt: Date,
     val createdAt: Date,
     val updatedAt: Date,

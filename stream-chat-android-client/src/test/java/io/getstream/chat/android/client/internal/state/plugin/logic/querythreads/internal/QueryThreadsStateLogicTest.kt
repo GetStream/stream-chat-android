@@ -570,6 +570,69 @@ internal class QueryThreadsStateLogicTest {
     }
 
     @Test
+    fun `Given QueryThreadsStateLogic When updating thread from event Should update title extraData and updatedAt`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
+        doNothing().whenever(mutableState).upsertThreads(any())
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        // when
+        val newUpdatedAt = Date()
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 5,
+            cid = "messaging:123",
+            createdAt = Date(),
+            createdBy = null,
+            createdByUserId = "usrId1",
+            deletedAt = null,
+            lastMessageAt = Date(),
+            parentMessage = null,
+            parentMessageId = "mId1",
+            participantCount = 5,
+            replyCount = 10,
+            title = "Updated Title",
+            updatedAt = newUpdatedAt,
+            extraData = mapOf("color" to "red"),
+        )
+        logic.updateThreadFromEvent(threadInfo)
+        // then
+        val expectedUpdatedThread = threadList[0].copy(
+            title = "Updated Title",
+            updatedAt = newUpdatedAt,
+            extraData = mapOf("color" to "red"),
+        )
+        val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When updating unknown thread from event Should do nothing`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
+        // when
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 2,
+            cid = "messaging:123",
+            createdAt = Date(),
+            createdBy = null,
+            createdByUserId = "usrId1",
+            deletedAt = null,
+            lastMessageAt = Date(),
+            parentMessage = null,
+            parentMessageId = "mId999",
+            participantCount = 2,
+            replyCount = 1,
+            title = "Unknown thread",
+            updatedAt = Date(),
+        )
+        logic.updateThreadFromEvent(threadInfo)
+        // then
+        verify(mutableState, never()).upsertThreads(any())
+    }
+
+    @Test
     fun `Given QueryThreadsStateLogic When marking not existing thread as unread Should do nothing`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
