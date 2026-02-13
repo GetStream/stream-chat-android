@@ -40,7 +40,7 @@ public interface MessagePreviewIconFactory {
          * Builds the default message preview icon factory that creates preview icons from
          * drawable resources.
          *
-         * @return The default implementation of [ReactionIconFactory].
+         * @return The default implementation of [MessagePreviewIconFactory].
          */
         public fun defaultFactory(): MessagePreviewIconFactory = DefaultMessagePreviewIconFactory()
     }
