@@ -163,7 +163,6 @@ import io.getstream.chat.android.compose.ui.components.userreactions.UserReactio
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingPermissionRationale
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
@@ -1885,19 +1884,21 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default permission rationale component displayed when the audio recording permission needs explanation.
+     * The permission rationale displayed as a snackbar when the audio recording permission
+     * needs explanation. Shows a message and a "Settings" action button.
      *
-     * Shown as a timed popup anchored at the bottom of the composer, with a message and a "Settings" button.
+     * Override this method to provide a custom permission rationale UI.
      *
-     * @param onDismissRequest Called when the popup should be dismissed (e.g. after timeout or user interaction).
+     * @param data The [SnackbarData] containing the rationale message and action.
      */
     @Composable
     public fun MessageComposerAudioRecordingPermissionRationale(
-        onDismissRequest: () -> Unit,
+        data: SnackbarData,
     ) {
-        AudioRecordingPermissionRationale(
-            onDismissRequest = onDismissRequest,
-        )
+        io.getstream.chat.android.compose.ui.messages.composer.internal
+            .MessageComposerAudioRecordingPermissionRationale(
+                data = data,
+            )
     }
 
     /**
