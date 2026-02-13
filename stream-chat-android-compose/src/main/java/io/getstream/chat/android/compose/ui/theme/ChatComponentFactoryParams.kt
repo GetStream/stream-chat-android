@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
@@ -33,19 +33,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 public data class MessageReactionsParams(
     val modifier: Modifier = Modifier,
     val message: Message,
-    val reactions: List<ReactionOptionItemState>,
+    val reactions: List<MessageReactionItemState>,
     val onClick: ((message: Message) -> Unit)? = null,
-)
-
-/**
- * Parameters for the [ChatComponentFactory.MessageReactionItem] component.
- *
- * @param modifier Modifier for styling.
- * @param state The reaction option state, holding all information required to render the icon.
- */
-public data class MessageReactionItemParams(
-    val modifier: Modifier = Modifier,
-    val state: ReactionOptionItemState,
 )
 
 /**

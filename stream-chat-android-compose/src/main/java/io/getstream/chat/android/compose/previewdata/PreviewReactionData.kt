@@ -16,48 +16,58 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import androidx.compose.runtime.Composable
+import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 
 /**
  * Provides sample reaction option items that will be used to render component previews.
  */
-internal object PreviewReactionOptionData {
+internal object PreviewReactionData {
 
-    @Composable
     fun reactionOption1() = ReactionOptionItemState(
         type = "like",
         emojiCode = "👍",
+        isSelected = false,
     )
 
-    @Composable
     fun reactionOption2() = ReactionOptionItemState(
         type = "love",
         emojiCode = "❤️",
+        isSelected = true,
     )
 
-    @Composable
-    fun reactionOption3() = ReactionOptionItemState(
+    fun messageReaction1() = MessageReactionItemState(
+        type = "like",
+        emoji = "👍",
+        count = 1,
+    )
+
+    fun messageReaction2() = MessageReactionItemState(
+        type = "love",
+        emoji = "❤️",
+        count = 10,
+    )
+
+    fun messageReaction3() = MessageReactionItemState(
         type = "wow",
-        emojiCode = "😮",
+        emoji = "😮",
+        count = 2,
     )
 
-    @Composable
-    fun reactionOption4() = ReactionOptionItemState(
+    fun messageReaction4() = MessageReactionItemState(
         type = "sad",
-        emojiCode = "👎",
+        emoji = "👎",
+        count = 5,
     )
 
-    @Composable
-    fun oneReaction(): List<ReactionOptionItemState> = listOf(
-        reactionOption1(),
+    fun oneReaction(): List<MessageReactionItemState> = listOf(
+        messageReaction1(),
     )
 
-    @Composable
-    fun manyReactions(): List<ReactionOptionItemState> = listOf(
-        reactionOption1(),
-        reactionOption2(),
-        reactionOption3(),
-        reactionOption4(),
+    fun manyReactions(): List<MessageReactionItemState> = listOf(
+        messageReaction1(),
+        messageReaction2(),
+        messageReaction3(),
+        messageReaction4(),
     )
 }

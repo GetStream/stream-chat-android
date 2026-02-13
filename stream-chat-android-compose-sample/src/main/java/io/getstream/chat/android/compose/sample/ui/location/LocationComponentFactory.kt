@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -121,7 +120,7 @@ class LocationComponentFactory(
     }
 
     @Composable
-    override fun ColumnScope.MessageContent(
+    override fun MessageContent(
         messageItem: MessageItemState,
         onLongItemClick: (Message) -> Unit,
         onPollUpdated: (Message, Poll) -> Unit,

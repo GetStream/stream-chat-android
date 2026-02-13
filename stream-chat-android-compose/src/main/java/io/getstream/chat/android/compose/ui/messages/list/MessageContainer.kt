@@ -47,12 +47,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.BottomEnd
-import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
@@ -71,13 +70,14 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
-import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
+import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -229,21 +229,37 @@ public fun MessageContainer(
                             reactionSorting = reactionSorting,
                             onReactionsClick = onReactionsClick,
                         )
-                        MessageContent(
-                            messageItem = messageItem,
-                            onLongItemClick = onLongItemClick,
-                            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                            onGiphyActionClick = onGiphyActionClick,
-                            onQuotedMessageClick = onQuotedMessageClick,
-                            onLinkClick = onLinkClick,
-                            onUserMentionClick = onUserMentionClick,
-                            onPollUpdated = onPollUpdated,
-                            onCastVote = onCastVote,
-                            onRemoveVote = onRemoveVote,
-                            selectPoll = selectPoll,
-                            onAddAnswer = onAddAnswer,
-                            onClosePoll = onClosePoll,
-                            onAddPollOption = onAddPollOption,
+                        MessageContentWithReactions(
+                            messageAlignment = messageAlignment,
+                            reactions = rememberMessageReactions(message, reactionSorting)?.let { reactions ->
+                                {
+                                    MessageReactions(
+                                        params = MessageReactionsParams(
+                                            message = message,
+                                            reactions = reactions,
+                                            onClick = onReactionsClick,
+                                        ),
+                                    )
+                                }
+                            },
+                            content = {
+                                MessageContent(
+                                    messageItem = messageItem,
+                                    onLongItemClick = onLongItemClick,
+                                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                                    onGiphyActionClick = onGiphyActionClick,
+                                    onQuotedMessageClick = onQuotedMessageClick,
+                                    onLinkClick = onLinkClick,
+                                    onUserMentionClick = onUserMentionClick,
+                                    onPollUpdated = onPollUpdated,
+                                    onCastVote = onCastVote,
+                                    onRemoveVote = onRemoveVote,
+                                    selectPoll = selectPoll,
+                                    onAddAnswer = onAddAnswer,
+                                    onClosePoll = onClosePoll,
+                                    onAddPollOption = onAddPollOption,
+                                )
+                            },
                         )
                         MessageBottom(messageItem = messageItem)
                     }
@@ -349,34 +365,74 @@ internal fun DefaultMessageTop(
             text = stringResource(alsoSendToChannelTextRes),
         )
     }
+}
 
-    if (!message.isDeleted()) {
-        val ownReactions = message.ownReactions
-        val resolver = ChatTheme.reactionResolver
-        val supported = resolver.supportedReactions
-        message.reactionGroups
-            .takeIf { it.isNotEmpty() }
-            ?.entries
-            ?.filter { it.key in supported }
-            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.value, o2.value) }
-            ?.map { (type, _) ->
-                val isSelected = ownReactions.any { it.type == type }
-                ReactionOptionItemState(
-                    type = type,
-                    isSelected = isSelected,
-                    emojiCode = resolver.emojiCode(type),
-                )
-            }?.let { reactions ->
-                ChatTheme.componentFactory.MessageReactions(
-                    params = MessageReactionsParams(
-                        message = message,
-                        reactions = reactions,
-                        onClick = onReactionsClick,
-                    ),
-                )
+/**
+ * Lays out message content with optional reactions above it. The layout width is determined by the message content
+ * only. Reactions are allowed to overflow beyond the content bounds.
+ */
+@Composable
+private fun MessageContentWithReactions(
+    messageAlignment: MessageAlignment,
+    reactions: (@Composable () -> Unit)?,
+    content: @Composable () -> Unit,
+) {
+    Layout(
+        content = {
+            if (reactions != null) reactions()
+            content()
+        },
+    ) { measurables, constraints ->
+        val hasReactions = reactions != null
+        val contentPlaceable = measurables.last().measure(constraints)
+        val reactionsPlaceable = if (hasReactions) {
+            measurables.first().measure(constraints.copy(minWidth = 0))
+        } else {
+            null
+        }
+
+        val overlapPx = if (reactionsPlaceable != null) StreamTokens.spacingXs.roundToPx() else 0
+        val reactionsHeight = reactionsPlaceable?.height ?: 0
+        val width = contentPlaceable.width
+        val height = reactionsHeight + contentPlaceable.height - overlapPx
+
+        layout(width, height) {
+            reactionsPlaceable?.let { rp ->
+                val protrusionPx = StreamTokens.spacingXs.roundToPx()
+                // The reactions are aligned opposite to the message alignment
+                val x = when (messageAlignment) {
+                    MessageAlignment.End -> minOf(0, width - rp.width) - protrusionPx
+                    MessageAlignment.Start -> maxOf(0, width - rp.width) + protrusionPx
+                }
+                rp.place(x, 0, zIndex = 1f)
             }
+            contentPlaceable.place(0, reactionsHeight - overlapPx)
+        }
     }
 }
+
+@Composable
+private fun rememberMessageReactions(message: Message, sorting: ReactionSorting): List<MessageReactionItemState>? =
+    if (message.isDeleted()) {
+        null
+    } else {
+        val resolver = ChatTheme.reactionResolver
+        remember(resolver, message.reactionGroups, sorting) {
+            val supported = resolver.supportedReactions
+            message.reactionGroups
+                .entries
+                .filter { it.key in supported }
+                .sortedWith { o1, o2 -> sorting.compare(o1.value, o2.value) }
+                .map { (type, group) ->
+                    MessageReactionItemState(
+                        type = type,
+                        emoji = resolver.emojiCode(type),
+                        count = group.count,
+                    )
+                }
+                .takeIf { it.isNotEmpty() }
+        }
+    }
 
 /**
  * Represents the default bottom content inside the message bubble.
@@ -396,7 +452,7 @@ internal fun ColumnScope.DefaultMessageBottom(
     when {
         message.isUploading() -> {
             ChatTheme.componentFactory.MessageFooterUploadingContent(
-                modifier = Modifier.align(End),
+                modifier = Modifier.align(Alignment.End),
                 messageItem = messageItem,
             )
         }
@@ -540,7 +596,7 @@ public fun EmojiMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
-                    .align(BottomEnd),
+                    .align(Alignment.BottomEnd),
                 message = message,
             )
         }
@@ -611,7 +667,7 @@ public fun RegularMessageContent(
             ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
-                    .align(BottomEnd)
+                    .align(Alignment.BottomEnd)
                     .testTag("Stream_MessageFailedIcon"),
                 message = message,
             )
