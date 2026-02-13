@@ -14,37 +14,33 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.push.internal.PushPreferenceEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ModerationEntity
 
 /**
- * Converter for [PushPreferenceEntity] to and from JSON.
+ * Converter for [ModerationEntity] to and from JSON
  */
-internal class PushPreferenceConverter {
+internal class ModerationConverter {
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val pushPreferenceAdapter = moshi.adapter<PushPreferenceEntity>()
+    private val entityAdapter = moshi.adapter<ModerationEntity>()
 
     /**
-     * Converts a [String] to a [PushPreferenceEntity].
+     * Converts a [String] to a [ModerationEntity].
      */
     @TypeConverter
-    fun stringToPushPreference(data: String?): PushPreferenceEntity? {
-        return data?.let {
-            pushPreferenceAdapter.fromJson(it)
-        }
+    fun stringToModeration(data: String?): ModerationEntity? {
+        return data?.let(entityAdapter::fromJson)
     }
 
     /**
-     * Converts a [PushPreferenceEntity] to a [String].
+     * Converts a [ModerationEntity] to a [String].
      */
     @TypeConverter
-    fun pushPreferenceToString(entity: PushPreferenceEntity?): String? {
-        return entity?.let {
-            pushPreferenceAdapter.toJson(it)
-        }
+    fun moderationToString(entity: ModerationEntity?): String? {
+        return entity?.let(entityAdapter::toJson)
     }
 }

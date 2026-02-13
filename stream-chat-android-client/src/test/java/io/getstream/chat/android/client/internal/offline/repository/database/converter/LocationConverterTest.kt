@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.LocationConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.LocationConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.LocationEntity
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest

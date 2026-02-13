@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.internal.debug
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
-import androidx.room.RoomDatabase
-import io.getstream.log.StreamLog
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.MultiMapJsonAdapter
+import com.squareup.moshi.addAdapter
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 
-internal class RoomQueryLogger : RoomDatabase.QueryCallback {
-    override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
-        StreamLog.v("Chat:RoomLog") { "Query: $sqlQuery, Args: $bindArgs" }
-    }
-}
+@OptIn(ExperimentalStdlibApi::class)
+internal val moshi: Moshi = Moshi.Builder()
+    .addAdapter(DateAdapter())
+    .add(KotlinJsonAdapterFactory())
+    .add(MultiMapJsonAdapter.FACTORY)
+    .build()

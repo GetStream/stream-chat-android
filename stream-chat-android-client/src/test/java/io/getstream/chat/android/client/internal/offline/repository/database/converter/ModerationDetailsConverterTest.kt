@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ModerationDetailsConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ModerationDetailsConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ModerationDetailsEntity
 import org.amshove.kluent.shouldBeEqualTo
 import org.intellij.lang.annotations.Language

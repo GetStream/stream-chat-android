@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.internal.offline.integration
 import androidx.annotation.CallSuper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.getstream.chat.android.client.internal.offline.createRoomDB
-import io.getstream.chat.android.client.internal.offline.repository.database.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.randomUser

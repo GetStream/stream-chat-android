@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ModerationDetailsEntity
 
-internal class UserMuteConverter {
+internal class ModerationDetailsConverter {
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val entityAdapter = moshi.adapter<UserMuteEntity>()
+    private val entityAdapter = moshi.adapter<ModerationDetailsEntity>()
 
     @TypeConverter
-    fun fromJson(json: String?): UserMuteEntity? = json?.let(entityAdapter::fromJson)
+    fun stringToModerationDetails(data: String?): ModerationDetailsEntity? {
+        return data?.let {
+            entityAdapter.fromJson(it)
+        }
+    }
 
     @TypeConverter
-    fun toJson(entity: UserMuteEntity?): String? = entity?.let(entityAdapter::toJson)
+    fun moderationDetailsToString(entity: ModerationDetailsEntity?): String? {
+        return entity?.let {
+            entityAdapter.toJson(it)
+        }
+    }
 }

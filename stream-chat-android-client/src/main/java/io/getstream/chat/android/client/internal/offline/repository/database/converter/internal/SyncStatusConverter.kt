@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
-import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
+import io.getstream.chat.android.models.SyncStatus
 
-internal class MemberConverter {
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private val memberEntityMapAdapter = moshi.adapter<MemberEntity>()
-
+internal class SyncStatusConverter {
     @TypeConverter
-    fun memberToString(member: MemberEntity?): String? {
-        return memberEntityMapAdapter.toJson(member)
+    fun stringToSyncStatus(data: Int): SyncStatus {
+        return SyncStatus.fromInt(data)!!
     }
 
     @TypeConverter
-    fun stringToMemberMap(data: String?): MemberEntity? {
-        if (data.isNullOrEmpty() || data == "null") {
-            return null
-        }
-        return memberEntityMapAdapter.fromJson(data)
+    fun syncStatusToString(syncStatus: SyncStatus): Int {
+        return syncStatus.status
     }
 }

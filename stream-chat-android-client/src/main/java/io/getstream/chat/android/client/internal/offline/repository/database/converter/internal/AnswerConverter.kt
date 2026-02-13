@@ -14,46 +14,46 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReactionGroupEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.AnswerEntity
 
-internal class ReactionGroupConverter {
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private val entityAdapter = moshi.adapter<ReactionGroupEntity>()
+internal class AnswerConverter {
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val entityMapAdapter = moshi.adapter<Map<String, ReactionGroupEntity>>()
+    private val entityAdapter = moshi.adapter<AnswerEntity>()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val entityListAdapter = moshi.adapter<List<AnswerEntity>>()
 
     @TypeConverter
-    fun stringToReactionGroupEntity(data: String?): ReactionGroupEntity? {
+    fun stringToAnswer(data: String?): AnswerEntity? {
         return data?.let {
             entityAdapter.fromJson(it)
         }
     }
 
     @TypeConverter
-    fun reactionGroupEntityToString(entity: ReactionGroupEntity?): String? {
+    fun answerToString(entity: AnswerEntity?): String? {
         return entity?.let {
             entityAdapter.toJson(it)
         }
     }
 
     @TypeConverter
-    fun reactionGroupEntityMapToString(entities: Map<String, ReactionGroupEntity>?): String? {
-        return entities?.let {
-            entityMapAdapter.toJson(it)
+    fun stringToAnswerList(data: String?): List<AnswerEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
         }
+        return entityListAdapter.fromJson(data)
     }
 
     @TypeConverter
-    fun stringToReactionGroupEntityMap(data: String?): Map<String, ReactionGroupEntity>? {
-        if (data.isNullOrEmpty() || data == "null") {
-            return mutableMapOf()
+    fun answerListToString(entities: List<AnswerEntity>?): String? {
+        return entities?.let {
+            entityListAdapter.toJson(it)
         }
-        return entityMapAdapter.fromJson(data)
     }
 }

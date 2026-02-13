@@ -30,7 +30,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.internal.offline.repository.database.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade

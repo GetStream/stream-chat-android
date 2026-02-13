@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ModerationEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReminderInfoEntity
 
 /**
- * Converter for [ModerationEntity] to and from JSON
+ * Converter class defining how the [ReminderInfoEntity] is stored in the database.
  */
-internal class ModerationConverter {
+internal class ReminderInfoConverter {
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val entityAdapter = moshi.adapter<ModerationEntity>()
+    private val adapter = moshi.adapter<ReminderInfoEntity>()
 
     /**
-     * Converts a [String] to a [ModerationEntity].
+     * Converts a [String] to a [ReminderInfoEntity].
      */
     @TypeConverter
-    fun stringToModeration(data: String?): ModerationEntity? {
-        return data?.let(entityAdapter::fromJson)
+    fun stringToReminderInfo(data: String?): ReminderInfoEntity? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return null
+        }
+        return adapter.fromJson(data)
     }
 
     /**
-     * Converts a [ModerationEntity] to a [String].
+     * Converts a [ReminderInfoEntity] to a [String].
      */
     @TypeConverter
-    fun moderationToString(entity: ModerationEntity?): String? {
-        return entity?.let(entityAdapter::toJson)
+    fun reminderInfoToString(reminderInfo: ReminderInfoEntity?): String? {
+        return reminderInfo?.let(adapter::toJson)
     }
 }

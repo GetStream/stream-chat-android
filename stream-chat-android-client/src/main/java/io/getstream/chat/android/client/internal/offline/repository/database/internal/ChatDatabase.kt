@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.internal
 
 import android.content.Context
 import androidx.room.Database
@@ -22,26 +22,26 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.AnswerConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.DateConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ExtraDataConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.FilterObjectConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ListConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.LocationConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.MapConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.MemberConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ModerationConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ModerationDetailsConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.OptionConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.PrivacySettingsConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.PushPreferenceConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.QuerySortConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ReactionGroupConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ReminderInfoConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.SetConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.SyncStatusConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.UserMuteConverter
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.VoteConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.AnswerConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.DateConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ExtraDataConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.FilterObjectConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ListConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.LocationConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.MapConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.MemberConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ModerationConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ModerationDetailsConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.OptionConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.PrivacySettingsConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.PushPreferenceConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.QuerySortConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ReactionGroupConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ReminderInfoConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.SetConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.SyncStatusConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.UserMuteConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.VoteConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.ChannelDao
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.ChannelEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channelconfig.internal.ChannelConfigDao

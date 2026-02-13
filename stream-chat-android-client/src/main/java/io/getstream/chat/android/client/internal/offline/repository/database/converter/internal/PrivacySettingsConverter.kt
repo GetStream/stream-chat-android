@@ -14,46 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.VoteEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.PrivacySettingsEntity
 
-internal class VoteConverter {
-
-    @OptIn(ExperimentalStdlibApi::class)
-    private val entityAdapter = moshi.adapter<VoteEntity>()
+internal class PrivacySettingsConverter {
 
     @OptIn(ExperimentalStdlibApi::class)
-    private val entityListAdapter = moshi.adapter<List<VoteEntity>>()
+    private val entityAdapter = moshi.adapter<PrivacySettingsEntity>()
 
     @TypeConverter
-    fun stringToVote(data: String?): VoteEntity? {
+    fun stringToPrivacySettings(data: String?): PrivacySettingsEntity? {
         return data?.let {
             entityAdapter.fromJson(it)
         }
     }
 
     @TypeConverter
-    fun voteToString(entity: VoteEntity?): String? {
+    fun privacySettingsToString(entity: PrivacySettingsEntity?): String? {
         return entity?.let {
             entityAdapter.toJson(it)
-        }
-    }
-
-    @TypeConverter
-    fun stringToVoteList(data: String?): List<VoteEntity>? {
-        if (data.isNullOrEmpty() || data == "null") {
-            return emptyList()
-        }
-        return entityListAdapter.fromJson(data)
-    }
-
-    @TypeConverter
-    fun voteListToString(entities: List<VoteEntity>?): String? {
-        return entities?.let {
-            entityListAdapter.toJson(it)
         }
     }
 }

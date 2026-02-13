@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ListConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ListConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
 import org.junit.jupiter.api.Assertions.assertEquals

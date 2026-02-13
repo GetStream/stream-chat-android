@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.internal.offline.repository.database.co
 
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.FilterObjectConverterTest.Companion.objectToStringArguments
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.FilterObjectConverterTest.Companion.stringToObjectArguments
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.FilterObjectConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.FilterObjectConverter
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.positiveRandomInt

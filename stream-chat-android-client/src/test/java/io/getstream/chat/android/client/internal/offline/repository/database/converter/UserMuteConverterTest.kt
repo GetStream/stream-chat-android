@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
 import io.getstream.chat.android.client.internal.offline.randomUserMuteEntity
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.UserMuteConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.UserMuteConverter
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test

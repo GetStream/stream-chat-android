@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.SyncStatusConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.SyncStatusConverter
 import io.getstream.chat.android.models.SyncStatus
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test

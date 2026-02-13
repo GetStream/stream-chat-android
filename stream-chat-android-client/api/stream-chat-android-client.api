@@ -3046,13 +3046,13 @@ public abstract interface class io/getstream/chat/android/client/interceptor/mes
 	public abstract fun prepareMessage (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 }
 
-public final class io/getstream/chat/android/client/internal/offline/repository/database/database/converter/internal/QuerySortParser {
+public final class io/getstream/chat/android/client/internal/offline/repository/database/converter/internal/QuerySortParser {
 	public fun <init> ()V
 	public final fun fromSpecifications (Ljava/util/List;)Lio/getstream/chat/android/models/querysort/QuerySorter;
 }
 
-public final class io/getstream/chat/android/client/internal/offline/repository/database/database/internal/ChatDatabase_Impl {
-	public static final field Companion Lio/getstream/chat/android/client/internal/offline/repository/database/database/internal/ChatDatabase$Companion;
+public final class io/getstream/chat/android/client/internal/offline/repository/database/internal/ChatDatabase_Impl {
+	public static final field Companion Lio/getstream/chat/android/client/internal/offline/repository/database/internal/ChatDatabase$Companion;
 	public fun <init> ()V
 	public fun attachmentDao ()Lio/getstream/chat/android/client/internal/offline/repository/domain/message/attachment/internal/AttachmentDao;
 	public fun channelConfigDao ()Lio/getstream/chat/android/client/internal/offline/repository/domain/channelconfig/internal/ChannelConfigDao;

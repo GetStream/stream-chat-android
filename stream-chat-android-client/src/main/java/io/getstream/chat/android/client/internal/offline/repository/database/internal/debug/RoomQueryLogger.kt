@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.internal.debug
 
-import androidx.room.TypeConverter
-import java.util.Date
+import androidx.room.RoomDatabase
+import io.getstream.log.StreamLog
 
-internal class DateConverter {
-    @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
-    }
-
-    @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
+internal class RoomQueryLogger : RoomDatabase.QueryCallback {
+    override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
+        StreamLog.v("Chat:RoomLog") { "Query: $sqlQuery, Args: $bindArgs" }
     }
 }

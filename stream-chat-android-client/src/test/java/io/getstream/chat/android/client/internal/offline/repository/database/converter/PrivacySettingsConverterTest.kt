@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.PrivacySettingsConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.PrivacySettingsConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.DeliveryReceiptsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.ReadReceiptsEntity

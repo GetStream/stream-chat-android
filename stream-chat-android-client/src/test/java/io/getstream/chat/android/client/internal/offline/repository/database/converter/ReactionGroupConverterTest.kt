@@ -20,7 +20,7 @@ import io.getstream.chat.android.client.internal.offline.repository.database.con
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.ReactionGroupConverterTest.Companion.decodeMapArguments
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.ReactionGroupConverterTest.Companion.encodeArguments
 import io.getstream.chat.android.client.internal.offline.repository.database.converter.ReactionGroupConverterTest.Companion.encodeMapArguments
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.ReactionGroupConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.ReactionGroupConverter
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReactionGroupEntity
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString

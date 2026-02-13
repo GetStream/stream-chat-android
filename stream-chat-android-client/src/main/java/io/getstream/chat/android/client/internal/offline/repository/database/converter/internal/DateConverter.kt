@@ -14,28 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
-import com.squareup.moshi.adapter
+import java.util.Date
 
-internal class ExtraDataConverter {
-    @OptIn(ExperimentalStdlibApi::class)
-    private val adapter = moshi.adapter<Map<String, Any>>()
-
+internal class DateConverter {
     @TypeConverter
-    fun stringToMap(data: String?): Map<String, Any>? {
-        if (data.isNullOrEmpty() || data == "null") {
-            return emptyMap()
-        }
-        return adapter.fromJson(data)
+    fun fromTimestamp(value: Long?): Date? {
+        return value?.let { Date(it) }
     }
 
     @TypeConverter
-    fun mapToString(someObjects: Map<String, Any>?): String? {
-        if (someObjects == null) {
-            return "{}"
-        }
-        return adapter.toJson(someObjects)
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time
     }
 }

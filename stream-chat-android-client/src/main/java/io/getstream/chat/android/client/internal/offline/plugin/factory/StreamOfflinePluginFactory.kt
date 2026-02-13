@@ -37,7 +37,7 @@ import io.getstream.chat.android.client.internal.offline.plugin.listener.interna
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.SendReactionListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.ShuffleGiphyListenerDatabase
 import io.getstream.chat.android.client.internal.offline.plugin.listener.internal.ThreadQueryListenerDatabase
-import io.getstream.chat.android.client.internal.offline.repository.database.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.plugin.Plugin

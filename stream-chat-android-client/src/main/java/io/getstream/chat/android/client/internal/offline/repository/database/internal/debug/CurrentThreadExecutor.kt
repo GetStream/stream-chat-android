@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.internal.debug
 
-import androidx.room.TypeConverter
-import io.getstream.chat.android.models.SyncStatus
+import java.util.concurrent.Executor
 
-internal class SyncStatusConverter {
-    @TypeConverter
-    fun stringToSyncStatus(data: Int): SyncStatus {
-        return SyncStatus.fromInt(data)!!
-    }
-
-    @TypeConverter
-    fun syncStatusToString(syncStatus: SyncStatus): Int {
-        return syncStatus.status
+/**
+ * Executor that runs tasks on the current thread.
+ */
+internal class CurrentThreadExecutor : Executor {
+    override fun execute(command: Runnable) {
+        command.run()
     }
 }

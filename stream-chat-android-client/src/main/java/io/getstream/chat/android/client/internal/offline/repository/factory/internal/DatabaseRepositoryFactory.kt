@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.factory.internal
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.DatabaseMessageRepository

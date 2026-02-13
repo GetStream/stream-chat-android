@@ -14,36 +14,28 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.internal.offline.repository.domain.message.internal.ReminderInfoEntity
 
-/**
- * Converter class defining how the [ReminderInfoEntity] is stored in the database.
- */
-internal class ReminderInfoConverter {
-
+internal class ExtraDataConverter {
     @OptIn(ExperimentalStdlibApi::class)
-    private val adapter = moshi.adapter<ReminderInfoEntity>()
+    private val adapter = moshi.adapter<Map<String, Any>>()
 
-    /**
-     * Converts a [String] to a [ReminderInfoEntity].
-     */
     @TypeConverter
-    fun stringToReminderInfo(data: String?): ReminderInfoEntity? {
+    fun stringToMap(data: String?): Map<String, Any>? {
         if (data.isNullOrEmpty() || data == "null") {
-            return null
+            return emptyMap()
         }
         return adapter.fromJson(data)
     }
 
-    /**
-     * Converts a [ReminderInfoEntity] to a [String].
-     */
     @TypeConverter
-    fun reminderInfoToString(reminderInfo: ReminderInfoEntity?): String? {
-        return reminderInfo?.let(adapter::toJson)
+    fun mapToString(someObjects: Map<String, Any>?): String? {
+        if (someObjects == null) {
+            return "{}"
+        }
+        return adapter.toJson(someObjects)
     }
 }

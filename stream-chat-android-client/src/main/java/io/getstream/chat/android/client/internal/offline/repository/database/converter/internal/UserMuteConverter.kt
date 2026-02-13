@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.offline.repository.database.database.internal.debug
+package io.getstream.chat.android.client.internal.offline.repository.database.converter.internal
 
-import java.util.concurrent.Executor
+import androidx.room.TypeConverter
+import com.squareup.moshi.adapter
+import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
 
-/**
- * Executor that runs tasks on the current thread.
- */
-internal class CurrentThreadExecutor : Executor {
-    override fun execute(command: Runnable) {
-        command.run()
-    }
+internal class UserMuteConverter {
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val entityAdapter = moshi.adapter<UserMuteEntity>()
+
+    @TypeConverter
+    fun fromJson(json: String?): UserMuteEntity? = json?.let(entityAdapter::fromJson)
+
+    @TypeConverter
+    fun toJson(entity: UserMuteEntity?): String? = entity?.let(entityAdapter::toJson)
 }

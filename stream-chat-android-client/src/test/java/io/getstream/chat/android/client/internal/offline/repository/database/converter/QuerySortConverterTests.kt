@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.database.converter
 
-import io.getstream.chat.android.client.internal.offline.repository.database.database.converter.internal.QuerySortConverter
+import io.getstream.chat.android.client.internal.offline.repository.database.converter.internal.QuerySortConverter
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName

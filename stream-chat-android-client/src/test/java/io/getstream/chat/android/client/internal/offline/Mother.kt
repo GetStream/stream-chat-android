@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.internal.offline
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import io.getstream.chat.android.client.internal.offline.repository.database.database.internal.ChatDatabase
+import io.getstream.chat.android.client.internal.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.internal.ChannelEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
