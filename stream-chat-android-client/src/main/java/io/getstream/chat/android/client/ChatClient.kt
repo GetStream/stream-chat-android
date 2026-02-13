@@ -4701,6 +4701,7 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
+        private var pluginFactories: List<PluginFactory> = emptyList()
         private var offlineConfig: OfflineConfig = OfflineConfig()
         private var stateConfig: StateConfig = StateConfig()
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
