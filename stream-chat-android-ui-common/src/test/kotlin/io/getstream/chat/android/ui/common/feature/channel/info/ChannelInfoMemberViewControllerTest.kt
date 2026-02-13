@@ -256,6 +256,7 @@ internal class ChannelInfoMemberViewControllerTest {
                             filter = Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
                             querySort = QuerySortByField.descByName("last_updated"),
                             messageLimit = 0,
+                            memberLimit = 1,
                             limit = 1,
                         ),
                     ),

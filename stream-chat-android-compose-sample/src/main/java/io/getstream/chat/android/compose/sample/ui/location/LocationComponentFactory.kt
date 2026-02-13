@@ -121,7 +121,7 @@ class LocationComponentFactory(
     }
 
     @Composable
-    override fun ColumnScope.MessageItemCenterContent(
+    override fun ColumnScope.MessageContent(
         messageItem: MessageItemState,
         onLongItemClick: (Message) -> Unit,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -149,7 +149,7 @@ class LocationComponentFactory(
             )
         } else {
             with(delegate) {
-                MessageItemCenterContent(
+                MessageContent(
                     messageItem = messageItem,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,

@@ -400,10 +400,6 @@ internal class SyncManager(
         logger.e(e) { "[retryFailedEntities] failed: $e" }
     }
 
-    @SuppressWarnings("LongMethod")
-    /**
-     * This method needs to be refactored. It's too long.
-     */
     private suspend fun restoreActiveChannels() {
         val recoverAll = !isFirstConnect.compareAndSet(true, false)
         logger.d { "[restoreActiveChannels] recoverAll: $recoverAll" }
