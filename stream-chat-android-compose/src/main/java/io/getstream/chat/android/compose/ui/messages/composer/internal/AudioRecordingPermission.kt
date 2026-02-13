@@ -55,13 +55,23 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.delay
 
 /**
- * Wrapper around Accompanist's [rememberPermissionState] that returns `null` in
- * preview / Paparazzi environments (where there is no Activity context).
+ * Wrapper around Accompanist's [rememberPermissionState].
+ *
+ * In preview / Paparazzi environments (where there is no Activity context) this returns a
+ * granted [AudioRecordingPermission].
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun rememberAudioRecordingPermission(): AudioRecordingPermission? {
-    if (LocalInspectionMode.current) return null
+internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
+    if (LocalInspectionMode.current) {
+        return remember {
+            AudioRecordingPermission(
+                status = PermissionStatus.Granted,
+                launchPermissionRequest = {},
+                showRationale = {},
+            )
+        }
+    }
 
     var showRationale by remember { mutableStateOf(false) }
     if (showRationale) {
@@ -101,16 +111,16 @@ internal class AudioRecordingPermission(
 )
 
 /**
- * Returns `true` if the recording can proceed (permission granted or not applicable).
+ * Returns `true` if the recording can proceed (permission granted).
  * Otherwise, triggers the appropriate permission request or rationale dialog and returns `false`.
  */
 @OptIn(ExperimentalPermissionsApi::class)
-internal fun AudioRecordingPermission?.gateRecording(): Boolean = when {
-    this?.status?.shouldShowRationale == true -> {
+internal fun AudioRecordingPermission.gateRecording(): Boolean = when {
+    status.shouldShowRationale -> {
         showRationale()
         false
     }
-    this?.status?.isGranted == false -> {
+    !status.isGranted -> {
         launchPermissionRequest()
         false
     }
