@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -119,14 +120,17 @@ internal fun MessageComposerAudioRecordingLockedContent(
     state: RecordingState.Locked,
     modifier: Modifier = Modifier,
 ) {
-    val playbackTheme = ChatTheme.messageComposerTheme.audioRecording.playback
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(playbackTheme.height),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        MicIndicatorIcon()
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+            contentDescription = null,
+            tint = ChatTheme.colors.errorAccent,
+        )
 
         PlaybackTimerText(
             progress = 1f,
@@ -138,7 +142,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
         StaticWaveformSlider(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(playbackTheme.waveformSliderPadding),
+                .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
             waveformData = state.waveform,
             progress = 1f,
             isPlaying = false,
@@ -207,24 +211,6 @@ private fun OverviewRecordContent(
             onDragStart = { currentProgress = it.also(recordingActions.onRecordingSliderDragStart) },
             onDrag = { currentProgress = it },
             onDragStop = { currentProgress = it.also(recordingActions.onRecordingSliderDragStop) },
-        )
-    }
-}
-
-@Composable
-private fun MicIndicatorIcon() {
-    val micStyle = ChatTheme.messageComposerTheme.audioRecording.playback.micIndicator
-    Box(
-        modifier = Modifier
-            .size(micStyle.size)
-            .padding(micStyle.padding),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = micStyle.icon.painter,
-            contentDescription = null,
-            modifier = Modifier.size(micStyle.size),
-            tint = micStyle.icon.tint,
         )
     }
 }
