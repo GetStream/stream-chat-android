@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.Result
 
 /** Listener for reply queries. */
+@InternalStreamChatApi
 public interface ThreadQueryListener {
     /**
      * Runs precondition check for [ChatClient.getReplies], [ChatClient.getNewerReplies] and

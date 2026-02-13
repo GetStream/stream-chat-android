@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 
 /**
  * Listener that updates the SDK accordingly with the request to send attachments to the backend.
  */
+@InternalStreamChatApi
 public interface SendAttachmentListener {
 
     /**

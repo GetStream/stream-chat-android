@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
@@ -26,6 +27,7 @@ import io.getstream.result.Result
 /**
  * Listener for draft message.
  */
+@InternalStreamChatApi
 public interface DraftMessageListener {
 
     /**

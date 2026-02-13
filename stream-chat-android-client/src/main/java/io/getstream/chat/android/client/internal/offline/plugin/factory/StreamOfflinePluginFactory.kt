@@ -65,6 +65,7 @@ import kotlin.reflect.KClass
  * @param ignoredChannelTypes Set of channel types that should be ignored by the offline plugin.
  * @param now Function to get the current time in milliseconds. Useful for testing purposes.
  */
+@InternalStreamChatApi
 internal class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
     private val ignoredChannelTypes: Set<String> = emptySet(),

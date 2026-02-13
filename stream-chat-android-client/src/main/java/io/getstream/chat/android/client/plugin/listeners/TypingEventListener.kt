@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.EventType
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -26,6 +27,7 @@ import java.util.Date
 /**
  * Listener for [ChatClient.keystroke] and [ChatClient.stopTyping] requests.
  */
+@InternalStreamChatApi
 public interface TypingEventListener {
 
     /**

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
@@ -24,6 +25,7 @@ import io.getstream.result.Result
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.sendReaction] calls.
  */
+@InternalStreamChatApi
 public interface SendReactionListener {
 
     /**
