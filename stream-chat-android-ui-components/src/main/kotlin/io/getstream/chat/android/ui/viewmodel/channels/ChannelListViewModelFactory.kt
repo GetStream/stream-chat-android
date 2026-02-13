@@ -19,12 +19,12 @@ package io.getstream.chat.android.ui.viewmodel.channels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.event.ChatEventHandlerFactory
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.ui.ChatUI
 
 /**
@@ -33,8 +33,8 @@ import io.getstream.chat.android.ui.ChatUI
  * @param filter How to filter the channels.
  * @param sort How to sort the channels, defaults to last_updated.
  * @param limit How many channels to return.
- * @param memberLimit The number of members per channel.
- * @param messageLimit The number of messages to fetch for each channel.
+ * @param memberLimit The number of members per channel. When `null`, the server-side default is used.
+ * @param messageLimit The number of messages to fetch for each channel. When `null`, the server-side default is used.
  * @param isDraftMessagesEnabled Enables or disables draft messages.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  *
@@ -45,8 +45,8 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val filter: FilterObject? = null,
     private val sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT,
     private val limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
-    private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
-    private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int? = null,
+    private val memberLimit: Int? = null,
     private val isDraftMessagesEnabled: Boolean = ChatUI.draftMessagesEnabled,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
 ) : ViewModelProvider.Factory {
@@ -81,8 +81,8 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         private var filter: FilterObject? = null
         private var sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT
         private var limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT
-        private var messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT
-        private var memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT
+        private var messageLimit: Int? = null
+        private var memberLimit: Int? = null
         private var chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory()
         private var isDraftMessagesEnabled: Boolean = ChatUI.draftMessagesEnabled
 
@@ -109,15 +109,17 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
 
         /**
          * Sets the number of messages to fetch for each channel.
+         * When `null`, the server-side default is used.
          */
-        public fun messageLimit(messageLimit: Int): Builder = apply {
+        public fun messageLimit(messageLimit: Int?): Builder = apply {
             this.messageLimit = messageLimit
         }
 
         /**
          * Sets the number of members per channel.
+         * When `null`, the server-side default is used.
          */
-        public fun memberLimit(memberLimit: Int): Builder = apply {
+        public fun memberLimit(memberLimit: Int?): Builder = apply {
             this.memberLimit = memberLimit
         }
 

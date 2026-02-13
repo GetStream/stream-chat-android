@@ -37,9 +37,9 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.downloadAttachment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.state.extensions.downloadAttachment
 import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
 import io.getstream.chat.android.ui.common.utils.extensions.wasPermissionRequested
 import io.getstream.chat.android.ui.common.utils.openSystemSettings

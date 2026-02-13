@@ -17,6 +17,8 @@
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.message.isModerationError
@@ -30,8 +32,6 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.globalStateFlow
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
@@ -899,9 +899,9 @@ public class MessageComposerController(
      * Starts audio recording and moves [MessageComposerState.recording] state
      * from [RecordingState.Idle] to [RecordingState.Hold].
      */
-    public fun startRecording(offset: Pair<Float, Float>? = null) {
+    public fun startRecording() {
         scope.launch {
-            audioRecordingController.startRecording(offset)
+            audioRecordingController.startRecording()
         }
     }
 

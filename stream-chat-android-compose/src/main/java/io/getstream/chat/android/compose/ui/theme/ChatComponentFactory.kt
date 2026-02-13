@@ -126,6 +126,7 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
@@ -145,6 +146,8 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedR
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptionItem
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
+import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
@@ -159,28 +162,25 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Ment
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerHeaderContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerInput
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageAuthor
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageBottom
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemCenterContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemFooterContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemHeaderContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemLeadingContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageSpacer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTop
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
@@ -227,6 +227,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
+import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
@@ -864,10 +865,11 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default message list item container, which renders each [MessageListItemState]'s subtype.
+     * The default message item component, which renders each [MessageListItemState]'s subtype.
+     * This includes date separators, system messages, and regular messages.
      */
     @Composable
-    public fun LazyItemScope.MessageListItemContainer(
+    public fun LazyItemScope.MessageItem(
         messageListItem: MessageListItemState,
         reactionSorting: ReactionSorting,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -888,7 +890,7 @@ public interface ChatComponentFactory {
         onAddAnswer: (Message, Poll, String) -> Unit,
         onReply: (Message) -> Unit,
     ) {
-        DefaultMessageContainer(
+        DefaultMessageItem(
             messageListItemState = messageListItem,
             reactionSorting = reactionSorting,
             onPollUpdated = onPollUpdated,
@@ -1001,10 +1003,11 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default item content of a regular message.
+     * The default container for a regular message, which includes the author avatar,
+     * message bubble, and reactions.
      */
     @Composable
-    public fun LazyItemScope.MessageListItemContent(
+    public fun MessageContainer(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -1025,7 +1028,7 @@ public interface ChatComponentFactory {
         onAddAnswer: (Message, Poll, String) -> Unit,
         onReply: (Message) -> Unit,
     ) {
-        DefaultMessageItem(
+        io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
             onPollUpdated = onPollUpdated,
@@ -1096,16 +1099,16 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default header content of the message item.
-     * Usually shown if the message is pinned and a list of reactions for the message.
+     * The default top content inside the message bubble.
+     * Usually shows pinned indicator and thread labels.
      */
     @Composable
-    public fun ColumnScope.MessageItemHeaderContent(
+    public fun ColumnScope.MessageTop(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
         onReactionsClick: (Message) -> Unit,
     ) {
-        DefaultMessageItemHeaderContent(
+        DefaultMessageTop(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
             onReactionsClick = onReactionsClick,
@@ -1113,37 +1116,37 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default footer content of the message item.
-     * Usually showing some of the following UI elements: upload status, thread participants, message timestamp.
+     * The default bottom content inside the message bubble.
+     * Usually shows timestamp and delivery status.
      */
     @Composable
-    public fun ColumnScope.MessageItemFooterContent(
+    public fun ColumnScope.MessageBottom(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageItemFooterContent(messageItem = messageItem)
+        DefaultMessageBottom(messageItem = messageItem)
     }
 
     /**
-     * The default leading content of the message item.
-     * Usually the avatar of the user if the message doesn't belong to the current user.
+     * The default author content for a message.
+     * Usually shows the avatar of the user if the message doesn't belong to the current user.
      */
     @Composable
-    public fun RowScope.MessageItemLeadingContent(
+    public fun RowScope.MessageAuthor(
         messageItem: MessageItemState,
         onUserAvatarClick: (() -> Unit)?,
     ) {
-        DefaultMessageItemLeadingContent(
+        DefaultMessageAuthor(
             messageItem = messageItem,
             onUserAvatarClick = onUserAvatarClick,
         )
     }
 
     /**
-     * The default center content of the message item.
-     * Usually a message bubble with attachments or emoji stickers if the message contains only emoji.
+     * The default content of the message bubble.
+     * Usually contains attachments and text.
      */
     @Composable
-    public fun ColumnScope.MessageItemCenterContent(
+    public fun ColumnScope.MessageContent(
         messageItem: MessageItemState,
         onLongItemClick: (Message) -> Unit,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -1159,7 +1162,7 @@ public interface ChatComponentFactory {
         onUserMentionClick: (User) -> Unit,
         onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     ) {
-        DefaultMessageItemCenterContent(
+        DefaultMessageContent(
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
@@ -1178,22 +1181,24 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default trailing content of the message item.
-     * Usually an extra spacing at the end of the message item if the author is the current user.
+     * The empty space in the message item opposite to the message bubble.
+     * For example, for outgoing messages, by default the spacer is placed before the bubble.
+     *
+     * @param messageItem The message item to show the spacer for.
      */
     @Composable
-    public fun RowScope.MessageItemTrailingContent(
+    public fun RowScope.MessageSpacer(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageItemTrailingContent(messageItem = messageItem)
+        DefaultMessageSpacer(messageItem = messageItem)
     }
 
     /**
-     * The default list of reactions displayed above the message bubble and is part of [MessageItemHeaderContent].
+     * The default reactions displayed overlaying the message bubble border.
      */
     @Composable
-    public fun MessageReactionList(
-        params: MessageReactionListParams,
+    public fun MessageReactions(
+        params: MessageReactionsParams,
     ) {
         MessageReactions(
             modifier = params.modifier
@@ -1210,7 +1215,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default individual reaction item shown inside [MessageReactionList].
+     * The default individual reaction item shown inside [MessageReactions].
      */
     @Composable
     public fun RowScope.MessageReactionItem(
@@ -1419,7 +1424,6 @@ public interface ChatComponentFactory {
         commandPopupContent: @Composable (List<Command>) -> Unit,
         leadingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         input: @Composable RowScope.(MessageComposerState) -> Unit,
-        audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
         trailingContent: @Composable (MessageComposerState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
@@ -1442,7 +1446,6 @@ public interface ChatComponentFactory {
             commandPopupContent = commandPopupContent,
             leadingContent = leadingContent,
             input = input,
-            audioRecordingContent = audioRecordingContent,
             trailingContent = trailingContent,
         )
     }
@@ -1717,7 +1720,8 @@ public interface ChatComponentFactory {
         centerContent: @Composable (Modifier) -> Unit,
         trailingContent: @Composable RowScope.() -> Unit,
     ) {
-        DefaultMessageComposerInput(
+        MessageInput(
+            modifier = Modifier.weight(1f),
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,
@@ -1876,21 +1880,10 @@ public interface ChatComponentFactory {
         state: RecordingState,
         recordingActions: AudioRecordingActions,
     ) {
-        DefaultAudioRecordButton(state, recordingActions)
-    }
-
-    /**
-     * Default composable used for displaying audio recording information while audio recording is in progress.
-     *
-     * @param state The current state of the message composer.
-     * @param recordingActions The actions to control the audio recording.
-     */
-    @Composable
-    public fun RowScope.MessageComposerAudioRecordingContent(
-        state: MessageComposerState,
-        recordingActions: AudioRecordingActions,
-    ) {
-        DefaultMessageComposerRecordingContent(state, recordingActions)
+        AudioRecordingButton(
+            recordingState = state,
+            recordingActions = recordingActions,
+        )
     }
 
     /**
@@ -2254,7 +2247,60 @@ public interface ChatComponentFactory {
         )
     }
 
-    // REGION: Reaction menu and items
+    // REGION: Reactions
+
+    /**
+     * Factory method for creating a reaction icon. By default, it only displays the emoji.
+     *
+     * @param type The string representation of the reaction.
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param size The size of the reaction button.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun ReactionIcon(
+        type: String,
+        emoji: String?,
+        size: ReactionIconSize,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.components.reactions.ReactionIcon(
+            type = type,
+            emoji = emoji,
+            size = size,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating a reaction toggle. By default, it only displays the emoji.
+     *
+     * @param type The string representation of the reaction.
+     * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+     * @param size The size of the reaction button.
+     * @param checked Whether the toggle is checked.
+     * @param onCheckedChange Callback when the checked state of the toggle changes.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun ReactionToggle(
+        type: String,
+        emoji: String?,
+        size: ReactionToggleSize,
+        checked: Boolean,
+        onCheckedChange: ((Boolean) -> Unit)?,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.components.reactions.ReactionToggle(
+            type = type,
+            emoji = emoji,
+            size = size,
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            modifier = modifier,
+        )
+    }
+
     /**
      * Factory method for creating the full content of the SelectedReactionsMenu.
      *
@@ -3021,10 +3067,10 @@ public interface ChatComponentFactory {
         showFileSize: (Attachment) -> Boolean,
     ) {
         io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
-            modifier = modifier,
             attachment = attachment,
             isMine = isMine,
             showFileSize = showFileSize,
+            modifier = modifier,
         )
     }
 

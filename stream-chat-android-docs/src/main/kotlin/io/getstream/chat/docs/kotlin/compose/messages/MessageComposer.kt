@@ -218,7 +218,10 @@ private object MessageComposerCustomizationSnippet {
                         onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                         onCancelAction = { composerViewModel.dismissMessageActions() },
                         onSendClick = onSendClick,
-                        recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
+                        recordingActions = AudioRecordingActions.defaultActions(
+                            viewModel = composerViewModel,
+                            sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                        ),
                         centerContent = { modifier ->
                             // create a custom text field
                             OutlinedTextField(

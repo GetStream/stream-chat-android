@@ -49,7 +49,7 @@ public fun SuggestionList(
     headerContent: @Composable () -> Unit = {},
     centerContent: @Composable () -> Unit,
 ) {
-    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
+    Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
         Card(
             modifier = modifier.semantics { testTagsAsResourceId = true },
             elevation = CardDefaults.cardElevation(defaultElevation = ChatTheme.dimens.suggestionListElevation),

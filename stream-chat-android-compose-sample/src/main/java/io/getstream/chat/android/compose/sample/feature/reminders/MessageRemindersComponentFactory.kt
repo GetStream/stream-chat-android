@@ -51,7 +51,7 @@ class MessageRemindersComponentFactory(
      * Creates a header for the message item, enhancing it with reminder information (if available).
      */
     @Composable
-    override fun ColumnScope.MessageItemHeaderContent(
+    override fun ColumnScope.MessageTop(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
         onReactionsClick: (Message) -> Unit,
@@ -67,10 +67,10 @@ class MessageRemindersComponentFactory(
                     // Display the reminder status label
                     MessageReminderStatusLabel(reminder.remindAt)
                     // Call the default header content
-                    MessageItemHeaderContent(messageItem, reactionSorting, onReactionsClick)
+                    MessageTop(messageItem, reactionSorting, onReactionsClick)
                 }
             } else {
-                MessageItemHeaderContent(messageItem, reactionSorting, onReactionsClick)
+                MessageTop(messageItem, reactionSorting, onReactionsClick)
             }
         }
     }

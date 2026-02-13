@@ -21,28 +21,6 @@
 
 ### ❌ Removed
 
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 

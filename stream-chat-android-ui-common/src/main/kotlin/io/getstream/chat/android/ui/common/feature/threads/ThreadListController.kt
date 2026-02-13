@@ -18,10 +18,10 @@ package io.getstream.chat.android.ui.common.feature.threads
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.state.QueryThreadsState
+import io.getstream.chat.android.client.api.state.queryThreadsAsState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.state.extensions.queryThreadsAsState
-import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -151,7 +151,10 @@ private fun CustomMessageComposer(
                 onAttachmentRemoved = { composerViewModel.removeSelectedAttachment(it) },
                 onCancelAction = { composerViewModel.dismissMessageActions() },
                 onSendClick = onSendClick,
-                recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
+                recordingActions = AudioRecordingActions.defaultActions(
+                    viewModel = composerViewModel,
+                    sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                ),
                 modifier = Modifier
                     .padding(horizontal = 10.dp)
                     .align(Alignment.CenterVertically),

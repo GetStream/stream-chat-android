@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -99,7 +100,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalStateFlow
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope

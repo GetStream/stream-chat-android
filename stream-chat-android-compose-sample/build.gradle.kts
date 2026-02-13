@@ -130,7 +130,6 @@ tasks.withType<KotlinCompile> {
 
 dependencies {
     implementation(project(":stream-chat-android-compose"))
-    implementation(project(":stream-chat-android-offline"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -3,8 +3,7 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.models.Channel
@@ -12,11 +11,9 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.result.Result
-import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -28,28 +25,15 @@ class AndroidIntroduction {
     fun chatClient(applicationContext: Context) {
         val apiKey = "{{ api_key }}"
         val token = "{{ chat_user_token }}"
-        // Step 1 - Set up the OfflinePlugin for offline storage
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            appContext = applicationContext,
-        )
 
-        val statePluginFactory = StreamStatePluginFactory(
-            config = StatePluginConfig(
-                backgroundSyncEnabled = false,
-                userPresence = true,
-            ),
-            appContext = applicationContext
-        )
-
-        // Step 2 - Set up the client, together with offline plugin, for API calls
+        // Step 1 - Set up the client
         val client = ChatClient.Builder(apiKey, applicationContext)
             // Change log level
             .logLevel(ChatLogLevel.ALL)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 
-        // Step 3 - Authenticate and connect the user
+        // Step 2 - Authenticate and connect the user
         val user = User(
             id = "summer-brook-2",
             name = "Paranoid Android",

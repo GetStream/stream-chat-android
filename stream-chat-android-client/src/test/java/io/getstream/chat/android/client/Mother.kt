@@ -587,8 +587,8 @@ internal object Mother {
         offset: Int = randomInt(),
         limit: Int = randomInt(),
         querySort: QuerySorter<Channel> = QuerySortByField(),
-        messageLimit: Int = randomInt(),
-        memberLimit: Int = randomInt(),
+        messageLimit: Int? = randomInt(),
+        memberLimit: Int? = randomInt(),
     ): QueryChannelsRequest {
         return QueryChannelsRequest(
             filter = filter,

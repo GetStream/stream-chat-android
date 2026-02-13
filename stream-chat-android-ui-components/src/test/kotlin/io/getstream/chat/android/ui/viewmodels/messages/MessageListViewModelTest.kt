@@ -17,8 +17,13 @@
 package io.getstream.chat.android.ui.viewmodels.messages
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -32,11 +37,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.InstantTaskExecutorExtension
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -280,7 +280,7 @@ internal class MessageListViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = MockChatClientBuilder().build(),
         private val channelId: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig(),
+        stateConfig: StateConfig = StateConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
@@ -292,7 +292,7 @@ internal class MessageListViewModelTest {
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
-            whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(statePluginFactory.resolveDependency(eq(StateConfig::class))) doReturn stateConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState

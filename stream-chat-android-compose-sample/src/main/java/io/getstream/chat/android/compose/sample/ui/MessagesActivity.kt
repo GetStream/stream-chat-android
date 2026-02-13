@@ -75,7 +75,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
-import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -147,7 +146,6 @@ class MessagesActivity : ComponentActivity() {
                     mentionStyleFactory = CustomMentionStyleFactory(colors.primaryAccent),
                 ),
             )
-        val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
@@ -172,7 +170,6 @@ class MessagesActivity : ComponentActivity() {
             messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                 optionVisibility = MessageOptionItemVisibility(),
             ),
-            ownMessageTheme = ownMessageTheme,
         ) {
             SetupContent()
         }
@@ -359,7 +356,10 @@ class MessagesActivity : ComponentActivity() {
                         val message = composerViewModel.buildNewMessage(input, attachments)
                         composerViewModel.sendMessage(message)
                     },
-                    recordingActions = AudioRecordingActions.defaultActions(composerViewModel),
+                    recordingActions = AudioRecordingActions.defaultActions(
+                        viewModel = composerViewModel,
+                        sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete,
+                    ),
                     centerContent = { modifier -> ComposerTextInput(modifier, composerState) },
                     trailingContent = { ComposerTrailingIcon() },
                 )

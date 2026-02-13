@@ -180,10 +180,10 @@ end
 
 private_lane :sources_matrix do
   {
-    unit: ['stream-chat-android-test', 'stream-chat-android-client', 'stream-chat-android-compose/', 'stream-chat-android-core', 'stream-chat-android-markdown-transformer', 'stream-chat-android-offline', 'stream-chat-android-state', 'stream-chat-android-ui-common', 'stream-chat-android-ui-components/'],
+    unit: ['stream-chat-android-test', 'stream-chat-android-client', 'stream-chat-android-compose/', 'stream-chat-android-core', 'stream-chat-android-markdown-transformer', 'stream-chat-android-ui-common', 'stream-chat-android-ui-components/'],
     ui: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
     e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-test'],
-    sonar: ['stream-chat-android-client/', 'stream-chat-android-compose/', 'stream-chat-android-core/', 'stream-chat-android-markdown-transformer/', 'stream-chat-android-offline/', 'stream-chat-android-state/', 'stream-chat-android-ui-common/', 'stream-chat-android-ui-components/'],
+    sonar: ['stream-chat-android-client/', 'stream-chat-android-compose/', 'stream-chat-android-core/', 'stream-chat-android-markdown-transformer/', 'stream-chat-android-ui-common/', 'stream-chat-android-ui-components/'],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
 end

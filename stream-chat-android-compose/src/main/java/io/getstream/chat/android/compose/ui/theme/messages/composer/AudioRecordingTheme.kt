@@ -35,7 +35,6 @@ import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 
 /**
  * Represents the theme for the audio recording component.
@@ -175,7 +174,6 @@ public data class AudioRecordingTheme(
                     timerTextStyle = typography.body.copy(
                         color = colors.textLowEmphasis,
                     ),
-                    waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
                     waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
                 ),
                 controls = AudioRecordingControlsTheme(
@@ -339,7 +337,6 @@ public data class AudioRecordingPlaybackTheme(
     val playButton: IconContainerStyle,
     val pauseButton: IconContainerStyle,
     val timerTextStyle: TextStyle,
-    val waveformSliderStyle: WaveformSliderStyle,
     val waveformSliderPadding: ComponentPadding,
 )
 

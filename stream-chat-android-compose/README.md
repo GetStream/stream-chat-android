@@ -1,6 +1,6 @@
 # Stream Chat Android Compose UI Components
 
-This module contains reusable UI components built in Jetpack Compose, which you can use in combination with the [offline support](../stream-chat-android-offline) library. See the [Compose UI Components documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/) for more info.
+This module contains reusable UI components built in Jetpack Compose. See the [Compose UI Components documentation](https://getstream.io/chat/docs/sdk/android/compose/overview/) for more info.
 
 > Not using Compose yet? Check out the [UI Components](../stream-chat-android-ui-components) library built with XML layouts!
 

@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -44,13 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
@@ -170,56 +166,6 @@ internal fun DefaultMessageComposerLeadingContent(
 }
 
 private const val OpenAttachmentPickerButtonRotation = 225f
-
-@Suppress("LongParameterList")
-@Composable
-internal fun RowScope.DefaultMessageComposerInput(
-    messageComposerState: MessageComposerState,
-    onValueChange: (String) -> Unit,
-    onAttachmentRemoved: (Attachment) -> Unit,
-    onLinkPreviewClick: ((LinkPreview) -> Unit)?,
-    onCancelAction: () -> Unit,
-    onCancelLinkPreviewClick: (() -> Unit)? = null,
-    onSendClick: (String, List<Attachment>) -> Unit,
-    recordingActions: AudioRecordingActions,
-    leadingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputLeadingContent(
-            state = messageComposerState,
-        )
-    },
-    centerContent: @Composable (modifier: Modifier) -> Unit = { modifier ->
-        ChatTheme.componentFactory.MessageComposerInputCenterContent(
-            state = messageComposerState,
-            onValueChange = onValueChange,
-            modifier = modifier,
-        )
-    },
-    trailingContent: @Composable RowScope.() -> Unit = {
-        ChatTheme.componentFactory.MessageComposerInputTrailingContent(
-            state = messageComposerState,
-            recordingActions = recordingActions,
-            onSendClick = onSendClick,
-        )
-    },
-) {
-    val isRecording = messageComposerState.recording !is RecordingState.Idle
-    if (!isRecording) {
-        MessageInput(
-            modifier = Modifier.weight(1f),
-            messageComposerState = messageComposerState,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            onCancelAction = onCancelAction,
-            onLinkPreviewClick = onLinkPreviewClick,
-            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
-            onSendClick = onSendClick,
-            recordingActions = recordingActions,
-            leadingContent = leadingContent,
-            centerContent = centerContent,
-            trailingContent = trailingContent,
-        )
-    }
-}
 
 /**
  * Default implementation of the "Send" button.

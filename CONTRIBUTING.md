@@ -29,9 +29,7 @@ If you haven't already, make sure to read our [README](https://github.com/GetStr
 ### Important modules & files 🧱
 
 - `stream-chat-android-client`: Holds all the code connected to the **low-level-client**, used to request data from and send information to the API.
-- `stream-chat-android-offline`: As an addition to the **client** module, you can use **offline** to introduce persistence and caching to your app.
 - `stream-chat-android-ui-common`: Common UI-related code and utility functions.
-- `stream-chat-android-state`: Module that contains common state-related API and functionality, such as syncing and persisting state and various messages.
 
 - `stream-chat-android-compose-sample`: The main sample app featuring the Compose SDK.
 - `stream-chat-android-compose`: Our Compose SDK that features channels and messages components, as well as other utilities.

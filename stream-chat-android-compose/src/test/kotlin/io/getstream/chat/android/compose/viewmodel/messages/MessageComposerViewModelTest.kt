@@ -17,7 +17,12 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.StateConfig
+import io.getstream.chat.android.client.api.state.GlobalState
+import io.getstream.chat.android.client.api.state.StateRegistry
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.internal.state.plugin.factory.StreamStatePluginFactory
+import io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -33,11 +38,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomString
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
@@ -385,11 +385,21 @@ internal class MessageComposerViewModelTest {
             viewModel.input.value `should be equal to` "@Custom Mention "
         }
 
+    @Test
+    fun `Given message composer When startRecording is called Then delegates to controller`() {
+        val controller: MessageComposerController = mock()
+        val viewModel = MessageComposerViewModel(controller)
+
+        viewModel.startRecording()
+
+        verify(controller).startRecording()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        statePluginConfig: StatePluginConfig = StatePluginConfig(),
+        stateConfig: StateConfig = StateConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
@@ -420,7 +430,7 @@ internal class MessageComposerViewModelTest {
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
-            whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(statePluginFactory.resolveDependency(eq(StateConfig::class))) doReturn stateConfig
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
