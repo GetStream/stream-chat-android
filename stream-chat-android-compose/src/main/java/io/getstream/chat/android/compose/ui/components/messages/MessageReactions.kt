@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -41,6 +42,41 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
+
+/**
+ * Adaptive message reactions that use [SegmentedMessageReactions] by default, falling back to
+ * [ClusteredMessageReactions] when the segmented layout would exceed the available width.
+ *
+ * @param reactions The list of reactions to display.
+ * @param modifier Modifier for styling.
+ * @param onClick Handler when the user taps on the reaction pills.
+ */
+@Composable
+public fun AdaptiveMessageReactions(
+    reactions: List<MessageReactionItemState>,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    SubcomposeLayout { constraints ->
+        val segmented = subcompose("segmented") {
+            SegmentedMessageReactions(modifier = modifier, reactions = reactions, onClick = onClick)
+        }.first().measure(constraints.copy(minWidth = 0))
+
+        if (segmented.width > constraints.maxWidth) {
+            val clustered = subcompose("clustered") {
+                ClusteredMessageReactions(modifier = modifier, reactions = reactions, onClick = onClick)
+            }.first().measure(constraints.copy(minWidth = 0))
+
+            layout(clustered.width, clustered.height) {
+                clustered.place(0, 0)
+            }
+        } else {
+            layout(segmented.width, segmented.height) {
+                segmented.place(0, 0)
+            }
+        }
+    }
+}
 
 /**
  * Represents a reaction bubble with a list of reactions this message has.
@@ -94,9 +130,64 @@ public fun ClusteredMessageReactions(
     }
 }
 
+/**
+ * Represents a segmented reaction layout where each reaction gets its own pill with an individual count.
+ *
+ * @param reactions The list of reactions to display.
+ * @param modifier Modifier for styling.
+ * @param onClick Handler when the user taps on the reaction pills.
+ */
+@Composable
+public fun SegmentedMessageReactions(
+    reactions: List<MessageReactionItemState>,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    val description = pluralStringResource(
+        R.plurals.stream_ui_message_list_semantics_message_reactions,
+        reactions.size,
+        reactions.size,
+    )
+    val colors = ChatTheme.colors
+
+    Row(
+        modifier = modifier.semantics {
+            testTag = "Stream_MessageReaction"
+            contentDescription = description
+        },
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        reactions.forEach {
+            Row(
+                modifier = Modifier
+                    .background(colors.barsBackground, CircleShape)
+                    .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
+                    .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
+                    .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+            ) {
+                ChatTheme.componentFactory.ReactionIcon(
+                    type = it.type,
+                    emoji = it.emoji,
+                    size = ReactionIconSize.Small,
+                    modifier = Modifier,
+                )
+                if (it.count > 1) {
+                    Text(
+                        text = it.count.toString(),
+                        style = ChatTheme.typography.numericMedium,
+                        color = colors.textPrimary,
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
-private fun OneMessageReactionPreview() {
+private fun SingleClusteredMessageReactionsPreview() {
     ChatTheme {
         ClusteredMessageReactions(reactions = PreviewReactionData.oneReaction())
     }
@@ -104,8 +195,24 @@ private fun OneMessageReactionPreview() {
 
 @Preview
 @Composable
-private fun ManyMessageReactionsPreview() {
+private fun MultipleClusteredMessageReactionsPreview() {
     ChatTheme {
         ClusteredMessageReactions(reactions = PreviewReactionData.manyReactions())
+    }
+}
+
+@Preview
+@Composable
+private fun SingleSegmentedMessageReactionsPreview() {
+    ChatTheme {
+        SegmentedMessageReactions(reactions = PreviewReactionData.oneReaction())
+    }
+}
+
+@Preview
+@Composable
+private fun MultipleSegmentedMessageReactionsPreview() {
+    ChatTheme {
+        SegmentedMessageReactions(reactions = PreviewReactionData.manyReactions())
     }
 }
