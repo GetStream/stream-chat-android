@@ -52,7 +52,6 @@ include (
 		":stream-chat-android-ui-components",
 		":stream-chat-android-ui-components-sample",
 		":stream-chat-android-ui-guides",
-        ":stream-chat-android-offline",
 		":stream-chat-android-client",
 		":stream-chat-android-client-test",
 		":stream-chat-android-core",

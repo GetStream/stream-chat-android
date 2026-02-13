@@ -32,7 +32,6 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
@@ -95,8 +94,6 @@ class ChatInitializer(
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
-        val offlinePlugin = StreamOfflinePluginFactory(context)
-
         val stateConfig = StateConfig(
             backgroundSyncEnabled = false,
             userPresence = true,
@@ -106,7 +103,6 @@ class ChatInitializer(
             .loggerHandler(FirebaseLogger)
             .notifications(notificationConfig, notificationHandler)
             .logLevel(logLevel)
-            .withPlugins(offlinePlugin)
             .stateConfig(stateConfig)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .apply {
