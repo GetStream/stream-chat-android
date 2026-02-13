@@ -130,15 +130,6 @@ public data class AudioRecordingTheme(
                 ),
                 playback = AudioRecordingPlaybackTheme(
                     height = 48.dp,
-                    micIndicator = IconContainerStyle(
-                        size = ComponentSize.square(32.dp),
-                        padding = ComponentPadding.all(4.dp),
-                        icon = IconStyle(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                            tint = colors.errorAccent,
-                            size = ComponentSize.square(24.dp),
-                        ),
-                    ),
                     playButton = IconContainerStyle(
                         size = ComponentSize.square(32.dp),
                         padding = ComponentPadding.all(4.dp),
@@ -156,9 +147,6 @@ public data class AudioRecordingTheme(
                             tint = colors.primaryAccent,
                             size = ComponentSize.square(24.dp),
                         ),
-                    ),
-                    timerTextStyle = typography.body.copy(
-                        color = colors.textLowEmphasis,
                     ),
                     waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
                 ),
@@ -295,19 +283,14 @@ public data class AudioRecordingHoldToRecordTheme(
  * Represents the theme for the audio recording playback component.
  *
  * @property height The height of the playback component.
- * @property micIndicator The style for the mic indicator.
  * @property playButton The style for the play button.
  * @property pauseButton The style for the pause button.
- * @property timerTextStyle The text style for the timer.
- * @property waveformSliderStyle The style for the waveform slider.
  * @property waveformSliderPadding The padding for the waveform slider.
  */
 public data class AudioRecordingPlaybackTheme(
     val height: Dp,
-    val micIndicator: IconContainerStyle,
     val playButton: IconContainerStyle,
     val pauseButton: IconContainerStyle,
-    val timerTextStyle: TextStyle,
     val waveformSliderPadding: ComponentPadding,
 )
 
