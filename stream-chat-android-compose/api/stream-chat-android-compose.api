@@ -4145,16 +4145,14 @@ public final class io/getstream/chat/android/compose/ui/theme/TextContainerStyle
 public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion;
-	public fun <init> (ZZZ)V
+	public fun <init> (ZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
-	public final fun component3 ()Z
-	public final fun copy (ZZZ)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public final fun copy (ZZ)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEnabled ()Z
 	public final fun getSendOnComplete ()Z
-	public final fun getShowRecordButtonOverSend ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
