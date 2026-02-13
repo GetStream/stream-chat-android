@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.internal.offline.repository.database.co
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
-import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadParticipantEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.UserMuteEntity
 
 @OptIn(ExperimentalStdlibApi::class)

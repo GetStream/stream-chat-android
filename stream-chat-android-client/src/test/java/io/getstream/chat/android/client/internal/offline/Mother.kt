@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.internal.offline.repository.domain.messa
 import io.getstream.chat.android.client.internal.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadEntity
-import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadParticipantEntity
+import io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal.ThreadParticipantEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.DeliveryReceiptsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.user.internal.ReadReceiptsEntity
