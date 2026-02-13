@@ -38,6 +38,7 @@ import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.concurrent.ConcurrentHashMap
 
@@ -46,24 +47,24 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @param userStateFlow The state flow that provides the user once it is set.
  * @param latestUsers Latest users of the SDK.
- * @param mutedUsers The current list of muted user.
  * @param activeLiveLocations Latest live locations of the SDK.
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
  * @param messageLimitConfig Configuration for message limits.
+ * @param mutedUsers The current list of muted users.
  * @param useLegacyChannelState Whether to use the legacy channel state implementation.
  */
 @Suppress("LongParameterList")
-public class StateRegistry(
+public class StateRegistry @JvmOverloads constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
-    private val mutedUsers: StateFlow<List<Mute>>,
     private val activeLiveLocations: StateFlow<List<Location>>,
     private val job: Job,
     private val now: () -> Long,
     private val scope: CoroutineScope,
     private val messageLimitConfig: MessageLimitConfig,
-    private val useLegacyChannelState: Boolean,
+    private val mutedUsers: StateFlow<List<Mute>> = MutableStateFlow(emptyList()),
+    private val useLegacyChannelState: Boolean = true,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")

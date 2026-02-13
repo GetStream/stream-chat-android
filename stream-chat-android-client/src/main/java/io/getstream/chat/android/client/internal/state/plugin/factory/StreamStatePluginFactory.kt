@@ -103,12 +103,12 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry(
             userStateFlow = clientState.user,
             latestUsers = repositoryFacade.observeLatestUsers(),
-            mutedUsers = mutableGlobalState.muted,
             activeLiveLocations = mutableGlobalState.activeLiveLocations,
             job = scope.coroutineContext.job,
             now = config.now,
             scope = scope,
             messageLimitConfig = config.messageLimitConfig,
+            mutedUsers = mutableGlobalState.muted,
             useLegacyChannelState = config.useLegacyChannelLogic,
         )
 

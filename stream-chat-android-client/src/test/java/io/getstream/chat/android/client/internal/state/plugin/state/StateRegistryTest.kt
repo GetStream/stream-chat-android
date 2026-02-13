@@ -78,24 +78,24 @@ internal class StateRegistryTest {
         legacyStateRegistry = StateRegistry(
             userStateFlow = userStateFlow,
             latestUsers = latestUsers,
-            mutedUsers = mutedUsers,
             activeLiveLocations = activeLiveLocations,
             job = job,
             now = { System.currentTimeMillis() },
             scope = scope,
             messageLimitConfig = messageLimitConfig,
+            mutedUsers = mutedUsers,
             useLegacyChannelState = true,
         )
 
         stateRegistry = StateRegistry(
             userStateFlow = userStateFlow,
             latestUsers = latestUsers,
-            mutedUsers = mutedUsers,
             activeLiveLocations = activeLiveLocations,
             job = job,
             now = { System.currentTimeMillis() },
             scope = scope,
             messageLimitConfig = messageLimitConfig,
+            mutedUsers = mutedUsers,
             useLegacyChannelState = false,
         )
     }
