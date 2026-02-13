@@ -44,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * @property showRecordButtonOverSend Shows the record button over the send button.
  * @property recordButton The style for the record button.
  * @property floatingIcons The theme for the floating icons.
- * @property slideToCancel The theme for the slide to cancel component.
  * @property playback The theme for the audio recording playback component.
  * @property controls The theme for the audio recording controls component.
  * @property holdToRecord The theme for the hold to record component.
@@ -56,7 +55,6 @@ public data class AudioRecordingTheme(
     val showRecordButtonOverSend: Boolean,
     val recordButton: IconContainerStyle,
     val floatingIcons: AudioRecordingFloatingIconsTheme,
-    val slideToCancel: AudioRecordingSlideToCancelTheme,
     val playback: AudioRecordingPlaybackTheme,
     val controls: AudioRecordingControlsTheme,
     val holdToRecord: AudioRecordingHoldToRecordTheme,
@@ -85,18 +83,6 @@ public data class AudioRecordingTheme(
                         tint = colors.textLowEmphasis,
                         size = ComponentSize.square(24.dp),
                     ),
-                ),
-                slideToCancel = AudioRecordingSlideToCancelTheme(
-                    textStyle = typography.body.copy(
-                        color = colors.textLowEmphasis,
-                    ),
-                    iconStyle = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
-                        tint = colors.textLowEmphasis,
-                        size = ComponentSize.square(24.dp),
-                    ),
-                    marginEnd = 96.dp,
-                    threshold = 96.dp,
                 ),
                 floatingIcons = AudioRecordingFloatingIconsTheme(
                     mic = AudioRecordingFloatingIconStyle(
@@ -303,21 +289,6 @@ public data class AudioRecordingHoldToRecordTheme(
     val contentHeight: Dp,
     val contentPadding: ComponentPadding,
     val textStyle: TextStyle,
-)
-
-/**
- * Represents the theme for the slide to cancel component.
- *
- * @property textStyle The text style for the slide to cancel text.
- * @property iconStyle The style for the slide to cancel icon.
- * @property marginEnd The margin end for the slide to cancel component.
- * @property threshold The threshold for the slide to cancel component.
- */
-public data class AudioRecordingSlideToCancelTheme(
-    val textStyle: TextStyle,
-    val iconStyle: IconStyle,
-    val marginEnd: Dp,
-    val threshold: Dp,
 )
 
 /**

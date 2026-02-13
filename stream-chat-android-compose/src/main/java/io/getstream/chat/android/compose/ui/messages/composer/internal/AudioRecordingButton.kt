@@ -285,9 +285,7 @@ private fun MicButtonGestureArea(
 
     val density = LocalDensity.current
     val gestureConfig = RecordingGestureConfig(
-        cancelThresholdPx = with(density) {
-            ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx()
-        },
+        cancelThresholdPx = with(density) { SlideToCancelThreshold.toPx() },
         lockThresholdPx = with(density) {
             ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
         },
