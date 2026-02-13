@@ -1927,20 +1927,24 @@ public interface ChatComponentFactory {
      * The content displayed in the message composer when the recording is locked (finger released while
      * recording continues).
      *
-     * Shows a mic indicator icon, a live recording timer, and a growing waveform visualization.
+     * Shows a mic indicator icon, a live recording timer, a growing waveform visualization, and
+     * control buttons (delete, stop, complete) below.
      *
      * Override this method to provide a fully custom locked-recording UI.
      *
      * @param state The current [RecordingState.Locked] containing the recording duration and waveform data.
+     * @param recordingActions Actions to control the recording (delete, stop, confirm).
      * @param modifier Modifier applied to the content container.
      */
     @Composable
     public fun MessageComposerAudioRecordingLockedContent(
         state: RecordingState.Locked,
+        recordingActions: AudioRecordingActions,
         modifier: Modifier,
     ) {
         io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingLockedContent(
             state = state,
+            recordingActions = recordingActions,
             modifier = modifier,
         )
     }
@@ -1949,12 +1953,13 @@ public interface ChatComponentFactory {
      * The content displayed in the message composer when the recording is stopped and the user
      * can scrub the waveform and play back before sending.
      *
-     * Shows a play/pause button, a timer, and an interactive waveform scrubber.
+     * Shows a play/pause button, a timer, an interactive waveform scrubber, and control buttons
+     * (delete, complete) below.
      *
      * Override this method to provide a fully custom recording-overview UI.
      *
      * @param state The current [RecordingState.Overview] containing waveform data and playback progress.
-     * @param recordingActions Actions to control playback (toggle play/pause, drag start/stop).
+     * @param recordingActions Actions to control playback (toggle play/pause, drag start/stop, delete, confirm).
      * @param modifier Modifier applied to the content container.
      */
     @Composable
