@@ -85,6 +85,7 @@ dependencies {
     api(libs.stream.push.permissions)
     implementation(libs.itu.date.version)
     implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
     implementation(libs.retrofit.converter.moshi)
     ksp(libs.moshi.codegen)
     implementation(libs.okhttp.logging.interceptor)

@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.models.User;
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/overview/">Getting Started</a>
@@ -39,21 +38,6 @@ public class GettingStarted {
                 .withPlugins(
                         //Add the desired plugin factories here
                 )
-                .build();
-    }
-
-    public void addingTheOfflinePlugin(String apiKey, Context context) {
-        // Create an offline plugin factory
-        StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
-
-        // Enable background sync which syncs user actions performed while offline
-        boolean backgroundSyncEnabled = true;
-        // Enable tracking online states for users
-        boolean userPresence = true;
-
-        new ChatClient.Builder(apiKey, context)
-                // Add both the state and offline plugin factories to the chat client
-                .withPlugins(offlinePluginFactory)
                 .build();
     }
 

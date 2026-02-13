@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.result.Result
 
 /**
@@ -35,16 +34,6 @@ class GettingStarted {
             .withPlugins(
                 //Add the desired plugin factories here
             )
-            .build()
-    }
-
-    fun addingTheOfflinePlugin(apiKey: String, context: Context) {
-        // Create an offline plugin factory
-        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = context)
-
-        ChatClient.Builder(apiKey, context)
-            // Add both the state and offline plugin factories to the chat client
-            .withPlugins(offlinePluginFactory)
             .build()
     }
 
