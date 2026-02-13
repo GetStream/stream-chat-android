@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,6 +65,7 @@ internal fun AudioRecordingContent(
         )
         is RecordingState.Locked -> ChatTheme.componentFactory.MessageComposerAudioRecordingLockedContent(
             state = recordingState,
+            recordingActions = recordingActions,
             modifier = modifier,
         )
         is RecordingState.Overview -> ChatTheme.componentFactory.MessageComposerAudioRecordingOverviewContent(
@@ -116,49 +118,57 @@ internal fun MessageComposerAudioRecordingHoldContent(
     }
 }
 
-/** Recording locked (finger released): waveform grows as recording continues. */
+/** Recording locked (finger released): waveform grows as recording continues, controls below. */
 @Composable
 internal fun MessageComposerAudioRecordingLockedContent(
     state: RecordingState.Locked,
+    recordingActions: AudioRecordingActions,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-            contentDescription = null,
-            tint = ChatTheme.colors.errorAccent,
-        )
-
-        PlaybackTimerText(
-            progress = 1f,
-            durationInMs = state.durationInMs,
-            color = ChatTheme.colors.textPrimary,
-            countdown = false,
-        )
-
-        StaticWaveformSlider(
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
-            waveformData = state.waveform,
-            progress = 1f,
-            isPlaying = false,
-            visibleBarLimit = 100,
-            adjustBarWidthToLimit = true,
-            isThumbVisible = false,
-            onDragStart = {},
-            onDrag = {},
-            onDragStop = {},
+                .fillMaxWidth()
+                .height(48.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent,
+            )
+
+            PlaybackTimerText(
+                progress = 1f,
+                durationInMs = state.durationInMs,
+                color = ChatTheme.colors.textPrimary,
+                countdown = false,
+            )
+
+            StaticWaveformSlider(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
+                waveformData = state.waveform,
+                progress = 1f,
+                isPlaying = false,
+                visibleBarLimit = 100,
+                adjustBarWidthToLimit = true,
+                isThumbVisible = false,
+                onDragStart = {},
+                onDrag = {},
+                onDragStop = {},
+            )
+        }
+
+        ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
+            isStopVisible = true,
+            recordingActions = recordingActions,
         )
     }
 }
 
-/** Recording stopped: user can scrub the waveform and play back before sending. */
+/** Recording stopped: user can scrub the waveform and play back before sending, controls below. */
 @Composable
 internal fun MessageComposerAudioRecordingOverviewContent(
     state: RecordingState.Overview,
@@ -170,47 +180,54 @@ internal fun MessageComposerAudioRecordingOverviewContent(
         currentProgress = state.playingProgress
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val playbackIcon = if (state.isPlaying) {
-            R.drawable.stream_compose_ic_pause
-        } else {
-            R.drawable.stream_compose_ic_play
-        }
-        IconButton(
-            onClick = recordingActions.onToggleRecordingPlayback,
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painter = painterResource(id = playbackIcon),
-                contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+            val playbackIcon = if (state.isPlaying) {
+                R.drawable.stream_compose_ic_pause
+            } else {
+                R.drawable.stream_compose_ic_play
+            }
+            IconButton(
+                onClick = recordingActions.onToggleRecordingPlayback,
+            ) {
+                Icon(
+                    painter = painterResource(id = playbackIcon),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.primaryAccent,
+                )
+            }
+
+            PlaybackTimerText(
+                progress = currentProgress,
+                durationInMs = state.durationInMs,
+                color = ChatTheme.colors.textPrimary,
+                countdown = false,
+            )
+
+            StaticWaveformSlider(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
+                waveformData = state.waveform,
+                progress = currentProgress,
+                isPlaying = state.isPlaying,
+                visibleBarLimit = 100,
+                adjustBarWidthToLimit = true,
+                isThumbVisible = true,
+                onDragStart = { currentProgress = it.also(recordingActions.onRecordingSliderDragStart) },
+                onDrag = { currentProgress = it },
+                onDragStop = { currentProgress = it.also(recordingActions.onRecordingSliderDragStop) },
             )
         }
 
-        PlaybackTimerText(
-            progress = currentProgress,
-            durationInMs = state.durationInMs,
-            color = ChatTheme.colors.textPrimary,
-            countdown = false,
-        )
-
-        StaticWaveformSlider(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
-            waveformData = state.waveform,
-            progress = currentProgress,
-            isPlaying = state.isPlaying,
-            visibleBarLimit = 100,
-            adjustBarWidthToLimit = true,
-            isThumbVisible = true,
-            onDragStart = { currentProgress = it.also(recordingActions.onRecordingSliderDragStart) },
-            onDrag = { currentProgress = it },
-            onDragStop = { currentProgress = it.also(recordingActions.onRecordingSliderDragStop) },
+        ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
+            isStopVisible = false,
+            recordingActions = recordingActions,
         )
     }
 }

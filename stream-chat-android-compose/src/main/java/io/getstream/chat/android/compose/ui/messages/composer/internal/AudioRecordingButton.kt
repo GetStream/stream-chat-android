@@ -122,7 +122,6 @@ internal fun AudioRecordingButton(
     modifier: Modifier = Modifier,
 ) {
     val isRecording = recordingState !is RecordingState.Idle
-    val showControls = recordingState is RecordingState.Locked || recordingState is RecordingState.Overview
     val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
     val floatingMic = rememberFloatingMicState(recordingState)
 
@@ -142,13 +141,6 @@ internal fun AudioRecordingButton(
                 recordingActions = recordingActions,
                 floatingActive = floatingMic.isActive,
                 floatingOffset = floatingMic.floatingOffset,
-            )
-        }
-
-        if (showControls) {
-            ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
-                isStopVisible = recordingState is RecordingState.Locked,
-                recordingActions = recordingActions,
             )
         }
 
