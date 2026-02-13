@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -85,7 +84,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMo
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
@@ -141,7 +139,6 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemCenterContent
@@ -151,7 +148,6 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Defa
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
-import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
@@ -2275,7 +2271,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the full content of the SelectedReactionsMenu.
+     * Factory method for creating the menu displaying all the reactions on a message.
      *
      * @param modifier The modifier for the menu.
      * @param currentUser The current user.
@@ -2285,7 +2281,7 @@ public interface ChatComponentFactory {
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
-    public fun ReactionsMenu(
+    public fun MessageReactionsMenu(
         modifier: Modifier,
         currentUser: User?,
         message: Message,
@@ -2294,7 +2290,7 @@ public interface ChatComponentFactory {
         ownCapabilities: Set<String>,
         onDismiss: () -> Unit,
     ) {
-        SelectedReactionsMenu(
+        io.getstream.chat.android.compose.ui.components.selectedmessage.MessageReactionsMenu(
             modifier = modifier,
             currentUser = currentUser,
             message = message,
@@ -2306,46 +2302,31 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the header content of the SelectedReactionsMenu.
+     * Factory method for creating the content of the reactions menu.
      *
+     * @param modifier The modifier for the content.
+     * @param currentUser The current user.
      * @param message The selected message.
      * @param onMessageAction Callback for when a message action is clicked.
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
+     * @param ownCapabilities The capabilities of the current user.
      */
     @Composable
-    public fun ReactionsMenuHeaderContent(
+    public fun MessageReactionsMenuContent(
         modifier: Modifier,
+        currentUser: User?,
         message: Message,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
+        ownCapabilities: Set<String>,
     ) {
-        ReactionMenuOptions(
+        io.getstream.chat.android.compose.ui.components.selectedmessage.MessageReactionsMenuContent(
             modifier = modifier,
+            currentUser = currentUser,
             message = message,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            showMoreReactionsIcon = showMoreReactionsIcon,
-        )
-    }
-
-    /**
-     * Factory method for creating the center content of the reactions menu.
-     *
-     * @param modifier The modifier for the center content.
-     * @param userReactions The user reactions.
-     */
-    @Composable
-    public fun ReactionsMenuCenterContent(
-        modifier: Modifier,
-        userReactions: List<UserReactionItemState>,
-    ) {
-        UserReactions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
-                .padding(vertical = 16.dp),
-            items = userReactions,
+            ownCapabilities = ownCapabilities,
         )
     }
 

@@ -6,18 +6,16 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageReactionsMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -54,7 +52,7 @@ private object SelectedReactionsMenuUsageSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageReactionsMenu(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
@@ -111,7 +109,7 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageReactionsMenu(
                                 modifier = Modifier.align(Alignment.BottomCenter),
                                 // The currently logged-in user
                                 currentUser = user,
@@ -166,7 +164,7 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
                         if (selectedMessageState is SelectedMessageReactionsState) {
                             val selectedMessage = selectedMessageState.message
-                            SelectedReactionsMenu(
+                            MessageReactionsMenu(
                                 // Use a Modifier to customize the appearance
                                 modifier = Modifier
                                     .align(Alignment.Center)
@@ -178,8 +176,6 @@ private object SelectedReactionsMenuCustomizationSnippet {
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                                 // The message whose reactions you selected
                                 message = selectedMessage,
-                                // Assign a different shape to the Composable element
-                                shape = ChatTheme.shapes.attachment,
                                 onMessageAction = { action ->
                                     // Handle message action
                                 },
@@ -189,21 +185,6 @@ private object SelectedReactionsMenuCustomizationSnippet {
                                 onDismiss = {
                                     // Handle dismiss
                                 },
-                                // Custom header content
-                                headerContent = {
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(16.dp)
-                                            .background(
-                                                shape = ChatTheme.shapes.avatar,
-                                                color = ChatTheme.colors.infoAccent
-                                            )
-                                            .padding(horizontal = 8.dp),
-                                        style = ChatTheme.typography.body,
-                                        color = ChatTheme.colors.textHighEmphasis,
-                                        text = "User Reactions"
-                                    )
-                                }
                             )
                         }
                     }

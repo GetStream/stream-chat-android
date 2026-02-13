@@ -64,8 +64,8 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageReactionsMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -293,12 +293,11 @@ class MessagesActivity : ComponentActivity() {
                     }
 
                     is SelectedMessageReactionsState -> {
-                        SelectedReactionsMenu(
+                        MessageReactionsMenu(
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .padding(horizontal = 20.dp)
                                 .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
                             message = selectedMessage,
                             currentUser = user,
                             onMessageAction = { action ->
