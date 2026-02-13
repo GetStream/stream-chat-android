@@ -83,8 +83,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlinx.coroutines.CoroutineScope
@@ -230,7 +228,6 @@ private fun MicButton(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
 
     Box(modifier = modifier) {
         MicButtonGestureArea(
@@ -250,7 +247,7 @@ private fun MicButton(
                 MicButtonVisual(
                     interactionSource = interactionSource,
                     isPressed = true,
-                    modifier = Modifier.size(style.size),
+                    modifier = Modifier.size(MicButtonSize),
                 )
             }
         }
@@ -282,12 +279,11 @@ private fun MicButtonGestureArea(
 
     PressInteractionEffect(isFingerDown, pressOffset, interactionSource)
 
-    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
     Box(
         modifier = Modifier
-            .run { if (isVisible) size(style.size) else size(0.dp) }
+            .run { if (isVisible) size(MicButtonSize) else size(0.dp) }
             .semantics { contentDescription = buttonDescription }
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -359,11 +355,9 @@ private fun MicButtonVisual(
     isPressed: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
-    val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
     val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = modifier
-            .padding(style.padding)
             .clip(CircleShape)
             .indication(
                 interactionSource = interactionSource,
@@ -383,9 +377,8 @@ private fun MicButtonVisual(
         Icon(
             modifier = Modifier
                 .mirrorRtl(layoutDirection = layoutDirection)
-                .size(style.icon.size)
                 .testTag("Stream_ComposerRecordAudioButton"),
-            painter = style.icon.painter,
+            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
             contentDescription = stringResource(R.string.stream_compose_record_audio_message),
         )
     }
@@ -418,6 +411,9 @@ private fun rememberRecordingHint(): RecordingHintState {
 }
 
 private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
+
+/** Size of the mic button container / hit area. */
+private val MicButtonSize = 48.dp
 
 /** Vertical drag distance required to lock the recording. */
 private val LockThreshold = 96.dp

@@ -65,7 +65,7 @@ public data class MessageComposerTheme(
             return MessageComposerTheme(
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
-                audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
+                audioRecording = AudioRecordingTheme.defaultTheme(),
                 attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }

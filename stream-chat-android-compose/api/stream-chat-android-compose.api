@@ -4145,16 +4145,14 @@ public final class io/getstream/chat/android/compose/ui/theme/TextContainerStyle
 public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion;
-	public fun <init> (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;)V
+	public fun <init> (ZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
-	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public final fun copy (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public final fun copy (ZZZ)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEnabled ()Z
-	public final fun getRecordButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun getSendOnComplete ()Z
 	public final fun getShowRecordButtonOverSend ()Z
 	public fun hashCode ()I
@@ -4162,7 +4160,7 @@ public final class io/getstream/chat/android/compose/ui/theme/messages/composer/
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion {
-	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public final fun defaultTheme ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme {
