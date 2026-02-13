@@ -21,12 +21,10 @@ package io.getstream.chat.android.compose.ui.theme.messages.composer
  *
  * @property enabled If the audio recording is enabled.
  * @property sendOnComplete Sends the recording on "Complete" button click.  If false, attaches it for manual sending.
- * @property showRecordButtonOverSend Shows the record button over the send button.
  */
 public data class AudioRecordingTheme(
     val enabled: Boolean,
     val sendOnComplete: Boolean,
-    val showRecordButtonOverSend: Boolean,
 ) {
 
     public companion object {
@@ -34,7 +32,6 @@ public data class AudioRecordingTheme(
             return AudioRecordingTheme(
                 enabled = false,
                 sendOnComplete = true,
-                showRecordButtonOverSend = false,
             )
         }
     }
