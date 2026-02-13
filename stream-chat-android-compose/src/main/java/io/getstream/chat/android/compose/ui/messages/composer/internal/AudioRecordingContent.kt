@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions") // Composable UI file: main components + private helpers + previews.
+
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.foundation.layout.Box
@@ -40,15 +42,18 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlin.math.abs
 
@@ -262,3 +267,67 @@ private fun RecordingSlideToCancelIndicator(
 
 /** Drag distance at which the recording is cancelled. */
 internal val SlideToCancelThreshold = 96.dp
+
+private const val PreviewDurationInMs = 120_000
+
+@Suppress("MagicNumber")
+private val PreviewWaveformData = (0..10).map {
+    listOf(0.5f, 0.8f, 0.3f, 0.6f, 0.4f, 0.7f, 0.2f, 0.9f, 0.1f)
+}.flatten()
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioRecordingHoldContentPreview() {
+    ChatPreviewTheme {
+        AudioRecordingHoldContent()
+    }
+}
+
+@Composable
+internal fun AudioRecordingHoldContent() {
+    MessageComposerAudioRecordingHoldContent(
+        state = RecordingState.Hold(
+            durationInMs = PreviewDurationInMs,
+            waveform = PreviewWaveformData,
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioRecordingLockedContentPreview() {
+    ChatPreviewTheme {
+        AudioRecordingLockedContent()
+    }
+}
+
+@Composable
+internal fun AudioRecordingLockedContent() {
+    MessageComposerAudioRecordingLockedContent(
+        state = RecordingState.Locked(
+            durationInMs = PreviewDurationInMs,
+            waveform = PreviewWaveformData,
+        ),
+        recordingActions = AudioRecordingActions.None,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioRecordingOverviewContentPreview() {
+    ChatPreviewTheme {
+        AudioRecordingOverviewContent()
+    }
+}
+
+@Composable
+internal fun AudioRecordingOverviewContent() {
+    MessageComposerAudioRecordingOverviewContent(
+        state = RecordingState.Overview(
+            durationInMs = PreviewDurationInMs,
+            waveform = PreviewWaveformData,
+            attachment = Attachment(),
+        ),
+        recordingActions = AudioRecordingActions.None,
+    )
+}
