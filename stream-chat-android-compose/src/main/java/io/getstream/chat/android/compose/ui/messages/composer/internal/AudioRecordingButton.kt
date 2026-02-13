@@ -27,7 +27,6 @@ import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,8 +36,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarData
@@ -60,6 +57,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -83,7 +81,6 @@ import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecor
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingFloatingIconStyle
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
@@ -125,7 +122,7 @@ internal fun AudioRecordingButton(
     val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
     val floatingMic = rememberFloatingMicState(recordingState)
 
-    Column(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
+    Box(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
         Row(verticalAlignment = Alignment.Bottom) {
             if (isRecording) {
                 AudioRecordingContent(
@@ -136,18 +133,18 @@ internal fun AudioRecordingButton(
             }
 
             MicButton(
-                isVisible = floatingMic.isMicVisible,
+                isVisible = floatingMic.isVisible,
                 recordingState = recordingState,
                 recordingActions = recordingActions,
-                floatingActive = floatingMic.isActive,
-                floatingOffset = floatingMic.floatingOffset,
+                floatingActive = floatingMic.isFloating,
+                floatingOffset = floatingMic.offset,
             )
         }
 
         if (showFloatingIcons) {
             FloatingLockIcon(
                 isLocked = recordingState is RecordingState.Locked,
-                holdControlsOffset = floatingMic.holdOffset,
+                dragOffsetY = floatingMic.offset.y,
             )
         }
     }
@@ -157,12 +154,15 @@ internal fun AudioRecordingButton(
  * Encapsulates the floating mic button animation state:
  * - Tracks hold → idle transitions to trigger spring-back animation.
  * - Keeps the mic button sized during spring-back so the Popup anchor stays stable.
+ *
+ * @property isFloating `true` when the mic is being dragged or spring-animating back (show as Popup).
+ * @property isVisible `true` when the mic button should have layout size (Idle, Hold, or spring-back).
+ * @property offset Current animated offset — follows the drag during Hold, spring-animates to zero on release.
  */
 private class FloatingMicState(
-    val isActive: Boolean,
-    val isMicVisible: Boolean,
-    val holdOffset: IntOffset,
-    val floatingOffset: IntOffset,
+    val isFloating: Boolean,
+    val isVisible: Boolean,
+    val offset: IntOffset,
 )
 
 @Composable
@@ -209,11 +209,11 @@ private fun rememberFloatingMicState(recordingState: RecordingState): FloatingMi
         }
     }
 
+    val isFloating = isHolding || isReturning
     return FloatingMicState(
-        isActive = isHolding || isReturning,
-        isMicVisible = recordingState is RecordingState.Idle || isHolding || isReturning,
-        holdOffset = holdOffset,
-        floatingOffset = IntOffset(
+        isFloating = isFloating,
+        isVisible = recordingState is RecordingState.Idle || isFloating,
+        offset = IntOffset(
             x = floatingOffsetX.value.roundToInt(),
             y = floatingOffsetY.value.roundToInt(),
         ),
@@ -277,9 +277,7 @@ private fun MicButtonGestureArea(
     val density = LocalDensity.current
     val gestureConfig = RecordingGestureConfig(
         cancelThresholdPx = with(density) { SlideToCancelThreshold.toPx() },
-        lockThresholdPx = with(density) {
-            ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx()
-        },
+        lockThresholdPx = with(density) { LockThreshold.toPx() },
     )
 
     PressInteractionEffect(isFingerDown, pressOffset, interactionSource)
@@ -421,6 +419,21 @@ private fun rememberRecordingHint(): RecordingHintState {
 
 private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
 
+/** Vertical drag distance required to lock the recording. */
+private val LockThreshold = 96.dp
+
+/** Height of the waveform / timer row. */
+private val RecordingRowHeight = 48.dp
+
+/** Height of the control-buttons row (delete, stop, complete). */
+private val ControlsRowHeight = 48.dp
+
+/** Horizontal margin between the lock icon and the content's end edge. */
+private val LockIconMarginEnd = 4.dp
+
+/** Vertical margin between the lock icon and the top of the content. */
+private val LockIconMarginTop = 16.dp
+
 /** "Hold to record" instructional hint shown as a snackbar. */
 @Composable
 internal fun MessageComposerAudioRecordingHint(data: SnackbarData) {
@@ -448,64 +461,35 @@ internal fun MessageComposerAudioRecordingHint(data: SnackbarData) {
     }
 }
 
-/** Floating lock icon that follows the drag offset during Hold, or snaps above controls when Locked. */
+/** Floating lock icon positioned above the content at the end edge, following drag during Hold. */
 @Composable
 private fun FloatingLockIcon(
     isLocked: Boolean,
-    holdControlsOffset: IntOffset,
+    dragOffsetY: Int,
 ) {
     val density = LocalDensity.current
-    val playbackHeight = 48.dp
-    val controlsHeight = 48.dp
-    val totalContentHeight = playbackHeight + controlsHeight
-    val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset
-    val lockOffset = with(density) {
+    val contentHeight = if (isLocked) {
+        RecordingRowHeight + ControlsRowHeight
+    } else {
+        RecordingRowHeight
+    }
+    val offset = with(density) {
         IntOffset(
-            x = -edgeOffset.x.toPx().toInt(),
-            y = when (isLocked) {
-                true -> -totalContentHeight.toPx().toInt() - edgeOffset.y.toPx().toInt()
-                else -> -playbackHeight.toPx().toInt() - edgeOffset.y.toPx().toInt() + holdControlsOffset.y
-            },
+            x = -LockIconMarginEnd.roundToPx(),
+            y = -(contentHeight + LockIconMarginTop).roundToPx() + if (isLocked) 0 else dragOffsetY,
         )
     }
-    Popup(
-        offset = lockOffset,
-        alignment = Alignment.BottomEnd,
-    ) {
-        RecordingLockableIcon(locked = isLocked)
-    }
-}
-
-@Composable
-private fun RecordingLockableIcon(locked: Boolean) {
-    val style = if (locked) {
-        ChatTheme.messageComposerTheme.audioRecording.floatingIcons.locked
-    } else {
-        ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lock
-    }
-    RecordingFloatingIcon(style)
-}
-
-@Composable
-private fun RecordingFloatingIcon(style: AudioRecordingFloatingIconStyle) {
-    Card(
-        modifier = Modifier
-            .size(style.size)
-            .padding(style.padding),
-        shape = style.backgroundShape,
-        colors = CardDefaults.cardColors(containerColor = style.backgroundColor),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            Icon(
-                painter = style.icon.painter,
-                contentDescription = null,
-                modifier = Modifier.size(style.icon.size),
-                tint = style.icon.tint,
-            )
+    Popup(offset = offset, alignment = Alignment.BottomEnd) {
+        val iconRes = if (isLocked) {
+            R.drawable.stream_compose_ic_mic_locked
+        } else {
+            R.drawable.stream_compose_ic_mic_lock
         }
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            tint = Color.Unspecified,
+        )
     }
 }
 
