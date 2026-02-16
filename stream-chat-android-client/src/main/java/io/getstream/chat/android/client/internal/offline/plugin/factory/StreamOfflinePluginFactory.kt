@@ -66,7 +66,7 @@ import kotlin.reflect.KClass
  * @param now Function to get the current time in milliseconds. Useful for testing purposes.
  */
 @InternalStreamChatApi
-internal class StreamOfflinePluginFactory @JvmOverloads constructor(
+public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
     private val ignoredChannelTypes: Set<String> = emptySet(),
     private val now: () -> Long = { System.currentTimeMillis() },
