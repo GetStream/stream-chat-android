@@ -135,10 +135,15 @@ private fun SimpleGroupAvatar(
 }
 
 private object StackedGroupAvatarSpecs {
-    val alignments2 = listOf(Alignment.TopStart, Alignment.BottomEnd)
-    val alignments3 = listOf(Alignment.TopCenter, Alignment.BottomStart, Alignment.BottomEnd)
-    val alignments4 = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
-    val alignmentsMore = listOf(Alignment.TopStart, Alignment.TopEnd)
+    private val alignments2 = listOf(Alignment.TopStart, Alignment.BottomEnd)
+    private val alignments3 = listOf(Alignment.TopCenter, Alignment.BottomStart, Alignment.BottomEnd)
+    private val alignments4 = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
+    private val alignmentsMore = listOf(Alignment.TopStart, Alignment.TopEnd)
+    private val alignmentsByIndex = listOf(emptyList(), alignments2, alignments2, alignments3, alignments4)
+
+    fun alignmentsFor(membersCount: Int): List<Alignment> {
+        return alignmentsByIndex.getOrElse(membersCount) { alignmentsMore }
+    }
 
     @Composable
     fun baseModifier(avatarSize: Dp): Modifier {
@@ -151,6 +156,7 @@ private object StackedGroupAvatarSpecs {
     }
 }
 
+@Suppress("MagicNumber")
 @Composable
 private fun StackedGroupAvatar(
     channel: Channel,
@@ -161,12 +167,13 @@ private fun StackedGroupAvatar(
     BoxWithConstraints(modifier) {
         val dimensions = resolveStackedAvatarDimensions()
         val baseModifier = StackedGroupAvatarSpecs.baseModifier(dimensions.avatarSize)
+        val membersCount = channel.members.size
+        val alignments = StackedGroupAvatarSpecs.alignmentsFor(membersCount)
 
-        when (channel.members.size) {
+        when (membersCount) {
             0 -> ChannelAvatarPlaceholder(channel, size = maxWidth, Modifier.clip(CircleShape))
 
             1 -> {
-                val alignments = StackedGroupAvatarSpecs.alignments2
                 val colors = ChatTheme.colors
                 UserAvatarIconPlaceholder(
                     background = colors.avatarBgPlaceholder,
@@ -183,41 +190,7 @@ private fun StackedGroupAvatar(
                 )
             }
 
-            2 -> {
-                val alignments = StackedGroupAvatarSpecs.alignments2
-                for (i in alignments.indices) {
-                    UserAvatar(
-                        user = channel.members[i].user,
-                        showIndicator = showIndicator,
-                        modifier = baseModifier.align(alignments[i]),
-                    )
-                }
-            }
-
-            3 -> {
-                val alignments = StackedGroupAvatarSpecs.alignments3
-                for (i in alignments.indices) {
-                    UserAvatar(
-                        user = channel.members[i].user,
-                        showIndicator = showIndicator,
-                        modifier = baseModifier.align(alignments[i]),
-                    )
-                }
-            }
-
-            4 -> {
-                val alignments = StackedGroupAvatarSpecs.alignments4
-                for (i in alignments.indices) {
-                    UserAvatar(
-                        user = channel.members[i].user,
-                        showIndicator = showIndicator,
-                        modifier = baseModifier.align(alignments[i]),
-                    )
-                }
-            }
-
             else -> {
-                val alignments = StackedGroupAvatarSpecs.alignmentsMore
                 for (i in alignments.indices) {
                     UserAvatar(
                         user = channel.members[i].user,
@@ -225,13 +198,15 @@ private fun StackedGroupAvatar(
                         modifier = baseModifier.align(alignments[i]),
                     )
                 }
-                val count = (channel.members.size - alignments.size).coerceAtMost(99)
-                CountBadge(
-                    text = stringResource(R.string.stream_compose_avatar_overflow_count, count),
-                    size = dimensions.badgeSize,
-                    fixedFontSize = true,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                )
+                if (membersCount > 4) {
+                    val count = (membersCount - alignments.size).coerceAtMost(99)
+                    CountBadge(
+                        text = stringResource(R.string.stream_compose_avatar_overflow_count, count),
+                        size = dimensions.badgeSize,
+                        fixedFontSize = true,
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                    )
+                }
             }
         }
     }
@@ -286,6 +261,7 @@ private fun directMessageRecipient(channel: Channel, currentUser: User?): User? 
     }
 }
 
+@Suppress("MagicNumber")
 @Preview
 @Composable
 private fun ChannelAvatarPreview() {
