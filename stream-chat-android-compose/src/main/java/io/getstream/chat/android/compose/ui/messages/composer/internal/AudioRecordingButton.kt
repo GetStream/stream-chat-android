@@ -309,7 +309,8 @@ private fun MicButtonGestureArea(
         lockThresholdPx = with(density) { LockThreshold.toPx() },
     )
 
-    PressInteractionEffect(isFingerDown, pressOffset, interactionSource)
+    val showPressed = isFingerDown || hint.snackbarHostState.currentSnackbarData != null
+    PressInteractionEffect(showPressed, pressOffset, interactionSource)
 
     val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
 
@@ -356,15 +357,15 @@ private fun MicButtonGestureArea(
     )
 }
 
-/** Emits press/release interactions on [interactionSource] while [isFingerDown] is true. */
+/** Emits press/release interactions on [interactionSource] while [isPressed] is true. */
 @Composable
 private fun PressInteractionEffect(
-    isFingerDown: Boolean,
+    isPressed: Boolean,
     pressOffset: Offset,
     interactionSource: MutableInteractionSource,
 ) {
-    LaunchedEffect(isFingerDown) {
-        if (isFingerDown) {
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
             val press = PressInteraction.Press(pressOffset)
             interactionSource.emit(press)
             try {
