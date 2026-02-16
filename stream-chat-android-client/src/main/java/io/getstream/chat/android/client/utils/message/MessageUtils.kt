@@ -19,6 +19,7 @@
 
 package io.getstream.chat.android.client.utils.message
 
+import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
@@ -30,6 +31,8 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.UUID
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
@@ -204,6 +207,41 @@ public fun Message.isModerationFlag(): Boolean =
  */
 public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&
     (isError() && isModerationBounce())
+
+/**
+ * Checks whether we should attempt to delete the message remotely.
+ *
+ * @param currentUserId The ID of the currently logged in user.
+ * @return [Result.Success] if remote delete should be attempted, [Result.Failure] if the message should be deleted only
+ * locally.
+ */
+@Suppress("ComplexCondition")
+@InternalStreamChatApi
+public fun Message.shouldDeleteRemote(currentUserId: String?): Result<Unit> {
+    // 1. Moderation action = 'bounce' - not persisted on server, delete only locally
+    // Note: handled separately from pt. 2/3 for backwards-compatibility
+    if (isModerationError(currentUserId)) {
+        val error = Error.ThrowableError(
+            message = "Message with failed moderation has been deleted locally: $id",
+            cause = MessageModerationDeletedException(
+                "Message with failed moderation has been deleted locally: $id",
+            ),
+        )
+        return Result.Failure(error)
+    }
+    // 2. type = 'error'/'ephemeral' - not persisted on server, delete only locally
+    // 3. syncStatus = 'IN_PROGRESS'/`SYNC_NEEDED`/`FAILED_PERMANENTLY` - not persisted on server, delete only locally
+    if (isError() || isEphemeral() ||
+        syncStatus == SyncStatus.IN_PROGRESS ||
+        syncStatus == SyncStatus.SYNC_NEEDED ||
+        syncStatus == SyncStatus.FAILED_PERMANENTLY
+    ) {
+        val error = Error.GenericError("Message is local-only, don't call DeleteMessage API")
+        return Result.Failure(error)
+    }
+    // 4. Any other case, attempt to delete the message remotely
+    return Result.Success(Unit)
+}
 
 /**
  * Ensures the message has an id.
