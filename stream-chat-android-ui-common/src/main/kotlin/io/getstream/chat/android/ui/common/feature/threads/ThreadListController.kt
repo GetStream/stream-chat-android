@@ -89,7 +89,7 @@ public class ThreadListController(
      * Force loads the first page of threads.
      */
     public fun load() {
-        chatClient.queryThreadsResult(query = query).enqueue()
+        chatClient.queryThreads(query = query).enqueue()
     }
 
     /**
@@ -98,7 +98,7 @@ public class ThreadListController(
     public fun loadNextPage() {
         val nextPage = getNextPage() ?: return
         val nextPageQuery = query.copy(next = nextPage)
-        chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
+        chatClient.queryThreads(query = nextPageQuery).enqueue()
     }
 
     private fun getNextPage(): String? {

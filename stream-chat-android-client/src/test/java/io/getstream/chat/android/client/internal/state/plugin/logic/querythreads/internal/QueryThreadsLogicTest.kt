@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ThreadUpdatedEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.EventType
@@ -513,6 +514,44 @@ internal class QueryThreadsLogicTest {
         logic.handleEvents(listOf(event))
         // then
         verify(stateLogic, never()).markThreadAsReadByUser(any(), any(), any())
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling ThreadUpdatedEvent Should update thread via stateLogic`() {
+        // given
+        val threadInfo = ThreadInfo(
+            activeParticipantCount = 2,
+            cid = "messaging:123",
+            createdAt = Date(),
+            createdBy = null,
+            createdByUserId = "usrId1",
+            deletedAt = null,
+            lastMessageAt = Date(),
+            parentMessage = null,
+            parentMessageId = "mId1",
+            participantCount = 2,
+            replyCount = 1,
+            title = "Updated Title",
+            updatedAt = Date(),
+            extraData = mapOf("color" to "blue"),
+        )
+        val event = ThreadUpdatedEvent(
+            type = EventType.THREAD_UPDATED,
+            createdAt = Date(),
+            rawCreatedAt = "",
+            cid = "messaging:123",
+            channelType = "messaging",
+            channelId = "123",
+            thread = threadInfo,
+        )
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        doNothing().whenever(stateLogic).updateThreadFromEvent(any())
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        logic.handleEvents(listOf(event))
+        // then
+        verify(stateLogic, times(1)).updateThreadFromEvent(threadInfo)
     }
 
     @Test
