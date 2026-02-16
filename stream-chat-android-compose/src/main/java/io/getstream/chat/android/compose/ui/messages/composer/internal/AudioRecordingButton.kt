@@ -451,9 +451,6 @@ private val RecordingRowHeight = 48.dp
 /** Height of the control-buttons row (delete, stop, complete). */
 private val ControlsRowHeight = 48.dp
 
-/** Size of the circular visual for control buttons (delete, stop, complete). */
-private val ControlButtonSize = 32.dp
-
 /** Size of the icon inside control buttons. */
 private val ControlIconSize = 20.dp
 
@@ -532,9 +529,7 @@ internal fun MessageComposerAudioRecordingControlsContent(
     recordingActions: AudioRecordingActions,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
+        modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -581,7 +576,7 @@ private fun RecordingControlButton(
     ) {
         Box(
             modifier = Modifier
-                .size(ControlButtonSize)
+                .size(32.dp)
                 .then(circleModifier),
             contentAlignment = Alignment.Center,
         ) {
