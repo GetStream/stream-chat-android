@@ -2188,10 +2188,6 @@ public final class io/getstream/chat/android/compose/ui/components/userreactions
 	public static final fun UserReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/composables/AudioWaveSeekbarKt {
-	public static final fun AudioWaveVSeekbar-t6yy7ic (Ljava/util/List;Landroidx/compose/ui/Modifier;JJLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
-}
-
 public final class io/getstream/chat/android/compose/ui/mentions/ComposableSingletons$MentionListKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/mentions/ComposableSingletons$MentionListKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
