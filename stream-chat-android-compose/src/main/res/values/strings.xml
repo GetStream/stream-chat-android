@@ -44,6 +44,9 @@
     <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">Do you want to delete the channel %1$s?</string>
     <string name="stream_compose_selected_channel_menu_dismiss">Cancel</string>
 
+    <!-- Avatar -->
+    <string name="stream_compose_avatar_overflow_count">+%1$d</string>
+
     <!-- Common -->
     <string name="stream_compose_member_count_online">%1$s, %2$d Online</string>
     <plurals name="stream_compose_member_count">

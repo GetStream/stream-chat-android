@@ -19,28 +19,19 @@ package io.getstream.chat.android.compose.ui.components.avatar
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.applyIf
-import io.getstream.chat.android.previewdata.PreviewChannelData
-import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 @Composable
@@ -88,53 +79,4 @@ public object AvatarSize {
     public val Medium: Dp = 32.dp
     public val Large: Dp = 40.dp
     public val ExtraLarge: Dp = 64.dp
-}
-
-@Preview
-@Composable
-private fun AvatarPreview() {
-    val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
-
-    ChatTheme {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    UserAvatar(
-                        user = PreviewUserData.userWithOnlineStatus,
-                        showIndicator = true,
-                        modifier = Modifier.size(size),
-                    )
-                }
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    UserAvatar(
-                        user = PreviewUserData.userWithoutImage,
-                        showIndicator = true,
-                        modifier = Modifier.size(size),
-                    )
-                }
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                sizes.forEach { size ->
-                    ChannelAvatar(
-                        PreviewChannelData.channelWithMessages,
-                        currentUser = null,
-                        modifier = Modifier.size(size),
-                    )
-                }
-            }
-        }
-    }
 }
