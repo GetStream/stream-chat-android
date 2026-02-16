@@ -340,7 +340,7 @@ private fun MicButtonGestureArea(
         if (isVisible && !floatingActive) {
             MicButtonVisual(
                 interactionSource = interactionSource,
-                modifier = Modifier.matchParentSize(),
+                modifier = Modifier.size(MicButtonVisualSize),
             )
         }
     }
@@ -376,7 +376,7 @@ private fun PressInteractionEffect(
     }
 }
 
-private const val PressedOverlayAlpha = 0.12f
+private const val PressedOverlayAlpha = 0.10f
 
 @Composable
 private fun MicButtonVisual(
@@ -443,6 +443,9 @@ private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
 
 /** Size of the mic button container / hit area. */
 private val MicButtonSize = 48.dp
+
+/** Size of the mic button visual circle (icon + pressed overlay). */
+private val MicButtonVisualSize = 32.dp
 
 /** Vertical drag distance required to lock the recording. */
 private val LockThreshold = 96.dp
