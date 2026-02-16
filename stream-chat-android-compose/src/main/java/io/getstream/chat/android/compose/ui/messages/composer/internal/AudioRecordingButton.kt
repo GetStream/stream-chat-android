@@ -22,12 +22,15 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -58,7 +61,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -463,6 +465,8 @@ private val LockIconMarginEnd = 4.dp
 /** Vertical margin between the lock icon and the top of the content. */
 private val LockIconMarginTop = 16.dp
 
+private val LockButtonShape = RoundedCornerShape(percent = 50)
+
 /** "Hold to record" instructional hint shown as a snackbar. */
 @Composable
 internal fun MessageComposerAudioRecordingHint(data: SnackbarData) {
@@ -512,20 +516,38 @@ private fun FloatingLockIcon(
     val entranceScale = rememberEntranceScale()
 
     Popup(offset = offset, alignment = Alignment.BottomEnd) {
-        val iconRes = if (isLocked) {
-            R.drawable.stream_compose_ic_mic_locked
-        } else {
-            R.drawable.stream_compose_ic_mic_lock
+        Column(
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = entranceScale
+                    scaleY = entranceScale
+                }
+                .shadow(4.dp, LockButtonShape)
+                .background(ChatTheme.colors.backgroundElevationElevation1, LockButtonShape)
+                .border(1.dp, ChatTheme.colors.borderCoreDefault, LockButtonShape)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        ) {
+            Icon(
+                painter = painterResource(
+                    id = if (isLocked) {
+                        R.drawable.stream_compose_ic_lock_closed
+                    } else {
+                        R.drawable.stream_compose_ic_lock_open
+                    },
+                ),
+                contentDescription = null,
+                tint = ChatTheme.colors.textSecondary,
+            )
+            if (!isLocked) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_chevron_top),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textSecondary,
+                )
+            }
         }
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.graphicsLayer {
-                scaleX = entranceScale
-                scaleY = entranceScale
-            },
-        )
     }
 }
 
