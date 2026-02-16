@@ -1795,9 +1795,13 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Comp
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageReactionsKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/ComposableSingletons$MessageTextKt {
@@ -1854,7 +1858,9 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageReactionsKt {
+	public static final fun AdaptiveMessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun ClusteredMessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SegmentedMessageReactions (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageTextKt {
