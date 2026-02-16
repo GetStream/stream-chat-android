@@ -176,12 +176,8 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 waveformData = state.waveform,
                 progress = 1f,
                 isPlaying = false,
-                visibleBarLimit = 100,
                 adjustBarWidthToLimit = true,
                 isThumbVisible = false,
-                onDragStart = {},
-                onDrag = {},
-                onDragStop = {},
             )
         }
 
@@ -233,9 +229,7 @@ internal fun MessageComposerAudioRecordingOverviewContent(
                 waveformData = state.waveform,
                 progress = currentProgress,
                 isPlaying = state.isPlaying,
-                visibleBarLimit = 100,
                 adjustBarWidthToLimit = true,
-                isThumbVisible = true,
                 onDragStart = { currentProgress = it.also(recordingActions.onRecordingSliderDragStart) },
                 onDrag = { currentProgress = it },
                 onDragStop = { currentProgress = it.also(recordingActions.onRecordingSliderDragStop) },
