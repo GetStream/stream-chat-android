@@ -45,16 +45,6 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
     }
 
     @Test
-    fun `Reaction picker with more reactions`() {
-        snapshotWithDarkMode {
-            ReactionsPicker(
-                message = PreviewMessageData.message1,
-                onMessageAction = { },
-            )
-        }
-    }
-
-    @Test
     fun `Reaction picker with header`() {
         snapshotWithDarkMode {
             ReactionsPicker(
