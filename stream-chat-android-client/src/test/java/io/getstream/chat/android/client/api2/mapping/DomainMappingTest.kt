@@ -748,21 +748,11 @@ internal class DomainMappingTest {
             createdByUserId = user1.id,
             createdBy = user1,
             threadParticipants = listOf(
-                DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
-                    user = user1,
-                    user_id = user1.id,
-                ),
-                DownstreamThreadParticipantDto(
-                    channel_cid = "messaging:123",
-                    user = user2,
-                    user_id = user2.id,
-                ),
+                DownstreamThreadParticipantDto(user_id = user1.id, user = user1),
+                DownstreamThreadParticipantDto(user_id = user2.id, user = user2),
             ),
             draft = randomDownstreamDraftDto(
-                message = randomDownstreamDraftMessageDto(
-                    text = "Draft message",
-                ),
+                message = randomDownstreamDraftMessageDto(text = "Draft message"),
                 channelCid = "messaging:123",
             ),
         )
@@ -793,9 +783,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draft = with(sut) {
-                downstreamThreadDto.draft?.toDomain()
-            },
+            draft = with(sut) { downstreamThreadDto.draft?.toDomain() },
             extraData = downstreamThreadDto.extraData,
         )
         assertEquals(expected, thread)
@@ -814,12 +802,14 @@ internal class DomainMappingTest {
             createdByUserId = downstreamThreadInfoDto.created_by_user_id,
             deletedAt = downstreamThreadInfoDto.deleted_at,
             lastMessageAt = downstreamThreadInfoDto.last_message_at,
-            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain() },
+            parentMessage = with(sut) { downstreamThreadInfoDto.parent_message?.toDomain(downstreamThreadInfoDto.channel?.toChannelInfo()) },
             parentMessageId = downstreamThreadInfoDto.parent_message_id,
             participantCount = downstreamThreadInfoDto.participant_count ?: 0,
             replyCount = downstreamThreadInfoDto.reply_count ?: 0,
             title = downstreamThreadInfoDto.title,
             updatedAt = downstreamThreadInfoDto.updated_at,
+            channel = with(sut) { downstreamThreadInfoDto.channel?.toDomain() },
+            threadParticipants = with(sut) { downstreamThreadInfoDto.thread_participants.orEmpty().map { it.toDomain() } },
             extraData = downstreamThreadInfoDto.extraData,
         )
         assertEquals(expected, threadInfo)
