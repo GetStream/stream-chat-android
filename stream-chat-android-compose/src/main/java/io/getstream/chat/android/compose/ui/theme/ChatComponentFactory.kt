@@ -178,7 +178,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageSpacer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTop
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
@@ -1190,7 +1189,6 @@ public interface ChatComponentFactory {
     public fun RowScope.MessageSpacer(
         messageItem: MessageItemState,
     ) {
-        DefaultMessageSpacer(messageItem = messageItem)
     }
 
     /**

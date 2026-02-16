@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -121,20 +122,23 @@ internal object MessageStyling {
     )
 
     private val roundBubble = RoundedCornerShape(StreamTokens.radius2xl)
-    private val outgoingBubble = RoundedCornerShape(
+    private val rightPointingBubble = RoundedCornerShape(
         topStart = StreamTokens.radius2xl,
         topEnd = StreamTokens.radius2xl,
         bottomStart = StreamTokens.radius2xl,
         bottomEnd = ZeroCornerSize,
     )
-    private val incomingBubble = RoundedCornerShape(
+    private val leftPointingBubble = RoundedCornerShape(
         topStart = StreamTokens.radius2xl,
         topEnd = StreamTokens.radius2xl,
         bottomStart = ZeroCornerSize,
         bottomEnd = StreamTokens.radius2xl,
     )
 
-    fun shape(position: MessagePosition, outgoing: Boolean): Shape {
+    fun shape(
+        position: MessagePosition,
+        messageAlignment: MessageAlignment,
+    ): Shape {
         return when (position) {
             MessagePosition.TOP,
             MessagePosition.MIDDLE,
@@ -142,9 +146,9 @@ internal object MessageStyling {
 
             MessagePosition.BOTTOM,
             MessagePosition.NONE,
-            -> when {
-                outgoing -> outgoingBubble
-                else -> incomingBubble
+            -> when (messageAlignment) {
+                MessageAlignment.End -> rightPointingBubble
+                MessageAlignment.Start -> leftPointingBubble
             }
         }
     }
