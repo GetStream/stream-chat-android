@@ -18,6 +18,9 @@
 
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,7 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,7 +97,24 @@ internal fun MessageComposerAudioRecordingHoldContent(
     state: RecordingState.Hold,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxWidth()) {
+    val previewMode = LocalInspectionMode.current
+    val enterProgress = remember { Animatable(if (previewMode) 0f else HoldContentEnterOffset) }
+    LaunchedEffect(Unit) {
+        enterProgress.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(durationMillis = HoldContentEnterDurationMs, easing = FastOutSlowInEasing),
+        )
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                val t = enterProgress.value
+                translationX = t * size.width
+                alpha = 1f - t
+            },
+    ) {
         Row(
             modifier = Modifier.align(Alignment.CenterStart),
             verticalAlignment = Alignment.CenterVertically,
@@ -273,6 +295,9 @@ private fun RecordingSlideToCancelIndicator(
 
 /** Drag distance at which the recording is cancelled. */
 internal val SlideToCancelThreshold = 96.dp
+
+private const val HoldContentEnterOffset = 0.3f
+private const val HoldContentEnterDurationMs = 200
 
 private const val PreviewDurationInMs = 120_000
 
