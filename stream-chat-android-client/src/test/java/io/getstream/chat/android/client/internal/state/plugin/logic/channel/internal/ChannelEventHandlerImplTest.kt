@@ -96,6 +96,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -838,7 +839,7 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).setHidden(true)
-        verify(state, never()).removeMessagesBefore(any(), any())
+        verify(state, never()).removeMessagesBefore(any(), anyOrNull())
     }
 
     @Test
