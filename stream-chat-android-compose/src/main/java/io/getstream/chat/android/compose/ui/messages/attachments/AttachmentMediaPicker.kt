@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,11 +42,11 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
-import io.getstream.chat.android.compose.ui.messages.attachments.permission.PermanentlyDeniedPermissionSnackBar
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
@@ -95,21 +96,21 @@ internal fun AttachmentMediaPicker(
             allowMultipleSelection = pickerMode.allowMultipleSelection,
         )
         // Access permanently denied snackbar
-        PermanentlyDeniedPermissionSnackBar(
-            hostState = snackBarHostState,
-            onActionClick = context::openSystemSettings,
-        )
+        StreamSnackbarHost(hostState = snackBarHostState)
     }
 
     val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
     val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
     LaunchedEffect(showPermanentlyDeniedSnackBar) {
         if (showPermanentlyDeniedSnackBar) {
-            snackBarHostState.showSnackbar(
+            val result = snackBarHostState.showSnackbar(
                 message = snackbarMessage,
                 actionLabel = snackbarAction,
                 duration = SnackbarDuration.Short,
             )
+            if (result == SnackbarResult.ActionPerformed) {
+                context.openSystemSettings()
+            }
             showPermanentlyDeniedSnackBar = false
         }
     }

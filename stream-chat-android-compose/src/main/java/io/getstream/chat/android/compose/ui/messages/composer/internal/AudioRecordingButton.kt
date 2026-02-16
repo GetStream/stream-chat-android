@@ -41,11 +41,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -442,8 +439,6 @@ private fun rememberRecordingHint(): RecordingHintState {
     }
 }
 
-private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
-
 /** Size of the mic button container / hit area. */
 private val MicButtonSize = 48.dp
 
@@ -472,33 +467,6 @@ private val LockIconMarginEnd = 4.dp
 private val LockIconMarginTop = 16.dp
 
 private val LockButtonShape = RoundedCornerShape(percent = 50)
-
-/** "Hold to record" instructional hint shown as a snackbar. */
-@Composable
-internal fun MessageComposerAudioRecordingHint(data: SnackbarData) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = StreamTokens.spacingMd),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            modifier = Modifier.shadow(4.dp, shape = SnackbarShape),
-            shape = SnackbarShape,
-            color = ChatTheme.colors.backgroundCoreInverse,
-            contentColor = ChatTheme.colors.textOnAccent,
-        ) {
-            Text(
-                modifier = Modifier.padding(
-                    horizontal = StreamTokens.spacingMd,
-                    vertical = StreamTokens.spacingSm,
-                ),
-                text = data.visuals.message,
-                style = ChatTheme.typography.bodyDefault,
-            )
-        }
-    }
-}
 
 /** Floating lock icon positioned above the content at the end edge, following drag during Hold. */
 @Composable

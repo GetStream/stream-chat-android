@@ -203,6 +203,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
+import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -1895,10 +1896,7 @@ public interface ChatComponentFactory {
     public fun MessageComposerAudioRecordingPermissionRationale(
         data: SnackbarData,
     ) {
-        io.getstream.chat.android.compose.ui.messages.composer.internal
-            .MessageComposerAudioRecordingPermissionRationale(
-                data = data,
-            )
+        StreamSnackbar(snackbarData = data)
     }
 
     /**
@@ -2007,9 +2005,7 @@ public interface ChatComponentFactory {
     public fun MessageComposerAudioRecordingHint(
         data: SnackbarData,
     ) {
-        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingHint(
-            data = data,
-        )
+        StreamSnackbar(snackbarData = data)
     }
 
     /**

@@ -17,31 +17,18 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
@@ -49,8 +36,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -166,54 +151,5 @@ private fun rememberPermissionRationale(): PermissionRationaleState {
             actionLabel = actionLabel,
             onAction = { context.openSystemSettings() },
         )
-    }
-}
-
-/** Permission rationale shown as a snackbar with a message and "Settings" action. */
-@Composable
-internal fun MessageComposerAudioRecordingPermissionRationale(data: SnackbarData) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = StreamTokens.spacingMd),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = StreamTokens.spacingMd)
-                .shadow(4.dp, shape = RoundedCornerShape(StreamTokens.radius3xl)),
-            shape = RoundedCornerShape(StreamTokens.radius3xl),
-            color = ChatTheme.colors.backgroundCoreInverse,
-            contentColor = ChatTheme.colors.textOnAccent,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = StreamTokens.spacingMd,
-                        top = StreamTokens.spacingSm,
-                        bottom = StreamTokens.spacingSm,
-                    ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    text = data.visuals.message,
-                    style = ChatTheme.typography.bodyDefault,
-                )
-                val actionLabel = data.visuals.actionLabel
-                if (actionLabel != null) {
-                    TextButton(onClick = data::performAction) {
-                        Text(
-                            text = actionLabel.uppercase(),
-                            style = ChatTheme.typography.bodyBold.copy(
-                                color = ChatTheme.colors.primaryAccent,
-                            ),
-                        )
-                    }
-                }
-            }
-        }
     }
 }
