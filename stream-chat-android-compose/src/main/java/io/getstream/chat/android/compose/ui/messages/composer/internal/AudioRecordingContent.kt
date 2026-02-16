@@ -52,7 +52,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -155,29 +154,25 @@ internal fun MessageComposerAudioRecordingLockedContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
-            )
+        Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
+            Box(modifier = Modifier.size(48.dp), contentAlignment = Alignment.Center) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.errorAccent,
+                )
+            }
 
-            PlaybackTimerText(
-                progress = 1f,
-                durationInMs = state.durationInMs,
+            Text(
+                text = ChatTheme.durationFormatter.format(state.durationInMs),
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
-                countdown = false,
             )
 
             StaticWaveformSlider(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
+                    .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
                 waveformData = state.waveform,
                 progress = 1f,
                 isPlaying = false,
@@ -210,38 +205,31 @@ internal fun MessageComposerAudioRecordingOverviewContent(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row(modifier = RecordingBarModifier, verticalAlignment = Alignment.CenterVertically) {
             val playbackIcon = if (state.isPlaying) {
                 R.drawable.stream_compose_ic_pause
             } else {
                 R.drawable.stream_compose_ic_play
             }
-            IconButton(
-                onClick = recordingActions.onToggleRecordingPlayback,
-            ) {
+            IconButton(onClick = recordingActions.onToggleRecordingPlayback) {
                 Icon(
                     painter = painterResource(id = playbackIcon),
                     contentDescription = null,
-                    tint = ChatTheme.colors.primaryAccent,
+                    tint = ChatTheme.colors.textPrimary,
                 )
             }
 
-            PlaybackTimerText(
-                progress = currentProgress,
-                durationInMs = state.durationInMs,
+            val playbackInMs = (currentProgress * state.durationInMs).toInt()
+            Text(
+                text = ChatTheme.durationFormatter.format(playbackInMs),
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
-                countdown = false,
             )
 
             StaticWaveformSlider(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(ComponentPadding(start = 16.dp, top = 8.dp, bottom = 8.dp)),
+                    .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
                 waveformData = state.waveform,
                 progress = currentProgress,
                 isPlaying = state.isPlaying,
@@ -295,6 +283,11 @@ private fun RecordingSlideToCancelIndicator(
 
 /** Drag distance at which the recording is cancelled. */
 internal val SlideToCancelThreshold = 96.dp
+
+private val RecordingBarModifier = Modifier
+    .fillMaxWidth()
+    .height(48.dp)
+    .padding(ComponentPadding(end = StreamTokens.spacingMd))
 
 private const val HoldContentEnterOffset = 0.3f
 private const val HoldContentEnterDurationMs = 200

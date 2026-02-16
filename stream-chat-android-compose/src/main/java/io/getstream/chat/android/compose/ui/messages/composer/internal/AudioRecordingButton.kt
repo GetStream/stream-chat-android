@@ -32,7 +32,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -61,6 +60,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -456,6 +456,12 @@ private val RecordingRowHeight = 48.dp
 /** Height of the control-buttons row (delete, stop, complete). */
 private val ControlsRowHeight = 48.dp
 
+/** Size of the circular visual for control buttons (delete, stop, complete). */
+private val ControlButtonSize = 32.dp
+
+/** Size of the icon inside control buttons. */
+private val ControlIconSize = 20.dp
+
 /** Starting scale for the pop-in entrance animation of floating icons. */
 private const val FloatingIconInitialScale = 0.5f
 
@@ -562,39 +568,60 @@ internal fun MessageComposerAudioRecordingControlsContent(
             .fillMaxWidth()
             .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        IconButton(
+        RecordingControlButton(
             onClick = recordingActions.onDeleteRecording,
-            modifier = Modifier.semantics { testTag = "Stream_ComposerDeleteAudioRecordingButton" },
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_delete),
-                contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+            testTag = "Stream_ComposerDeleteAudioRecordingButton",
+            circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonSecondaryBorder, CircleShape),
+            iconRes = R.drawable.stream_compose_ic_delete,
+            iconTint = ChatTheme.colors.textPrimary,
+            iconModifier = Modifier.size(ControlIconSize),
+        )
+        if (isStopVisible) {
+            RecordingControlButton(
+                onClick = recordingActions.onStopRecording,
+                testTag = "Stream_ComposerStopAudioRecordingButton",
+                circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonDestructiveBorder, CircleShape),
+                iconRes = R.drawable.stream_compose_ic_stop,
+                iconTint = ChatTheme.colors.errorAccent,
+                iconModifier = Modifier.size(ControlIconSize),
             )
         }
-        if (isStopVisible) {
-            Spacer(modifier = Modifier.weight(1f))
-            IconButton(
-                onClick = recordingActions.onStopRecording,
-                modifier = Modifier.semantics { testTag = "Stream_ComposerStopAudioRecordingButton" },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
-                    contentDescription = null,
-                    tint = ChatTheme.colors.errorAccent,
-                )
-            }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
+        RecordingControlButton(
             onClick = recordingActions.onConfirmRecording,
-            modifier = Modifier.semantics { testTag = "Stream_ComposerConfirmAudioRecordingButton" },
+            testTag = "Stream_ComposerConfirmAudioRecordingButton",
+            circleModifier = Modifier.background(ChatTheme.colors.buttonPrimaryBg, CircleShape),
+            iconRes = R.drawable.stream_compose_ic_checkmark,
+            iconTint = ChatTheme.colors.textOnAccent,
+        )
+    }
+}
+
+@Composable
+private fun RecordingControlButton(
+    onClick: () -> Unit,
+    testTag: String,
+    circleModifier: Modifier,
+    iconRes: Int,
+    iconTint: Color,
+    iconModifier: Modifier = Modifier,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.semantics { this.testTag = testTag },
+    ) {
+        Box(
+            modifier = Modifier
+                .size(ControlButtonSize)
+                .then(circleModifier),
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
+                modifier = iconModifier,
+                painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = iconTint,
             )
         }
     }
