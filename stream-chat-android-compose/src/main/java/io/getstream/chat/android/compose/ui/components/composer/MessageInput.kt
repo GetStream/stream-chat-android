@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -101,18 +102,24 @@ public fun MessageInput(
         )
     },
 ) {
-    val shape = ChatTheme.shapes.inputField
     Column(
         modifier = modifier
-            .border(width = 1.dp, color = ChatTheme.colors.borders, shape = shape)
+            .border(
+                width = 1.dp,
+                color = ChatTheme.colors.borderCoreDefault,
+                shape = MessageInputShape,
+            )
             .then(
                 if (ChatTheme.messageComposerFloatingStyleEnabled) {
-                    Modifier.shadow(6.dp, shape = shape)
+                    Modifier.shadow(6.dp, shape = MessageInputShape)
                 } else {
                     Modifier
                 },
             )
-            .background(ChatTheme.colors.barsBackground)
+            .background(
+                color = ChatTheme.colors.backgroundElevationElevation1,
+                shape = MessageInputShape,
+            )
             .defaultMinSize(minHeight = 48.dp)
             .animateContentSize(alignment = Alignment.BottomStart),
         verticalArrangement = Arrangement.Bottom,
@@ -142,6 +149,8 @@ public fun MessageInput(
         }
     }
 }
+
+private val MessageInputShape = RoundedCornerShape(StreamTokens.radius3xl)
 
 @Composable
 private fun MessageInputHeader(
