@@ -122,7 +122,7 @@ internal object MessageStyling {
             )
         } else {
             PollStyle(
-                textColor = colors.chatTextOutgoing,
+                textColor = colors.chatTextIncoming,
                 outlineColor = colors.chatBorderOnChatIncoming,
                 progressColor = colors.chatPollProgressFillIncoming,
                 trackColor = colors.chatPollProgressTrackIncoming,
