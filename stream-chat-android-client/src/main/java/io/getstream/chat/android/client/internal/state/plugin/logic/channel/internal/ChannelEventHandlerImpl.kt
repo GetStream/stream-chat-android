@@ -332,7 +332,8 @@ internal class ChannelEventHandlerImpl(
             is MessageDeliveredEvent -> state.updateDelivered(event.toChannelUserRead())
             // Invitation events
             is NotificationInviteAcceptedEvent -> {
-                state.addMember(event.member)
+                // Member is already counted in the count, don't add it as a new member
+                state.upsertMember(event.member)
                 state.updateChannelData(event)
             }
 

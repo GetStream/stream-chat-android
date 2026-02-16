@@ -661,14 +661,18 @@ internal class ChannelStateImpl(
      * @param member The member to add.
      */
     fun addMember(member: Member) {
+        var wasAdded = false
         _members.update { current ->
             if (current.any { it.getUserId() == member.getUserId() }) {
                 current
             } else {
+                wasAdded = true
                 current + member
             }
         }
-        _memberCount.update { it + 1 }
+        if (wasAdded) {
+            _memberCount.update { it + 1 }
+        }
     }
 
     /**
@@ -693,6 +697,8 @@ internal class ChannelStateImpl(
 
     /**
      * Deletes a member from the current state.
+     * Removes the member from the list if present (list may be partial - not all members loaded).
+     * Always decrements [membersCount] because the event is authoritative: someone left the channel.
      *
      * @param id The ID of the member to delete.
      */

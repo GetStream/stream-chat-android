@@ -111,16 +111,15 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `addMember with duplicate should still increment member count`() = runTest {
+        fun `addMember with duplicate should not increment member count`() = runTest {
             // given
             val member = createMember(1)
             channelState.addMember(member)
             val initialCount = channelState.membersCount.value
             // when
             channelState.addMember(member) // Add same member again
-            // then - count is incremented even though member wasn't added
-            // This is the current behavior - may need to be reconsidered
-            assertEquals(initialCount + 1, channelState.membersCount.value)
+            // then - count should not change since member was already present
+            assertEquals(initialCount, channelState.membersCount.value)
         }
     }
 
@@ -244,16 +243,16 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `deleteMember should do nothing for non-existing member`() = runTest {
-            // given
+        fun `deleteMember should do nothing for non-existing member in list but still decrement count`() = runTest {
+            // given - members list may be partial (not all members loaded); removed member might not be in our list
             val members = createMembers(3)
             channelState.setMembers(members)
             channelState.setMemberCount(3)
-            // when
+            // when - removing member not in our list
             channelState.deleteMember("non_existing_id")
-            // then
+            // then - list unchanged, count decremented (we trust the event)
             assertEquals(3, channelState.members.value.size)
-            assertEquals(2, channelState.membersCount.value) // Count is still decremented
+            assertEquals(2, channelState.membersCount.value)
         }
     }
 
