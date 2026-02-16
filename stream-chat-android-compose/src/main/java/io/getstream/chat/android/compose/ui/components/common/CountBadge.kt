@@ -61,7 +61,7 @@ internal fun CountBadge(
         textAlign = TextAlign.Center,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        style = ChatTheme.typography.numericLarge,
+        style = style,
         color = ChatTheme.colors.badgeText,
         fontSize = fontSize,
     )
