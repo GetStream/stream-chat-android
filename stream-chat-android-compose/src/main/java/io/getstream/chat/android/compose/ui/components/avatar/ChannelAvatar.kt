@@ -46,6 +46,7 @@ import io.getstream.chat.android.compose.ui.components.common.CountBadge
 import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
@@ -171,7 +172,13 @@ private fun StackedGroupAvatar(
         val alignments = StackedGroupAvatarSpecs.alignmentsFor(membersCount)
 
         when (membersCount) {
-            0 -> ChannelAvatarPlaceholder(channel, size = maxWidth, Modifier.clip(CircleShape))
+            0 -> ChannelAvatarPlaceholder(
+                channel = channel,
+                size = maxWidth,
+                modifier = Modifier
+                    .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) }
+                    .clip(CircleShape)
+            )
 
             1 -> {
                 val colors = ChatTheme.colors
@@ -180,12 +187,14 @@ private fun StackedGroupAvatar(
                     foreground = colors.avatarTextPlaceholder,
                     modifier = baseModifier
                         .clip(CircleShape)
+                        .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) }
                         .align(alignments[0]),
                 )
 
                 UserAvatar(
                     user = channel.members.first().user,
                     showIndicator = showIndicator,
+                    showBorder = showBorder,
                     modifier = baseModifier.align(alignments[1]),
                 )
             }
@@ -195,6 +204,7 @@ private fun StackedGroupAvatar(
                     UserAvatar(
                         user = channel.members[i].user,
                         showIndicator = showIndicator,
+                        showBorder = showBorder,
                         modifier = baseModifier.align(alignments[i]),
                     )
                 }
@@ -240,7 +250,7 @@ internal fun ChannelAvatarPlaceholder(channel: Channel, size: Dp, modifier: Modi
             painter = painterResource(R.drawable.stream_compose_ic_team),
             contentDescription = null,
             tint = foreground,
-            modifier = modifier
+            modifier = Modifier
                 .background(background)
                 .size(size.toPlaceholderIconSize()),
         )
