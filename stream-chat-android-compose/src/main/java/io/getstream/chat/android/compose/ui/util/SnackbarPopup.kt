@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarData
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.IntOffset
@@ -38,10 +36,10 @@ import androidx.compose.ui.window.PopupPositionProvider
 @Composable
 internal fun SnackbarPopup(
     hostState: SnackbarHostState,
-    snackbar: @Composable (SnackbarData) -> Unit = { Snackbar(it) },
+    snackbar: @Composable (SnackbarData) -> Unit = { StreamSnackbar(it) },
 ) {
     Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
-        SnackbarHost(
+        StreamSnackbarHost(
             hostState = hostState,
             snackbar = snackbar,
         )
