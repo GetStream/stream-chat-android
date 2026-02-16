@@ -94,6 +94,7 @@ public fun ChannelAvatar(
             StackedGroupAvatar(
                 modifier = testTagModifier,
                 channel = channel,
+                currentUser = currentUser,
                 showIndicator = showIndicator,
                 showBorder = showBorder,
             )
@@ -109,12 +110,30 @@ private fun SimpleGroupAvatar(
     showBorder: Boolean,
     modifier: Modifier,
 ) {
-    BoxWithConstraints(modifier) {
+    WithChannelIndicator(
+        channel = channel,
+        currentUser = currentUser,
+        showIndicator = showIndicator,
+        modifier = modifier,
+    ) {
         Avatar(
             imageUrl = channel.image,
             fallback = { ChannelAvatarPlaceholder(channel, size = this.maxWidth) },
             showBorder = showBorder,
         )
+    }
+}
+
+@Composable
+private fun WithChannelIndicator(
+    channel: Channel,
+    currentUser: User?,
+    showIndicator: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxWithConstraintsScope.() -> Unit,
+) {
+    BoxWithConstraints(modifier) {
+        content()
 
         if (showIndicator) {
             val isOnline = remember(channel.members, currentUser?.id) {
@@ -161,11 +180,17 @@ private object StackedGroupAvatarSpecs {
 @Composable
 private fun StackedGroupAvatar(
     channel: Channel,
+    currentUser: User?,
     showIndicator: Boolean,
     showBorder: Boolean,
     modifier: Modifier,
 ) {
-    BoxWithConstraints(modifier) {
+    WithChannelIndicator(
+        channel = channel,
+        currentUser = currentUser,
+        showIndicator = showIndicator,
+        modifier = modifier,
+    ) {
         val dimensions = resolveStackedAvatarDimensions()
         val baseModifier = StackedGroupAvatarSpecs.baseModifier(dimensions.avatarSize)
         val membersCount = channel.members.size
@@ -177,7 +202,7 @@ private fun StackedGroupAvatar(
                 size = maxWidth,
                 modifier = Modifier
                     .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) }
-                    .clip(CircleShape)
+                    .clip(CircleShape),
             )
 
             1 -> {
@@ -193,7 +218,6 @@ private fun StackedGroupAvatar(
 
                 UserAvatar(
                     user = channel.members.first().user,
-                    showIndicator = showIndicator,
                     showBorder = showBorder,
                     modifier = baseModifier.align(alignments[1]),
                 )
@@ -203,7 +227,6 @@ private fun StackedGroupAvatar(
                 for (i in alignments.indices) {
                     UserAvatar(
                         user = channel.members[i].user,
-                        showIndicator = showIndicator,
                         showBorder = showBorder,
                         modifier = baseModifier.align(alignments[i]),
                     )
