@@ -124,23 +124,22 @@ internal fun AudioRecordingButton(
     val floatingMic = rememberFloatingMicState(recordingState)
 
     Box(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            if (isRecording) {
-                AudioRecordingContent(
-                    recordingState = recordingState,
-                    recordingActions = recordingActions,
-                    modifier = Modifier.weight(1f),
-                )
-            }
-
-            MicButton(
-                isVisible = floatingMic.isVisible,
+        if (isRecording) {
+            AudioRecordingContent(
                 recordingState = recordingState,
                 recordingActions = recordingActions,
-                floatingActive = floatingMic.isFloating,
-                floatingOffset = floatingMic.offset,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
+
+        MicButton(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            isVisible = floatingMic.isVisible,
+            recordingState = recordingState,
+            recordingActions = recordingActions,
+            floatingActive = floatingMic.isFloating,
+            floatingOffset = floatingMic.offset,
+        )
 
         if (showFloatingIcons) {
             FloatingLockIcon(
@@ -268,16 +267,20 @@ private fun MicButton(
                 properties = PopupProperties(clippingEnabled = false),
             ) {
                 val entranceScale = rememberEntranceScale()
-                MicButtonVisual(
-                    interactionSource = interactionSource,
-                    isPressed = true,
+                Box(
                     modifier = Modifier
                         .size(MicButtonSize)
                         .graphicsLayer {
                             scaleX = entranceScale
                             scaleY = entranceScale
                         },
-                )
+                    contentAlignment = Alignment.Center,
+                ) {
+                    MicButtonVisual(
+                        interactionSource = interactionSource,
+                        isPressed = true,
+                    )
+                }
             }
         }
     }
@@ -338,10 +341,7 @@ private fun MicButtonGestureArea(
         contentAlignment = Alignment.Center,
     ) {
         if (isVisible && !floatingActive) {
-            MicButtonVisual(
-                interactionSource = interactionSource,
-                modifier = Modifier.size(MicButtonVisualSize),
-            )
+            MicButtonVisual(interactionSource = interactionSource)
         }
     }
 
@@ -382,11 +382,11 @@ private const val PressedOverlayAlpha = 0.10f
 private fun MicButtonVisual(
     interactionSource: MutableInteractionSource,
     isPressed: Boolean = false,
-    modifier: Modifier = Modifier,
 ) {
     val layoutDirection = LocalLayoutDirection.current
     Box(
-        modifier = modifier
+        modifier = Modifier
+            .size(32.dp)
             .clip(CircleShape)
             .indication(
                 interactionSource = interactionSource,
@@ -443,9 +443,6 @@ private val SnackbarShape = RoundedCornerShape(StreamTokens.radius3xl)
 
 /** Size of the mic button container / hit area. */
 private val MicButtonSize = 48.dp
-
-/** Size of the mic button visual circle (icon + pressed overlay). */
-private val MicButtonVisualSize = 32.dp
 
 /** Vertical drag distance required to lock the recording. */
 private val LockThreshold = 96.dp
