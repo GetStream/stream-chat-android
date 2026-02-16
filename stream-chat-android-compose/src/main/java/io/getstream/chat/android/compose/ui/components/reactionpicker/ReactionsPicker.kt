@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -47,7 +46,6 @@ private const val DefaultNumberOfReactions = 5
  * @param overlayColor The color applied to the overlay.
  * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
  * @param onDismiss Handler called when the menu is dismissed.
- * @param reactionTypes The available reactions.
  * @param headerContent The content shown on the top of [ReactionsPicker]. By default empty.
  * @param centerContent The content shown at the center of [ReactionsPicker].
  * By default displays all available reactions.
@@ -61,7 +59,6 @@ public fun ReactionsPicker(
     overlayColor: Color = ChatTheme.colors.overlay,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageReactionPickerHeaderContent(Modifier, message, onMessageAction, onDismiss)
@@ -74,7 +71,6 @@ public fun ReactionsPicker(
                 message = message,
                 onMessageAction = onMessageAction,
                 onDismiss = onDismiss,
-                reactionTypes = reactionTypes,
             )
         }
     },

@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -48,7 +47,6 @@ import io.getstream.chat.android.ui.common.state.messages.MessageAction
  * @param modifier Modifier for styling.
  * @param shape Changes the shape of [SelectedMessageMenu].
  * @param overlayColor The color applied to the overlay.
- * @param reactionTypes The available reactions within the menu.
  * @param showMoreReactionsIcon Drawable resource used for the show more button.
  * @param onDismiss Handler called when the menu is dismissed.
  * @param headerContent The content shown at the top of the [SelectedMessageMenu] dialog. By default [ReactionOptions].
@@ -65,7 +63,6 @@ public fun SelectedMessageMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -79,7 +76,6 @@ public fun SelectedMessageMenu(
                     onMessageAction = onMessageAction,
                     ownCapabilities = ownCapabilities,
                     onShowMore = onShowMoreReactionsSelected,
-                    reactionTypes = reactionTypes,
                     showMoreReactionsIcon = showMoreReactionsIcon,
                 )
             }
