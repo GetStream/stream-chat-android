@@ -200,8 +200,7 @@ internal class ChannelLogicImpl(
             }
             .toWatchChannelRequest(userPresence)
             .apply {
-                // Don't refresh the whole state when loading messages around a specific message, because `fillTheGap`
-                // will load the missing messages between the already loaded and the requested messages.
+                // Refresh all messages in the channel
                 shouldRefresh = true
             }
         return queryChannel(request)
