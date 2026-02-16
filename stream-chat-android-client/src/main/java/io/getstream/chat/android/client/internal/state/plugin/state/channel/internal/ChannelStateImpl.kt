@@ -57,6 +57,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.Date
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.max
 
 /**
@@ -100,7 +101,7 @@ internal class ChannelStateImpl(
 
     // Watchers
     private val _watcherCount = MutableStateFlow(0)
-    private val _watchers = MutableStateFlow<List<User>>(emptyList()) // TODO Maybe use a map for performance sake
+    private val _watchers = MutableStateFlow<List<User>>(emptyList())
 
     // Typing events
     private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
@@ -134,8 +135,8 @@ internal class ChannelStateImpl(
      * Key: Poll ID
      * Value: Set of Message IDs linked to the poll
      */
-    private val messagesWithPolls = mutableMapOf<String, Set<String>>()
-    private val polls = mutableMapOf<String, Poll>()
+    private val messagesWithPolls = ConcurrentHashMap<String, Set<String>>()
+    private val polls = ConcurrentHashMap<String, Poll>()
 
     /* Keeps track of messages processed when updating the current user read state */
     private val processedMessageIds = LruCache<String, Boolean>(maxSize = 100)
@@ -827,7 +828,7 @@ internal class ChannelStateImpl(
     fun deletePoll(poll: Poll) {
         polls.remove(poll.id)
         // Remove the poll from associated messages
-        val messageIds = messagesWithPolls[poll.id].orEmpty()
+        val messageIds = messagesWithPolls.remove(poll.id).orEmpty()
         for (messageId in messageIds) {
             val message = getMessageById(messageId)
             if (message != null) {
@@ -835,8 +836,6 @@ internal class ChannelStateImpl(
                 updateMessage(updatedMessage)
             }
         }
-        // Remove the mapping
-        messagesWithPolls.remove(poll.id)
     }
 
     // endregion
@@ -1425,8 +1424,9 @@ internal class ChannelStateImpl(
 
     private fun registerPollForMessage(poll: Poll, messageId: String) {
         polls[poll.id] = poll
-        val linkedMessages = messagesWithPolls[poll.id].orEmpty() + messageId
-        messagesWithPolls[poll.id] = linkedMessages
+        messagesWithPolls.compute(poll.id) { _, existing ->
+            (existing.orEmpty() + messageId)
+        }
     }
 
     /**
