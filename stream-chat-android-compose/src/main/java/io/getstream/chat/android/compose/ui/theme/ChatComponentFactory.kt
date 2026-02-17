@@ -1974,26 +1974,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The control buttons (delete, stop, complete) displayed below the recording content
-     * during locked and overview recording states.
-     *
-     * Override this method to provide a fully custom recording-controls UI.
-     *
-     * @param isStopVisible Whether the stop button is visible (true when recording is locked).
-     * @param recordingActions Actions to control the recording (delete, stop, confirm).
-     */
-    @Composable
-    public fun MessageComposerAudioRecordingControlsContent(
-        isStopVisible: Boolean,
-        recordingActions: AudioRecordingActions,
-    ) {
-        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingControlsContent(
-            isStopVisible = isStopVisible,
-            recordingActions = recordingActions,
-        )
-    }
-
-    /**
      * The "Hold to record" instructional hint displayed as a snackbar when the user taps
      * the record button without holding.
      *

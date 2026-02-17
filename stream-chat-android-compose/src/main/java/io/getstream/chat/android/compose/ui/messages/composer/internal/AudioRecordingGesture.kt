@@ -23,9 +23,13 @@ import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.AwaitPointerEventScope
 import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlin.math.abs
+
+/** Horizontal drag distance at which the recording is cancelled. */
+internal val SlideToCancelThreshold = 96.dp
 
 /**
  * Thresholds used to interpret drag gestures during audio recording.

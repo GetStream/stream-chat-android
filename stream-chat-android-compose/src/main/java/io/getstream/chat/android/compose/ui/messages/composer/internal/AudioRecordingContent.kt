@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-@file:Suppress("TooManyFunctions") // Composable UI file: main components + private helpers + previews.
-
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -43,11 +44,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -181,7 +185,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
             )
         }
 
-        ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
+        MessageComposerAudioRecordingControlsContent(
             isStopVisible = true,
             recordingActions = recordingActions,
         )
@@ -236,7 +240,7 @@ internal fun MessageComposerAudioRecordingOverviewContent(
             )
         }
 
-        ChatTheme.componentFactory.MessageComposerAudioRecordingControlsContent(
+        MessageComposerAudioRecordingControlsContent(
             isStopVisible = false,
             recordingActions = recordingActions,
         )
@@ -275,8 +279,76 @@ private fun RecordingSlideToCancelIndicator(
     }
 }
 
-/** Drag distance at which the recording is cancelled. */
-internal val SlideToCancelThreshold = 96.dp
+/** Control buttons (delete, stop, complete) shown during locked and overview recording states. */
+@Composable
+private fun MessageComposerAudioRecordingControlsContent(
+    isStopVisible: Boolean,
+    recordingActions: AudioRecordingActions,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        RecordingControlButton(
+            onClick = recordingActions.onDeleteRecording,
+            testTag = "Stream_ComposerDeleteAudioRecordingButton",
+            circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonSecondaryBorder, CircleShape),
+            iconRes = R.drawable.stream_compose_ic_delete,
+            iconTint = ChatTheme.colors.textPrimary,
+            iconModifier = Modifier.size(ControlIconSize),
+        )
+        if (isStopVisible) {
+            RecordingControlButton(
+                onClick = recordingActions.onStopRecording,
+                testTag = "Stream_ComposerStopAudioRecordingButton",
+                circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonDestructiveBorder, CircleShape),
+                iconRes = R.drawable.stream_compose_ic_stop,
+                iconTint = ChatTheme.colors.errorAccent,
+                iconModifier = Modifier.size(ControlIconSize),
+            )
+        }
+        RecordingControlButton(
+            onClick = recordingActions.onConfirmRecording,
+            testTag = "Stream_ComposerConfirmAudioRecordingButton",
+            circleModifier = Modifier.background(ChatTheme.colors.buttonPrimaryBg, CircleShape),
+            iconRes = R.drawable.stream_compose_ic_checkmark,
+            iconTint = ChatTheme.colors.textOnAccent,
+        )
+    }
+}
+
+@Composable
+private fun RecordingControlButton(
+    onClick: () -> Unit,
+    testTag: String,
+    circleModifier: Modifier,
+    iconRes: Int,
+    iconTint: Color,
+    iconModifier: Modifier = Modifier,
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.semantics { this.testTag = testTag },
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .then(circleModifier),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                modifier = iconModifier,
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = iconTint,
+            )
+        }
+    }
+}
+
+/** Size of the icon inside control buttons. */
+private val ControlIconSize = 20.dp
 
 private val RecordingBarModifier = Modifier
     .fillMaxWidth()
