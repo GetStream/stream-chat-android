@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.result.Result
 
 /**
- * Listener for [ChatClient.queryChannels] requests.
+ * Listener for [ChatClient.queryThreads] requests.
  */
 @InternalStreamChatApi
 public interface QueryThreadsListener {
