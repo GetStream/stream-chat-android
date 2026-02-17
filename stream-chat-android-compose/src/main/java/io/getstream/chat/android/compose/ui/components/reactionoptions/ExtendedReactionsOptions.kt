@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -54,7 +53,6 @@ public fun ExtendedReactionsOptions(
     onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     modifier: Modifier = Modifier,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         with(ChatTheme.componentFactory) {
             ExtendedReactionMenuOptionItem(
@@ -65,13 +63,13 @@ public fun ExtendedReactionsOptions(
         }
     },
 ) {
-    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
-    val options = reactionTypes.entries.map { (type, reactionIcon) ->
-        val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
+    val resolver = ChatTheme.reactionResolver
+    val options = resolver.supportedReactions.map { type ->
+        val isSelected = ownReactions.any { it.type == type }
         ReactionOptionItemState(
-            painter = reactionIcon.getPainter(isSelected),
             type = type,
-            emojiCode = pushEmojiFactory.emojiCode(type),
+            isSelected = isSelected,
+            emojiCode = resolver.emojiCode(type),
         )
     }
 

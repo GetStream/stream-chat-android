@@ -32,16 +32,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
-import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 
 /**
  * Component for rendering reaction emoji toggles.
  *
  * @param type The string representation of the reaction.
- * @param emoji The emoji character the [type] maps to, if any. See [ReactionPushEmojiFactory].
+ * @param emoji The emoji character the [type] maps to, if any. See [ReactionResolver].
  * @param size The size of the reaction toggle.
  * @param checked Whether the toggle is checked.
  * @param onCheckedChange Callback when the checked state of the toggle changes.

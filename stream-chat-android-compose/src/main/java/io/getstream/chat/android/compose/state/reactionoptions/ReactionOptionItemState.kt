@@ -16,17 +16,15 @@
 
 package io.getstream.chat.android.compose.state.reactionoptions
 
-import androidx.compose.ui.graphics.painter.Painter
-
 /**
  * UI representation of reactions.
  *
- * @param painter The icon of the option.
  * @param type The String representation of the reaction, for the API.
- * @param emojiCode The optional emoji code to be shown in the push notification text, for the API.
+ * @param isSelected Whether the reaction is selected by the current user.
+ * @param emojiCode The optional emoji code to be shown for the reaction.
  */
 public data class ReactionOptionItemState(
-    public val painter: Painter,
     public val type: String,
+    public val isSelected: Boolean = false,
     public val emojiCode: String? = null,
 )
