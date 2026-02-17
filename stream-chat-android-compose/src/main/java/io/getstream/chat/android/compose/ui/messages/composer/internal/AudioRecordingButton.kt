@@ -304,7 +304,7 @@ private fun MicButtonGestureArea(
     val showPressed = isFingerDown || hint.snackbarHostState.currentSnackbarData != null
     PressInteractionEffect(showPressed, pressOffset, interactionSource)
 
-    val buttonDescription = stringResource(R.string.stream_compose_cd_record_audio_message)
+    val buttonDescription = stringResource(R.string.stream_compose_audio_recording_start)
 
     Box(
         modifier = Modifier
@@ -401,7 +401,7 @@ private fun MicButtonVisual(
                 .mirrorRtl(layoutDirection = layoutDirection)
                 .testTag("Stream_ComposerRecordAudioButton"),
             painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-            contentDescription = stringResource(R.string.stream_compose_record_audio_message),
+            contentDescription = null,
         )
     }
 }
@@ -426,7 +426,7 @@ private class RecordingHintState(
 private fun rememberRecordingHint(): RecordingHintState {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    val message = stringResource(R.string.stream_compose_message_composer_hold_to_record)
+    val message = stringResource(R.string.stream_compose_audio_recording_hint)
     return remember(snackbarHostState, scope, message) {
         RecordingHintState(snackbarHostState, scope, message)
     }
@@ -498,7 +498,13 @@ internal fun MessageComposerAudioRecordingFloatingLockIcon(
                         R.drawable.stream_compose_ic_lock_open
                     },
                 ),
-                contentDescription = null,
+                contentDescription = stringResource(
+                    if (isLocked) {
+                        R.string.stream_compose_audio_recording_locked
+                    } else {
+                        R.string.stream_compose_audio_recording_lock
+                    },
+                ),
                 tint = ChatTheme.colors.textSecondary,
             )
             if (!isLocked) {

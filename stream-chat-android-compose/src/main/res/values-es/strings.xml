@@ -109,7 +109,7 @@
   <string name="stream_compose_quoted_message_giphy_tag">"Giphy"</string>
   <string name="stream_compose_quoted_message_image_tag">"Imagen"</string>
   <string name="stream_compose_recent_files">"Ficheros recientes"</string>
-  <string name="stream_compose_record_audio_message">"Grabar mensaje de audio"</string>
+  <string name="stream_compose_audio_recording_start">"Grabar mensaje de audio"</string>
   <string name="stream_compose_remaining_images_count">"+%1$d"</string>
   <string name="stream_compose_remaining_media_attachments_count">"+%1$d"</string>
   <string name="stream_compose_replied_to_thread">"Respuestas en el hilo"</string>

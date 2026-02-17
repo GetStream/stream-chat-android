@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -83,6 +84,7 @@ public fun StaticWaveformSlider(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .progressSemantics(value = progress)
             .onSizeChanged { size ->
                 widthPx = size.width.toFloat()
             }

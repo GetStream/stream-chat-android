@@ -50,6 +50,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -173,9 +174,11 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 color = ChatTheme.colors.textPrimary,
             )
 
+            val progressDescription = stringResource(R.string.stream_compose_audio_recording_progress)
             StaticWaveformSlider(
                 modifier = Modifier
                     .fillMaxSize()
+                    .semantics { contentDescription = progressDescription }
                     .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
                 waveformData = state.waveform,
                 progress = 1f,
@@ -211,10 +214,17 @@ internal fun MessageComposerAudioRecordingOverviewContent(
             } else {
                 R.drawable.stream_compose_ic_play
             }
+            val playbackDescription = stringResource(
+                if (state.isPlaying) {
+                    R.string.stream_compose_audio_recording_pause
+                } else {
+                    R.string.stream_compose_audio_recording_play
+                },
+            )
             IconButton(onClick = recordingActions.onToggleRecordingPlayback) {
                 Icon(
                     painter = painterResource(id = playbackIcon),
-                    contentDescription = null,
+                    contentDescription = playbackDescription,
                     tint = ChatTheme.colors.textPrimary,
                 )
             }
@@ -226,9 +236,11 @@ internal fun MessageComposerAudioRecordingOverviewContent(
                 color = ChatTheme.colors.textPrimary,
             )
 
+            val progressDescription = stringResource(R.string.stream_compose_audio_recording_progress)
             StaticWaveformSlider(
                 modifier = Modifier
                     .fillMaxSize()
+                    .semantics { contentDescription = progressDescription }
                     .padding(ComponentPadding(start = StreamTokens.spacingMd, top = 8.dp, bottom = 8.dp)),
                 waveformData = state.waveform,
                 progress = currentProgress,
@@ -268,7 +280,7 @@ private fun RecordingSlideToCancelIndicator(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Text(
-            text = stringResource(id = R.string.stream_compose_message_composer_slide_to_cancel),
+            text = stringResource(id = R.string.stream_compose_audio_recording_slide_to_cancel),
             style = ChatTheme.typography.bodyDefault.copy(brush = gradientBrush),
         )
         Icon(
@@ -292,6 +304,7 @@ private fun MessageComposerAudioRecordingControlsContent(
     ) {
         RecordingControlButton(
             onClick = recordingActions.onDeleteRecording,
+            contentDescription = stringResource(R.string.stream_compose_audio_recording_delete),
             testTag = "Stream_ComposerDeleteAudioRecordingButton",
             circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonSecondaryBorder, CircleShape),
             iconRes = R.drawable.stream_compose_ic_delete,
@@ -301,6 +314,7 @@ private fun MessageComposerAudioRecordingControlsContent(
         if (isStopVisible) {
             RecordingControlButton(
                 onClick = recordingActions.onStopRecording,
+                contentDescription = stringResource(R.string.stream_compose_audio_recording_stop),
                 testTag = "Stream_ComposerStopAudioRecordingButton",
                 circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonDestructiveBorder, CircleShape),
                 iconRes = R.drawable.stream_compose_ic_stop,
@@ -310,6 +324,7 @@ private fun MessageComposerAudioRecordingControlsContent(
         }
         RecordingControlButton(
             onClick = recordingActions.onConfirmRecording,
+            contentDescription = stringResource(R.string.stream_compose_audio_recording_send),
             testTag = "Stream_ComposerConfirmAudioRecordingButton",
             circleModifier = Modifier.background(ChatTheme.colors.buttonPrimaryBg, CircleShape),
             iconRes = R.drawable.stream_compose_ic_checkmark,
@@ -318,9 +333,11 @@ private fun MessageComposerAudioRecordingControlsContent(
     }
 }
 
+@Suppress("LongParameterList")
 @Composable
 private fun RecordingControlButton(
     onClick: () -> Unit,
+    contentDescription: String,
     testTag: String,
     circleModifier: Modifier,
     iconRes: Int,
@@ -340,7 +357,7 @@ private fun RecordingControlButton(
             Icon(
                 modifier = iconModifier,
                 painter = painterResource(id = iconRes),
-                contentDescription = null,
+                contentDescription = contentDescription,
                 tint = iconTint,
             )
         }
