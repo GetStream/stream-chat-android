@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -122,7 +123,7 @@ public fun ClusteredMessageReactions(
                 type = it.type,
                 emoji = it.emoji,
                 size = ReactionIconSize.Small,
-                modifier = Modifier,
+                modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
             )
         }
         if (count > 1) {
@@ -176,7 +177,7 @@ public fun SegmentedMessageReactions(
                     type = it.type,
                     emoji = it.emoji,
                     size = ReactionIconSize.Small,
-                    modifier = Modifier,
+                    modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
                 )
                 if (it.count > 1) {
                     Text(
