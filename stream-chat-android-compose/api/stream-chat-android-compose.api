@@ -4345,10 +4345,6 @@ public final class io/getstream/chat/android/compose/ui/util/DefaultReactionReso
 	public fun getSupportedReactions ()Ljava/util/Set;
 }
 
-public final class io/getstream/chat/android/compose/ui/util/ImageUtilsKt {
-	public static final fun mirrorRtl (Landroidx/compose/ui/Modifier;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Modifier;
-}
-
 public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoaderKt {
 	public static final fun getLocalStreamImageLoader ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }

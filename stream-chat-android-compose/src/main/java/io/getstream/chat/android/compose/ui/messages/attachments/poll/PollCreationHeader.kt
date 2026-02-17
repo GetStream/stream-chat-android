@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,8 +43,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
-
 /**
  * Poll's creation header (toolbar) Composable that consist of several components.
  *
@@ -105,12 +102,8 @@ public fun PollCreationHeader(
 
 @Composable
 internal fun DefaultPollOptionsHeaderLeadingContent(onBackPressed: () -> Unit) {
-    val layoutDirection = LocalLayoutDirection.current
-
     BackButton(
-        modifier = Modifier
-            .mirrorRtl(layoutDirection = layoutDirection)
-            .padding(end = 32.dp),
+        modifier = Modifier.padding(end = 32.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )

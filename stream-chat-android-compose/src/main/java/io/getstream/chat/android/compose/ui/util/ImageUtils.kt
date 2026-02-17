@@ -28,11 +28,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.unit.LayoutDirection
 import coil3.Image
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImage
@@ -57,18 +55,6 @@ import java.net.SocketTimeoutException
 private const val GradientDarkerColorFactor = 1.3f
 private const val GradientLighterColorFactor = 0.7f
 private const val MaxRetries = 3
-
-/**
- * Applies the given mirroring scaleX based on the [layoutDirection] that's currently configured in the UI.
- *
- * Useful since the Painter from Compose doesn't know how to parse `autoMirrored` flags in SVGs.
- */
-public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
-    return this.scale(
-        scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
-        scaleY = 1f,
-    )
-}
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
