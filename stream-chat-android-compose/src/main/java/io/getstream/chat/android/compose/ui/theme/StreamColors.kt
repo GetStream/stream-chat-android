@@ -75,6 +75,7 @@ import io.getstream.chat.android.compose.R
  * @param backgroundCoreInverse Used for elevated, transient, or high-attention UI surfaces that
  * sit on top of the default app background.
  * @param backgroundElevationElevation0 Used for base elevation surface backgrounds.
+ * @param backgroundElevationElevation1 Slightly elevated surface backgrounds.
  * @param borderCoreImage Used for image frame border treatment.
  * @param borderCoreDefault Used for default border color.
  * @param borderCoreOnAccent Used for borders on accent backgrounds.
@@ -188,6 +189,7 @@ public data class StreamColors(
     public val backgroundCoreSurfaceSubtle: Color,
     public val backgroundCoreInverse: Color,
     public val backgroundElevationElevation0: Color,
+    public val backgroundElevationElevation1: Color,
     public val borderCoreImage: Color,
     public val borderCoreDefault: Color,
     public val borderCoreOnAccent: Color,
@@ -309,6 +311,7 @@ public data class StreamColors(
             backgroundCoreSurfaceSubtle = StreamPrimitiveColors.slate200,
             backgroundCoreInverse = StreamPrimitiveColors.slate900,
             backgroundElevationElevation0 = StreamPrimitiveColors.baseWhite,
+            backgroundElevationElevation1 = StreamPrimitiveColors.baseWhite,
             backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
             badgeBgInverse = StreamPrimitiveColors.baseBlack,
             badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
@@ -410,6 +413,7 @@ public data class StreamColors(
             backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral800,
             backgroundCoreInverse = StreamPrimitiveColors.neutral50,
             backgroundElevationElevation0 = StreamPrimitiveColors.baseBlack,
+            backgroundElevationElevation1 = StreamPrimitiveColors.neutral900,
             backgroundElevationElevation2 = StreamPrimitiveColors.neutral800,
             borderCoreDefault = StreamPrimitiveColors.neutral600,
             borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
@@ -498,6 +502,7 @@ internal object StreamPrimitiveColors {
     val neutral600 = Color(0xFF565656)
     val neutral700 = Color(0xFF4A4A4A)
     val neutral800 = Color(0xFF323232)
+    val neutral900 = Color(0xFF1C1C1C)
     val purple100 = Color(0xFFEBDEFD)
     val purple200 = Color(0xFFD8BFFC)
     val purple800 = Color(0xFF6640AB)

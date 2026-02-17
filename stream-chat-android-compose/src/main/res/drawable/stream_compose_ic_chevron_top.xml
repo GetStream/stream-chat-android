@@ -17,14 +17,13 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="20dp"
     android:height="20dp"
-    android:autoMirrored="true"
     android:viewportWidth="20"
     android:viewportHeight="20"
     >
 
     <path
         android:fillColor="#00000000"
-        android:pathData="M10.001,15.834C12.564,15.834 14.766,14.291 15.731,12.084M10.001,15.834C7.438,15.834 5.235,14.291 4.271,12.084M10.001,15.834V17.709M10.001,13.125C8.045,13.125 6.459,11.54 6.459,9.584V5.834C6.459,3.878 8.045,2.292 10.001,2.292C11.957,2.292 13.542,3.878 13.542,5.834V9.584C13.542,11.54 11.957,13.125 10.001,13.125Z"
+        android:pathData="M5,12.5L10,7.5L15,12.5"
         android:strokeWidth="1.5"
         android:strokeColor="#000000"
         android:strokeLineCap="round"

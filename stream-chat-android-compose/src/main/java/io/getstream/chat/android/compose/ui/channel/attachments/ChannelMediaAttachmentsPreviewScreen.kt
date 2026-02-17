@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +42,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewSharingInProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewBottomBarParams
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelMediaAttachmentsPreviewViewAction
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelMediaAttachmentsPreviewViewEvent
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelMediaAttachmentsPreviewViewModel
@@ -158,7 +158,7 @@ private fun ChannelMediaAttachmentsPreviewContent(
                 onShareClick = onShareClick,
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = { StreamSnackbarHost(hostState = snackbarHostState) },
         containerColor = ChatTheme.colors.appBackground,
     ) { padding ->
         MediaGalleryPager(

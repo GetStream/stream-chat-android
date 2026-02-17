@@ -18,44 +18,33 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class AudioRecordingButtonTest : PaparazziComposeTest {
+internal class AudioRecordingContentTest : PaparazziComposeTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(
-        deviceConfig = DeviceConfig.PIXEL_2,
-        renderingMode = SessionParams.RenderingMode.SHRINK,
-    )
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `button idle`() {
-        snapshotWithDarkModeRow {
-            AudioRecordingButtonIdle()
+    fun `hold content`() {
+        snapshotWithDarkMode {
+            AudioRecordingHoldContent()
         }
     }
 
     @Test
-    fun `button hold`() {
+    fun `locked content`() {
         snapshotWithDarkMode {
-            AudioRecordingButtonHold()
+            AudioRecordingLockedContent()
         }
     }
 
     @Test
-    fun `button locked`() {
+    fun `overview content`() {
         snapshotWithDarkMode {
-            AudioRecordingButtonLocked()
-        }
-    }
-
-    @Test
-    fun `button overview`() {
-        snapshotWithDarkMode {
-            AudioRecordingButtonOverview()
+            AudioRecordingOverviewContent()
         }
     }
 }

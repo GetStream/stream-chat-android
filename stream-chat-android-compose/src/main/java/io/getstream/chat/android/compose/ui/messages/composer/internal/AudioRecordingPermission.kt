@@ -17,30 +17,18 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.window.Popup
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
@@ -48,10 +36,9 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.ui.common.utils.openSystemSettings
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Wrapper around Accompanist's [rememberPermissionState].
@@ -65,19 +52,15 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
     if (LocalInspectionMode.current) {
         return remember {
             AudioRecordingPermission(
-                status = PermissionStatus.Granted,
+                statusProvider = { PermissionStatus.Granted },
                 launchPermissionRequest = {},
                 showRationale = {},
+                rationaleSnackbarHostState = SnackbarHostState(),
             )
         }
     }
 
-    var showRationale by remember { mutableStateOf(false) }
-    if (showRationale) {
-        AudioRecordingPermissionRationale(
-            onDismissRequest = { showRationale = false },
-        )
-    }
+    val rationaleState = rememberPermissionRationale()
 
     var showDenied by remember { mutableStateOf(false) }
     val state = rememberPermissionState(Manifest.permission.RECORD_AUDIO) { granted ->
@@ -93,21 +76,26 @@ internal fun rememberAudioRecordingPermission(): AudioRecordingPermission {
         )
     }
 
-    return remember(state) {
+    return remember(state, rationaleState) {
         AudioRecordingPermission(
-            status = state.status,
+            statusProvider = { state.status },
             launchPermissionRequest = { state.launchPermissionRequest() },
-            showRationale = { showRationale = true },
+            showRationale = { rationaleState.show() },
+            rationaleSnackbarHostState = rationaleState.snackbarHostState,
         )
     }
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 internal class AudioRecordingPermission(
-    val status: PermissionStatus,
+    private val statusProvider: () -> PermissionStatus,
     val launchPermissionRequest: () -> Unit,
     val showRationale: () -> Unit,
-)
+    val rationaleSnackbarHostState: SnackbarHostState,
+) {
+    /** Current permission status, read fresh on every access. */
+    val status: PermissionStatus get() = statusProvider()
+}
 
 /**
  * Returns `true` if the recording can proceed (permission granted).
@@ -126,70 +114,42 @@ internal fun AudioRecordingPermission.gateRecording(): Boolean = when {
     else -> true
 }
 
-/**
- * A popup anchored at [Alignment.BottomCenter] that auto-dismisses after [dismissTimeoutMs].
- */
-@Composable
-private fun TimedPopup(
-    offsetY: Int,
-    dismissTimeoutMs: Long = 1000L,
-    onDismissRequest: () -> Unit,
-    content: @Composable () -> Unit,
+/** State holder for the permission rationale snackbar. */
+private class PermissionRationaleState(
+    val snackbarHostState: SnackbarHostState,
+    private val scope: CoroutineScope,
+    private val message: String,
+    private val actionLabel: String,
+    private val onAction: () -> Unit,
 ) {
-    LaunchedEffect(Unit) {
-        delay(dismissTimeoutMs)
-        onDismissRequest()
-    }
-    Popup(
-        onDismissRequest = onDismissRequest,
-        offset = IntOffset(0, -offsetY),
-        alignment = Alignment.BottomCenter,
-    ) {
-        content()
+    fun show() {
+        scope.launch {
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                actionLabel = actionLabel,
+                duration = SnackbarDuration.Short,
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onAction()
+            }
+        }
     }
 }
 
 @Composable
-private fun AudioRecordingPermissionRationale(
-    onDismissRequest: () -> Unit,
-) {
-    val theme = ChatTheme.messageComposerTheme.audioRecording.permissionRationale
-    val offsetY = with(LocalDensity.current) { theme.containerBottomOffset.toPx().toInt() }
-    TimedPopup(offsetY = offsetY, onDismissRequest = onDismissRequest) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(theme.containerPadding),
-            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
-            shape = theme.containerShape,
-            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(theme.contentHeight)
-                    .padding(theme.contentPadding),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier.weight(1f),
-                    style = theme.textStyle,
-                    text = stringResource(id = R.string.stream_ui_message_composer_permission_audio_record_message),
-                )
-                Spacer(modifier = Modifier.width(theme.contentSpace))
-                val context = LocalContext.current
-                TextButton(
-                    modifier = Modifier,
-                    onClick = { context.openSystemSettings() },
-                ) {
-                    Text(
-                        style = theme.buttonTextStyle,
-                        text = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
-                            .uppercase(),
-                    )
-                }
-            }
-        }
+private fun rememberPermissionRationale(): PermissionRationaleState {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val message = stringResource(R.string.stream_ui_message_composer_permission_audio_record_message)
+    val actionLabel = stringResource(R.string.stream_ui_message_composer_permissions_setting_button)
+    return remember(snackbarHostState, scope, context, message, actionLabel) {
+        PermissionRationaleState(
+            snackbarHostState = snackbarHostState,
+            scope = scope,
+            message = message,
+            actionLabel = actionLabel,
+            onAction = { context.openSystemSettings() },
+        )
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.composables
+package io.getstream.chat.android.compose.ui.util
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -23,7 +23,7 @@ import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class AudioWaveSeekbarTest : PaparazziComposeTest {
+internal class StreamSnackbarTest : PaparazziComposeTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(
@@ -32,9 +32,16 @@ internal class AudioWaveSeekbarTest : PaparazziComposeTest {
     )
 
     @Test
-    fun `default parameters`() {
-        snapshotWithDarkModeRow {
-            AudioWaveVSeekbar()
+    fun `snackbar message only`() {
+        snapshotWithDarkMode {
+            StreamSnackbarMessageOnly()
+        }
+    }
+
+    @Test
+    fun `snackbar with action`() {
+        snapshotWithDarkMode {
+            StreamSnackbarWithAction()
         }
     }
 }

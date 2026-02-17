@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.progressSemantics
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,9 +42,12 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -78,24 +82,26 @@ public fun StaticWaveformSlider(
     onDrag: (Float) -> Unit = {},
     onDragStop: (Float) -> Unit = {},
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val currentProgress by rememberUpdatedState(progress)
     var widthPx by remember { mutableFloatStateOf(0f) }
     Box(
         modifier = modifier
             .fillMaxSize()
+            .progressSemantics(value = progress)
             .onSizeChanged { size ->
                 widthPx = size.width.toFloat()
             }
             .dragPointerInput(
                 enabled = isThumbVisible,
                 onDragStart = {
-                    onDragStart(it.toHorizontalProgress(widthPx))
+                    onDragStart(it.toHorizontalProgress(widthPx, isRtl))
                 },
                 onDrag = {
-                    onDrag(it.toHorizontalProgress(widthPx))
+                    onDrag(it.toHorizontalProgress(widthPx, isRtl))
                 },
                 onDragStop = {
-                    onDragStop(it?.toHorizontalProgress(widthPx) ?: currentProgress)
+                    onDragStop(it?.toHorizontalProgress(widthPx, isRtl) ?: currentProgress)
                 },
             ),
     ) {
@@ -161,6 +167,7 @@ internal fun WaveformTrack(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float = 0f,
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val colors = ChatTheme.colors
     val finalProgress = progress.coerceIn(0f, 1f)
     val progressColor = colors.chatWaveformBarPlaying
@@ -175,7 +182,9 @@ internal fun WaveformTrack(
     }
     val visibleBars = minOf(visibleBarLimit, waveformData.size)
     var barCornerRadius by remember(totalBars) { mutableStateOf(CornerRadius.Zero) }
-    Canvas(modifier = modifier) {
+    Canvas(
+        modifier = modifier.graphicsLayer { scaleX = if (isRtl) -1f else 1f },
+    ) {
         val canvasW = size.width
         val canvasH = size.height
         val spaceWidth = canvasW * BarSpacingRatio
@@ -275,6 +284,7 @@ internal fun WaveformTrackPreview() {
     }
 }
 
-private fun Offset.toHorizontalProgress(base: Float): Float {
-    return if (base > 0) (x / base).coerceIn(0f, 1f) else 0f
+private fun Offset.toHorizontalProgress(base: Float, isRtl: Boolean): Float {
+    val rawProgress = if (base > 0) (x / base).coerceIn(0f, 1f) else 0f
+    return if (isRtl) 1f - rawProgress else rawProgress
 }

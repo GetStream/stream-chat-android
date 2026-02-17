@@ -148,9 +148,24 @@
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
     <!-- Audio Recording -->
-    <string name="stream_compose_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_compose_message_composer_hold_to_record">Hold to record. Release to send</string>
     <string name="stream_compose_audio_recording_preview">Voice message</string>
+    <string name="stream_compose_audio_recording_start">Record audio message</string>
+    <string name="stream_compose_audio_recording_hint">Hold to record. Release to send</string>
+    <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>
+    <string name="stream_compose_audio_recording_delete">Delete recording</string>
+    <string name="stream_compose_audio_recording_stop">Stop recording</string>
+    <string name="stream_compose_audio_recording_send">Send recording</string>
+    <string name="stream_compose_audio_recording_play">Play</string>
+    <string name="stream_compose_audio_recording_pause">Pause</string>
+    <string name="stream_compose_audio_recording_progress">Audio recording progress</string>
+    <string name="stream_compose_audio_recording_lock">Lock recording</string>
+    <string name="stream_compose_audio_recording_locked">Recording locked</string>
+
+    <!-- Audio Playback -->
+    <string name="stream_compose_audio_playback_play">Play</string>
+    <string name="stream_compose_audio_playback_pause">Pause</string>
+    <string name="stream_compose_audio_playback_speed">Playback speed, %s</string>
+    <string name="stream_compose_audio_playback_progress">Audio playback progress</string>
 
     <!-- Attachment Picker -->
     <string name="stream_compose_attachment_media_picker">Media</string>
@@ -166,7 +181,8 @@
     <string name="stream_compose_message_label">Message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
-    <string name="stream_compose_record_audio_message">Record audio message</string>
+
+
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
@@ -227,7 +243,6 @@
     <string name="stream_compose_cd_message_item" translatable="false">Message item</string>
     <string name="stream_compose_cd_message_input" translatable="false">Message input</string>
     <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
-    <string name="stream_compose_cd_record_audio_message" translatable="false">Record audio message</string>
 
     <!--  Poll  -->
     <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
