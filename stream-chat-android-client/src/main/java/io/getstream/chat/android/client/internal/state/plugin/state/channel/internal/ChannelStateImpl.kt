@@ -1435,9 +1435,8 @@ internal class ChannelStateImpl(
 
     private fun registerPollForMessage(poll: Poll, messageId: String) {
         polls[poll.id] = poll
-        messagesWithPolls.compute(poll.id) { _, existing ->
-            (existing.orEmpty() + messageId)
-        }
+        val currentSet = messagesWithPolls[poll.id].orEmpty()
+        messagesWithPolls[poll.id] = currentSet + messageId
     }
 
     /**
