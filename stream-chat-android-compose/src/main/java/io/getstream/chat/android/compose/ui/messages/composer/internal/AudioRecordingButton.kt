@@ -77,6 +77,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -115,7 +116,7 @@ internal fun AudioRecordingButton(
     val showFloatingIcons = recordingState is RecordingState.Hold || recordingState is RecordingState.Locked
     val floatingMic = rememberFloatingMicState(recordingState)
 
-    Box(modifier = modifier.then(if (isRecording) Modifier.fillMaxWidth() else Modifier)) {
+    Box(modifier = modifier.applyIf(isRecording) { fillMaxWidth() }) {
         if (isRecording) {
             AudioRecordingContent(
                 recordingState = recordingState,
