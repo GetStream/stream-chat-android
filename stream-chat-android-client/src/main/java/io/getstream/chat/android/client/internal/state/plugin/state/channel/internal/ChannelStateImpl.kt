@@ -715,9 +715,11 @@ internal class ChannelStateImpl(
      * @param members The list of members to upsert.
      */
     fun upsertMembers(members: List<Member>) {
-        val currentMembers = _members.value.associateBy(Member::getUserId).toMutableMap()
-        currentMembers += members.associateBy(Member::getUserId)
-        _members.value = currentMembers.values.toList()
+        _members.update { current ->
+            val merged = current.associateBy(Member::getUserId).toMutableMap()
+            merged += members.associateBy(Member::getUserId)
+            merged.values.toList()
+        }
     }
 
     // endregion
@@ -787,12 +789,14 @@ internal class ChannelStateImpl(
      * @param watcherCount The total count of watchers.
      */
     fun upsertWatchers(watchers: List<User>, watcherCount: Int) {
-        val currentWatchers = _watchers.value.associateBy { it.id }.toMutableMap()
-        for (watcher in watchers) {
-            currentWatchers[watcher.id] = watcher
+        _watchers.update { current ->
+            val merged = current.associateBy { it.id }.toMutableMap()
+            for (watcher in watchers) {
+                merged[watcher.id] = watcher
+            }
+            merged.values.sortedBy(User::createdAt)
         }
-        _watchers.value = currentWatchers.values.sortedBy(User::createdAt)
-        _watcherCount.value = max(0, watcherCount)
+        _watcherCount.update { max(0, watcherCount) }
     }
 
     // endregion
