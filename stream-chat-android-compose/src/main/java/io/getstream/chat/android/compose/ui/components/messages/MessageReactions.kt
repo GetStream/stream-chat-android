@@ -19,11 +19,16 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -95,6 +100,8 @@ public fun ClusteredMessageReactions(
     }
 }
 
+private const val MaxVisibleSegmentedReactions = 4
+
 /**
  * Represents a segmented reaction layout where each reaction gets its own pill with an individual count.
  *
@@ -115,40 +122,66 @@ public fun SegmentedMessageReactions(
     )
     val colors = ChatTheme.colors
     val shouldShowCounts = reactions.any { it.count > 1 }
+    val overflowCount = remember(reactions) {
+        reactions.drop(MaxVisibleSegmentedReactions).sumOf(MessageReactionItemState::count)
+    }
 
     Row(
-        modifier = modifier.semantics {
-            testTag = "Stream_MessageReaction"
-            contentDescription = description
-        },
+        modifier = modifier
+            .height(IntrinsicSize.Min)
+            .semantics {
+                testTag = "Stream_MessageReaction"
+                contentDescription = description
+            },
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
-        reactions.forEach {
-            Row(
-                modifier = Modifier
-                    .background(colors.barsBackground, CircleShape)
-                    .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
-                    .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
-                    .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
-            ) {
+        for (i in 0 until minOf(reactions.size, MaxVisibleSegmentedReactions)) {
+            val reaction = reactions[i]
+            ReactionChip(onClick = onClick) {
                 ChatTheme.componentFactory.ReactionIcon(
-                    type = it.type,
-                    emoji = it.emoji,
+                    type = reaction.type,
+                    emoji = reaction.emoji,
                     size = ReactionIconSize.Small,
-                    modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
+                    modifier = Modifier.testTag("Stream_MessageReaction_${reaction.type}"),
                 )
                 if (shouldShowCounts) {
                     Text(
-                        text = it.count.toString(),
+                        text = reaction.count.toString(),
                         style = ChatTheme.typography.numericMedium,
                         color = colors.textPrimary,
                     )
                 }
             }
         }
+        if (overflowCount > 0) {
+            ReactionChip(onClick = onClick) {
+                Text(
+                    text = "+$overflowCount",
+                    style = ChatTheme.typography.numericMedium,
+                    color = colors.textPrimary,
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun ReactionChip(
+    onClick: (() -> Unit)?,
+    content: @Composable RowScope.() -> Unit,
+) {
+    val colors = ChatTheme.colors
+    Row(
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(colors.barsBackground, CircleShape)
+            .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
+            .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
+            .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+        content = content,
+    )
 }
 
 @Preview
