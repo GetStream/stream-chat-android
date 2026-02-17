@@ -33,6 +33,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.ui.common.state.messages.MessageMode.MessageThread
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Rule
 import org.junit.Test
@@ -49,7 +50,9 @@ internal class MessageComposerScreenTest : MockedChatClientTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    val mockViewModel: MessageComposerViewModel = mock()
+    val mockViewModel: MessageComposerViewModel = mock {
+        on { inputFocusEvents } doReturn MutableSharedFlow()
+    }
 
     @Test
     @UiThread
