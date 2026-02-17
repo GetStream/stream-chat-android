@@ -39,7 +39,6 @@ import io.getstream.chat.android.compose.R
  * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
  * @param infoAccent Used for the online status.
  * @param highlight Used for message highlights.
- * @param giphyMessageBackground Used as a background for the ephemeral giphy messages.
  * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
  * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
  * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
@@ -156,7 +155,6 @@ public data class StreamColors(
     public val errorAccent: Color,
     public val infoAccent: Color,
     public val highlight: Color,
-    public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
     public val mediaShimmerBase: Color,
@@ -294,7 +292,6 @@ public data class StreamColors(
             errorAccent = colorResource(R.color.stream_compose_error_accent),
             infoAccent = colorResource(R.color.stream_compose_info_accent),
             highlight = colorResource(R.color.stream_compose_highlight),
-            giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
             mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
@@ -398,7 +395,6 @@ public data class StreamColors(
             errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
             infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
             highlight = colorResource(R.color.stream_compose_highlight_dark),
-            giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
             mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
