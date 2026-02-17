@@ -1885,6 +1885,28 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The floating lock icon displayed above the recording content during [RecordingState.Hold]
+     * and [RecordingState.Locked] states.
+     *
+     * Shows an open lock with a chevron while dragging, and a closed lock once locked.
+     * The icon follows the vertical drag offset during Hold.
+     *
+     * @param isLocked Whether the recording is currently locked (true) or still being held (false).
+     * @param dragOffsetY The vertical drag offset in pixels (negative = upward) during Hold.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingFloatingLockIcon(
+        isLocked: Boolean,
+        dragOffsetY: Int,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal
+            .MessageComposerAudioRecordingFloatingLockIcon(
+                isLocked = isLocked,
+                dragOffsetY = dragOffsetY,
+            )
+    }
+
+    /**
      * The permission rationale displayed as a snackbar when the audio recording permission
      * needs explanation. Shows a message and a "Settings" action button.
      *

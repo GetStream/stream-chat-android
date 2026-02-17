@@ -134,7 +134,7 @@ internal fun AudioRecordingButton(
         )
 
         if (showFloatingIcons) {
-            FloatingLockIcon(
+            ChatTheme.componentFactory.MessageComposerAudioRecordingFloatingLockIcon(
                 isLocked = recordingState is RecordingState.Locked,
                 dragOffsetY = floatingMic.offset.y,
             )
@@ -457,7 +457,7 @@ private val LockButtonShape = RoundedCornerShape(percent = 50)
 
 /** Floating lock icon positioned above the content at the end edge, following drag during Hold. */
 @Composable
-private fun FloatingLockIcon(
+internal fun MessageComposerAudioRecordingFloatingLockIcon(
     isLocked: Boolean,
     dragOffsetY: Int,
 ) {
