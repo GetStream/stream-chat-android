@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.state.channel.internal
 
+import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.randomMember
@@ -80,8 +82,9 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         fun `addMember should add new member`() = runTest {
             // given
             val member = createMember(1)
+            val event = randomMemberAddedEvent(member = member)
             // when
-            channelState.addMember(member)
+            channelState.addMember(event)
             // then
             assertEquals(1, channelState.members.value.size)
             assertEquals(member.getUserId(), channelState.members.value.first().getUserId())
@@ -91,10 +94,10 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         fun `addMember should not add duplicate member`() = runTest {
             // given
             val member = createMember(1)
-            channelState.addMember(member)
+            channelState.addMember(randomMemberAddedEvent(member = member))
             // when
             val duplicateMember = member.copy(user = member.user.copy(name = "Updated Name"))
-            channelState.addMember(duplicateMember)
+            channelState.addMember(randomMemberAddedEvent(member = duplicateMember))
             // then
             assertEquals(1, channelState.members.value.size)
         }
@@ -104,8 +107,9 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
             // given
             channelState.setMemberCount(5)
             val member = createMember(1)
+            val event = randomMemberAddedEvent(member = member)
             // when
-            channelState.addMember(member)
+            channelState.addMember(event)
             // then
             assertEquals(6, channelState.membersCount.value)
         }
@@ -114,10 +118,10 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
         fun `addMember with duplicate should not increment member count`() = runTest {
             // given
             val member = createMember(1)
-            channelState.addMember(member)
+            channelState.addMember(randomMemberAddedEvent(member = member))
             val initialCount = channelState.membersCount.value
             // when
-            channelState.addMember(member) // Add same member again
+            channelState.addMember(randomMemberAddedEvent(member = member)) // Add same member again
             // then - count should not change since member was already present
             assertEquals(initialCount, channelState.membersCount.value)
         }
@@ -206,50 +210,50 @@ internal class ChannelStateImplMembersTest : ChannelStateImplTestBase() {
     }
 
     @Nested
-    inner class DeleteMember {
+    inner class RemoveMember {
 
         @Test
-        fun `deleteMember should remove member from state`() = runTest {
+        fun `removeMember should remove member from state`() = runTest {
             // given
             val members = createMembers(3)
             channelState.setMembers(members)
             // when
-            channelState.deleteMember(members[1].getUserId())
+            channelState.removeMember(randomMemberRemovedEvent(member = members[1]))
             // then
             assertEquals(2, channelState.members.value.size)
             assertFalse(channelState.members.value.any { it.getUserId() == members[1].getUserId() })
         }
 
         @Test
-        fun `deleteMember should decrement member count`() = runTest {
+        fun `removeMember should decrement member count`() = runTest {
             // given
             val members = createMembers(3)
             channelState.setMembers(members)
             channelState.setMemberCount(3)
             // when
-            channelState.deleteMember(members[0].getUserId())
+            channelState.removeMember(randomMemberRemovedEvent(member = members[0]))
             // then
             assertEquals(2, channelState.membersCount.value)
         }
 
         @Test
-        fun `deleteMember should not decrement count below zero`() = runTest {
+        fun `removeMember should not decrement count below zero`() = runTest {
             // given
             channelState.setMemberCount(0)
             // when
-            channelState.deleteMember("non_existing_id")
+            channelState.removeMember(randomMemberRemovedEvent(member = randomMember(user = randomUser(id = "non_existing_id"))))
             // then
             assertEquals(0, channelState.membersCount.value)
         }
 
         @Test
-        fun `deleteMember should do nothing for non-existing member in list but still decrement count`() = runTest {
+        fun `removeMember should do nothing for non-existing member in list but still decrement count`() = runTest {
             // given - members list may be partial (not all members loaded); removed member might not be in our list
             val members = createMembers(3)
             channelState.setMembers(members)
             channelState.setMemberCount(3)
             // when - removing member not in our list
-            channelState.deleteMember("non_existing_id")
+            channelState.removeMember(randomMemberRemovedEvent(member = randomMember(user = randomUser(id = "non_existing_id"))))
             // then - list unchanged, count decremented (we trust the event)
             assertEquals(3, channelState.members.value.size)
             assertEquals(2, channelState.membersCount.value)

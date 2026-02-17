@@ -657,7 +657,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).addMember(member)
+        verify(state).addMember(event)
         verify(state).setMembership(member)
     }
 
@@ -668,7 +668,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).addMember(member)
+        verify(state).addMember(event)
         verify(state, never()).setMembership(any())
     }
 
@@ -679,7 +679,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).deleteMember(member.getUserId())
+        verify(state).removeMember(event)
         verify(state).deleteMembership()
     }
 
@@ -690,7 +690,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).deleteMember(member.getUserId())
+        verify(state).removeMember(event)
         verify(state, never()).deleteMembership()
     }
 
@@ -779,7 +779,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).upsertWatcher(event)
+        verify(state).addWatcher(event)
     }
 
     @Test
@@ -797,7 +797,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).deleteWatcher(event)
+        verify(state).removeWatcher(event)
     }
 
     // endregion
@@ -1036,7 +1036,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).addMember(member)
+        verify(state).upsertMember(member)
         verify(state).updateChannelData(event)
     }
 
@@ -1057,7 +1057,7 @@ internal class ChannelEventHandlerImplTest {
 
         handler.handle(event)
 
-        verify(state).deleteMember(member.getUserId())
+        verify(state).removeMember(event)
         verify(state).updateChannelData(event)
     }
 

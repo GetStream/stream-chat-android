@@ -250,7 +250,7 @@ internal class ChannelEventHandlerImpl(
             is ReactionDeletedEvent -> updateMessageWithReaction(event.message)
             // Member events
             is MemberAddedEvent -> {
-                state.addMember(event.member)
+                state.addMember(event)
                 // Set the channel.membership if the current user is added to the channel
                 if (event.member.getUserId() == getCurrentUserId()) {
                     state.setMembership(event.member)
@@ -266,7 +266,7 @@ internal class ChannelEventHandlerImpl(
             }
 
             is MemberRemovedEvent -> {
-                state.deleteMember(event.member.getUserId())
+                state.removeMember(event)
                 // Remove the channel.membership if the current user is removed from the channel
                 if (event.member.getUserId() == getCurrentUserId()) {
                     state.deleteMembership()
@@ -283,8 +283,8 @@ internal class ChannelEventHandlerImpl(
                 state.setWatchers(event.channel.watchers, event.channel.watcherCount)
             }
             // Watcher events
-            is UserStartWatchingEvent -> state.upsertWatcher(event)
-            is UserStopWatchingEvent -> state.deleteWatcher(event)
+            is UserStartWatchingEvent -> state.addWatcher(event)
+            is UserStopWatchingEvent -> state.removeWatcher(event)
             // Channel update events
             is ChannelUpdatedEvent -> state.updateChannelData(event)
             is ChannelUpdatedByUserEvent -> state.updateChannelData(event)
@@ -338,7 +338,7 @@ internal class ChannelEventHandlerImpl(
             }
 
             is NotificationInviteRejectedEvent -> {
-                state.deleteMember(event.member.getUserId())
+                state.removeMember(event)
                 state.updateChannelData(event)
             }
             // Ban events

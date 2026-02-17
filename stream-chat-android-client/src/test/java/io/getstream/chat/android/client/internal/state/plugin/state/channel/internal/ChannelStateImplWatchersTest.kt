@@ -96,15 +96,15 @@ internal class ChannelStateImplWatchersTest : ChannelStateImplTestBase() {
     }
 
     @Nested
-    inner class UpsertWatcherEvent {
+    inner class AddWatcher {
 
         @Test
-        fun `upsertWatcher should add watcher from UserStartWatchingEvent`() = runTest {
+        fun `addWatcher should add watcher from UserStartWatchingEvent`() = runTest {
             // given
             val user = createWatcher(1)
             val event = createStartWatchingEvent(user, watcherCount = 1)
             // when
-            channelState.upsertWatcher(event)
+            channelState.addWatcher(event)
             // then
             assertEquals(1, channelState.watchers.value.size)
             assertEquals(user.id, channelState.watchers.value.first().id)
@@ -112,28 +112,28 @@ internal class ChannelStateImplWatchersTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `upsertWatcher should update existing watcher from event`() = runTest {
+        fun `addWatcher should update existing watcher from event`() = runTest {
             // given
             val user = createWatcher(1)
             channelState.setWatchers(listOf(user), watcherCount = 1)
             // when
             val updatedUser = user.copy(name = "Updated Name")
             val event = createStartWatchingEvent(updatedUser, watcherCount = 1)
-            channelState.upsertWatcher(event)
+            channelState.addWatcher(event)
             // then
             assertEquals(1, channelState.watchers.value.size)
             assertEquals("Updated Name", channelState.watchers.value.first().name)
         }
 
         @Test
-        fun `upsertWatcher should update watcher count from event`() = runTest {
+        fun `addWatcher should update watcher count from event`() = runTest {
             // given
             val user1 = createWatcher(1)
             channelState.setWatchers(listOf(user1), watcherCount = 1)
             // when
             val user2 = createWatcher(2)
             val event = createStartWatchingEvent(user2, watcherCount = 2)
-            channelState.upsertWatcher(event)
+            channelState.addWatcher(event)
             // then
             assertEquals(2, channelState.watchers.value.size)
             assertEquals(2, channelState.watcherCount.value)
@@ -210,16 +210,16 @@ internal class ChannelStateImplWatchersTest : ChannelStateImplTestBase() {
     }
 
     @Nested
-    inner class DeleteWatcherEvent {
+    inner class RemoveWatcher {
 
         @Test
-        fun `deleteWatcher should remove watcher from UserStopWatchingEvent`() = runTest {
+        fun `removeWatcher should remove watcher from UserStopWatchingEvent`() = runTest {
             // given
             val watchers = createWatchers(3)
             channelState.setWatchers(watchers, watcherCount = 3)
             // when
             val event = createStopWatchingEvent(watchers[1], watcherCount = 2)
-            channelState.deleteWatcher(event)
+            channelState.removeWatcher(event)
             // then
             assertEquals(2, channelState.watchers.value.size)
             assertFalse(channelState.watchers.value.any { it.id == watchers[1].id })
@@ -227,53 +227,37 @@ internal class ChannelStateImplWatchersTest : ChannelStateImplTestBase() {
         }
 
         @Test
-        fun `deleteWatcher should update watcher count from event`() = runTest {
+        fun `removeWatcher should update watcher count from event`() = runTest {
             // given
             val watchers = createWatchers(3)
             channelState.setWatchers(watchers, watcherCount = 3)
             // when
             val event = createStopWatchingEvent(watchers[0], watcherCount = 2)
-            channelState.deleteWatcher(event)
+            channelState.removeWatcher(event)
             // then
-            assertEquals(2, channelState.watcherCount.value)
-        }
-    }
-
-    @Nested
-    inner class DeleteWatcherById {
-
-        @Test
-        fun `deleteWatcher by userId should remove watcher from state`() = runTest {
-            // given
-            val watchers = createWatchers(3)
-            channelState.setWatchers(watchers, watcherCount = 3)
-            // when
-            channelState.deleteWatcher(watchers[1].id, watcherCount = 2)
-            // then
-            assertEquals(2, channelState.watchers.value.size)
-            assertFalse(channelState.watchers.value.any { it.id == watchers[1].id })
             assertEquals(2, channelState.watcherCount.value)
         }
 
         @Test
-        fun `deleteWatcher by userId should do nothing for non-existing user`() = runTest {
+        fun `removeWatcher should do nothing for non-existing user`() = runTest {
             // given
             val watchers = createWatchers(3)
             channelState.setWatchers(watchers, watcherCount = 3)
             // when
-            channelState.deleteWatcher("non_existing_id", watcherCount = 2)
+            val nonExistingUser = randomUser(id = "non_existing_id")
+            channelState.removeWatcher(createStopWatchingEvent(nonExistingUser, watcherCount = 2))
             // then
             assertEquals(3, channelState.watchers.value.size)
             assertEquals(2, channelState.watcherCount.value)
         }
 
         @Test
-        fun `deleteWatcher should clamp negative watcher count to zero`() = runTest {
+        fun `removeWatcher should clamp negative watcher count to zero`() = runTest {
             // given
             val watchers = createWatchers(1)
             channelState.setWatchers(watchers, watcherCount = 1)
             // when
-            channelState.deleteWatcher(watchers[0].id, watcherCount = -1)
+            channelState.removeWatcher(createStopWatchingEvent(watchers[0], watcherCount = -1))
             // then
             assertEquals(0, channelState.watcherCount.value)
         }

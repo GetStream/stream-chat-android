@@ -19,6 +19,9 @@ package io.getstream.chat.android.client.internal.state.plugin.state.channel.int
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.HasChannel
+import io.getstream.chat.android.client.events.MemberAddedEvent
+import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
@@ -656,27 +659,47 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Adds a member to the current state.
+     * Adds a [Member] to the channel from the given [MemberAddedEvent].
      *
-     * @param member The member to add.
+     * **Important:** Increments [membersCount] if the member wasn't already a member.
+     *
+     * @param event The [MemberAddedEvent] informing the channel of the new member.
      */
-    fun addMember(member: Member) {
-        var wasAdded = false
-        _members.update { current ->
-            if (current.any { it.getUserId() == member.getUserId() }) {
-                current
-            } else {
-                wasAdded = true
-                current + member
-            }
-        }
-        if (wasAdded) {
-            _memberCount.update { it + 1 }
+    fun addMember(event: MemberAddedEvent) {
+        val memberToAdd = event.member
+        val isAlreadyMember = _members.value.any { it.getUserId() == memberToAdd.getUserId() }
+        if (!isAlreadyMember) {
+            _members.update { current -> current + memberToAdd }
+            _memberCount.update { current -> current + 1 }
         }
     }
 
     /**
+     * Removes a [Member] from the channel according the given [MemberRemovedEvent].
+     * Removes the member from the list if present (list may be partial - not all members loaded).
+     *
+     * **Important:** Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     *
+     * @param event The [MemberRemovedEvent] informing the channel about the member removal.
+     */
+    fun removeMember(event: MemberRemovedEvent) =
+        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+
+    /**
+     * Removes a [Member] from the channel according the given [NotificationInviteRejectedEvent]. Happens when the user
+     * has a pending invite (considered a member), but the invite is rejected.
+     * Removes the member from the list if present (list may be partial - not all members loaded).
+     * Always decrements [membersCount] because the event is authoritative: someone left the channel.
+     *
+     * @param event The [NotificationInviteRejectedEvent] informing the channel about the rejected invite.
+     */
+    fun removeMember(event: NotificationInviteRejectedEvent) =
+        deleteMemberAndDecrementMemberCount(event.member.getUserId())
+
+    /**
      * Upserts a single member into the current state.
+     *
+     * **Important:** It wouldn't increment the [membersCount], only adds the newly acquired member of the channel.
      *
      * @param member The member to upsert.
      */
@@ -687,26 +710,14 @@ internal class ChannelStateImpl(
     /**
      * Upserts the list of members into the current state.
      *
+     * **Important:** It wouldn't increment the [membersCount], only adds the newly acquired members of the channel.
+     *
      * @param members The list of members to upsert.
      */
     fun upsertMembers(members: List<Member>) {
         val currentMembers = _members.value.associateBy(Member::getUserId).toMutableMap()
         currentMembers += members.associateBy(Member::getUserId)
         _members.value = currentMembers.values.toList()
-    }
-
-    /**
-     * Deletes a member from the current state.
-     * Removes the member from the list if present (list may be partial - not all members loaded).
-     * Always decrements [membersCount] because the event is authoritative: someone left the channel.
-     *
-     * @param id The ID of the member to delete.
-     */
-    fun deleteMember(id: String) {
-        _members.update { current ->
-            current.filter { it.getUserId() != id }
-        }
-        _memberCount.update { max(0, it - 1) }
     }
 
     // endregion
@@ -749,12 +760,24 @@ internal class ChannelStateImpl(
     }
 
     /**
-     * Upserts a watcher from a [UserStartWatchingEvent].
+     * Adds a watcher from a [UserStartWatchingEvent].
      *
      * @param event The event containing the watcher information.
      */
-    fun upsertWatcher(event: UserStartWatchingEvent) {
+    fun addWatcher(event: UserStartWatchingEvent) {
         upsertWatchers(listOf(event.user), event.watcherCount)
+    }
+
+    /**
+     * Removes a watcher from a [UserStopWatchingEvent].
+     *
+     * @param event The event containing the watcher information.
+     */
+    fun removeWatcher(event: UserStopWatchingEvent) {
+        _watchers.update { current ->
+            current.filterNot { it.id == event.user.id }
+        }
+        _watcherCount.value = max(0, event.watcherCount)
     }
 
     /**
@@ -769,28 +792,6 @@ internal class ChannelStateImpl(
             currentWatchers[watcher.id] = watcher
         }
         _watchers.value = currentWatchers.values.sortedBy(User::createdAt)
-        _watcherCount.value = max(0, watcherCount)
-    }
-
-    /**
-     * Deletes a watcher from a [UserStopWatchingEvent].
-     *
-     * @param event The event containing the watcher information.
-     */
-    fun deleteWatcher(event: UserStopWatchingEvent) {
-        deleteWatcher(event.user.id, event.watcherCount)
-    }
-
-    /**
-     * Deletes a watcher by user ID and updates the watcher count.
-     *
-     * @param userId The ID of the user to delete from watchers.
-     * @param watcherCount The total count of watchers after deletion.
-     */
-    fun deleteWatcher(userId: UserId, watcherCount: Int) {
-        _watchers.update { current ->
-            current.filterNot { it.id == userId }
-        }
         _watcherCount.value = max(0, watcherCount)
     }
 
@@ -1468,6 +1469,13 @@ internal class ChannelStateImpl(
             // Server data is more recent, use it
             serverRead
         }
+    }
+
+    private fun deleteMemberAndDecrementMemberCount(memberId: String) {
+        _members.update { current ->
+            current.filter { it.getUserId() != memberId }
+        }
+        _memberCount.update { max(0, it - 1) }
     }
 
     /**
