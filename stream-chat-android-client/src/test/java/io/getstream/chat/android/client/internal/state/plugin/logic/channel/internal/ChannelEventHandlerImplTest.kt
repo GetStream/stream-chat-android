@@ -862,7 +862,7 @@ internal class ChannelEventHandlerImplTest {
     }
 
     @Test
-    fun `When ChannelTruncatedEvent is handled, Then messages are removed with system message`() {
+    fun `When ChannelTruncatedEvent is handled, Then messages are removed with system message and channel data is updated`() {
         val systemMessage = randomMessage()
         val event = ChannelTruncatedEvent(
             type = EventType.CHANNEL_TRUNCATED,
@@ -879,15 +879,17 @@ internal class ChannelEventHandlerImplTest {
         handler.handle(event)
 
         verify(state).removeMessagesBefore(event.createdAt, systemMessage)
+        verify(state).updateChannelData(event)
     }
 
     @Test
-    fun `When NotificationChannelTruncatedEvent is handled, Then messages are removed`() {
+    fun `When NotificationChannelTruncatedEvent is handled, Then messages are removed and channel data is updated`() {
         val event = randomNotificationChannelTruncatedEvent(cid = cid)
 
         handler.handle(event)
 
         verify(state).removeMessagesBefore(event.createdAt)
+        verify(state).updateChannelData(event)
     }
 
     // endregion

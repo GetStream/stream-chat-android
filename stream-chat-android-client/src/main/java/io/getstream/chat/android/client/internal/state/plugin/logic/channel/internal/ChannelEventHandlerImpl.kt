@@ -301,8 +301,14 @@ internal class ChannelEventHandlerImpl(
                 state.deleteChannel(event.createdAt)
             }
 
-            is ChannelTruncatedEvent -> state.removeMessagesBefore(event.createdAt, event.message)
-            is NotificationChannelTruncatedEvent -> state.removeMessagesBefore(event.createdAt)
+            is ChannelTruncatedEvent -> {
+                state.removeMessagesBefore(event.createdAt, event.message)
+                state.updateChannelData(event)
+            }
+            is NotificationChannelTruncatedEvent -> {
+                state.removeMessagesBefore(event.createdAt)
+                state.updateChannelData(event)
+            }
             // Typing events
             is TypingStartEvent -> {
                 if (event.user.id != getCurrentUserId()) {
