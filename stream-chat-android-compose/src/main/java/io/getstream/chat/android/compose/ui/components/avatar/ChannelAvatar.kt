@@ -207,19 +207,20 @@ private fun StackedGroupAvatar(
 
             1 -> {
                 val colors = ChatTheme.colors
+
+                UserAvatar(
+                    user = channel.members.first().user,
+                    showBorder = showBorder,
+                    modifier = baseModifier.align(alignments[0]),
+                )
+
                 UserAvatarIconPlaceholder(
                     background = colors.avatarBgPlaceholder,
                     foreground = colors.avatarTextPlaceholder,
                     modifier = baseModifier
                         .clip(CircleShape)
                         .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) }
-                        .align(alignments[0]),
-                )
-
-                UserAvatar(
-                    user = channel.members.first().user,
-                    showBorder = showBorder,
-                    modifier = baseModifier.align(alignments[1]),
+                        .align(alignments[1]),
                 )
             }
 
