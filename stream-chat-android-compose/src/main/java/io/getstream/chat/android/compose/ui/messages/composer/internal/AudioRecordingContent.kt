@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -55,6 +56,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
@@ -101,6 +103,7 @@ internal fun MessageComposerAudioRecordingHoldContent(
     state: RecordingState.Hold,
     modifier: Modifier = Modifier,
 ) {
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val previewMode = LocalInspectionMode.current
     val enterProgress = remember { Animatable(if (previewMode) 0f else HoldContentEnterOffset) }
     LaunchedEffect(Unit) {
@@ -110,12 +113,14 @@ internal fun MessageComposerAudioRecordingHoldContent(
         )
     }
 
+    val enterDirectionSign = if (isRtl) -1f else 1f
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .graphicsLayer {
                 val t = enterProgress.value
-                translationX = t * size.width
+                translationX = t * size.width * enterDirectionSign
                 alpha = 1f - t
             },
     ) {

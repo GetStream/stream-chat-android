@@ -125,6 +125,9 @@ internal class AudioRecordingGestureTest {
     }
 
     // -- evaluateDragThreshold ---------------------------------------------
+    // The function always receives **logical** coordinates where cancel == negative-x.
+    // RTL normalisation (negating x) happens upstream in awaitDragResult, so the
+    // threshold logic itself is layout-direction-agnostic.
 
     @Nested
     inner class EvaluateDragThresholdTest {
@@ -132,6 +135,7 @@ internal class AudioRecordingGestureTest {
         private val config = RecordingGestureConfig(
             cancelThresholdPx = 100f,
             lockThresholdPx = 80f,
+            isRtl = false,
         )
 
         @Test

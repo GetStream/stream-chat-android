@@ -36,10 +36,14 @@ internal val SlideToCancelThreshold = 96.dp
  *
  * @property cancelThresholdPx Horizontal drag distance (px) to cancel recording.
  * @property lockThresholdPx Vertical drag distance (px) to lock recording.
+ * @property isRtl `true` when the layout direction is right-to-left. In RTL the raw
+ *  screen-coordinate drag is normalised so that cancel is always negative-x, matching
+ *  the convention expected by [evaluateDragThreshold] and the downstream UI code.
  */
 internal class RecordingGestureConfig(
     val cancelThresholdPx: Float,
     val lockThresholdPx: Float,
+    val isRtl: Boolean,
 )
 
 @VisibleForTesting
@@ -133,9 +137,10 @@ private suspend fun AwaitPointerEventScope.awaitDragResult(
         dragAxis = dragAxis ?: resolveAxis(rawDiff, touchSlop)
 
         val constrained = constrainToAxis(rawDiff, dragAxis)
-        onDragOffset(constrained)
+        val logical = if (config.isRtl) constrained.copy(x = -constrained.x) else constrained
+        onDragOffset(logical)
 
-        evaluateDragThreshold(constrained, config)?.let { return it }
+        evaluateDragThreshold(logical, config)?.let { return it }
     }
 }
 
@@ -164,6 +169,9 @@ internal fun constrainToAxis(rawDiff: Offset, axis: DragAxis?): Offset = when (a
 /**
  * Returns a terminal [DragResult] when the constrained offset crosses a gesture threshold,
  * or `null` if the drag is still within bounds.
+ *
+ * The offset is expected in **logical coordinates** where cancel is always negative-x.
+ * RTL normalisation (negating x for right-to-left layouts) happens upstream in [awaitDragResult].
  *
  * Cancel (horizontal) is evaluated before lock (vertical), so a simultaneous breach favours cancel.
  */

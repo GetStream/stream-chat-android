@@ -67,6 +67,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -297,9 +298,11 @@ private fun MicButtonGestureArea(
     val hapticFeedback = LocalHapticFeedback.current
 
     val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
     val gestureConfig = RecordingGestureConfig(
         cancelThresholdPx = with(density) { SlideToCancelThreshold.toPx() },
         lockThresholdPx = with(density) { LockThreshold.toPx() },
+        isRtl = layoutDirection == LayoutDirection.Rtl,
     )
 
     val showPressed = isFingerDown || hint.snackbarHostState.currentSnackbarData != null
