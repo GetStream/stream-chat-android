@@ -31,11 +31,13 @@ import io.getstream.chat.android.randomModeration
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import java.util.Date
 
@@ -582,5 +584,87 @@ internal class MessageUtilsTest {
         val draftMessage = randomDraftMessage(id = "")
         val result = draftMessage.ensureId(user)
         result.id.startsWith(userId) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for moderation bounce message`() {
+        val currentUserId = randomString()
+        val message = randomMessage(
+            user = randomUser(id = currentUserId),
+            type = MessageType.ERROR,
+            moderation = randomModeration(action = ModerationAction.bounce),
+        )
+        val result = message.shouldDeleteRemote(currentUserId)
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for error message type`() {
+        val message = randomMessage(
+            type = MessageType.ERROR,
+            syncStatus = SyncStatus.COMPLETED,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for ephemeral message type`() {
+        val message = randomMessage(
+            type = MessageType.EPHEMERAL,
+            syncStatus = SyncStatus.COMPLETED,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for IN_PROGRESS sync status`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.IN_PROGRESS,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for SYNC_NEEDED sync status`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Failure for FAILED_PERMANENTLY sync status`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.FAILED_PERMANENTLY,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Failure)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Success for COMPLETED regular message`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.COMPLETED,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Success for AWAITING_ATTACHMENTS regular message`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Success)
     }
 }

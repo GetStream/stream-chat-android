@@ -16,16 +16,14 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.message.isModerationError
+import io.getstream.chat.android.client.utils.message.shouldDeleteRemote
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.result.Error
 import io.getstream.result.Result
 import java.util.Date
 
@@ -45,24 +43,19 @@ internal class DeleteMessageListenerDatabase(
      * @param messageId The message id to be deleted.
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
-        return messageRepository.selectMessage(messageId)?.let { message ->
-            val currentUserId = clientState.user.value?.id
-            val isModerationFailed = message.isModerationError(currentUserId)
-
-            if (isModerationFailed) {
-                messageRepository.deleteChannelMessage(message)
-                Result.Failure(
-                    Error.ThrowableError(
-                        message = "Message with failed moderation has been deleted locally: $messageId",
-                        cause = MessageModerationDeletedException(
-                            "Message with failed moderation has been deleted locally: $messageId",
-                        ),
-                    ),
-                )
-            } else {
-                Result.Success(Unit)
-            }
-        } ?: Result.Success(Unit)
+        val localMessage = messageRepository.selectMessage(messageId)
+        val currentUserId = clientState.user.value?.id
+        // We don't have the message locally, we must attempt to delete the message remotely
+        if (localMessage == null) {
+            return Result.Success(Unit)
+        }
+        // Check if the message is local-only (if attempting remote delete should be skipped
+        val shouldDeleteRemote = localMessage.shouldDeleteRemote(currentUserId)
+        if (shouldDeleteRemote is Result.Failure) {
+            // Delete the message ONLY locally
+            messageRepository.deleteChannelMessage(localMessage)
+        }
+        return shouldDeleteRemote
     }
 
     /**
