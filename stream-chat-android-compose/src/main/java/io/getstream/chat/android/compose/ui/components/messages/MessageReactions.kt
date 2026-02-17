@@ -155,6 +155,7 @@ public fun SegmentedMessageReactions(
         reactions.size,
     )
     val colors = ChatTheme.colors
+    val shouldShowCounts = reactions.any { it.count > 1 }
 
     Row(
         modifier = modifier.semantics {
@@ -179,7 +180,7 @@ public fun SegmentedMessageReactions(
                     size = ReactionIconSize.Small,
                     modifier = Modifier.testTag("Stream_MessageReaction_${it.type}"),
                 )
-                if (it.count > 1) {
+                if (shouldShowCounts) {
                     Text(
                         text = it.count.toString(),
                         style = ChatTheme.typography.numericMedium,
