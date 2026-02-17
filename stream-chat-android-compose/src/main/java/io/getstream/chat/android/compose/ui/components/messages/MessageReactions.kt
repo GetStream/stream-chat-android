@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -43,46 +42,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.ifNotNull
-
-/**
- * Adaptive message reactions that use [SegmentedMessageReactions] by default, falling back to
- * [ClusteredMessageReactions] when the segmented layout would exceed the available width.
- *
- * @param reactions The list of reactions to display.
- * @param modifier Modifier for styling.
- * @param onClick Handler when the user taps on the reaction pills.
- */
-@Composable
-public fun AdaptiveMessageReactions(
-    reactions: List<MessageReactionItemState>,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-) {
-    SubcomposeLayout(modifier = modifier) { constraints ->
-        val unconstrainedConstraints = constraints.copy(maxWidth = Int.MAX_VALUE)
-        val segmentedIntrinsic = subcompose("segmented_intrinsic") {
-            SegmentedMessageReactions(reactions = reactions, onClick = onClick)
-        }.first().measure(unconstrainedConstraints)
-
-        if (segmentedIntrinsic.width > constraints.maxWidth) {
-            val clustered = subcompose("clustered") {
-                ClusteredMessageReactions(reactions = reactions, onClick = onClick)
-            }.first().measure(constraints)
-
-            layout(clustered.width, clustered.height) {
-                clustered.place(0, 0)
-            }
-        } else {
-            val segmented = subcompose("segmented") {
-                SegmentedMessageReactions(reactions = reactions, onClick = onClick)
-            }.first().measure(constraints)
-
-            layout(segmented.width, segmented.height) {
-                segmented.place(0, 0)
-            }
-        }
-    }
-}
 
 /**
  * Represents a reaction bubble with a list of reactions this message has.

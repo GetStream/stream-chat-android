@@ -125,7 +125,6 @@ import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicato
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
-import io.getstream.chat.android.compose.ui.components.messages.AdaptiveMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
@@ -136,6 +135,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFoo
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
+import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -1192,7 +1192,7 @@ public interface ChatComponentFactory {
     public fun MessageReactions(
         params: MessageReactionsParams,
     ) {
-        AdaptiveMessageReactions(
+        SegmentedMessageReactions(
             modifier = params.modifier,
             reactions = params.reactions,
             onClick = params.onClick?.let { onClick -> { onClick(params.message) } },
