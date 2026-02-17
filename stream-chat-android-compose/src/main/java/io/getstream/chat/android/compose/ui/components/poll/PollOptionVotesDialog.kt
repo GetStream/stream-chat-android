@@ -46,13 +46,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -183,7 +184,11 @@ private fun Content(
                             )
                         }
                         Text(
-                            text = stringResource(id = R.string.stream_compose_poll_vote_counts, state.voteCount),
+                            text = pluralStringResource(
+                                stream_compose_poll_vote_counts,
+                                state.voteCount,
+                                state.voteCount,
+                            ),
                             color = ChatTheme.colors.textHighEmphasis,
                             fontSize = 16.sp,
                         )

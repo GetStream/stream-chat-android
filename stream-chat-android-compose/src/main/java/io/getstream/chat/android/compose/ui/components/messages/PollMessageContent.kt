@@ -19,26 +19,25 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,28 +46,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyle
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
+import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
+import io.getstream.chat.android.compose.ui.theme.MessageStyling.PollStyle
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -78,6 +75,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.PollsConstants
@@ -123,7 +121,7 @@ public fun PollMessageContent(
             message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            border = null,
             content = {
                 PollMessageContent(
                     message = message,
@@ -189,9 +187,9 @@ private fun PollMessageContent(
 ) {
     val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
-    val heightMax = LocalConfiguration.current.screenHeightDp
-    val isClosed = poll.closed
     val showAddAnswerDialog = remember { mutableStateOf(false) }
+    val typography = ChatTheme.typography
+    val style = MessageStyling.pollStyle(outgoing = isMine)
 
     if (showAddAnswerDialog.value) {
         AddAnswerDialog(
@@ -208,41 +206,29 @@ private fun PollMessageContent(
         )
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .padding(
-                horizontal = 10.dp,
-                vertical = 12.dp,
-            )
-            .heightIn(max = heightMax.dp),
-        userScrollEnabled = false,
-    ) {
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 4.dp),
-                text = poll.name,
-                color = ChatTheme.colors.textHighEmphasis,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-            )
-        }
+    Column(modifier = Modifier.padding(StreamTokens.spacingMd)) {
+        Text(
+            text = poll.name,
+            style = typography.bodyEmphasis,
+            color = style.textColor,
+        )
 
-        item {
-            Text(
-                modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.getSubtitle(context),
-                color = ChatTheme.colors.textLowEmphasis,
-                fontSize = 12.sp,
-            )
-        }
+        Text(
+            modifier = Modifier.padding(top = StreamTokens.spacing2xs),
+            text = poll.getSubtitle(context),
+            style = typography.captionDefault,
+            color = style.textColor,
+        )
 
-        items(
-            items = poll.options.take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS),
-            key = Option::id,
-        ) { option ->
+        poll.options.take(PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS).forEachIndexed { index, option ->
+            val padding = PaddingValues(
+                top = if (index > 0) StreamTokens.spacingLg else StreamTokens.spacingMd,
+                bottom = if (index == poll.options.size - 1) StreamTokens.spacingLg else 0.dp,
+            )
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
 
             PollOptionItem(
+                modifier = Modifier.padding(padding),
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
@@ -250,6 +236,7 @@ private fun PollMessageContent(
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
                 checked = poll.ownVotes.any { it.optionId == option.id },
+                style = style,
                 onCastVote = { onCastVote.invoke(option) },
                 onRemoveVote = {
                     poll.ownVotes.firstOrNull { it.optionId == option.id }
@@ -258,58 +245,81 @@ private fun PollMessageContent(
             )
         }
 
-        if (poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
-                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
-                )
-            }
+        PollButtons(
+            poll = poll,
+            style = style,
+            selectPoll = selectPoll,
+            message = message,
+            showDialog = showDialog,
+            showAddAnswerDialog = showAddAnswerDialog,
+            isMine = isMine,
+            onClosePoll = onClosePoll,
+        )
+    }
+}
+
+@Suppress("LongParameterList")
+@Composable
+private fun PollButtons(
+    poll: Poll,
+    style: PollStyle,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    message: Message,
+    showDialog: MutableState<Boolean>,
+    showAddAnswerDialog: MutableState<Boolean>,
+    isMine: Boolean,
+    onClosePoll: (String) -> Unit,
+) {
+    val outlinedButtonStyle = StreamButtonStyleDefaults.secondaryOutline.copy(borderColor = style.outlineColor)
+    val ghostButtonStyle = StreamButtonStyleDefaults.secondaryGhost
+
+    Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)) {
+        if (poll.options.size > PollsConstants.MAX_NUMBER_OF_VISIBLE_OPTIONS) {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
+                style = ghostButtonStyle,
+                onButtonClicked = { selectPoll(message, poll, PollSelectionType.MoreOption) },
+            )
         }
 
-        if (poll.allowUserSuggestedOptions && !isClosed) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_suggest_option),
-                    onButtonClicked = { showDialog.value = true },
-                )
-            }
+        PollOptionButton(
+            text = stringResource(id = R.string.stream_compose_poll_view_result),
+            style = outlinedButtonStyle,
+            onButtonClicked = { selectPoll(message, poll, PollSelectionType.ViewResult) },
+        )
+
+        if (isMine && !poll.closed) {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_compose_poll_end_vote),
+                style = outlinedButtonStyle,
+                onButtonClicked = { onClosePoll.invoke(poll.id) },
+            )
+        }
+
+        if (poll.allowUserSuggestedOptions && !poll.closed) {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_compose_poll_suggest_option),
+                style = ghostButtonStyle,
+                onButtonClicked = { showDialog.value = true },
+            )
         }
 
         if (poll.allowAnswers) {
             if (poll.answers.isNotEmpty()) {
-                item {
-                    PollOptionButton(
-                        text = pluralStringResource(
-                            R.plurals.stream_ui_poll_action_view_comments,
-                            poll.answers.size,
-                            poll.answers.size,
-                        ),
-                        onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
-                    )
-                }
-            } else if (!poll.closed) {
-                item {
-                    PollOptionButton(
-                        text = stringResource(R.string.stream_compose_add_answer),
-                        onButtonClicked = { showAddAnswerDialog.value = true },
-                    )
-                }
-            }
-        }
-
-        item {
-            PollOptionButton(
-                text = stringResource(id = R.string.stream_compose_poll_view_result),
-                onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewResult) },
-            )
-        }
-
-        if (isMine && !isClosed) {
-            item {
                 PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_end_vote),
-                    onButtonClicked = { onClosePoll.invoke(poll.id) },
+                    text = pluralStringResource(
+                        R.plurals.stream_ui_poll_action_view_comments,
+                        poll.answers.size,
+                        poll.answers.size,
+                    ),
+                    style = ghostButtonStyle,
+                    onButtonClicked = { selectPoll(message, poll, PollSelectionType.ViewAnswers) },
+                )
+            } else if (!poll.closed) {
+                PollOptionButton(
+                    text = stringResource(R.string.stream_compose_add_answer),
+                    style = ghostButtonStyle,
+                    onButtonClicked = { showAddAnswerDialog.value = true },
                 )
             }
         }
@@ -375,6 +385,7 @@ private fun NewOptionDialog(
     )
 }
 
+@Suppress("LongParameterList", "LongMethod")
 @Composable
 private fun PollOptionItem(
     modifier: Modifier = Modifier,
@@ -385,159 +396,97 @@ private fun PollOptionItem(
     users: List<User>,
     checkedCount: Int,
     checked: Boolean,
+    style: PollStyle,
     onCastVote: () -> Unit,
     onRemoveVote: () -> Unit,
 ) {
-    val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
+    val typography = ChatTheme.typography
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 2.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (!poll.closed) {
-                PollItemCheckBox(
-                    checked = checked,
-                    onCheckChanged = { enabled ->
-                        if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
-                            onCastVote.invoke()
-                        } else if (!enabled) {
-                            onRemoveVote.invoke()
-                        }
-                    },
-                )
-            }
-
-            Text(
-                modifier = Modifier
-                    .weight(0.5f)
-                    .padding(start = 4.dp, bottom = 2.dp),
-                text = option.text,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 16.sp,
+        if (!poll.closed) {
+            RadioCheck(
+                checked = checked,
+                onCheckedChange = { enabled: Boolean ->
+                    if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                        onCastVote.invoke()
+                    } else if (!enabled) {
+                        onRemoveVote.invoke()
+                    }
+                },
+                borderColor = style.outlineColor,
             )
+        }
 
-            Row {
+        Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
+            Row(Modifier.heightIn(min = AvatarSize.ExtraSmall)) {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = option.text,
+                    style = typography.captionDefault,
+                    color = style.textColor,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
                 if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
                     UserAvatarStack(
                         overlap = StreamTokens.spacingXs,
-                        modifier = Modifier.padding(end = 2.dp),
-                        users = users,
+                        users = users.take(MaxStackedAvatars),
                         avatarSize = AvatarSize.ExtraSmall,
                         showBorder = true,
+                        modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
                     )
                 }
 
                 Text(
-                    modifier = Modifier.padding(bottom = 2.dp),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = voteCount.toString(),
-                    color = ChatTheme.colors.textHighEmphasis,
-                    fontSize = 16.sp,
+                    style = typography.metadataDefault,
+                    color = style.textColor,
                 )
             }
-        }
 
-        val progress by animateFloatAsState(
-            targetValue = if (voteCount == 0 || totalVoteCount == 0) {
-                0f
-            } else {
-                voteCount / totalVoteCount.toFloat()
-            },
-        )
-
-        LinearProgressIndicator(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = if (poll.closed) {
-                        0.dp
-                    } else {
-                        22.dp
-                    },
-                )
-                .clip(RoundedCornerShape(4.dp))
-                .height(4.dp),
-            progress = { progress },
-            color = if (isVotedByMine) {
-                ChatTheme.colors.infoAccent
-            } else {
-                ChatTheme.colors.primaryAccent
-            },
-            trackColor = ChatTheme.colors.inputBackground,
-            gapSize = 0.dp,
-            strokeCap = StrokeCap.Square,
-            drawStopIndicator = { /* Don't draw the stop indicator */ },
-        )
-    }
-}
-
-@Composable
-internal fun PollItemCheckBox(
-    modifier: Modifier = Modifier,
-    checked: Boolean,
-    onCheckChanged: (Boolean) -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .size(18.dp)
-            .clickable(
-                bounded = false,
-                onClick = { onCheckChanged(!checked) },
-            )
-            .background(
-                if (checked) {
-                    ChatTheme.colors.primaryAccent
+            val progress by animateFloatAsState(
+                targetValue = if (voteCount == 0 || totalVoteCount == 0) {
+                    0f
                 } else {
-                    ChatTheme.colors.disabled
+                    voteCount / totalVoteCount.toFloat()
                 },
-                CircleShape,
             )
-            .padding(1.dp)
-            .background(
-                if (checked) {
-                    ChatTheme.colors.primaryAccent
-                } else {
-                    ChatTheme.colors.inputBackground
-                },
-                CircleShape,
-            ),
-    ) {
-        if (checked) {
-            Icon(
+
+            LinearProgressIndicator(
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(3.dp),
-                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-                tint = Color.White,
-                contentDescription = null,
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .clip(RoundedCornerShape(4.dp)),
+                progress = { progress },
+                color = style.progressColor,
+                trackColor = style.trackColor,
+                gapSize = 0.dp,
+                strokeCap = StrokeCap.Square,
+                drawStopIndicator = { /* Don't draw the stop indicator */ },
             )
         }
     }
 }
+
+private const val MaxStackedAvatars = 3
 
 @Composable
 private fun PollOptionButton(
     text: String,
+    style: StreamButtonStyle,
     onButtonClicked: () -> Unit,
 ) {
-    Text(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(ButtonDefaults.shape)
-            .clickable(onClick = onButtonClicked)
-            .padding(vertical = 11.dp),
-        textAlign = TextAlign.Center,
+    StreamTextButton(
+        onClick = onButtonClicked,
         text = text,
-        color = ChatTheme.colors.primaryAccent,
-        fontSize = 16.sp,
+        style = style,
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -557,7 +506,7 @@ private fun PollMessageContentPreview() {
                 onClosePoll = {},
                 onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(
-                    message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
+                    message = PreviewMessageData.messageWithPoll,
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
                 ),
@@ -574,7 +523,7 @@ private fun PollMessageContentPreview() {
                 onClosePoll = {},
                 onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(
-                    message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
+                    message = PreviewMessageData.messageWithError,
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
                 ),
@@ -585,29 +534,12 @@ private fun PollMessageContentPreview() {
 
 @Preview
 @Composable
-private fun PollItemCheckBoxPreview() {
-    ChatTheme {
-        Row {
-            PollItemCheckBox(
-                checked = false,
-                onCheckChanged = {},
-            )
-
-            PollItemCheckBox(
-                checked = true,
-                onCheckChanged = {},
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
 private fun PollOptionButtonPreview() {
     ChatTheme {
+        val style = StreamButtonStyleDefaults.secondaryOutline
         Column {
-            PollOptionButton("End Vote") {}
-            PollOptionButton("View Result") {}
+            PollOptionButton("End Vote", style) {}
+            PollOptionButton("View Result", style) {}
         }
     }
 }

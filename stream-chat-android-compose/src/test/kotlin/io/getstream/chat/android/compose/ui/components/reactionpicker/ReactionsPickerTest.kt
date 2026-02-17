@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -41,18 +40,6 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
             ReactionsPicker(
                 message = PreviewMessageData.message1,
                 onMessageAction = { },
-                reactionTypes = PreviewReactionOptionData.reactionPickerIcons(5),
-            )
-        }
-    }
-
-    @Test
-    fun `Reaction picker with more reactions`() {
-        snapshotWithDarkMode {
-            ReactionsPicker(
-                message = PreviewMessageData.message1,
-                onMessageAction = { },
-                reactionTypes = PreviewReactionOptionData.reactionPickerIcons(12),
             )
         }
     }
@@ -63,7 +50,6 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
             ReactionsPicker(
                 message = PreviewMessageData.message1,
                 onMessageAction = { },
-                reactionTypes = PreviewReactionOptionData.reactionPickerIcons(5),
                 headerContent = {
                     Text(
                         modifier = Modifier
