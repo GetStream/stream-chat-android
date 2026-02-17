@@ -248,12 +248,16 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
 private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
     error("No MediaGalleryConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalChatConfig = compositionLocalOf<ChatConfig> {
+    error("No ChatConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
+ * @param config Central behavioral configuration for the Chat SDK. See [ChatConfig].
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
  * @param showOriginalTranslationEnabled Whether the option to show the original translation is enabled or not.
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
@@ -305,6 +309,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
+    config: ChatConfig = ChatConfig(),
     autoTranslationEnabled: Boolean = false,
     showOriginalTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
@@ -383,6 +388,7 @@ public fun ChatTheme(
     }
 
     CompositionLocalProvider(
+        LocalChatConfig provides config,
         LocalColors provides colors,
         LocalDimens provides dimens,
         LocalTypography provides typography,
@@ -446,6 +452,14 @@ public fun ChatTheme(
  * look and feel.
  */
 public object ChatTheme {
+    /**
+     * Retrieves the current [ChatConfig] at the call site's position in the hierarchy.
+     */
+    public val config: ChatConfig
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalChatConfig.current
+
     /**
      * Retrieves the current [StreamColors] at the call site's position in the hierarchy.
      */

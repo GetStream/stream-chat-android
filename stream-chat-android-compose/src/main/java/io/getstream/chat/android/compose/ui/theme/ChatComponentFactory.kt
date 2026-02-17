@@ -50,6 +50,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -202,6 +203,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
+import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
@@ -1880,6 +1882,132 @@ public interface ChatComponentFactory {
             recordingState = state,
             recordingActions = recordingActions,
         )
+    }
+
+    /**
+     * The floating lock icon displayed above the recording content during [RecordingState.Hold]
+     * and [RecordingState.Locked] states.
+     *
+     * Shows an open lock with a chevron while dragging, and a closed lock once locked.
+     * The icon follows the vertical drag offset during Hold.
+     *
+     * @param isLocked Whether the recording is currently locked (true) or still being held (false).
+     * @param dragOffsetY The vertical drag offset in pixels (negative = upward) during Hold.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingFloatingLockIcon(
+        isLocked: Boolean,
+        dragOffsetY: Int,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal
+            .MessageComposerAudioRecordingFloatingLockIcon(
+                isLocked = isLocked,
+                dragOffsetY = dragOffsetY,
+            )
+    }
+
+    /**
+     * The permission rationale displayed as a snackbar when the audio recording permission
+     * needs explanation. Shows a message and a "Settings" action button.
+     *
+     * Override this method to provide a custom permission rationale UI.
+     *
+     * @param data The [SnackbarData] containing the rationale message and action.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingPermissionRationale(
+        data: SnackbarData,
+    ) {
+        StreamSnackbar(snackbarData = data)
+    }
+
+    /**
+     * The content displayed in the message composer while the user is holding to record audio.
+     *
+     * Shows a mic indicator icon, a live recording timer, and a "slide to cancel" hint that follows
+     * the user's drag gesture.
+     *
+     * Override this method to provide a fully custom hold-to-record UI.
+     *
+     * @param state The current [RecordingState.Hold] containing the recording duration and drag offset.
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingHoldContent(
+        state: RecordingState.Hold,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingHoldContent(
+            state = state,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * The content displayed in the message composer when the recording is locked (finger released while
+     * recording continues).
+     *
+     * Shows a mic indicator icon, a live recording timer, a growing waveform visualization, and
+     * control buttons (delete, stop, complete) below.
+     *
+     * Override this method to provide a fully custom locked-recording UI.
+     *
+     * @param state The current [RecordingState.Locked] containing the recording duration and waveform data.
+     * @param recordingActions Actions to control the recording (delete, stop, confirm).
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingLockedContent(
+        state: RecordingState.Locked,
+        recordingActions: AudioRecordingActions,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingLockedContent(
+            state = state,
+            recordingActions = recordingActions,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * The content displayed in the message composer when the recording is stopped and the user
+     * can scrub the waveform and play back before sending.
+     *
+     * Shows a play/pause button, a timer, an interactive waveform scrubber, and control buttons
+     * (delete, complete) below.
+     *
+     * Override this method to provide a fully custom recording-overview UI.
+     *
+     * @param state The current [RecordingState.Overview] containing waveform data and playback progress.
+     * @param recordingActions Actions to control playback (toggle play/pause, drag start/stop, delete, confirm).
+     * @param modifier Modifier applied to the content container.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingOverviewContent(
+        state: RecordingState.Overview,
+        recordingActions: AudioRecordingActions,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerAudioRecordingOverviewContent(
+            state = state,
+            recordingActions = recordingActions,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * The "Hold to record" instructional hint displayed as a snackbar when the user taps
+     * the record button without holding.
+     *
+     * Override this method to provide a custom recording hint UI.
+     *
+     * @param data The [SnackbarData] containing the hint message and dismiss action.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordingHint(
+        data: SnackbarData,
+    ) {
+        StreamSnackbar(snackbarData = data)
     }
 
     /**

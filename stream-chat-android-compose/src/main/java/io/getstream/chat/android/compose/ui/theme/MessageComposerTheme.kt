@@ -27,7 +27,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingTheme
 import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
@@ -35,13 +34,11 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Men
  * Represents the theming for the message composer.
  * @param inputField The theming for the input field in the message composer.
  * @param actionsTheme The theming for the different composer actions.
- * @param audioRecording The theming for the audio recording in the message composer.
  * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
 public data class MessageComposerTheme(
     val inputField: ComposerInputFieldTheme,
     val actionsTheme: ComposerActionsTheme,
-    val audioRecording: AudioRecordingTheme,
     val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
 
@@ -65,7 +62,6 @@ public data class MessageComposerTheme(
             return MessageComposerTheme(
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
-                audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
                 attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }

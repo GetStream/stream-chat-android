@@ -15,14 +15,30 @@
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:tint="#FF3742"
-    android:viewportWidth="24"
-    android:viewportHeight="24"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20"
     >
+
+    <!-- Lock body -->
     <path
-        android:fillColor="@android:color/white"
-        android:pathData="M12,2C6.48,2 2,6.48 2,12c0,5.52 4.48,10 10,10s10,-4.48 10,-10C22,6.48 17.52,2 12,2zM12,20c-4.42,0 -8,-3.58 -8,-8s3.58,-8 8,-8s8,3.58 8,8S16.42,20 12,20zM16,16H8V8h8V16z"
+        android:fillColor="#00000000"
+        android:pathData="M5.5,10H14.5C15.33,10 16,10.67 16,11.5V16C16,16.83 15.33,17.5 14.5,17.5H5.5C4.67,17.5 4,16.83 4,16V11.5C4,10.67 4.67,10 5.5,10Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
         />
+
+    <!-- Open shackle -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M7,10V6.5A3,3 0,0 1,13 6.5"
+        android:strokeWidth="1.5"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        />
+
 </vector>
