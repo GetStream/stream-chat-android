@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -306,11 +305,6 @@ class MessagesActivity : ComponentActivity() {
 
                     is SelectedMessageReactionsPickerState -> {
                         ReactionsPicker(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(horizontal = 20.dp)
-                                .wrapContentSize(),
-                            shape = RoundedCornerShape(12.dp),
                             message = selectedMessage,
                             onMessageAction = { action ->
                                 composerViewModel.performMessageAction(action)
