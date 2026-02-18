@@ -24,7 +24,7 @@ public interface ApiRequestsAnalyser {
     /**
      * Registers the request using the name as an ID.
      *
-     * @param name Name of the request.
+     * @param requestName Name of the request.
      * @param data All the data that should be included in the analyser about the request.
      */
     public fun registerRequest(requestName: String, data: Map<String, String>)

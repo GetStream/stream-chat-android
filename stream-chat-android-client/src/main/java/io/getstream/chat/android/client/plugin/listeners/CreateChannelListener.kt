@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.query.CreateChannelParams
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
@@ -25,6 +26,7 @@ import io.getstream.result.Result
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.createChannel] calls.
  */
+@InternalStreamChatApi
 public interface CreateChannelListener {
 
     /**
