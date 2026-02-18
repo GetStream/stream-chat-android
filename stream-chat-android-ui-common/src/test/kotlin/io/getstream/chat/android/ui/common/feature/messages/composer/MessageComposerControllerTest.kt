@@ -621,6 +621,35 @@ internal class MessageComposerControllerTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
+    fun `Given thread mode and endOfNewerMessages is false When sendMessage called Then loadNewestMessages is not called`() = runTest {
+        // Given
+        val currentUser = User("uid1")
+        val parentMessage = randomMessage(id = "parent-id", cid = CID)
+        val sentMessage = randomMessage(cid = CID, text = "Thread reply")
+        val fixture = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(currentUser)
+            .givenGlobalState()
+            .givenChannelState(endOfNewerMessagesState = MutableStateFlow(false))
+            .givenSendMessage(sentMessage)
+        val controller = fixture.get()
+
+        controller.setMessageMode(MessageMode.MessageThread(parentMessage))
+
+        val message = Message(cid = CID, text = "Thread reply", parentId = "parent-id")
+        val callback: Call.Callback<Message> = mock()
+
+        // When
+        controller.sendMessage(message, callback)
+        advanceUntilIdle()
+
+        // Then
+        verify(fixture.chatClient, never()).inheritScope(any())
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
     fun `Given endOfNewerMessages is false When sendMessage called Then loadNewestMessages is called`() = runTest {
         // Given
         val currentUser = User("uid1")
