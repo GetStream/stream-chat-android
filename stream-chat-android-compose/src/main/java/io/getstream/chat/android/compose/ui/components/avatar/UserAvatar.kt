@@ -17,10 +17,14 @@
 package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,10 +32,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
@@ -75,7 +84,7 @@ public fun UserAvatar(
     }
 }
 
-private fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicatorDimensions = when {
+internal fun BoxWithConstraintsScope.resolveIndicatorDimensions(): OnlineIndicatorDimensions = when {
     maxWidth >= AvatarSize.ExtraLarge -> OnlineIndicatorDimensions.ExtraLarge
     maxWidth >= AvatarSize.Large -> OnlineIndicatorDimensions.Large
     maxWidth >= AvatarSize.Medium -> OnlineIndicatorDimensions.Medium
@@ -87,28 +96,46 @@ internal fun UserAvatarPlaceholder(user: User, size: Dp, modifier: Modifier = Mo
     val (background, foreground) = rememberAvatarPlaceholderColors(user.id)
     val initials = rememberPlaceholderInitials(user, size)
 
-    Box(
-        modifier
-            .background(background)
-            .size(size),
-        contentAlignment = Alignment.Center,
-    ) {
-        if (initials.isNotEmpty()) {
+    if (initials.isNotEmpty()) {
+        Box(
+            modifier
+                .background(background)
+                .size(size),
+            contentAlignment = Alignment.Center,
+        ) {
             Text(
                 text = initials,
                 style = size.toPlaceholderTextStyle(),
                 color = foreground,
             )
-        } else {
-            Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_user),
-                contentDescription = null,
-                tint = foreground,
-                modifier = modifier
-                    .background(background)
-                    .size(size.toPlaceholderIconSize()),
-            )
         }
+    } else {
+        UserAvatarIconPlaceholder(
+            background = background,
+            foreground = foreground,
+            modifier = modifier.size(size),
+        )
+    }
+}
+
+@Composable
+internal fun UserAvatarIconPlaceholder(
+    background: Color,
+    foreground: Color,
+    modifier: Modifier = Modifier,
+) {
+    BoxWithConstraints(
+        modifier.background(background),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_user),
+            contentDescription = null,
+            tint = foreground,
+            modifier = Modifier
+                .background(background)
+                .size(this.maxWidth.toPlaceholderIconSize()),
+        )
     }
 }
 
@@ -119,5 +146,41 @@ private fun rememberPlaceholderInitials(user: User, availableWidth: Dp): String 
         initials
     } else {
         initials.take(1)
+    }
+}
+
+@Preview
+@Composable
+private fun AvatarPreview() {
+    val sizes = AvatarSize.run { listOf(ExtraLarge, Large, Medium, Small, ExtraSmall) }
+
+    ChatTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    UserAvatar(
+                        user = PreviewUserData.userWithOnlineStatus,
+                        showIndicator = true,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                sizes.forEach { size ->
+                    UserAvatar(
+                        user = PreviewUserData.userWithoutImage,
+                        showIndicator = true,
+                        modifier = Modifier.size(size),
+                    )
+                }
+            }
+        }
     }
 }
