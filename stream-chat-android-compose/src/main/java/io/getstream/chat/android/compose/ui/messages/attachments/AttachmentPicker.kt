@@ -83,18 +83,7 @@ public fun AttachmentPicker(
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onDismiss: () -> Unit = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
 ) {
-    val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
-    val dismissAction = {
-        if (saveAttachmentsOnDismiss) {
-            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                onAttachmentsSelected(attachments)
-                onDismiss()
-            }
-        } else {
-            onDismiss()
-        }
-    }
-    BackHandler(onBack = dismissAction)
+    BackHandler(onBack = onDismiss)
 
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),

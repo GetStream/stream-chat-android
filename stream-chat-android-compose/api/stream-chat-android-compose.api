@@ -2782,9 +2782,8 @@ public final class io/getstream/chat/android/compose/ui/theme/AttachmentPickerTh
 	public final fun component4-0d7_KjU ()J
 	public final fun component5-0d7_KjU ()J
 	public final fun component6-0d7_KjU ()J
-	public final fun component7 ()Z
-	public final fun copy-nl4AeYM (JJJJJJZ)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
-	public static synthetic fun copy-nl4AeYM$default (Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;JJJJJJZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
+	public final fun copy-tNS2XkQ (JJJJJJ)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
+	public static synthetic fun copy-tNS2XkQ$default (Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;JJJJJJILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundOverlay-0d7_KjU ()J
 	public final fun getBackgroundPrimary-0d7_KjU ()J
@@ -2792,7 +2791,6 @@ public final class io/getstream/chat/android/compose/ui/theme/AttachmentPickerTh
 	public final fun getCheckIconBackgroundColor-0d7_KjU ()J
 	public final fun getCheckIconTintColor-0d7_KjU ()J
 	public final fun getContentColor-0d7_KjU ()J
-	public final fun getSaveAttachmentsOnDismiss ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
