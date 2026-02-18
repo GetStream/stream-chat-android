@@ -293,7 +293,7 @@ internal class MessageComposerControllerTest {
         controller.updateSelectedAttachments(attachments)
 
         // Then
-        assertEquals(attachments, controller.selectedAttachments.value)
+        assertEquals(attachments, controller.state.value.attachments)
     }
 
     @Test

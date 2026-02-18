@@ -78,11 +78,6 @@ public class MessageComposerViewModel(
     public val cooldownTimer: MutableStateFlow<Int> = messageComposerController.cooldownTimer
 
     /**
-     * Represents the currently selected attachments, that are shown within the composer UI.
-     */
-    public val selectedAttachments: MutableStateFlow<List<Attachment>> = messageComposerController.selectedAttachments
-
-    /**
      * Represents the list of validation errors for the current text input and the currently selected attachments.
      */
     public val validationErrors: MutableStateFlow<List<ValidationError>> = messageComposerController.validationErrors

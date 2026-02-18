@@ -281,11 +281,6 @@ public class MessageComposerController(
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
 
     /**
-     * Represents the currently selected attachments, that are shown within the composer UI.
-     */
-    public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
-
-    /**
      * Represents the list of validation errors for the current text input and the currently selected attachments.
      */
     public val validationErrors: MutableStateFlow<List<ValidationError>> = MutableStateFlow(emptyList())
@@ -433,10 +428,6 @@ public class MessageComposerController(
             scope.launch { handleLinkPreviews() }
         }.launchIn(scope)
 
-        selectedAttachments.onEach { selectedAttachments ->
-            state.value = state.value.copy(attachments = selectedAttachments)
-        }.launchIn(scope)
-
         lastActiveAction.onEach { activeAction ->
             state.value = state.value.copy(action = activeAction)
         }.launchIn(scope)
@@ -489,9 +480,12 @@ public class MessageComposerController(
 
         audioRecordingController.recordingState.onEach { recording ->
             logger.d { "[onRecordingState] recording: $recording" }
-            state.value = state.value.copy(recording = recording)
-            if (recording is RecordingState.Complete) {
-                selectedAttachments.value = selectedAttachments.value + recording.attachment
+            state.update {
+                if (recording is RecordingState.Complete) {
+                    it.copy(recording = recording, attachments = it.attachments + recording.attachment)
+                } else {
+                    it.copy(recording = recording)
+                }
             }
         }.launchIn(scope)
 
@@ -607,7 +601,7 @@ public class MessageComposerController(
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
-                selectedAttachments.value = messageAction.message.attachments
+                state.update { it.copy(attachments = messageAction.message.attachments) }
                 messageActions.value = messageActions.value + messageAction
             }
 
@@ -623,7 +617,7 @@ public class MessageComposerController(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInputInternal("", MessageInput.Source.Default)
-            this.selectedAttachments.value = emptyList()
+            state.update { it.copy(attachments = emptyList()) }
         }
 
         this.messageActions.value = emptySet()
@@ -633,8 +627,7 @@ public class MessageComposerController(
      * Updates the selected attachments that are shown within the composer UI.
      */
     public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        selectedAttachments.update { attachments }
-
+        state.update { it.copy(attachments = attachments) }
         handleValidationErrors()
     }
 
@@ -647,15 +640,16 @@ public class MessageComposerController(
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
         logger.d { "[addSelectedAttachments] attachments: $attachments" }
-        val newAttachments = (selectedAttachments.value + attachments).distinctBy {
-            if (it.name != null && it.mimeType?.isNotEmpty() == true) {
-                it.name
-            } else {
-                it
+        state.update { current ->
+            val merged = (current.attachments + attachments).distinctBy {
+                if (it.name != null && it.mimeType?.isNotEmpty() == true) {
+                    it.name
+                } else {
+                    it
+                }
             }
+            current.copy(attachments = merged)
         }
-        selectedAttachments.value = newAttachments
-
         handleValidationErrors()
     }
 
@@ -667,8 +661,7 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
-        selectedAttachments.value -= attachment
-
+        state.update { it.copy(attachments = it.attachments - attachment) }
         handleValidationErrors()
     }
 
@@ -688,15 +681,14 @@ public class MessageComposerController(
     }
 
     /**
-     * Clears all the data from the input - both the current [input] value and the
-     * [selectedAttachments].
+     * Clears all the data from the input — text, attachments, validation errors, and actions.
      */
     public fun clearData() {
         logger.i { "[clearData]" }
         dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
-        selectedAttachments.value = emptyList()
+        state.update { it.copy(attachments = emptyList()) }
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
     }
@@ -856,7 +848,7 @@ public class MessageComposerController(
      * Checks the current input for validation errors.
      */
     private fun handleValidationErrors() {
-        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, selectedAttachments.value)
+        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, state.value.attachments)
     }
 
     /**
@@ -981,7 +973,7 @@ public class MessageComposerController(
     public fun sendRecording() {
         scope.launch {
             audioRecordingController.completeRecordingSync().onSuccess { recording ->
-                val attachments = selectedAttachments.value + recording
+                val attachments = state.value.attachments + recording
                 sendMessage(buildNewMessage(messageInput.value.text, attachments), callback = {})
             }
         }
@@ -1018,7 +1010,7 @@ public class MessageComposerController(
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
 
-        commandSuggestions.value = if (containsCommand && selectedAttachments.value.isEmpty()) {
+        commandSuggestions.value = if (containsCommand && state.value.attachments.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
