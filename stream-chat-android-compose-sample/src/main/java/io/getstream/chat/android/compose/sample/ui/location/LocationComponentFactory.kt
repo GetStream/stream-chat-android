@@ -36,8 +36,7 @@ import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactor
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -97,14 +96,13 @@ class LocationComponentFactory(
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         if (pickerMode == LocationPickerMode && locationViewModelFactory != null) {
             LocationPicker(
                 viewModelFactory = locationViewModelFactory,
-                onDismiss = { onAttachmentPickerAction(AttachmentPickerBack) },
+                onDismiss = actions.onDismiss,
             )
         } else {
             super.AttachmentPickerContent(
@@ -112,8 +110,7 @@ class LocationComponentFactory(
                 commands,
                 attachments,
                 onAttachmentsChanged,
-                onAttachmentItemSelected,
-                onAttachmentPickerAction,
+                actions,
                 onAttachmentsSubmitted,
             )
         }

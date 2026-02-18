@@ -43,21 +43,22 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.PollConfig
 import kotlinx.coroutines.launch
 
 /**
  * Screen for creating a new poll with options and configuration switches.
  *
- * @param onAttachmentPickerAction Callback invoked when an attachment picker action occurs.
+ * @param onBack Called when the user navigates back from the poll creation screen
+ *  (via back press or discard). Resets the ViewModel state.
+ * @param onCreatePoll Called when the user submits a new poll configuration.
  */
 @Suppress("LongMethod")
 @Composable
 public fun CreatePollScreen(
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    onBack: () -> Unit,
+    onCreatePoll: (PollConfig) -> Unit,
 ) {
     val viewModel: CreatePollViewModel = viewModel(
         factory = CreatePollViewModelFactory(ChatTheme.pollSwitchitemFactory.providePollSwitchItemList()),
@@ -66,7 +67,7 @@ public fun CreatePollScreen(
         // Invoke reset() - important to clear the ViewModel state. (the view model can be persisted across opening and
         // closing the attachment picker, because it is not a modal one).
         viewModel.reset()
-        onAttachmentPickerAction(AttachmentPickerBack)
+        onBack()
     }
     val state by viewModel.state.collectAsState()
     var isShowingDiscardDialog by remember { mutableStateOf(false) }
@@ -105,13 +106,11 @@ public fun CreatePollScreen(
             modifier = Modifier.fillMaxWidth(),
             enabledCreation = state.isCreationEnabled,
             onPollCreateClicked = {
-                onAttachmentPickerAction(
-                    AttachmentPickerPollCreation(
-                        pollConfigFrom(
-                            pollQuestion = state.question,
-                            pollOptions = state.optionItemList,
-                            pollSwitches = state.switchItemList,
-                        ),
+                onCreatePoll(
+                    pollConfigFrom(
+                        pollQuestion = state.question,
+                        pollOptions = state.optionItemList,
+                        pollSwitches = state.switchItemList,
                     ),
                 )
                 backAction()
@@ -165,5 +164,5 @@ private fun CreatePollScreenPreview() {
 
 @Composable
 internal fun CreatePollScreen() {
-    CreatePollScreen {}
+    CreatePollScreen(onBack = {}, onCreatePoll = {})
 }

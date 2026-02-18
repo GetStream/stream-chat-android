@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,9 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -97,6 +95,34 @@ public fun AttachmentPickerMenu(
         else -> ChatTheme.dimens.attachmentsPickerHeight
     }
 
+    val baseActions = remember(attachmentsPickerViewModel, composerViewModel) {
+        AttachmentPickerActions.defaultActions(attachmentsPickerViewModel, composerViewModel)
+    }
+    val actions = remember(baseActions) {
+        baseActions.copy(
+            onCreatePollClick = {
+                isShowingDialog = true
+                baseActions.onCreatePollClick()
+            },
+            onCreatePoll = { pollConfig ->
+                isShowingDialog = false
+                baseActions.onCreatePoll(pollConfig)
+            },
+            onCreatePollDismissed = {
+                isShowingDialog = false
+                baseActions.onCreatePollDismissed()
+            },
+            onCommandSelected = { command ->
+                isShowingDialog = false
+                baseActions.onCommandSelected(command)
+            },
+            onDismiss = {
+                isShowingDialog = false
+                baseActions.onDismiss()
+            },
+        )
+    }
+
     AnimatedVisibility(
         visible = isShowingAttachments,
         enter = expandVertically(expandFrom = Alignment.Top),
@@ -106,32 +132,7 @@ public fun AttachmentPickerMenu(
             modifier = Modifier.height(menuHeight),
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
-            onAttachmentItemSelected = { attachmentItem ->
-                val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
-                attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                    composerViewModel.updateSelectedAttachments(attachments)
-                }
-            },
-            onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                composerViewModel.addSelectedAttachments(attachments)
-            },
-            onAttachmentPickerAction = { action ->
-                when (action) {
-                    is AttachmentPickerPollCreation -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.createPoll(action.pollConfig)
-                    }
-
-                    is AttachmentPickerCommandSelect -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.selectCommand(action.command)
-                    }
-                }
-                isShowingDialog = action is AttachmentPickerCreatePollClick
-            },
-            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            actions = actions,
         )
     }
 }

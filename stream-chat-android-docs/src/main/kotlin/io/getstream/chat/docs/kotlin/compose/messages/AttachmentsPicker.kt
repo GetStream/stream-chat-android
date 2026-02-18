@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -48,12 +49,16 @@ private object AttachmentsPickerUsageSnippet {
                         if (isShowingAttachments) {
                             AttachmentPicker( // Add the picker to your UI
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                onAttachmentsSelected = {
-                                    // Handle selected attachments
-                                },
-                                onDismiss = {
-                                    // Handle dismiss
-                                }
+                                actions = AttachmentPickerActions.pickerDefaults(
+                                    attachmentsPickerViewModel,
+                                ).copy(
+                                    onAttachmentsSelected = {
+                                        // Handle selected attachments
+                                    },
+                                    onDismiss = {
+                                        // Handle dismiss
+                                    },
+                                ),
                             )
                         }
                     }
@@ -96,14 +101,10 @@ private object AttachmentsPickerHandlingActionsSnippet {
                         if (isShowingAttachments) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                onAttachmentsSelected = { attachments ->
-                                    // Dismiss the picker and store the attachments
-                                    attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                                    composerViewModel.addSelectedAttachments(attachments)
-                                },
-                                onDismiss = { // Dismiss the picker
-                                    attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                                }
+                                actions = AttachmentPickerActions.defaultActions(
+                                    attachmentsPickerViewModel,
+                                    composerViewModel,
+                                ),
                             )
                         }
                     }
@@ -142,12 +143,16 @@ private object AttachmentsPickerCustomizationSnippet {
                         if (isShowingAttachments) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
-                                onAttachmentsSelected = { attachments ->
-                                    // Handle selected attachments
-                                },
-                                onDismiss = {
-                                    // Handle dismiss
-                                }
+                                actions = AttachmentPickerActions.pickerDefaults(
+                                    attachmentsPickerViewModel,
+                                ).copy(
+                                    onAttachmentsSelected = { attachments ->
+                                        // Handle selected attachments
+                                    },
+                                    onDismiss = {
+                                        // Handle dismiss
+                                    },
+                                ),
                             )
                         }
                     }

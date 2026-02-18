@@ -53,8 +53,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.state.messages.attachments.MediaType
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -81,7 +79,7 @@ internal fun AttachmentSystemPicker(
     channel: Channel,
     messageMode: MessageMode,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
+    actions: AttachmentPickerActions = AttachmentPickerActions.None,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -171,7 +169,7 @@ internal fun AttachmentSystemPicker(
 
                 is PollPickerMode -> {
                     showCreatePollDialog = true
-                    onAttachmentPickerAction(AttachmentPickerCreatePollClick)
+                    actions.onCreatePollClick()
                 }
 
                 is CommandPickerMode -> showCommandsPickerDialog = true
@@ -190,11 +188,20 @@ internal fun AttachmentSystemPicker(
     }
 
     if (showCreatePollDialog) {
-        FullscreenDialog(onDismissRequest = { showCreatePollDialog = false }) {
+        FullscreenDialog(
+            onDismissRequest = {
+                showCreatePollDialog = false
+                actions.onCreatePollDismissed()
+            },
+        ) {
             CreatePollScreen(
-                onAttachmentPickerAction = { action ->
+                onBack = {
                     showCreatePollDialog = false
-                    onAttachmentPickerAction(action)
+                    actions.onCreatePollDismissed()
+                },
+                onCreatePoll = { pollConfig ->
+                    showCreatePollDialog = false
+                    actions.onCreatePoll(pollConfig)
                 },
             )
         }
@@ -209,9 +216,9 @@ internal fun AttachmentSystemPicker(
             ChatTheme.componentFactory.AttachmentCommandPicker(
                 pickerMode = commandPickerMode,
                 commands = commands,
-                onAttachmentPickerAction = { action ->
+                onCommandSelected = { command ->
                     showCommandsPickerDialog = false
-                    onAttachmentPickerAction(action)
+                    actions.onCommandSelected(command)
                 },
             )
         }

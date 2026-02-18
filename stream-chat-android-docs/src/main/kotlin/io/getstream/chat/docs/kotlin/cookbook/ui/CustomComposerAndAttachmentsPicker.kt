@@ -42,8 +42,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.CameraPicker
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -115,11 +114,10 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
             if (isShowingAttachments) {
                 CustomAttachmentsPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
-                    onAttachmentsSelected = { attachments ->
-                        attachmentsPickerViewModel.changeAttachmentState(false)
-                        composerViewModel.addSelectedAttachments(attachments)
-                    },
-                    onDismiss = { attachmentsPickerViewModel.changeAttachmentState(false) },
+                    actions = AttachmentPickerActions.defaultActions(
+                        attachmentsPickerViewModel,
+                        composerViewModel,
+                    ),
                 )
             }
         }
@@ -204,8 +202,7 @@ private val DefaultPickerModes: List<AttachmentPickerMode> = listOf(
 @Composable
 private fun CustomAttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
-    onAttachmentsSelected: (List<Attachment>) -> Unit,
-    onDismiss: () -> Unit,
+    actions: AttachmentPickerActions,
     pickerModes: List<AttachmentPickerMode> = DefaultPickerModes,
 ) {
     var shouldShowMenu by remember { mutableStateOf(true) }
@@ -217,7 +214,7 @@ private fun CustomAttachmentsPicker(
             .fillMaxSize()
             .background(ChatTheme.colors.overlay)
             .clickable(
-                onClick = onDismiss,
+                onClick = actions.onDismiss,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
             ),
@@ -258,7 +255,9 @@ private fun CustomAttachmentsPicker(
                             },
                             isSubmitEnabled = attachmentsPickerViewModel.attachments.any { it.isSelected },
                             onSubmitClick = {
-                                onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+                                actions.onAttachmentsSelected(
+                                    attachmentsPickerViewModel.getSelectedAttachments(),
+                                )
                             },
                         )
 
@@ -268,16 +267,9 @@ private fun CustomAttachmentsPicker(
                                 commands = attachmentsPickerViewModel.channel.config.commands,
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                                onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                                onAttachmentPickerAction = { pickerAction ->
-                                    when (pickerAction) {
-                                        AttachmentPickerBack -> onDismiss()
-                                        is AttachmentPickerPollCreation -> Unit
-                                        else -> Unit
-                                    }
-                                },
+                                actions = actions,
                                 onAttachmentsSubmitted = { metaData ->
-                                    onAttachmentsSelected(
+                                    actions.onAttachmentsSelected(
                                         attachmentsPickerViewModel.getAttachmentsFromMetaData(metaData),
                                     )
                                 },
