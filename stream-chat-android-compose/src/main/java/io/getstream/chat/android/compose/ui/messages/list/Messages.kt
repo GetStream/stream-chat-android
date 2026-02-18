@@ -131,6 +131,8 @@ public fun Messages(
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
+    headingContent: @Composable () -> Unit = {},
+    footerContent: @Composable () -> Unit = {},
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
@@ -170,6 +172,10 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
+            item {
+                headingContent()
+            }
+
             if (isLoadingMoreNewMessages && !endOfNewMessages) {
                 item {
                     loadingMoreContent()
@@ -200,6 +206,10 @@ public fun Messages(
                 item {
                     loadingMoreContent()
                 }
+            }
+
+            item {
+                footerContent()
             }
         }
 
