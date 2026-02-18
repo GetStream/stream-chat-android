@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,8 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -50,41 +47,16 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.size.Size
 import coil3.size.SizeResolver
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.toNetworkHeaders
-import io.getstream.chat.android.ui.common.utils.adjustColorBrightness
 import java.net.SocketTimeoutException
-import kotlin.math.abs
 
 private const val GradientDarkerColorFactor = 1.3f
 private const val GradientLighterColorFactor = 0.7f
 private const val MaxRetries = 3
-
-/**
- * Generates a gradient for an initials avatar based on the user initials.
- *
- * @param initials The user initials to use for gradient colors.
- * @return The [Brush] that represents the gradient.
- */
-@Composable
-@ReadOnlyComposable
-internal fun initialsGradient(initials: String): Brush {
-    val gradientBaseColors = LocalContext.current.resources.getIntArray(R.array.stream_compose_avatar_gradient_colors)
-
-    val baseColorIndex = abs(initials.hashCode()) % gradientBaseColors.size
-    val baseColor = gradientBaseColors[baseColorIndex]
-
-    return Brush.linearGradient(
-        listOf(
-            Color(adjustColorBrightness(baseColor, GradientDarkerColorFactor)),
-            Color(adjustColorBrightness(baseColor, GradientLighterColorFactor)),
-        ),
-    )
-}
 
 /**
  * Applies the given mirroring scaleX based on the [layoutDirection] that's currently configured in the UI.
