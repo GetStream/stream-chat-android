@@ -310,7 +310,10 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     // Keep track of the last new message state that triggered a scroll to bottom.
     // If a configuration change happens, we want to keep the same state
     // and not scroll to bottom again if the newMessageState is the same as before the configuration change.
-    var lastScrollToBottomOnNewMessage by rememberSaveable(saver = MutableStateNewMessageStateSaver) {
+    var lastScrollToBottomOnNewMessage by rememberSaveable(
+        isMessageInThread,
+        saver = MutableStateNewMessageStateSaver,
+    ) {
         mutableStateOf(newMessageState)
     }
 
@@ -344,9 +347,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             count = messagesState.unreadCount,
             onClick = {
                 scrollToBottom {
-                    coroutineScope.launch {
-                        lazyListState.scrollToItem(0)
-                    }
+                    coroutineScope.launch { lazyListState.scrollToItem(0) }
                 }
             },
         )
