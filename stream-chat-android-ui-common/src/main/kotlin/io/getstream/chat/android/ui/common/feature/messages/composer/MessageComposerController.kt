@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.globalStateFlow
+import io.getstream.chat.android.client.api.state.loadNewestMessages
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.message.isModerationError
@@ -55,6 +56,7 @@ import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.doOnResult
+import io.getstream.result.call.doOnStart
 import io.getstream.result.call.map
 import io.getstream.result.onSuccessSuspend
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -734,18 +736,22 @@ public class MessageComposerController(
                     showInChannel = isInThread && alsoSendToChannel.value,
                     skipEnrichUrl = linkPreviews.value.isEmpty(),
                 ),
-            ).doOnResult(scope) { result ->
-                result.onSuccessSuspend { resultMessage ->
-                    if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
-                        chatClient.markMessageRead(
-                            channelType = channelType,
-                            channelId = channelId,
-                            messageId = resultMessage.id,
-                        )
-                            .await()
+            )
+                .doOnStart(scope) {
+                    // Optimistically load the latest messages (if not already loaded)
+                    loadLatestMessagesIfNeeded()
+                }
+                .doOnResult(scope) { result ->
+                    result.onSuccessSuspend { resultMessage ->
+                        if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                            chatClient.markMessageRead(
+                                channelType = channelType,
+                                channelId = channelId,
+                                messageId = resultMessage.id,
+                            ).await()
+                        }
                     }
                 }
-            }
         }
         clearData()
         sendMessageCall.enqueue(callback)
@@ -1076,6 +1082,14 @@ public class MessageComposerController(
                 "mentioned_users" to message.mentionedUsersIds,
             ),
         )
+    }
+
+    private fun loadLatestMessagesIfNeeded() {
+        if (isInThread) return
+        val endReached = channelState.value?.endOfNewerMessages?.value ?: true
+        if (endReached) return
+        logger.d { "[loadLatestMessagesIfNeeded] loading latest messages" }
+        chatClient.loadNewestMessages(channelCid, messageLimit = 30).enqueue()
     }
 
     /**
