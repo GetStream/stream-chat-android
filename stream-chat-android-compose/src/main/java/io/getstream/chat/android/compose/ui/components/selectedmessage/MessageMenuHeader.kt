@@ -53,7 +53,7 @@ public fun MessageMenuHeader(
     val componentFactory = ChatTheme.componentFactory
     val colors = ChatTheme.colors
     val resolver = ChatTheme.reactionResolver
-    val options = resolver.supportedReactions.map { type ->
+    val options = resolver.defaultReactions.map { type ->
         ReactionOptionItemState(
             type = type,
             isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
@@ -69,7 +69,7 @@ public fun MessageMenuHeader(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        options.take(MaxDisplayedReactions).forEach { option ->
+        options.forEach { option ->
             ReactionToggle(
                 type = option.type,
                 emoji = option.emojiCode,
@@ -80,7 +80,7 @@ public fun MessageMenuHeader(
             )
         }
 
-        if (options.size > MaxDisplayedReactions) {
+        if (options.size < resolver.supportedReactions.size) {
             componentFactory.ReactionMenuShowMore(
                 modifier = Modifier.padding(StreamTokens.spacing2xs),
                 onShowMoreReactionsSelected = onShowMoreReactionsSelected,
@@ -104,8 +104,3 @@ private fun MessageMenuHeaderPreview() {
         }
     }
 }
-
-/**
- * The default maximum number of reactions shown before the show more button.
- */
-private const val MaxDisplayedReactions = 5
