@@ -70,8 +70,8 @@ internal fun ReactionCountRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs)
-            .horizontalScroll(rememberScrollState()),
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
