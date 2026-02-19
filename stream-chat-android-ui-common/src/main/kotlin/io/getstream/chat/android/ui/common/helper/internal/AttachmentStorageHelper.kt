@@ -29,8 +29,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  * [AttachmentMetaData] and the SDK [Attachment] model.
  *
  * @param context The context of the app, used to fetch files and media.
- * @param storageHelper The storage helper that provides all the logic required to work with the
- * system storage.
+ * @param storageHelper Queries the device's content providers for files and media.
  * @param attachmentFilter A filter that is used to filter out attachments that will not be accepted
  * by the backend.
  */
@@ -85,8 +84,8 @@ public class AttachmentStorageHelper(
      * Resolves deferred attachments by copying their source content into local cache files.
      *
      * Attachments that already have a non-null [Attachment.upload] are returned unchanged.
-     * For others, the original content URI is read from [EXTRA_SOURCE_URI] and copied via
-     * [StorageHelper.getCachedFileFromUri].
+     * For others, the original content URI is read from [EXTRA_SOURCE_URI] and copied to a
+     * local cache file.
      *
      * @param attachments The attachments to resolve.
      * @return Attachments with [Attachment.upload] populated for every entry that had a source URI.
