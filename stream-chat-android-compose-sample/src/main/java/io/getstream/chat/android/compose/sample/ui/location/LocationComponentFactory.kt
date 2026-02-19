@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.sample.ui.location
 
 import android.net.Uri
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
