@@ -76,7 +76,7 @@ internal fun UserReactionRow(
                 overflow = TextOverflow.Ellipsis,
                 color = ChatTheme.colors.textPrimary,
             )
-            if (item.isMine) {
+            if (item.isMine && onClick != null) {
                 Text(
                     text = stringResource(R.string.stream_compose_reactions_remove),
                     style = ChatTheme.typography.captionDefault,
