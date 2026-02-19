@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * Shows the unread count badge for each channel item, to showcase how many messages
@@ -43,24 +45,29 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun UnreadCountIndicator(
     unreadCount: Int,
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.errorAccent,
+    color: Color = ChatTheme.colors.accentPrimary,   // was errorAccent (red #FF3742) → accentPrimary (blue #005FFF)
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
-    val shape = RoundedCornerShape(9.dp)
+    val shape = RoundedCornerShape(50)               // was RoundedCornerShape(9.dp) → pill/circle shape
 
     Box(
         modifier = modifier
-            .defaultMinSize(minWidth = 18.dp, minHeight = 18.dp)
+            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)  // was 18.dp → 20.dp
+            .border(
+                width = 2.dp,
+                color = ChatTheme.colors.presenceBorder,           // white (#FFFFFF) -- reuses presence border token
+                shape = shape,
+            )
             .background(shape = shape, color = color)
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = StreamTokens.spacing2xs),       // 4dp horizontal content padding
         contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier.testTag("Stream_UnreadCountIndicator"),
             text = displayText,
-            color = Color.White,
+            color = ChatTheme.colors.badgeTextOnAccent,           // was Color.White (now uses semantic token)
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold,
+            style = ChatTheme.typography.numericExtraLarge,        // was captionBold (10sp Bold) → numericExtraLarge (14sp Bold)
         )
     }
 }

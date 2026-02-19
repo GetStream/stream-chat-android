@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
  * @param channelItemVerticalPadding The vertical content padding inside channel list item.
  * @param channelItemHorizontalPadding The horizontal content padding inside channel list item.
  * @param channelAvatarSize The size of channel avatar.
+ * @param channelListItemAvatarSize The size of channel avatar in channel list items. Separate from [channelAvatarSize]
+ * which is used for the header avatar (40dp). Channel list items use 48dp per Figma spec.
  * @param selectedChannelMenuUserItemWidth The width of a member tile in the selected channel menu.
  * @param selectedChannelMenuUserItemHorizontalPadding The padding inside a member tile in the selected channel
  * menu.
@@ -97,6 +99,7 @@ public data class StreamDimens(
     public val channelItemVerticalPadding: Dp,
     public val channelItemHorizontalPadding: Dp,
     public val channelAvatarSize: Dp,
+    public val channelListItemAvatarSize: Dp,   // Size of channel avatar in list items (48dp). channelAvatarSize (40dp) is used for header avatar.
     public val selectedChannelMenuUserItemWidth: Dp,
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,
@@ -161,6 +164,7 @@ public data class StreamDimens(
             channelItemVerticalPadding = 12.dp,
             channelItemHorizontalPadding = 8.dp,
             channelAvatarSize = 40.dp,
+            channelListItemAvatarSize = 48.dp,
             selectedChannelMenuUserItemWidth = 80.dp,
             selectedChannelMenuUserItemHorizontalPadding = 8.dp,
             selectedChannelMenuUserItemAvatarSize = 64.dp,
