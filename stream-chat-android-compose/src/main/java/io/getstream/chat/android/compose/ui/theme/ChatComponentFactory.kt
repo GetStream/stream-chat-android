@@ -125,6 +125,7 @@ import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicato
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
+import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
@@ -1186,7 +1187,9 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default reactions displayed overlaying the message bubble border.
+     * The component displaying the reactions on a message. Defaults to [SegmentedMessageReactions],
+     * but an equivalent implementation with a different visual style is available through
+     * [ClusteredMessageReactions].
      */
     @Composable
     public fun MessageReactions(
