@@ -49,10 +49,6 @@ import io.getstream.chat.android.models.Reaction
 /**
  * Horizontally scrollable row of reaction chips with counts.
  *
- * Each chip shows the reaction emoji and its count (when > 1). Chips for reactions the current
- * user has added are rendered with a selected background; all others use a default surface style.
- * Tapping a chip toggles the current user's reaction of that type.
- *
  * @param reactionGroups The list of reaction types with their emoji and count.
  * @param ownReactions The current user's reactions on this message (used to determine selected state).
  * @param onReactionOptionSelected Called with the reaction type when a chip is tapped.
