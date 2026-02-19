@@ -25,34 +25,7 @@ import io.getstream.chat.android.compose.R
 /**
  * Contains all the colors in our palette. Each color is used for various things and can be changed to
  * customize the app design style.
- * @param textHighEmphasis Used for main text and active icon status.
- * @param textHighEmphasisInverse Used for contrasting backgrounds or elements against the main text and active icon
- * status, providing better visibility and readability.
- * @param textLowEmphasis Used for secondary text, default icon state, deleted messages text and datestamp background.
- * @param disabled Used for disabled icons and empty states.
- * @param borders Used for borders, the background of self messages, selected items, pressed state, button dividers.
- * @param inputBackground Used for the input background, deleted messages, section headings.
- * @param barsBackground Used for button text, top and bottom bar background and other user messages.
- * @param overlay Used for general overlays and background when opening modals.
- * @param overlayDark Used for the date separator background color.
- * @param primaryAccent Used for selected icon state, call to actions, white buttons text and links.
- * @param errorAccent Used for error text labels, notification badges and disruptive action text and icons.
- * @param infoAccent Used for the online status.
- * @param highlight Used for message highlights.
- * @param threadSeparatorGradientStart Used as a start color for vertical gradient background in a thread separator.
- * @param threadSeparatorGradientEnd Used as an end color for vertical gradient background in a thread separator.
- * @param imageBackgroundMessageList Used to set the background colour of images inside the message list.
- * Most visible in placeholders before the images are loaded.
- * @param imageBackgroundMediaGalleryPicker Used to set the background colour of images inside the media gallery picker
- * in the media gallery preview screen. Most visible in placeholders before the images are loaded.
- * @param imageBackgroundMessageList Used to set the background colour of videos inside the message list.
- * Most visible in placeholders before the video previews are loaded.
- * @param videoBackgroundMediaGalleryPicker Used to set the background color of videos inside the media gallery picker
- * in the media gallery preview screen. Most visible in placeholders before the video previews are loaded.
- * @param showMoreOverlay The color of the overlay displaying how many more media attachments the message contains,
- * given it contains more than can be displayed in the message list media attachment preview.
- * @param showMoreCountText The color of the text displaying how many more media attachments the message contains,
- * given it contains more than can be displayed in the message list media attachment preview.
+ * @param legacyColors Colors used by legacy components.
  * @param accentBlack Used for black accent elements.
  * @param accentError Used for destructive actions and error states.
  * @param accentNeutral Used for neutral accent for low-priority badges.
@@ -142,29 +115,7 @@ import io.getstream.chat.android.compose.R
 @Suppress("DEPRECATION_ERROR")
 @Immutable
 public data class StreamColors(
-    public val textHighEmphasis: Color,
-    public val textHighEmphasisInverse: Color,
-    public val textLowEmphasis: Color,
-    public val disabled: Color,
-    public val borders: Color,
-    public val inputBackground: Color,
-    public val barsBackground: Color,
-    public val overlay: Color,
-    public val overlayDark: Color,
-    public val primaryAccent: Color,
-    public val errorAccent: Color,
-    public val infoAccent: Color,
-    public val highlight: Color,
-    public val threadSeparatorGradientStart: Color,
-    public val threadSeparatorGradientEnd: Color,
-    public val mediaShimmerBase: Color,
-    public val mediaShimmerHighlights: Color,
-    public val imageBackgroundMessageList: Color,
-    public val imageBackgroundMediaGalleryPicker: Color,
-    public val videoBackgroundMessageList: Color,
-    public val videoBackgroundMediaGalleryPicker: Color,
-    public val showMoreOverlay: Color,
-    public val showMoreCountText: Color,
+    public val legacyColors: StreamLegacyColors,
 
     // Design System semantic colors
     public val accentBlack: Color,
@@ -271,6 +222,32 @@ public data class StreamColors(
     public val presenceBorder: Color,
 ) {
 
+    // region Legacy color delegates
+    public val textHighEmphasis: Color get() = legacyColors.textHighEmphasis
+    public val textHighEmphasisInverse: Color get() = legacyColors.textHighEmphasisInverse
+    public val textLowEmphasis: Color get() = legacyColors.textLowEmphasis
+    public val disabled: Color get() = legacyColors.disabled
+    public val borders: Color get() = legacyColors.borders
+    public val inputBackground: Color get() = legacyColors.inputBackground
+    public val barsBackground: Color get() = legacyColors.barsBackground
+    public val overlay: Color get() = legacyColors.overlay
+    public val overlayDark: Color get() = legacyColors.overlayDark
+    public val primaryAccent: Color get() = legacyColors.primaryAccent
+    public val errorAccent: Color get() = legacyColors.errorAccent
+    public val infoAccent: Color get() = legacyColors.infoAccent
+    public val highlight: Color get() = legacyColors.highlight
+    public val threadSeparatorGradientStart: Color get() = legacyColors.threadSeparatorGradientStart
+    public val threadSeparatorGradientEnd: Color get() = legacyColors.threadSeparatorGradientEnd
+    public val mediaShimmerBase: Color get() = legacyColors.mediaShimmerBase
+    public val mediaShimmerHighlights: Color get() = legacyColors.mediaShimmerHighlights
+    public val imageBackgroundMessageList: Color get() = legacyColors.imageBackgroundMessageList
+    public val imageBackgroundMediaGalleryPicker: Color get() = legacyColors.imageBackgroundMediaGalleryPicker
+    public val videoBackgroundMessageList: Color get() = legacyColors.videoBackgroundMessageList
+    public val videoBackgroundMediaGalleryPicker: Color get() = legacyColors.videoBackgroundMediaGalleryPicker
+    public val showMoreOverlay: Color get() = legacyColors.showMoreOverlay
+    public val showMoreCountText: Color get() = legacyColors.showMoreCountText
+    // endregion
+
     public companion object {
         /**
          * Provides the default colors for the light mode of the app.
@@ -280,29 +257,31 @@ public data class StreamColors(
         @Suppress("LongMethod")
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
-            textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
-            textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse),
-            textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis),
-            disabled = colorResource(R.color.stream_compose_disabled),
-            borders = colorResource(R.color.stream_compose_borders),
-            inputBackground = colorResource(R.color.stream_compose_input_background),
-            barsBackground = colorResource(R.color.stream_compose_bars_background),
-            overlay = colorResource(R.color.stream_compose_overlay_regular),
-            overlayDark = colorResource(R.color.stream_compose_overlay_dark),
-            primaryAccent = colorResource(R.color.stream_compose_primary_accent),
-            errorAccent = colorResource(R.color.stream_compose_error_accent),
-            infoAccent = colorResource(R.color.stream_compose_info_accent),
-            highlight = colorResource(R.color.stream_compose_highlight),
-            threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
-            threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
-            mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
-            mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
-            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
-            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
-            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
-            showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
-            showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
+            legacyColors = StreamLegacyColors(
+                textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
+                textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse),
+                textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis),
+                disabled = colorResource(R.color.stream_compose_disabled),
+                borders = colorResource(R.color.stream_compose_borders),
+                inputBackground = colorResource(R.color.stream_compose_input_background),
+                barsBackground = colorResource(R.color.stream_compose_bars_background),
+                overlay = colorResource(R.color.stream_compose_overlay_regular),
+                overlayDark = colorResource(R.color.stream_compose_overlay_dark),
+                primaryAccent = colorResource(R.color.stream_compose_primary_accent),
+                errorAccent = colorResource(R.color.stream_compose_error_accent),
+                infoAccent = colorResource(R.color.stream_compose_info_accent),
+                highlight = colorResource(R.color.stream_compose_highlight),
+                threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
+                threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
+                mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
+                mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
+                imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
+                imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
+                videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
+                videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
+                showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
+                showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
+            ),
 
             accentBlack = StreamPrimitiveColors.baseBlack,
             accentError = StreamPrimitiveColors.red500,
@@ -382,30 +361,32 @@ public data class StreamColors(
         @Suppress("LongMethod")
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
-            textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
-            textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse_dark),
-            textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis_dark),
-            disabled = colorResource(R.color.stream_compose_disabled_dark),
-            borders = colorResource(R.color.stream_compose_borders_dark),
-            inputBackground = colorResource(R.color.stream_compose_input_background_dark),
+            legacyColors = StreamLegacyColors(
+                textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+                textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse_dark),
+                textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis_dark),
+                disabled = colorResource(R.color.stream_compose_disabled_dark),
+                borders = colorResource(R.color.stream_compose_borders_dark),
+                inputBackground = colorResource(R.color.stream_compose_input_background_dark),
+                barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
+                overlay = colorResource(R.color.stream_compose_overlay_regular_dark),
+                overlayDark = colorResource(R.color.stream_compose_overlay_dark_dark),
+                primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
+                errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
+                infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
+                highlight = colorResource(R.color.stream_compose_highlight_dark),
+                threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
+                threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
+                mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
+                mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
+                imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
+                imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
+                videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
+                videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
+                showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
+                showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
+            ),
             appBackground = colorResource(R.color.stream_compose_app_background_dark),
-            barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
-            overlay = colorResource(R.color.stream_compose_overlay_regular_dark),
-            overlayDark = colorResource(R.color.stream_compose_overlay_dark_dark),
-            primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
-            errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
-            infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
-            highlight = colorResource(R.color.stream_compose_highlight_dark),
-            threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
-            threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
-            mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
-            mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-            imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
-            imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
-            videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
-            videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
-            showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
-            showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
 
             accentBlack = StreamPrimitiveColors.baseBlack,
             accentError = StreamPrimitiveColors.red400,
@@ -477,6 +458,36 @@ public data class StreamColors(
         )
     }
 }
+
+/**
+ * Contains all the colors used by legacy components.
+ */
+@Immutable
+public data class StreamLegacyColors(
+    public val textHighEmphasis: Color,
+    public val textHighEmphasisInverse: Color,
+    public val textLowEmphasis: Color,
+    public val disabled: Color,
+    public val borders: Color,
+    public val inputBackground: Color,
+    public val barsBackground: Color,
+    public val overlay: Color,
+    public val overlayDark: Color,
+    public val primaryAccent: Color,
+    public val errorAccent: Color,
+    public val infoAccent: Color,
+    public val highlight: Color,
+    public val threadSeparatorGradientStart: Color,
+    public val threadSeparatorGradientEnd: Color,
+    public val mediaShimmerBase: Color,
+    public val mediaShimmerHighlights: Color,
+    public val imageBackgroundMessageList: Color,
+    public val imageBackgroundMediaGalleryPicker: Color,
+    public val videoBackgroundMessageList: Color,
+    public val videoBackgroundMediaGalleryPicker: Color,
+    public val showMoreOverlay: Color,
+    public val showMoreCountText: Color,
+)
 
 @Suppress("MagicNumber")
 internal object StreamPrimitiveColors {
