@@ -35,6 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -146,6 +148,13 @@ public fun MessageComposer(
         }
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = { state ->
+        val inputFocusRequester = remember { FocusRequester() }
+        LaunchedEffect(Unit) {
+            viewModel.inputFocusEvents.collect {
+                inputFocusRequester.requestFocus()
+            }
+        }
+
         with(ChatTheme.componentFactory) {
             MessageComposerInput(
                 state = state,
@@ -168,7 +177,7 @@ public fun MessageComposer(
                     ChatTheme.componentFactory.MessageComposerInputCenterContent(
                         state = state,
                         onValueChange = onValueChange,
-                        modifier = modifier,
+                        modifier = modifier.focusRequester(inputFocusRequester),
                     )
                 },
                 trailingContent = {

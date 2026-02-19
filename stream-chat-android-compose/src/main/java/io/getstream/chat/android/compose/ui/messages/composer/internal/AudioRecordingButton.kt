@@ -79,7 +79,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.ui.util.applyIf
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import kotlinx.coroutines.CoroutineScope
@@ -380,7 +379,6 @@ private fun MicButtonVisual(
     interactionSource: MutableInteractionSource,
     isPressed: Boolean = false,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
     Box(
         modifier = Modifier
             .size(32.dp)
@@ -401,9 +399,7 @@ private fun MicButtonVisual(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            modifier = Modifier
-                .mirrorRtl(layoutDirection = layoutDirection)
-                .testTag("Stream_ComposerRecordAudioButton"),
+            modifier = Modifier.testTag("Stream_ComposerRecordAudioButton"),
             painter = painterResource(id = R.drawable.stream_compose_ic_mic),
             contentDescription = null,
         )

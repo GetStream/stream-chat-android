@@ -4345,10 +4345,6 @@ public final class io/getstream/chat/android/compose/ui/util/DefaultReactionReso
 	public fun getSupportedReactions ()Ljava/util/Set;
 }
 
-public final class io/getstream/chat/android/compose/ui/util/ImageUtilsKt {
-	public static final fun mirrorRtl (Landroidx/compose/ui/Modifier;Landroidx/compose/ui/unit/LayoutDirection;)Landroidx/compose/ui/Modifier;
-}
-
 public final class io/getstream/chat/android/compose/ui/util/LocalStreamImageLoaderKt {
 	public static final fun getLocalStreamImageLoader ()Landroidx/compose/runtime/ProvidableCompositionLocal;
 }
@@ -4728,6 +4724,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun getCommandSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getCooldownTimer ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getInput ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun getInputFocusEvents ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getLastActiveAction ()Lkotlinx/coroutines/flow/Flow;
 	public final fun getLinkPreviews ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getMentionSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;

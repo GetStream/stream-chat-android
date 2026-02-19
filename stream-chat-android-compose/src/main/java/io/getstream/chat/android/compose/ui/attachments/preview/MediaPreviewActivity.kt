@@ -43,15 +43,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
-
 /**
  * An Activity that is capable of playing video/audio stream.
  */
@@ -150,7 +147,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
             colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
             navigationIcon = {
                 IconButton(
-                    modifier = Modifier.mirrorRtl(LocalLayoutDirection.current),
                     onClick = { onBackPressed() },
                 ) {
                     Icon(

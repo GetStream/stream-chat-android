@@ -34,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,7 +49,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.ifNotNull
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -164,10 +162,7 @@ public fun MessageListHeader(
  */
 @Composable
 internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
-    val layoutDirection = LocalLayoutDirection.current
-
     BackButton(
-        modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
         onBackPressed = onBackPressed,
     )

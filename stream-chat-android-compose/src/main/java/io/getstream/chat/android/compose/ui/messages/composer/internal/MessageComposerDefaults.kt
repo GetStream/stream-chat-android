@@ -37,14 +37,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.LinkPreview
@@ -174,7 +172,6 @@ private const val OpenAttachmentPickerButtonRotation = 225f
 internal fun SendButton(
     onClick: () -> Unit,
 ) {
-    val layoutDirection = LocalLayoutDirection.current
     val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
     FilledIconButton(
         modifier = Modifier
@@ -183,9 +180,7 @@ internal fun SendButton(
             .testTag("Stream_ComposerSendButton"),
         content = {
             Icon(
-                modifier = Modifier
-                    .size(sendButtonStyle.icon.size)
-                    .mirrorRtl(layoutDirection = layoutDirection),
+                modifier = Modifier.size(sendButtonStyle.icon.size),
                 painter = sendButtonStyle.icon.painter,
                 contentDescription = stringResource(id = R.string.stream_compose_send_message),
             )

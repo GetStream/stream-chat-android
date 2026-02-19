@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -50,6 +51,11 @@ import kotlinx.coroutines.flow.StateFlow
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
+
+    /**
+     * Emits each time the message input field should request focus (e.g. after a command is selected).
+     */
+    public val inputFocusEvents: SharedFlow<Unit> = messageComposerController.inputFocusEvents
 
     /**
      * The full UI state that has all the required data.
