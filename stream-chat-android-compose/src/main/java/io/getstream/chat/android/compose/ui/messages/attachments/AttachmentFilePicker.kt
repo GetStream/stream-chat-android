@@ -57,11 +57,11 @@ import io.getstream.chat.android.compose.ui.messages.attachments.permission.Requ
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
@@ -80,7 +80,7 @@ internal fun AttachmentFilePicker(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+        AttachmentProcessingViewModelFactory(AttachmentStorageHelper(context.applicationContext))
     }
     val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }

@@ -45,11 +45,11 @@ import io.getstream.chat.android.compose.ui.components.attachments.images.Images
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -65,7 +65,7 @@ internal fun AttachmentMediaPicker(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+        AttachmentProcessingViewModelFactory(AttachmentStorageHelper(context.applicationContext))
     }
     val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     val permissions = Permissions.visualMediaPermissions()

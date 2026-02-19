@@ -18,8 +18,8 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -54,8 +54,8 @@ internal class AttachmentProcessingViewModelTest {
                 title = "screenshot.png",
             ),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsMetadataFromUris(uris)) doReturn expectedMetadata
+        val storageHelper: AttachmentStorageHelper = mock {
+            whenever(it.resolveMetadata(uris)) doReturn expectedMetadata
         }
         val viewModel = AttachmentProcessingViewModel(storageHelper)
 
@@ -82,8 +82,8 @@ internal class AttachmentProcessingViewModelTest {
                 title = "report.docx",
             ),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getFiles()) doReturn expectedFilesMetadata
+        val storageHelper: AttachmentStorageHelper = mock {
+            whenever(it.getFileMetadata()) doReturn expectedFilesMetadata
         }
         val viewModel = AttachmentProcessingViewModel(storageHelper)
 
@@ -114,8 +114,8 @@ internal class AttachmentProcessingViewModelTest {
                 title = "screenshot.png",
             ),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getMedia()) doReturn expectedMediaMetadata
+        val storageHelper: AttachmentStorageHelper = mock {
+            whenever(it.getMediaMetadata()) doReturn expectedMediaMetadata
         }
         val viewModel = AttachmentProcessingViewModel(storageHelper)
 
@@ -134,7 +134,7 @@ internal class AttachmentProcessingViewModelFactoryTest {
 
     @Test
     fun `create should return correct AttachmentProcessingViewModel instance`() {
-        val storageHelper: StorageHelperWrapper = mock()
+        val storageHelper: AttachmentStorageHelper = mock()
         val factory = AttachmentProcessingViewModelFactory(storageHelper)
 
         val viewModel = factory.create(AttachmentProcessingViewModel::class.java)
@@ -144,7 +144,7 @@ internal class AttachmentProcessingViewModelFactoryTest {
 
     @Test
     fun `create should throw IllegalArgumentException for unsupported ViewModel class`() {
-        val storageHelper: StorageHelperWrapper = mock()
+        val storageHelper: AttachmentStorageHelper = mock()
         val factory = AttachmentProcessingViewModelFactory(storageHelper)
 
         val exception = assertThrows<IllegalArgumentException> {

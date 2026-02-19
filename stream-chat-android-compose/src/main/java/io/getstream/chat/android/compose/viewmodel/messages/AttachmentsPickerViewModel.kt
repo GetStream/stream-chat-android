@@ -28,13 +28,12 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -52,11 +51,11 @@ import kotlinx.coroutines.withContext
  * Items that appear in both tabs (e.g. an image visible in the gallery and the files list)
  * share selection state — selecting in one tab marks the matching item in the other.
  *
- * @param storageHelper Wrapper around [StorageHelper] for accessing device storage.
+ * @param storageHelper Provides device storage queries and attachment conversion.
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
  */
 public class AttachmentsPickerViewModel(
-    private val storageHelper: StorageHelperWrapper,
+    private val storageHelper: AttachmentStorageHelper,
     channelState: StateFlow<ChannelState?>,
 ) : ViewModel() {
 
@@ -193,14 +192,18 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Returns all selected attachments across both tabs, deduplicated and mapped for upload.
+     * Returns lightweight preview [Attachment] objects for all selected items across both tabs.
+     *
+     * No file copying is performed; the returned attachments carry only the source URI and
+     * metadata needed for the composer preview. File resolution is deferred to send time
+     * via [AttachmentStorageHelper.resolveAttachmentFiles].
      */
     public fun getSelectedAttachments(): List<Attachment> {
         val allSelected = (mediaAttachments + fileAttachments)
             .filter(AttachmentPickerItemState::isSelected)
             .distinctBy { it.attachmentMetaData.uri }
             .map(AttachmentPickerItemState::attachmentMetaData)
-        return storageHelper.getAttachmentsForUpload(allSelected)
+        return storageHelper.toAttachments(allSelected)
     }
 
     /**
@@ -216,18 +219,12 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Converts the given [uris] to uploadable [Attachment] objects.
+     * Converts the given [metaData] into lightweight [Attachment]s.
+     *
+     * File resolution is deferred to send time via [AttachmentStorageHelper.resolveAttachmentFiles].
      */
-    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return storageHelper.getAttachmentsFromUris(uris)
-    }
-
-    /**
-     * Converts the given [metaData] to uploadable [Attachment] objects.
-     */
-    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
-        return storageHelper.getAttachmentsForUpload(metaData)
-    }
+    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> =
+        storageHelper.toAttachments(metaData)
 
     /**
      * Asynchronous version of [getAttachmentsFromMetaData].

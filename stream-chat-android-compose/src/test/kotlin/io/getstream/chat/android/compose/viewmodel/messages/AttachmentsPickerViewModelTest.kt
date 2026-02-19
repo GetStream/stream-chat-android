@@ -22,12 +22,12 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +53,7 @@ internal class AttachmentsPickerViewModelTest {
     @get:Rule
     val testCoroutineRule = TestCoroutineRule()
 
-    private val storageHelper: StorageHelperWrapper = mock()
+    private val storageHelper: AttachmentStorageHelper = mock()
     private val channelState = MutableStateFlow(mockChannelState())
 
     @Test
@@ -91,7 +91,7 @@ internal class AttachmentsPickerViewModelTest {
 
     @Test
     fun `Given images on the file system When selecting an image Should show the selection`() {
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image"))
+        whenever(storageHelper.toAttachments(any())) doReturn listOf(Attachment(type = "image"))
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -150,8 +150,8 @@ internal class AttachmentsPickerViewModelTest {
 
         assertInstanceOf<FilePickerMode>(viewModel.pickerMode)
         assertEquals(0, viewModel.attachments.size)
-        verify(storageHelper, never()).getFiles()
-        verify(storageHelper, never()).getMedia()
+        verify(storageHelper, never()).getFileMetadata()
+        verify(storageHelper, never()).getMediaMetadata()
     }
 
     @Test
@@ -159,8 +159,8 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         assertFalse(viewModel.isShowingAttachments)
-        verify(storageHelper, never()).getFiles()
-        verify(storageHelper, never()).getMedia()
+        verify(storageHelper, never()).getFileMetadata()
+        verify(storageHelper, never()).getMediaMetadata()
     }
 
     @Test
@@ -169,7 +169,7 @@ internal class AttachmentsPickerViewModelTest {
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
         )
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn expectedAttachments
+        whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -193,7 +193,7 @@ internal class AttachmentsPickerViewModelTest {
         val expectedAttachments = listOf(
             Attachment(type = "file", upload = mock()),
         )
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn expectedAttachments
+        whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -213,9 +213,9 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selected attachments When getting selected attachments Should map metadata for upload`() {
-        val expectedAttachments = listOf(Attachment(type = "image", upload = mock()))
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn expectedAttachments
+    fun `Given selected attachments When getting selected attachments Should map metadata for preview`() {
+        val expectedAttachments = listOf(Attachment(type = "image"))
+        whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -237,27 +237,10 @@ internal class AttachmentsPickerViewModelTest {
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
         )
-        whenever(storageHelper.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         val result = viewModel.getAttachmentsFromMetaData(metadata)
-
-        assertEquals(expectedAttachments, result)
-    }
-
-    @Test
-    fun `Given attachment uris When getting attachments from uris Should return attachments`() {
-        val uris = listOf(Uri.parse("file://test1.pdf"), Uri.parse("file://test2.pdf"))
-        val expectedAttachments = listOf(
-            Attachment(type = "file", upload = mock()),
-            Attachment(type = "file", upload = mock()),
-        )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsFromUris(uris)) doReturn expectedAttachments
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        val result = viewModel.getAttachmentsFromUris(uris)
 
         assertEquals(expectedAttachments, result)
     }
@@ -269,8 +252,8 @@ internal class AttachmentsPickerViewModelTest {
             Attachment(type = "image", upload = mock()),
             Attachment(type = "image", upload = mock()),
         )
-        val storageHelper: StorageHelperWrapper = mock {
-            whenever(it.getAttachmentsForUpload(metadata)) doReturn expectedAttachments
+        val storageHelper: AttachmentStorageHelper = mock {
+            whenever(it.toAttachments(metadata)) doReturn expectedAttachments
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
@@ -367,7 +350,7 @@ internal class AttachmentsPickerViewModelTest {
 
     @Test
     fun `Given selections in both tabs When getting selected attachments Should combine from all tabs`() {
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn listOf(
+        whenever(storageHelper.toAttachments(any())) doReturn listOf(
             Attachment(type = "image"),
             Attachment(type = "file"),
         )
@@ -426,7 +409,7 @@ internal class AttachmentsPickerViewModelTest {
 
     @Test
     fun `Given selections across tabs When dismissing picker Should clear all state`() {
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn emptyList()
+        whenever(storageHelper.toAttachments(any())) doReturn emptyList()
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -517,7 +500,7 @@ internal class AttachmentsPickerViewModelTest {
 
     @Test
     fun `Given same file in both tabs When getting selected attachments Should not duplicate`() {
-        whenever(storageHelper.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image"))
+        whenever(storageHelper.toAttachments(any())) doReturn listOf(Attachment(type = "image"))
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -645,7 +628,7 @@ internal class AttachmentsPickerViewModelTest {
             type = "file",
         )
 
-        /** Creates an [Attachment] carrying [uri] in [EXTRA_SOURCE_URI], as produced by [StorageHelperWrapper]. */
+        /** Creates an [Attachment] carrying [uri] in [EXTRA_SOURCE_URI], as produced by [AttachmentStorageHelper]. */
         private fun attachmentWithSourceUri(uri: Uri): Attachment =
             Attachment(extraData = mapOf(EXTRA_SOURCE_URI to uri.toString()))
     }

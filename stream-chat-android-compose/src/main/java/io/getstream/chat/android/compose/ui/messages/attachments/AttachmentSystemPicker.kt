@@ -57,7 +57,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.permission.Requ
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
@@ -67,6 +66,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
@@ -86,7 +86,7 @@ internal fun AttachmentSystemPicker(
     val pickerModes = ChatTheme.attachmentPickerConfig.modes
 
     val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
+        AttachmentProcessingViewModelFactory(AttachmentStorageHelper(context.applicationContext))
     }
     val processingViewModel = viewModel<AttachmentProcessingViewModel>(
         factory = processingViewModelFactory,

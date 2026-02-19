@@ -20,8 +20,8 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,11 +31,10 @@ import kotlinx.coroutines.withContext
  * It handles the background retrieval and processing of attachment metadata from various
  * sources (URIs, files, media) without blocking the main thread.
  *
- * @param storageHelper The wrapper around storage helper functionality used to retrieve attachment
- * metadata from the device's storage system.
+ * @param storageHelper Retrieves attachment metadata from device storage.
  */
 internal class AttachmentProcessingViewModel(
-    private val storageHelper: StorageHelperWrapper,
+    private val storageHelper: AttachmentStorageHelper,
 ) : ViewModel() {
 
     /**
@@ -47,7 +46,7 @@ internal class AttachmentProcessingViewModel(
     fun getAttachmentsMetadataFromUrisAsync(uris: List<Uri>, onComplete: (AttachmentsMetadataFromUris) -> Unit) {
         viewModelScope.launch {
             val attachmentsMetadataFromUris = withContext(DispatcherProvider.IO) {
-                val metadata = storageHelper.getAttachmentsMetadataFromUris(uris)
+                val metadata = storageHelper.resolveMetadata(uris)
                 AttachmentsMetadataFromUris(
                     uris = uris,
                     attachmentsMetadata = metadata,
@@ -65,7 +64,7 @@ internal class AttachmentProcessingViewModel(
     fun getFilesAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
         viewModelScope.launch {
             val metadata = withContext(DispatcherProvider.IO) {
-                storageHelper.getFiles()
+                storageHelper.getFileMetadata()
             }
             onComplete(metadata)
         }
@@ -79,7 +78,7 @@ internal class AttachmentProcessingViewModel(
     fun getMediaAsync(onComplete: (List<AttachmentMetaData>) -> Unit) {
         viewModelScope.launch {
             val metadata = withContext(DispatcherProvider.IO) {
-                storageHelper.getMedia()
+                storageHelper.getMediaMetadata()
             }
             onComplete(metadata)
         }
@@ -104,7 +103,7 @@ internal data class AttachmentsMetadataFromUris(
  * @param storageHelper The helper used to access file metadata from storage.
  */
 internal class AttachmentProcessingViewModelFactory(
-    private val storageHelper: StorageHelperWrapper,
+    private val storageHelper: AttachmentStorageHelper,
 ) : ViewModelProvider.Factory {
 
     /**
