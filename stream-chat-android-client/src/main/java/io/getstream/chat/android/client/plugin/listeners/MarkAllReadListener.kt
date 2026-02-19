@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
  * Listener for [ChatClient.markAllRead] requests.
  */
+@InternalStreamChatApi
 public interface MarkAllReadListener {
 
     /**

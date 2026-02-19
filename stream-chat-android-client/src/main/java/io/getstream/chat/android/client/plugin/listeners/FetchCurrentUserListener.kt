@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 
 /**
  * Listener used when fetching the current user from the backend.
  */
+@InternalStreamChatApi
 public interface FetchCurrentUserListener {
 
     /**

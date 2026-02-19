@@ -4689,7 +4689,6 @@ internal constructor(
         private var retryPolicy: RetryPolicy = NoRetryPolicy()
         private var distinctApiCalls: Boolean = true
         private var debugRequests: Boolean = false
-        private var pluginFactories: List<PluginFactory> = emptyList()
         private var offlineConfig: OfflineConfig = OfflineConfig()
         private var stateConfig: StateConfig = StateConfig()
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
@@ -4920,16 +4919,6 @@ internal constructor(
         }
 
         /**
-         * Adds plugins factories to be used by the client.
-         * @see [PluginFactory]
-         *
-         * @param pluginFactories The factories to be added.
-         */
-        public fun withPlugins(vararg pluginFactories: PluginFactory): Builder = apply {
-            this.pluginFactories = pluginFactories.asList()
-        }
-
-        /**
          * Configures the offline support for the ChatClient.
          *
          * @param offlineConfig The offline configuration to be used.
@@ -5088,7 +5077,6 @@ internal constructor(
             val repository = ChatClientRepository.from(database)
 
             val allPluginFactories = setupPluginFactories(
-                userProvided = pluginFactories,
                 offlineConfig = offlineConfig,
                 stateConfig = stateConfig,
             )
@@ -5139,7 +5127,6 @@ internal constructor(
         }
 
         private fun setupPluginFactories(
-            userProvided: List<PluginFactory>,
             offlineConfig: OfflineConfig,
             stateConfig: StateConfig,
         ): List<PluginFactory> {
@@ -5153,8 +5140,6 @@ internal constructor(
                 if (offlineConfig.enabled) {
                     add(StreamOfflinePluginFactory(appContext, offlineConfig.ignoredChannelTypes))
                 }
-                // Then user provided plugins
-                addAll(userProvided)
             }
         }
 
