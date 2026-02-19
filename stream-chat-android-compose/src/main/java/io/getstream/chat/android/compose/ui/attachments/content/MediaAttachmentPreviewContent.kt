@@ -83,6 +83,7 @@ public fun MediaAttachmentPreviewContent(
             key = Attachment::stableKey,
         ) { attachment ->
             MediaAttachmentPreviewItem(
+                modifier = Modifier.animateItem(),
                 mediaAttachment = attachment,
                 onAttachmentRemoved = onAttachmentRemoved,
                 overlayContent = previewItemOverlayContent,
@@ -104,11 +105,12 @@ private fun MediaAttachmentPreviewItem(
     mediaAttachment: Attachment,
     onAttachmentRemoved: (Attachment) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val data = mediaAttachment.localPreviewData
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(95.dp)
             .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewItem"),

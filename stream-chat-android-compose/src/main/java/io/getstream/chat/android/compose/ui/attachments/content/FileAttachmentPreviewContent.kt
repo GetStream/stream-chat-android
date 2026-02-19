@@ -70,7 +70,9 @@ public fun FileAttachmentPreviewContent(
             key = Attachment::stableKey,
         ) { attachment ->
             Surface(
-                modifier = Modifier.padding(1.dp),
+                modifier = Modifier
+                    .animateItem()
+                    .padding(1.dp),
                 color = ChatTheme.colors.appBackground,
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, ChatTheme.colors.borders),
