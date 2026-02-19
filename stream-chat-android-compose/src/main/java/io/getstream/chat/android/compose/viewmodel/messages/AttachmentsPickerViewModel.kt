@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
@@ -182,7 +181,6 @@ public class AttachmentsPickerViewModel(
 
         val isCurrentlySelected = attachments[itemIndex].isSelected
 
-        // Single-select: clicking already selected item is a no-op
         if (!allowMultipleSelection && isCurrentlySelected) return
 
         val previous = attachments
@@ -286,34 +284,19 @@ public class AttachmentsPickerViewModel(
         fileAttachments = emptyList()
     }
 
-    private fun deselectAttachment(itemIndex: Int): List<AttachmentPickerItemState> {
-        val removedPosition = (attachments[itemIndex].selection as Selection.Selected).position
-        return attachments.mapIndexed { index, item ->
+    private fun deselectAttachment(itemIndex: Int): List<AttachmentPickerItemState> =
+        attachments.mapIndexed { index, item ->
+            if (index == itemIndex) item.copy(isSelected = false) else item
+        }
+
+    private fun selectAttachment(itemIndex: Int, allowMultipleSelection: Boolean): List<AttachmentPickerItemState> =
+        attachments.mapIndexed { index, item ->
             when {
-                index == itemIndex -> item.copy(selection = Selection.Unselected)
-                item.selection is Selection.Selected && item.selection.position > removedPosition ->
-                    item.copy(selection = Selection.Selected(position = item.selection.position - 1))
+                index == itemIndex -> item.copy(isSelected = true)
+                !allowMultipleSelection -> item.copy(isSelected = false)
                 else -> item
             }
         }
-    }
-
-    private fun selectAttachment(itemIndex: Int, allowMultipleSelection: Boolean): List<AttachmentPickerItemState> {
-        return if (allowMultipleSelection) {
-            val nextPosition = attachments.count(AttachmentPickerItemState::isSelected) + 1
-            attachments.mapIndexed { index, item ->
-                if (index == itemIndex) item.copy(selection = Selection.Selected(position = nextPosition)) else item
-            }
-        } else {
-            attachments.mapIndexed { index, item ->
-                if (index == itemIndex) {
-                    item.copy(selection = Selection.Selected(position = 1))
-                } else {
-                    item.copy(selection = Selection.Unselected)
-                }
-            }
-        }
-    }
 
     /**
      * Propagates selection changes from the current tab to the other tab.
@@ -326,7 +309,7 @@ public class AttachmentsPickerViewModel(
         if (otherAttachments.isEmpty()) return
 
         val changes = current.zip(previous)
-            .filter { (cur, prev) -> cur.selection != prev.selection }
+            .filter { (cur, prev) -> cur.isSelected != prev.isSelected }
             .mapNotNull { (cur, _) -> cur.attachmentMetaData.uri?.let { it to cur.isSelected } }
 
         for ((uri, selected) in changes) {
@@ -349,13 +332,13 @@ public class AttachmentsPickerViewModel(
             newItems: List<AttachmentPickerItemState>,
         ): List<AttachmentPickerItemState> {
             if (existing.isEmpty()) return newItems
-            val selectedByMetaData = existing
-                .filter { it.isSelected }
-                .associateBy { it.attachmentMetaData }
-            if (selectedByMetaData.isEmpty()) return newItems
+            val selectedMetaData = existing
+                .filter(AttachmentPickerItemState::isSelected)
+                .map(AttachmentPickerItemState::attachmentMetaData)
+                .toSet()
+            if (selectedMetaData.isEmpty()) return newItems
             return newItems.map { item ->
-                val match = selectedByMetaData[item.attachmentMetaData]
-                if (match != null) item.copy(selection = match.selection) else item
+                if (item.attachmentMetaData in selectedMetaData) item.copy(isSelected = true) else item
             }
         }
 
@@ -368,16 +351,15 @@ public class AttachmentsPickerViewModel(
             otherTabItems: List<AttachmentPickerItemState>,
         ): List<AttachmentPickerItemState> {
             val otherSelectedUris = otherTabItems
-                .filter { it.isSelected }
+                .filter(AttachmentPickerItemState::isSelected)
                 .mapNotNull { it.attachmentMetaData.uri }
                 .toSet()
             if (otherSelectedUris.isEmpty()) return items
 
-            var nextPosition = items.count(AttachmentPickerItemState::isSelected) + 1
             return items.map { item ->
                 val uri = item.attachmentMetaData.uri
                 if (!item.isSelected && uri != null && uri in otherSelectedUris) {
-                    item.copy(selection = Selection.Selected(position = nextPosition++))
+                    item.copy(isSelected = true)
                 } else {
                     item
                 }
@@ -385,8 +367,8 @@ public class AttachmentsPickerViewModel(
         }
 
         /**
-         * Finds an unselected item whose [AttachmentMetaData.uri] equals [uri] and selects it,
-         * appending it after the current selections. Calls [update] with the result if a match is found.
+         * Finds an unselected item whose [AttachmentMetaData.uri] equals [uri] and selects it.
+         * Calls [update] with the result if a match is found.
          */
         private fun selectByUri(
             uri: Uri,
@@ -397,21 +379,16 @@ public class AttachmentsPickerViewModel(
             val matchIndex = list.indexOfFirst { it.attachmentMetaData.uri == uri }
             if (matchIndex == -1 || list[matchIndex].isSelected) return
 
-            val nextPosition = list.count(AttachmentPickerItemState::isSelected) + 1
             update(
                 list.mapIndexed { index, item ->
-                    if (index == matchIndex) {
-                        item.copy(selection = Selection.Selected(position = nextPosition))
-                    } else {
-                        item
-                    }
+                    if (index == matchIndex) item.copy(isSelected = true) else item
                 },
             )
         }
 
         /**
-         * Finds a selected item whose [AttachmentMetaData.uri] equals [uri], deselects it,
-         * and reorders the remaining positions. Calls [update] with the result if a match is found.
+         * Finds a selected item whose [AttachmentMetaData.uri] equals [uri] and deselects it.
+         * Calls [update] with the result if a match is found.
          */
         private fun deselectByUri(
             uri: Uri,
@@ -419,20 +396,12 @@ public class AttachmentsPickerViewModel(
             update: (List<AttachmentPickerItemState>) -> Unit,
         ) {
             val list = items()
-            val itemIndex = list.indexOfFirst { it.attachmentMetaData.uri == uri }
-            if (itemIndex == -1) return
-            val currentItem = list[itemIndex]
-            if (currentItem.selection !is Selection.Selected) return
+            val matchIndex = list.indexOfFirst { it.attachmentMetaData.uri == uri }
+            if (matchIndex == -1 || !list[matchIndex].isSelected) return
 
-            val removedPosition = currentItem.selection.position
             update(
                 list.mapIndexed { index, item ->
-                    when {
-                        index == itemIndex -> item.copy(selection = Selection.Unselected)
-                        item.selection is Selection.Selected && item.selection.position > removedPosition ->
-                            item.copy(selection = Selection.Selected(position = item.selection.position - 1))
-                        else -> item
-                    }
+                    if (index == matchIndex) item.copy(isSelected = false) else item
                 },
             )
         }

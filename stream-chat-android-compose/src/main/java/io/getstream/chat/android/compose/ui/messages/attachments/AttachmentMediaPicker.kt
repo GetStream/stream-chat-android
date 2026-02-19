@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.images.ImagesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
@@ -82,7 +81,6 @@ internal fun AttachmentMediaPicker(
             attachments = attachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
             onGrantPermissionClick = { permissionLauncher.launch(permissions) },
-            allowMultipleSelection = pickerMode.allowMultipleSelection,
         )
         // Access permanently denied snackbar
         StreamSnackbarHost(hostState = snackBarHostState)
@@ -111,7 +109,6 @@ private fun VisualMediaAccessContent(
     attachments: List<AttachmentPickerItemState>,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     onGrantPermissionClick: () -> Unit,
-    allowMultipleSelection: Boolean,
 ) {
     when (visualMediaAccess) {
         VisualMediaAccess.FULL -> {
@@ -119,7 +116,6 @@ private fun VisualMediaAccessContent(
                 modifier = Modifier.padding(2.dp),
                 images = attachments,
                 onImageSelected = onAttachmentItemSelected,
-                allowMultipleSelection = allowMultipleSelection,
                 showAddMore = false,
             )
         }
@@ -129,7 +125,6 @@ private fun VisualMediaAccessContent(
                 modifier = Modifier.padding(2.dp),
                 images = attachments,
                 onImageSelected = onAttachmentItemSelected,
-                allowMultipleSelection = allowMultipleSelection,
                 showAddMore = true,
                 onAddMoreClick = onGrantPermissionClick,
             )
@@ -145,55 +140,24 @@ private fun VisualMediaAccessContent(
 
 @Preview(showBackground = true)
 @Composable
-private fun AttachmentMediaPickerSingleSelectionPreview() {
+private fun AttachmentMediaPickerPreview() {
     ChatPreviewTheme {
-        AttachmentMediaPickerSingleSelection()
+        AttachmentMediaPickerSelection()
     }
 }
 
 @Suppress("MagicNumber")
 @Composable
-internal fun AttachmentMediaPickerSingleSelection() {
-    AttachmentMediaPicker(
-        pickerMode = GalleryPickerMode(allowMultipleSelection = false),
-        attachments = listOf(
-            AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(),
-            ),
-            AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(),
-                selection = Selection.Selected(position = 1),
-            ),
-            AttachmentPickerItemState(
-                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
-                    videoLength = 1_000
-                },
-            ),
-        ),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AttachmentMediaPickerMultipleSelectionPreview() {
-    ChatPreviewTheme {
-        AttachmentMediaPickerMultipleSelection()
-    }
-}
-
-@Suppress("MagicNumber")
-@Composable
-internal fun AttachmentMediaPickerMultipleSelection() {
+internal fun AttachmentMediaPickerSelection() {
     AttachmentMediaPicker(
         pickerMode = GalleryPickerMode(),
         attachments = listOf(
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                selection = Selection.Selected(position = 1),
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(),
-                selection = Selection.Selected(position = 2),
+                isSelected = true,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {

@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import android.net.Uri
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.models.Attachment
@@ -110,7 +109,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selected images When deselecting earlier item Should update selection order`() {
+    fun `Given selected images When deselecting earlier item Should update selection`() {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -122,12 +121,8 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changeSelectedAttachments(viewModel.attachments.last())
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        val firstItem = viewModel.attachments.first()
-        val lastItem = viewModel.attachments.last()
-        assertFalse(firstItem.isSelected)
-        assertEquals(Selection.Unselected, firstItem.selection)
-        assertTrue(lastItem.isSelected)
-        assertEquals(Selection.Selected(position = 1), lastItem.selection)
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
     }
 
     @Test
@@ -210,7 +205,7 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given multiple selected attachments When removing first Should unselect and reorder`() {
+    fun `Given multiple selected attachments When removing first Should unselect it`() {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
@@ -223,12 +218,8 @@ internal class AttachmentsPickerViewModelTest {
 
         viewModel.removeSelectedAttachment(attachmentWithSourceUri(imageUri1))
 
-        val firstItem = viewModel.attachments.first()
-        val lastItem = viewModel.attachments.last()
-        assertFalse(firstItem.isSelected)
-        assertEquals(Selection.Unselected, firstItem.selection)
-        assertTrue(lastItem.isSelected)
-        assertEquals(Selection.Selected(position = 1), lastItem.selection)
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertTrue(viewModel.attachments.last().isSelected)
     }
 
     @Test
@@ -246,7 +237,6 @@ internal class AttachmentsPickerViewModelTest {
 
         assertFalse(viewModel.attachments.first().isSelected)
         assertTrue(viewModel.attachments.last().isSelected)
-        assertEquals(Selection.Selected(position = 1), viewModel.attachments.last().selection)
     }
 
     @Test
@@ -313,7 +303,6 @@ internal class AttachmentsPickerViewModelTest {
         )
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // Simulate recomposition reload
         viewModel.onAttachmentsLoaded(
             listOf(AttachmentPickerItemState(imageAttachment1), AttachmentPickerItemState(imageAttachment2)),
         )
@@ -373,16 +362,14 @@ internal class AttachmentsPickerViewModelTest {
         )
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // Switch to files tab — the files list includes the same image (same URI)
         viewModel.changePickerMode(FilePickerMode())
         viewModel.onAttachmentsLoaded(
             listOf(
-                AttachmentPickerItemState(imageAttachment1), // same file as in media tab
+                AttachmentPickerItemState(imageAttachment1),
                 AttachmentPickerItemState(fileAttachment1),
             ),
         )
 
-        // The image should appear already selected in the files tab
         assertTrue(viewModel.attachments.first().isSelected)
         assertFalse(viewModel.attachments.last().isSelected)
     }
@@ -392,20 +379,17 @@ internal class AttachmentsPickerViewModelTest {
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
-        // Pre-populate both tabs
         viewModel.changePickerMode(GalleryPickerMode())
         viewModel.attachments = listOf(AttachmentPickerItemState(imageAttachment1))
         viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(
-            AttachmentPickerItemState(imageAttachment1), // same URI
+            AttachmentPickerItemState(imageAttachment1),
             AttachmentPickerItemState(fileAttachment1),
         )
 
-        // Select the image on the gallery tab
         viewModel.changePickerMode(GalleryPickerMode())
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // The files tab should now show the matching item as selected
         viewModel.changePickerMode(FilePickerMode())
         assertTrue(viewModel.attachments.first().isSelected)
     }
@@ -420,11 +404,9 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(AttachmentPickerItemState(imageAttachment1))
 
-        // Select in gallery → syncs to files
         viewModel.changePickerMode(GalleryPickerMode())
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // Deselect in gallery → should also deselect in files
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
         assertFalse(viewModel.attachments.first().isSelected)
         viewModel.changePickerMode(FilePickerMode())
@@ -442,11 +424,9 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(AttachmentPickerItemState(imageAttachment1))
 
-        // Select in gallery (syncs to files)
         viewModel.changePickerMode(GalleryPickerMode())
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // Both tabs have it selected, but getSelectedAttachments should deduplicate
         assertTrue(viewModel.attachments.first().isSelected)
         viewModel.changePickerMode(FilePickerMode())
         assertTrue(viewModel.attachments.first().isSelected)
@@ -463,11 +443,9 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.changePickerMode(FilePickerMode())
         viewModel.attachments = listOf(AttachmentPickerItemState(imageAttachment1))
 
-        // Select in gallery (syncs to files)
         viewModel.changePickerMode(GalleryPickerMode())
         viewModel.changeSelectedAttachments(viewModel.attachments.first())
 
-        // Remove via composer — should deselect in both tabs
         viewModel.removeSelectedAttachment(attachmentWithSourceUri(imageUri1))
 
         assertFalse(viewModel.attachments.first().isSelected)
@@ -490,7 +468,7 @@ internal class AttachmentsPickerViewModelTest {
     @Test
     fun `mergeSelections with existing selections Should restore matching selections`() {
         val existing = listOf(
-            AttachmentPickerItemState(imageAttachment1, selection = Selection.Selected(position = 1)),
+            AttachmentPickerItemState(imageAttachment1, isSelected = true),
             AttachmentPickerItemState(imageAttachment2),
         )
         val newItems = listOf(
@@ -511,7 +489,7 @@ internal class AttachmentsPickerViewModelTest {
             AttachmentPickerItemState(fileAttachment1),
         )
         val otherTab = listOf(
-            AttachmentPickerItemState(imageAttachment1, selection = Selection.Selected(position = 1)),
+            AttachmentPickerItemState(imageAttachment1, isSelected = true),
         )
 
         val result = AttachmentsPickerViewModel.applyCrossTabSelections(items, otherTab)
