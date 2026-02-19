@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.audio.AudioPlayer
@@ -293,6 +294,30 @@ internal class MessageComposerControllerTest {
 
         // Then
         assertEquals(attachments, controller.selectedAttachments.value)
+    }
+
+    @Test
+    fun `Given a command When selectCommand called Then inputFocusEvents emits`() = runTest {
+        // Given
+        val command = Command("giphy", "Search GIFs", "[text]", "fun_set")
+        val controller = Fixture()
+            .givenAppSettings()
+            .givenAudioPlayer(mock())
+            .givenClientState(randomUser())
+            .givenGlobalState()
+            .givenChannelState(
+                configState = MutableStateFlow(Config(commands = listOf(command))),
+            )
+            .get()
+
+        controller.inputFocusEvents.test {
+            // When
+            controller.selectCommand(command)
+
+            // Then
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     // region sendMessage tests

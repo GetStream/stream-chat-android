@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -69,6 +70,13 @@ public fun CreatePollScreen(
     }
     val state by viewModel.state.collectAsState()
     var isShowingDiscardDialog by remember { mutableStateOf(false) }
+    val backOrDiscardDialog = {
+        if (state.hasChanges) {
+            isShowingDiscardDialog = true
+        } else {
+            backAction()
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val questionListLazyState = rememberLazyListState()
 
@@ -86,6 +94,7 @@ public fun CreatePollScreen(
 
     Column(
         modifier = Modifier
+            .systemBarsPadding()
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(rememberScrollState())
@@ -107,13 +116,7 @@ public fun CreatePollScreen(
                 )
                 backAction()
             },
-            onBackPressed = {
-                if (!state.hasChanges) {
-                    backAction()
-                } else {
-                    isShowingDiscardDialog = true
-                }
-            },
+            onBackPressed = backOrDiscardDialog,
         )
 
         // Poll question input
@@ -137,10 +140,7 @@ public fun CreatePollScreen(
             onSwitchesChanged = viewModel::updateSwitches,
         )
 
-        // Back handler
-        BackHandler(enabled = state.hasChanges) {
-            isShowingDiscardDialog = true
-        }
+        BackHandler(onBack = backOrDiscardDialog)
 
         // Discard dialog
         if (isShowingDiscardDialog) {

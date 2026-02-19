@@ -70,20 +70,4 @@
     <color name="stream_compose_white">#FFFFFF</color>
     <color name="stream_compose_white_85">#D9FFFFFF</color>
     <color name="stream_compose_blue_alice">#E9F2FF</color>
-
-    <!-- Avatar gradient colors -->
-    <color name="stream_compose_avatar_gradient_orange">#FF8A65</color>
-    <color name="stream_compose_avatar_gradient_green">#81C784</color>
-    <color name="stream_compose_avatar_gradient_blue">#4FC3F7</color>
-    <color name="stream_compose_avatar_gradient_brown">#A1887F</color>
-    <color name="stream_compose_avatar_gradient_yellow">#FFF176</color>
-    <color name="stream_compose_avatar_gradient_red">#E57373</color>
-    <array name="stream_compose_avatar_gradient_colors">
-        <item>@color/stream_compose_avatar_gradient_orange</item>
-        <item>@color/stream_compose_avatar_gradient_green</item>
-        <item>@color/stream_compose_avatar_gradient_blue</item>
-        <item>@color/stream_compose_avatar_gradient_brown</item>
-        <item>@color/stream_compose_avatar_gradient_yellow</item>
-        <item>@color/stream_compose_avatar_gradient_red</item>
-    </array>
 </resources>

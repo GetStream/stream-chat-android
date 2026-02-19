@@ -1,7 +1,6 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
@@ -27,14 +26,6 @@ class GettingStarted {
                 val chatClient = ChatClient.instance() // Returns the singleton instance
             }
         }
-    }
-
-    fun addingAPlugin(apiKey: String, context: Context) {
-        val client = ChatClient.Builder(apiKey, context)
-            .withPlugins(
-                //Add the desired plugin factories here
-            )
-            .build()
     }
 
     fun connectingAUser() {

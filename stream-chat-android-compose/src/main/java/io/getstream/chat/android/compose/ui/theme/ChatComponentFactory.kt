@@ -40,7 +40,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.BottomAppBarDefaults
@@ -53,14 +52,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -69,9 +66,6 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -131,17 +125,18 @@ import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicato
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
+import io.getstream.chat.android.compose.ui.components.messages.ClusteredMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.GiphyMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageComposerQuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
-import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
+import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
@@ -1145,7 +1140,7 @@ public interface ChatComponentFactory {
      * Usually contains attachments and text.
      */
     @Composable
-    public fun ColumnScope.MessageContent(
+    public fun MessageContent(
         messageItem: MessageItemState,
         onLongItemClick: (Message) -> Unit,
         onPollUpdated: (Message, Poll) -> Unit,
@@ -1192,43 +1187,18 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default reactions displayed overlaying the message bubble border.
+     * The component displaying the reactions on a message. Defaults to [SegmentedMessageReactions],
+     * but an equivalent implementation with a different visual style is available through
+     * [ClusteredMessageReactions].
      */
     @Composable
     public fun MessageReactions(
         params: MessageReactionsParams,
     ) {
-        MessageReactions(
-            modifier = params.modifier
-                .minimumInteractiveComponentSize()
-                .clip(shape = RoundedCornerShape(16.dp))
-                .run {
-                    params.onClick?.let { onClick ->
-                        clickable { onClick(params.message) }
-                    } ?: this
-                }
-                .padding(horizontal = 4.dp, vertical = 2.dp),
-            options = params.reactions,
-        )
-    }
-
-    /**
-     * The default individual reaction item shown inside [MessageReactions].
-     */
-    @Composable
-    public fun RowScope.MessageReactionItem(
-        params: MessageReactionItemParams,
-    ) {
-        ChatTheme.componentFactory.ReactionIcon(
-            type = params.state.type,
-            emoji = params.state.emojiCode,
-            size = ReactionIconSize.Small,
-            modifier = params.modifier
-                .semantics {
-                    testTag = "Stream_MessageReaction_${params.state.type}"
-                    contentDescription = params.state.type
-                }
-                .align(Alignment.CenterVertically),
+        SegmentedMessageReactions(
+            modifier = params.modifier,
+            reactions = params.reactions,
+            onClick = params.onClick?.let { onClick -> { onClick(params.message) } },
         )
     }
 
@@ -2065,7 +2035,7 @@ public interface ChatComponentFactory {
      *
      * @param channel The channel whose avatar will be displayed.
      * @param currentUser The user currently logged in.
-     * @param showIndicator Whether to overlay a status indicator to show whether the user is online for 1:1 channels.
+     * @param showIndicator Whether to overlay a status indicator to show whether any user in the channel is online.
      * @param showBorder Whether to draw a border around the avatar to provide contrast against the background.
      */
     @Composable

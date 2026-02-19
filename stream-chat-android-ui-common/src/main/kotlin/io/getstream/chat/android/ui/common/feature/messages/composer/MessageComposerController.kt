@@ -67,9 +67,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -240,6 +243,13 @@ public class MessageComposerController(
     private val threadDraftMessages = globalState
         .flatMapLatest { it.threadDraftMessages }
         .stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    private val _inputFocusEvents = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
+    /**
+     * Emits each time the message input field should request focus (e.g. after a command is selected).
+     */
+    public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
 
     /**
      * Full message composer state holding all the required information.
@@ -882,6 +892,7 @@ public class MessageComposerController(
      */
     public fun selectCommand(command: Command) {
         setMessageInputInternal("/${command.name} ", MessageInput.Source.CommandSelected)
+        _inputFocusEvents.tryEmit(Unit)
     }
 
     /**

@@ -75,6 +75,7 @@ public data class StreamTypography(
     public val metadataDefault: TextStyle,
     public val metadataEmphasis: TextStyle,
     public val numericMedium: TextStyle,
+    public val numericLarge: TextStyle,
     public val numericExtraLarge: TextStyle,
 ) {
 
@@ -211,6 +212,11 @@ public data class StreamTypography(
                 fontWeight = StreamTokens.fontWeightBold,
                 fontSize = StreamTokens.fontSize2xs,
                 lineHeight = StreamTokens.lineHeightTighter,
+            ),
+            numericLarge = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightBold,
+                fontSize = StreamTokens.fontSizeXs,
             ),
             numericExtraLarge = TextStyle(
                 fontFamily = fontFamily,

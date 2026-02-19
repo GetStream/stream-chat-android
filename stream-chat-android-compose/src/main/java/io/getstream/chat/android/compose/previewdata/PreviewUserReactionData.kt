@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.previewdata
 
-import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.previewdata.PreviewUserData
 
@@ -25,40 +24,34 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  */
 internal object PreviewUserReactionData {
 
-    @Composable
     fun user1Reaction() = UserReactionItemState(
         user = PreviewUserData.user1,
         type = "like",
         emojiCode = "👍",
     )
 
-    @Composable
     fun user2Reaction() = UserReactionItemState(
         user = PreviewUserData.user2,
         type = "love",
         emojiCode = "❤️",
     )
 
-    @Composable
     fun user3Reaction() = UserReactionItemState(
         user = PreviewUserData.user3,
         type = "wow",
         emojiCode = "😮",
     )
 
-    @Composable
     fun user4Reaction() = UserReactionItemState(
         user = PreviewUserData.user4,
         type = "sad",
         emojiCode = "👎",
     )
 
-    @Composable
     fun oneUserReaction() = listOf(
         user1Reaction(),
     )
 
-    @Composable
     fun manyUserReactions() = listOf(
         user1Reaction(),
         user2Reaction(),

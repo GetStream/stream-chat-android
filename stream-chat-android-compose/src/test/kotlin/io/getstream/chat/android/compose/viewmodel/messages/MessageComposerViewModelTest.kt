@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.StateConfig
 import io.getstream.chat.android.client.api.state.GlobalState
@@ -309,13 +310,17 @@ internal class MessageComposerViewModelTest {
                 .givenChannelState(config = Config(commands = listOf(giphyCommand)))
                 .get()
 
-            viewModel.toggleCommandsVisibility()
-            viewModel.selectCommand(viewModel.commandSuggestions.value.first())
+            viewModel.inputFocusEvents.test {
+                viewModel.toggleCommandsVisibility()
+                viewModel.selectCommand(viewModel.commandSuggestions.value.first())
 
-            viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
-            viewModel.commandSuggestions.value.size `should be equal to` 0
-            viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
-            viewModel.input.value `should be equal to` "/giphy "
+                viewModel.messageComposerState.value.commandSuggestions.size `should be equal to` 0
+                viewModel.commandSuggestions.value.size `should be equal to` 0
+                viewModel.messageComposerState.value.inputValue `should be equal to` "/giphy "
+                viewModel.input.value `should be equal to` "/giphy "
+                awaitItem()
+                cancelAndIgnoreRemainingEvents()
+            }
         }
 
     @Test

@@ -187,26 +187,26 @@ private fun SelectedIndicator(
             .size(SelectionIndicatorSize)
             .background(
                 shape = CircleShape,
-                color = ChatTheme.colors.borderCoreOnDark,
+                color = ChatTheme.colors.borderCoreOnAccent,
             )
             .padding(2.dp)
             .background(
                 shape = CircleShape,
-                color = ChatTheme.colors.accentPrimary,
+                color = ChatTheme.colors.controlRadioCheckBgSelected,
             ),
         contentAlignment = Alignment.Center,
     ) {
         if (allowMultipleSelection) {
             Text(
                 text = selection.position.toString(),
-                color = ChatTheme.colors.badgeText,
+                color = ChatTheme.colors.controlRadioCheckIconSelected,
                 style = ChatTheme.typography.numericExtraLarge,
             )
         } else {
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
                 contentDescription = null,
-                tint = ChatTheme.colors.badgeText,
+                tint = ChatTheme.colors.controlRadioCheckIconSelected,
             )
         }
     }
@@ -222,7 +222,7 @@ private fun UnselectedIndicator(
             .border(
                 width = 2.dp,
                 shape = CircleShape,
-                color = ChatTheme.colors.borderCoreOnDark,
+                color = ChatTheme.colors.borderCoreOnAccent,
             ),
     )
 }
@@ -250,12 +250,12 @@ private fun VideoThumbnailOverlay(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_video),
             contentDescription = null,
-            tint = ChatTheme.colors.badgeText,
+            tint = ChatTheme.colors.badgeTextInverse,
         )
         Text(
             text = MediaStringUtil.convertVideoLength(videoLength),
             style = ChatTheme.typography.numericMedium,
-            color = ChatTheme.colors.badgeText,
+            color = ChatTheme.colors.badgeTextInverse,
         )
     }
 }

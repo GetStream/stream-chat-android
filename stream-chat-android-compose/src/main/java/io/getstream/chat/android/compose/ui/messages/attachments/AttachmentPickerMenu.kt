@@ -19,9 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,14 +28,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -77,17 +75,17 @@ public fun AttachmentPickerMenu(
 
     var isShowingDialog by rememberSaveable { mutableStateOf(false) }
 
-    // Ensure keyboard is closed when the attachments picker is shown (if instructed by ChatTheme)
-    val keyboardController = LocalSoftwareKeyboardController.current
+    // Dismiss the keyboard when the attachments picker is shown (if instructed by ChatTheme).
+    val focusManager = LocalFocusManager.current
     val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
     LaunchedEffect(isShowingAttachments) {
         if (shouldCloseKeyboard && isShowingAttachments) {
-            keyboardController?.hide()
+            focusManager.clearFocus()
         }
     }
 
-    // Ensure attachments picker is not visible when keyboard is visible
-    val isKeyboardVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+    // Dismiss the attachments picker when the keyboard becomes visible.
+    val isKeyboardVisible by isKeyboardVisibleAsState()
     LaunchedEffect(isKeyboardVisible) {
         if (isKeyboardVisible && !isShowingDialog) {
             attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)

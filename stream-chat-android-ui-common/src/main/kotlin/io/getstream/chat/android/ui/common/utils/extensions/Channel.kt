@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -203,8 +204,9 @@ private fun Channel.nameFromMembers(
  * @param currentUser The currently logged in user.
  * @return True if the channel is a one-to-one conversation.
  */
-private fun Channel.isOneToOne(currentUser: User?): Boolean {
-    return cid.contains("!members") &&
+@InternalStreamChatApi
+public fun Channel.isOneToOne(currentUser: User?): Boolean {
+    return id.startsWith("!members") &&
         members.size == 2 &&
         members.any { it.user.id == currentUser?.id }
 }

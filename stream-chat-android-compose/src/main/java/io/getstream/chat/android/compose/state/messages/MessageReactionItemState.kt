@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin.listeners
-
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+package io.getstream.chat.android.compose.state.messages
 
 /**
- * Listener for [ChatClient.markAllRead] requests.
+ * Representation of a message reaction, holding all information required to render the reaction.
+ *
+ * @param type The string representation of the reaction.
+ * @param emoji The emoji character the [type] maps to, if any.
+ * @param count The number of reactions of this type in the message.
  */
-@InternalStreamChatApi
-public interface MarkAllReadListener {
-
-    /**
-     * Register this side effect to run just before actual [ChatClient.markAllRead] request is launched.
-     */
-    public suspend fun onMarkAllReadRequest()
-}
+public data class MessageReactionItemState(
+    public val type: String,
+    public val emoji: String?,
+    public val count: Int,
+)

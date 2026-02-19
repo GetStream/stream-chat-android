@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.query.CreateChannelParams
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
@@ -71,6 +72,7 @@ import java.util.Date
 /**
  * Plugin is an extension for [ChatClient].
  */
+@InternalStreamChatApi
 @Suppress("TooManyFunctions")
 public interface Plugin :
     DependencyResolver,

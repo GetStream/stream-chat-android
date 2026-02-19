@@ -72,7 +72,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,7 +85,6 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.PushPreferenceLevel
 import io.getstream.chat.android.models.UnreadChannel
@@ -256,7 +254,6 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
         title = {},
         navigationIcon = {
             BackButton(
-                modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
                 painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                 onBackPressed = onNavigationIconClick,
             )
