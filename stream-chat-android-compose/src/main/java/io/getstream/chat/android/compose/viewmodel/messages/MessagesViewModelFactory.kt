@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
@@ -36,6 +35,7 @@ import io.getstream.chat.android.ui.common.feature.messages.list.MessageListCont
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.helper.ClipboardHandlerImpl
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
@@ -115,13 +115,15 @@ public class MessagesViewModelFactory(
         )
     }
 
+    private val storageHelper by lazy { AttachmentStorageHelper(context) }
+
     /**
      * The list of factories that can build [ViewModel]s that our Messages feature components use.
      */
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageComposerViewModel::class.java to {
             MessageComposerViewModel(
-                MessageComposerController(
+                messageComposerController = MessageComposerController(
                     chatClient = chatClient,
                     channelState = channelStateFlow,
                     mediaRecorder = mediaRecorder,
@@ -134,6 +136,7 @@ public class MessagesViewModelFactory(
                         isDraftMessageEnabled = isComposerDraftMessageEnabled,
                     ),
                 ),
+                storageHelper = storageHelper,
             )
         },
         MessageListViewModel::class.java to {
@@ -161,7 +164,7 @@ public class MessagesViewModelFactory(
             )
         },
         AttachmentsPickerViewModel::class.java to {
-            AttachmentsPickerViewModel(StorageHelperWrapper(context), channelStateFlow)
+            AttachmentsPickerViewModel(storageHelper, channelStateFlow)
         },
     )
 

@@ -17,6 +17,8 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
@@ -26,6 +28,7 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -38,6 +41,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -47,9 +52,11 @@ import kotlinx.coroutines.flow.StateFlow
  * implementation-specific data is stored in respective in the [ViewModel].
  *
  * @param messageComposerController The controller used to relay all the actions and fetch all the state.
+ * @param storageHelper Resolves deferred attachment files before sending.
  */
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
+    private val storageHelper: AttachmentStorageHelper,
 ) : ViewModel() {
 
     /**
@@ -194,6 +201,9 @@ public class MessageComposerViewModel(
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,
      * or we send a new message, using our API.
      *
+     * Deferred attachments (those without a local file) are resolved on a background thread
+     * before the message is handed off to the controller.
+     *
      * It also dismisses any current message actions.
      *
      * @param message The message to send.
@@ -201,7 +211,17 @@ public class MessageComposerViewModel(
     public fun sendMessage(
         message: Message,
         callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
-    ): Unit = messageComposerController.sendMessage(message, callback)
+    ) {
+        viewModelScope.launch {
+            val resolved = withContext(DispatcherProvider.IO) {
+                storageHelper.resolveAttachmentFiles(message.attachments)
+            }
+            messageComposerController.sendMessage(
+                message.copy(attachments = resolved.toMutableList()),
+                callback,
+            )
+        }
+    }
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and

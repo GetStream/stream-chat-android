@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComp
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.MentionType
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -60,6 +61,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -393,7 +395,7 @@ internal class MessageComposerViewModelTest {
     @Test
     fun `Given message composer When startRecording is called Then delegates to controller`() {
         val controller: MessageComposerController = mock()
-        val viewModel = MessageComposerViewModel(controller)
+        val viewModel = MessageComposerViewModel(controller, mock())
 
         viewModel.startRecording()
 
@@ -410,6 +412,9 @@ internal class MessageComposerViewModelTest {
         private val globalState: GlobalState = mock()
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
+        private val storageHelper: AttachmentStorageHelper = mock {
+            on { resolveAttachmentFiles(any()) } doAnswer { it.getArgument(0) }
+        }
         private val appSettings: AppSettings = AppSettings(
             app = App(
                 name = randomString(),
@@ -479,7 +484,7 @@ internal class MessageComposerViewModelTest {
 
         fun get(): MessageComposerViewModel {
             return MessageComposerViewModel(
-                MessageComposerController(
+                messageComposerController = MessageComposerController(
                     chatClient = chatClient,
                     channelCid = channelId,
                     mediaRecorder = mock(),
@@ -491,6 +496,7 @@ internal class MessageComposerViewModelTest {
                     channelState = MutableStateFlow(channelState),
                     globalState = MutableStateFlow(globalState),
                 ),
+                storageHelper = storageHelper,
             )
         }
     }
