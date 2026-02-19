@@ -36,7 +36,10 @@ import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelp
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -207,18 +210,6 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Asynchronous version of [getSelectedAttachments].
-     */
-    internal fun getSelectedAttachmentsAsync(onComplete: (List<Attachment>) -> Unit) {
-        viewModelScope.launch {
-            val attachments = withContext(DispatcherProvider.IO) {
-                getSelectedAttachments()
-            }
-            onComplete(attachments)
-        }
-    }
-
-    /**
      * Converts the given [metaData] into lightweight [Attachment]s.
      *
      * File resolution is deferred to send time via [AttachmentStorageHelper.resolveAttachmentFiles].
@@ -227,17 +218,48 @@ public class AttachmentsPickerViewModel(
         storageHelper.toAttachments(metaData)
 
     /**
-     * Asynchronous version of [getAttachmentsFromMetaData].
+     * One-shot events for attachments resolved from system picker URIs.
+     * Collected by the parent composable to submit attachments and show error toasts.
      */
-    internal fun getAttachmentsFromMetadataAsync(
-        metadata: List<AttachmentMetaData>,
-        onComplete: (List<Attachment>) -> Unit,
-    ) {
+    internal val submittedAttachments: SharedFlow<SubmittedAttachments>
+        get() = _submittedAttachments.asSharedFlow()
+
+    private val _submittedAttachments = MutableSharedFlow<SubmittedAttachments>(extraBufferCapacity = 1)
+
+    /**
+     * Loads attachment metadata from device storage for the current [pickerMode].
+     *
+     * Results are written directly to [attachments] via [onAttachmentsLoaded];
+     * callers do not need a callback.
+     */
+    internal fun loadAttachments() {
         viewModelScope.launch {
-            val attachments = withContext(DispatcherProvider.IO) {
-                getAttachmentsFromMetaData(metadata)
+            val metadata = withContext(DispatcherProvider.IO) {
+                when (pickerMode) {
+                    is GalleryPickerMode -> storageHelper.getMediaMetadata()
+                    is FilePickerMode -> storageHelper.getFileMetadata()
+                    else -> emptyList()
+                }
             }
-            onComplete(attachments)
+            onAttachmentsLoaded(metadata.map(::AttachmentPickerItemState))
+        }
+    }
+
+    /**
+     * Resolves [uris] from a system picker into [Attachment]s and emits the result
+     * via [submittedAttachments].
+     */
+    internal fun resolveAndSubmitUris(uris: List<Uri>) {
+        if (uris.isEmpty()) return
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
+            val attachments = storageHelper.toAttachments(metadata)
+            _submittedAttachments.tryEmit(
+                SubmittedAttachments(
+                    attachments = attachments,
+                    hasUnsupportedFiles = metadata.size < uris.size,
+                ),
+            )
         }
     }
 
@@ -416,3 +438,14 @@ public class AttachmentsPickerViewModel(
         }
     }
 }
+
+/**
+ * Event emitted when system picker URIs have been resolved into [Attachment]s.
+ *
+ * @property attachments The resolved attachments ready for the composer.
+ * @property hasUnsupportedFiles `true` when some URIs were filtered out as unsupported.
+ */
+internal data class SubmittedAttachments(
+    val attachments: List<Attachment>,
+    val hasUnsupportedFiles: Boolean,
+)

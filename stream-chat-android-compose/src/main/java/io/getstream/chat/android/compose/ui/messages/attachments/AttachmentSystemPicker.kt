@@ -17,9 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
-import android.content.Context
 import android.net.Uri
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,12 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
@@ -57,16 +53,12 @@ import io.getstream.chat.android.compose.ui.messages.attachments.permission.Requ
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.previewdata.PreviewCommandData
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
@@ -80,41 +72,21 @@ internal fun AttachmentSystemPicker(
     messageMode: MessageMode,
     attachments: List<AttachmentPickerItemState>,
     actions: AttachmentPickerActions = AttachmentPickerActions.None,
+    onUrisSelected: (List<Uri>) -> Unit = {},
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val pickerModes = ChatTheme.attachmentPickerConfig.modes
 
-    val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(AttachmentStorageHelper(context.applicationContext))
-    }
-    val processingViewModel = viewModel<AttachmentProcessingViewModel>(
-        factory = processingViewModelFactory,
-    )
-
     val filePickerMode = remember(pickerModes) {
         pickerModes.filterIsInstance<FilePickerMode>().firstOrNull()
     }
-    val filePickerLauncher = rememberFilePickerLauncher(filePickerMode) { uris ->
-        if (uris.isNotEmpty()) {
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-                showErrorIfNeeded(context, metadata)
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
-            }
-        }
-    }
+    val filePickerLauncher = rememberFilePickerLauncher(filePickerMode, onResult = onUrisSelected)
 
     val galleryPickerMode = remember(pickerModes) {
         pickerModes.filterIsInstance<GalleryPickerMode>().firstOrNull()
     }
-    val mediaPickerLauncher = rememberVisualMediaPickerLauncher(galleryPickerMode) { uris ->
-        if (uris.isNotEmpty()) {
-            processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-                showErrorIfNeeded(context, metadata)
-                onAttachmentsSubmitted(metadata.attachmentsMetadata)
-            }
-        }
-    }
+    val mediaPickerLauncher = rememberVisualMediaPickerLauncher(galleryPickerMode, onResult = onUrisSelected)
 
     val captureMediaMode = remember(pickerModes) {
         pickerModes.filterIsInstance<CameraPickerMode>()
@@ -122,8 +94,7 @@ internal fun AttachmentSystemPicker(
             .firstOrNull()
     }
     val captureMediaLauncher = rememberCaptureMediaLauncher(captureMediaMode) { file ->
-        val attachments = listOf(AttachmentMetaData(context, file))
-        onAttachmentsSubmitted(attachments)
+        onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
     }
     // Handling camera permission flow is only required if the host application has declared the permission.
     val requiresCameraPermission = remember { context.isPermissionDeclared(Manifest.permission.CAMERA) }
@@ -275,16 +246,6 @@ private fun rememberCaptureMediaLauncher(
 ) = mode?.let {
     rememberLauncherForActivityResult(CaptureMediaContract(mode)) { file ->
         file?.let(onResult)
-    }
-}
-
-private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
-    if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-        Toast.makeText(
-            context,
-            R.string.stream_compose_message_composer_file_not_supported,
-            Toast.LENGTH_SHORT,
-        ).show()
     }
 }
 

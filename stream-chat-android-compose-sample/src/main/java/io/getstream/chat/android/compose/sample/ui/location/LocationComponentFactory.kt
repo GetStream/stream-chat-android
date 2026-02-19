@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
+import android.net.Uri
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -95,7 +97,8 @@ class LocationComponentFactory(
         pickerMode: AttachmentPickerMode?,
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
         actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
@@ -109,7 +112,8 @@ class LocationComponentFactory(
                 pickerMode,
                 commands,
                 attachments,
-                onAttachmentsChanged,
+                onLoadAttachments,
+                onUrisSelected,
                 actions,
                 onAttachmentsSubmitted,
             )

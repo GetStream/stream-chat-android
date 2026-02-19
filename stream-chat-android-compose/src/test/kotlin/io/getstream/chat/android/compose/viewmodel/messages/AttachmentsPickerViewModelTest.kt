@@ -31,6 +31,8 @@ import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelp
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -164,55 +166,6 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selected images When getting selected attachments async Should invoke callback`() = runTest {
-        val expectedAttachments = listOf(
-            Attachment(type = "image", upload = mock()),
-            Attachment(type = "image", upload = mock()),
-        )
-        whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        viewModel.changeAttachmentState(true)
-        viewModel.attachments = listOf(
-            AttachmentPickerItemState(imageAttachment1),
-            AttachmentPickerItemState(imageAttachment2),
-        )
-        viewModel.changeSelectedAttachments(viewModel.attachments.first())
-        viewModel.changeSelectedAttachments(viewModel.attachments.last())
-
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
-        advanceUntilIdle()
-
-        assertEquals(2, result?.size)
-        assertEquals(expectedAttachments, result)
-    }
-
-    @Test
-    fun `Given selected files When getting selected attachments async Should invoke callback`() = runTest {
-        val expectedAttachments = listOf(
-            Attachment(type = "file", upload = mock()),
-        )
-        whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        viewModel.changeAttachmentState(true)
-        viewModel.changePickerMode(FilePickerMode())
-        viewModel.attachments = listOf(
-            AttachmentPickerItemState(fileAttachment1),
-            AttachmentPickerItemState(fileAttachment2),
-        )
-        viewModel.changeSelectedAttachments(viewModel.attachments.first())
-
-        var result: List<Attachment>? = null
-        viewModel.getSelectedAttachmentsAsync { result = it }
-        advanceUntilIdle()
-
-        assertEquals(1, result?.size)
-        assertEquals(expectedAttachments, result)
-    }
-
-    @Test
     fun `Given selected attachments When getting selected attachments Should map metadata for preview`() {
         val expectedAttachments = listOf(Attachment(type = "image"))
         whenever(storageHelper.toAttachments(any())) doReturn expectedAttachments
@@ -242,26 +195,6 @@ internal class AttachmentsPickerViewModelTest {
 
         val result = viewModel.getAttachmentsFromMetaData(metadata)
 
-        assertEquals(expectedAttachments, result)
-    }
-
-    @Test
-    fun `Given attachment metadata When getting from metadata async Should invoke callback`() = runTest {
-        val metadata = listOf(imageAttachment1, imageAttachment2)
-        val expectedAttachments = listOf(
-            Attachment(type = "image", upload = mock()),
-            Attachment(type = "image", upload = mock()),
-        )
-        val storageHelper: AttachmentStorageHelper = mock {
-            whenever(it.toAttachments(metadata)) doReturn expectedAttachments
-        }
-        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
-
-        var result: List<Attachment>? = null
-        viewModel.getAttachmentsFromMetadataAsync(metadata) { result = it }
-        advanceUntilIdle()
-
-        assertEquals(2, result?.size)
         assertEquals(expectedAttachments, result)
     }
 
@@ -585,6 +518,90 @@ internal class AttachmentsPickerViewModelTest {
 
         assertTrue(result.first().isSelected)
         assertFalse(result.last().isSelected)
+    }
+
+    @Test
+    fun `loadAttachments loads file metadata for FilePickerMode`() = runTest {
+        val expectedMetadata = listOf(fileAttachment1, fileAttachment2)
+        whenever(storageHelper.getFileMetadata()) doReturn expectedMetadata
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        viewModel.changePickerMode(FilePickerMode())
+
+        viewModel.loadAttachments()
+        advanceUntilIdle()
+
+        assertEquals(expectedMetadata.size, viewModel.attachments.size)
+    }
+
+    @Test
+    fun `loadAttachments loads media metadata for GalleryPickerMode`() = runTest {
+        val expectedMetadata = listOf(imageAttachment1, imageAttachment2)
+        whenever(storageHelper.getMediaMetadata()) doReturn expectedMetadata
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+        viewModel.changePickerMode(GalleryPickerMode())
+
+        viewModel.loadAttachments()
+        advanceUntilIdle()
+
+        assertEquals(expectedMetadata.size, viewModel.attachments.size)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris emits resolved attachments`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
+        val metadata = listOf(imageAttachment1, imageAttachment2)
+        val expectedAttachments = uris.map(::attachmentWithSourceUri)
+        whenever(storageHelper.resolveMetadata(uris)) doReturn metadata
+        whenever(storageHelper.toAttachments(metadata)) doReturn expectedAttachments
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertEquals(1, results.size)
+        assertEquals(expectedAttachments, results.first().attachments)
+        assertFalse(results.first().hasUnsupportedFiles)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris sets hasUnsupportedFiles when URIs are filtered`() = runTest {
+        val uris = listOf(imageUri1, imageUri2)
+        val filteredMetadata = listOf(imageAttachment1)
+        val expectedAttachments = listOf(attachmentWithSourceUri(imageUri1))
+        whenever(storageHelper.resolveMetadata(uris)) doReturn filteredMetadata
+        whenever(storageHelper.toAttachments(filteredMetadata)) doReturn expectedAttachments
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(uris)
+        advanceUntilIdle()
+        job.cancel()
+
+        assertEquals(1, results.size)
+        assertTrue(results.first().hasUnsupportedFiles)
+    }
+
+    @Test
+    fun `resolveAndSubmitUris does nothing for empty URIs`() = runTest {
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
+
+        val results = mutableListOf<SubmittedAttachments>()
+        val job = launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.submittedAttachments.collect(results::add)
+        }
+        viewModel.resolveAndSubmitUris(emptyList())
+        advanceUntilIdle()
+        job.cancel()
+
+        assertTrue(results.isEmpty())
     }
 
     private fun mockChannelState(): ChannelState {

@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
@@ -46,10 +45,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.permission.Requ
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.visualMediaAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -59,22 +55,15 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 internal fun AttachmentMediaPicker(
     pickerMode: GalleryPickerMode,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
+    onLoadAttachments: () -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(AttachmentStorageHelper(context.applicationContext))
-    }
-    val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     val permissions = Permissions.visualMediaPermissions()
     val mediaAccess by visualMediaAccessAsState(context, lifecycleOwner) { value ->
         if (value != VisualMediaAccess.DENIED) {
-            processingViewModel.getMediaAsync { metadata ->
-                val items = metadata.map(::AttachmentPickerItemState)
-                onAttachmentsChanged(items)
-            }
+            onLoadAttachments()
         }
     }
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }

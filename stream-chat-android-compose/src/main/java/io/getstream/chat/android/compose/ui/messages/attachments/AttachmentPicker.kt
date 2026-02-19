@@ -16,13 +16,17 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
@@ -31,6 +35,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * The main attachment picker component that allows users to select and attach files to messages.
@@ -69,6 +74,21 @@ public fun AttachmentPicker(
 ) {
     BackHandler(onBack = actions.onDismiss)
 
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        attachmentsPickerViewModel.submittedAttachments.collect { submitted ->
+            if (submitted.hasUnsupportedFiles) {
+                Toast.makeText(context, R.string.stream_compose_message_composer_file_not_supported, Toast.LENGTH_SHORT)
+                    .show()
+            }
+            actions.onAttachmentsSelected(submitted.attachments)
+        }
+    }
+
+    val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = { metaData ->
+        actions.onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(metaData))
+    }
+
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
         color = ChatTheme.colors.barsBackground,
@@ -79,9 +99,8 @@ public fun AttachmentPicker(
                 messageMode = messageMode,
                 attachments = attachmentsPickerViewModel.attachments,
                 actions = actions,
-                onAttachmentsSubmitted = { metaData ->
-                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData, actions.onAttachmentsSelected)
-                },
+                onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                onAttachmentsSubmitted = onAttachmentsSubmitted,
             )
         } else {
             Column {
@@ -99,14 +118,10 @@ public fun AttachmentPicker(
                         pickerMode = pickerMode,
                         commands = attachmentsPickerViewModel.channel.config.commands,
                         attachments = attachmentsPickerViewModel.attachments,
-                        onAttachmentsChanged = { attachmentsPickerViewModel.onAttachmentsLoaded(it) },
+                        onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                        onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
                         actions = actions,
-                        onAttachmentsSubmitted = { metaData ->
-                            attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(
-                                metaData,
-                                actions.onAttachmentsSelected,
-                            )
-                        },
+                        onAttachmentsSubmitted = onAttachmentsSubmitted,
                     )
                 }
             }

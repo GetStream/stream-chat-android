@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
@@ -34,7 +35,8 @@ internal fun AttachmentPickerContent(
     pickerMode: AttachmentPickerMode?,
     commands: List<Command>,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+    onLoadAttachments: () -> Unit,
+    onUrisSelected: (List<Uri>) -> Unit,
     actions: AttachmentPickerActions,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
 ) {
@@ -42,16 +44,16 @@ internal fun AttachmentPickerContent(
         is GalleryPickerMode -> ChatTheme.componentFactory.AttachmentMediaPicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = actions.onAttachmentItemSelected,
         )
 
         is FilePickerMode -> ChatTheme.componentFactory.AttachmentFilePicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = actions.onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            onUrisSelected = onUrisSelected,
         )
 
         is CameraPickerMode -> ChatTheme.componentFactory.AttachmentCameraPicker(
@@ -72,7 +74,6 @@ internal fun AttachmentPickerContent(
             onCommandSelected = actions.onCommandSelected,
         )
 
-        // Custom modes are handled by overriding AttachmentPickerContent in ChatComponentFactory
         else -> Unit
     }
 }

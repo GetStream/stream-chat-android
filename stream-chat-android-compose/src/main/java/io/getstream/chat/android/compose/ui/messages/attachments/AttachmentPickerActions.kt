@@ -105,7 +105,7 @@ public data class AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
                 attachmentsPickerViewModel.changeSelectedAttachments(item, multiSelect)
-                attachmentsPickerViewModel.getSelectedAttachmentsAsync(composerViewModel::updateSelectedAttachments)
+                composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
             },
             onAttachmentsSelected = { attachments ->
                 attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)

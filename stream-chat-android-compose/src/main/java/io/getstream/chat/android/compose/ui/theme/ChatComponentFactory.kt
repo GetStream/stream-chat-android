@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -3778,7 +3779,8 @@ public interface ChatComponentFactory {
      * @param pickerMode The currently active mode; determines which picker UI to show.
      * @param commands Available slash commands for [CommandPickerMode].
      * @param attachments Current attachment items loaded for gallery/file modes.
-     * @param onAttachmentsChanged Called when the attachment list needs updating (e.g., after loading).
+     * @param onLoadAttachments Called to trigger loading attachment metadata for the current mode.
+     * @param onUrisSelected Called with URIs from a system picker for async resolution.
      * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
      * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
      */
@@ -3787,7 +3789,8 @@ public interface ChatComponentFactory {
         pickerMode: AttachmentPickerMode?,
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
         actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
@@ -3795,7 +3798,8 @@ public interface ChatComponentFactory {
             pickerMode = pickerMode,
             commands = commands,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
+            onUrisSelected = onUrisSelected,
             actions = actions,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
@@ -3809,20 +3813,20 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
      * @param attachments Media items to display in the grid.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading media metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
      */
     @Composable
     public fun AttachmentMediaPicker(
         pickerMode: GalleryPickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
         )
     }
@@ -3855,24 +3859,24 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the file picker (multi-select).
      * @param attachments File items to display in the list.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading file metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
-     * @param onAttachmentsSubmitted Called when files are picked via system file browser.
+     * @param onUrisSelected Called with URIs picked via the system file browser.
      */
     @Composable
     public fun AttachmentFilePicker(
         pickerMode: FilePickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentFilePicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            onUrisSelected = onUrisSelected,
         )
     }
 
@@ -3936,7 +3940,8 @@ public interface ChatComponentFactory {
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
      * @param attachments Current attachment state (used for state management).
      * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
-     * @param onAttachmentsSubmitted Called when files are selected from system pickers.
+     * @param onUrisSelected Called with URIs from system pickers for async resolution.
+     * @param onAttachmentsSubmitted Called when camera-captured media is ready.
      */
     @Composable
     public fun AttachmentSystemPicker(
@@ -3944,6 +3949,7 @@ public interface ChatComponentFactory {
         messageMode: MessageMode,
         attachments: List<AttachmentPickerItemState>,
         actions: AttachmentPickerActions,
+        onUrisSelected: (List<Uri>) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
@@ -3951,6 +3957,7 @@ public interface ChatComponentFactory {
             messageMode = messageMode,
             attachments = attachments,
             actions = actions,
+            onUrisSelected = onUrisSelected,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
