@@ -76,7 +76,7 @@ public fun InputField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
+    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = DefaultInputFieldVisualTransformation(

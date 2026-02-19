@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * The search component that allows the user to fill in a search query and filter their items.
@@ -89,6 +91,7 @@ public fun SearchInput(
 
     InputField(
         modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
             .onFocusEvent { newState ->
                 val wasPreviouslyFocused = isFocused
 
@@ -119,7 +122,12 @@ public fun SearchInput(
             }
         },
         maxLines = 1,
-        innerPadding = PaddingValues(4.dp),
+        innerPadding = PaddingValues(
+            start = StreamTokens.spacingXs,  // 8dp gap after icon
+            end = StreamTokens.spacingMd,    // 16dp trailing padding
+            top = StreamTokens.spacingSm,    // 12dp vertical
+            bottom = StreamTokens.spacingSm, // 12dp vertical
+        ),
     )
 }
 
@@ -129,10 +137,12 @@ public fun SearchInput(
 @Composable
 internal fun DefaultSearchLeadingIcon() {
     Icon(
-        modifier = Modifier.padding(horizontal = 6.dp),
+        modifier = Modifier
+            .padding(start = StreamTokens.spacingMd)  // 16dp leading padding, matches Figma input content px
+            .size(16.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.textTertiary,
     )
 }
 
@@ -143,8 +153,8 @@ internal fun DefaultSearchLeadingIcon() {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.stream_compose_search_input_hint),
-        style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.bodyDefault,
+        color = ChatTheme.colors.textTertiary,
     )
 }
 

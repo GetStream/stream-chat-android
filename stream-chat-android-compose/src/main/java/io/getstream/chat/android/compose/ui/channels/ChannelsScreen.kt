@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -145,7 +146,12 @@ public fun ChannelsScreen(
                     ChatTheme.componentFactory.ChannelListSearchInput(
                         modifier = Modifier
                             .testTag("Stream_SearchInput")
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .padding(
+                                top = StreamTokens.spacingMd,
+                                bottom = StreamTokens.spacingXs,
+                                start = StreamTokens.spacingMd,
+                                end = StreamTokens.spacingMd,
+                            )
                             .fillMaxWidth(),
                         query = searchQuery,
                         onSearchStarted = {},
