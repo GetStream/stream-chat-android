@@ -39,6 +39,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
@@ -127,11 +128,15 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            .padding(
+                start = StreamTokens.spacingMd,     // 16dp (was 16.dp, now token-aligned)
+                end = StreamTokens.spacingMd,       // 16dp (was 16.dp)
+                top = StreamTokens.spacingMd,       // 16dp (was 16.dp)
+            ),
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
+        style = ChatTheme.typography.headingSmall,      // was title3Bold (18sp/W500)
+        color = ChatTheme.colors.textPrimary,            // was textHighEmphasis
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -143,8 +148,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         ),
-        style = ChatTheme.typography.footnoteBold,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.captionDefault,    // was footnoteBold
+        color = ChatTheme.colors.textSecondary,          // was textLowEmphasis
     )
 
     ChannelMembers(

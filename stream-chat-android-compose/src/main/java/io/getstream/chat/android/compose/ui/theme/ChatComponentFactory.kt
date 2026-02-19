@@ -2160,7 +2160,7 @@ public interface ChatComponentFactory {
                 ChannelOptionsItemLeadingIcon(Modifier, option)
             },
             onClick = onClick,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyDefault,   // was bodyBold (14sp/W500); Figma: body/default (16sp/Regular)
             itemHeight = 56.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,

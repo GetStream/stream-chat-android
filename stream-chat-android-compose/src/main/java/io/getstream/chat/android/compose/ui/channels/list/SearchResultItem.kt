@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -89,6 +90,7 @@ public fun SearchResultItem(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),  // 16dp avatar-to-content gap
         ) {
             leadingContent(searchResultItemState)
             centerContent(searchResultItemState)
@@ -121,12 +123,12 @@ internal fun DefaultSearchResultItemLeadingContent(
                 user = user,
                 modifier = Modifier
                     .padding(
-                        start = ChatTheme.dimens.channelItemHorizontalPadding,
-                        end = 4.dp,
-                        top = ChatTheme.dimens.channelItemVerticalPadding,
-                        bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                        start = StreamTokens.spacingMd,    // 16dp (was channelItemHorizontalPadding = 8dp)
+                        end = 0.dp,                         // gap handled by Row's horizontalArrangement
+                        top = StreamTokens.spacingMd,      // 16dp (was channelItemVerticalPadding = 12dp)
+                        bottom = StreamTokens.spacingMd,   // 16dp
                     )
-                    .size(ChatTheme.dimens.channelAvatarSize),
+                    .size(48.dp),                          // 48dp (was channelAvatarSize = 40dp; Figma: 48dp)
                 showIndicator = user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,
                     currentUser = currentUser,
@@ -150,18 +152,22 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
+            .padding(
+                start = StreamTokens.spacing2xs,    // 4dp (was 4.dp, same value but token-aligned)
+                end = StreamTokens.spacing2xs,      // 4dp (was 4.dp)
+                top = StreamTokens.spacing3xs,      // 2dp vertical padding
+                bottom = StreamTokens.spacing3xs,   // 2dp
+            )
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp gap
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
-            style = ChatTheme.typography.bodyBold,
-            fontSize = 16.sp,
+            style = ChatTheme.typography.bodyDefault,      // was bodyBold + fontSize override
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,          // was textHighEmphasis
         )
 
         Text(
@@ -171,8 +177,8 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.captionDefault,   // was body
+            color = ChatTheme.colors.textSecondary,        // was textLowEmphasis
         )
     }
 }
@@ -189,17 +195,21 @@ internal fun RowScope.DefaultSearchResultItemTrailingContent(
     Column(
         modifier = Modifier
             .padding(
-                start = 4.dp,
-                end = ChatTheme.dimens.channelItemHorizontalPadding,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                start = StreamTokens.spacing2xs,    // 4dp (was 4.dp)
+                end = StreamTokens.spacingMd,       // 16dp (was channelItemHorizontalPadding = 8dp; Figma: spacing/md)
+                top = StreamTokens.spacingMd,       // 16dp (was channelItemVerticalPadding = 12dp; Figma: spacing/md)
+                bottom = StreamTokens.spacingMd,    // 16dp
             )
             .wrapContentHeight()
-            .align(Alignment.Bottom),
+            .align(Alignment.CenterVertically),    // was Alignment.Bottom; center-align with Figma layout
         horizontalAlignment = Alignment.End,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Timestamp(date = searchResultItemState.message.createdAt)
-        }
+        Timestamp(
+            date = searchResultItemState.message.createdAt,
+            textStyle = ChatTheme.typography.captionDefault.copy(  // was default footnote
+                color = ChatTheme.colors.textTertiary,              // was textLowEmphasis
+                lineHeight = 20.sp,                                  // Figma: line-height/normal = 20sp
+            ),
+        )
     }
 }
