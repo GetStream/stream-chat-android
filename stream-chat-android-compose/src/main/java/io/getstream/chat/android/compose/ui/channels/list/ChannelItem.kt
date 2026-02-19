@@ -25,9 +25,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -46,7 +48,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -55,6 +56,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
@@ -156,12 +158,12 @@ internal fun DefaultChannelItemLeadingContent(
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .padding(
-                start = ChatTheme.dimens.channelItemHorizontalPadding,
-                end = 4.dp,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                start = StreamTokens.spacingMd,   // 16dp (was channelItemHorizontalPadding = 8dp)
+                end = StreamTokens.spacingMd,     // 16dp gap between avatar and content column
+                top = StreamTokens.spacingMd,     // 16dp (was channelItemVerticalPadding = 12dp)
+                bottom = StreamTokens.spacingMd,  // 16dp (was channelItemVerticalPadding = 12dp)
             )
-            .size(ChatTheme.dimens.channelAvatarSize),
+            .size(ChatTheme.dimens.channelListItemAvatarSize), // 48dp (new dimen, NOT channelAvatarSize which = 40dp for header)
         channel = channelItem.channel,
         currentUser = currentUser,
         showIndicator = false,
@@ -181,64 +183,114 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     channelItemState: ItemState.ChannelItemState,
     currentUser: User?,
 ) {
+    val channel = channelItemState.channel
+    val lastMessage = channel.getLastMessage(currentUser)
+    val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
+    val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
+
     Column(
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
             .weight(1f)
-            .wrapContentHeight(),
-        verticalArrangement = Arrangement.Center,
+            .padding(vertical = StreamTokens.spacing3xs),   // 2dp vertical padding
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp gap between title and message rows
     ) {
-        val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
+        // ── Title Row: [Name] [MuteIcon?] [Timestamp] [Badge?] ──────────────
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp default gap
+        ) {
+            // Channel name (flex-1)
             Text(
-                modifier = it.testTag("Stream_ChannelName"),
-                text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
-                style = ChatTheme.typography.bodyBold,
-                fontSize = 16.sp,
+                modifier = Modifier
+                    .testTag("Stream_ChannelName")
+                    .weight(1f),
+                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+                style = ChatTheme.typography.bodyDefault,      // 16sp Regular (was bodyBold + fontSize=16.sp override)
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,          // was textHighEmphasis
             )
-        }
 
-        if (channelItemState.isMuted) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                channelName(Modifier.weight(weight = 1f, fill = false))
-
+            // Mute icon (optional, inline in title row after name)
+            if (channelItemState.isMuted) {
                 Icon(
                     modifier = Modifier
                         .testTag("Stream_ChannelMutedIcon")
-                        .padding(start = 8.dp)
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_muted),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textTertiary,     // was textLowEmphasis
                 )
             }
-        } else {
-            channelName(Modifier)
+
+            // Trailing: Timestamp + Badge (gap = spacing/xs = 8dp between them)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),  // 8dp between timestamp and badge
+            ) {
+                // Timestamp
+                if (lastMessage != null) {
+                    Timestamp(
+                        date = lastMessage.getCreatedAtOrNull(),
+                        textStyle = ChatTheme.typography.captionDefault.copy(
+                            color = ChatTheme.colors.textTertiary,
+                        ),
+                    )
+                }
+
+                // Unread badge (optional)
+                if (unreadCount > 0) {
+                    ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
+                        unreadCount = unreadCount,
+                        modifier = Modifier,
+                    )
+                }
+            }
         }
 
-        if (channelItemState.typingUsers.isNotEmpty()) {
-            UserTypingIndicator(channelItemState.typingUsers)
-        } else {
-            val lastMessageText =
-                channelItemState.draftMessage
-                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
-                    ?: channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
-                        ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
-                    }
-                    ?: AnnotatedString("")
+        // ── Message Row: [DeliveryStatus?] [MessagePreview or TypingIndicator] ──
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp gap
+        ) {
+            if (channelItemState.typingUsers.isNotEmpty()) {
+                // Typing indicator replaces message preview when active
+                UserTypingIndicator(channelItemState.typingUsers)
+            } else {
+                // Delivery status prefix: checkmark icon (only for own messages)
+                if (isLastMessageFromCurrentUser && lastMessage != null) {
+                    ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
+                        channel = channel,
+                        message = lastMessage,
+                        currentUser = currentUser,
+                        modifier = Modifier,
+                    )
+                }
 
-            if (lastMessageText.isNotEmpty()) {
-                Text(
-                    modifier = Modifier.testTag("Stream_MessagePreview"),
-                    text = lastMessageText,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
-                    inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
-                )
+                // Message preview text (draft overrides last message)
+                val lastMessageText =
+                    channelItemState.draftMessage
+                        ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
+                        ?: lastMessage?.let {
+                            ChatTheme.messagePreviewFormatter.formatMessagePreview(it, currentUser)
+                        }
+                        ?: AnnotatedString("")
+
+                if (lastMessageText.isNotEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .testTag("Stream_MessagePreview")
+                            .weight(1f),
+                        text = lastMessageText,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ChatTheme.typography.captionDefault,
+                        color = ChatTheme.colors.textSecondary,         // was textLowEmphasis
+                        inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
+                    )
+                }
             }
         }
     }
@@ -253,7 +305,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
 private fun UserTypingIndicator(users: List<User>) {
     Row(
         modifier = Modifier,
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp (was 6dp)
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TypingIndicator()
@@ -267,8 +319,8 @@ private fun UserTypingIndicator(users: List<User>) {
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.captionDefault,          // was body
+            color = ChatTheme.colors.textSecondary,               // was textLowEmphasis
         )
     }
 }
@@ -286,50 +338,9 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
 ) {
-    val lastMessage = channel.getLastMessage(currentUser)
-
-    if (lastMessage != null) {
-        Column(
-            modifier = Modifier
-                .padding(
-                    start = 4.dp,
-                    end = ChatTheme.dimens.channelItemHorizontalPadding,
-                    top = ChatTheme.dimens.channelItemVerticalPadding,
-                    bottom = ChatTheme.dimens.channelItemVerticalPadding,
-                )
-                .wrapContentHeight()
-                .align(Alignment.Bottom),
-            horizontalAlignment = Alignment.End,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
-
-            if (unreadCount > 0) {
-                ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
-                    unreadCount = unreadCount,
-                    modifier = Modifier,
-                )
-            }
-
-            val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (isLastMessageFromCurrentUser) {
-                    ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
-                        channel = channel,
-                        message = lastMessage,
-                        currentUser = currentUser,
-                        modifier = Modifier,
-                    )
-                }
-
-                Timestamp(date = lastMessage.getCreatedAtOrNull())
-            }
-        }
-    }
+    // Timestamp, badge, and delivery status have moved to DefaultChannelItemCenterContent.
+    // This slot remains for API compatibility and provides the trailing end padding.
+    Spacer(modifier = Modifier.width(StreamTokens.spacingMd))  // 16dp end padding
 }
 
 @Preview(showBackground = true)
