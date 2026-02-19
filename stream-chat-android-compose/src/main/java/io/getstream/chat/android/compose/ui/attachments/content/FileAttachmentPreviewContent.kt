@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.extensions.internal.stableKey
+import io.getstream.chat.android.compose.ui.util.rememberAutoScrollLazyListState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
@@ -58,6 +59,7 @@ public fun FileAttachmentPreviewContent(
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
+        state = rememberAutoScrollLazyListState(attachments.size),
         modifier = modifier
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .testTag("Stream_FileAttachmentPreviewContent"),

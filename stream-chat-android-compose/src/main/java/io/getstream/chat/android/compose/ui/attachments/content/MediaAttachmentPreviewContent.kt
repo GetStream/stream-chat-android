@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.extensions.internal.localPreviewData
 import io.getstream.chat.android.compose.ui.util.extensions.internal.stableKey
+import io.getstream.chat.android.compose.ui.util.rememberAutoScrollLazyListState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 
@@ -71,6 +72,7 @@ public fun MediaAttachmentPreviewContent(
     },
 ) {
     LazyRow(
+        state = rememberAutoScrollLazyListState(attachments.size),
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewContent"),
