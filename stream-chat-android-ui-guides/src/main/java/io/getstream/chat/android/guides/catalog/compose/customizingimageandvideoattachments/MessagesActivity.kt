@@ -26,7 +26,6 @@ import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFa
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
@@ -53,7 +52,6 @@ class MessagesActivity : ComponentActivity() {
      * custom one.
      */
     private val attachmentFactories = listOf(
-        UploadAttachmentFactory(),
         LinkAttachmentFactory(linkDescriptionMaxLines = 5),
         GiphyAttachmentFactory(),
         customMediaAttachmentFactory,

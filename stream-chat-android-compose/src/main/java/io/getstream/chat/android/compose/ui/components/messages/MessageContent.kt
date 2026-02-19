@@ -38,7 +38,6 @@ import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.util.shouldBeDisplayedAsFullSizeAttachment
@@ -46,7 +45,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
-import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Represents the default message content within the bubble that can show different UI based on the message state.
@@ -173,46 +171,39 @@ internal fun DefaultMessageContent(
         )
         val info = message.rememberMessageInfo()
 
-        if (info.hasUploads) {
-            FileUploadContent(
+        if (info.hasMedia) {
+            componentFactory.MediaAttachmentContent(
                 modifier = Modifier,
-                attachmentState = attachmentState,
+                state = attachmentState,
             )
-        } else {
-            if (info.hasMedia) {
-                componentFactory.MediaAttachmentContent(
-                    modifier = Modifier,
-                    state = attachmentState,
-                )
-            }
+        }
 
-            if (info.hasGiphys) {
-                componentFactory.GiphyAttachmentContent(
-                    modifier = Modifier,
-                    state = attachmentState,
-                )
-            }
+        if (info.hasGiphys) {
+            componentFactory.GiphyAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
+            )
+        }
 
-            if (info.hasLinks) {
-                componentFactory.LinkAttachmentContent(
-                    modifier = Modifier,
-                    state = attachmentState,
-                )
-            }
+        if (info.hasLinks) {
+            componentFactory.LinkAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
+            )
+        }
 
-            if (info.hasFiles) {
-                componentFactory.FileAttachmentContent(
-                    modifier = Modifier,
-                    state = attachmentState,
-                )
-            }
+        if (info.hasFiles) {
+            componentFactory.FileAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
+            )
+        }
 
-            if (info.hasRecordings) {
-                componentFactory.AudioRecordAttachmentContent(
-                    modifier = Modifier,
-                    state = attachmentState,
-                )
-            }
+        if (info.hasRecordings) {
+            componentFactory.AudioRecordAttachmentContent(
+                modifier = Modifier,
+                state = attachmentState,
+            )
         }
 
         if (info.hasUnknown) {
@@ -233,7 +224,7 @@ internal fun DefaultMessageContent(
             )
         }
 
-        if (!info.displaysFullSizeAttachment && !info.hasUploads) {
+        if (!info.displaysFullSizeAttachment) {
             Spacer(Modifier.height(MessageStyling.contentPadding))
         }
     }
@@ -248,10 +239,8 @@ private fun Message.rememberMessageInfo(): MessageContentInfo {
         var hasMedia = false
         var hasGiphys = false
         var hasUnknown = false
-        var hasUploads = false
 
         attachments.forEach {
-            hasUploads = hasUploads || it.isUploading()
             when {
                 it.isFile() || it.isAudio() -> hasFiles = true
                 it.isAudioRecording() -> hasRecordings = true
@@ -269,7 +258,6 @@ private fun Message.rememberMessageInfo(): MessageContentInfo {
             hasMedia = hasMedia,
             hasGiphys = hasGiphys,
             hasUnknown = hasUnknown,
-            hasUploads = hasUploads,
             displaysFullSizeAttachment = shouldBeDisplayedAsFullSizeAttachment(),
         )
     }
@@ -282,6 +270,5 @@ private data class MessageContentInfo(
     val hasMedia: Boolean,
     val hasGiphys: Boolean,
     val hasUnknown: Boolean,
-    val hasUploads: Boolean,
     val displaysFullSizeAttachment: Boolean,
 )

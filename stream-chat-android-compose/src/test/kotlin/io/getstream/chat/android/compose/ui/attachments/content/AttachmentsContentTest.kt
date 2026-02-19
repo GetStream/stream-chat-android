@@ -80,7 +80,7 @@ internal class AttachmentsContentTest : PaparazziComposeTest {
     @Test
     fun `file upload content`() {
         snapshotWithDarkModeRow {
-            FileUploadContent()
+            FileAttachmentContent(isMine = true, isUploading = true)
         }
     }
 

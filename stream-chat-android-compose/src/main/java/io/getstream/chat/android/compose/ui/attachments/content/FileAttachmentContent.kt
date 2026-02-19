@@ -28,12 +28,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
@@ -187,7 +189,13 @@ internal fun RowScope.FileAttachmentDescription(
             overflow = TextOverflow.Ellipsis,
         )
 
-        if (showFileSize(attachment)) {
+        val uploadState = attachment.uploadState
+        if (uploadState is Attachment.UploadState.InProgress) {
+            FileUploadProgressIndicator(
+                uploadState = uploadState,
+                textColor = textColor,
+            )
+        } else if (showFileSize(attachment)) {
             Text(
                 modifier = Modifier
                     .padding(top = StreamTokens.spacing2xs)
@@ -199,6 +207,39 @@ internal fun RowScope.FileAttachmentDescription(
                 overflow = TextOverflow.Ellipsis,
             )
         }
+    }
+}
+
+@Composable
+private fun FileUploadProgressIndicator(
+    uploadState: Attachment.UploadState.InProgress,
+    textColor: Color,
+) {
+    val progress = if (uploadState.totalBytes > 0) {
+        (uploadState.bytesUploaded / uploadState.totalBytes.toFloat()).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+    Row(
+        modifier = Modifier.padding(top = StreamTokens.spacing2xs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+    ) {
+        CircularProgressIndicator(
+            progress = { progress },
+            modifier = Modifier.size(14.dp),
+            color = ChatTheme.colors.primaryAccent,
+            strokeWidth = 2.dp,
+        )
+        Text(
+            modifier = Modifier.testTag("Stream_FileAttachmentSize"),
+            text = "${MediaStringUtil.convertFileSizeByteCount(uploadState.bytesUploaded)} / " +
+                MediaStringUtil.convertFileSizeByteCount(uploadState.totalBytes),
+            style = ChatTheme.typography.metadataDefault,
+            color = textColor,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -271,12 +312,48 @@ private fun OtherFileAttachmentContentPreview() {
 }
 
 @Composable
-internal fun FileAttachmentContent(isMine: Boolean) {
-    val attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF, type = AttachmentType.FILE))
+internal fun FileAttachmentContent(isMine: Boolean, isUploading: Boolean = false) {
+    val attachments = listOf(
+        Attachment(
+            mimeType = MimeType.MIME_TYPE_PDF,
+            type = AttachmentType.FILE,
+            title = "test_document.pdf",
+            uploadState = if (isUploading) {
+                Attachment.UploadState.InProgress(
+                    bytesUploaded = 512 * 1024,
+                    totalBytes = 1024 * 1024,
+                )
+            } else null
+        )
+    )
     FileAttachmentContent(
         attachmentState = AttachmentState(
             message = Message(attachments = attachments),
             isMine = isMine,
         ),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UploadingFileAttachmentContentPreview() {
+    ChatTheme {
+        val attachments = listOf(
+            Attachment(
+                mimeType = MimeType.MIME_TYPE_PDF,
+                type = AttachmentType.FILE,
+                fileSize = 6_500_000,
+                uploadState = Attachment.UploadState.InProgress(
+                    bytesUploaded = 2_500_000,
+                    totalBytes = 6_500_000,
+                ),
+            ),
+        )
+        FileAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(attachments = attachments),
+                isMine = true,
+            ),
+        )
+    }
 }

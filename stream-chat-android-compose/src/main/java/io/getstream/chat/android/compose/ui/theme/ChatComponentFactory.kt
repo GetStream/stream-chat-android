@@ -89,7 +89,6 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.content.UnsupportedAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
@@ -137,7 +136,6 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
-import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -1298,19 +1296,12 @@ public interface ChatComponentFactory {
         )
     }
 
-    /**
-     * The default uploading content of the message footer.
-     * Usually shows how many items have been uploaded and the total number of items.
-     */
+    /** The message footer while uploading attachments. Empty by default. */
     @Composable
     public fun MessageFooterUploadingContent(
         modifier: Modifier,
         messageItem: MessageItemState,
     ) {
-        UploadingFooter(
-            modifier = modifier,
-            message = messageItem.message,
-        )
     }
 
     /**
@@ -3151,43 +3142,6 @@ public interface ChatComponentFactory {
             attachment = attachment,
             isMine = isMine,
             showFileSize = showFileSize,
-            modifier = modifier,
-        )
-    }
-
-    /**
-     * The default file upload content used for displaying uploading attachments.
-     *
-     * @param attachmentState The state of the attachment.
-     * @param modifier Modifier for styling.
-     * @param onItemClick Lambda called when an item gets clicked.
-     */
-    @Composable
-    public fun FileUploadContent(
-        attachmentState: AttachmentState,
-        modifier: Modifier,
-        onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit,
-    ) {
-        io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent(
-            attachmentState = attachmentState,
-            modifier = modifier,
-            onItemClick = onItemClick,
-        )
-    }
-
-    /**
-     * Factory method for creating a file upload item that shows an uploading attachment with progress.
-     *
-     * @param attachment The attachment that's being uploaded.
-     * @param modifier Modifier for styling.
-     */
-    @Composable
-    public fun FileUploadItem(
-        attachment: Attachment,
-        modifier: Modifier,
-    ) {
-        io.getstream.chat.android.compose.ui.attachments.content.FileUploadItem(
-            attachment = attachment,
             modifier = modifier,
         )
     }

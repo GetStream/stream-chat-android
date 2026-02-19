@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -62,6 +63,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -75,6 +77,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.common.PlayButton
 import io.getstream.chat.android.compose.ui.components.common.PlayButtonSize
@@ -96,6 +99,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.extensions.hasLink
+import io.getstream.chat.android.ui.common.utils.extensions.isUploading
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -220,37 +224,54 @@ public fun MediaAttachmentContent(
         message.attachments.filter { (it.isImage() || it.isVideo()) && !it.hasLink() }
     }
 
-    if (attachments.size == 1) {
-        SingleMediaAttachment(
-            attachment = attachments.first(),
-            message = message,
-            modifier = modifier,
-            onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
-            onLongItemClick = state.onLongItemClick,
-            skipEnrichUrl = skipEnrichUrl,
-            onContentItemClick = onItemClick,
-            overlayContent = itemOverlayContent,
-        )
-    } else {
-        val gridSpacing = StreamTokens.spacing2xs
-        val description =
-            stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
-        Row(
-            modifier = modifier
-                .semantics { this.contentDescription = description }
-                .padding(MessageStyling.messageSectionPadding),
-            horizontalArrangement = Arrangement.spacedBy(gridSpacing),
-        ) {
-            MultipleMediaAttachmentsColumns(
-                attachments = attachments,
-                gridSpacing = gridSpacing,
-                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+    val isUploading = remember(message.attachments) {
+        attachments.any(Attachment::isUploading)
+    }
+
+    Box(modifier = modifier) {
+        if (attachments.size == 1) {
+            SingleMediaAttachment(
+                attachment = attachments.first(),
                 message = message,
-                skipEnrichUrl = skipEnrichUrl,
+                modifier = Modifier,
                 onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
                 onLongItemClick = state.onLongItemClick,
+                skipEnrichUrl = skipEnrichUrl,
                 onContentItemClick = onItemClick,
-                itemOverlayContent = itemOverlayContent,
+                overlayContent = itemOverlayContent,
+            )
+        } else {
+            val gridSpacing = StreamTokens.spacing2xs
+            val description =
+                stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachments.size)
+            Row(
+                modifier = Modifier
+                    .semantics { this.contentDescription = description }
+                    .padding(MessageStyling.messageSectionPadding),
+                horizontalArrangement = Arrangement.spacedBy(gridSpacing),
+            ) {
+                MultipleMediaAttachmentsColumns(
+                    attachments = attachments,
+                    gridSpacing = gridSpacing,
+                    maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+                    message = message,
+                    skipEnrichUrl = skipEnrichUrl,
+                    onMediaGalleryPreviewResult = state.onMediaGalleryPreviewResult,
+                    onLongItemClick = state.onLongItemClick,
+                    onContentItemClick = onItemClick,
+                    itemOverlayContent = itemOverlayContent,
+                )
+            }
+        }
+
+        if (isUploading) {
+            LoadingIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(36.dp)
+                    .background(color = Color.White, shape = CircleShape)
+                    .padding(2.dp),
+                strokeWidth = 3.dp,
             )
         }
     }
