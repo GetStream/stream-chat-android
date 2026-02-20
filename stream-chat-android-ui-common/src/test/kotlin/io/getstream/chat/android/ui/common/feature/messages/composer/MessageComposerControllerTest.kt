@@ -386,7 +386,7 @@ internal class MessageComposerControllerTest {
 
         // Then
         assertEquals("", controller.messageInput.value.text)
-        assertEquals(emptyList<Any>(), controller.selectedAttachments.value)
+        assertEquals(emptyList<Any>(), controller.state.value.attachments)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -542,7 +542,7 @@ internal class MessageComposerControllerTest {
         verify(fixture.chatClient, never()).sendMessage(any(), any(), any(), any())
         // And data should be cleared
         assertEquals("", controller.messageInput.value.text)
-        assertEquals(emptyList<Any>(), controller.selectedAttachments.value)
+        assertEquals(emptyList<Any>(), controller.state.value.attachments)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
