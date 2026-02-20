@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.navigation.destinations
 
 import android.content.Context
-import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
 import io.getstream.chat.android.client.utils.attachment.isAudio
@@ -130,9 +129,13 @@ public open class AttachmentDestination(
             }
 
             docMimeType(mimeType) -> {
-                val intent = Intent(context, AttachmentDocumentActivity::class.java).apply {
-                    putExtra("url", url)
-                }
+                val intent = AttachmentDocumentActivity.getIntent(
+                    context,
+                    url ?: "",
+                    mimeType,
+                    attachment.name,
+                    attachment.fileSize,
+                )
                 start(intent)
             }
 

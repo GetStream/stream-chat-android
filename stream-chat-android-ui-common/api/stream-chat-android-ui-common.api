@@ -573,8 +573,18 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDocumentActivity : androidx/appcompat/app/AppCompatActivity {
 	public fun <init> ()V
 	public static fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
+	public static fun getIntent (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)Landroid/content/Intent;
 	public fun loadDocument (Ljava/lang/String;)V
 	protected fun onCreate (Landroid/os/Bundle;)V
+	protected fun onDestroy ()V
+}
+
+public final class io/getstream/chat/android/ui/common/feature/documents/AttachmentShareHelper {
+	public static final field $stable I
+	public fun <init> (Landroidx/lifecycle/LifecycleOwner;)V
+	public final fun cancel ()V
+	public final fun isInProgress ()Z
+	public final fun share (Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Runnable;Ljava/util/function/Consumer;)V
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/capabilities/MessageComposerCapabilitiesKt {

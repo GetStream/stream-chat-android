@@ -49,6 +49,7 @@
     <string name="stream_ui_message_composer_attachment_picker_poll">Poll</string>
 
     <!--Attachment View-->
+    <string name="stream_ui_attachment_document_could_not_share">Could not share this document</string>
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>

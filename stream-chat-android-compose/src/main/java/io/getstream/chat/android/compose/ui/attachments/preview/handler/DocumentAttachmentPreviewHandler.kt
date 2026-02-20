@@ -45,6 +45,14 @@ public class DocumentAttachmentPreviewHandler(private val context: Context) : At
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {
-        context.startActivity(AttachmentDocumentActivity.getIntent(context, attachment.assetUrl))
+        context.startActivity(
+            AttachmentDocumentActivity.getIntent(
+                context,
+                attachment.assetUrl,
+                attachment.mimeType,
+                attachment.name,
+                attachment.fileSize,
+            ),
+        )
     }
 }
