@@ -110,7 +110,7 @@ public fun SearchInput(
         }
     }
 
-    val shape = RoundedCornerShape(StreamTokens.radiusLg)
+    val shape = RoundedCornerShape(StreamTokens.radius3xl)
 
     BasicTextField(
         modifier = modifier
@@ -128,13 +128,7 @@ public fun SearchInput(
                 border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
                 shape = shape,
             )
-            .clip(shape)
-            .padding(
-                start = StreamTokens.spacingXs,
-                end = StreamTokens.spacingMd,
-                top = StreamTokens.spacingSm,
-                bottom = StreamTokens.spacingSm,
-            ),
+            .clip(shape),
         value = textState,
         onValueChange = {
             textState = it
@@ -151,7 +145,14 @@ public fun SearchInput(
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         decorationBox = { innerTextField ->
             Row(
-                Modifier.fillMaxWidth(),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = StreamTokens.spacingXs,
+                        end = StreamTokens.spacingMd,
+                        top = StreamTokens.spacingSm,
+                        bottom = StreamTokens.spacingSm,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 leadingIcon()
