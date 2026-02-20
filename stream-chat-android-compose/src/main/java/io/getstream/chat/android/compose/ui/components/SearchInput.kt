@@ -22,6 +22,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -54,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.padding
 
 /**
  * The search component that allows the user to fill in a search query and filter their items.
@@ -178,7 +180,10 @@ public fun SearchInput(
 internal fun DefaultSearchLeadingIcon() {
     Icon(
         modifier = Modifier
-            .padding(start = StreamTokens.spacingMd)  // 16dp leading padding, matches Figma input content px
+            .padding(
+                start = StreamTokens.spacingSm,
+                end = StreamTokens.spacingXs
+            )
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
