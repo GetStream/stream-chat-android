@@ -238,7 +238,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
         ) {
             Icon(
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(20.dp)
                     .testTag("Stream_CreateChannelIcon"),
                 painter = painterResource(id = R.drawable.stream_compose_ic_add),
                 contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
