@@ -56,7 +56,7 @@ import androidx.compose.ui.window.DialogWindowProvider
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.messages.list.LocalMessageBounds
+import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -130,7 +130,7 @@ public fun SelectedMessageMenu(
 
         val isInspection = LocalInspectionMode.current
         val animation = rememberMenuAnimation(
-            sourceBounds = LocalMessageBounds.current?.value,
+            sourceBounds = LocalSelectedMessageBounds.current?.value,
             messageAlignment = messageAlignment,
         )
 

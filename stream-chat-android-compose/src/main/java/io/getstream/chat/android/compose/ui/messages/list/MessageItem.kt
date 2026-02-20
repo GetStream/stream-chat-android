@@ -114,7 +114,7 @@ public fun LazyItemScope.MessageItem(
             is SystemMessageItemState -> MessageListSystemItemContent(messageListItemState)
             is ModeratedMessageItemState -> MessageListModeratedItemContent(messageListItemState)
             is MessageItemState -> {
-                val selectedMessageBounds = LocalMessageBounds.current
+                val selectedMessageBounds = LocalSelectedMessageBounds.current
                 var layoutCoords by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 MessageContainer(
                     messageItem = messageListItemState,

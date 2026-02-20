@@ -66,7 +66,7 @@ import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialo
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerMenu
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.list.LocalMessageBounds
+import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBounds
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -288,7 +288,7 @@ public fun MessagesScreen(
 @Composable
 private fun MessagesScreenContentBox(content: @Composable BoxScope.() -> Unit) {
     val selectedMessageBounds = remember { mutableStateOf<Rect?>(null) }
-    CompositionLocalProvider(LocalMessageBounds provides selectedMessageBounds) {
+    CompositionLocalProvider(LocalSelectedMessageBounds provides selectedMessageBounds) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

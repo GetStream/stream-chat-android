@@ -24,5 +24,5 @@ import androidx.compose.ui.geometry.Rect
 /**
  * CompositionLocal that provides a mutable holder for the selected message's window-space bounds.
  */
-internal val LocalMessageBounds: ProvidableCompositionLocal<MutableState<Rect?>?> =
+internal val LocalSelectedMessageBounds: ProvidableCompositionLocal<MutableState<Rect?>?> =
     compositionLocalOf { null }
