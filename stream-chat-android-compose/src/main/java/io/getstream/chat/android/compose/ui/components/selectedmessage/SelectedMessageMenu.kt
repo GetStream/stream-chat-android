@@ -44,6 +44,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -63,6 +64,8 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import kotlinx.coroutines.coroutineScope
@@ -125,12 +128,15 @@ public fun SelectedMessageMenu(
             }
         }
 
+        val isInspection = LocalInspectionMode.current
         val animation = rememberMenuAnimation(
             sourceBounds = LocalMessageBounds.current?.value,
             messageAlignment = messageAlignment,
         )
 
-        LaunchedEffect(Unit) { animation.animateIn() }
+        LaunchedEffect(Unit) {
+            if (isInspection) animation.snapIn() else animation.animateIn()
+        }
 
         Column(
             modifier = modifier
@@ -251,32 +257,64 @@ private class MenuAnimationState(
             launch { peripheral.animateTo(1f, tween(durationMillis = 200, delayMillis = 150)) }
         }
     }
+
+    suspend fun snapIn() {
+        coroutineScope {
+            launch { message.snapTo(1f) }
+            launch { peripheral.snapTo(1f) }
+        }
+    }
 }
 
 @Composable
 private fun rememberMenuAnimation(sourceBounds: Rect?, messageAlignment: MessageAlignment): MenuAnimationState =
     remember { MenuAnimationState(sourceBounds, messageAlignment) }
 
-/**
- * Preview of [SelectedMessageMenu].
- */
-@Preview(showBackground = true, name = "SelectedMessageMenu Preview")
+@Preview(showBackground = true)
 @Composable
-private fun SelectedMessageMenuPreview() {
+private fun SelectedMessageMenuForIncomingMessagePreview() {
     ChatTheme {
-        val messageOptionsStateList = defaultMessageOptionsState(
-            selectedMessage = Message(),
-            currentUser = User(),
-            isInThread = false,
-            ownCapabilities = ChannelCapabilities.toSet(),
-        )
-
-        SelectedMessageMenu(
-            message = Message(),
-            messageOptions = messageOptionsStateList,
-            onMessageAction = {},
-            onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet(),
-        )
+        SelectedMessageMenuForIncomingMessage()
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectedMessageMenuForOutgoingMessagePreview() {
+    ChatTheme {
+        SelectedMessageMenuForOutgoingMessage()
+    }
+}
+
+@Composable
+internal fun SelectedMessageMenuForIncomingMessage() {
+    SelectedMessageMenuPreview(
+        selectedMessage = PreviewMessageData.message1,
+    )
+}
+
+@Composable
+internal fun SelectedMessageMenuForOutgoingMessage() {
+    SelectedMessageMenuPreview(
+        selectedMessage = PreviewMessageData.message1.copy(user = PreviewUserData.user1),
+    )
+}
+
+@Composable
+private fun SelectedMessageMenuPreview(selectedMessage: Message) {
+    val messageOptions = defaultMessageOptionsState(
+        selectedMessage = selectedMessage,
+        currentUser = PreviewUserData.user1,
+        isInThread = false,
+        ownCapabilities = ChannelCapabilities.toSet(),
+    )
+
+    SelectedMessageMenu(
+        message = selectedMessage,
+        messageOptions = messageOptions,
+        onMessageAction = {},
+        onShowMoreReactionsSelected = {},
+        ownCapabilities = ChannelCapabilities.toSet(),
+        currentUser = PreviewUserData.user1,
+    )
 }
