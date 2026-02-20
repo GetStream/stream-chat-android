@@ -59,7 +59,6 @@ import io.getstream.chat.android.ui.common.state.messages.UnblockUser
  * @param options List of available options.
  * @param onMessageOptionSelected Handler that propagates click events on each item.
  * @param modifier Modifier for styling.
- * By default, it shows individual message items.
  */
 @Composable
 public fun MessageOptions(
