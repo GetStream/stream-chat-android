@@ -179,8 +179,8 @@ public fun MessagesScreen(
             val isShowingOverlay = listViewModel.isShowingOverlay
 
             when {
-                attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(
-                    false,
+                attachmentsPickerViewModel.isPickerVisible -> attachmentsPickerViewModel.setPickerVisible(
+                    visible = false,
                 )
 
                 isShowingOverlay -> listViewModel.selectMessage(null)
@@ -351,11 +351,11 @@ internal fun DefaultBottomBarContent(
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = composerViewModel,
-            isAttachmentPickerVisible = attachmentsPickerViewModel.isShowingAttachments,
-            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+            isAttachmentPickerVisible = attachmentsPickerViewModel.isPickerVisible,
+            onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
             onAttachmentRemoved = { attachment ->
                 composerViewModel.removeSelectedAttachment(attachment)
-                attachmentsPickerViewModel.removeSelectedAttachment(attachment)
+                attachmentsPickerViewModel.deselectAttachment(attachment)
             },
             onCancelAction = {
                 listViewModel.dismissAllMessageActions()
@@ -363,7 +363,7 @@ internal fun DefaultBottomBarContent(
             },
             onLinkPreviewClick = onComposerLinkPreviewClick,
             onSendMessage = { message ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                attachmentsPickerViewModel.setPickerVisible(visible = false)
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,

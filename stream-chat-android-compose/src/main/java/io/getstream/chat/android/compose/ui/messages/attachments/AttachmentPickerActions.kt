@@ -79,14 +79,14 @@ public data class AttachmentPickerActions(
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.changeSelectedAttachments(item, multiSelect)
+                attachmentsPickerViewModel.toggleSelection(item, multiSelect)
             },
-            onAttachmentsSelected = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            onAttachmentsSelected = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
             onCreatePollClick = {},
             onCreatePoll = {},
             onCreatePollDismissed = {},
             onCommandSelected = {},
-            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
         )
 
         /**
@@ -104,24 +104,24 @@ public data class AttachmentPickerActions(
         ): AttachmentPickerActions = AttachmentPickerActions(
             onAttachmentItemSelected = { item ->
                 val multiSelect = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.changeSelectedAttachments(item, multiSelect)
+                attachmentsPickerViewModel.toggleSelection(item, multiSelect)
                 composerViewModel.updateSelectedAttachments(attachmentsPickerViewModel.getSelectedAttachments())
             },
             onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                attachmentsPickerViewModel.setPickerVisible(visible = false)
                 composerViewModel.addSelectedAttachments(attachments)
             },
             onCreatePollClick = {},
             onCreatePoll = { pollConfig ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                attachmentsPickerViewModel.setPickerVisible(visible = false)
                 composerViewModel.createPoll(pollConfig)
             },
             onCreatePollDismissed = {},
             onCommandSelected = { command ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+                attachmentsPickerViewModel.setPickerVisible(visible = false)
                 composerViewModel.selectCommand(command)
             },
-            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            onDismiss = { attachmentsPickerViewModel.setPickerVisible(visible = false) },
         )
     }
 }

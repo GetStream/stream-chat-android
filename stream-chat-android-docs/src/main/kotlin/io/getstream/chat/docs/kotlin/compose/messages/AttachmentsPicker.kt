@@ -44,9 +44,9 @@ private object AttachmentsPickerUsageSnippet {
                         // The rest of the UI
 
                         // The state if we need to show the picker or not
-                        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+                        val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
 
-                        if (isShowingAttachments) {
+                        if (isPickerVisible) {
                             AttachmentPicker( // Add the picker to your UI
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 actions = AttachmentPickerActions.pickerDefaults(
@@ -96,9 +96,9 @@ private object AttachmentsPickerHandlingActionsSnippet {
                         // The rest of the UI
 
                         // The state if we need to show the picker or not
-                        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+                        val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
 
-                        if (isShowingAttachments) {
+                        if (isPickerVisible) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 actions = AttachmentPickerActions.defaultActions(
@@ -138,9 +138,9 @@ private object AttachmentsPickerCustomizationSnippet {
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.BottomCenter,
                     ) {
-                        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+                        val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
 
-                        if (isShowingAttachments) {
+                        if (isPickerVisible) {
                             AttachmentPicker(
                                 attachmentsPickerViewModel = attachmentsPickerViewModel,
                                 actions = AttachmentPickerActions.pickerDefaults(

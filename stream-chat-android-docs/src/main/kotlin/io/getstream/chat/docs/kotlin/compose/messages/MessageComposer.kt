@@ -84,7 +84,7 @@ private object MessageComposerUsageSnippet {
                             .wrapContentHeight(),
                         viewModel = composerViewModel, // 3 - provide ViewModel
                         // 4 - customize actions
-                        onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
+                        onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
                         onCancelAction = {
                             listViewModel.dismissAllMessageActions()
                             composerViewModel.dismissMessageActions()

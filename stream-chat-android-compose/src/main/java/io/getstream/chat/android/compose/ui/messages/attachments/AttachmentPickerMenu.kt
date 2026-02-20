@@ -47,8 +47,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * - Height configuration based on picker type (system vs in-app)
  * - Integration between the attachment picker and message composer
  *
- * The picker visibility is controlled by [AttachmentsPickerViewModel.isShowingAttachments].
- * Toggle it using [AttachmentsPickerViewModel.changeAttachmentState].
+ * The picker visibility is controlled by [AttachmentsPickerViewModel.isPickerVisible].
+ * Toggle it using [AttachmentsPickerViewModel.setPickerVisible].
  *
  * This component is typically used within [MessagesScreen] and handles the complete flow of:
  * 1. Displaying the attachment picker when triggered
@@ -68,7 +68,7 @@ public fun AttachmentPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
-    val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+    val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
     val messageMode by composerViewModel.messageMode.collectAsStateWithLifecycle()
 
     var isShowingDialog by rememberSaveable { mutableStateOf(false) }
@@ -76,8 +76,8 @@ public fun AttachmentPickerMenu(
     // Dismiss the keyboard when the attachments picker is shown (if instructed by ChatTheme).
     val focusManager = LocalFocusManager.current
     val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
-    LaunchedEffect(isShowingAttachments) {
-        if (shouldCloseKeyboard && isShowingAttachments) {
+    LaunchedEffect(isPickerVisible) {
+        if (shouldCloseKeyboard && isPickerVisible) {
             focusManager.clearFocus()
         }
     }
@@ -86,7 +86,7 @@ public fun AttachmentPickerMenu(
     val isKeyboardVisible by isKeyboardVisibleAsState()
     LaunchedEffect(isKeyboardVisible) {
         if (isKeyboardVisible && !isShowingDialog) {
-            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+            attachmentsPickerViewModel.setPickerVisible(visible = false)
         }
     }
 
@@ -124,7 +124,7 @@ public fun AttachmentPickerMenu(
     }
 
     AnimatedVisibility(
-        visible = isShowingAttachments,
+        visible = isPickerVisible,
         enter = expandVertically(expandFrom = Alignment.Top),
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {

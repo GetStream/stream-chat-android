@@ -74,12 +74,12 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
             factory = viewModelFactory,
         )
 
-        val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+        val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
         val backAction = remember(composerViewModel, attachmentsPickerViewModel) {
             {
                 when {
-                    attachmentsPickerViewModel.isShowingAttachments -> {
-                        attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.isPickerVisible -> {
+                        attachmentsPickerViewModel.setPickerVisible(visible = false)
                     }
 
                     else -> onBackClick()
@@ -111,7 +111,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                 },
             )
 
-            if (isShowingAttachments) {
+            if (isPickerVisible) {
                 CustomAttachmentsPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
                     actions = AttachmentPickerActions.defaultActions(
@@ -160,7 +160,7 @@ private fun CustomMessageComposer(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         IconButton(
                             onClick = {
-                                attachmentsPickerViewModel.changeAttachmentState(showAttachments = true)
+                                attachmentsPickerViewModel.setPickerVisible(visible = true)
                             },
                             content = {
                                 Icon(
@@ -185,7 +185,7 @@ private fun CustomMessageComposer(
                 },
             )
         },
-        onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = true) },
+        onAttachmentsClick = { attachmentsPickerViewModel.setPickerVisible(visible = true) },
         leadingContent = {},
     )
 }
@@ -266,11 +266,12 @@ private fun CustomAttachmentsPicker(
                                 pickerMode = pickerMode,
                                 commands = attachmentsPickerViewModel.channel.config.commands,
                                 attachments = attachmentsPickerViewModel.attachments,
-                                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                                onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                                onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
                                 actions = actions,
                                 onAttachmentsSubmitted = { metaData ->
                                     actions.onAttachmentsSelected(
-                                        attachmentsPickerViewModel.getAttachmentsFromMetaData(metaData),
+                                        attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData),
                                     )
                                 },
                             )

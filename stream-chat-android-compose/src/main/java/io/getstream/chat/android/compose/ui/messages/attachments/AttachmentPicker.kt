@@ -86,7 +86,7 @@ public fun AttachmentPicker(
     }
 
     val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = { metaData ->
-        actions.onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(metaData))
+        actions.onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData))
     }
 
     Surface(
@@ -108,7 +108,7 @@ public fun AttachmentPicker(
                     channel = attachmentsPickerViewModel.channel,
                     messageMode = messageMode,
                     selectedMode = attachmentsPickerViewModel.pickerMode,
-                    onModeSelected = attachmentsPickerViewModel::changePickerMode,
+                    onModeSelected = attachmentsPickerViewModel::setPickerMode,
                     trailingContent = {},
                 )
                 AnimatedContent(

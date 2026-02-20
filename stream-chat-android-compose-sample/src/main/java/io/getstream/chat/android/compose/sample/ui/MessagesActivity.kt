@@ -359,7 +359,7 @@ class MessagesActivity : ComponentActivity() {
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
-            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+            onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
         )
     }
 
