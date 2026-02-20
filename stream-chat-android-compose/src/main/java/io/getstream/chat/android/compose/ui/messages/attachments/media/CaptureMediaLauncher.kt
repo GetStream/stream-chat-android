@@ -46,7 +46,7 @@ import java.io.File
  * )
  *
  * // Launch the camera
- * captureMediaLauncher?.launch(Unit)
+ * captureMediaLauncher.launch(Unit)
  * ```
  *
  * Note: This function doesn't check for camera permissions. Ensure that the necessary permissions
