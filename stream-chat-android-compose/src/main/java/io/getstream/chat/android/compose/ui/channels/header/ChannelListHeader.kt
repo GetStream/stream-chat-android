@@ -236,14 +236,19 @@ internal fun DefaultChannelListHeaderTrailingContent(
             shape = CircleShape,
             shadowElevation = 0.dp,
         ) {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .testTag("Stream_CreateChannelIcon"),
-                painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
-                tint = Color.White,
-            )
+            Box(
+                modifier = Modifier.padding(10.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .testTag("Stream_CreateChannelIcon"),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                    contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
+                    tint = Color.White,
+                )
+            }
         }
     }
 }
