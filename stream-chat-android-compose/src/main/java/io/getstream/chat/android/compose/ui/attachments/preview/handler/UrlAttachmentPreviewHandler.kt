@@ -16,11 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.widget.Toast
+import androidx.core.net.toUri
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Shows a preview for an URL in the attachment using the [Intent.ACTION_VIEW] action.
@@ -33,7 +36,21 @@ public class UrlAttachmentPreviewHandler(private val context: Context) : Attachm
 
     override fun handleAttachmentPreview(attachment: Attachment) {
         val url = getAttachmentUrl(attachment)
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        val uri = url?.toUri()
+        val intent = if (attachment.mimeType != null) {
+            Intent(Intent.ACTION_VIEW).apply { setDataAndType(uri, attachment.mimeType) }
+        } else {
+            Intent(Intent.ACTION_VIEW, uri)
+        }
+        try {
+            context.startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(
+                context,
+                context.getString(UiCommonR.string.stream_ui_message_list_error_cannot_open_link, url),
+                Toast.LENGTH_LONG,
+            ).show()
+        }
     }
 
     private fun getAttachmentUrl(attachment: Attachment): String? {
@@ -47,6 +64,7 @@ public class UrlAttachmentPreviewHandler(private val context: Context) : Attachm
                         else -> imageUrl
                     }
                 }
+
                 else -> assetUrl
             }
         }
