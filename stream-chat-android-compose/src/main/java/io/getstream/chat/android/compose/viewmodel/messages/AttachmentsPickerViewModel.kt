@@ -125,13 +125,16 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Shows or hides the attachment picker. Hiding clears all state.
+     * Shows or hides the attachment picker. Hiding clears cached data but preserves the
+     * current selection so items remain checked when the picker is reopened.
      *
-     * @param visible `true` to show the picker, `false` to hide it and reset selection.
+     * Call [clearSelection] after this to also reset the selection (e.g. after sending a message).
+     *
+     * @param visible `true` to show the picker, `false` to hide it.
      */
     public fun setPickerVisible(visible: Boolean) {
         _isPickerVisible.value = visible
-        if (!visible) resetState()
+        if (!visible) clearCachedData()
     }
 
     /**
@@ -255,11 +258,18 @@ public class AttachmentsPickerViewModel(
         }
     }
 
-    private fun resetState() {
+    /**
+     * Removes all selected URIs. Call this when the associated attachments are consumed
+     * (e.g. message sent, poll created) so the picker starts fresh on next open.
+     */
+    public fun clearSelection() {
+        _selectedUris.value = emptySet()
+    }
+
+    private fun clearCachedData() {
         _pickerMode.value = null
         _mediaItems.value = emptyList()
         _fileItems.value = emptyList()
-        _selectedUris.value = emptySet()
     }
 }
 

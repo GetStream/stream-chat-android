@@ -301,7 +301,23 @@ internal class AttachmentsPickerViewModelTest {
     }
 
     @Test
-    fun `Given selections across tabs When dismissing picker Should clear all state`() {
+    fun `Given selections When hiding picker Should preserve selection on reopen`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+        viewModel.toggleSelection(viewModel.attachments.first())
+
+        viewModel.setPickerVisible(visible = false)
+        viewModel.setPickerVisible(visible = true)
+        viewModel.loadMediaItems(imageAttachment1, imageAttachment2)
+
+        assertTrue(viewModel.attachments.first().isSelected)
+        assertFalse(viewModel.attachments.last().isSelected)
+    }
+
+    @Test
+    fun `Given selections When calling clearSelection Should remove all selections`() {
         whenever(storageHelper.toAttachments(any())) doReturn emptyList()
         val viewModel = createViewModel()
 
@@ -313,12 +329,28 @@ internal class AttachmentsPickerViewModelTest {
         viewModel.loadFileItems(fileAttachment1)
         viewModel.toggleSelection(viewModel.attachments.first())
 
+        viewModel.clearSelection()
+
+        viewModel.setPickerMode(GalleryPickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+        viewModel.setPickerMode(FilePickerMode())
+        assertFalse(viewModel.attachments.first().isSelected)
+        assertEquals(0, viewModel.getSelectedAttachments().size)
+    }
+
+    @Test
+    fun `Given selections When hiding picker Should clear cached data`() {
+        val viewModel = createViewModel()
+
+        viewModel.setPickerVisible(visible = true)
+        viewModel.setPickerMode(FilePickerMode())
+        viewModel.loadFileItems(fileAttachment1)
+
         viewModel.setPickerVisible(visible = false)
 
+        assertFalse(viewModel.isPickerVisible)
+        assertNull(viewModel.pickerMode)
         assertEquals(0, viewModel.attachments.size)
-        viewModel.setPickerMode(FilePickerMode())
-        assertEquals(0, viewModel.attachments.size)
-        assertEquals(0, viewModel.getSelectedAttachments().size)
     }
 
     @Test

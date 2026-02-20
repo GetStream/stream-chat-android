@@ -364,6 +364,7 @@ internal fun DefaultBottomBarContent(
             onLinkPreviewClick = onComposerLinkPreviewClick,
             onSendMessage = { message ->
                 attachmentsPickerViewModel.setPickerVisible(visible = false)
+                attachmentsPickerViewModel.clearSelection()
                 composerViewModel.sendMessage(
                     message.copy(
                         skipPushNotification = skipPushNotification,

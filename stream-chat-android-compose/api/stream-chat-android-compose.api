@@ -4637,6 +4637,7 @@ public final class io/getstream/chat/android/compose/viewmodel/mentions/MentionL
 public final class io/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/helper/internal/AttachmentStorageHelper;Lkotlinx/coroutines/flow/StateFlow;)V
+	public final fun clearSelection ()V
 	public final fun deselectAttachment (Lio/getstream/chat/android/models/Attachment;)V
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getAttachmentsFromMetadata (Ljava/util/List;)Ljava/util/List;
