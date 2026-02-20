@@ -42,7 +42,8 @@ internal fun rememberAvatarPlaceholderColors(identifier: Any): Pair<Color, Color
 }
 
 internal fun Dp.toPlaceholderIconSize() = when {
-    this >= AvatarSize.ExtraLarge -> 32.dp
+    this >= AvatarSize.ExtraExtraLarge -> 32.dp
+    this >= AvatarSize.ExtraLarge -> 24.dp
     this >= AvatarSize.Large -> 20.dp
     this >= AvatarSize.Medium -> 16.dp
     this >= AvatarSize.Small -> 12.dp
@@ -53,7 +54,8 @@ internal fun Dp.toPlaceholderIconSize() = when {
 internal fun Dp.toPlaceholderTextStyle(): TextStyle {
     val typography = ChatTheme.typography
     return when {
-        this >= AvatarSize.ExtraLarge -> typography.headingLarge
+        this >= AvatarSize.ExtraExtraLarge -> typography.headingLarge
+        this >= AvatarSize.ExtraLarge -> typography.headingMedium
         this >= AvatarSize.Large -> typography.bodyEmphasis
         this >= AvatarSize.Medium -> typography.captionEmphasis
         this >= AvatarSize.Small -> typography.captionEmphasis

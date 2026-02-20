@@ -248,16 +248,16 @@ private fun StackedGroupAvatar(
 
 private fun BoxWithConstraintsScope.resolveStackedAvatarDimensions(): StackedGroupAvatarDimensions {
     return when {
+        maxWidth >= AvatarSize.ExtraExtraLarge -> StackedGroupAvatarDimensions.ExtraExtraLarge
         maxWidth >= AvatarSize.ExtraLarge -> StackedGroupAvatarDimensions.ExtraLarge
-        maxWidth >= AvatarSize.Large -> StackedGroupAvatarDimensions.Large
-        else -> StackedGroupAvatarDimensions.Medium
+        else -> StackedGroupAvatarDimensions.Large
     }
 }
 
 private enum class StackedGroupAvatarDimensions(val avatarSize: Dp, val badgeSize: CountBadgeSize) {
-    ExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
-    Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Medium),
-    Medium(avatarSize = AvatarSize.ExtraSmall, badgeSize = CountBadgeSize.Small),
+    ExtraExtraLarge(avatarSize = AvatarSize.Large, badgeSize = CountBadgeSize.Large),
+    ExtraLarge(avatarSize = AvatarSize.Medium, badgeSize = CountBadgeSize.Medium),
+    Large(avatarSize = AvatarSize.Small, badgeSize = CountBadgeSize.Small),
 }
 
 @Composable
