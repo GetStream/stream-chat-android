@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.media
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import java.io.File
 
@@ -62,8 +63,10 @@ public fun rememberCaptureMediaLauncher(
     video: Boolean,
     onResult: (File) -> Unit,
 ): ManagedActivityResultLauncher<Unit, File?>? {
-    val mode = resolveMediaPickerMode(photo, video) ?: return null
-    return rememberLauncherForActivityResult(CaptureMediaContract(mode)) { file ->
+    val contract = remember(photo, video) {
+        resolveMediaPickerMode(photo, video)?.let { CaptureMediaContract(it) }
+    } ?: return null
+    return rememberLauncherForActivityResult(contract) { file ->
         file?.let(onResult)
     }
 }
