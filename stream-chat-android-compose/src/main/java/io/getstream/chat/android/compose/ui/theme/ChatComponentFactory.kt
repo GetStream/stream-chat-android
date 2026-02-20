@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -115,9 +114,13 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -137,10 +140,10 @@ import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomBu
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
@@ -195,7 +198,6 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -1000,6 +1002,7 @@ public interface ChatComponentFactory {
     public fun MessageContainer(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
+        modifier: Modifier,
         onPollUpdated: (Message, Poll) -> Unit,
         onCastVote: (Message, Poll, Option) -> Unit,
         onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -1021,6 +1024,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
+            modifier = modifier,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -2190,7 +2194,9 @@ public interface ChatComponentFactory {
      * @param messageOptions List of message options.
      * @param ownCapabilities The capabilities of the current user.
      * @param onMessageAction Callback for when a message action is clicked.
+     * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onDismiss Callback for when the menu is dismissed.
+     * @param currentUser The currently logged in user.
      */
     @Composable
     public fun MessageMenu(
@@ -2201,6 +2207,7 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         SelectedMessageMenu(
             modifier = modifier,
@@ -2210,42 +2217,17 @@ public interface ChatComponentFactory {
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMore,
             onDismiss = onDismiss,
-        )
-    }
-
-    /**
-     * Factory method for creating the center content of the SelectedMessageMenu.
-     *
-     * @param modifier The modifier for the center content.
-     * @param message The selected message.
-     * @param messageOptions List of message options.
-     * @param ownCapabilities The capabilities of the current user.
-     */
-    @Composable
-    public fun MessageMenuCenterContent(
-        modifier: Modifier,
-        message: Message,
-        messageOptions: List<MessageOptionItemState>,
-        onMessageAction: (MessageAction) -> Unit,
-        ownCapabilities: Set<String>,
-    ) {
-        MessageMenuOptions(
-            modifier = modifier,
-            message = message,
-            options = messageOptions,
-            onMessageOptionSelected = { onMessageAction(it.action) },
+            currentUser = currentUser,
         )
     }
 
     /**
      * Factory method for creating the header content of the SelectedMessageMenu.
      *
+     * @param modifier The modifier for the header content.
      * @param message The selected message.
-     * @param messageOptions List of message options.
-     * @param ownCapabilities The capabilities of the current user.
-     * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onMessageAction Callback for when a message action is clicked.
-     * @param showMoreReactionsIcon The icon to show for the "Show more reactions" option.
+     * @param onShowMore Callback for when the show more reactions option is clicked.
      */
     @Composable
     public fun MessageMenuHeaderContent(
@@ -2255,14 +2237,19 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        ReactionMenuOptions(
+        MessageMenuHeader(
             modifier = modifier,
-            message = message,
-            onMessageAction = onMessageAction,
+            onReactionOptionSelected = {
+                onMessageAction(
+                    React(
+                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
+                        message = message,
+                    ),
+                )
+            },
             onShowMoreReactionsSelected = onShowMore,
-            showMoreReactionsIcon = showMoreReactionsIcon,
+            ownReactions = message.ownReactions,
         )
     }
 
@@ -2287,50 +2274,21 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the options content of the SelectedMessageMenu.
+     * Factory method for creating an individual option item in the SelectedMessageMenu.
+     *
+     * @param option The message option state.
+     * @param onMessageOptionSelected Callback for when a message option is selected.
      */
     @Composable
     public fun MessageMenuOptionsItem(
-        modifier: Modifier,
         option: MessageOptionItemState,
         onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     ) {
-        val title = stringResource(id = option.title)
-        // Not using directly the [MessageOptionsItem] because
-        // that one contains our default behavior which is not overridable.
-        MenuOptionItem(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(ChatTheme.dimens.messageOptionsItemHeight),
-            title = title,
-            titleColor = option.titleColor,
-            leadingIcon = {
-                MessageMenuOptionsItemLeadingContent(modifier, option)
-            },
+        ContextualMenuItem(
+            label = stringResource(id = option.title),
+            leadingIcon = option.iconPainter,
+            destructive = option.destructive,
             onClick = { onMessageOptionSelected(option) },
-            style = ChatTheme.typography.body,
-            itemHeight = 56.dp,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        )
-    }
-
-    /**
-     * Factory method for creating the leading icon of the Message options menu item.
-     * This is the icon that appears on the left side of the message option.
-     *
-     * @param option The message option state.
-     */
-    @Composable
-    public fun MessageMenuOptionsItemLeadingContent(
-        modifier: Modifier,
-        option: MessageOptionItemState,
-    ) {
-        Icon(
-            modifier = modifier.padding(horizontal = 16.dp),
-            painter = option.iconPainter,
-            tint = option.iconColor,
-            contentDescription = null,
         )
     }
 
@@ -2449,39 +2407,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for the reaction options in the menu.
-     *
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     */
-    @Composable
-    public fun ReactionMenuOptions(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
-    ) {
-        ReactionOptions(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-            showMoreReactionsIcon = showMoreReactionsIcon,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
-                        message = message,
-                    ),
-                )
-            },
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownReactions = message.ownReactions,
-        )
-    }
-
-    /**
      * Factory method for creating the header content of the SelectedReactionsMenu.
      *
      * @param modifier The modifier for the header.
@@ -2508,22 +2433,23 @@ public interface ChatComponentFactory {
      * Factory method for creating the reactions menu more option.
      *
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     * @param showMoreReactionsIcon The icon for the show more reactions option.
      */
     @Composable
     public fun ReactionMenuShowMore(
         modifier: Modifier,
         onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        Icon(
-            modifier = modifier.clickable(bounded = false) {
-                onShowMoreReactionsSelected()
-            },
-            painter = painterResource(id = showMoreReactionsIcon),
-            contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
-            tint = ChatTheme.colors.textLowEmphasis,
-        )
+        StreamButton(
+            onClick = onShowMoreReactionsSelected,
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            size = StreamButtonSize.Small,
+            modifier = modifier,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.stream_compose_ic_plus),
+                contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
+            )
+        }
     }
 
     /**

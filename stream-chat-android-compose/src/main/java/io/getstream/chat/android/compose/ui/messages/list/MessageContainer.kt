@@ -205,7 +205,7 @@ public fun MessageContainer(
             contentAlignment = messageAlignment.itemAlignment,
         ) {
             Row(
-                modifier
+                Modifier
                     .wrapContentWidth()
                     .then(clickModifier)
                     .testTag("Stream_MessageCell"),
@@ -722,7 +722,7 @@ private fun SwipeToReply(
             }
         }
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { rowWidth = it.width.toFloat() }
                 .offset { IntOffset(x = offset.value.roundToInt(), y = 0) }

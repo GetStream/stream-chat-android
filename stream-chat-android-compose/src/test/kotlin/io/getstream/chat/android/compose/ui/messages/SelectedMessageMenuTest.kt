@@ -16,21 +16,11 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.util.extensions.toSet
-import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
-import io.getstream.chat.android.previewdata.PreviewMessageData
-import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForIncomingMessage
+import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenuForOutgoingMessage
 import org.junit.Rule
 import org.junit.Test
 
@@ -41,74 +31,29 @@ internal class SelectedMessageMenuTest : PaparazziComposeTest {
 
     @Test
     fun `my message`() {
-        runTest(
-            currentUser = PreviewUserData.user1,
-            selectedMessage = PreviewMessageData.message1.copy(
-                user = PreviewUserData.user1,
-            ),
-        )
+        snapshot(isInDarkMode = false) {
+            SelectedMessageMenuForOutgoingMessage()
+        }
     }
 
     @Test
     fun `my message in dark mode`() {
-        runTest(
-            currentUser = PreviewUserData.user1,
-            selectedMessage = PreviewMessageData.message1.copy(
-                user = PreviewUserData.user1,
-            ),
-            inDarkMode = true,
-        )
+        snapshot(isInDarkMode = true) {
+            SelectedMessageMenuForOutgoingMessage()
+        }
     }
 
     @Test
     fun `their message`() {
-        runTest(
-            currentUser = PreviewUserData.user1,
-            selectedMessage = PreviewMessageData.message2.copy(
-                user = PreviewUserData.user2,
-            ),
-        )
+        snapshot(isInDarkMode = false) {
+            SelectedMessageMenuForIncomingMessage()
+        }
     }
 
     @Test
     fun `their message in dark mode`() {
-        runTest(
-            currentUser = PreviewUserData.user1,
-            selectedMessage = PreviewMessageData.message2.copy(
-                user = PreviewUserData.user2,
-            ),
-            inDarkMode = true,
-        )
-    }
-
-    private fun runTest(
-        currentUser: User,
-        selectedMessage: Message,
-        inDarkMode: Boolean = false,
-    ) {
-        snapshot(isInDarkMode = inDarkMode) {
-            val channelCapabilities = ChannelCapabilities.toSet() - setOf(
-                ChannelCapabilities.DELETE_ANY_MESSAGE,
-                ChannelCapabilities.UPDATE_ANY_MESSAGE,
-            )
-
-            val messageOptions = defaultMessageOptionsState(
-                selectedMessage = selectedMessage,
-                currentUser = currentUser,
-                isInThread = false,
-                ownCapabilities = channelCapabilities,
-            )
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                SelectedMessageMenu(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    message = selectedMessage,
-                    messageOptions = messageOptions,
-                    onMessageAction = {},
-                    onShowMoreReactionsSelected = {},
-                    ownCapabilities = channelCapabilities,
-                )
-            }
+        snapshot(isInDarkMode = true) {
+            SelectedMessageMenuForIncomingMessage()
         }
     }
 }

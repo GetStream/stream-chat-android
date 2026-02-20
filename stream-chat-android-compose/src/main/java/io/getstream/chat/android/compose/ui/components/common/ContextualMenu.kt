@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ internal fun ContextualMenu(
 
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(StreamTokens.radiusLg),
+        shape = RoundedCornerShape(StreamTokens.radiusMd),
         color = colors.backgroundElevationElevation2,
         shadowElevation = StreamTokens.elevation3,
         border = BorderStroke(StreamTokens.borderStrokeSubtle, colors.borderCoreSurfaceSubtle),
@@ -101,8 +102,11 @@ internal fun ContextualMenuItem(
 
         Text(
             text = label,
+            style = ChatTheme.typography.bodyEmphasis,
             color = textColor,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .testTag("Stream_ContextMenu_$label"),
         )
 
         trailingIcon?.let {
