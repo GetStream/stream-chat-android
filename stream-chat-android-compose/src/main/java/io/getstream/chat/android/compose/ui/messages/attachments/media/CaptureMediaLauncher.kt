@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.media
 
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
@@ -103,10 +102,7 @@ private fun rememberCaptureMediaLauncherInternal(
     var pictureFilePath by rememberSaveable { mutableStateOf<String?>(null) }
     var videoFilePath by rememberSaveable { mutableStateOf<String?>(null) }
 
-    Log.d("X_PETAR", "recomposing")
-
     val contract = remember(mode) {
-        Log.d("X_PETAR", "Creating contract")
         CaptureMediaContract(mode) { createdPicture, createdVideo ->
             pictureFilePath = createdPicture?.absolutePath
             videoFilePath = createdVideo?.absolutePath
