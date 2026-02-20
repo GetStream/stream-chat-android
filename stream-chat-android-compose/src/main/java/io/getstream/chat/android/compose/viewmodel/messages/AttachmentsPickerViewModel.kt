@@ -183,7 +183,7 @@ public class AttachmentsPickerViewModel(
      * Returns lightweight preview [Attachment] objects for all selected items across both tabs,
      * ordered by the sequence in which the user selected them.
      *
-     * Items that appear in both tabs are returned only once (the first match wins).
+     * Items that appear in both tabs are deduplicated by URI.
      * No file copying is performed; file resolution is deferred to send time
      * via [AttachmentStorageHelper.resolveAttachmentFiles].
      */
