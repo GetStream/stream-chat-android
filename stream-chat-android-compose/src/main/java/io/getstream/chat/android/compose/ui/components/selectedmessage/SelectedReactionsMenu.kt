@@ -231,7 +231,7 @@ private fun buildUserReactionItems(
 }
 
 @Composable
-internal fun ReactionsMenuContentPreview(selectedMessage: Message) {
+private fun ReactionsMenuContentPreview(selectedMessage: Message) {
     ReactionsMenuContent(
         message = selectedMessage,
         currentUser = PreviewUserData.user1,
