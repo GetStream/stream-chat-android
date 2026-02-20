@@ -235,6 +235,24 @@ internal class AttachmentStorageHelperTest {
     }
 
     @Test
+    fun `resolveAttachmentFiles drops attachment when file resolution fails`() {
+        val sourceUri = "content://media/external/images/42"
+        val parsedUri = mock<Uri>()
+        val attachment = Attachment(
+            type = "image",
+            extraData = mapOf(EXTRA_SOURCE_URI to sourceUri),
+        )
+        whenever(storageHelper.getCachedFileFromUri(eq(context), any())) doReturn null
+        Mockito.mockStatic(Uri::class.java).use { mockedUri ->
+            mockedUri.`when`<Uri> { Uri.parse(sourceUri) }.thenReturn(parsedUri)
+
+            val result = sut.resolveAttachmentFiles(listOf(attachment))
+
+            assertEquals(emptyList<Attachment>(), result)
+        }
+    }
+
+    @Test
     fun `resolveAttachmentFiles processes resolved, deferred, and missing-URI attachments independently`() {
         val existingFile = mock<File>()
         val cachedFile = mock<File>()

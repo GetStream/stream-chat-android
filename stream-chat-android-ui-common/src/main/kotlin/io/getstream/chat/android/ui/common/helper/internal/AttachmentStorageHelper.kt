@@ -23,6 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.log.taggedLogger
 
 /**
  * Handles querying device storage for attachment metadata and converting between
@@ -39,6 +40,7 @@ public class AttachmentStorageHelper(
     private val storageHelper: StorageHelper = StorageHelper(),
     private val attachmentFilter: AttachmentFilter = AttachmentFilter(),
 ) {
+    private val logger by taggedLogger("AttachmentStorageHelper")
 
     /**
      * Loads file metadata from the system, filtered against file types accepted by the backend.
@@ -85,16 +87,19 @@ public class AttachmentStorageHelper(
      *
      * Attachments that already have a non-null [Attachment.upload] are returned unchanged.
      * For others, the original content URI is read from [EXTRA_SOURCE_URI] and copied to a
-     * local cache file.
+     * local cache file. Attachments whose source URI cannot be resolved (e.g. the content
+     * URI is no longer accessible or the cache write fails) are **dropped** from the result.
      *
      * @param attachments The attachments to resolve.
      * @return Attachments with [Attachment.upload] populated for every entry that had a source URI.
      */
     @WorkerThread
-    public fun resolveAttachmentFiles(attachments: List<Attachment>): List<Attachment> = attachments.map { attachment ->
-        if (attachment.upload != null) return@map attachment
+    public fun resolveAttachmentFiles(
+        attachments: List<Attachment>,
+    ): List<Attachment> = attachments.mapNotNull { attachment ->
+        if (attachment.upload != null) return@mapNotNull attachment
         val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
-            ?.let(Uri::parse) ?: return@map attachment
+            ?.let(Uri::parse) ?: return@mapNotNull attachment
         val metaData = AttachmentMetaData(
             uri = sourceUri,
             type = attachment.type,
@@ -102,6 +107,10 @@ public class AttachmentStorageHelper(
             title = attachment.name,
         ).apply { size = attachment.fileSize.toLong() }
         val file = storageHelper.getCachedFileFromUri(context, metaData)
+        if (file == null) {
+            logger.w { "[resolveAttachmentFiles] Failed to resolve file for URI: $sourceUri" }
+            return@mapNotNull null
+        }
         attachment.copy(upload = file)
     }
 
