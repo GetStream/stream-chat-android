@@ -2118,7 +2118,6 @@ public final class io/getstream/chat/android/compose/ui/components/selectedmessa
 }
 
 public final class io/getstream/chat/android/compose/ui/components/selectedmessage/SelectedReactionsMenuKt {
-	public static final fun ReactionsMenuContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Ljava/util/Set;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun SelectedReactionsMenu (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Ljava/util/Set;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 

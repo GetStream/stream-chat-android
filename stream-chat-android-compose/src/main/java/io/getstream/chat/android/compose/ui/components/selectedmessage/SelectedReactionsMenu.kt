@@ -33,7 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +46,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewReactionData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -109,7 +110,7 @@ public fun SelectedReactionsMenu(
  * @param modifier Modifier for styling.
  */
 @Composable
-public fun ReactionsMenuContent(
+internal fun ReactionsMenuContent(
     message: Message,
     currentUser: User?,
     ownCapabilities: Set<String>,
@@ -138,7 +139,7 @@ public fun ReactionsMenuContent(
         )
     }
 
-    val reactionCountText = LocalContext.current.resources.getQuantityString(
+    val reactionCountText = LocalResources.current.getQuantityString(
         R.plurals.stream_compose_message_reactions,
         userReactions.size,
         userReactions.size,
@@ -229,46 +230,49 @@ private fun buildUserReactionItems(
         }
 }
 
-/**
- * Preview of the [SelectedReactionsMenu] component with 1 reaction.
- */
+@Composable
+internal fun ReactionsMenuContentPreview(selectedMessage: Message) {
+    ReactionsMenuContent(
+        message = selectedMessage,
+        currentUser = PreviewUserData.user1,
+        onMessageAction = {},
+        onShowMoreReactionsSelected = {},
+        ownCapabilities = ChannelCapabilities.toSet(),
+    )
+}
+
+@Composable
+internal fun ReactionsMenuContentOneReaction() {
+    ReactionsMenuContentPreview(
+        selectedMessage = PreviewMessageData.message1.copy(
+            latestReactions = PreviewReactionData.oneReaction,
+            reactionGroups = PreviewReactionData.oneReactionGroup,
+        ),
+    )
+}
+
+@Composable
+internal fun ReactionsMenuContentManyReactions() {
+    ReactionsMenuContentPreview(
+        PreviewMessageData.message1.copy(
+            latestReactions = PreviewReactionData.manyReaction,
+            reactionGroups = PreviewReactionData.manyReactionGroups,
+        ),
+    )
+}
+
 @Preview
 @Composable
 private fun OneSelectedReactionMenuPreview() {
     ChatTheme {
-        val message = Message(
-            latestReactions = PreviewReactionData.oneReaction,
-            reactionGroups = PreviewReactionData.oneReactionGroup,
-        )
-
-        ReactionsMenuContent(
-            message = message,
-            currentUser = PreviewUserData.user1,
-            onMessageAction = {},
-            onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet(),
-        )
+        ReactionsMenuContentOneReaction()
     }
 }
 
-/**
- * Preview of the [SelectedReactionsMenu] component with many reactions.
- */
 @Preview
 @Composable
 private fun ManySelectedReactionsMenuPreview() {
     ChatTheme {
-        val message = Message(
-            latestReactions = PreviewReactionData.manyReaction,
-            reactionGroups = PreviewReactionData.manyReactionGroups,
-        )
-
-        ReactionsMenuContent(
-            message = message,
-            currentUser = PreviewUserData.user1,
-            onMessageAction = {},
-            onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet(),
-        )
+        ReactionsMenuContentManyReactions()
     }
 }

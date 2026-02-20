@@ -68,7 +68,7 @@ internal fun ReactionCountRow(
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
             .padding(horizontal = StreamTokens.spacingMd, vertical = StreamTokens.spacingXs),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (onAddReactionClick != null) {
