@@ -205,6 +205,7 @@ public data class StreamColors(
     public val chatTextOutgoing: Color = textPrimary,
     public val chatTextLink: Color = accentPrimary,
     public val chatTextMention: Color = chatTextLink,
+    public val chatTextSystem: Color = textSecondary,
     public val chatTextTimestamp: Color = textTertiary,
     public val chatWaveformBar: Color = borderCoreOpacity25,
     public val chatWaveformBarPlaying: Color = accentPrimary,

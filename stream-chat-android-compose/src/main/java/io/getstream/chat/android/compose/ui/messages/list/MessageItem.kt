@@ -21,14 +21,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -145,27 +144,15 @@ public fun LazyItemScope.MessageItem(
  */
 @Composable
 internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
-    Box(
+    MessageDivider(
+        text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
         modifier = Modifier
-            .semantics(mergeDescendants = true) {}
+            .semantics(mergeDescendants = true) {
+                testTag = "Stream_MessageDateSeparator"
+            }
+            .padding(vertical = 8.dp)
             .fillMaxWidth(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            modifier = Modifier
-                .padding(vertical = 8.dp),
-            color = ChatTheme.messageDateSeparatorTheme.backgroundColor,
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 2.dp, horizontal = 16.dp)
-                    .testTag("Stream_MessageDateSeparator"),
-                text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
-                style = ChatTheme.messageDateSeparatorTheme.textStyle,
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -175,24 +162,15 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
  */
 @Composable
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
-    Box(
+    MessageDivider(
+        text = LocalResources.current.getString(R.string.stream_compose_message_list_unread_separator),
         modifier = Modifier
             .semantics(mergeDescendants = true) {
                 testTag = "Stream_UnreadMessagesBadge"
             }
             .fillMaxWidth()
-            .padding(bottom = 8.dp)
-            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
-            text = LocalContext.current.resources.getString(
-                R.string.stream_compose_message_list_unread_separator,
-            ),
-            style = ChatTheme.messageUnreadSeparatorTheme.textStyle,
-        )
-    }
+            .padding(bottom = 8.dp),
+    )
 }
 
 /**

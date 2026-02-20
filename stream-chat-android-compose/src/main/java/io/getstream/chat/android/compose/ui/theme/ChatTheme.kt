@@ -198,12 +198,6 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
-private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
-    error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalMessageUnreadSeparatorTheme = compositionLocalOf<MessageUnreadSeparatorTheme> {
-    error("No MessageUnreadSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
     error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -284,13 +278,10 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
- * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
- * @param messageDateSeparatorTheme Theme of the message date separator.
- * @param messageUnreadSeparatorTheme Theme of the message unread separator.
  * @param messageComposerTheme Theme of the message composer.
  * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
@@ -349,14 +340,6 @@ public fun ChatTheme(
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
-    messageDateSeparatorTheme: MessageDateSeparatorTheme = MessageDateSeparatorTheme.defaultTheme(
-        typography = typography,
-        colors = colors,
-    ),
-    messageUnreadSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
-        typography = typography,
-        colors = colors,
-    ),
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
@@ -404,8 +387,6 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
-        LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
-        LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
@@ -665,22 +646,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReadCountEnabled.current
-
-    /**
-     * Retrieves the current [MessageDateSeparatorTheme] at the call site's position in the hierarchy.
-     */
-    public val messageDateSeparatorTheme: MessageDateSeparatorTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageDateSeparatorTheme.current
-
-    /**
-     * Retrieves the current [MessageUnreadSeparatorTheme] at the call site's position in the hierarchy.
-     */
-    public val messageUnreadSeparatorTheme: MessageUnreadSeparatorTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageUnreadSeparatorTheme.current
 
     /**
      * Retrieves the current [MessageComposerTheme] at the call site's position in the hierarchy.
