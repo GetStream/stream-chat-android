@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ShareLocation
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -84,7 +84,7 @@ class LocationComponentFactory(
                 ),
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.ShareLocation,
+                    imageVector = Icons.Outlined.LocationOn,
                     contentDescription = "Share Location",
                 )
             }
