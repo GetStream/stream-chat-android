@@ -37,20 +37,40 @@ import java.io.File
  * - Videos: `{externalFilesDir}/Movies/`
  * With fallback to cache directories if external storage is unavailable.
  *
- * @param mode The capture mode determining what media types can be captured
- * @param fileManager Manager for creating temporary files in external storage
+ * [pictureFile] and [videoFile] are set during [createIntent] and used by [parseResult] to resolve
+ * the captured file. After process death these references are lost; callers can restore them by
+ * writing to the properties directly before the pending result is dispatched.
+ *
+ * @param mode The capture mode determining what media types can be captured.
+ * @param fileManager Manager for creating temporary files in external storage.
+ * @param onFilesCreated Optional callback invoked inside [createIntent] after destination files
+ * are created, giving the caller an opportunity to persist the file references before the
+ * external activity starts.
  */
 @InternalStreamChatApi
 public class CaptureMediaContract(
     private val mode: Mode,
     private val fileManager: StreamFileManager = StreamFileManager(),
+    private val onFilesCreated: ((pictureFile: File?, videoFile: File?) -> Unit)? = null,
 ) : ActivityResultContract<Unit, File?>() {
 
-    private var pictureFile: File? = null
-    private var videoFile: File? = null
+    /**
+     * The destination file for a captured photo.
+     * Set by [createIntent]; can be restored externally after process death.
+     */
+    @InternalStreamChatApi
+    public var pictureFile: File? = null
+
+    /**
+     * The destination file for a captured video.
+     * Set by [createIntent]; can be restored externally after process death.
+     */
+    @InternalStreamChatApi
+    public var videoFile: File? = null
 
     override fun createIntent(context: Context, input: Unit): Intent {
         val intents: List<Intent> = mode.intents(context)
+        onFilesCreated?.invoke(pictureFile, videoFile)
         val initialIntent = intents.lastOrNull() ?: Intent()
         return Intent.createChooser(initialIntent, mode.label(context))
             .apply {
