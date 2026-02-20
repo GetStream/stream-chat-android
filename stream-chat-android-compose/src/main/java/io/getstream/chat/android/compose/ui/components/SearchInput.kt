@@ -16,19 +16,24 @@
 
 package io.getstream.chat.android.compose.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,13 +41,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
@@ -89,7 +98,21 @@ public fun SearchInput(
         null
     }
 
-    InputField(
+    var textState by remember { mutableStateOf(TextFieldValue(text = query)) }
+    if (textState.text != query) {
+        LaunchedEffect(query) {
+            if (textState.text != query) {
+                textState = textState.copy(
+                    text = query,
+                    selection = TextRange(query.length),
+                )
+            }
+        }
+    }
+
+    val shape = RoundedCornerShape(StreamTokens.radiusLg)
+
+    BasicTextField(
         modifier = modifier
             .defaultMinSize(minHeight = 48.dp)
             .onFocusEvent { newState ->
@@ -100,9 +123,32 @@ public fun SearchInput(
                 }
 
                 isFocused = newState.isFocused
-            },
-        value = query,
-        onValueChange = onValueChange,
+            }
+            .border(
+                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+                shape = shape,
+            )
+            .clip(shape)
+            .padding(
+                start = StreamTokens.spacingXs,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
+            ),
+        value = textState,
+        onValueChange = {
+            textState = it
+            if (query != it.text) {
+                onValueChange(it.text)
+            }
+        },
+        textStyle = ChatTheme.typography.bodyDefault.copy(
+            color = ChatTheme.colors.textPrimary,
+        ),
+        cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),
+        singleLine = true,
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
         decorationBox = { innerTextField ->
             Row(
                 Modifier.fillMaxWidth(),
@@ -121,13 +167,6 @@ public fun SearchInput(
                 trailingContent?.invoke(this)
             }
         },
-        maxLines = 1,
-        innerPadding = PaddingValues(
-            start = StreamTokens.spacingXs,  // 8dp gap after icon
-            end = StreamTokens.spacingMd,    // 16dp trailing padding
-            top = StreamTokens.spacingSm,    // 12dp vertical
-            bottom = StreamTokens.spacingSm, // 12dp vertical
-        ),
     )
 }
 
