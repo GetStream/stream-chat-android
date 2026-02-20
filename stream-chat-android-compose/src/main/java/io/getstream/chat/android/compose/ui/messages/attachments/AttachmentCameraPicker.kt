@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages.attachments
 
 import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,13 +49,13 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CaptureMode
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -153,14 +152,6 @@ internal fun CameraPickerMode.toCaptureMediaMode(): CaptureMediaContract.Mode =
         CaptureMode.Video -> CaptureMediaContract.Mode.VIDEO
         CaptureMode.PhotoAndVideo -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
     }
-
-@Composable
-private fun rememberCaptureMediaLauncher(
-    mode: CaptureMediaContract.Mode,
-    onResult: (File) -> Unit,
-) = rememberLauncherForActivityResult(CaptureMediaContract(mode)) { file ->
-    file?.let(onResult)
-}
 
 @Preview(showBackground = true)
 @Composable

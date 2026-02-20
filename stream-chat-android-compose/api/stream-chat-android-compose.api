@@ -2310,6 +2310,10 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/Com
 	public final fun getLambda-8$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/media/CaptureMediaLauncherKt {
+	public static final fun rememberCaptureMediaLauncher (Lio/getstream/chat/android/ui/common/contract/internal/CaptureMediaContract$Mode;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)Landroidx/activity/compose/ManagedActivityResultLauncher;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/permission/ComposableSingletons$RequiredPermissionKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/permission/ComposableSingletons$RequiredPermissionKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;

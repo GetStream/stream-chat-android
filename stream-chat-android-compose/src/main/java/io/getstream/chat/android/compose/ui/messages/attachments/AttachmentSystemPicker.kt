@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.GalleryPicke
 import io.getstream.chat.android.compose.state.messages.attachments.MediaType
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredCameraPermission
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -57,12 +58,10 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.previewdata.PreviewCommandData
-import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import java.io.File
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -93,8 +92,10 @@ internal fun AttachmentSystemPicker(
             .map(CameraPickerMode::toCaptureMediaMode)
             .firstOrNull()
     }
-    val captureMediaLauncher = rememberCaptureMediaLauncher(captureMediaMode) { file ->
-        onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+    val captureMediaLauncher = captureMediaMode?.let { mode ->
+        rememberCaptureMediaLauncher(mode) { file ->
+            onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+        }
     }
     // Handling camera permission flow is only required if the host application has declared the permission.
     val requiresCameraPermission = remember { context.isPermissionDeclared(Manifest.permission.CAMERA) }
@@ -236,16 +237,6 @@ private fun rememberVisualMediaPickerLauncher(
                 onResult(listOf(uri))
             }
         }
-    }
-}
-
-@Composable
-private fun rememberCaptureMediaLauncher(
-    mode: CaptureMediaContract.Mode?,
-    onResult: (File) -> Unit,
-) = mode?.let {
-    rememberLauncherForActivityResult(CaptureMediaContract(mode)) { file ->
-        file?.let(onResult)
     }
 }
 
