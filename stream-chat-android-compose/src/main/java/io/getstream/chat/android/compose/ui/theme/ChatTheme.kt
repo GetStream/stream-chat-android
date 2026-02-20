@@ -68,7 +68,6 @@ import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
-import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -179,12 +178,6 @@ private val LocalMessageOptionsTheme = compositionLocalOf<MessageOptionsTheme> {
 }
 private val LocalChannelOptionsTheme = compositionLocalOf<ChannelOptionsTheme> {
     error("No ChannelOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
-    error(
-        "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
-            "in a ChatTheme.",
-    )
 }
 
 private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
@@ -353,7 +346,6 @@ public fun ChatTheme(
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
-    messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
@@ -424,7 +416,6 @@ public fun ChatTheme(
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalChannelOptionsTheme provides channelOptionsTheme,
-        LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalReadCountEnabled provides readCountEnabled,
@@ -652,14 +643,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalChannelOptionsTheme.current
-
-    /**
-     * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
-     */
-    public val messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageOptionsUserReactionAlignment.current
 
     /**
      * Retrieves the value of [Boolean] dictating whether video thumbnails are enabled at the call site's

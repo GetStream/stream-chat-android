@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2026 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+  <path
+      android:pathData="M17.708,10.001C17.708,14.258 14.257,17.709 10,17.709C5.743,17.709 2.292,14.258 2.292,10.001C2.292,5.743 5.743,2.292 10,2.292M15.833,1.459V6.876M13.125,4.167H18.542M12.357,12.358C11.055,13.659 8.945,13.659 7.643,12.358M12.083,7.917H12.5M7.5,7.917H7.917M12.708,7.917C12.708,8.147 12.522,8.334 12.292,8.334C12.061,8.334 11.875,8.147 11.875,7.917C11.875,7.687 12.061,7.501 12.292,7.501C12.522,7.501 12.708,7.687 12.708,7.917ZM8.125,7.917C8.125,8.147 7.938,8.334 7.708,8.334C7.478,8.334 7.292,8.147 7.292,7.917C7.292,7.687 7.478,7.501 7.708,7.501C7.938,7.501 8.125,7.687 8.125,7.917Z"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.5"
+      android:fillColor="#00000000"
+      android:strokeColor="#FF000000"
+      android:strokeLineCap="round"/>
+</vector>
