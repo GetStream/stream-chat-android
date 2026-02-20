@@ -127,9 +127,12 @@
     <string name="stream_compose_pin_message">Pin to this Chat</string>
     <string name="stream_compose_flag_message">Flag Message</string>
     <plurals name="stream_compose_message_reactions">
-        <item quantity="one">%d Message Reaction</item>
-        <item quantity="other">%d Message Reactions</item>
+        <item quantity="one">%d Reaction</item>
+        <item quantity="other">%d Reactions</item>
     </plurals>
+    <string name="stream_compose_reactions_add">Add reaction</string>
+    <string name="stream_compose_reactions_you">You</string>
+    <string name="stream_compose_reactions_remove">Tap to remove</string>
 
     <!-- Reactions Picker -->
     <string name="stream_compose_show_more_reactions">Show more reactions</string>

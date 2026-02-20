@@ -38,7 +38,7 @@ internal class SendGiphyListenerState(private val logic: LogicRegistry) : SendGi
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         if (result is Result.Success) {
             val message = result.value
-            logic.channelFromMessage(message)?.stateLogic?.upsertMessage(message)
+            logic.channelFromMessage(message)?.upsertMessage(message)
             logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
             logic.threadFromMessage(message)?.stateLogic()?.upsertMessage(message)
         }

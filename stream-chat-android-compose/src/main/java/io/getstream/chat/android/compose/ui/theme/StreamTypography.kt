@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
  * @param captionDefault Style for captions and supplementary information.
  * @param captionEmphasis Style for emphasized captions that require attention.
  * @param headingSmall Style for small headings.
+ * @param headingMedium Style for medium headings.
  * @param headingLarge Style for large, prominent headings.
  * @param metadataDefault Style for metadata and secondary information.
  * @param metadataEmphasis Style for emphasized metadata in secondary content areas.
@@ -71,6 +72,7 @@ public data class StreamTypography(
     public val captionDefault: TextStyle,
     public val captionEmphasis: TextStyle,
     public val headingSmall: TextStyle,
+    public val headingMedium: TextStyle,
     public val headingLarge: TextStyle,
     public val metadataDefault: TextStyle,
     public val metadataEmphasis: TextStyle,
@@ -194,6 +196,12 @@ public data class StreamTypography(
                 fontWeight = StreamTokens.fontWeightSemiBold,
                 fontSize = StreamTokens.fontSizeMd,
                 lineHeight = StreamTokens.lineHeightTight,
+            ),
+            headingMedium = TextStyle(
+                fontFamily = fontFamily,
+                fontWeight = StreamTokens.fontWeightSemiBold,
+                fontSize = StreamTokens.fontSizeLg,
+                lineHeight = StreamTokens.lineHeightRelaxed,
             ),
             headingLarge = TextStyle(
                 fontFamily = fontFamily,

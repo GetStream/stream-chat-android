@@ -296,7 +296,6 @@ class MessagesActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 20.dp)
                                 .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
                             message = selectedMessage,
                             currentUser = user,
                             onMessageAction = { action ->

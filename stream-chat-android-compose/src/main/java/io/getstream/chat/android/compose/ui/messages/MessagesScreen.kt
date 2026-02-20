@@ -500,24 +500,9 @@ private fun BoxScope.MessagesScreenMenus(
         )
     }
 
-    AnimatedVisibility(
-        visible = selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
-    ) {
+    if (selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty()) {
         ChatTheme.componentFactory.ReactionsMenu(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween(),
-                    ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                    ),
-                ),
+            modifier = Modifier,
             currentUser = user,
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {

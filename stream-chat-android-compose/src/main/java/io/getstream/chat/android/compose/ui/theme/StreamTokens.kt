@@ -55,6 +55,7 @@ internal object StreamTokens {
     val fontSizeXs = 12.sp
     val fontSizeSm = 14.sp
     val fontSizeMd = 16.sp
+    val fontSizeLg = 18.sp
     val fontSizeXl = 20.sp
     val lineHeightTightest = 10.sp
     val lineHeightTighter = 14.sp
