@@ -119,13 +119,14 @@ public fun SelectedMessageMenu(
             decorFitsSystemWindows = false,
         ),
     ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            (LocalView.current.parent as? DialogWindowProvider)?.window?.let { window ->
+        (LocalView.current.parent as? DialogWindowProvider)?.window?.let { window ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 window.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND)
                 window.attributes = window.attributes.apply {
                     blurBehindRadius = BackgroundBlur
                 }
             }
+            window.setDimAmount(DimAmount)
         }
 
         val isInspection = LocalInspectionMode.current
@@ -204,6 +205,7 @@ public fun SelectedMessageMenu(
 }
 
 private const val BackgroundBlur = 50
+private const val DimAmount = 0.6f
 
 /**
  * Holds the animation state for the [SelectedMessageMenu] pop-out effect.
