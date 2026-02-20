@@ -34,6 +34,6 @@ internal class QueryMembersListenerState(private val logic: LogicRegistry) : Que
         sort: QuerySorter<Member>,
         members: List<Member>,
     ) {
-        result.onSuccess { logic.channelState(channelType, channelId).upsertMembers(it) }
+        result.onSuccess { logic.channel(channelType, channelId).upsertMembers(it) }
     }
 }

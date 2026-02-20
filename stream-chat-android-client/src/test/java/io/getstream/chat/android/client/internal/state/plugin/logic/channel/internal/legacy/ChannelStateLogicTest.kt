@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy
 
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -22,7 +22,8 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.client.internal.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannelUserBannedEvent
@@ -47,6 +48,7 @@ import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -135,7 +137,7 @@ internal class ChannelStateLogicTest {
     private val _muted = MutableStateFlow(false)
 
     @Suppress("UNCHECKED_CAST")
-    private val mutableState: ChannelMutableState = mock { mock ->
+    private val mutableState: ChannelStateLegacyImpl = mock { mock ->
         on(mock.unreadCount) doReturn _unreadCount
         on(mock.read) doReturn _read
         on(mock.cid) doReturn randomCID()
@@ -328,7 +330,12 @@ internal class ChannelStateLogicTest {
     fun `Given ChannelUserBannedEvent updates the channel state`() {
         /* Given */
         val originMembers = randomMembers(size = 2) { idx ->
-            randomMember(user = randomUser(id = "user_${idx + 1}"), banned = false, banExpires = null, shadowBanned = false)
+            randomMember(
+                user = randomUser(id = "user_${idx + 1}"),
+                banned = false,
+                banExpires = null,
+                shadowBanned = false,
+            )
         }
         _members.value = originMembers
         _membersCount.value = originMembers.size
@@ -568,7 +575,7 @@ internal class ChannelStateLogicTest {
         // given
         val mutedUserId = "mutedUserId"
         val mutedUser = randomUser(id = mutedUserId)
-        val mute = io.getstream.chat.android.randomMute(target = mutedUser)
+        val mute = randomMute(target = mutedUser)
         spyMutableGlobalState.setMutedUsers(listOf(mute))
 
         val initialUnreadCount = 5

@@ -23,9 +23,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Attachment
@@ -92,12 +92,12 @@ internal class UploadAttachmentsIntegrationTests {
             on(it.channel(any(), any())) doReturn mock()
         }
 
-        val channelState: ChannelMutableState = mock {
+        val channelState: ChannelStateLegacyImpl = mock {
             on(it.messageList) doReturn MutableStateFlow(listOf(randomMessage()))
         }
         val channelLogic: ChannelStateLogic = mock {
             on(it.writeChannelState()) doReturn channelState
-            on(it.listenForChannelState()) doReturn channelState
+            on(it.channelState()) doReturn channelState
         }
 
         uploader = mock()

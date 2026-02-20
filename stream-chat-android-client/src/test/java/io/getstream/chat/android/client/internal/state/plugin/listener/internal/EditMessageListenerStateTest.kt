@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
-import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
@@ -45,10 +44,7 @@ internal class EditMessageListenerStateTest {
 
     @Test
     fun `when messages are in channel and threads, they are upserted in edit message`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -65,7 +61,7 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id
             },
@@ -84,10 +80,7 @@ internal class EditMessageListenerStateTest {
 
     @Test
     fun `when messages edit is requested, sync status is updated correctly when online`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -105,7 +98,7 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
@@ -124,10 +117,7 @@ internal class EditMessageListenerStateTest {
 
     @Test
     fun `when messages edit is requested, sync status is updated correctly when offline`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -145,7 +135,7 @@ internal class EditMessageListenerStateTest {
         val testMessage = randomMessage()
         editMessageListenerState.onMessageEditRequest(testMessage)
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
@@ -164,10 +154,7 @@ internal class EditMessageListenerStateTest {
 
     @Test
     fun `when messages edit completes, sync status is updated correctly when successful`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -185,7 +172,7 @@ internal class EditMessageListenerStateTest {
 
         editMessageListenerState.onMessageEditResult(testMessage, Result.Success(testMessage))
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
@@ -204,10 +191,7 @@ internal class EditMessageListenerStateTest {
 
     @Test
     fun `when messages edit completes, sync status is updated correctly when failing`() = runTest {
-        val channelStateLogic: ChannelStateLogic = mock()
-        val channelLogic: ChannelLogic = mock {
-            on(it.stateLogic) doReturn channelStateLogic
-        }
+        val channelLogic: ChannelLogic = mock()
 
         val threadsLogic: QueryThreadsLogic = mock()
         val activeThreadsLogic = listOf(threadsLogic)
@@ -225,7 +209,7 @@ internal class EditMessageListenerStateTest {
 
         editMessageListenerState.onMessageEditResult(testMessage, Result.Failure(Error.GenericError("")))
 
-        verify(channelStateLogic).upsertMessage(
+        verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },

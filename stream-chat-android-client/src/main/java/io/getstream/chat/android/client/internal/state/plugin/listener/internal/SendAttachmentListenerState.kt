@@ -37,7 +37,7 @@ internal class SendAttachmentListenerState(private val logic: LogicRegistry) : S
 
         channel.upsertMessage(message)
         // Optimistically update lastMessageAt when sending a message
-        channel.stateLogic.updateLastMessageAt(message)
+        channel.updateLastMessageAt(message)
         logic.getActiveQueryThreadsLogic().forEach { it.upsertMessage(message) }
         logic.threadFromMessage(message)?.upsertMessage(message)
 

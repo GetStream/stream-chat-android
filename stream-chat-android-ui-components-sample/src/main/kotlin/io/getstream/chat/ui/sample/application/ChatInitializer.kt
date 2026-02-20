@@ -97,6 +97,7 @@ class ChatInitializer(
         val stateConfig = StateConfig(
             backgroundSyncEnabled = false,
             userPresence = true,
+            useLegacyChannelLogic = false,
         )
 
         val client = ChatClient.Builder(apiKey, context)

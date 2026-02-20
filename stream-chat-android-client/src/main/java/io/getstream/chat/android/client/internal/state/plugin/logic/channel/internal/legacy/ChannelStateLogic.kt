@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -27,7 +27,9 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.internal.state.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.SearchLogic
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.TypingEventPruner
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.internal.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.calculateNewLastMessageAt
@@ -41,6 +43,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PushPreference
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -58,13 +61,13 @@ import java.util.Date
  * update the state of the channel in the SDK.
  *
  * @property clientState [ClientState]
- * @property mutableState [ChannelMutableState]
+ * @property mutableState [ChannelStateLegacyImpl]
  * @property globalMutableState [MutableGlobalState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogic(
     private val clientState: ClientState,
-    private val mutableState: ChannelMutableState,
+    private val mutableState: ChannelStateLegacyImpl,
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
@@ -98,7 +101,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state without changing it.
      */
-    override fun listenForChannelState(): ChannelState {
+    override fun channelState(): ChannelState {
         return mutableState
     }
 
@@ -106,7 +109,7 @@ internal class ChannelStateLogic(
      * Return [ChannelState] representing the state of the channel. Use this when you would like to
      * keep track of the state and would like to write a new state too.
      */
-    fun writeChannelState(): ChannelMutableState = mutableState
+    fun writeChannelState(): ChannelStateLegacyImpl = mutableState
 
     /**
      * Updates the channel data of the state of the SDK.
@@ -287,9 +290,9 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Updates the typing events inside [ChannelMutableState] and [MutableGlobalState].
+     * Updates the typing events inside [ChannelStateLegacyImpl] and [MutableGlobalState].
      *
-     * @param rawTypingEvents A map of typing events used to update [ChannelMutableState].
+     * @param rawTypingEvents A map of typing events used to update [ChannelStateLegacyImpl].
      * @param typingEvent A [TypingEvent] object used to update [MutableGlobalState].
      */
     private fun updateTypingStates(
@@ -332,7 +335,7 @@ internal class ChannelStateLogic(
         }
     }
 
-    override fun delsertPinnedMessage(message: Message) {
+    fun delsertPinnedMessage(message: Message) {
         logger.d {
             "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
                 ", deleted: ${message.isDeleted()}" +
@@ -352,7 +355,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean = false) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
@@ -382,7 +385,7 @@ internal class ChannelStateLogic(
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+    fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
@@ -445,6 +448,15 @@ internal class ChannelStateLogic(
     fun removeMessagesBefore(date: Date, systemMessage: Message? = null) {
         mutableState.removeMessagesBefore(date)
         systemMessage?.let(mutableState::upsertMessage)
+    }
+
+    /**
+     * Sets the [io.getstream.chat.android.models.PushPreference] for the channel.
+     */
+    fun setPushPreference(preference: PushPreference) {
+        updateChannelData { data ->
+            data?.copy(pushPreference = preference)
+        }
     }
 
     fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
@@ -582,8 +594,17 @@ internal class ChannelStateLogic(
      *
      * @param repliedMessage The message that contains the reply.
      */
-    override fun replyMessage(repliedMessage: Message?) {
+    override fun setRepliedMessage(repliedMessage: Message?) {
         mutableState.setRepliedMessage(repliedMessage)
+    }
+
+    /**
+     * Marks channel as read locally.
+     *
+     * @return The flag to determine if the channel was marked as read locally.
+     */
+    fun markRead(): Boolean {
+        return mutableState.markChannelAsRead()
     }
 
     /**
@@ -957,6 +978,7 @@ internal class ChannelStateLogic(
     }
 
     fun getPoll(pollId: String): Poll? = polls[pollId]
+
     fun updateMessageCount(channelMessageCount: Int) {
         updateChannelData { it?.copy(messageCount = channelMessageCount) }
     }

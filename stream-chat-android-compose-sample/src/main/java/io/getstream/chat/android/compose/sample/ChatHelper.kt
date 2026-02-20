@@ -83,6 +83,7 @@ object ChatHelper {
         val stateConfig = StateConfig(
             backgroundSyncEnabled = false,
             userPresence = true,
+            useLegacyChannelLogic = false,
         )
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING

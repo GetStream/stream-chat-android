@@ -16,18 +16,20 @@
 
 package io.getstream.chat.android.client.internal.state.plugin.listener.internal
 
-import io.getstream.chat.android.client.api.state.StateRegistry
+import io.getstream.chat.android.client.internal.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.result.Error
 import io.getstream.result.Result
 
 /**
- * [ChannelMarkReadListener] implementation for [io.getstream.chat.android.offline.plugin.internal.OfflinePlugin].
+ * [ChannelMarkReadListener] implementation for
+ * [io.getstream.chat.android.client.internal.state.plugin.internal.StatePlugin].
+ *
  * Checks if the channel can be marked as read and marks it locally if needed.
  *
- * @param state [StateRegistry]
+ * @param logic [LogicRegistry]
  */
-internal class ChannelMarkReadListenerState(private val state: StateRegistry) : ChannelMarkReadListener {
+internal class ChannelMarkReadListenerState(private val logic: LogicRegistry) : ChannelMarkReadListener {
 
     /**
      * Checks if the channel can be marked as read and marks it locally if needed.
@@ -39,11 +41,7 @@ internal class ChannelMarkReadListenerState(private val state: StateRegistry) : 
      * @return [Result] with information if channel should be marked as read.
      */
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {
-        val shouldMarkRead = state.markChannelAsRead(
-            channelType = channelType,
-            channelId = channelId,
-        )
-
+        val shouldMarkRead = logic.channel(channelType, channelId).markRead()
         return if (shouldMarkRead) {
             Result.Success(Unit)
         } else {

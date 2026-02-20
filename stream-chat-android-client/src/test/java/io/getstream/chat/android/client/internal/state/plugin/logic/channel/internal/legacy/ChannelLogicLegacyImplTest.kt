@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal
+package io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.legacy
 
-import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelMutableState
+import io.getstream.chat.android.client.internal.state.plugin.logic.channel.internal.ChannelLogic
+import io.getstream.chat.android.client.internal.state.plugin.state.channel.internal.ChannelStateLegacyImpl
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.client.test.randomUserMessagesDeletedEvent
@@ -35,7 +36,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-internal class ChannelLogicTest {
+internal class ChannelLogicLegacyImplTest {
 
     private val currentUserId = randomString()
     private lateinit var channelStateLogic: ChannelStateLogic
@@ -45,16 +46,16 @@ internal class ChannelLogicTest {
     fun setUp() {
         // Channel mutable state
         val cid = randomCID()
-        val mutableState = mock<ChannelMutableState>()
+        val mutableState = mock<ChannelStateLegacyImpl>()
         whenever(mutableState.cid).doReturn(cid)
         // Channel state logic
         channelStateLogic = mock()
         whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
         // Channel logic
-        sut = ChannelLogicImpl(
+        sut = ChannelLogicLegacyImpl(
             repos = mock(),
             userPresence = false,
-            channelStateLogic = channelStateLogic,
+            stateLogic = channelStateLogic,
             coroutineScope = TestScope(),
             getCurrentUserId = { currentUserId },
         )
