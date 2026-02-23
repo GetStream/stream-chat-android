@@ -81,7 +81,9 @@ public fun AttachmentPicker(
                 Toast.makeText(context, R.string.stream_compose_message_composer_file_not_supported, Toast.LENGTH_SHORT)
                     .show()
             }
-            actions.onAttachmentsSelected(submitted.attachments)
+            if (submitted.attachments.isNotEmpty()) {
+                actions.onAttachmentsSelected(submitted.attachments)
+            }
         }
     }
 
