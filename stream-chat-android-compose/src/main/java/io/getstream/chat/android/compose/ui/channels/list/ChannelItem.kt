@@ -276,21 +276,19 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                         ?: lastMessage?.let {
                             ChatTheme.messagePreviewFormatter.formatMessagePreview(it, currentUser)
                         }
-                        ?: AnnotatedString("")
 
-                if (lastMessageText.isNotEmpty()) {
-                    Text(
-                        modifier = Modifier
-                            .testTag("Stream_MessagePreview")
-                            .weight(1f),
-                        text = lastMessageText,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = ChatTheme.typography.captionDefault,
-                        color = ChatTheme.colors.textSecondary,         // was textLowEmphasis
-                        inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
-                    )
-                }
+                Text(
+                    modifier = Modifier
+                        .testTag("Stream_MessagePreview")
+                        .weight(1f),
+                    text = lastMessageText
+                        ?: AnnotatedString(stringResource(R.string.stream_compose_no_messages_yet)),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ChatTheme.typography.captionDefault,
+                    color = ChatTheme.colors.textSecondary,
+                    inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
+                )
             }
         }
     }

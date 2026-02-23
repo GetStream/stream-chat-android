@@ -105,7 +105,7 @@ public fun MessageReadStatusIcon(
             else -> isSentIcon()
         }
 
-        SyncStatus.FAILED_PERMANENTLY -> Unit
+        SyncStatus.FAILED_PERMANENTLY -> IsErrorIcon(modifier = modifier)
     }
 }
 
@@ -161,6 +161,16 @@ private fun IsSentIcon(modifier: Modifier) {
         painter = painterResource(id = R.drawable.stream_compose_message_sent),
         contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_sent),
         tint = ChatTheme.colors.chatTextTimestamp,
+    )
+}
+
+@Composable
+private fun IsErrorIcon(modifier: Modifier) {
+    Icon(
+        modifier = modifier.testTag("Stream_MessageReadStatus_isError"),
+        painter = painterResource(id = R.drawable.stream_compose_ic_error),
+        contentDescription = null,
+        tint = ChatTheme.colors.accentError,
     )
 }
 

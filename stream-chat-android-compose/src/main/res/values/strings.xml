@@ -153,8 +153,28 @@
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
-    <!-- Audio Recording -->
+    <!-- Message Preview -->
     <string name="stream_compose_audio_recording_preview">Voice message</string>
+    <string name="stream_compose_photo_preview">Photo</string>
+    <string name="stream_compose_video_preview">Video</string>
+    <string name="stream_compose_file_preview">File</string>
+    <string name="stream_compose_link_preview">Link</string>
+    <string name="stream_compose_message_deleted_preview">Message deleted</string>
+    <string name="stream_compose_no_messages_yet">No messages yet</string>
+    <plurals name="stream_compose_photos_preview">
+        <item quantity="one">%d Photo</item>
+        <item quantity="other">%d Photos</item>
+    </plurals>
+    <plurals name="stream_compose_videos_preview">
+        <item quantity="one">%d Video</item>
+        <item quantity="other">%d Videos</item>
+    </plurals>
+    <plurals name="stream_compose_files_preview">
+        <item quantity="one">%d File</item>
+        <item quantity="other">%d Files</item>
+    </plurals>
+
+    <!-- Audio Recording -->
     <string name="stream_compose_audio_recording_start">Record audio message</string>
     <string name="stream_compose_audio_recording_hint">Hold to record. Release to send</string>
     <string name="stream_compose_audio_recording_slide_to_cancel">Slide to cancel</string>

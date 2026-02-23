@@ -52,23 +52,67 @@ public interface MessagePreviewIconFactory {
 internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
 
     companion object {
-        /**
-         * The key for the voice message preview icon.
-         */
         internal const val VOICE_MESSAGE = "voice_message"
+        internal const val PHOTO = "photo"
+        internal const val VIDEO = "video"
+        internal const val FILE = "file"
+        internal const val LINK = "link"
+        internal const val LOCATION = "location"
+        internal const val POLL = "poll"
     }
 
     override fun createPreviewIcons(): Map<String, InlineTextContent> {
+        val placeholder = Placeholder(
+            width = 16.sp,
+            height = 16.sp,
+            placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
+        )
         return mapOf(
-            VOICE_MESSAGE to InlineTextContent(
-                placeholder = Placeholder(
-                    width = 16.sp,
-                    height = 16.sp,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
-                ),
-            ) {
+            VOICE_MESSAGE to InlineTextContent(placeholder) {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            PHOTO to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_camera),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            VIDEO to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_video),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            FILE to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_file),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            LINK to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_link),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            LOCATION to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_map_pin),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+            },
+            POLL to InlineTextContent(placeholder) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_poll),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
                 )
