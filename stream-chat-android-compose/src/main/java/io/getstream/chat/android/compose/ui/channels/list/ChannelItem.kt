@@ -57,7 +57,9 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.ui.util.getLastMessage
+import io.getstream.chat.android.compose.ui.util.getLastMessageIncludingDeleted
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.SyncStatus
@@ -184,7 +186,10 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     currentUser: User?,
 ) {
     val channel = channelItemState.channel
-    val lastMessage = channel.getLastMessage(currentUser)
+    // Use raw last message (including deleted) for preview; fall back to filtered for non-deleted
+    val rawLastMessage = channel.getLastMessageIncludingDeleted(currentUser)
+    val isLastMessageDeleted = rawLastMessage?.isDeleted() == true
+    val lastMessage = if (isLastMessageDeleted) rawLastMessage else channel.getLastMessage(currentUser)
     val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
     val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
 
@@ -259,8 +264,8 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                 // Typing indicator replaces message preview when active
                 UserTypingIndicator(channelItemState.typingUsers)
             } else {
-                // Delivery status prefix: checkmark icon (only for own messages)
-                if (isLastMessageFromCurrentUser && lastMessage != null) {
+                // Delivery status prefix: checkmark icon (only for own non-deleted messages)
+                if (isLastMessageFromCurrentUser && lastMessage != null && !isLastMessageDeleted) {
                     ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
                         channel = channel,
                         message = lastMessage,
