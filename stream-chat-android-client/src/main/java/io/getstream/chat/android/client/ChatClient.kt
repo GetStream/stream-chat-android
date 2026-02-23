@@ -1760,7 +1760,10 @@ internal constructor(
         sort: QuerySorter<Message>? = null,
     ): Call<SearchMessagesResult> {
         if (offset != null && next != null) {
-            return ErrorCall(userScope, Error.GenericError("Cannot use both offset and next values. Specify only one of these options."))
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Cannot use both offset and next values. Specify only one of these options."),
+            )
         }
         return api.searchMessages(
             channelFilter = channelFilter,
