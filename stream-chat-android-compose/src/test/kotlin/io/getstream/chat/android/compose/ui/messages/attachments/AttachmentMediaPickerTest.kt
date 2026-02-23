@@ -33,19 +33,10 @@ internal class AttachmentMediaPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `single selection`() {
+    fun `selection`() {
         snapshotWithDarkMode {
             ViewModelStore {
-                AttachmentMediaPickerSingleSelection()
-            }
-        }
-    }
-
-    @Test
-    fun `multiple selection`() {
-        snapshotWithDarkMode {
-            ViewModelStore {
-                AttachmentMediaPickerMultipleSelection()
+                AttachmentMediaPickerSelection()
             }
         }
     }

@@ -45,9 +45,11 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.localPreviewData
+import io.getstream.chat.android.compose.ui.util.extensions.internal.stableKey
+import io.getstream.chat.android.compose.ui.util.rememberAutoScrollLazyListState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * UI for currently selected image and video attachments, within the [MessageInput].
@@ -70,6 +72,7 @@ public fun MediaAttachmentPreviewContent(
     },
 ) {
     LazyRow(
+        state = rememberAutoScrollLazyListState(attachments.size),
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewContent"),
@@ -77,9 +80,13 @@ public fun MediaAttachmentPreviewContent(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs, Alignment.Start),
         contentPadding = PaddingValues(horizontal = StreamTokens.spacingSm),
     ) {
-        items(attachments) { image ->
+        items(
+            items = attachments,
+            key = Attachment::stableKey,
+        ) { attachment ->
             MediaAttachmentPreviewItem(
-                mediaAttachment = image,
+                modifier = Modifier.animateItem(),
+                mediaAttachment = attachment,
                 onAttachmentRemoved = onAttachmentRemoved,
                 overlayContent = previewItemOverlayContent,
             )
@@ -100,11 +107,12 @@ private fun MediaAttachmentPreviewItem(
     mediaAttachment: Attachment,
     onAttachmentRemoved: (Attachment) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val data = mediaAttachment.upload ?: mediaAttachment.imagePreviewUrl
+    val data = mediaAttachment.localPreviewData
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(95.dp)
             .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewItem"),

@@ -28,8 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
-import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.resolveFilesAccessState
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -50,9 +49,8 @@ internal class FileAttachmentFragment : Fragment() {
     private var _binding: StreamUiFragmentAttachmentFileBinding? = null
     private val binding get() = _binding!!
 
-    private val storageHelper: StorageHelper = StorageHelper()
+    private lateinit var attachmentStorageHelper: AttachmentStorageHelper
     private val permissionChecker: PermissionChecker = PermissionChecker()
-    private val attachmentFilter: AttachmentFilter = AttachmentFilter()
     private var activityResultLauncher: ActivityResultLauncher<Boolean>? = null
 
     /**
@@ -87,6 +85,7 @@ internal class FileAttachmentFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
+        attachmentStorageHelper = AttachmentStorageHelper(requireContext())
         _binding = StreamUiFragmentAttachmentFileBinding.inflate(requireContext().streamThemeInflater, container, false)
         return binding.root
     }
@@ -225,14 +224,13 @@ internal class FileAttachmentFragment : Fragment() {
 
     private fun setupResultListener() {
         activityResultLauncher = activity?.activityResultRegistry
-            ?.register(LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) {
+            ?.register(LauncherRequestsKeys.SELECT_FILES, SelectFilesContract()) { uris ->
                 lifecycleScope.launch(DispatcherProvider.Main) {
-                    val attachments = withContext(DispatcherProvider.IO) {
-                        storageHelper.getAttachmentsFromUriList(requireContext(), it)
+                    val filteredAttachments = withContext(DispatcherProvider.IO) {
+                        attachmentStorageHelper.resolveMetadata(uris)
                     }
-                    val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
-                    if (filteredAttachments.size < attachments.size) {
+                    if (filteredAttachments.size < uris.size) {
                         Toast.makeText(
                             context,
                             getString(R.string.stream_ui_message_composer_file_not_supported),
@@ -257,10 +255,9 @@ internal class FileAttachmentFragment : Fragment() {
         lifecycleScope.launch(DispatcherProvider.Main) {
             binding.progressBar.isVisible = true
 
-            val attachments = withContext(DispatcherProvider.IO) {
-                storageHelper.getFileAttachments(requireContext())
+            val filteredAttachments = withContext(DispatcherProvider.IO) {
+                attachmentStorageHelper.getFileMetadata()
             }
-            val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
             if (filteredAttachments.isEmpty()) {
                 binding.emptyPlaceholderTextView.setTextStyle(style.fileAttachmentsNoFilesTextStyle)

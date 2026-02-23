@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,7 +32,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -115,9 +115,13 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -137,10 +141,10 @@ import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomBu
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
+import io.getstream.chat.android.compose.ui.components.selectedmessage.MessageMenuHeader
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
@@ -151,7 +155,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Defa
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
@@ -195,7 +199,6 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -208,6 +211,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
@@ -1000,6 +1004,7 @@ public interface ChatComponentFactory {
     public fun MessageContainer(
         messageItem: MessageItemState,
         reactionSorting: ReactionSorting,
+        modifier: Modifier,
         onPollUpdated: (Message, Poll) -> Unit,
         onCastVote: (Message, Poll, Option) -> Unit,
         onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -1021,6 +1026,7 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.messages.list.MessageContainer(
             messageItem = messageItem,
             reactionSorting = reactionSorting,
+            modifier = modifier,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -2190,7 +2196,9 @@ public interface ChatComponentFactory {
      * @param messageOptions List of message options.
      * @param ownCapabilities The capabilities of the current user.
      * @param onMessageAction Callback for when a message action is clicked.
+     * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onDismiss Callback for when the menu is dismissed.
+     * @param currentUser The currently logged in user.
      */
     @Composable
     public fun MessageMenu(
@@ -2201,6 +2209,7 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         onShowMore: () -> Unit,
         onDismiss: () -> Unit,
+        currentUser: User?,
     ) {
         SelectedMessageMenu(
             modifier = modifier,
@@ -2210,42 +2219,17 @@ public interface ChatComponentFactory {
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMore,
             onDismiss = onDismiss,
-        )
-    }
-
-    /**
-     * Factory method for creating the center content of the SelectedMessageMenu.
-     *
-     * @param modifier The modifier for the center content.
-     * @param message The selected message.
-     * @param messageOptions List of message options.
-     * @param ownCapabilities The capabilities of the current user.
-     */
-    @Composable
-    public fun MessageMenuCenterContent(
-        modifier: Modifier,
-        message: Message,
-        messageOptions: List<MessageOptionItemState>,
-        onMessageAction: (MessageAction) -> Unit,
-        ownCapabilities: Set<String>,
-    ) {
-        MessageMenuOptions(
-            modifier = modifier,
-            message = message,
-            options = messageOptions,
-            onMessageOptionSelected = { onMessageAction(it.action) },
+            currentUser = currentUser,
         )
     }
 
     /**
      * Factory method for creating the header content of the SelectedMessageMenu.
      *
+     * @param modifier The modifier for the header content.
      * @param message The selected message.
-     * @param messageOptions List of message options.
-     * @param ownCapabilities The capabilities of the current user.
-     * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onMessageAction Callback for when a message action is clicked.
-     * @param showMoreReactionsIcon The icon to show for the "Show more reactions" option.
+     * @param onShowMore Callback for when the show more reactions option is clicked.
      */
     @Composable
     public fun MessageMenuHeaderContent(
@@ -2255,14 +2239,19 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        ReactionMenuOptions(
+        MessageMenuHeader(
             modifier = modifier,
-            message = message,
-            onMessageAction = onMessageAction,
+            onReactionOptionSelected = {
+                onMessageAction(
+                    React(
+                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
+                        message = message,
+                    ),
+                )
+            },
             onShowMoreReactionsSelected = onShowMore,
-            showMoreReactionsIcon = showMoreReactionsIcon,
+            ownReactions = message.ownReactions,
         )
     }
 
@@ -2287,50 +2276,21 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the options content of the SelectedMessageMenu.
+     * Factory method for creating an individual option item in the SelectedMessageMenu.
+     *
+     * @param option The message option state.
+     * @param onMessageOptionSelected Callback for when a message option is selected.
      */
     @Composable
     public fun MessageMenuOptionsItem(
-        modifier: Modifier,
         option: MessageOptionItemState,
         onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     ) {
-        val title = stringResource(id = option.title)
-        // Not using directly the [MessageOptionsItem] because
-        // that one contains our default behavior which is not overridable.
-        MenuOptionItem(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(ChatTheme.dimens.messageOptionsItemHeight),
-            title = title,
-            titleColor = option.titleColor,
-            leadingIcon = {
-                MessageMenuOptionsItemLeadingContent(modifier, option)
-            },
+        ContextualMenuItem(
+            label = stringResource(id = option.title),
+            leadingIcon = option.iconPainter,
+            destructive = option.destructive,
             onClick = { onMessageOptionSelected(option) },
-            style = ChatTheme.typography.body,
-            itemHeight = 56.dp,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-        )
-    }
-
-    /**
-     * Factory method for creating the leading icon of the Message options menu item.
-     * This is the icon that appears on the left side of the message option.
-     *
-     * @param option The message option state.
-     */
-    @Composable
-    public fun MessageMenuOptionsItemLeadingContent(
-        modifier: Modifier,
-        option: MessageOptionItemState,
-    ) {
-        Icon(
-            modifier = modifier.padding(horizontal = 16.dp),
-            painter = option.iconPainter,
-            tint = option.iconColor,
-            contentDescription = null,
         )
     }
 
@@ -2449,39 +2409,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for the reaction options in the menu.
-     *
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     */
-    @Composable
-    public fun ReactionMenuOptions(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
-    ) {
-        ReactionOptions(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-            showMoreReactionsIcon = showMoreReactionsIcon,
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
-                        message = message,
-                    ),
-                )
-            },
-            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            ownReactions = message.ownReactions,
-        )
-    }
-
-    /**
      * Factory method for creating the header content of the SelectedReactionsMenu.
      *
      * @param modifier The modifier for the header.
@@ -2508,22 +2435,23 @@ public interface ChatComponentFactory {
      * Factory method for creating the reactions menu more option.
      *
      * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     * @param showMoreReactionsIcon The icon for the show more reactions option.
      */
     @Composable
     public fun ReactionMenuShowMore(
         modifier: Modifier,
         onShowMoreReactionsSelected: () -> Unit,
-        showMoreReactionsIcon: Int,
     ) {
-        Icon(
-            modifier = modifier.clickable(bounded = false) {
-                onShowMoreReactionsSelected()
-            },
-            painter = painterResource(id = showMoreReactionsIcon),
-            contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
-            tint = ChatTheme.colors.textLowEmphasis,
-        )
+        StreamButton(
+            onClick = onShowMoreReactionsSelected,
+            style = StreamButtonStyleDefaults.secondaryOutline,
+            size = StreamButtonSize.Small,
+            modifier = modifier,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.stream_compose_ic_plus),
+                contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
+            )
+        }
     }
 
     /**
@@ -3770,29 +3698,20 @@ public interface ChatComponentFactory {
      * @param modifier Modifier for styling.
      * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
      * @param messageMode Current message mode; affects poll availability (disabled in threads).
-     * @param onAttachmentItemSelected Called when user taps an item to select/deselect it.
-     * @param onAttachmentsSelected Called when attachments are confirmed for sending.
-     * @param onAttachmentPickerAction Called for special actions (poll creation, command selection).
-     * @param onDismiss Called when the picker should close.
+     * @param actions The [AttachmentPickerActions] that handle user interactions within the picker.
      */
     @Composable
     public fun AttachmentPicker(
         modifier: Modifier,
         attachmentsPickerViewModel: AttachmentsPickerViewModel,
         messageMode: MessageMode,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentsSelected: (List<Attachment>) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-        onDismiss: () -> Unit,
+        actions: AttachmentPickerActions,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker(
             modifier = modifier,
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSelected = onAttachmentsSelected,
-            onAttachmentPickerAction = onAttachmentPickerAction,
-            onDismiss = onDismiss,
+            actions = actions,
         )
     }
 
@@ -3860,9 +3779,9 @@ public interface ChatComponentFactory {
      * @param pickerMode The currently active mode; determines which picker UI to show.
      * @param commands Available slash commands for [CommandPickerMode].
      * @param attachments Current attachment items loaded for gallery/file modes.
-     * @param onAttachmentsChanged Called when the attachment list needs updating (e.g., after loading).
-     * @param onAttachmentItemSelected Called when user selects/deselects an attachment.
-     * @param onAttachmentPickerAction Called for mode-specific actions (poll creation, command selection).
+     * @param onLoadAttachments Called to trigger loading attachment metadata for the current mode.
+     * @param onUrisSelected Called with URIs from a system picker for async resolution.
+     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
      * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
      */
     @Composable
@@ -3870,18 +3789,18 @@ public interface ChatComponentFactory {
         pickerMode: AttachmentPickerMode?,
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onLoadAttachments: () -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
+        actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerContent(
             pickerMode = pickerMode,
             commands = commands,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onLoadAttachments = onLoadAttachments,
+            onUrisSelected = onUrisSelected,
+            actions = actions,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
@@ -3894,20 +3813,20 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
      * @param attachments Media items to display in the grid.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading media metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
      */
     @Composable
     public fun AttachmentMediaPicker(
         pickerMode: GalleryPickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
         )
     }
@@ -3940,24 +3859,24 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the file picker (multi-select).
      * @param attachments File items to display in the list.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading file metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
-     * @param onAttachmentsSubmitted Called when files are picked via system file browser.
+     * @param onUrisSelected Called with URIs picked via the system file browser.
      */
     @Composable
     public fun AttachmentFilePicker(
         pickerMode: FilePickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentFilePicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            onUrisSelected = onUrisSelected,
         )
     }
 
@@ -3968,17 +3887,22 @@ public interface ChatComponentFactory {
      * Poll creation is only available when the channel has the "polls" capability.
      *
      * @param pickerMode Configuration for poll picker behavior.
-     * @param onAttachmentPickerAction Called with [AttachmentPickerPollCreation] when a poll is created,
-     * or [AttachmentPickerCreatePollClick] when the create button is tapped.
+     * @param onCreatePollClick Called when the user taps "Create Poll", opening the creation dialog.
+     * @param onCreatePoll Called when the user submits a new poll configuration.
+     * @param onCreatePollDismissed Called when the poll creation dialog is closed without submitting.
      */
     @Composable
     public fun AttachmentPollPicker(
         pickerMode: PollPickerMode,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onCreatePollClick: () -> Unit,
+        onCreatePoll: (PollConfig) -> Unit,
+        onCreatePollDismissed: () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker(
             pickerMode = pickerMode,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onCreatePollClick = onCreatePollClick,
+            onCreatePoll = onCreatePoll,
+            onCreatePollDismissed = onCreatePollDismissed,
         )
     }
 
@@ -3990,18 +3914,18 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode The command picker mode configuration.
      * @param commands Available commands from the channel configuration.
-     * @param onAttachmentPickerAction Called with [AttachmentPickerCommandSelect] when a command is selected.
+     * @param onCommandSelected Called when a slash command is selected.
      */
     @Composable
     public fun AttachmentCommandPicker(
         pickerMode: CommandPickerMode,
         commands: List<Command>,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onCommandSelected: (Command) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCommandPicker(
             pickerMode = pickerMode,
             commands = commands,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onCommandSelected = onCommandSelected,
         )
     }
 
@@ -4015,22 +3939,25 @@ public interface ChatComponentFactory {
      * @param channel Used to check channel capabilities for filtering available modes.
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
      * @param attachments Current attachment state (used for state management).
-     * @param onAttachmentPickerAction Called for poll creation and command selection.
-     * @param onAttachmentsSubmitted Called when files are selected from system pickers.
+     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
+     * @param onUrisSelected Called with URIs from system pickers for async resolution.
+     * @param onAttachmentsSubmitted Called when camera-captured media is ready.
      */
     @Composable
     public fun AttachmentSystemPicker(
         channel: Channel,
         messageMode: MessageMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        actions: AttachmentPickerActions,
+        onUrisSelected: (List<Uri>) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
             channel = channel,
             messageMode = messageMode,
             attachments = attachments,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            actions = actions,
+            onUrisSelected = onUrisSelected,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }

@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -31,9 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCommandSelect
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.isKeyboardVisibleAsState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -49,8 +47,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * - Height configuration based on picker type (system vs in-app)
  * - Integration between the attachment picker and message composer
  *
- * The picker visibility is controlled by [AttachmentsPickerViewModel.isShowingAttachments].
- * Toggle it using [AttachmentsPickerViewModel.changeAttachmentState].
+ * The picker visibility is controlled by [AttachmentsPickerViewModel.isPickerVisible].
+ * Toggle it using [AttachmentsPickerViewModel.setPickerVisible].
  *
  * This component is typically used within [MessagesScreen] and handles the complete flow of:
  * 1. Displaying the attachment picker when triggered
@@ -70,7 +68,7 @@ public fun AttachmentPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
-    val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+    val isPickerVisible = attachmentsPickerViewModel.isPickerVisible
     val messageMode by composerViewModel.messageMode.collectAsStateWithLifecycle()
 
     var isShowingDialog by rememberSaveable { mutableStateOf(false) }
@@ -78,8 +76,8 @@ public fun AttachmentPickerMenu(
     // Dismiss the keyboard when the attachments picker is shown (if instructed by ChatTheme).
     val focusManager = LocalFocusManager.current
     val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
-    LaunchedEffect(isShowingAttachments) {
-        if (shouldCloseKeyboard && isShowingAttachments) {
+    LaunchedEffect(isPickerVisible) {
+        if (shouldCloseKeyboard && isPickerVisible) {
             focusManager.clearFocus()
         }
     }
@@ -88,7 +86,7 @@ public fun AttachmentPickerMenu(
     val isKeyboardVisible by isKeyboardVisibleAsState()
     LaunchedEffect(isKeyboardVisible) {
         if (isKeyboardVisible && !isShowingDialog) {
-            attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
+            attachmentsPickerViewModel.setPickerVisible(visible = false)
         }
     }
 
@@ -97,8 +95,34 @@ public fun AttachmentPickerMenu(
         else -> ChatTheme.dimens.attachmentsPickerHeight
     }
 
+    val actions = remember(attachmentsPickerViewModel, composerViewModel) {
+        val baseActions = AttachmentPickerActions.defaultActions(attachmentsPickerViewModel, composerViewModel)
+        baseActions.copy(
+            onCreatePollClick = {
+                isShowingDialog = true
+                baseActions.onCreatePollClick()
+            },
+            onCreatePoll = { pollConfig ->
+                isShowingDialog = false
+                baseActions.onCreatePoll(pollConfig)
+            },
+            onCreatePollDismissed = {
+                isShowingDialog = false
+                baseActions.onCreatePollDismissed()
+            },
+            onCommandSelected = { command ->
+                isShowingDialog = false
+                baseActions.onCommandSelected(command)
+            },
+            onDismiss = {
+                isShowingDialog = false
+                baseActions.onDismiss()
+            },
+        )
+    }
+
     AnimatedVisibility(
-        visible = isShowingAttachments,
+        visible = isPickerVisible,
         enter = expandVertically(expandFrom = Alignment.Top),
         exit = shrinkVertically(shrinkTowards = Alignment.Top),
     ) {
@@ -106,32 +130,7 @@ public fun AttachmentPickerMenu(
             modifier = Modifier.height(menuHeight),
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
-            onAttachmentItemSelected = { attachmentItem ->
-                val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-                attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
-                attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                    composerViewModel.updateSelectedAttachments(attachments)
-                }
-            },
-            onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                composerViewModel.addSelectedAttachments(attachments)
-            },
-            onAttachmentPickerAction = { action ->
-                when (action) {
-                    is AttachmentPickerPollCreation -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.createPoll(action.pollConfig)
-                    }
-
-                    is AttachmentPickerCommandSelect -> {
-                        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-                        composerViewModel.selectCommand(action.command)
-                    }
-                }
-                isShowingDialog = action is AttachmentPickerCreatePollClick
-            },
-            onDismiss = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+            actions = actions,
         )
     }
 }

@@ -46,7 +46,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
@@ -215,7 +214,7 @@ internal fun FilesPickerSingleSelection() {
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC).apply {
                     size = 100_000
                 },
-                selection = Selection.Selected(position = 1),
+                isSelected = true,
             ),
         ),
         onItemSelected = {},
@@ -241,13 +240,13 @@ internal fun FilesPickerMultipleSelection() {
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
                     size = 10_000
                 },
-                selection = Selection.Selected(position = 1),
+                isSelected = true,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC).apply {
                     size = 100_000
                 },
-                selection = Selection.Selected(position = 2),
+                isSelected = true,
             ),
         ),
         onItemSelected = {},

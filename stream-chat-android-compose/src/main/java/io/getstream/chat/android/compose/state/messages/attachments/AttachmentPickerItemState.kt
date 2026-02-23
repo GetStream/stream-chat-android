@@ -26,37 +26,9 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  *
  * @param attachmentMetaData The metadata describing the attachment, including its URI, file name,
  * size, MIME type, and other relevant information.
- * @param selection The current selection state of the item. See [Selection] for possible states.
+ * @param isSelected Whether this item is currently selected.
  */
 public data class AttachmentPickerItemState(
     val attachmentMetaData: AttachmentMetaData,
-    val selection: Selection = Selection.Unselected,
-) {
-
-    /**
-     * Represents the selection state of an attachment picker item.
-     */
-    public sealed interface Selection {
-
-        /**
-         * Indicates that the attachment is selected.
-         *
-         * @param position The 1-based position of this attachment in the selection order.
-         * This is displayed as a badge on the item to show the selection order when
-         * multiple attachments are selected.
-         */
-        public data class Selected(val position: Int) : Selection
-
-        /**
-         * Indicates that the attachment is not selected.
-         */
-        public data object Unselected : Selection
-    }
-
-    /**
-     * Convenience property to check if this item is currently selected.
-     *
-     * @return `true` if the item is selected, `false` otherwise.
-     */
-    public val isSelected: Boolean get() = selection is Selection.Selected
-}
+    val isSelected: Boolean = false,
+)

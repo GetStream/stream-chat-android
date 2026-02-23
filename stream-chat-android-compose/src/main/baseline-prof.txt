@@ -2302,7 +2302,7 @@ HSPLio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory
 HSPLio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory$$ExternalSyntheticLambda1;->invoke()Ljava/lang/Object;
 PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;-><clinit>()V
 PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;-><init>(Lio/getstream/chat/android/compose/ui/util/StorageHelperWrapper;Lkotlinx/coroutines/flow/StateFlow;)V
-PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;->isShowingAttachments()Z
+PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;->isPickerVisible()Z
 PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel$special$$inlined$map$1;-><init>(Lkotlinx/coroutines/flow/Flow;)V
 PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel$special$$inlined$map$1;->collect(Lkotlinx/coroutines/flow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 PLio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel$special$$inlined$map$1$2;-><init>(Lkotlinx/coroutines/flow/FlowCollector;)V

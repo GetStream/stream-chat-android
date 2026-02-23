@@ -175,17 +175,15 @@ class MessagesActivity : ComponentActivity() {
 
     @Composable
     private fun SetupContent() {
-        Column {
-            MessagesScreen(
-                viewModelFactory = factory,
-                reactionSorting = ReactionSortingByLastReactionAt,
-                onBackPressed = { finish() },
-                onHeaderTitleClick = ::openChannelInfo,
-                onMessageLinkClick = { _, link ->
-                    openLink(link)
-                },
-            )
-        }
+        MessagesScreen(
+            viewModelFactory = factory,
+            reactionSorting = ReactionSortingByLastReactionAt,
+            onBackPressed = { finish() },
+            onHeaderTitleClick = ::openChannelInfo,
+            onMessageLinkClick = { _, link ->
+                openLink(link)
+            },
+        )
         // MyCustomUi()
     }
 
@@ -270,7 +268,6 @@ class MessagesActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 20.dp)
                                 .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
@@ -362,7 +359,7 @@ class MessagesActivity : ComponentActivity() {
                 )
             },
             trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
-            onAttachmentsClick = attachmentsPickerViewModel::toggleAttachmentState,
+            onAttachmentsClick = attachmentsPickerViewModel::togglePickerVisibility,
         )
     }
 

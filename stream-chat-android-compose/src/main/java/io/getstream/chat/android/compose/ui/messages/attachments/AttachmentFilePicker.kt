@@ -16,8 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
-import android.content.Context
-import android.widget.Toast
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
@@ -47,21 +46,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.RequiredStoragePermission
 import io.getstream.chat.android.compose.ui.messages.attachments.permission.filesAccessAsState
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModel
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentProcessingViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsMetadataFromUris
 import io.getstream.chat.android.ui.common.model.MimeType
 import io.getstream.chat.android.ui.common.permissions.FilesAccess
 import io.getstream.chat.android.ui.common.permissions.Permissions
@@ -73,16 +66,12 @@ import io.getstream.chat.android.ui.common.utils.openSystemSettings
 internal fun AttachmentFilePicker(
     pickerMode: FilePickerMode,
     attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit = {},
+    onLoadAttachments: () -> Unit = {},
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = {},
-    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
+    onUrisSelected: (List<Uri>) -> Unit = {},
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val processingViewModelFactory = remember(context) {
-        AttachmentProcessingViewModelFactory(StorageHelperWrapper(context.applicationContext))
-    }
-    val processingViewModel = viewModel<AttachmentProcessingViewModel>(factory = processingViewModelFactory)
     var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
     val permissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -92,16 +81,12 @@ internal fun AttachmentFilePicker(
         }
     val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
         if (value != FilesAccess.DENIED) {
-            processingViewModel.getFilesAsync { metadata ->
-                val items = metadata.map(::AttachmentPickerItemState)
-                onAttachmentsChanged(items)
-            }
+            onLoadAttachments()
         }
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
     Box(contentAlignment = Alignment.Center) {
-        // Content
         FilesAccessContent(
             filesAccess = filesAccess,
             onGrantPermissionClick = { permissionLauncher.launch(Permissions.filesPermissions()) },
@@ -112,16 +97,10 @@ internal fun AttachmentFilePicker(
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     allowMultipleSelection = pickerMode.allowMultipleSelection,
-                    onBrowseFilesResult = { uris ->
-                        processingViewModel.getAttachmentsMetadataFromUrisAsync(uris) { metadata ->
-                            showErrorIfNeeded(context, metadata)
-                            onAttachmentsSubmitted(metadata.attachmentsMetadata)
-                        }
-                    },
+                    onBrowseFilesResult = onUrisSelected,
                 )
             },
         )
-        // Access permanently denied snackbar
         StreamSnackbarHost(hostState = snackBarHostState)
     }
     val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
@@ -138,16 +117,6 @@ internal fun AttachmentFilePicker(
             }
             showPermanentlyDeniedSnackBar = false
         }
-    }
-}
-
-private fun showErrorIfNeeded(context: Context, metadata: AttachmentsMetadataFromUris) {
-    if (metadata.uris.size != metadata.attachmentsMetadata.size) {
-        Toast.makeText(
-            context,
-            R.string.stream_compose_message_composer_file_not_supported,
-            Toast.LENGTH_SHORT,
-        ).show()
     }
 }
 
@@ -284,7 +253,7 @@ internal fun AttachmentFilePickerSingleSelection() {
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
                     size = 100_000
                 },
-                selection = Selection.Selected(position = 1),
+                isSelected = true,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {
@@ -313,13 +282,13 @@ internal fun AttachmentFilePickerMultipleSelection() {
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF).apply {
                     size = 10_000
                 },
-                selection = Selection.Selected(position = 1),
+                isSelected = true,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP3).apply {
                     size = 100_000
                 },
-                selection = Selection.Selected(position = 2),
+                isSelected = true,
             ),
             AttachmentPickerItemState(
                 attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_MP4).apply {

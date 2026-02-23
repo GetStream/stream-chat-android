@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
+import android.net.Uri
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ShareLocation
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.FilledIconToggleButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -36,8 +37,7 @@ import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactor
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -84,7 +84,7 @@ class LocationComponentFactory(
                 ),
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.ShareLocation,
+                    imageVector = Icons.Outlined.LocationOn,
                     contentDescription = "Share Location",
                 )
             }
@@ -96,24 +96,24 @@ class LocationComponentFactory(
         pickerMode: AttachmentPickerMode?,
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onLoadAttachments: () -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
+        actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         if (pickerMode == LocationPickerMode && locationViewModelFactory != null) {
             LocationPicker(
                 viewModelFactory = locationViewModelFactory,
-                onDismiss = { onAttachmentPickerAction(AttachmentPickerBack) },
+                onDismiss = actions.onDismiss,
             )
         } else {
             super.AttachmentPickerContent(
                 pickerMode,
                 commands,
                 attachments,
-                onAttachmentsChanged,
-                onAttachmentItemSelected,
-                onAttachmentPickerAction,
+                onLoadAttachments,
+                onUrisSelected,
+                actions,
                 onAttachmentsSubmitted,
             )
         }

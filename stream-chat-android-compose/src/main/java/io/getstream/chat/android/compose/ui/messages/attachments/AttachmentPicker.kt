@@ -16,24 +16,26 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * The main attachment picker component that allows users to select and attach files to messages.
@@ -59,42 +61,35 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param modifier The modifier to be applied to the picker container.
  * @param messageMode The current message mode ([MessageMode.Normal] or [MessageMode.MessageThread]).
  * Used to determine if poll creation is available (not available in threads).
- * @param onAttachmentItemSelected Called when a user taps an attachment item to select/deselect it.
- * By default, delegates to [AttachmentsPickerViewModel.changeSelectedAttachments].
- * @param onAttachmentsSelected Called when attachments are confirmed and should be added to the composer.
- * Receives the list of [Attachment] objects ready to be sent.
- * @param onAttachmentPickerAction Called for picker-specific actions like poll creation or command selection.
- * See [AttachmentPickerAction] for available actions.
- * @param onDismiss Called when the picker should be dismissed (back press, outside tap, etc.).
+ * @param actions The [AttachmentPickerActions] that handle user interactions within the picker.
+ * Use [AttachmentPickerActions.pickerDefaults] for standalone usage or
+ * [AttachmentPickerActions.defaultActions] for full integration with the message composer.
  */
-@Suppress("LongMethod")
 @Composable
 public fun AttachmentPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     modifier: Modifier = Modifier,
     messageMode: MessageMode = MessageMode.Normal,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit = { attachmentItem ->
-        val allowMultipleSelection = attachmentsPickerViewModel.pickerMode?.allowMultipleSelection == true
-        attachmentsPickerViewModel.changeSelectedAttachments(attachmentItem, allowMultipleSelection)
-    },
-    onAttachmentsSelected: (List<Attachment>) -> Unit = {
-        attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
-    },
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
-    onDismiss: () -> Unit = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = false) },
+    actions: AttachmentPickerActions = AttachmentPickerActions.pickerDefaults(attachmentsPickerViewModel),
 ) {
-    val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
-    val dismissAction = {
-        if (saveAttachmentsOnDismiss) {
-            attachmentsPickerViewModel.getSelectedAttachmentsAsync { attachments ->
-                onAttachmentsSelected(attachments)
-                onDismiss()
+    BackHandler(onBack = actions.onDismiss)
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        attachmentsPickerViewModel.submittedAttachments.collect { submitted ->
+            if (submitted.hasUnsupportedFiles) {
+                Toast.makeText(context, R.string.stream_compose_message_composer_file_not_supported, Toast.LENGTH_SHORT)
+                    .show()
             }
-        } else {
-            onDismiss()
+            if (submitted.attachments.isNotEmpty()) {
+                actions.onAttachmentsSelected(submitted.attachments)
+            }
         }
     }
-    BackHandler(onBack = dismissAction)
+
+    val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = { metaData ->
+        actions.onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetadata(metaData))
+    }
 
     Surface(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
@@ -105,12 +100,9 @@ public fun AttachmentPicker(
                 channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,
                 attachments = attachmentsPickerViewModel.attachments,
-                onAttachmentPickerAction = onAttachmentPickerAction,
-                onAttachmentsSubmitted = { metaData ->
-                    attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaData) { attachments ->
-                        onAttachmentsSelected(attachments)
-                    }
-                },
+                actions = actions,
+                onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                onAttachmentsSubmitted = onAttachmentsSubmitted,
             )
         } else {
             Column {
@@ -118,7 +110,7 @@ public fun AttachmentPicker(
                     channel = attachmentsPickerViewModel.channel,
                     messageMode = messageMode,
                     selectedMode = attachmentsPickerViewModel.pickerMode,
-                    onModeSelected = attachmentsPickerViewModel::changePickerMode,
+                    onModeSelected = attachmentsPickerViewModel::setPickerMode,
                     trailingContent = {},
                 )
                 AnimatedContent(
@@ -128,14 +120,10 @@ public fun AttachmentPicker(
                         pickerMode = pickerMode,
                         commands = attachmentsPickerViewModel.channel.config.commands,
                         attachments = attachmentsPickerViewModel.attachments,
-                        onAttachmentsChanged = { attachmentsPickerViewModel.onAttachmentsLoaded(it) },
-                        onAttachmentItemSelected = onAttachmentItemSelected,
-                        onAttachmentPickerAction = onAttachmentPickerAction,
-                        onAttachmentsSubmitted = { metaDataList ->
-                            attachmentsPickerViewModel.getAttachmentsFromMetadataAsync(metaDataList) { attachments ->
-                                onAttachmentsSelected(attachments)
-                            }
-                        },
+                        onLoadAttachments = attachmentsPickerViewModel::loadAttachments,
+                        onUrisSelected = attachmentsPickerViewModel::resolveAndSubmitUris,
+                        actions = actions,
+                        onAttachmentsSubmitted = onAttachmentsSubmitted,
                     )
                 }
             }
