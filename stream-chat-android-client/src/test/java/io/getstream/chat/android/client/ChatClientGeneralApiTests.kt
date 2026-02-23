@@ -232,7 +232,7 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
     }
 
     @Test
-    fun searchMessagesWithoutOffsetWithSortAndNextSuccess() = runTest {
+    fun searchMessagesWithNextAndSort() = runTest {
         // given
         val channelFilter = Filters.neutral()
         val messageFilter = Filters.neutral()
@@ -266,7 +266,7 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
         // when
         val result = sut.searchMessages(channelFilter, messageFilter, offset, limit, next, sort).await()
         // then
-        verifyGenericError(result, "Cannot specify offset with sort or next parameters")
+        verifySuccess(result, response)
     }
 
     @Test
@@ -285,7 +285,7 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
         // when
         val result = sut.searchMessages(channelFilter, messageFilter, offset, limit, next, sort).await()
         // then
-        verifyGenericError(result, "Cannot specify offset with sort or next parameters")
+        verifyGenericError(result, "Cannot use both offset and next values. Specify only one of these options.")
     }
 
     @Test
