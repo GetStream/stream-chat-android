@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getLastMessageIncludingDeleted
+import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.SyncStatus
@@ -186,6 +187,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     currentUser: User?,
 ) {
     val channel = channelItemState.channel
+    val isDirectMessaging = channel.isOneToOne(currentUser)
     // Use raw last message (including deleted) for preview; fall back to filtered for non-deleted
     val rawLastMessage = channel.getLastMessageIncludingDeleted(currentUser)
     val isLastMessageDeleted = rawLastMessage?.isDeleted() == true
@@ -279,7 +281,9 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     channelItemState.draftMessage
                         ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
                         ?: lastMessage?.let {
-                            ChatTheme.messagePreviewFormatter.formatMessagePreview(it, currentUser)
+                            ChatTheme.messagePreviewFormatter.formatMessagePreview(
+                                it, currentUser, isDirectMessaging,
+                            )
                         }
 
                 Text(

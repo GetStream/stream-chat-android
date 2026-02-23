@@ -60,7 +60,11 @@ public interface MessagePreviewFormatter {
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
      */
-    public fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString
+    public fun formatMessagePreview(
+        message: Message,
+        currentUser: User?,
+        isDirectMessaging: Boolean = false,
+    ): AnnotatedString
 
     /**
      * Generates a preview text for the given draft message.
@@ -157,6 +161,7 @@ private class DefaultMessagePreviewFormatter(
     override fun formatMessagePreview(
         message: Message,
         currentUser: User?,
+        isDirectMessaging: Boolean,
     ): AnnotatedString {
         return buildAnnotatedString {
             val displayedText = when (autoTranslationEnabled) {
@@ -171,7 +176,7 @@ private class DefaultMessagePreviewFormatter(
                 message.isSystem() -> append(displayedText)
 
                 message.isDeleted() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle)
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
                     append(context.getString(R.string.stream_compose_message_deleted_preview))
                 }
 
@@ -194,14 +199,14 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 message.hasAudioRecording() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle)
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
                     appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
                     append(SPACE)
                     append(context.getString(R.string.stream_compose_audio_recording_preview))
                 }
 
                 message.hasSharedLocation() -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle)
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
                     appendInlineContent(DefaultMessagePreviewIconFactory.LOCATION)
                     append(SPACE)
                     message.sharedLocation?.let { location ->
@@ -210,7 +215,7 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 else -> {
-                    appendSenderName(message, currentUser, senderNameTextStyle)
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
                     appendTypedAttachmentPreview(message.attachments, displayedText)
                 }
             }
@@ -342,8 +347,9 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
         senderNameTextStyle: TextStyle,
+        isDirectMessaging: Boolean = false,
     ) {
-        val sender = message.getSenderDisplayName(context, currentUser)
+        val sender = message.getSenderDisplayName(context, currentUser, isDirectMessaging)
 
         if (sender != null) {
             append("$sender: ")

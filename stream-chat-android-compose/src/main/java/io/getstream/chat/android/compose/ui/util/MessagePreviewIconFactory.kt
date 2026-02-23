@@ -16,11 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.material3.Icon
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -63,13 +66,15 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
 
     override fun createPreviewIcons(): Map<String, InlineTextContent> {
         val placeholder = Placeholder(
-            width = 16.sp,
-            height = 16.sp,
-            placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter,
+            width = 14.sp,
+            height = 14.sp,
+            placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
         )
+        val iconModifier = Modifier.size(14.dp)
         return mapOf(
             VOICE_MESSAGE to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -77,6 +82,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             PHOTO to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_camera),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -84,6 +90,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             VIDEO to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_video),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -91,6 +98,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             FILE to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_file),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -98,6 +106,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             LINK to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_link),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -105,6 +114,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             LOCATION to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_map_pin),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
@@ -112,6 +122,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
             },
             POLL to InlineTextContent(placeholder) {
                 Icon(
+                    modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_poll),
                     contentDescription = null,
                     tint = ChatTheme.colors.textLowEmphasis,
