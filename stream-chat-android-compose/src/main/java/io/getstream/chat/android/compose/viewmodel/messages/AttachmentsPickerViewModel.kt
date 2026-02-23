@@ -124,6 +124,18 @@ public class AttachmentsPickerViewModel(
         items.map { meta -> AttachmentPickerItemState(meta, isSelected = meta.uri in selected) }
     }.asState(viewModelScope, emptyList())
 
+    private val _submittedAttachments = kotlinx.coroutines.channels.Channel<SubmittedAttachments>(capacity = UNLIMITED)
+
+    /**
+     * One-shot events for attachments resolved from system picker URIs.
+     * Collected by the parent composable to submit attachments and show error toasts.
+     *
+     * Each event is retained until consumed, so it is safe to collect even if the
+     * collector starts after the emission.
+     */
+    public val submittedAttachments: Flow<SubmittedAttachments>
+        get() = _submittedAttachments.receiveAsFlow()
+
     /**
      * Switches the active picker tab.
      *
@@ -217,15 +229,6 @@ public class AttachmentsPickerViewModel(
         storageHelper.toAttachments(metaData)
 
     /**
-     * One-shot events for attachments resolved from system picker URIs.
-     * Collected by the parent composable to submit attachments and show error toasts.
-     */
-    public val submittedAttachments: SharedFlow<SubmittedAttachments>
-        get() = _submittedAttachments.asSharedFlow()
-
-    private val _submittedAttachments = MutableSharedFlow<SubmittedAttachments>(extraBufferCapacity = 1)
-
-    /**
      * Loads attachment metadata from device storage for the current [pickerMode].
      */
     public fun loadAttachments() {
@@ -252,7 +255,7 @@ public class AttachmentsPickerViewModel(
         viewModelScope.launch {
             val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
             val attachments = storageHelper.toAttachments(metadata)
-            _submittedAttachments.tryEmit(
+            _submittedAttachments.trySend(
                 SubmittedAttachments(
                     attachments = attachments,
                     hasUnsupportedFiles = metadata.size < uris.size,
