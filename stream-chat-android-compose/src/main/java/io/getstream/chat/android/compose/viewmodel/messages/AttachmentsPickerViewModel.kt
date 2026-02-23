@@ -18,29 +18,34 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState.Selection
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
-import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper.Companion.EXTRA_SOURCE_URI
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -48,16 +53,22 @@ import kotlinx.coroutines.withContext
  * ViewModel for the attachment picker. Manages available media and file attachments,
  * user selection state, and conversion to uploadable [Attachment] objects.
  *
- * Media and file items are stored in separate lists so selections survive tab switches.
- * Items that appear in both tabs (e.g. an image visible in the gallery and the files list)
- * share selection state — selecting in one tab marks the matching item in the other.
+ * Media and file items are stored in separate lists so they survive tab switches.
+ * Selection is centralised in a single [Set] of [Uri]s, so items that appear in both
+ * tabs (e.g. an image visible in the gallery and the files list) share selection state
+ * automatically — no explicit cross-tab synchronisation is needed.
  *
- * @param storageHelper Wrapper around [StorageHelper] for accessing device storage.
+ * Picker visibility and active tab survive Activity destruction (e.g. "Don't keep
+ * activities") so that pending system picker results are delivered on recreation.
+ *
+ * @param storageHelper Provides device storage queries and attachment conversion.
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
+ * @param savedStateHandle Persists picker visibility and mode across Activity recreation.
  */
 public class AttachmentsPickerViewModel(
-    private val storageHelper: StorageHelperWrapper,
+    private val storageHelper: AttachmentStorageHelper,
     channelState: StateFlow<ChannelState?>,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     /**
@@ -76,346 +87,239 @@ public class AttachmentsPickerViewModel(
         }
         .asState(viewModelScope, Channel())
 
+    private val _pickerMode = MutableStateFlow(
+        savedStateHandle.get<String>(KeyPickerMode)?.toPickerMode(),
+    )
+    private val _mediaItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
+    private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
+    private val _selectedUris = MutableStateFlow<Set<Uri>>(linkedSetOf())
+    private val _isPickerVisible = MutableStateFlow(
+        savedStateHandle[KeyPickerVisible] ?: false,
+    )
+
     /**
      * The active picker tab.
      */
-    public var pickerMode: AttachmentPickerMode? by mutableStateOf(null)
-        private set
-
-    /**
-     * Items from the device gallery (images and videos).
-     */
-    private var mediaAttachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
-
-    /**
-     * Items from the device file system.
-     */
-    private var fileAttachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
-
-    /**
-     * The attachment list for the active [pickerMode].
-     *
-     * Reading returns [mediaAttachments] or [fileAttachments] depending on the mode.
-     * Writing updates the corresponding list. Defaults to [mediaAttachments] when the mode is `null`.
-     */
-    public var attachments: List<AttachmentPickerItemState>
-        get() = when (pickerMode) {
-            is GalleryPickerMode, null -> mediaAttachments
-            is FilePickerMode -> fileAttachments
-            else -> emptyList()
-        }
-        set(value) {
-            when (pickerMode) {
-                is GalleryPickerMode, null -> mediaAttachments = value
-                is FilePickerMode -> fileAttachments = value
-                else -> { /* Other modes have no selectable attachments */ }
-            }
-        }
+    public val pickerMode: AttachmentPickerMode? by _pickerMode.asState(viewModelScope)
 
     /**
      * Whether the attachment picker is currently visible.
      */
-    public var isShowingAttachments: Boolean by mutableStateOf(false)
-        private set
+    public val isPickerVisible: Boolean by _isPickerVisible.asState(viewModelScope)
+
+    /**
+     * The attachment list for the active [pickerMode], with each item's selection state
+     * reflecting whether it is currently selected.
+     */
+    public val attachments: List<AttachmentPickerItemState> by combine(
+        _pickerMode,
+        _mediaItems,
+        _fileItems,
+        _selectedUris,
+    ) { mode, media, files, selected ->
+        val items = when (mode) {
+            is GalleryPickerMode, null -> media
+            is FilePickerMode -> files
+            else -> emptyList()
+        }
+        items.map { meta -> AttachmentPickerItemState(meta, isSelected = meta.uri in selected) }
+    }.asState(viewModelScope, emptyList())
+
+    private val _submittedAttachments = kotlinx.coroutines.channels.Channel<SubmittedAttachments>(capacity = UNLIMITED)
+
+    /**
+     * One-shot events for attachments resolved from system picker URIs.
+     * Collected by the parent composable to submit attachments and show error toasts.
+     *
+     * Each event is retained until consumed, so it is safe to collect even if the
+     * collector starts after the emission.
+     */
+    public val submittedAttachments: Flow<SubmittedAttachments>
+        get() = _submittedAttachments.receiveAsFlow()
 
     /**
      * Switches the active picker tab.
-     */
-    public fun changePickerMode(pickerMode: AttachmentPickerMode) {
-        this.pickerMode = pickerMode
-    }
-
-    /**
-     * Replaces the current tab's items with [newItems], preserving any existing selections.
      *
-     * Existing selections are restored by matching on [AttachmentPickerItemState.attachmentMetaData].
-     * Items that match a selected item in the other tab are also marked as selected.
+     * @param mode The [AttachmentPickerMode] to activate.
      */
-    public fun onAttachmentsLoaded(newItems: List<AttachmentPickerItemState>) {
-        val merged = mergeSelections(existing = attachments, newItems = newItems)
-        attachments = applyCrossTabSelections(merged, otherAttachments)
+    public fun setPickerMode(mode: AttachmentPickerMode) {
+        _pickerMode.value = mode
+        savedStateHandle[KeyPickerMode] = mode.toSavedKey()
     }
 
     /**
-     * Shows or hides the attachment picker. Hiding clears all state.
+     * Shows or hides the attachment picker. Hiding clears cached data but preserves the
+     * current selection so items remain checked when the picker is reopened.
+     *
+     * Call [clearSelection] after this to also reset the selection (e.g. after sending a message).
+     *
+     * @param visible `true` to show the picker, `false` to hide it.
      */
-    public fun changeAttachmentState(showAttachments: Boolean) {
-        isShowingAttachments = showAttachments
-
-        if (!showAttachments) {
-            resetState()
-        }
+    public fun setPickerVisible(visible: Boolean) {
+        _isPickerVisible.value = visible
+        savedStateHandle[KeyPickerVisible] = visible
+        if (!visible) clearCachedData()
     }
 
     /**
      * Toggles the attachment picker visibility.
      */
-    public fun toggleAttachmentState() {
-        changeAttachmentState(showAttachments = !isShowingAttachments)
+    public fun togglePickerVisibility() {
+        setPickerVisible(visible = !_isPickerVisible.value)
     }
 
     /**
-     * Deselects the picker item whose content URI matches the [EXTRA_SOURCE_URI] stored
-     * in [attachment]'s [extraData][Attachment.extraData]. Both tabs are checked.
-     */
-    public fun removeSelectedAttachment(attachment: Attachment) {
-        val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
-            ?.let(Uri::parse) ?: return
-        deselectByUri(sourceUri, ::mediaAttachments) { mediaAttachments = it }
-        deselectByUri(sourceUri, ::fileAttachments) { fileAttachments = it }
-    }
-
-    /**
-     * Selects or deselects [attachmentItem] in the current tab.
+     * Selects or deselects [item].
      *
-     * @param allowMultipleSelection When `false`, selecting a new item deselects all others
-     * in the current tab.
+     * @param item The attachment item to select or deselect.
+     * @param allowMultipleSelection When `false`, selecting a new item replaces the
+     * current selection. Tapping the already-selected item is a no-op.
      */
-    public fun changeSelectedAttachments(
-        attachmentItem: AttachmentPickerItemState,
+    public fun toggleSelection(
+        item: AttachmentPickerItemState,
         allowMultipleSelection: Boolean = true,
     ) {
-        val itemIndex = attachments.indexOf(attachmentItem)
-        if (itemIndex == -1) return
+        val uri = item.attachmentMetaData.uri ?: return
+        val currentlySelected = uri in _selectedUris.value
 
-        val isCurrentlySelected = attachments[itemIndex].isSelected
+        if (!allowMultipleSelection && currentlySelected) return
 
-        // Single-select: clicking already selected item is a no-op
-        if (!allowMultipleSelection && isCurrentlySelected) return
-
-        val previous = attachments
-        attachments = if (isCurrentlySelected) {
-            deselectAttachment(itemIndex)
+        _selectedUris.value = if (currentlySelected) {
+            _selectedUris.value - uri
         } else {
-            selectAttachment(itemIndex, allowMultipleSelection)
+            if (allowMultipleSelection) _selectedUris.value + uri else linkedSetOf(uri)
         }
-        syncChangesToOtherTab(previous, attachments)
     }
 
     /**
-     * Returns all selected attachments across both tabs, deduplicated and mapped for upload.
+     * Deselects the attachment whose content URI matches the [EXTRA_SOURCE_URI] stored
+     * in [attachment]'s [extraData][Attachment.extraData].
+     *
+     * @param attachment The [Attachment] to deselect.
+     */
+    public fun deselectAttachment(attachment: Attachment) {
+        val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
+            ?.let(Uri::parse) ?: return
+        _selectedUris.value -= sourceUri
+    }
+
+    /**
+     * Returns lightweight preview [Attachment] objects for all selected items across both tabs,
+     * ordered by the sequence in which the user selected them.
+     *
+     * Items that appear in both tabs are deduplicated by URI.
+     * No file copying is performed; file resolution is deferred to send time
+     * via [AttachmentStorageHelper.resolveAttachmentFiles].
      */
     public fun getSelectedAttachments(): List<Attachment> {
-        val allSelected = (mediaAttachments + fileAttachments)
-            .filter(AttachmentPickerItemState::isSelected)
-            .distinctBy { it.attachmentMetaData.uri }
-            .map(AttachmentPickerItemState::attachmentMetaData)
-        return storageHelper.getAttachmentsForUpload(allSelected)
+        val allItemsByUri = (_mediaItems.value + _fileItems.value)
+            .mapNotNull { meta -> meta.uri?.let { it to meta } }
+            .toMap()
+        val orderedMeta = _selectedUris.value.mapNotNull(allItemsByUri::get)
+        return storageHelper.toAttachments(orderedMeta)
     }
 
     /**
-     * Asynchronous version of [getSelectedAttachments].
+     * Converts the given [metaData] into lightweight [Attachment]s.
+     *
+     * File resolution is deferred to send time via [AttachmentStorageHelper.resolveAttachmentFiles].
+     *
+     * @param metaData The metadata items to convert.
      */
-    internal fun getSelectedAttachmentsAsync(onComplete: (List<Attachment>) -> Unit) {
-        viewModelScope.launch {
-            val attachments = withContext(DispatcherProvider.IO) {
-                getSelectedAttachments()
-            }
-            onComplete(attachments)
-        }
-    }
+    public fun getAttachmentsFromMetadata(metaData: List<AttachmentMetaData>): List<Attachment> =
+        storageHelper.toAttachments(metaData)
+
+    private var loadAttachmentsJob: Job? = null
 
     /**
-     * Converts the given [uris] to uploadable [Attachment] objects.
+     * Loads attachment metadata from device storage for the current [pickerMode].
      */
-    public fun getAttachmentsFromUris(uris: List<Uri>): List<Attachment> {
-        return storageHelper.getAttachmentsFromUris(uris)
-    }
-
-    /**
-     * Converts the given [metaData] to uploadable [Attachment] objects.
-     */
-    public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
-        return storageHelper.getAttachmentsForUpload(metaData)
-    }
-
-    /**
-     * Asynchronous version of [getAttachmentsFromMetaData].
-     */
-    internal fun getAttachmentsFromMetadataAsync(
-        metadata: List<AttachmentMetaData>,
-        onComplete: (List<Attachment>) -> Unit,
-    ) {
-        viewModelScope.launch {
-            val attachments = withContext(DispatcherProvider.IO) {
-                getAttachmentsFromMetaData(metadata)
-            }
-            onComplete(attachments)
-        }
-    }
-
-    /**
-     * The inactive tab's attachment list (opposite of [attachments]).
-     */
-    private var otherAttachments: List<AttachmentPickerItemState>
-        get() = when (pickerMode) {
-            is GalleryPickerMode, null -> fileAttachments
-            is FilePickerMode -> mediaAttachments
-            else -> emptyList()
-        }
-        set(value) {
-            when (pickerMode) {
-                is GalleryPickerMode, null -> fileAttachments = value
-                is FilePickerMode -> mediaAttachments = value
-                else -> { /* Other modes have no selectable attachments */ }
-            }
-        }
-
-    private fun resetState() {
-        pickerMode = null
-        mediaAttachments = emptyList()
-        fileAttachments = emptyList()
-    }
-
-    private fun deselectAttachment(itemIndex: Int): List<AttachmentPickerItemState> {
-        val removedPosition = (attachments[itemIndex].selection as Selection.Selected).position
-        return attachments.mapIndexed { index, item ->
-            when {
-                index == itemIndex -> item.copy(selection = Selection.Unselected)
-                item.selection is Selection.Selected && item.selection.position > removedPosition ->
-                    item.copy(selection = Selection.Selected(position = item.selection.position - 1))
-                else -> item
-            }
-        }
-    }
-
-    private fun selectAttachment(itemIndex: Int, allowMultipleSelection: Boolean): List<AttachmentPickerItemState> {
-        return if (allowMultipleSelection) {
-            val nextPosition = attachments.count(AttachmentPickerItemState::isSelected) + 1
-            attachments.mapIndexed { index, item ->
-                if (index == itemIndex) item.copy(selection = Selection.Selected(position = nextPosition)) else item
-            }
-        } else {
-            attachments.mapIndexed { index, item ->
-                if (index == itemIndex) {
-                    item.copy(selection = Selection.Selected(position = 1))
-                } else {
-                    item.copy(selection = Selection.Unselected)
+    public fun loadAttachments() {
+        loadAttachmentsJob?.cancel()
+        loadAttachmentsJob = viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) {
+                when (_pickerMode.value) {
+                    is GalleryPickerMode, null -> storageHelper.getMediaMetadata()
+                    is FilePickerMode -> storageHelper.getFileMetadata()
+                    else -> emptyList()
                 }
             }
+            setCurrentTabItems(metadata)
         }
     }
 
     /**
-     * Propagates selection changes from the current tab to the other tab.
-     * Items are matched across tabs by [URI][AttachmentMetaData.uri].
+     * Resolves [uris] from a system picker into [Attachment]s and emits the result
+     * via [submittedAttachments].
+     *
+     * @param uris Content URIs returned by the system picker.
      */
-    private fun syncChangesToOtherTab(
-        previous: List<AttachmentPickerItemState>,
-        current: List<AttachmentPickerItemState>,
-    ) {
-        if (otherAttachments.isEmpty()) return
-
-        val changes = current.zip(previous)
-            .filter { (cur, prev) -> cur.selection != prev.selection }
-            .mapNotNull { (cur, _) -> cur.attachmentMetaData.uri?.let { it to cur.isSelected } }
-
-        for ((uri, selected) in changes) {
-            if (selected) {
-                selectByUri(uri, { otherAttachments }) { otherAttachments = it }
-            } else {
-                deselectByUri(uri, { otherAttachments }) { otherAttachments = it }
-            }
-        }
-    }
-
-    internal companion object {
-
-        /**
-         * Restores selections from [existing] into [newItems] by matching on
-         * [AttachmentPickerItemState.attachmentMetaData] equality.
-         */
-        internal fun mergeSelections(
-            existing: List<AttachmentPickerItemState>,
-            newItems: List<AttachmentPickerItemState>,
-        ): List<AttachmentPickerItemState> {
-            if (existing.isEmpty()) return newItems
-            val selectedByMetaData = existing
-                .filter { it.isSelected }
-                .associateBy { it.attachmentMetaData }
-            if (selectedByMetaData.isEmpty()) return newItems
-            return newItems.map { item ->
-                val match = selectedByMetaData[item.attachmentMetaData]
-                if (match != null) item.copy(selection = match.selection) else item
-            }
-        }
-
-        /**
-         * Marks items in [items] as selected when a matching item (by [URI][AttachmentMetaData.uri])
-         * is already selected in [otherTabItems].
-         */
-        internal fun applyCrossTabSelections(
-            items: List<AttachmentPickerItemState>,
-            otherTabItems: List<AttachmentPickerItemState>,
-        ): List<AttachmentPickerItemState> {
-            val otherSelectedUris = otherTabItems
-                .filter { it.isSelected }
-                .mapNotNull { it.attachmentMetaData.uri }
-                .toSet()
-            if (otherSelectedUris.isEmpty()) return items
-
-            var nextPosition = items.count(AttachmentPickerItemState::isSelected) + 1
-            return items.map { item ->
-                val uri = item.attachmentMetaData.uri
-                if (!item.isSelected && uri != null && uri in otherSelectedUris) {
-                    item.copy(selection = Selection.Selected(position = nextPosition++))
-                } else {
-                    item
-                }
-            }
-        }
-
-        /**
-         * Finds an unselected item whose [AttachmentMetaData.uri] equals [uri] and selects it,
-         * appending it after the current selections. Calls [update] with the result if a match is found.
-         */
-        private fun selectByUri(
-            uri: Uri,
-            items: () -> List<AttachmentPickerItemState>,
-            update: (List<AttachmentPickerItemState>) -> Unit,
-        ) {
-            val list = items()
-            val matchIndex = list.indexOfFirst { it.attachmentMetaData.uri == uri }
-            if (matchIndex == -1 || list[matchIndex].isSelected) return
-
-            val nextPosition = list.count(AttachmentPickerItemState::isSelected) + 1
-            update(
-                list.mapIndexed { index, item ->
-                    if (index == matchIndex) {
-                        item.copy(selection = Selection.Selected(position = nextPosition))
-                    } else {
-                        item
-                    }
-                },
-            )
-        }
-
-        /**
-         * Finds a selected item whose [AttachmentMetaData.uri] equals [uri], deselects it,
-         * and reorders the remaining positions. Calls [update] with the result if a match is found.
-         */
-        private fun deselectByUri(
-            uri: Uri,
-            items: () -> List<AttachmentPickerItemState>,
-            update: (List<AttachmentPickerItemState>) -> Unit,
-        ) {
-            val list = items()
-            val itemIndex = list.indexOfFirst { it.attachmentMetaData.uri == uri }
-            if (itemIndex == -1) return
-            val currentItem = list[itemIndex]
-            if (currentItem.selection !is Selection.Selected) return
-
-            val removedPosition = currentItem.selection.position
-            update(
-                list.mapIndexed { index, item ->
-                    when {
-                        index == itemIndex -> item.copy(selection = Selection.Unselected)
-                        item.selection is Selection.Selected && item.selection.position > removedPosition ->
-                            item.copy(selection = Selection.Selected(position = item.selection.position - 1))
-                        else -> item
-                    }
-                },
+    public fun resolveAndSubmitUris(uris: List<Uri>) {
+        if (uris.isEmpty()) return
+        viewModelScope.launch {
+            val metadata = withContext(DispatcherProvider.IO) { storageHelper.resolveMetadata(uris) }
+            val attachments = storageHelper.toAttachments(metadata)
+            _submittedAttachments.trySend(
+                SubmittedAttachments(
+                    attachments = attachments,
+                    hasUnsupportedFiles = metadata.size < uris.size,
+                ),
             )
         }
     }
+
+    private fun setCurrentTabItems(items: List<AttachmentMetaData>) {
+        when (_pickerMode.value) {
+            is GalleryPickerMode, null -> _mediaItems.value = items
+            is FilePickerMode -> _fileItems.value = items
+            else -> Unit
+        }
+    }
+
+    /**
+     * Removes all selected URIs. Call this when the associated attachments are consumed
+     * (e.g. message sent, poll created) so the picker starts fresh on next open.
+     */
+    public fun clearSelection() {
+        _selectedUris.value = linkedSetOf()
+    }
+
+    private fun clearCachedData() {
+        _pickerMode.value = null
+        savedStateHandle[KeyPickerMode] = null as String?
+        _mediaItems.value = emptyList()
+        _fileItems.value = emptyList()
+    }
+}
+
+private const val KeyPickerVisible = "stream_picker_visible"
+private const val KeyPickerMode = "stream_picker_mode"
+
+/**
+ * Event emitted when system picker URIs have been resolved into [Attachment]s.
+ *
+ * @property attachments The resolved attachments ready for the composer.
+ * @property hasUnsupportedFiles `true` when some URIs were filtered out as unsupported.
+ */
+public data class SubmittedAttachments(
+    val attachments: List<Attachment>,
+    val hasUnsupportedFiles: Boolean,
+)
+
+private fun AttachmentPickerMode.toSavedKey(): String = when (this) {
+    is GalleryPickerMode -> "gallery"
+    is FilePickerMode -> "file"
+    is CameraPickerMode -> "camera"
+    is PollPickerMode -> "poll"
+    is CommandPickerMode -> "command"
+    else -> "unknown"
+}
+
+private fun String.toPickerMode(): AttachmentPickerMode? = when (this) {
+    "gallery" -> GalleryPickerMode()
+    "file" -> FilePickerMode()
+    "camera" -> CameraPickerMode()
+    "poll" -> PollPickerMode()
+    "command" -> CommandPickerMode
+    else -> null
 }

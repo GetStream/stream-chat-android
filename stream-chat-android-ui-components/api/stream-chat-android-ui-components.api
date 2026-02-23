@@ -4531,7 +4531,6 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun getMessageComposerState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getMessageMode ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getOwnCapabilities ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getSelectedAttachments ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getValidationErrors ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun leaveThread ()V
 	public final fun lockRecording ()V

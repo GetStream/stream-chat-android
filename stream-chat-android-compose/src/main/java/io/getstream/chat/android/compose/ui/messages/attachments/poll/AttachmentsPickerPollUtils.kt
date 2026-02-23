@@ -16,13 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PollOption
 import io.getstream.chat.android.models.VotingVisibility
 
 /**
- * Builds a [PollConfig] from the provided [AttachmentPickerPollCreation] data.
+ * Builds a [PollConfig] from the provided poll creation data.
  *
  * @param pollQuestion The question of the poll.
  * @param pollOptions The list of poll options.

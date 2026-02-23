@@ -147,7 +147,7 @@ internal class MessageComposerViewModelTest {
                 isRetrying = eq(false),
             )
             captor.firstValue.attachments.size `should be equal to` 2
-            viewModel.selectedAttachments.value.size `should be equal to` 0
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 0
         }
 
     @Test
@@ -170,7 +170,7 @@ internal class MessageComposerViewModelTest {
                 Attachment(imageUrl = "url1"),
             )
 
-            viewModel.selectedAttachments.value.size `should be equal to` 1
+            viewModel.messageComposerState.value.attachments.size `should be equal to` 1
         }
 
     @Test

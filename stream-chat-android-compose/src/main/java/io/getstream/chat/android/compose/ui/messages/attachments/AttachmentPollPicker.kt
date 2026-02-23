@@ -43,26 +43,27 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.ui.components.FullscreenDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerCreatePollClick
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.CreatePollScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.models.PollConfig
 
 @Suppress("LongMethod")
 @Composable
 internal fun AttachmentPollPicker(
     pickerMode: PollPickerMode,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
+    onCreatePollClick: () -> Unit = {},
+    onCreatePoll: (PollConfig) -> Unit = {},
+    onCreatePollDismissed: () -> Unit = {},
 ) {
     var showCreateDialog by rememberSaveable { mutableStateOf(false) }
-    val onCreatePollClick = {
+    val openDialog = {
         showCreateDialog = true
-        onAttachmentPickerAction(AttachmentPickerCreatePollClick)
+        onCreatePollClick()
     }
     LaunchedEffect(pickerMode.autoShowCreateDialog) {
         if (pickerMode.autoShowCreateDialog) {
-            onCreatePollClick()
+            openDialog()
         }
     }
     Column(
@@ -100,7 +101,7 @@ internal fun AttachmentPollPicker(
             modifier = Modifier
                 .height(48.dp)
                 .fillMaxWidth(),
-            onClick = onCreatePollClick,
+            onClick = openDialog,
             colors = ButtonDefaults.outlinedButtonColors(
                 contentColor = ChatTheme.colors.buttonSecondaryText,
             ),
@@ -109,11 +110,20 @@ internal fun AttachmentPollPicker(
         }
     }
     if (showCreateDialog) {
-        FullscreenDialog(onDismissRequest = { showCreateDialog = false }) {
+        FullscreenDialog(
+            onDismissRequest = {
+                showCreateDialog = false
+                onCreatePollDismissed()
+            },
+        ) {
             CreatePollScreen(
-                onAttachmentPickerAction = { action ->
+                onBack = {
                     showCreateDialog = false
-                    onAttachmentPickerAction(action)
+                    onCreatePollDismissed()
+                },
+                onCreatePoll = { pollConfig ->
+                    showCreateDialog = false
+                    onCreatePoll(pollConfig)
                 },
             )
         }

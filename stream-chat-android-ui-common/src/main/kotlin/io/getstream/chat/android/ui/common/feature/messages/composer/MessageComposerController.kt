@@ -131,10 +131,6 @@ public class MessageComposerController(
 
     private var currentDraftId: String? = null
 
-    /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
-     */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageComposerController")
 
     /**
@@ -251,39 +247,24 @@ public class MessageComposerController(
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
 
-    /**
-     * Full message composer state holding all the required information.
-     */
+    /** Full message composer state holding all the required information. */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
 
-    /**
-     * UI state of the current composer input.
-     */
+    /** UI state of the current composer input. */
     public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
 
-    /**
-     * UI state of the current composer input.
-     */
+    /** UI state of the current composer input. */
     @Deprecated(
         message = "Use messageInput instead",
         replaceWith = ReplaceWith("messageInput"),
     )
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
-    /**
-     * If the message will be shown in the channel after it is sent.
-     */
+    /** If the message will be shown in the channel after it is sent. */
     public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    /**
-     * Represents the remaining time until the user is allowed to send the next message.
-     */
+    /** Represents the remaining time until the user is allowed to send the next message. */
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
-
-    /**
-     * Represents the currently selected attachments, that are shown within the composer UI.
-     */
-    public val selectedAttachments: MutableStateFlow<List<Attachment>> = MutableStateFlow(emptyList())
 
     /**
      * Represents the list of validation errors for the current text input and the currently selected attachments.
@@ -433,10 +414,6 @@ public class MessageComposerController(
             scope.launch { handleLinkPreviews() }
         }.launchIn(scope)
 
-        selectedAttachments.onEach { selectedAttachments ->
-            state.value = state.value.copy(attachments = selectedAttachments)
-        }.launchIn(scope)
-
         lastActiveAction.onEach { activeAction ->
             state.value = state.value.copy(action = activeAction)
         }.launchIn(scope)
@@ -489,9 +466,12 @@ public class MessageComposerController(
 
         audioRecordingController.recordingState.onEach { recording ->
             logger.d { "[onRecordingState] recording: $recording" }
-            state.value = state.value.copy(recording = recording)
-            if (recording is RecordingState.Complete) {
-                selectedAttachments.value = selectedAttachments.value + recording.attachment
+            state.update {
+                if (recording is RecordingState.Complete) {
+                    it.copy(recording = recording, attachments = it.attachments + recording.attachment)
+                } else {
+                    it.copy(recording = recording)
+                }
             }
         }.launchIn(scope)
 
@@ -597,23 +577,18 @@ public class MessageComposerController(
      */
     public fun performMessageAction(messageAction: MessageAction) {
         when (messageAction) {
-            is ThreadReply -> {
-                setMessageMode(MessageMode.MessageThread(messageAction.message))
-            }
-
-            is Reply -> {
-                messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
-            }
+            is ThreadReply -> setMessageMode(MessageMode.MessageThread(messageAction.message))
+            is Reply ->
+                messageActions.value =
+                    (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
-                selectedAttachments.value = messageAction.message.attachments
+                state.update { it.copy(attachments = messageAction.message.attachments) }
                 messageActions.value = messageActions.value + messageAction
             }
 
-            else -> {
-                // no op, custom user action
-            }
+            else -> Unit
         }
     }
 
@@ -623,7 +598,7 @@ public class MessageComposerController(
     public fun dismissMessageActions() {
         if (isInEditMode) {
             setMessageInputInternal("", MessageInput.Source.Default)
-            this.selectedAttachments.value = emptyList()
+            state.update { it.copy(attachments = emptyList()) }
         }
 
         this.messageActions.value = emptySet()
@@ -633,8 +608,7 @@ public class MessageComposerController(
      * Updates the selected attachments that are shown within the composer UI.
      */
     public fun updateSelectedAttachments(attachments: List<Attachment>) {
-        selectedAttachments.update { attachments }
-
+        state.update { it.copy(attachments = attachments) }
         handleValidationErrors()
     }
 
@@ -647,15 +621,16 @@ public class MessageComposerController(
      */
     public fun addSelectedAttachments(attachments: List<Attachment>) {
         logger.d { "[addSelectedAttachments] attachments: $attachments" }
-        val newAttachments = (selectedAttachments.value + attachments).distinctBy {
-            if (it.name != null && it.mimeType?.isNotEmpty() == true) {
-                it.name
-            } else {
-                it
+        state.update { current ->
+            val merged = (current.attachments + attachments).distinctBy {
+                if (it.name != null && it.mimeType?.isNotEmpty() == true) {
+                    it.name
+                } else {
+                    it
+                }
             }
+            current.copy(attachments = merged)
         }
-        selectedAttachments.value = newAttachments
-
         handleValidationErrors()
     }
 
@@ -667,8 +642,7 @@ public class MessageComposerController(
      * @param attachment The attachment to remove.
      */
     public fun removeSelectedAttachment(attachment: Attachment) {
-        selectedAttachments.value -= attachment
-
+        state.update { it.copy(attachments = it.attachments - attachment) }
         handleValidationErrors()
     }
 
@@ -682,21 +656,18 @@ public class MessageComposerController(
             channelType = channelType,
             channelId = channelId,
             pollConfig = pollConfig,
-        ).enqueue { response ->
-            onResult(response)
-        }
+        ).enqueue { onResult(it) }
     }
 
     /**
-     * Clears all the data from the input - both the current [input] value and the
-     * [selectedAttachments].
+     * Clears all the data from the input — text, attachments, validation errors, and actions.
      */
     public fun clearData() {
         logger.i { "[clearData]" }
         dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
-        selectedAttachments.value = emptyList()
+        state.update { it.copy(attachments = emptyList()) }
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
     }
@@ -721,50 +692,67 @@ public class MessageComposerController(
      *
      * @param message The message to send.
      */
-    public fun sendMessage(message: Message, callback: Call.Callback<Message>) {
+    public fun sendMessage(
+        message: Message,
+        callback: Call.Callback<Message>,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+    ) {
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
         val activeMessage = activeAction?.message ?: message
-
         val currentUserId = chatClient.getCurrentUser()?.id
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
+
+        if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             if (activeMessage.text == message.text) {
                 logger.i { "[sendMessage] No changes in the message text, skipping edit." }
                 clearData()
                 return
             }
-            getEditMessageCall(message)
-        } else {
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            if (activeMessage.isModerationError(currentUserId)) {
-                chatClient.deleteMessage(activeMessage.id, true).enqueue()
-            }
+            val editCall = getEditMessageCall(message)
+            clearData()
+            editCall.enqueue(callback)
+            return
+        }
 
-            chatClient.sendMessage(
-                channelType,
-                channelId,
-                message.copy(
-                    showInChannel = isInThread && alsoSendToChannel.value,
-                    skipEnrichUrl = linkPreviews.value.isEmpty(),
-                ),
-            )
-                .doOnStart(scope) {
-                    // Optimistically load the latest messages (if not already loaded)
-                    loadLatestMessagesIfNeeded()
+        if (activeMessage.isModerationError(currentUserId)) {
+            chatClient.deleteMessage(activeMessage.id, true).enqueue()
+        }
+        val preparedMessage = message.copy(
+            showInChannel = isInThread && alsoSendToChannel.value,
+            skipEnrichUrl = linkPreviews.value.isEmpty(),
+        )
+        clearData()
+
+        if (resolveAttachments != null) {
+            scope.launch {
+                val resolved = withContext(DispatcherProvider.IO) {
+                    resolveAttachments(preparedMessage.attachments)
                 }
-                .doOnResult(scope) { result ->
-                    result.onSuccessSuspend { resultMessage ->
-                        if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
-                            chatClient.markMessageRead(
-                                channelType = channelType,
-                                channelId = channelId,
-                                messageId = resultMessage.id,
-                            ).await()
-                        }
+                enqueueSendMessage(preparedMessage.copy(attachments = resolved), callback)
+            }
+        } else {
+            enqueueSendMessage(preparedMessage, callback)
+        }
+    }
+
+    private fun enqueueSendMessage(
+        message: Message,
+        callback: Call.Callback<Message>,
+    ) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        chatClient.sendMessage(channelType, channelId, message)
+            .doOnStart(scope) { loadLatestMessagesIfNeeded() }
+            .doOnResult(scope) { result ->
+                result.onSuccessSuspend { resultMessage ->
+                    if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                        chatClient.markMessageRead(
+                            channelType = channelType,
+                            channelId = channelId,
+                            messageId = resultMessage.id,
+                        ).await()
                     }
                 }
-        }
-        clearData()
-        sendMessageCall.enqueue(callback)
+            }
+            .enqueue(callback)
     }
 
     /**
@@ -856,7 +844,7 @@ public class MessageComposerController(
      * Checks the current input for validation errors.
      */
     private fun handleValidationErrors() {
-        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, selectedAttachments.value)
+        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, state.value.attachments)
     }
 
     /**
@@ -899,9 +887,7 @@ public class MessageComposerController(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility() {
-        val isHidden = commandSuggestions.value.isEmpty()
-
-        commandSuggestions.value = if (isHidden) commands else emptyList()
+        commandSuggestions.value = if (commandSuggestions.value.isEmpty()) commands else emptyList()
     }
 
     /**
@@ -981,7 +967,7 @@ public class MessageComposerController(
     public fun sendRecording() {
         scope.launch {
             audioRecordingController.completeRecordingSync().onSuccess { recording ->
-                val attachments = selectedAttachments.value + recording
+                val attachments = state.value.attachments + recording
                 sendMessage(buildNewMessage(messageInput.value.text, attachments), callback = {})
             }
         }
@@ -1017,8 +1003,7 @@ public class MessageComposerController(
      */
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
-
-        commandSuggestions.value = if (containsCommand && selectedAttachments.value.isEmpty()) {
+        commandSuggestions.value = if (containsCommand && state.value.attachments.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
         } else {
@@ -1066,9 +1051,7 @@ public class MessageComposerController(
      */
     private suspend fun handleLinkPreviews() {
         if (!config.isLinkPreviewEnabled) return
-        val urls = LinkPattern.findAll(messageText).map {
-            it.value
-        }.toList()
+        val urls = LinkPattern.findAll(messageText).map(MatchResult::value).toList()
         logger.v { "[handleLinkPreviews] urls: $urls" }
         val previews = urls.take(1)
             .map { url -> chatClient.enrichPreview(url).await() }
@@ -1117,10 +1100,8 @@ public class MessageComposerController(
         chatClient.stopTyping(channelType, channelId, parentMessageId).enqueue()
     }
 
-    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
-        val urlWithScheme = url.addSchemeToUrlIfNeeded()
-        return this.enrichUrl(urlWithScheme).map { LinkPreview(url, it) }
-    }
+    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> =
+        enrichUrl(url.addSchemeToUrlIfNeeded()).map { LinkPreview(url, it) }
 
     internal companion object {
 

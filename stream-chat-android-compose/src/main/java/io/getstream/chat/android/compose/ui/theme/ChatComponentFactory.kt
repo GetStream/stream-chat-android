@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -154,7 +155,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Defa
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
+import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerActions
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
@@ -210,6 +211,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
@@ -3696,29 +3698,20 @@ public interface ChatComponentFactory {
      * @param modifier Modifier for styling.
      * @param attachmentsPickerViewModel Manages picker state including current mode and selections.
      * @param messageMode Current message mode; affects poll availability (disabled in threads).
-     * @param onAttachmentItemSelected Called when user taps an item to select/deselect it.
-     * @param onAttachmentsSelected Called when attachments are confirmed for sending.
-     * @param onAttachmentPickerAction Called for special actions (poll creation, command selection).
-     * @param onDismiss Called when the picker should close.
+     * @param actions The [AttachmentPickerActions] that handle user interactions within the picker.
      */
     @Composable
     public fun AttachmentPicker(
         modifier: Modifier,
         attachmentsPickerViewModel: AttachmentsPickerViewModel,
         messageMode: MessageMode,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentsSelected: (List<Attachment>) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-        onDismiss: () -> Unit,
+        actions: AttachmentPickerActions,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicker(
             modifier = modifier,
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             messageMode = messageMode,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSelected = onAttachmentsSelected,
-            onAttachmentPickerAction = onAttachmentPickerAction,
-            onDismiss = onDismiss,
+            actions = actions,
         )
     }
 
@@ -3786,9 +3779,9 @@ public interface ChatComponentFactory {
      * @param pickerMode The currently active mode; determines which picker UI to show.
      * @param commands Available slash commands for [CommandPickerMode].
      * @param attachments Current attachment items loaded for gallery/file modes.
-     * @param onAttachmentsChanged Called when the attachment list needs updating (e.g., after loading).
-     * @param onAttachmentItemSelected Called when user selects/deselects an attachment.
-     * @param onAttachmentPickerAction Called for mode-specific actions (poll creation, command selection).
+     * @param onLoadAttachments Called to trigger loading attachment metadata for the current mode.
+     * @param onUrisSelected Called with URIs from a system picker for async resolution.
+     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
      * @param onAttachmentsSubmitted Called when attachments are ready to be added to the composer.
      */
     @Composable
@@ -3796,18 +3789,18 @@ public interface ChatComponentFactory {
         pickerMode: AttachmentPickerMode?,
         commands: List<Command>,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-        onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onLoadAttachments: () -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
+        actions: AttachmentPickerActions,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPickerContent(
             pickerMode = pickerMode,
             commands = commands,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onLoadAttachments = onLoadAttachments,
+            onUrisSelected = onUrisSelected,
+            actions = actions,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
@@ -3820,20 +3813,20 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the gallery picker (media type filter, multi-select).
      * @param attachments Media items to display in the grid.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading media metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
      */
     @Composable
     public fun AttachmentMediaPicker(
         pickerMode: GalleryPickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentMediaPicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
         )
     }
@@ -3866,24 +3859,24 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode Configuration for the file picker (multi-select).
      * @param attachments File items to display in the list.
-     * @param onAttachmentsChanged Called when items are loaded or refreshed.
+     * @param onLoadAttachments Called to trigger loading file metadata from device storage.
      * @param onAttachmentItemSelected Called when user taps an item to toggle selection.
-     * @param onAttachmentsSubmitted Called when files are picked via system file browser.
+     * @param onUrisSelected Called with URIs picked via the system file browser.
      */
     @Composable
     public fun AttachmentFilePicker(
         pickerMode: FilePickerMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+        onLoadAttachments: () -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-        onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+        onUrisSelected: (List<Uri>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentFilePicker(
             pickerMode = pickerMode,
             attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
+            onLoadAttachments = onLoadAttachments,
             onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+            onUrisSelected = onUrisSelected,
         )
     }
 
@@ -3894,17 +3887,22 @@ public interface ChatComponentFactory {
      * Poll creation is only available when the channel has the "polls" capability.
      *
      * @param pickerMode Configuration for poll picker behavior.
-     * @param onAttachmentPickerAction Called with [AttachmentPickerPollCreation] when a poll is created,
-     * or [AttachmentPickerCreatePollClick] when the create button is tapped.
+     * @param onCreatePollClick Called when the user taps "Create Poll", opening the creation dialog.
+     * @param onCreatePoll Called when the user submits a new poll configuration.
+     * @param onCreatePollDismissed Called when the poll creation dialog is closed without submitting.
      */
     @Composable
     public fun AttachmentPollPicker(
         pickerMode: PollPickerMode,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onCreatePollClick: () -> Unit,
+        onCreatePoll: (PollConfig) -> Unit,
+        onCreatePollDismissed: () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPollPicker(
             pickerMode = pickerMode,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onCreatePollClick = onCreatePollClick,
+            onCreatePoll = onCreatePoll,
+            onCreatePollDismissed = onCreatePollDismissed,
         )
     }
 
@@ -3916,18 +3914,18 @@ public interface ChatComponentFactory {
      *
      * @param pickerMode The command picker mode configuration.
      * @param commands Available commands from the channel configuration.
-     * @param onAttachmentPickerAction Called with [AttachmentPickerCommandSelect] when a command is selected.
+     * @param onCommandSelected Called when a slash command is selected.
      */
     @Composable
     public fun AttachmentCommandPicker(
         pickerMode: CommandPickerMode,
         commands: List<Command>,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        onCommandSelected: (Command) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentCommandPicker(
             pickerMode = pickerMode,
             commands = commands,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            onCommandSelected = onCommandSelected,
         )
     }
 
@@ -3941,22 +3939,25 @@ public interface ChatComponentFactory {
      * @param channel Used to check channel capabilities for filtering available modes.
      * @param messageMode Used to filter modes (e.g., polls disabled in threads).
      * @param attachments Current attachment state (used for state management).
-     * @param onAttachmentPickerAction Called for poll creation and command selection.
-     * @param onAttachmentsSubmitted Called when files are selected from system pickers.
+     * @param actions The [AttachmentPickerActions] containing all user-interaction handlers.
+     * @param onUrisSelected Called with URIs from system pickers for async resolution.
+     * @param onAttachmentsSubmitted Called when camera-captured media is ready.
      */
     @Composable
     public fun AttachmentSystemPicker(
         channel: Channel,
         messageMode: MessageMode,
         attachments: List<AttachmentPickerItemState>,
-        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+        actions: AttachmentPickerActions,
+        onUrisSelected: (List<Uri>) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.messages.attachments.AttachmentSystemPicker(
             channel = channel,
             messageMode = messageMode,
             attachments = attachments,
-            onAttachmentPickerAction = onAttachmentPickerAction,
+            actions = actions,
+            onUrisSelected = onUrisSelected,
             onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }

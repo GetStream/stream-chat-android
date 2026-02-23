@@ -1176,6 +1176,9 @@ public final class io/getstream/chat/android/ui/common/helper/internal/Attachmen
 	public final fun getSupportedMimeTypes ()Ljava/util/List;
 }
 
+public final class io/getstream/chat/android/ui/common/helper/internal/AttachmentStorageHelper$Companion {
+}
+
 public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion;

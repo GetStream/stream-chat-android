@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.extensions.internal.stableKey
+import io.getstream.chat.android.compose.ui.util.rememberAutoScrollLazyListState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
@@ -57,6 +59,7 @@ public fun FileAttachmentPreviewContent(
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
+        state = rememberAutoScrollLazyListState(attachments.size),
         modifier = modifier
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .testTag("Stream_FileAttachmentPreviewContent"),
@@ -64,9 +67,14 @@ public fun FileAttachmentPreviewContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
         contentPadding = PaddingValues(12.dp),
     ) {
-        items(attachments) { attachment ->
+        items(
+            items = attachments,
+            key = Attachment::stableKey,
+        ) { attachment ->
             Surface(
-                modifier = Modifier.padding(1.dp),
+                modifier = Modifier
+                    .animateItem()
+                    .padding(1.dp),
                 color = ChatTheme.colors.appBackground,
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, ChatTheme.colors.borders),
@@ -98,9 +106,9 @@ public fun FileAttachmentPreviewContent(
                             color = ChatTheme.colors.textHighEmphasis,
                         )
 
-                        val fileSize = attachment.upload?.length()?.let { length ->
-                            MediaStringUtil.convertFileSizeByteCount(length)
-                        }
+                        val fileSize = attachment.fileSize
+                            .takeIf { it > 0 }
+                            ?.let { MediaStringUtil.convertFileSizeByteCount(it.toLong()) }
                         if (fileSize != null) {
                             Text(
                                 modifier = Modifier.testTag("Stream_FileSizeInPreview"),

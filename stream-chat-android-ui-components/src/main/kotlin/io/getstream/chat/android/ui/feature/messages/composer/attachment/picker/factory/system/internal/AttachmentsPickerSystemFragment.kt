@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
-import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper
 import io.getstream.chat.android.ui.common.permissions.VisualMediaType
 import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -57,13 +57,13 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
      * A listener invoked when attachments are selected in the attachment tab.
      */
     private var attachmentsPickerTabListener: AttachmentsPickerTabListener? = null
-    private val storageHelper = StorageHelper()
+    private lateinit var attachmentStorageHelper: AttachmentStorageHelper
     private val attachmentFilter = AttachmentFilter()
     private val filePickerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val uri = result.data?.data
             if (uri != null) {
-                val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), listOf(uri))
+                val attachmentMetaData = attachmentStorageHelper.resolveMetadata(listOf(uri))
                 attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
             }
             attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
@@ -74,6 +74,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
     private var captureMedia: ActivityResultLauncher<Unit>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        attachmentStorageHelper = AttachmentStorageHelper(requireContext())
         _binding =
             StreamUiFragmentAttachmentSystemPickerBinding.inflate(
                 requireContext().streamThemeInflater,
@@ -202,14 +203,14 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
     private fun registerVisualMediaPickerLauncher(allowMultiple: Boolean) = if (allowMultiple) {
         registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
-            val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), uris)
+            val attachmentMetaData = attachmentStorageHelper.resolveMetadata(uris)
             attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
             attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
         }
     } else {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
-                val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), listOf(uri))
+                val attachmentMetaData = attachmentStorageHelper.resolveMetadata(listOf(uri))
                 attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
             }
             attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()

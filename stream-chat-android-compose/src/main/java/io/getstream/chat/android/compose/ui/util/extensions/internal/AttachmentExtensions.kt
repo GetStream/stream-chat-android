@@ -21,14 +21,40 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
- * This property checks if the attachment is an image or a video with enabled thumbnails.
- * If so, it returns the image preview URL (applied with Stream CDN image resizing if enabled)
- * or the upload [java.io.File] object.
- * Otherwise, it returns null.
+ * The content URI stored when the attachment was created from a device picker,
+ * before the file is resolved at send time.
+ */
+internal val Attachment.sourceUri: String?
+    get() = extraData[EXTRA_SOURCE_URI] as? String
+
+/**
+ * Stable identity for `LazyList` keys.
+ *
+ * Prefers the immutable [sourceUri], falls back to [Attachment.upload] path,
+ * then [hashCode] as a last resort.
+ */
+internal val Attachment.stableKey: String
+    get() = sourceUri ?: upload?.absolutePath ?: hashCode().toString()
+
+/**
+ * Best available data source for rendering an unsent attachment preview.
+ *
+ * Prefers [Attachment.upload] (local file), then [imagePreviewUrl] (CDN URL),
+ * then [sourceUri] (content URI from the picker).
+ */
+internal val Attachment.localPreviewData: Any?
+    get() = upload ?: imagePreviewUrl ?: sourceUri
+
+/**
+ * Image preview data for a sent or received attachment.
+ *
+ * Returns the CDN image URL (with Stream resizing applied) or the local [Attachment.upload] file
+ * for images and videos (when video thumbnails are enabled). Returns `null` for other types.
  */
 @get:Composable
 internal val Attachment.imagePreviewData: Any?

@@ -28,16 +28,9 @@ internal class ImagesPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `single selection`() {
+    fun `selection`() {
         snapshotWithDarkMode {
-            ImagesPickerSingleSelection()
-        }
-    }
-
-    @Test
-    fun `multiple selection`() {
-        snapshotWithDarkMode {
-            ImagesPickerMultipleSelection()
+            ImagesPickerSelection()
         }
     }
 
