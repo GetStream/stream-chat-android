@@ -45,6 +45,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -228,11 +229,14 @@ public class AttachmentsPickerViewModel(
     public fun getAttachmentsFromMetadata(metaData: List<AttachmentMetaData>): List<Attachment> =
         storageHelper.toAttachments(metaData)
 
+    private var loadAttachmentsJob: Job? = null
+
     /**
      * Loads attachment metadata from device storage for the current [pickerMode].
      */
     public fun loadAttachments() {
-        viewModelScope.launch {
+        loadAttachmentsJob?.cancel()
+        loadAttachmentsJob = viewModelScope.launch {
             val metadata = withContext(DispatcherProvider.IO) {
                 when (_pickerMode.value) {
                     is GalleryPickerMode, null -> storageHelper.getMediaMetadata()
