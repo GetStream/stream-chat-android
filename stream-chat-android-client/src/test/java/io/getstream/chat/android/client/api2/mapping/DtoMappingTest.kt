@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.DeliveryReceipts
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DeliveryReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
@@ -238,12 +240,31 @@ internal class DtoMappingTest {
         val privacySettings = PrivacySettings(
             typingIndicators = TypingIndicators(enabled = true),
             readReceipts = ReadReceipts(enabled = false),
+            deliveryReceipts = DeliveryReceipts(enabled = false),
         )
         val mapping = Fixture().get()
         val dto = with(mapping) { privacySettings.toDto() }
         val expected = PrivacySettingsDto(
             typing_indicators = TypingIndicatorsDto(enabled = true),
             read_receipts = ReadReceiptsDto(enabled = false),
+            delivery_receipts = DeliveryReceiptsDto(enabled = false),
+        )
+        dto shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `PrivacySettings with null deliveryReceipts is correctly mapped to Dto`() {
+        val privacySettings = PrivacySettings(
+            typingIndicators = TypingIndicators(enabled = true),
+            readReceipts = ReadReceipts(enabled = false),
+            deliveryReceipts = null,
+        )
+        val mapping = Fixture().get()
+        val dto = with(mapping) { privacySettings.toDto() }
+        val expected = PrivacySettingsDto(
+            typing_indicators = TypingIndicatorsDto(enabled = true),
+            read_receipts = ReadReceiptsDto(enabled = false),
+            delivery_receipts = null,
         )
         dto shouldBeEqualTo expected
     }
