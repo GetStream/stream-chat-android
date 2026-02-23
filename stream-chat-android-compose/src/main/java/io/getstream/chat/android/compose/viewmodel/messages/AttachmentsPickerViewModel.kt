@@ -91,7 +91,7 @@ public class AttachmentsPickerViewModel(
     )
     private val _mediaItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
     private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
-    private val _selectedUris = MutableStateFlow<Set<Uri>>(emptySet())
+    private val _selectedUris = MutableStateFlow<Set<Uri>>(linkedSetOf())
     private val _isPickerVisible = MutableStateFlow(
         savedStateHandle[KeyPickerVisible] ?: false,
     )
@@ -199,7 +199,7 @@ public class AttachmentsPickerViewModel(
     public fun deselectAttachment(attachment: Attachment) {
         val sourceUri = (attachment.extraData[EXTRA_SOURCE_URI] as? String)
             ?.let(Uri::parse) ?: return
-        _selectedUris.value = _selectedUris.value - sourceUri
+        _selectedUris.value -= sourceUri
     }
 
     /**
@@ -268,7 +268,7 @@ public class AttachmentsPickerViewModel(
         when (_pickerMode.value) {
             is GalleryPickerMode, null -> _mediaItems.value = items
             is FilePickerMode -> _fileItems.value = items
-            else -> {}
+            else -> Unit
         }
     }
 
@@ -277,7 +277,7 @@ public class AttachmentsPickerViewModel(
      * (e.g. message sent, poll created) so the picker starts fresh on next open.
      */
     public fun clearSelection() {
-        _selectedUris.value = emptySet()
+        _selectedUris.value = linkedSetOf()
     }
 
     private fun clearCachedData() {
