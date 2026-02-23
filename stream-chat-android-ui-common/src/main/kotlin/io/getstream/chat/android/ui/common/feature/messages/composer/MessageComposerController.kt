@@ -131,10 +131,6 @@ public class MessageComposerController(
 
     private var currentDraftId: String? = null
 
-    /**
-     * The logger used to print to errors, warnings, information
-     * and other things to log.
-     */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:MessageComposerController")
 
     /**
@@ -251,33 +247,23 @@ public class MessageComposerController(
      */
     public val inputFocusEvents: SharedFlow<Unit> = _inputFocusEvents.asSharedFlow()
 
-    /**
-     * Full message composer state holding all the required information.
-     */
+    /** Full message composer state holding all the required information. */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
 
-    /**
-     * UI state of the current composer input.
-     */
+    /** UI state of the current composer input. */
     public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
 
-    /**
-     * UI state of the current composer input.
-     */
+    /** UI state of the current composer input. */
     @Deprecated(
         message = "Use messageInput instead",
         replaceWith = ReplaceWith("messageInput"),
     )
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
-    /**
-     * If the message will be shown in the channel after it is sent.
-     */
+    /** If the message will be shown in the channel after it is sent. */
     public val alsoSendToChannel: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    /**
-     * Represents the remaining time until the user is allowed to send the next message.
-     */
+    /** Represents the remaining time until the user is allowed to send the next message. */
     public val cooldownTimer: MutableStateFlow<Int> = MutableStateFlow(0)
 
     /**
@@ -591,13 +577,10 @@ public class MessageComposerController(
      */
     public fun performMessageAction(messageAction: MessageAction) {
         when (messageAction) {
-            is ThreadReply -> {
-                setMessageMode(MessageMode.MessageThread(messageAction.message))
-            }
-
-            is Reply -> {
-                messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
-            }
+            is ThreadReply -> setMessageMode(MessageMode.MessageThread(messageAction.message))
+            is Reply ->
+                messageActions.value =
+                    (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
 
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
@@ -605,9 +588,7 @@ public class MessageComposerController(
                 messageActions.value = messageActions.value + messageAction
             }
 
-            else -> {
-                // no op, custom user action
-            }
+            else -> Unit
         }
     }
 
@@ -675,9 +656,7 @@ public class MessageComposerController(
             channelType = channelType,
             channelId = channelId,
             pollConfig = pollConfig,
-        ).enqueue { response ->
-            onResult(response)
-        }
+        ).enqueue { onResult(it) }
     }
 
     /**
@@ -734,58 +713,47 @@ public class MessageComposerController(
             return
         }
 
-        val (channelType, channelId) = message.cid.cidToTypeAndId()
         if (activeMessage.isModerationError(currentUserId)) {
             chatClient.deleteMessage(activeMessage.id, true).enqueue()
         }
-        val showInChannel = isInThread && alsoSendToChannel.value
-        val skipEnrichUrl = linkPreviews.value.isEmpty()
+        val preparedMessage = message.copy(
+            showInChannel = isInThread && alsoSendToChannel.value,
+            skipEnrichUrl = linkPreviews.value.isEmpty(),
+        )
         clearData()
 
         if (resolveAttachments != null) {
             scope.launch {
                 val resolved = withContext(DispatcherProvider.IO) {
-                    resolveAttachments(message.attachments)
+                    resolveAttachments(preparedMessage.attachments)
                 }
-                buildSendMessageCall(channelType, channelId, message, resolved, showInChannel, skipEnrichUrl)
-                    .enqueue(callback)
+                enqueueSendMessage(preparedMessage.copy(attachments = resolved), callback)
             }
         } else {
-            buildSendMessageCall(channelType, channelId, message, message.attachments, showInChannel, skipEnrichUrl)
-                .enqueue(callback)
+            enqueueSendMessage(preparedMessage, callback)
         }
     }
 
-    private fun buildSendMessageCall(
-        channelType: String,
-        channelId: String,
+    private fun enqueueSendMessage(
         message: Message,
-        attachments: List<Attachment>,
-        showInChannel: Boolean,
-        skipEnrichUrl: Boolean,
-    ): Call<Message> = chatClient.sendMessage(
-        channelType,
-        channelId,
-        message.copy(
-            attachments = attachments,
-            showInChannel = showInChannel,
-            skipEnrichUrl = skipEnrichUrl,
-        ),
-    )
-        .doOnStart(scope) {
-            loadLatestMessagesIfNeeded()
-        }
-        .doOnResult(scope) { result ->
-            result.onSuccessSuspend { resultMessage ->
-                if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
-                    chatClient.markMessageRead(
-                        channelType = channelType,
-                        channelId = channelId,
-                        messageId = resultMessage.id,
-                    ).await()
+        callback: Call.Callback<Message>,
+    ) {
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        chatClient.sendMessage(channelType, channelId, message)
+            .doOnStart(scope) { loadLatestMessagesIfNeeded() }
+            .doOnResult(scope) { result ->
+                result.onSuccessSuspend { resultMessage ->
+                    if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                        chatClient.markMessageRead(
+                            channelType = channelType,
+                            channelId = channelId,
+                            messageId = resultMessage.id,
+                        ).await()
+                    }
                 }
             }
-        }
+            .enqueue(callback)
+    }
 
     /**
      * Builds a new [Message] to send to our API. If [isInEditMode] is true, we use the current
@@ -919,9 +887,7 @@ public class MessageComposerController(
      * Toggles the visibility of the command suggestion list popup.
      */
     public fun toggleCommandsVisibility() {
-        val isHidden = commandSuggestions.value.isEmpty()
-
-        commandSuggestions.value = if (isHidden) commands else emptyList()
+        commandSuggestions.value = if (commandSuggestions.value.isEmpty()) commands else emptyList()
     }
 
     /**
@@ -1037,7 +1003,6 @@ public class MessageComposerController(
      */
     private fun handleCommandSuggestions() {
         val containsCommand = CommandPattern.matcher(messageText).find()
-
         commandSuggestions.value = if (containsCommand && state.value.attachments.isEmpty()) {
             val commandPattern = messageText.removePrefix("/")
             commands.filter { it.name.startsWith(commandPattern) }
@@ -1086,9 +1051,7 @@ public class MessageComposerController(
      */
     private suspend fun handleLinkPreviews() {
         if (!config.isLinkPreviewEnabled) return
-        val urls = LinkPattern.findAll(messageText).map {
-            it.value
-        }.toList()
+        val urls = LinkPattern.findAll(messageText).map(MatchResult::value).toList()
         logger.v { "[handleLinkPreviews] urls: $urls" }
         val previews = urls.take(1)
             .map { url -> chatClient.enrichPreview(url).await() }
@@ -1137,10 +1100,8 @@ public class MessageComposerController(
         chatClient.stopTyping(channelType, channelId, parentMessageId).enqueue()
     }
 
-    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
-        val urlWithScheme = url.addSchemeToUrlIfNeeded()
-        return this.enrichUrl(urlWithScheme).map { LinkPreview(url, it) }
-    }
+    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> =
+        enrichUrl(url.addSchemeToUrlIfNeeded()).map { LinkPreview(url, it) }
 
     internal companion object {
 
