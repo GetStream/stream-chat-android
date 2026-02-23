@@ -97,7 +97,7 @@ public fun PollOptionInput(
 ) {
     val typography = ChatTheme.typography
     val colors = ChatTheme.colors
-    val textColor = ChatTheme.colors.textHighEmphasis
+    val textColor = ChatTheme.colors.textPrimary
     val focusRequester = remember { FocusRequester() }
     // Using TextFieldValue to manage the text input state,
     // which allows us to set the cursor position to the end of the text
@@ -111,7 +111,7 @@ public fun PollOptionInput(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(shape = shape)
-                .background(ChatTheme.colors.inputBackground)
+                .background(ChatTheme.colors.backgroundCoreSurface)
                 .padding(innerPadding)
                 .focusRequester(focusRequester)
                 .semantics { contentDescription = description },
@@ -127,7 +127,7 @@ public fun PollOptionInput(
                     textColor = textColor,
                     textFontStyle = typography.body.fontStyle,
                     linkStyle = TextStyle(
-                        color = colors.primaryAccent,
+                        color = colors.accentPrimary,
                         textDecoration = TextDecoration.Underline,
                     ),
                 )
@@ -137,7 +137,7 @@ public fun PollOptionInput(
                 fontSize = 16.sp,
                 textDirection = TextDirection.Content,
             ),
-            cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
+            cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),
             decorationBox = { innerTextField -> decorationBox(innerTextField) },
             maxLines = maxLines,
             singleLine = maxLines == 1,
@@ -154,7 +154,7 @@ public fun PollOptionInput(
                     .semantics { contentDescription = description },
                 text = description,
                 style = ChatTheme.typography.body.copy(
-                    color = colors.textLowEmphasis,
+                    color = colors.textSecondary,
                     textDirection = TextDirection.Content,
                 ),
                 fontSize = 16.sp,

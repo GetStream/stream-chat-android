@@ -91,7 +91,7 @@ internal fun MediaGalleryPhotosMenu(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.colors.overlayBackground)
             .clickable(
                 indication = null,
                 interactionSource = null,
@@ -104,7 +104,7 @@ internal fun MediaGalleryPhotosMenu(
                 .wrapContentHeight()
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.backgroundElevationElevation1,
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 MediaGalleryPhotosMenuHeader(onDismiss)
@@ -144,14 +144,14 @@ private fun MediaGalleryPhotosMenuHeader(onDismiss: () -> Unit) {
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
 
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = stringResource(R.string.stream_compose_image_preview_photos),
             style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -199,18 +199,12 @@ private fun MediaGalleryPhotosMenuItem(
 
         var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
-        val backgroundColor = if (isImage) {
-            ChatTheme.colors.imageBackgroundMediaGalleryPicker
-        } else {
-            ChatTheme.colors.videoBackgroundMediaGalleryPicker
-        }
-
         StreamAsyncImage(
             imageRequest = imageRequest,
             modifier = Modifier
                 .padding(1.dp)
                 .fillMaxSize()
-                .background(color = backgroundColor),
+                .background(color = ChatTheme.colors.appBackground),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
             imageState = asyncImageState
@@ -262,7 +256,7 @@ private fun ErrorIcon(modifier: Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            tint = ChatTheme.colors.disabled,
+            tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.fillMaxSize(fraction = 0.4f),
             painter = painterResource(R.drawable.stream_compose_ic_image_picker),
             contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),

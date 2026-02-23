@@ -174,7 +174,7 @@ class ChannelsActivity : ComponentActivity() {
                     drawerContent = {
                         ModalDrawerSheet(
                             modifier = Modifier.width(300.dp),
-                            drawerContainerColor = ChatTheme.colors.barsBackground,
+                            drawerContainerColor = ChatTheme.colors.backgroundElevationElevation1,
                         ) {
                             ChannelsScreenNavigationDrawer(
                                 currentUser = user,
@@ -301,7 +301,7 @@ class ChannelsActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .background(color = ChatTheme.colors.textLowEmphasis),
+                            .background(color = ChatTheme.colors.textSecondary),
                     )
                 },
             )
@@ -325,7 +325,7 @@ class ChannelsActivity : ComponentActivity() {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
             },
         )

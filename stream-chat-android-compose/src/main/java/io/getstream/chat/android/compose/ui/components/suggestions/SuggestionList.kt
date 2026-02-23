@@ -54,7 +54,7 @@ public fun SuggestionList(
             modifier = modifier.semantics { testTagsAsResourceId = true },
             elevation = CardDefaults.cardElevation(defaultElevation = ChatTheme.dimens.suggestionListElevation),
             shape = shape,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {
             Column(Modifier.padding(contentPadding)) {
                 headerContent()

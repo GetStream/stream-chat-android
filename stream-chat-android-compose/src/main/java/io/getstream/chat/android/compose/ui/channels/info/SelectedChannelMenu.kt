@@ -76,7 +76,7 @@ public fun SelectedChannelMenu(
         ownCapabilities = selectedChannel.ownCapabilities,
     ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    overlayColor: Color = ChatTheme.colors.overlayBackground,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
@@ -131,7 +131,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
         style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
+        color = ChatTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -144,7 +144,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             userPresence = ChatTheme.userPresence,
         ),
         style = ChatTheme.typography.footnoteBold,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 
     ChannelMembers(

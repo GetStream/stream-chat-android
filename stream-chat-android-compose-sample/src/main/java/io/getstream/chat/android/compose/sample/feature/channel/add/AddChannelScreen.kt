@@ -152,13 +152,13 @@ private fun AddChannelToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
     ) {
         AppToolbar(title = stringResource(id = R.string.add_channel_title), onBack = onBack, elevation = 0.dp)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.barsBackground)
+                .background(ChatTheme.colors.backgroundElevationElevation1)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -170,7 +170,7 @@ private fun AddChannelToolbar(
                     .padding(top = 20.dp),
                 text = stringResource(id = R.string.add_channel_to),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
             Spacer(modifier = Modifier.size(8.dp))
             // Selected users + Search field
@@ -194,14 +194,14 @@ private fun AddChannelToolbar(
                 Icon(
                     painter = painterResource(iconId),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             }
         }
-        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
         if (!hasSelectedUsers) {
             CreateGroupSection(onClick = onCreateGroupClick)
-            HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
         }
     }
 }
@@ -216,7 +216,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundElevationElevation1)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
@@ -226,7 +226,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            tint = ChatTheme.colors.primaryAccent,
+            tint = ChatTheme.colors.accentPrimary,
             painter = painterResource(id = R.drawable.ic_create_group),
             contentDescription = null,
         )
@@ -235,7 +235,7 @@ private fun CreateGroupSection(onClick: () -> Unit) {
             text = stringResource(id = R.string.add_channel_create_group),
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -255,7 +255,7 @@ private fun SelectedUsersList(
     FlowRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundElevationElevation1)
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -296,7 +296,7 @@ private fun SelectedUserChip(
             Text(
                 text = user.name,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         },
     )

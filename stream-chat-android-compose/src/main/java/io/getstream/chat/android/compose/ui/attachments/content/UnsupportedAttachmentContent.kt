@@ -70,7 +70,7 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
                 text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
                 style = ChatTheme.typography.bodyBold,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }

@@ -182,12 +182,12 @@ private object MessageListCustomizationSnippet {
                                             text = message.user.name,
                                             style = ChatTheme.typography.bodyBold,
                                             fontSize = 14.sp,
-                                            color = ChatTheme.colors.textHighEmphasis
+                                            color = ChatTheme.colors.textPrimary
                                         )
                                     }
 
                                     MessageBubble(
-                                        color = ChatTheme.colors.barsBackground,
+                                        color = ChatTheme.colors.backgroundElevationElevation1,
                                         modifier = Modifier.padding(top = 4.dp),
                                         shape = RoundedCornerShape(
                                             topEnd = 16.dp,
@@ -199,7 +199,7 @@ private object MessageListCustomizationSnippet {
                                             Text(
                                                 modifier = Modifier.padding(8.dp),
                                                 text = message.text,
-                                                color = ChatTheme.colors.textHighEmphasis
+                                                color = ChatTheme.colors.textPrimary
                                             )
                                         }
                                     )

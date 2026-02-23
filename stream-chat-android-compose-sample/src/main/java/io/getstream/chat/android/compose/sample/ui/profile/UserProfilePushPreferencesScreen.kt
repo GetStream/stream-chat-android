@@ -141,7 +141,7 @@ private fun NotificationLevelSection(
     Text(
         text = "NOTIFICATION LEVEL",
         style = ChatTheme.typography.footnote.copy(
-            color = if (isEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+            color = if (isEnabled) ChatTheme.colors.textSecondary else ChatTheme.colors.textDisabled,
             fontWeight = FontWeight.Medium,
         ),
         modifier = Modifier.padding(16.dp),
@@ -186,7 +186,7 @@ private fun TemporaryDisableSection(
     Text(
         text = "TEMPORARY DISABLE",
         style = ChatTheme.typography.footnote.copy(
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontWeight = FontWeight.Medium,
         ),
         modifier = Modifier.padding(16.dp),
@@ -209,7 +209,7 @@ private fun TemporaryDisableSection(
         Text(
             text = "Disable notifications temporarily",
             style = ChatTheme.typography.bodyBold.copy(
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             ),
         )
 
@@ -217,9 +217,9 @@ private fun TemporaryDisableSection(
             checked = isTemporaryDisabled,
             onCheckedChange = null, // Handled by row click
             colors = SwitchDefaults.colors(
-                checkedTrackColor = ChatTheme.colors.infoAccent,
+                checkedTrackColor = ChatTheme.colors.accentSuccess,
                 checkedThumbColor = Color.White,
-                uncheckedTrackColor = ChatTheme.colors.disabled,
+                uncheckedTrackColor = ChatTheme.colors.stateBgDisabled,
                 uncheckedThumbColor = Color.White,
             ),
         )
@@ -250,7 +250,7 @@ private fun ActionButtons(
                 containerColor = if (isTemporaryDisabled) {
                     Color(color = 0xFFFF8A65) // Orange color when temporary disable is ON
                 } else {
-                    ChatTheme.colors.primaryAccent // Blue color when temporary disable is OFF
+                    ChatTheme.colors.accentPrimary
                 },
             ),
             shape = RoundedCornerShape(12.dp),
@@ -318,14 +318,14 @@ private fun DateTimeSelector(
         Text(
             text = "Disable until:",
             style = ChatTheme.typography.bodyBold.copy(
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             ),
         )
 
         Text(
             text = displayTime,
             style = ChatTheme.typography.body.copy(
-                color = ChatTheme.colors.primaryAccent,
+                color = ChatTheme.colors.accentPrimary,
             ),
         )
     }
@@ -439,10 +439,10 @@ private fun NotificationLevelOption(
                 onClick = null, // Handled by row click
                 enabled = isEnabled,
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = if (isEnabled) ChatTheme.colors.primaryAccent else ChatTheme.colors.disabled,
-                    unselectedColor = ChatTheme.colors.disabled,
-                    disabledSelectedColor = ChatTheme.colors.disabled,
-                    disabledUnselectedColor = ChatTheme.colors.disabled,
+                    selectedColor = if (isEnabled) ChatTheme.colors.accentPrimary else ChatTheme.colors.textDisabled,
+                    unselectedColor = ChatTheme.colors.textDisabled,
+                    disabledSelectedColor = ChatTheme.colors.textDisabled,
+                    disabledUnselectedColor = ChatTheme.colors.textDisabled,
                 ),
                 modifier = Modifier.padding(end = 12.dp),
             )
@@ -451,13 +451,13 @@ private fun NotificationLevelOption(
                 Text(
                     text = title,
                     style = ChatTheme.typography.bodyBold.copy(
-                        color = if (isEnabled) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled,
+                        color = if (isEnabled) ChatTheme.colors.textPrimary else ChatTheme.colors.textDisabled,
                     ),
                 )
                 Text(
                     text = subtitle,
                     style = ChatTheme.typography.footnote.copy(
-                        color = if (isEnabled) ChatTheme.colors.textLowEmphasis else ChatTheme.colors.disabled,
+                        color = if (isEnabled) ChatTheme.colors.textSecondary else ChatTheme.colors.textDisabled,
                     ),
                 )
             }

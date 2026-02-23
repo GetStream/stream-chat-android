@@ -120,7 +120,7 @@ internal fun DefaultPollOptionsHeaderCenterContent(modifier: Modifier, title: St
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -133,8 +133,8 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     IconButton(
         enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
-            contentColor = ChatTheme.colors.primaryAccent,
-            disabledContentColor = ChatTheme.colors.textLowEmphasis,
+            contentColor = ChatTheme.colors.accentPrimary,
+            disabledContentColor = ChatTheme.colors.textSecondary,
         ),
         onClick = onPollCreateClicked,
     ) {

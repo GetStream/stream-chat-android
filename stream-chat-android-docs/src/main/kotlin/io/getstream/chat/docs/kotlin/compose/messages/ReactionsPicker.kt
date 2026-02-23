@@ -190,7 +190,7 @@ private object ReactionsPickerCustomizationSnippet {
                 modifier = Modifier.padding(start = 20.dp, top = 12.dp),
                 text = "Available reactions",
                 style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textPrimary
             )
         }
     }

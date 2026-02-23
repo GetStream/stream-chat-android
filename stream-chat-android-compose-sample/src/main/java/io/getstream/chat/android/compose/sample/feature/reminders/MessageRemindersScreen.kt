@@ -234,7 +234,7 @@ private fun MessageRemindersResultList(
                     ),
                 reminder = it,
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
         }
         if (isLoadingMore) {
             item {
@@ -289,15 +289,15 @@ private fun MessageReminderFilterItem(
     SuggestionChip(
         modifier = Modifier.height(32.dp),
         colors = SuggestionChipDefaults.suggestionChipColors(
-            containerColor = if (isSelected) ChatTheme.colors.primaryAccent else ChatTheme.colors.appBackground,
+            containerColor = if (isSelected) ChatTheme.colors.accentPrimary else ChatTheme.colors.appBackground,
         ),
         shape = RoundedCornerShape(16.dp),
-        border = if (isSelected) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+        border = if (isSelected) null else BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
         label = {
             Text(
                 text = stringResource(filter.label),
                 fontSize = 14.sp,
-                color = if (isSelected) Color.White else ChatTheme.colors.textLowEmphasis,
+                color = if (isSelected) Color.White else ChatTheme.colors.textSecondary,
             )
         },
         onClick = onClick,
@@ -327,7 +327,7 @@ private fun MessageReminderItem(
             Text(
                 text = stringResource(R.string.reminders_channel_name, reminder.channel?.name ?: ""),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
@@ -355,13 +355,13 @@ private fun MessageReminderItem(
                 Text(
                     text = reminder.message?.user?.name ?: "",
                     fontSize = 16.sp,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                     style = ChatTheme.typography.bodyBold,
                 )
                 Text(
                     text = reminder.message?.text ?: "",
                     fontSize = 14.sp,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                     style = ChatTheme.typography.body,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
@@ -382,7 +382,7 @@ private fun LoadingMoreItem() {
             .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
+        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
     }
 }
 

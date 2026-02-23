@@ -196,7 +196,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                 fontSize = 16.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
 
@@ -211,7 +211,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_muted),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             }
         } else {
@@ -236,7 +236,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                     inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
                 )
             }
@@ -268,7 +268,7 @@ private fun UserTypingIndicator(users: List<User>) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }

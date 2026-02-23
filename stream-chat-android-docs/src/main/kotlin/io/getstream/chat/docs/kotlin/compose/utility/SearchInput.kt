@@ -99,7 +99,7 @@ private object SearchInputCustomizationSnippet {
                 Text(
                     text = "Search channels",
                     style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         )

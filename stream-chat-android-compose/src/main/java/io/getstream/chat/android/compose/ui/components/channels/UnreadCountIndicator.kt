@@ -43,7 +43,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun UnreadCountIndicator(
     unreadCount: Int,
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.errorAccent,
+    color: Color = ChatTheme.colors.accentError,
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
     val shape = RoundedCornerShape(9.dp)

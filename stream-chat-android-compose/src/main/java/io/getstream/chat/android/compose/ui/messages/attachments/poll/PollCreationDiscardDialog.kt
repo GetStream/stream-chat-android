@@ -63,7 +63,7 @@ public fun PollCreationDiscardDialog(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(16.dp))
-                .background(ChatTheme.colors.overlay),
+                .background(ChatTheme.colors.overlayBackground),
         ) {
             Column(
                 modifier = Modifier
@@ -79,14 +79,14 @@ public fun PollCreationDiscardDialog(
                     Text(
                         modifier = Modifier.padding(bottom = 8.dp),
                         text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_title),
-                        color = ChatTheme.colors.textHighEmphasis,
+                        color = ChatTheme.colors.textPrimary,
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Medium,
                     )
 
                     Text(
                         text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_description),
-                        color = ChatTheme.colors.textHighEmphasis,
+                        color = ChatTheme.colors.textPrimary,
                         fontSize = 17.sp,
                     )
                 }
@@ -100,7 +100,7 @@ public fun PollCreationDiscardDialog(
                     TextButton(onClick = { onCancelClicked() }) {
                         Text(
                             text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_cancel),
-                            color = ChatTheme.colors.primaryAccent,
+                            color = ChatTheme.colors.accentPrimary,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Medium,
                         )
@@ -109,7 +109,7 @@ public fun PollCreationDiscardDialog(
                     TextButton(onClick = { onDiscardClicked() }) {
                         Text(
                             text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_confirm),
-                            color = ChatTheme.colors.primaryAccent,
+                            color = ChatTheme.colors.accentPrimary,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Medium,
                         )

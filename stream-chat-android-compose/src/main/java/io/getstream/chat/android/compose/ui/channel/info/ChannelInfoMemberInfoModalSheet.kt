@@ -83,7 +83,7 @@ internal fun ChannelInfoMemberInfoModalSheet(
 
     ModalBottomSheet(
         sheetState = sheetState,
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
         onDismissRequest = onDismiss,
     ) {
         val state by viewModel.state.collectAsStateWithLifecycle()
@@ -143,14 +143,14 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
             style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = user.getLastSeenText(context),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -158,7 +158,7 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
             Text(
                 text = member.getBanExpirationText(context),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.errorAccent,
+                color = ChatTheme.colors.accentError,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -226,7 +226,7 @@ private fun ExpandedSheet(content: @Composable () -> Unit) {
     // so we need to mimic it with a card.
     Card(
         shape = BottomSheetDefaults.ExpandedShape,
-        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+        colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

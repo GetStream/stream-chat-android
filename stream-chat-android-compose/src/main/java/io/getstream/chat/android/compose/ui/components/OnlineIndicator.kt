@@ -39,6 +39,6 @@ public fun OnlineIndicator(modifier: Modifier = Modifier) {
             .size(12.dp)
             .background(ChatTheme.colors.appBackground, CircleShape)
             .padding(2.dp)
-            .background(ChatTheme.colors.infoAccent, CircleShape),
+            .background(ChatTheme.colors.accentSuccess, CircleShape),
     )
 }

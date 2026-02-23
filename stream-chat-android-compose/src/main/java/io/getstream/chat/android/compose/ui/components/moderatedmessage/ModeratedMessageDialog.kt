@@ -123,7 +123,7 @@ internal fun DefaultModeratedMessageDialogTitle() {
     Image(
         painter = painter,
         contentDescription = "",
-        colorFilter = ColorFilter.tint(ChatTheme.colors.primaryAccent),
+        colorFilter = ColorFilter.tint(ChatTheme.colors.accentPrimary),
     )
 
     Spacer(modifier = Modifier.height(4.dp))
@@ -132,7 +132,7 @@ internal fun DefaultModeratedMessageDialogTitle() {
         text = stringResource(id = R.string.stream_ui_moderation_dialog_title),
         textAlign = TextAlign.Center,
         style = ChatTheme.typography.title3,
-        color = ChatTheme.colors.textHighEmphasis,
+        color = ChatTheme.colors.textPrimary,
     )
 }
 
@@ -150,6 +150,6 @@ internal fun DefaultModeratedMessageDialogDescription() {
         text = stringResource(id = R.string.stream_ui_moderation_dialog_description),
         textAlign = TextAlign.Center,
         style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 }

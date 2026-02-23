@@ -86,7 +86,7 @@ public fun MessageListHeader(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    color: Color = ChatTheme.colors.barsBackground,
+    color: Color = ChatTheme.colors.backgroundElevationElevation1,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
@@ -228,7 +228,7 @@ public fun DefaultMessageListHeaderCenterContent(
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         when (connectionState) {
@@ -243,7 +243,7 @@ public fun DefaultMessageListHeaderCenterContent(
                 NetworkLoadingIndicator(
                     modifier = Modifier.wrapContentHeight(),
                     spinnerSize = 12.dp,
-                    textColor = ChatTheme.colors.textLowEmphasis,
+                    textColor = ChatTheme.colors.textSecondary,
                     textStyle = ChatTheme.typography.footnote,
                 )
             }
@@ -251,7 +251,7 @@ public fun DefaultMessageListHeaderCenterContent(
             is ConnectionState.Offline -> {
                 Text(
                     text = stringResource(id = R.string.stream_compose_disconnected),
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                     style = ChatTheme.typography.footnote,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -273,7 +273,7 @@ internal fun DefaultMessageListHeaderSubtitle(
     subtitle: String,
     typingUsers: List<User>,
 ) {
-    val textColor = ChatTheme.colors.textLowEmphasis
+    val textColor = ChatTheme.colors.textSecondary
     val textStyle = ChatTheme.typography.footnote
 
     if (typingUsers.isEmpty()) {

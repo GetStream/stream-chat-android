@@ -152,11 +152,11 @@ private fun LiveLocationSharing(
                 animationSpec = infiniteRepeatable(animation = tween(AnimationDurationMillis)),
             )
             val animatedColor by rememberInfiniteTransition().animateColor(
-                initialValue = ChatTheme.colors.primaryAccent,
+                initialValue = ChatTheme.colors.accentPrimary,
                 targetValue = if (isLiveLocationEnded) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.primaryAccent.copy(alpha = 0f)
+                    ChatTheme.colors.accentPrimary.copy(alpha = 0f)
                 },
                 animationSpec = infiniteRepeatable(animation = tween(AnimationDurationMillis)),
             )
@@ -182,12 +182,12 @@ private fun LiveLocationSharing(
                 Icon(
                     imageVector = Icons.Rounded.NearMeDisabled,
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
                 Text(
                     text = "Live location sharing ended",
                     style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         } else {
@@ -200,19 +200,19 @@ private fun LiveLocationSharing(
                         Icon(
                             imageVector = Icons.Rounded.NearMe,
                             contentDescription = null,
-                            tint = ChatTheme.colors.primaryAccent,
+                            tint = ChatTheme.colors.accentPrimary,
                         )
                     }
                     Text(
                         text = "Sharing live location until ${ChatTheme.dateFormatter.formatDate(location.endAt)}",
                         style = ChatTheme.typography.footnote,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 }
                 if (isOwnMessage) {
                     TextButton(
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.errorAccent),
+                        colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentError),
                         onClick = onStopSharingClick,
                     ) {
                         Text(text = "Stop Sharing")

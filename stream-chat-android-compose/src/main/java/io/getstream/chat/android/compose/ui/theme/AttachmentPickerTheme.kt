@@ -56,12 +56,12 @@ public data class AttachmentPickerTheme(
             },
         ): AttachmentPickerTheme {
             return AttachmentPickerTheme(
-                backgroundOverlay = colors.overlay,
-                backgroundSecondary = colors.inputBackground,
-                backgroundPrimary = colors.barsBackground,
-                checkIconBackgroundColor = colors.overlayDark,
-                checkIconTintColor = colors.textHighEmphasisInverse,
-                contentColor = colors.overlayDark,
+                backgroundOverlay = colors.overlayBackground,
+                backgroundSecondary = colors.backgroundCoreSurface,
+                backgroundPrimary = colors.backgroundElevationElevation1,
+                checkIconBackgroundColor = colors.overlayBackgroundDark,
+                checkIconTintColor = colors.textOnDark,
+                contentColor = colors.overlayBackgroundDark,
             )
         }
     }

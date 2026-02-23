@@ -125,7 +125,7 @@ internal fun DefaultMessageDeletedContent(
                 bottom = 8.dp,
             ),
         text = stringResource(id = R.string.stream_compose_message_deleted),
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         style = ChatTheme.typography.footnoteItalic,
     )
 }

@@ -145,7 +145,7 @@ class MessagesActivity : ComponentActivity() {
             .defaultTheme(isInDarkMode, typography, shapes, colors)
             .copy(
                 inputField = ComposerInputFieldTheme.defaultTheme(
-                    mentionStyleFactory = CustomMentionStyleFactory(colors.primaryAccent),
+                    mentionStyleFactory = CustomMentionStyleFactory(colors.accentPrimary),
                 ),
             )
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
@@ -377,12 +377,12 @@ class MessagesActivity : ComponentActivity() {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                         contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
+                        tint = ChatTheme.colors.textSecondary,
                     )
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
                         text = "Type something",
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 }
             },
@@ -409,7 +409,7 @@ class MessagesActivity : ComponentActivity() {
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
                 contentDescription = null,
             )
         }

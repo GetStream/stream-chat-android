@@ -161,7 +161,7 @@ private fun SelectUsersToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
     ) {
         AppToolbar(
             title = stringResource(id = R.string.add_group_channel_members_title),
@@ -172,7 +172,7 @@ private fun SelectUsersToolbar(
             onQueryChanged = onSearchQueryChanged,
             leadingContent = {
                 Icon(
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                     painter = painterResource(id = R.drawable.ic_search),
                     contentDescription = null,
                 )
@@ -184,7 +184,7 @@ private fun SelectUsersToolbar(
                 onRemoveClick = onUserClick,
             )
         }
-        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
     }
 }
 
@@ -204,7 +204,7 @@ private fun EnterNameToolbar(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
     ) {
         AppToolbar(
             title = stringResource(id = R.string.add_group_channel_name_title),
@@ -214,7 +214,7 @@ private fun EnterNameToolbar(
             channelName = channelName,
             onChannelNameChanged = onChannelNameChanged,
         )
-        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
     }
 }
 
@@ -245,7 +245,7 @@ private fun EnterNameContent(
         Text(
             modifier = Modifier.padding(8.dp),
             text = text,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontSize = 14.sp,
         )
         LazyColumn {
@@ -254,7 +254,7 @@ private fun EnterNameContent(
                     user = user,
                     onRemoveClick = { onRemoveUserClick(user) },
                 )
-                HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+                HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
             }
         }
     }
@@ -269,7 +269,7 @@ private fun EnterNameContent(
 private fun NextFab(onClick: () -> Unit) {
     FloatingActionButton(
         shape = CircleShape,
-        containerColor = ChatTheme.colors.primaryAccent,
+        containerColor = ChatTheme.colors.accentPrimary,
         onClick = onClick,
     ) {
         Icon(
@@ -289,7 +289,7 @@ private fun NextFab(onClick: () -> Unit) {
 private fun AddGroupChannelFab(onClick: () -> Unit) {
     FloatingActionButton(
         shape = CircleShape,
-        containerColor = ChatTheme.colors.primaryAccent,
+        containerColor = ChatTheme.colors.accentPrimary,
         onClick = onClick,
     ) {
         Icon(
@@ -317,21 +317,21 @@ private fun ChannelNameTextField(
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = ChatTheme.colors.barsBackground,
-            unfocusedContainerColor = ChatTheme.colors.barsBackground,
+            focusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+            unfocusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            focusedTextColor = ChatTheme.colors.textHighEmphasis,
-            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
-            cursorColor = ChatTheme.colors.primaryAccent,
+            focusedTextColor = ChatTheme.colors.textPrimary,
+            unfocusedTextColor = ChatTheme.colors.textPrimary,
+            cursorColor = ChatTheme.colors.accentPrimary,
         ),
         onValueChange = onChannelNameChanged,
         placeholder = {
             Text(
                 text = stringResource(id = R.string.add_group_channel_name_placeholder),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         },
         leadingIcon = {
@@ -339,7 +339,7 @@ private fun ChannelNameTextField(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(id = R.string.add_group_channel_name_label),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         },
     )
@@ -371,7 +371,7 @@ private fun GroupChannelUserPreviewItem(
                 .padding(start = 8.dp)
                 .weight(1f),
             text = user.name,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 14.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -382,7 +382,7 @@ private fun GroupChannelUserPreviewItem(
             Icon(
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = null,
-                tint = ChatTheme.colors.textHighEmphasis,
+                tint = ChatTheme.colors.textPrimary,
             )
         }
     }
@@ -402,7 +402,7 @@ private fun SelectedUsersList(
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
         contentPadding = PaddingValues(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -444,21 +444,21 @@ private fun SelectedUserItem(
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
         Box(
             modifier = Modifier
                 .size(24.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(ChatTheme.colors.barsBackground)
+                .background(ChatTheme.colors.backgroundElevationElevation1)
                 .align(Alignment.TopEnd)
                 .clickable { onRemoveClick() },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = null,
-                tint = ChatTheme.colors.textHighEmphasis,
+                tint = ChatTheme.colors.textPrimary,
             )
         }
     }

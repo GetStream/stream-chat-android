@@ -186,7 +186,7 @@ internal fun ChannelMediaAttachmentsGrid(
                 sheetMaxWidth = Dp.Unspecified,
                 shape = RectangleShape,
                 dragHandle = {},
-                containerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
             ) {
                 ChannelMediaAttachmentsPreviewScreen(
                     items = items,

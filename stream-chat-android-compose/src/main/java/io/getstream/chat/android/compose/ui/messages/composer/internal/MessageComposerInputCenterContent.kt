@@ -126,7 +126,7 @@ private fun TextFieldPlaceholder(canSendMessage: Boolean) {
     }
     Text(
         text = text,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         style = ChatTheme.messageComposerTheme.inputField.textStyle,
     )
 }
@@ -158,7 +158,7 @@ private class TextFieldVisualTransformation(
         val textColor = inputFieldTheme.textStyle.color
         val fontStyle = typography.body.fontStyle
         val linkStyle = TextStyle(
-            color = colors.primaryAccent,
+            color = colors.accentPrimary,
             textDecoration = TextDecoration.Underline,
         )
         val transformed = buildAnnotatedInputText(

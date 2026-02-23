@@ -18,7 +18,6 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -26,36 +25,6 @@ import androidx.compose.ui.graphics.Color
  */
 @Deprecated("Use StreamDesign.Colors", ReplaceWith("StreamDesign.Colors"))
 public typealias StreamColors = StreamDesign.Colors
-
-/**
- * Contains all the colors used by legacy components.
- */
-@Immutable
-public data class StreamLegacyColors(
-    public val textHighEmphasis: Color,
-    public val textHighEmphasisInverse: Color,
-    public val textLowEmphasis: Color,
-    public val disabled: Color,
-    public val borders: Color,
-    public val inputBackground: Color,
-    public val barsBackground: Color,
-    public val overlay: Color,
-    public val overlayDark: Color,
-    public val primaryAccent: Color,
-    public val errorAccent: Color,
-    public val infoAccent: Color,
-    public val highlight: Color,
-    public val threadSeparatorGradientStart: Color,
-    public val threadSeparatorGradientEnd: Color,
-    public val mediaShimmerBase: Color,
-    public val mediaShimmerHighlights: Color,
-    public val imageBackgroundMessageList: Color,
-    public val imageBackgroundMediaGalleryPicker: Color,
-    public val videoBackgroundMessageList: Color,
-    public val videoBackgroundMediaGalleryPicker: Color,
-    public val showMoreOverlay: Color,
-    public val showMoreCountText: Color,
-)
 
 @Suppress("MagicNumber")
 internal object StreamPrimitiveColors {
@@ -107,4 +76,6 @@ internal object StreamPrimitiveColors {
     val yellow100 = Color(0xFFFFF1C2)
     val yellow200 = Color(0xFFFFE8A0)
     val yellow800 = Color(0xFF9F7700)
+    val highlightLight = Color(0xFFFBF4DD)
+    val highlightDark = Color(0xFF302D22)
 }

@@ -18,12 +18,10 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -31,7 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.compose.R
 
 /**
  * The Stream Chat Design System namespace.
@@ -56,7 +53,6 @@ public object StreamDesign {
      * Contains all the colors in our palette. Each color is used for various things and can be
      * changed to customize the app design style.
      *
-     * @param legacyColors Colors used by legacy components.
      * @param accentBlack Used for black accent elements.
      * @param accentError Used for destructive actions and error states.
      * @param accentNeutral Used for neutral accent for low-priority badges.
@@ -160,12 +156,12 @@ public object StreamDesign {
      * @param presenceBgOnline Used for online presence indicator.
      * @param presenceBgOffline Used for offline presence indicator.
      * @param presenceBorder Used for the outline around the presence dot.
+     * @param overlayBackground Used for regular overlay/scrim backgrounds.
+     * @param overlayBackgroundDark Used for darker overlay/scrim backgrounds.
+     * @param highlightBackground Used for highlight backgrounds such as message highlights.
      */
-    @Suppress("DEPRECATION_ERROR")
     @Immutable
     public data class Colors(
-        public val legacyColors: StreamLegacyColors,
-
         public val accentBlack: Color,
         public val accentError: Color,
         public val accentNeutral: Color,
@@ -268,31 +264,10 @@ public object StreamDesign {
         public val presenceBgOnline: Color = accentSuccess,
         public val presenceBgOffline: Color = accentNeutral,
         public val presenceBorder: Color,
+        public val overlayBackground: Color,
+        public val overlayBackgroundDark: Color,
+        public val highlightBackground: Color,
     ) {
-
-        public val textHighEmphasis: Color get() = legacyColors.textHighEmphasis
-        public val textHighEmphasisInverse: Color get() = legacyColors.textHighEmphasisInverse
-        public val textLowEmphasis: Color get() = legacyColors.textLowEmphasis
-        public val disabled: Color get() = legacyColors.disabled
-        public val borders: Color get() = legacyColors.borders
-        public val inputBackground: Color get() = legacyColors.inputBackground
-        public val barsBackground: Color get() = legacyColors.barsBackground
-        public val overlay: Color get() = legacyColors.overlay
-        public val overlayDark: Color get() = legacyColors.overlayDark
-        public val primaryAccent: Color get() = legacyColors.primaryAccent
-        public val errorAccent: Color get() = legacyColors.errorAccent
-        public val infoAccent: Color get() = legacyColors.infoAccent
-        public val highlight: Color get() = legacyColors.highlight
-        public val threadSeparatorGradientStart: Color get() = legacyColors.threadSeparatorGradientStart
-        public val threadSeparatorGradientEnd: Color get() = legacyColors.threadSeparatorGradientEnd
-        public val mediaShimmerBase: Color get() = legacyColors.mediaShimmerBase
-        public val mediaShimmerHighlights: Color get() = legacyColors.mediaShimmerHighlights
-        public val imageBackgroundMessageList: Color get() = legacyColors.imageBackgroundMessageList
-        public val imageBackgroundMediaGalleryPicker: Color get() = legacyColors.imageBackgroundMediaGalleryPicker
-        public val videoBackgroundMessageList: Color get() = legacyColors.videoBackgroundMessageList
-        public val videoBackgroundMediaGalleryPicker: Color get() = legacyColors.videoBackgroundMediaGalleryPicker
-        public val showMoreOverlay: Color get() = legacyColors.showMoreOverlay
-        public val showMoreCountText: Color get() = legacyColors.showMoreCountText
 
         public companion object {
             /**
@@ -302,7 +277,6 @@ public object StreamDesign {
              */
             @Deprecated("Use default()", ReplaceWith("default()"))
             @Suppress("LongMethod")
-            @Composable
             public fun defaultColors(): Colors = default()
 
             /**
@@ -311,33 +285,7 @@ public object StreamDesign {
              * @return A [Colors] instance holding our color palette.
              */
             @Suppress("LongMethod")
-            @Composable
             public fun default(): Colors = Colors(
-                legacyColors = StreamLegacyColors(
-                    textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
-                    textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse),
-                    textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis),
-                    disabled = colorResource(R.color.stream_compose_disabled),
-                    borders = colorResource(R.color.stream_compose_borders),
-                    inputBackground = colorResource(R.color.stream_compose_input_background),
-                    barsBackground = colorResource(R.color.stream_compose_bars_background),
-                    overlay = colorResource(R.color.stream_compose_overlay_regular),
-                    overlayDark = colorResource(R.color.stream_compose_overlay_dark),
-                    primaryAccent = colorResource(R.color.stream_compose_primary_accent),
-                    errorAccent = colorResource(R.color.stream_compose_error_accent),
-                    infoAccent = colorResource(R.color.stream_compose_info_accent),
-                    highlight = colorResource(R.color.stream_compose_highlight),
-                    threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
-                    threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
-                    mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
-                    mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-                    imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
-                    imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
-                    videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
-                    videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background),
-                    showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay),
-                    showMoreCountText = colorResource(R.color.stream_compose_show_more_text),
-                ),
                 accentBlack = StreamPrimitiveColors.baseBlack,
                 accentError = StreamPrimitiveColors.red500,
                 accentNeutral = StreamPrimitiveColors.slate500,
@@ -406,6 +354,9 @@ public object StreamDesign {
                 controlRemoveBorder = StreamPrimitiveColors.baseWhite,
                 controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 presenceBorder = StreamPrimitiveColors.baseWhite,
+                overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
+                overlayBackgroundDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.6f),
+                highlightBackground = StreamPrimitiveColors.highlightLight,
             )
 
             /**
@@ -415,7 +366,6 @@ public object StreamDesign {
              */
             @Deprecated("Use defaultDark()", ReplaceWith("defaultDark()"))
             @Suppress("LongMethod")
-            @Composable
             public fun defaultDarkColors(): Colors = defaultDark()
 
             /**
@@ -424,34 +374,7 @@ public object StreamDesign {
              * @return A [Colors] instance holding our color palette.
              */
             @Suppress("LongMethod")
-            @Composable
             public fun defaultDark(): Colors = Colors(
-                legacyColors = StreamLegacyColors(
-                    textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
-                    textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse_dark),
-                    textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis_dark),
-                    disabled = colorResource(R.color.stream_compose_disabled_dark),
-                    borders = colorResource(R.color.stream_compose_borders_dark),
-                    inputBackground = colorResource(R.color.stream_compose_input_background_dark),
-                    barsBackground = colorResource(R.color.stream_compose_bars_background_dark),
-                    overlay = colorResource(R.color.stream_compose_overlay_regular_dark),
-                    overlayDark = colorResource(R.color.stream_compose_overlay_dark_dark),
-                    primaryAccent = colorResource(R.color.stream_compose_primary_accent_dark),
-                    errorAccent = colorResource(R.color.stream_compose_error_accent_dark),
-                    infoAccent = colorResource(R.color.stream_compose_info_accent_dark),
-                    highlight = colorResource(R.color.stream_compose_highlight_dark),
-                    threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
-                    threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
-                    mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
-                    mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
-                    imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
-                    imageBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
-                    videoBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),
-                    videoBackgroundMediaGalleryPicker = colorResource(R.color.stream_compose_app_background_dark),
-                    showMoreOverlay = colorResource(R.color.stream_compose_show_more_overlay_dark),
-                    showMoreCountText = colorResource(R.color.stream_compose_show_more_text_dark),
-                ),
-                appBackground = colorResource(R.color.stream_compose_app_background_dark),
                 accentBlack = StreamPrimitiveColors.baseBlack,
                 accentError = StreamPrimitiveColors.red400,
                 accentNeutral = StreamPrimitiveColors.neutral500,
@@ -519,6 +442,9 @@ public object StreamDesign {
                 controlRemoveBg = StreamPrimitiveColors.neutral800,
                 controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 presenceBorder = StreamPrimitiveColors.baseBlack,
+                overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.2f),
+                overlayBackgroundDark = StreamPrimitiveColors.baseWhite.copy(alpha = 0.6f),
+                highlightBackground = StreamPrimitiveColors.highlightDark,
             )
         }
     }
@@ -600,6 +526,7 @@ public object StreamDesign {
              * @param fontFamily The font that the users want to use for the app.
              * @return [Typography] that holds all the default text styles that we support.
              */
+            @Suppress("LongMethod")
             public fun default(fontFamily: FontFamily? = null): Typography = Typography(
                 title1 = TextStyle(
                     fontSize = 24.sp,

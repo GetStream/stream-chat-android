@@ -171,8 +171,8 @@ public fun MessageContainer(
     )
 
     val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
-        true -> ChatTheme.colors.highlight
-        else -> ChatTheme.colors.highlight.copy(alpha = 0f) // Ensures a smooth fade-out without unwanted color shifts.
+        true -> ChatTheme.colors.highlightBackground
+        else -> ChatTheme.colors.highlightBackground.copy(alpha = 0f)
     }
 
     val color by animateColorAsState(

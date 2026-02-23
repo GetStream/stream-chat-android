@@ -54,7 +54,7 @@ public fun EmptyContent(
         Icon(
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.disabled,
+            tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.size(96.dp),
         )
 
@@ -64,7 +64,7 @@ public fun EmptyContent(
             Text(
                 text = title,
                 style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.size(8.dp))
@@ -73,7 +73,7 @@ public fun EmptyContent(
         Text(
             text = text,
             style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )
     }

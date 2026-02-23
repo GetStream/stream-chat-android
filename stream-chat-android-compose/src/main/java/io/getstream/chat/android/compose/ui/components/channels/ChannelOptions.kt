@@ -105,9 +105,9 @@ public fun buildDefaultChannelOptionsState(
         if (optionVisibility.isViewInfoVisible) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
-                titleColor = ChatTheme.colors.textHighEmphasis,
+                titleColor = ChatTheme.colors.textPrimary,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                iconColor = ChatTheme.colors.textSecondary,
                 action = ViewInfo(selectedChannel),
             )
         } else {
@@ -116,9 +116,9 @@ public fun buildDefaultChannelOptionsState(
         if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
-                titleColor = ChatTheme.colors.textHighEmphasis,
+                titleColor = ChatTheme.colors.textPrimary,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
-                iconColor = ChatTheme.colors.textLowEmphasis,
+                iconColor = ChatTheme.colors.textSecondary,
                 action = LeaveGroup(selectedChannel),
             )
         } else {
@@ -140,9 +140,9 @@ public fun buildDefaultChannelOptionsState(
         if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
-                titleColor = ChatTheme.colors.errorAccent,
+                titleColor = ChatTheme.colors.accentError,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
-                iconColor = ChatTheme.colors.errorAccent,
+                iconColor = ChatTheme.colors.accentError,
                 action = DeleteConversation(selectedChannel),
             )
         } else {
@@ -150,9 +150,9 @@ public fun buildDefaultChannelOptionsState(
         },
         ChannelOptionState(
             title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
-            titleColor = ChatTheme.colors.textHighEmphasis,
+            titleColor = ChatTheme.colors.textPrimary,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
-            iconColor = ChatTheme.colors.textLowEmphasis,
+            iconColor = ChatTheme.colors.textSecondary,
             action = Cancel,
         ),
     )
@@ -185,9 +185,9 @@ private fun buildPinOption(
 }?.let {
     ChannelOptionState(
         title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textHighEmphasis,
+        titleColor = ChatTheme.colors.textPrimary,
         iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textLowEmphasis,
+        iconColor = ChatTheme.colors.textSecondary,
         action = it.third,
     )
 }
@@ -219,9 +219,9 @@ private fun buildArchiveOption(
 }?.let {
     ChannelOptionState(
         title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textHighEmphasis,
+        titleColor = ChatTheme.colors.textPrimary,
         iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textLowEmphasis,
+        iconColor = ChatTheme.colors.textSecondary,
         action = it.third,
     )
 }
@@ -248,9 +248,9 @@ private fun buildMuteOption(
 
     ChannelOptionState(
         title = stringResource(id = uiData.first),
-        titleColor = ChatTheme.colors.textHighEmphasis,
+        titleColor = ChatTheme.colors.textPrimary,
         iconPainter = painterResource(id = uiData.second),
-        iconColor = ChatTheme.colors.textLowEmphasis,
+        iconColor = ChatTheme.colors.textSecondary,
         action = uiData.third,
     )
 } else {

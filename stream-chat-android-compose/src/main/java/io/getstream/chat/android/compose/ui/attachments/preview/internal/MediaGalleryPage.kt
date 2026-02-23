@@ -132,7 +132,7 @@ internal fun MediaGalleryImagePage(
             )
             Modifier
                 .aspectRatio(size.width / size.height, true)
-                .background(color = ChatTheme.colors.overlay)
+                .background(color = ChatTheme.colors.overlayBackground)
         } else {
             Modifier
         }
@@ -257,7 +257,7 @@ private fun ErrorIcon(modifier: Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            tint = ChatTheme.colors.disabled,
+            tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.fillMaxSize(fraction = 0.4f),
             painter = painterResource(R.drawable.stream_compose_ic_image_picker),
             contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),

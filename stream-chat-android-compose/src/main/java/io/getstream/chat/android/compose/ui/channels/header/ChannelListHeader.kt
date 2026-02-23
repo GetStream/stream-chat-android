@@ -73,7 +73,7 @@ public fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState: ConnectionState,
-    color: Color = ChatTheme.colors.barsBackground,
+    color: Color = ChatTheme.colors.backgroundElevationElevation1,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onAvatarClick: (User?) -> Unit = {},
@@ -172,7 +172,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = title,
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
 
@@ -186,7 +186,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = stringResource(R.string.stream_compose_disconnected),
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }
@@ -204,7 +204,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
     Surface(
         modifier = Modifier.size(40.dp),
         onClick = onHeaderActionClick,
-        color = ChatTheme.colors.primaryAccent,
+        color = ChatTheme.colors.accentPrimary,
         shape = ChatTheme.shapes.avatar,
         shadowElevation = 4.dp,
     ) {

@@ -252,7 +252,7 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.stream_compose_thread_list_empty_title),
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontSize = 20.sp,
             lineHeight = 25.sp,
             maxLines = 1,

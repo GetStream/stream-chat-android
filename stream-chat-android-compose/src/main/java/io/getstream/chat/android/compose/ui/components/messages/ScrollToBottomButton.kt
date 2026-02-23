@@ -72,8 +72,8 @@ internal fun ScrollToBottomButton(
             onClick = onClick,
             shape = CircleShape,
             colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                contentColor = ChatTheme.colors.textHighEmphasis,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                contentColor = ChatTheme.colors.textPrimary,
             ),
         ) {
             Icon(
@@ -89,7 +89,7 @@ internal fun ScrollToBottomButton(
                 Surface(
                     modifier = Modifier.border(width = 1.dp, color = Color.White, shape = BadgeShape),
                     shape = BadgeShape,
-                    color = ChatTheme.colors.primaryAccent,
+                    color = ChatTheme.colors.accentPrimary,
                     contentColor = Color.White,
                 ) {
                     Text(

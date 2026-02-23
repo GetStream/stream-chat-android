@@ -147,7 +147,7 @@ public fun PollAnswersDialog(
                                 .padding(horizontal = 16.dp)
                                 .clip(shape = ButtonDefaults.shape)
                                 .clickable { showAddAnswerDialog.value = true }
-                                .background(color = ChatTheme.colors.inputBackground),
+                                .background(color = ChatTheme.colors.backgroundCoreSurface),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
@@ -161,7 +161,7 @@ public fun PollAnswersDialog(
                                     },
                                 ),
                                 textAlign = TextAlign.Center,
-                                color = ChatTheme.colors.primaryAccent,
+                                color = ChatTheme.colors.accentPrimary,
                                 fontSize = 16.sp,
                             )
                         }
@@ -183,7 +183,7 @@ internal fun PollAnswersItem(
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .background(
-                color = ChatTheme.colors.inputBackground,
+                color = ChatTheme.colors.backgroundCoreSurface,
                 shape = RoundedCornerShape(
                     topStart = 12.dp,
                     topEnd = 12.dp,
@@ -197,7 +197,7 @@ internal fun PollAnswersItem(
             Text(
                 modifier = Modifier.weight(1f),
                 text = answer.text,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
             )
@@ -221,7 +221,7 @@ internal fun PollAnswersItem(
                         .padding(horizontal = 4.dp)
                         .weight(1f),
                     text = user.name,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                     fontSize = 14.sp,
                 )
             }
@@ -229,7 +229,7 @@ internal fun PollAnswersItem(
             Text(
                 modifier = Modifier.padding(bottom = 2.dp),
                 text = ChatTheme.dateFormatter.formatDate(answer.createdAt),
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 fontSize = 14.sp,
             )
         }
@@ -253,7 +253,7 @@ internal fun AddAnswerDialog(
                         false -> R.string.stream_compose_edit_answer
                     },
                 ),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         },
         text = {
@@ -278,8 +278,8 @@ internal fun AddAnswerDialog(
             TextButton(
                 enabled = newOption.value.isNotBlank(),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = ChatTheme.colors.primaryAccent,
-                    disabledContentColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
+                    contentColor = ChatTheme.colors.accentPrimary,
+                    disabledContentColor = ChatTheme.colors.accentPrimary.copy(alpha = 0.5f),
                 ),
                 onClick = {
                     onNewAnswer.invoke(newOption.value)
@@ -291,12 +291,12 @@ internal fun AddAnswerDialog(
         },
         dismissButton = {
             TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
                 onClick = { onDismiss.invoke() },
             ) {
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     )
 }

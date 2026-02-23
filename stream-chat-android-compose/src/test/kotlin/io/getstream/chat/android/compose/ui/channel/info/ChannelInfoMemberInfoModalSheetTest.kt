@@ -42,7 +42,7 @@ internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
             }
             ModalBottomSheet(
                 sheetState = sheetState,
-                containerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
                 onDismissRequest = {},
             ) {
                 ChannelInfoMemberInfoModalSheetContent(banned = true)
@@ -59,7 +59,7 @@ internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
             }
             ModalBottomSheet(
                 sheetState = sheetState,
-                containerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
                 onDismissRequest = {},
             ) {
                 ChannelInfoMemberInfoModalSheetContent(banned = true)
@@ -76,7 +76,7 @@ internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
             }
             ModalBottomSheet(
                 sheetState = sheetState,
-                containerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
                 onDismissRequest = {},
             ) {
                 ChannelInfoMemberInfoModalSheetContent(banned = false)
@@ -93,7 +93,7 @@ internal class ChannelInfoMemberInfoModalSheetTest : PaparazziComposeTest {
             }
             ModalBottomSheet(
                 sheetState = sheetState,
-                containerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
                 onDismissRequest = {},
             ) {
                 ChannelInfoMemberInfoModalSheetContent(banned = false)

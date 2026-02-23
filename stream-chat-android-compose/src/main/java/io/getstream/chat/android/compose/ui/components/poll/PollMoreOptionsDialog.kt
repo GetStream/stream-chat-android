@@ -165,7 +165,7 @@ internal fun PollMoreOptionsTitle(title: String) {
             .fillMaxWidth()
             .heightIn(min = 56.dp)
             .clip(shape = ChatTheme.shapes.pollOptionInput)
-            .background(ChatTheme.colors.inputBackground)
+            .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
     ) {
         Text(
@@ -173,7 +173,7 @@ internal fun PollMoreOptionsTitle(title: String) {
                 .fillMaxWidth()
                 .align(Alignment.CenterStart),
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
         )
@@ -232,7 +232,7 @@ private fun PollMoreOptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .background(color = ChatTheme.colors.inputBackground, shape = shape)
+            .background(color = ChatTheme.colors.backgroundCoreSurface, shape = shape)
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -253,7 +253,7 @@ private fun PollMoreOptionItem(
         Text(
             modifier = Modifier.weight(1f),
             text = option.text,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             fontSize = 16.sp,
@@ -262,7 +262,7 @@ private fun PollMoreOptionItem(
         Text(
             modifier = Modifier.padding(bottom = 2.dp),
             text = voteCount.toString(),
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 16.sp,
         )
     }

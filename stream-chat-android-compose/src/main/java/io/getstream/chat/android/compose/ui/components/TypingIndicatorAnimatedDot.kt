@@ -58,7 +58,7 @@ public fun TypingIndicatorAnimatedDot(
         )
     }
 
-    val color: Color = ChatTheme.colors.textLowEmphasis.copy(alpha = alpha.value)
+    val color: Color = ChatTheme.colors.textSecondary.copy(alpha = alpha.value)
 
     Box(
         Modifier

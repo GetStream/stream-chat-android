@@ -97,7 +97,7 @@ internal fun PollOptionVotesDialog(
         sheetMaxWidth = Dp.Unspecified,
         shape = RoundedCornerShape(0.dp),
         dragHandle = {},
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     ) {
         ViewModelStore {
             val viewModel = viewModel {
@@ -165,7 +165,7 @@ private fun Content(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .clip(shape = ChatTheme.shapes.pollOptionInput)
-                    .background(ChatTheme.colors.inputBackground)
+                    .background(ChatTheme.colors.backgroundCoreSurface)
                     .padding(16.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -179,7 +179,7 @@ private fun Content(
                             Icon(
                                 modifier = Modifier.padding(end = 8.dp),
                                 painter = painterResource(id = R.drawable.stream_compose_ic_award),
-                                tint = ChatTheme.colors.textHighEmphasis,
+                                tint = ChatTheme.colors.textPrimary,
                                 contentDescription = null,
                             )
                         }
@@ -189,7 +189,7 @@ private fun Content(
                                 state.voteCount,
                                 state.voteCount,
                             ),
-                            color = ChatTheme.colors.textHighEmphasis,
+                            color = ChatTheme.colors.textPrimary,
                             fontSize = 16.sp,
                         )
                     }

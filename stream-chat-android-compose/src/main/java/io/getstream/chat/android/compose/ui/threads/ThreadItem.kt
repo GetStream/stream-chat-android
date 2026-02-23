@@ -144,12 +144,12 @@ internal fun ThreadItemTitle(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread),
             contentDescription = null,
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.bodyBold,
@@ -170,7 +170,7 @@ internal fun RowScope.ThreadItemReplyToContent(parentMessage: Message) {
         modifier = Modifier.weight(1f),
         text = "$prefix$text",
         fontSize = 12.sp,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         style = ChatTheme.typography.body,
@@ -227,7 +227,7 @@ internal fun ThreadItemLatestReplyContent(
                     style = ChatTheme.typography.bodyBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -241,7 +241,7 @@ internal fun ThreadItemLatestReplyContent(
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
                         style = ChatTheme.typography.body,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                     Timestamp(
                         modifier = Modifier.padding(start = 8.dp),

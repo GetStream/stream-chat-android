@@ -56,13 +56,13 @@ public fun MessageInputOptions(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_edit),
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
 
         Text(
             text = stringResource(id = R.string.stream_compose_edit_message),
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         IconButton(
@@ -73,7 +73,7 @@ public fun MessageInputOptions(
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_close),
                 contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                tint = ChatTheme.colors.textLowEmphasis,
+                tint = ChatTheme.colors.textSecondary,
             )
         }
     }

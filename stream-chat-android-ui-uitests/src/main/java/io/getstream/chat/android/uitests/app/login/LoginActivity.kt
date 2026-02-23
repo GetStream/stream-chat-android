@@ -192,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
                         text = userCredentials.user.name,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = ChatTheme.colors.textHighEmphasis,
+                        color = ChatTheme.colors.textPrimary,
                     )
                 }
 
@@ -200,7 +200,7 @@ class LoginActivity : AppCompatActivity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(0.5.dp)
-                        .background(color = ChatTheme.colors.borders),
+                        .background(color = ChatTheme.colors.borderCoreDefault),
                 )
             }
         }

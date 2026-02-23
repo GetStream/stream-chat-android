@@ -56,7 +56,7 @@ public fun ReactionsPicker(
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    overlayColor: Color = ChatTheme.colors.overlayBackground,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {

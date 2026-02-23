@@ -55,8 +55,8 @@ internal fun PullToRefreshBox(
             state = state,
             isRefreshing = isRefreshing,
             modifier = Modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.barsBackground,
-            color = ChatTheme.colors.primaryAccent,
+            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            color = ChatTheme.colors.accentPrimary,
         )
     },
     content: @Composable BoxScope.() -> Unit,

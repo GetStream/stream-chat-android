@@ -127,7 +127,7 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
         Text(
             text = user.name.ifEmpty { username },
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -135,7 +135,7 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
             Text(
                 text = username,
                 style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -154,6 +154,6 @@ internal fun DefaultMentionSuggestionItemTrailingContent() {
             .size(24.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_mentions),
         contentDescription = null,
-        tint = ChatTheme.colors.primaryAccent,
+        tint = ChatTheme.colors.accentPrimary,
     )
 }

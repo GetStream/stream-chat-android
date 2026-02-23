@@ -247,7 +247,7 @@ private fun CameraPermissionDialog(
     Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier.height(ChatTheme.dimens.attachmentsPickerHeight),
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {
             RequiredCameraPermission()
         }

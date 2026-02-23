@@ -57,7 +57,7 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
                             .padding(8.dp),
                         text = "My custom header",
                         style = ChatTheme.typography.title1,
-                        color = ChatTheme.colors.textHighEmphasis,
+                        color = ChatTheme.colors.textPrimary,
                     )
                     Text(
                         modifier = Modifier
@@ -65,7 +65,7 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
                             .padding(8.dp),
                         text = "Our reactions often reveal truths that actions alone can hide.",
                         style = ChatTheme.typography.footnoteItalic,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 },
             )

@@ -77,7 +77,7 @@ public fun FileAttachmentPreviewContent(
                     .padding(1.dp),
                 color = ChatTheme.colors.appBackground,
                 shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
             ) {
                 Row(
                     modifier = Modifier
@@ -103,7 +103,7 @@ public fun FileAttachmentPreviewContent(
                             style = ChatTheme.typography.bodyBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = ChatTheme.colors.textHighEmphasis,
+                            color = ChatTheme.colors.textPrimary,
                         )
 
                         val fileSize = attachment.fileSize
@@ -114,7 +114,7 @@ public fun FileAttachmentPreviewContent(
                                 modifier = Modifier.testTag("Stream_FileSizeInPreview"),
                                 text = fileSize,
                                 style = ChatTheme.typography.footnote,
-                                color = ChatTheme.colors.textLowEmphasis,
+                                color = ChatTheme.colors.textSecondary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )

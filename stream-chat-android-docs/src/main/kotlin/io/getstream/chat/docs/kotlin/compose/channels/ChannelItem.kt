@@ -141,7 +141,7 @@ private object ChannelItemCustomizationSnippet {
                     Text(
                         text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                         style = ChatTheme.typography.bodyBold,
-                        color = ChatTheme.colors.textHighEmphasis
+                        color = ChatTheme.colors.textPrimary
                     )
                 }
             )

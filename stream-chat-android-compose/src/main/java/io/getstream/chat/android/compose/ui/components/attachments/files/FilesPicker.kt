@@ -92,7 +92,7 @@ public fun FilesPicker(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.stream_compose_recent_files),
                 style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.weight(6f))
@@ -103,7 +103,7 @@ public fun FilesPicker(
                         modifier = Modifier.testTag("Stream_FindFilesButton"),
                         painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
                         contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                        tint = ChatTheme.colors.primaryAccent,
+                        tint = ChatTheme.colors.accentPrimary,
                     )
                 },
                 onClick = { fileSelectContract.launch(allowMultipleSelection) },
@@ -143,12 +143,12 @@ internal fun DefaultFilesPickerItem(
                     checked = fileItem.isSelected,
                     onCheckedChange = null,
                     colors = CheckboxDefaults.colors(
-                        checkedColor = ChatTheme.colors.primaryAccent,
-                        uncheckedColor = ChatTheme.colors.disabled,
+                        checkedColor = ChatTheme.colors.accentPrimary,
+                        uncheckedColor = ChatTheme.colors.textDisabled,
                         checkmarkColor = Color.White,
-                        disabledCheckedColor = ChatTheme.colors.disabled,
-                        disabledUncheckedColor = ChatTheme.colors.disabled,
-                        disabledIndeterminateColor = ChatTheme.colors.disabled,
+                        disabledCheckedColor = ChatTheme.colors.textDisabled,
+                        disabledUncheckedColor = ChatTheme.colors.textDisabled,
+                        disabledIndeterminateColor = ChatTheme.colors.textDisabled,
                     ),
                 )
             } else {
@@ -156,10 +156,10 @@ internal fun DefaultFilesPickerItem(
                     selected = fileItem.isSelected,
                     onClick = null,
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = ChatTheme.colors.primaryAccent,
-                        unselectedColor = ChatTheme.colors.disabled,
-                        disabledSelectedColor = ChatTheme.colors.disabled,
-                        disabledUnselectedColor = ChatTheme.colors.disabled,
+                        selectedColor = ChatTheme.colors.accentPrimary,
+                        unselectedColor = ChatTheme.colors.textDisabled,
+                        disabledSelectedColor = ChatTheme.colors.textDisabled,
+                        disabledUnselectedColor = ChatTheme.colors.textDisabled,
                     ),
                 )
             }
@@ -180,13 +180,13 @@ internal fun DefaultFilesPickerItem(
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
                 style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Text(
                 text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         }
     }

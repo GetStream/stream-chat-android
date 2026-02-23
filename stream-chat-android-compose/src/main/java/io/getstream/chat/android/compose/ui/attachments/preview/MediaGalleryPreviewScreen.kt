@@ -476,8 +476,8 @@ internal fun MediaGalleryPreviewHeader(
     onTrailingContentClick: () -> Unit,
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
-    backgroundColor: Color = ChatTheme.colors.barsBackground,
-    contentColor: Color = ChatTheme.colors.textHighEmphasis,
+    backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
+    contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isCloseVisible) {
@@ -676,8 +676,8 @@ internal fun MediaGalleryPreviewFooter(
     onTrailingContentClick: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
-    backgroundColor: Color = ChatTheme.colors.barsBackground,
-    contentColor: Color = ChatTheme.colors.textHighEmphasis,
+    backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
+    contentColor: Color = ChatTheme.colors.textPrimary,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isShareVisible) {
@@ -900,7 +900,7 @@ internal fun MediaGalleryPreviewPageIndicator(
     Text(
         text = text,
         style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
+        color = ChatTheme.colors.textPrimary,
         maxLines = 1,
     )
 }
@@ -919,7 +919,7 @@ internal fun MediaGalleryPreviewSharingInProgressIndicator() {
                 .padding(horizontal = 12.dp)
                 .size(24.dp),
             strokeWidth = 2.dp,
-            color = ChatTheme.colors.primaryAccent,
+            color = ChatTheme.colors.accentPrimary,
         )
         Text(
             text = stringResource(id = R.string.stream_compose_media_gallery_preview_preparing),

@@ -65,7 +65,7 @@ internal fun ChannelMembersItem(
             style = ChatTheme.typography.footnoteBold,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }

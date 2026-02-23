@@ -57,19 +57,19 @@ fun ReminderOptionsDialog(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_options),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 style = ChatTheme.typography.title3Bold,
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_edit),
-                color = ChatTheme.colors.primaryAccent,
+                color = ChatTheme.colors.accentPrimary,
                 onClick = onEdit,
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_delete),
-                color = ChatTheme.colors.errorAccent,
+                color = ChatTheme.colors.accentError,
                 onClick = onDelete,
             )
         }
@@ -92,31 +92,31 @@ fun CreateReminderDialog(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_select_reminder_time_title),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 style = ChatTheme.typography.title3Bold,
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                 text = stringResource(R.string.reminders_select_reminder_time_description),
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 style = ChatTheme.typography.body,
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_2_minutes),
                 onClick = { onRemindAtSelected(Date().apply { time += 2.minutes.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_5_minutes),
                 onClick = { onRemindAtSelected(Date().apply { time += 5.minutes.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_1_hour),
                 onClick = { onRemindAtSelected(Date().apply { time += 1.hours.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_1_day),
                 onClick = { onRemindAtSelected(Date().apply { time += 1.days.inWholeMilliseconds }) },
@@ -143,31 +143,31 @@ fun EditReminderDialog(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_edit_due_date),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 style = ChatTheme.typography.title3Bold,
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_2_minutes),
                 onClick = { onRemindAtSelected(Date().apply { time += 2.minutes.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_5_minutes),
                 onClick = { onRemindAtSelected(Date().apply { time += 5.minutes.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_1_hour),
                 onClick = { onRemindAtSelected(Date().apply { time += 1.hours.inWholeMilliseconds }) },
             )
-            HorizontalDivider(color = ChatTheme.colors.borders)
+            HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
                 text = stringResource(R.string.reminders_remind_in_1_day),
                 onClick = { onRemindAtSelected(Date().apply { time += 1.days.inWholeMilliseconds }) },
             )
             if (remindAt != null) {
-                HorizontalDivider(color = ChatTheme.colors.borders)
+                HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
                 ReminderOptionItem(
                     text = stringResource(R.string.reminders_clear_due_date),
                     onClick = { onRemindAtSelected(null) },
@@ -183,7 +183,7 @@ private fun ReminderDialog(
     content: @Composable () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismiss) {
-        Card(colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground)) {
+        Card(colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1)) {
             content()
         }
     }
@@ -200,7 +200,7 @@ private fun ReminderDialog(
 private fun ReminderOptionItem(
     text: String,
     onClick: () -> Unit,
-    color: Color = ChatTheme.colors.primaryAccent,
+    color: Color = ChatTheme.colors.accentPrimary,
 ) {
     Column(
         modifier = Modifier

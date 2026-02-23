@@ -1090,7 +1090,7 @@ public interface ChatComponentFactory {
             modifier = modifier,
             painter = painterResource(id = R.drawable.stream_compose_ic_error),
             contentDescription = null,
-            tint = ChatTheme.colors.errorAccent,
+            tint = ChatTheme.colors.accentError,
         )
     }
 
@@ -2824,7 +2824,7 @@ public interface ChatComponentFactory {
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_reply),
                 contentDescription = "",
-                tint = ChatTheme.colors.textLowEmphasis,
+                tint = ChatTheme.colors.textSecondary,
             )
         }
     }
@@ -2908,8 +2908,8 @@ public interface ChatComponentFactory {
             state = pullToRefreshState,
             isRefreshing = isRefreshing,
             modifier = modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.barsBackground,
-            color = ChatTheme.colors.primaryAccent,
+            containerColor = ChatTheme.colors.backgroundElevationElevation1,
+            color = ChatTheme.colors.accentPrimary,
         )
     }
 
@@ -3322,8 +3322,8 @@ public interface ChatComponentFactory {
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                titleContentColor = ChatTheme.colors.textHighEmphasis,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
     }
@@ -3373,11 +3373,11 @@ public interface ChatComponentFactory {
         Text(
             modifier = modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.borders.copy(alpha = 0.8f))
+                .background(ChatTheme.colors.borderCoreDefault.copy(alpha = 0.8f))
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             text = label,
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 
@@ -3452,8 +3452,8 @@ public interface ChatComponentFactory {
             },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                titleContentColor = ChatTheme.colors.textHighEmphasis,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
     }
@@ -3505,13 +3505,13 @@ public interface ChatComponentFactory {
                 .align(Alignment.TopCenter)
                 .padding(16.dp)
                 .background(
-                    color = ChatTheme.colors.textHighEmphasis.copy(alpha = 0.6f),
+                    color = ChatTheme.colors.textPrimary.copy(alpha = 0.6f),
                     shape = ButtonDefaults.outlinedShape,
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             text = label,
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasisInverse,
+            color = ChatTheme.colors.textOnDark,
         )
     }
 
@@ -3552,7 +3552,7 @@ public interface ChatComponentFactory {
             CircularProgressIndicator(
                 modifier = modifier.fillMaxSize(.25f),
                 strokeWidth = 2.dp,
-                color = ChatTheme.colors.primaryAccent,
+                color = ChatTheme.colors.accentPrimary,
             )
         }
     }
@@ -3576,13 +3576,13 @@ public interface ChatComponentFactory {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_close),
                         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                        tint = ChatTheme.colors.textHighEmphasis,
+                        tint = ChatTheme.colors.textPrimary,
                     )
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                titleContentColor = ChatTheme.colors.textHighEmphasis,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                titleContentColor = ChatTheme.colors.textPrimary,
             ),
         )
     }
@@ -3604,13 +3604,13 @@ public interface ChatComponentFactory {
             Text(
                 text = title,
                 style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
             Text(
                 text = subtitle,
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
             )
         }
@@ -3633,7 +3633,7 @@ public interface ChatComponentFactory {
     public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
         Row(
             modifier = Modifier
-                .background(ChatTheme.colors.barsBackground)
+                .background(ChatTheme.colors.backgroundElevationElevation1)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -3641,7 +3641,7 @@ public interface ChatComponentFactory {
             Text(
                 text = text,
                 style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
         }
@@ -3661,10 +3661,10 @@ public interface ChatComponentFactory {
             actions = { params.trailingContent() },
             windowInsets = BottomAppBarDefaults.windowInsets,
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                titleContentColor = ChatTheme.colors.textHighEmphasis,
-                navigationIconContentColor = ChatTheme.colors.textHighEmphasis,
-                actionIconContentColor = ChatTheme.colors.textHighEmphasis,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                titleContentColor = ChatTheme.colors.textPrimary,
+                navigationIconContentColor = ChatTheme.colors.textPrimary,
+                actionIconContentColor = ChatTheme.colors.textPrimary,
             ),
         )
     }

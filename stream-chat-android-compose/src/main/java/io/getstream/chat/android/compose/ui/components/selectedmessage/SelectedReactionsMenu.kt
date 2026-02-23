@@ -79,8 +79,8 @@ public fun SelectedReactionsMenu(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(),
         shape = ChatTheme.shapes.bottomSheet,
-        containerColor = ChatTheme.colors.barsBackground,
-        scrimColor = ChatTheme.colors.overlay,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        scrimColor = ChatTheme.colors.overlayBackground,
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
@@ -149,7 +149,7 @@ internal fun ReactionsMenuContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundElevationElevation1)
             .verticalScroll(rememberScrollState()),
     ) {
         Text(
@@ -157,7 +157,7 @@ internal fun ReactionsMenuContent(
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         ReactionCountRow(

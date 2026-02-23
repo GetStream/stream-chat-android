@@ -91,7 +91,7 @@ public fun ComposerLinkPreview(
     val attachment = linkPreview.attachment
     val colors = ChatTheme.colors
     val typography = ChatTheme.typography
-    val textColor = colors.textHighEmphasis
+    val textColor = colors.textPrimary
 
     Box(
         modifier = modifier,

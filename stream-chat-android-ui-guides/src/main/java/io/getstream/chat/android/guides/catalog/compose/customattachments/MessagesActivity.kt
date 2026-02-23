@@ -191,7 +191,7 @@ class MessagesActivity : AppCompatActivity() {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = ChatTheme.colors.textLowEmphasis,
+                            tint = ChatTheme.colors.textSecondary,
                         )
                     },
                     onClick = {

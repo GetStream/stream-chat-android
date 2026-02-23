@@ -200,8 +200,8 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
 internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
-            ChatTheme.colors.threadSeparatorGradientStart,
-            ChatTheme.colors.threadSeparatorGradientEnd,
+            ChatTheme.colors.backgroundCoreSurface,
+            ChatTheme.colors.appBackground,
         ),
     )
     val replyCount = threadSeparator.replyCount
@@ -223,7 +223,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
                 replyCount,
                 replyCount,
             ),
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             style = ChatTheme.typography.body,
         )
     }
@@ -243,7 +243,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp),
         text = systemMessageState.message.text,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         style = ChatTheme.typography.footnoteBold,
         textAlign = TextAlign.Center,
     )
@@ -263,7 +263,7 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
         text = moderatedMessageItemState.message.text
             .takeUnless { it.isBlank() }
             ?: stringResource(id = R.string.stream_compose_message_moderated),
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         style = ChatTheme.typography.footnoteBold,
         textAlign = TextAlign.Center,
     )

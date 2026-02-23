@@ -99,7 +99,7 @@ public fun PollOptionList(
     Text(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
         text = title,
-        color = ChatTheme.colors.textHighEmphasis,
+        color = ChatTheme.colors.textPrimary,
         style = ChatTheme.typography.title3,
         fontSize = 16.sp,
     )
@@ -122,14 +122,14 @@ public fun PollOptionList(
                         .border(
                             width = 1.dp,
                             color = if (item.pollOptionError == null) {
-                                ChatTheme.colors.inputBackground
+                                ChatTheme.colors.backgroundCoreSurface
                             } else {
-                                ChatTheme.colors.errorAccent
+                                ChatTheme.colors.accentError
                             },
                             shape = ChatTheme.shapes.pollOptionInput,
                         )
                         .clip(shape = ChatTheme.shapes.pollOptionInput)
-                        .background(ChatTheme.colors.inputBackground),
+                        .background(ChatTheme.colors.backgroundCoreSurface),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     PollOptionInput(
@@ -174,7 +174,7 @@ public fun PollOptionList(
                                             .fillMaxWidth()
                                             .padding(bottom = 4.dp),
                                         text = item.pollOptionError.message,
-                                        color = ChatTheme.colors.errorAccent,
+                                        color = ChatTheme.colors.accentError,
                                         fontSize = 12.sp,
                                     )
                                     innerTextField.invoke()
@@ -219,7 +219,7 @@ public fun PollOptionList(
                 .align(Alignment.CenterStart)
                 .padding(itemInnerPadding),
             text = stringResource(id = R.string.stream_compose_poll_option_description),
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontSize = 16.sp,
         )
     }

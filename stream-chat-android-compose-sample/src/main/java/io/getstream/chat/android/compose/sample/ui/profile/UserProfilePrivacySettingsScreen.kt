@@ -101,7 +101,7 @@ fun UserProfilePrivacySettingsScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ChatTheme.colors.primaryAccent,
+                containerColor = ChatTheme.colors.accentPrimary,
             ),
             shape = RoundedCornerShape(12.dp),
         ) {
@@ -149,7 +149,7 @@ private fun SwitchItem(
         Text(
             text = label,
             style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
         Switch(
             checked = checked,

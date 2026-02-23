@@ -55,7 +55,7 @@ public fun MessageHeaderLabel(
                 .size(14.dp),
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
 
         if (text != null) {
@@ -63,7 +63,7 @@ public fun MessageHeaderLabel(
                 modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
                 text = text,
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         }
     }

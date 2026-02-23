@@ -59,7 +59,7 @@ public fun OwnedMessageVisibilityContent(
         Text(
             text = stringResource(id = R.string.stream_compose_only_visible_to_you),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         Timestamp(

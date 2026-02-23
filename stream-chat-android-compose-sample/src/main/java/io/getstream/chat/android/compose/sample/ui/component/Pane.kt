@@ -45,7 +45,7 @@ internal fun PaneTitle(
         modifier = Modifier.padding(padding),
         text = text,
         style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 }
 
@@ -73,7 +73,7 @@ internal fun PaneRow(
                     else -> RectangleShape
                 }
                 background(
-                    color = ChatTheme.colors.barsBackground,
+                    color = ChatTheme.colors.backgroundElevationElevation1,
                     shape = shape,
                 )
             }

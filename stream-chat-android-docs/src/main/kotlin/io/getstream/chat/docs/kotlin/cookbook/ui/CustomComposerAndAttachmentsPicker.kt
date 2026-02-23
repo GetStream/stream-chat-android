@@ -212,7 +212,7 @@ private fun CustomAttachmentsPicker(
         // Gray overlay
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.colors.overlayBackground)
             .clickable(
                 onClick = actions.onDismiss,
                 indication = null,
@@ -230,7 +230,7 @@ private fun CustomAttachmentsPicker(
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             shape = ChatTheme.shapes.bottomSheet,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.inputBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
         ) {
             Box(modifier = Modifier.padding(vertical = 24.dp)) {
                 if (shouldShowMenu) {
@@ -390,9 +390,9 @@ private fun AttachmentsPickerToolbar(
                 contentDescription = "Submit Attachments",
                 modifier = Modifier.size(24.dp),
                 tint = if (isSubmitEnabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.textLowEmphasis
+                    ChatTheme.colors.textSecondary
                 },
             )
         }

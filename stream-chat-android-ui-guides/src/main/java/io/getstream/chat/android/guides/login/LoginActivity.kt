@@ -84,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
                 modifier = Modifier.size(width = 80.dp, height = 40.dp),
                 painter = painterResource(id = R.drawable.ic_stream),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
                 text = stringResource(R.string.login_screen_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -147,13 +147,13 @@ class LoginActivity : AppCompatActivity() {
                     text = loginUser.user.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
 
                 Text(
                     text = stringResource(id = R.string.login_user_subtitle),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
 
@@ -161,7 +161,7 @@ class LoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
             )
         }
     }
@@ -175,7 +175,7 @@ class LoginActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders),
+                .background(color = ChatTheme.colors.borderCoreDefault),
         )
     }
 

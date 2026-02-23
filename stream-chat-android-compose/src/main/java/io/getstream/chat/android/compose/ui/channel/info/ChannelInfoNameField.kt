@@ -65,7 +65,7 @@ internal fun ChannelInfoNameField(
                 modifier = Modifier.padding(end = 8.dp),
                 text = stringResource(R.string.stream_ui_channel_info_name_field_label),
                 style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         },
         placeholder = {
@@ -88,7 +88,7 @@ internal fun ChannelInfoNameField(
                             focusManager.clearFocus()
                         },
                         imageVector = Icons.Rounded.Close,
-                        tint = ChatTheme.colors.textLowEmphasis,
+                        tint = ChatTheme.colors.textSecondary,
                         contentDescription = null,
                     )
                     Icon(
@@ -97,7 +97,7 @@ internal fun ChannelInfoNameField(
                             focusManager.clearFocus()
                         },
                         imageVector = Icons.Rounded.Done,
-                        tint = ChatTheme.colors.primaryAccent,
+                        tint = ChatTheme.colors.accentPrimary,
                         contentDescription = null,
                     )
                 }
@@ -106,8 +106,8 @@ internal fun ChannelInfoNameField(
         singleLine = true,
         onValueChange = { value = it },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = ChatTheme.colors.textHighEmphasis,
-            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
+            focusedTextColor = ChatTheme.colors.textPrimary,
+            unfocusedTextColor = ChatTheme.colors.textPrimary,
             unfocusedBorderColor = Color.Transparent,
             focusedBorderColor = Color.Transparent,
         ),

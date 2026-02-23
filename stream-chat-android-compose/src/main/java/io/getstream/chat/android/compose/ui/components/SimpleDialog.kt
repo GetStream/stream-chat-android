@@ -81,7 +81,7 @@ internal fun SimpleDialog(
         text = text,
         confirmButton = {
             TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
                 onClick = onConfirmClick,
             ) {
                 Text(text = stringResource(id = R.string.stream_compose_ok))
@@ -90,7 +90,7 @@ internal fun SimpleDialog(
         dismissButton = if (showDismissButton) {
             {
                 TextButton(
-                    colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                    colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
                     onClick = onDismiss,
                 ) {
                     Text(text = stringResource(id = R.string.stream_compose_cancel))
@@ -99,8 +99,8 @@ internal fun SimpleDialog(
         } else {
             null
         },
-        titleContentColor = ChatTheme.colors.textHighEmphasis,
-        textContentColor = ChatTheme.colors.textHighEmphasis,
-        containerColor = ChatTheme.colors.barsBackground,
+        titleContentColor = ChatTheme.colors.textPrimary,
+        textContentColor = ChatTheme.colors.textPrimary,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     )
 }

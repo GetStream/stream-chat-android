@@ -45,7 +45,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun SimpleMenu(
     modifier: Modifier = Modifier,
     shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    overlayColor: Color = ChatTheme.colors.overlayBackground,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {},
@@ -68,7 +68,7 @@ public fun SimpleMenu(
                     interactionSource = null,
                 ),
             shape = shape,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {
             Column {
                 headerContent()

@@ -46,7 +46,7 @@ public fun NetworkLoadingIndicator(
     modifier: Modifier = Modifier,
     spinnerSize: Dp = 18.dp,
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
-    textColor: Color = ChatTheme.colors.textHighEmphasis,
+    textColor: Color = ChatTheme.colors.textPrimary,
 ) {
     Row(
         modifier,
@@ -58,7 +58,7 @@ public fun NetworkLoadingIndicator(
                 .padding(horizontal = 8.dp)
                 .size(spinnerSize),
             strokeWidth = 2.dp,
-            color = ChatTheme.colors.primaryAccent,
+            color = ChatTheme.colors.accentPrimary,
         )
 
         Text(

@@ -146,7 +146,7 @@ internal fun RowScope.DefaultMessagePreviewItemCenterContent(
             fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
@@ -154,7 +154,7 @@ internal fun RowScope.DefaultMessagePreviewItemCenterContent(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }

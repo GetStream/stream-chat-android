@@ -75,7 +75,7 @@ public fun ClusteredMessageReactions(
                 testTag = "Stream_MessageReaction"
                 contentDescription = description
             }
-            .background(colors.barsBackground, CircleShape)
+            .background(colors.backgroundElevationElevation1, CircleShape)
             .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
             .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
@@ -174,7 +174,7 @@ private fun ReactionChip(
     Row(
         modifier = Modifier
             .fillMaxHeight()
-            .background(colors.barsBackground, CircleShape)
+            .background(colors.backgroundElevationElevation1, CircleShape)
             .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
             .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),

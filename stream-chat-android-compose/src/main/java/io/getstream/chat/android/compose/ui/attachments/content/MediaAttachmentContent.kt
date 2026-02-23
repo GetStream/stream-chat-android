@@ -562,18 +562,11 @@ internal fun MediaAttachmentContentItem(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        val backgroundColor =
-            if (isImage) {
-                ChatTheme.colors.imageBackgroundMessageList
-            } else {
-                ChatTheme.colors.videoBackgroundMessageList
-            }
-
         StreamAsyncImage(
             imageRequest = imageRequest,
             modifier = Modifier
                 .fillMaxSize()
-                .background(backgroundColor),
+                .background(ChatTheme.colors.backgroundCoreSurface),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
             Crossfade(targetState = asyncImageState) { state ->
@@ -605,7 +598,7 @@ internal fun MediaAttachmentContentItem(
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                tint = ChatTheme.colors.disabled,
+                                tint = ChatTheme.colors.textDisabled,
                                 modifier = Modifier.fillMaxSize(0.4f),
                                 painter = painterResource(R.drawable.stream_compose_ic_image_picker),
                                 contentDescription = stringResource(
@@ -642,7 +635,7 @@ internal fun MediaAttachmentShowMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.showMoreOverlay, shape = shape),
+            .background(color = ChatTheme.colors.overlayBackgroundDark, shape = shape),
     ) {
         Text(
             modifier = modifier
@@ -651,7 +644,7 @@ internal fun MediaAttachmentShowMoreOverlay(
                 id = R.string.stream_compose_remaining_media_attachments_count,
                 remainingMediaCount,
             ),
-            color = ChatTheme.colors.showMoreCountText,
+            color = ChatTheme.colors.textOnAccent,
             style = ChatTheme.typography.title1,
             textAlign = TextAlign.Center,
         )

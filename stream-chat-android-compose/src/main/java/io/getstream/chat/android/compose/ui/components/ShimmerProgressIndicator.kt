@@ -33,8 +33,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamShimmerTheme
 internal fun ShimmerProgressIndicator(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .background(color = ChatTheme.colors.mediaShimmerBase)
+            .background(color = ChatTheme.colors.backgroundCoreSurface)
             .shimmer()
-            .background(color = ChatTheme.colors.mediaShimmerHighlights),
+            .background(color = ChatTheme.colors.appBackground),
     )
 }

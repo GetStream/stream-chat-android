@@ -242,7 +242,7 @@ private fun ReadItem(userRead: ChannelUserRead) {
         Text(
             text = userRead.user.name.takeIf(String::isNotBlank) ?: userRead.user.id,
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

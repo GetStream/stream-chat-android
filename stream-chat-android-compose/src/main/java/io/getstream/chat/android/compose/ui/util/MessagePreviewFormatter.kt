@@ -91,7 +91,7 @@ public interface MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
+                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.accentPrimary),
                 messageTextStyle = typography.bodyBold,
                 senderNameTextStyle = typography.bodyBold,
                 attachmentTextFontStyle = typography.bodyItalic,

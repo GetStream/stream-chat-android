@@ -123,7 +123,7 @@ public fun FileUploadItem(
                     style = ChatTheme.typography.bodyBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
 
                 when (val uploadState = attachment.uploadState) {
@@ -137,7 +137,7 @@ public fun FileUploadItem(
                         Text(
                             text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L),
                             style = ChatTheme.typography.footnote,
-                            color = ChatTheme.colors.textLowEmphasis,
+                            color = ChatTheme.colors.textSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
@@ -172,7 +172,7 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
                 MediaStringUtil.convertFileSizeByteCount(totalBytes),
             ),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }

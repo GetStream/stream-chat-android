@@ -129,7 +129,7 @@ private fun GroupChannelInfoScaffold(
                 onAddMembersClick = onAddMembersClick,
             )
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
@@ -297,9 +297,9 @@ internal fun GroupChannelInfoMemberItem(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
                 style = ChatTheme.typography.bodyBold,
                 color = if (member.banned) {
-                    ChatTheme.colors.errorAccent
+                    ChatTheme.colors.accentError
                 } else {
-                    ChatTheme.colors.textHighEmphasis
+                    ChatTheme.colors.textPrimary
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -308,9 +308,9 @@ internal fun GroupChannelInfoMemberItem(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.footnote,
                 color = if (member.banned) {
-                    ChatTheme.colors.errorAccent
+                    ChatTheme.colors.accentError
                 } else {
-                    ChatTheme.colors.textLowEmphasis
+                    ChatTheme.colors.textSecondary
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -328,7 +328,7 @@ internal fun GroupChannelInfoMemberItem(
         Text(
             text = role,
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -340,7 +340,7 @@ internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textLowEmphasis)) {
+    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textSecondary)) {
         ChannelInfoOption(
             modifier = Modifier.fillMaxWidth(),
             onClick = onClick,

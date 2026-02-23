@@ -132,7 +132,7 @@ internal fun DefaultSearchLeadingIcon() {
         modifier = Modifier.padding(horizontal = 6.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
-        tint = ChatTheme.colors.textLowEmphasis,
+        tint = ChatTheme.colors.textSecondary,
     )
 }
 
@@ -144,7 +144,7 @@ internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.stream_compose_search_input_hint),
         style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 }
 
@@ -162,7 +162,7 @@ internal fun DefaultSearchClearButton(onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_clear),
             contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
     }
 }
