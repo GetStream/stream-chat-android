@@ -57,6 +57,7 @@ internal fun Message.getSenderDisplayName(
     isDirectMessaging: Boolean = false,
 ): String? =
     when {
+        user.id == currentUser?.id && isDirectMessaging -> null
         user.id == currentUser?.id -> context.getString(R.string.stream_compose_channel_list_you)
         isDirectMessaging -> null
         else -> user.name

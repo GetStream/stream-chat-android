@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -55,7 +54,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
+import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.ui.util.getLastMessage
@@ -195,6 +197,8 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
     val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
 
+    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
+
     Column(
         modifier = Modifier
             .weight(1f)
@@ -207,28 +211,34 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp default gap
         ) {
-            // Channel name (flex-1)
-            Text(
-                modifier = Modifier
-                    .testTag("Stream_ChannelName")
-                    .weight(1f),
-                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
-                style = ChatTheme.typography.bodyDefault,      // 16sp Regular (was bodyBold + fontSize=16.sp override)
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textPrimary,          // was textHighEmphasis
-            )
-
-            // Mute icon (optional, inline in title row after name)
-            if (channelItemState.isMuted) {
-                Icon(
+            // Channel name + optional inline mute icon (flex-1)
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
+            ) {
+                Text(
                     modifier = Modifier
-                        .testTag("Stream_ChannelMutedIcon")
-                        .size(16.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_muted),
-                    contentDescription = null,
-                    tint = ChatTheme.colors.textTertiary,     // was textLowEmphasis
+                        .testTag("Stream_ChannelName")
+                        .weight(1f, fill = false),
+                    text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+                    style = ChatTheme.typography.bodyDefault,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = ChatTheme.colors.textPrimary,
                 )
+
+                // Mute icon — inline in title row (INLINE_TITLE variant)
+                if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.INLINE_TITLE) {
+                    Icon(
+                        modifier = Modifier
+                            .testTag("Stream_ChannelMutedIcon")
+                            .size(StreamTokens.size16),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_muted),
+                        contentDescription = null,
+                        tint = ChatTheme.colors.textTertiary,
+                    )
+                }
             }
 
             // Trailing: Timestamp + Badge (gap = spacing/xs = 8dp between them)
@@ -256,7 +266,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             }
         }
 
-        // ── Message Row: [DeliveryStatus?] [MessagePreview or TypingIndicator] ──
+        // ── Message Row: [DeliveryStatus?] [MessagePreview or TypingIndicator] [MuteIcon?] ──
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -264,7 +274,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         ) {
             if (channelItemState.typingUsers.isNotEmpty()) {
                 // Typing indicator replaces message preview when active
-                UserTypingIndicator(channelItemState.typingUsers)
+                UserTypingIndicator(channelItemState.typingUsers, isDirectMessaging)
             } else {
                 // Delivery status prefix: checkmark icon (only for own non-deleted messages)
                 if (isLastMessageFromCurrentUser && lastMessage != null && !isLastMessageDeleted) {
@@ -299,6 +309,18 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
                 )
             }
+
+            // Mute icon — at end of message row (TRAILING_BOTTOM variant)
+            if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TRAILING_BOTTOM) {
+                Icon(
+                    modifier = Modifier
+                        .testTag("Stream_ChannelMutedIcon")
+                        .size(StreamTokens.size16),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_muted),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textTertiary,
+                )
+            }
         }
     }
 }
@@ -309,7 +331,22 @@ internal fun RowScope.DefaultChannelItemCenterContent(
  * @param users The list of users currently typing.
  */
 @Composable
-private fun UserTypingIndicator(users: List<User>) {
+private fun UserTypingIndicator(users: List<User>, isDirectMessaging: Boolean) {
+    val context = LocalContext.current
+    val typingText = when {
+        isDirectMessaging -> stringResource(R.string.stream_compose_channel_list_typing)
+        users.size == 1 -> stringResource(R.string.stream_compose_channel_list_typing_one, users.first().name)
+        users.size == 2 -> stringResource(
+            R.string.stream_compose_channel_list_typing_two,
+            users[0].name,
+            users[1].name,
+        )
+        else -> context.resources.getQuantityString(
+            R.plurals.stream_compose_channel_list_typing_many,
+            users.size,
+            users.size,
+        )
+    }
     Row(
         modifier = Modifier,
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp (was 6dp)
@@ -318,16 +355,11 @@ private fun UserTypingIndicator(users: List<User>) {
         TypingIndicator()
         Text(
             modifier = Modifier.testTag("Stream_ChannelListTypingIndicator"),
-            text = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_header_typing_users,
-                users.size,
-                users.first().name,
-                users.size - 1,
-            ),
+            text = typingText,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.captionDefault,          // was body
-            color = ChatTheme.colors.textSecondary,               // was textLowEmphasis
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -376,6 +408,25 @@ private fun ChannelItemMutedPreview() {
 
 @Composable
 internal fun ChannelItemMuted() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        isMuted = true,
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemMutedTrailingBottomPreview() {
+    ChatTheme(
+        config = ChatConfig(channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM)),
+    ) {
+        ChannelItemMutedTrailingBottom()
+    }
+}
+
+@Composable
+internal fun ChannelItemMutedTrailingBottom() {
     ChannelItem(
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,

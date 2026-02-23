@@ -19,12 +19,17 @@ package io.getstream.chat.android.compose.ui.channels
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
+import io.getstream.chat.android.compose.ui.theme.ChatConfig
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
+import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDraftMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageDeliveredStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessagePendingStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSeenStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageSentStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMuted
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
 import org.junit.Rule
@@ -46,6 +51,21 @@ internal class ChannelItemTest : PaparazziComposeTest {
     fun `muted channel`() {
         snapshotWithDarkMode {
             ChannelItemMuted()
+        }
+    }
+
+    @Test
+    fun `muted channel trailing bottom`() {
+        snapshot {
+            ChatTheme(
+                config = ChatConfig(
+                    channelList = ChannelListConfig(
+                        muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM,
+                    ),
+                ),
+            ) {
+                ChannelItemMutedTrailingBottom()
+            }
         }
     }
 

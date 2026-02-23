@@ -25,6 +25,13 @@
     <!-- Channel List -->
     <string name="stream_compose_channel_list_draft">Draft: </string>
     <string name="stream_compose_channel_list_you">You</string>
+    <string name="stream_compose_channel_list_typing">Typing</string>
+    <string name="stream_compose_channel_list_typing_one">%s is typing</string>
+    <string name="stream_compose_channel_list_typing_two">%1$s and %2$s are typing</string>
+    <plurals name="stream_compose_channel_list_typing_many">
+        <item quantity="one">%d person is typing</item>
+        <item quantity="other">%d people are typing</item>
+    </plurals>
     <string name="stream_compose_channel_list_empty_channels">No channels available</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 

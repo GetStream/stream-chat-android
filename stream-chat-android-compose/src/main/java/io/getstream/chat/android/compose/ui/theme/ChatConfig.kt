@@ -17,12 +17,33 @@
 package io.getstream.chat.android.compose.ui.theme
 
 /**
+ * Defines where the mute indicator icon is placed in the channel list item.
+ */
+public enum class MuteIndicatorPosition {
+    /** Icon appears inline after the channel name in the title row. */
+    INLINE_TITLE,
+    /** Icon appears at the trailing end of the message/preview row. */
+    TRAILING_BOTTOM,
+}
+
+/**
+ * Behavioral configuration for the channel list.
+ *
+ * @param muteIndicatorPosition Where the mute icon is placed in the channel list item.
+ */
+public data class ChannelListConfig(
+    val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.INLINE_TITLE,
+)
+
+/**
  * Central behavioral configuration for the Chat SDK, accessible through `ChatTheme.config`.
  *
  * @param composer Configuration for the message composer behavior.
+ * @param channelList Configuration for the channel list behavior.
  */
 public data class ChatConfig(
     val composer: ComposerConfig = ComposerConfig(),
+    val channelList: ChannelListConfig = ChannelListConfig(),
 )
 
 /**
