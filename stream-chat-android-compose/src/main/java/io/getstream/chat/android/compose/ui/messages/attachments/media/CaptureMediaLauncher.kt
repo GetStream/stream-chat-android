@@ -112,8 +112,7 @@ private fun rememberCaptureMediaLauncherInternal(
     // Restore file references on the contract after process death.
     // Runs during composition, before rememberLauncherForActivityResult re-registers
     // in its DisposableEffect and dispatches pending results.
-    pictureFilePath?.let { contract.pictureFile = File(it) }
-    videoFilePath?.let { contract.videoFile = File(it) }
+    contract.restoreFilePaths(picturePath = pictureFilePath, videoPath = videoFilePath)
 
     return rememberLauncherForActivityResult(contract) { file ->
         onResult(file)

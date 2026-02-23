@@ -38,8 +38,8 @@ import java.io.File
  * With fallback to cache directories if external storage is unavailable.
  *
  * [pictureFile] and [videoFile] are set during [createIntent] and used by [parseResult] to resolve
- * the captured file. After process death these references are lost; callers can restore them by
- * writing to the properties directly before the pending result is dispatched.
+ * the captured file. After process death these references are lost; callers can restore them via
+ * [restoreFilePaths] before the pending result is dispatched.
  *
  * @param mode The capture mode determining what media types can be captured.
  * @param fileManager Manager for creating temporary files in external storage.
@@ -58,15 +58,13 @@ public class CaptureMediaContract(
      * The destination file for a captured photo.
      * Set by [createIntent]; can be restored externally after process death.
      */
-    @InternalStreamChatApi
-    public var pictureFile: File? = null
+    private var pictureFile: File? = null
 
     /**
      * The destination file for a captured video.
      * Set by [createIntent]; can be restored externally after process death.
      */
-    @InternalStreamChatApi
-    public var videoFile: File? = null
+    private var videoFile: File? = null
 
     override fun createIntent(context: Context, input: Unit): Intent {
         val intents: List<Intent> = mode.intents(context)
@@ -79,6 +77,25 @@ public class CaptureMediaContract(
                     (intents - initialIntent).toTypedArray(),
                 )
             }
+    }
+
+    /**
+     * Restores [pictureFile] and [videoFile] from previously persisted absolute paths.
+     *
+     * After process death the in-memory file references are lost, so the pending
+     * [ActivityResultContract] callback would be unable to locate the captured media.
+     * Call this method **before** the result is dispatched (e.g. in `onCreate`) to
+     * reconstruct the destination files so that [parseResult] can return the correct file.
+     *
+     * Passing `null` for either parameter leaves the corresponding file reference unchanged.
+     *
+     * @param picturePath Absolute path of the photo destination file, or `null`.
+     * @param videoPath Absolute path of the video destination file, or `null`.
+     */
+    @InternalStreamChatApi
+    public fun restoreFilePaths(picturePath: String?, videoPath: String?) {
+        picturePath?.let { pictureFile = File(it) }
+        videoPath?.let { videoFile = File(it) }
     }
 
     private fun getRecordVideoIntents(context: Context): List<Intent> {
