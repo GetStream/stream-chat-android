@@ -111,7 +111,10 @@ public class AttachmentStorageHelper(
             logger.w { "[resolveAttachmentFiles] Failed to resolve file for URI: $sourceUri" }
             return@mapNotNull null
         }
-        attachment.copy(upload = file)
+        attachment.copy(
+            upload = file,
+            extraData = attachment.extraData - EXTRA_SOURCE_URI,
+        )
     }
 
     /**

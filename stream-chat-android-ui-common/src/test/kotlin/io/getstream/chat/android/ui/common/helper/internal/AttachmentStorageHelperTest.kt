@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Test
@@ -202,6 +203,7 @@ internal class AttachmentStorageHelperTest {
             val result = sut.resolveAttachmentFiles(listOf(attachment))
 
             assertEquals(cachedFile, result.first().upload)
+            assertFalse(result.first().extraData.containsKey(EXTRA_SOURCE_URI))
         }
     }
 
@@ -273,6 +275,7 @@ internal class AttachmentStorageHelperTest {
             assertSame(existingFile, result[0].upload)
             assertNull(result[1].upload)
             assertEquals(cachedFile, result[2].upload)
+            assertFalse(result[2].extraData.containsKey(EXTRA_SOURCE_URI))
         }
     }
 
