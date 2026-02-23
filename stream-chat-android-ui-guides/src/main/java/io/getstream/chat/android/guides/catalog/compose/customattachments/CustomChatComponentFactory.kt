@@ -99,7 +99,7 @@ fun DateAttachmentPreviewContent(
                 .padding(16.dp)
                 .fillMaxWidth(),
             text = formattedDate,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             color = ChatTheme.colors.textPrimary,
         )
@@ -148,7 +148,7 @@ fun DateAttachmentContent(
 
             Text(
                 text = formattedDate,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
                 maxLines = 1,
                 color = ChatTheme.colors.textPrimary,
             )

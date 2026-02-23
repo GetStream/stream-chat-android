@@ -45,7 +45,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun NetworkLoadingIndicator(
     modifier: Modifier = Modifier,
     spinnerSize: Dp = 18.dp,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    textStyle: TextStyle = ChatTheme.typography.headingMedium,
     textColor: Color = ChatTheme.colors.textPrimary,
 ) {
     Row(

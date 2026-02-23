@@ -167,7 +167,7 @@ class CatalogActivity : AppCompatActivity() {
         Text(
             text = text,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )
     }
@@ -195,7 +195,7 @@ class CatalogActivity : AppCompatActivity() {
             ) {
                 Text(
                     text = titleText,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     fontSize = 16.sp,
                     color = ChatTheme.colors.textPrimary,
                 )
@@ -204,7 +204,7 @@ class CatalogActivity : AppCompatActivity() {
 
                 Text(
                     text = descriptionText,
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     color = ChatTheme.colors.textPrimary,
                 )
             }

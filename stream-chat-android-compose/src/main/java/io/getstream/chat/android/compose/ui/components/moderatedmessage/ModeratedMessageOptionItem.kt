@@ -45,7 +45,7 @@ public fun ModeratedMessageOptionItem(
     ) {
         Text(
             text = stringResource(id = option.text),
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.accentPrimary,
         )
     }

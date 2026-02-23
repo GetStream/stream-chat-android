@@ -154,7 +154,7 @@ internal fun ReactionsMenuContent(
     ) {
         Text(
             text = reactionCountText,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,

@@ -131,7 +131,7 @@ private fun IsReadCount(
             Text(
                 text = readCount.toString(),
                 modifier = Modifier.testTag("Stream_MessageReadCount"),
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.chatTextTimestamp,
             )
         }

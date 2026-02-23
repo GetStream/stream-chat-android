@@ -99,7 +99,7 @@ public data class ComposerInputFieldTheme(
             return ComposerInputFieldTheme(
                 borderShape = shapes.inputField,
                 backgroundColor = colors.backgroundCoreSurface,
-                textStyle = typography.body.copy(
+                textStyle = typography.bodyDefault.copy(
                     color = colors.textPrimary,
                     textDirection = TextDirection.Content,
                 ),

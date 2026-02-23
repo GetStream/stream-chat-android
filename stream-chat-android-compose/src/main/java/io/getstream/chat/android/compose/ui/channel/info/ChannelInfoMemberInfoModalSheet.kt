@@ -142,14 +142,14 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         val user = member.user
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = user.getLastSeenText(context),
-            style = ChatTheme.typography.footnote,
+            style = ChatTheme.typography.metadataDefault,
             color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -157,7 +157,7 @@ internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         if (member.banned) {
             Text(
                 text = member.getBanExpirationText(context),
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.accentError,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

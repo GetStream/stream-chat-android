@@ -130,7 +130,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.title3Bold,
+        style = ChatTheme.typography.headingMedium,
         color = ChatTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
@@ -143,7 +143,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         ),
-        style = ChatTheme.typography.footnoteBold,
+        style = ChatTheme.typography.metadataEmphasis,
         color = ChatTheme.colors.textSecondary,
     )
 

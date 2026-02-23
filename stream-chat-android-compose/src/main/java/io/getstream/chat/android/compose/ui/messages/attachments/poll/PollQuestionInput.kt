@@ -52,7 +52,7 @@ public fun PollQuestionInput(
             modifier = Modifier.padding(bottom = 8.dp),
             text = title,
             color = ChatTheme.colors.textPrimary,
-            style = ChatTheme.typography.title3,
+            style = ChatTheme.typography.headingMedium,
             fontSize = 16.sp,
         )
 

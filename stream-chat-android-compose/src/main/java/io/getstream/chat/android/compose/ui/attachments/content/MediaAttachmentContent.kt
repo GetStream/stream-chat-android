@@ -645,7 +645,7 @@ internal fun MediaAttachmentShowMoreOverlay(
                 remainingMediaCount,
             ),
             color = ChatTheme.colors.textOnAccent,
-            style = ChatTheme.typography.title1,
+            style = ChatTheme.typography.headingLarge,
             textAlign = TextAlign.Center,
         )
     }

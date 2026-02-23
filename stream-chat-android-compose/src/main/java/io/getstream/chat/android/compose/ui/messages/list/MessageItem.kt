@@ -224,7 +224,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
                 replyCount,
             ),
             color = ChatTheme.colors.textSecondary,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }
@@ -244,7 +244,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
             .padding(vertical = 12.dp, horizontal = 16.dp),
         text = systemMessageState.message.text,
         color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.typography.footnoteBold,
+        style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
     )
 }
@@ -264,7 +264,7 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
             .takeUnless { it.isBlank() }
             ?: stringResource(id = R.string.stream_compose_message_moderated),
         color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.typography.footnoteBold,
+        style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
     )
 }

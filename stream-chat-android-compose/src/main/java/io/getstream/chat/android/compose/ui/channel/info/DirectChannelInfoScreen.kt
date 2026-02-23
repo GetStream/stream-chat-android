@@ -215,14 +215,14 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         )
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = user.getLastSeenText(LocalContext.current),
-            style = ChatTheme.typography.footnote,
+            style = ChatTheme.typography.metadataDefault,
             color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

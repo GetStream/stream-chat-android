@@ -118,7 +118,7 @@ fun UserProfilePrivacySettingsScreen(
                 Spacer(modifier = Modifier.size(8.dp))
                 Text(
                     text = "Save Settings",
-                    style = ChatTheme.typography.bodyBold.copy(
+                    style = ChatTheme.typography.bodyEmphasis.copy(
                         color = Color.White,
                         fontSize = 16.sp,
                     ),
@@ -148,7 +148,7 @@ private fun SwitchItem(
     ) {
         Text(
             text = label,
-            style = ChatTheme.typography.title3,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )
         Switch(

@@ -152,7 +152,7 @@ internal fun ThreadItemTitle(
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }
@@ -173,7 +173,7 @@ internal fun RowScope.ThreadItemReplyToContent(parentMessage: Message) {
         color = ChatTheme.colors.textSecondary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        style = ChatTheme.typography.body,
+        style = ChatTheme.typography.bodyDefault,
     )
 }
 
@@ -224,7 +224,7 @@ internal fun ThreadItemLatestReplyContent(
             ) {
                 Text(
                     text = latestReply.user.name,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = ChatTheme.colors.textPrimary,
@@ -240,7 +240,7 @@ internal fun ThreadItemLatestReplyContent(
                         maxLines = 1,
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
-                        style = ChatTheme.typography.body,
+                        style = ChatTheme.typography.bodyDefault,
                         color = ChatTheme.colors.textSecondary,
                     )
                     Timestamp(

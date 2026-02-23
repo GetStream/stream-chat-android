@@ -190,7 +190,7 @@ private fun SearchResultItem(
             )
             Text(
                 text = user.name,
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
             )

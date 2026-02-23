@@ -62,7 +62,7 @@ internal fun ChannelMembersItem(
 
         Text(
             text = memberName,
-            style = ChatTheme.typography.footnoteBold,
+            style = ChatTheme.typography.metadataEmphasis,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
             color = ChatTheme.colors.textPrimary,

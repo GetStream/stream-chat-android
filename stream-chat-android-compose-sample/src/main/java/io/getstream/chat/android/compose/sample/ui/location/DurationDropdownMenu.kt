@@ -43,7 +43,7 @@ fun DurationDropdownMenu(
         Text(
             modifier = Modifier.padding(16.dp),
             text = "Select a duration for sharing",
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )
         Duration.entries.forEach { duration ->

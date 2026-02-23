@@ -342,12 +342,12 @@ private fun UserProfileScreenContent(
                 ) {
                     Text(
                         text = "Name",
-                        style = ChatTheme.typography.title3,
+                        style = ChatTheme.typography.headingMedium,
                         color = ChatTheme.colors.textPrimary,
                     )
                     Text(
                         text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                        style = ChatTheme.typography.body,
+                        style = ChatTheme.typography.bodyDefault,
                         color = ChatTheme.colors.textSecondary,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -363,12 +363,12 @@ private fun UserProfileScreenContent(
                     ) {
                         Text(
                             text = "Average Response Time",
-                            style = ChatTheme.typography.title3,
+                            style = ChatTheme.typography.headingMedium,
                             color = ChatTheme.colors.textPrimary,
                         )
                         Text(
                             text = LocalContext.current.formatTime(seconds = avgResponseTimeInSeconds),
-                            style = ChatTheme.typography.body,
+                            style = ChatTheme.typography.bodyDefault,
                             color = ChatTheme.colors.textSecondary,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -415,7 +415,7 @@ private fun NavigationItem(
     ) {
         Text(
             text = label,
-            style = ChatTheme.typography.title3,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )
         Icon(
@@ -476,7 +476,7 @@ private fun UpdateProfilePicture(
     ) {
         Text(
             text = "Update Profile Picture",
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
             modifier = Modifier.padding(16.dp),
         )
@@ -493,7 +493,7 @@ private fun UpdateProfilePicture(
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Choose from library",
-                style = ChatTheme.typography.title3,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.textPrimary,
             )
         }
@@ -510,7 +510,7 @@ private fun UpdateProfilePicture(
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Take a photo",
-                style = ChatTheme.typography.title3,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.textPrimary,
             )
         }
@@ -527,7 +527,7 @@ private fun UpdateProfilePicture(
             Text(
                 modifier = Modifier.weight(1f),
                 text = "Remove picture",
-                style = ChatTheme.typography.title3,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.accentError,
             )
         }
@@ -596,12 +596,12 @@ private fun LazyListScope.summary(
         ) {
             Text(
                 text = title,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
                 color = ChatTheme.colors.textPrimary,
             )
             Text(
                 text = "$count",
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
             )
         }
@@ -630,12 +630,12 @@ private fun LazyListScope.unreadChannels(
             ) {
                 Text(
                     text = item.cid,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = "Last read ${ChatTheme.dateFormatter.formatRelativeTime(item.lastRead)}",
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }
@@ -669,17 +669,17 @@ private fun LazyListScope.unreadThreads(
             ) {
                 Text(
                     text = item.parentMessageId,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     color = ChatTheme.colors.textPrimary,
                 )
                 Text(
                     text = "Last read ${ChatTheme.dateFormatter.formatRelativeTime(item.lastRead)}",
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
                 Text(
                     text = "Last read message: ${item.lastReadMessageId}",
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }
@@ -716,14 +716,14 @@ private fun LazyListScope.unreadChannelsByType(
             ) {
                 Text(
                     text = item.channelType,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     color = ChatTheme.colors.textPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = "${item.channelsCount} channels",
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }
@@ -752,7 +752,7 @@ private fun LazyListScope.unreadChannelsByTeam(
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = team,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
                 color = ChatTheme.colors.textPrimary,
             )
             CountText(
@@ -773,7 +773,7 @@ private fun CountText(
             .background(backgroundColor, RoundedCornerShape(6.dp))
             .padding(horizontal = 8.dp, vertical = 4.dp),
         text = count.toString(),
-        style = ChatTheme.typography.bodyBold,
+        style = ChatTheme.typography.bodyEmphasis,
         color = ChatTheme.colors.textSecondary,
     )
 }

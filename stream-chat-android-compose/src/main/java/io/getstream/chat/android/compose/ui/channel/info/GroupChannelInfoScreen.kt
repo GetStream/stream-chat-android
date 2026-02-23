@@ -295,7 +295,7 @@ internal fun GroupChannelInfoMemberItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = if (member.banned) {
                     ChatTheme.colors.accentError
                 } else {
@@ -306,7 +306,7 @@ internal fun GroupChannelInfoMemberItem(
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = if (member.banned) {
                     ChatTheme.colors.accentError
                 } else {
@@ -327,7 +327,7 @@ internal fun GroupChannelInfoMemberItem(
         }
         Text(
             text = role,
-            style = ChatTheme.typography.footnote,
+            style = ChatTheme.typography.metadataDefault,
             color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

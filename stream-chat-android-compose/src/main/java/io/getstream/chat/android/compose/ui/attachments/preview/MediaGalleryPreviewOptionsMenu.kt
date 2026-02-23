@@ -157,7 +157,7 @@ internal fun MediaGalleryOptionItem(
         Text(
             text = option.title,
             color = option.titleColor,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

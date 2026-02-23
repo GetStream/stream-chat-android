@@ -60,7 +60,7 @@ public fun UnreadCountIndicator(
             text = displayText,
             color = Color.White,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold,
+            style = ChatTheme.typography.numericMedium,
         )
     }
 }

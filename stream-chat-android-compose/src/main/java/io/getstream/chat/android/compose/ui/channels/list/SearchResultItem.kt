@@ -157,7 +157,7 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -171,7 +171,7 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textSecondary,
         )
     }

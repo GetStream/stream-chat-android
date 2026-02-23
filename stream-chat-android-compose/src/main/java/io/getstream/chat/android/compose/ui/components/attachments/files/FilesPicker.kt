@@ -91,7 +91,7 @@ public fun FilesPicker(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.stream_compose_recent_files),
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
             )
 
@@ -179,13 +179,13 @@ internal fun DefaultFilesPickerItem(
         ) {
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textPrimary,
             )
 
             Text(
                 text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.textSecondary,
             )
         }

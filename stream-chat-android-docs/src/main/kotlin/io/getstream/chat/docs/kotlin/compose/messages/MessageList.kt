@@ -180,7 +180,7 @@ private object MessageListCustomizationSnippet {
                                         Text(
                                             modifier = Modifier.padding(start = 8.dp),
                                             text = message.user.name,
-                                            style = ChatTheme.typography.bodyBold,
+                                            style = ChatTheme.typography.bodyEmphasis,
                                             fontSize = 14.sp,
                                             color = ChatTheme.colors.textPrimary
                                         )

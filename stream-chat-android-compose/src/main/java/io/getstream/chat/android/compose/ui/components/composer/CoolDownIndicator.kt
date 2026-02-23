@@ -52,7 +52,7 @@ public fun CoolDownIndicator(
             text = coolDownTime.toString(),
             color = Color.White,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }

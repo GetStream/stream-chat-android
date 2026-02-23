@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -111,6 +112,7 @@ public fun MessageContent(
  *
  * @param modifier Modifier for styling.
  */
+@Suppress("detekt:ForbiddenComment")
 @Composable
 internal fun DefaultMessageDeletedContent(
     modifier: Modifier,
@@ -126,7 +128,8 @@ internal fun DefaultMessageDeletedContent(
             ),
         text = stringResource(id = R.string.stream_compose_message_deleted),
         color = ChatTheme.colors.textSecondary,
-        style = ChatTheme.typography.footnoteItalic,
+        // TODO: replace with a dedicated italic token once the design system provides one
+        style = ChatTheme.typography.metadataDefault.copy(fontStyle = FontStyle.Italic),
     )
 }
 

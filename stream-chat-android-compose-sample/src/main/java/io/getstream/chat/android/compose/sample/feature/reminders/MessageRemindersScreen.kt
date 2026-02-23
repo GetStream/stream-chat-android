@@ -356,13 +356,13 @@ private fun MessageReminderItem(
                     text = reminder.message?.user?.name ?: "",
                     fontSize = 16.sp,
                     color = ChatTheme.colors.textPrimary,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                 )
                 Text(
                     text = reminder.message?.text ?: "",
                     fontSize = 14.sp,
                     color = ChatTheme.colors.textPrimary,
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )

@@ -62,7 +62,7 @@ public fun MessageHeaderLabel(
             Text(
                 modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
                 text = text,
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.textSecondary,
             )
         }

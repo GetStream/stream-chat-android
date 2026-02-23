@@ -90,7 +90,7 @@ private fun CustomHeaderCenterContent(channel: Channel, currentUser: User?) {
             Text(
                 text = channel.getMembersStatusText(LocalContext.current, currentUser),
                 color = Color.LightGray,
-                style = ChatTheme.typography.footnote
+                style = ChatTheme.typography.metadataDefault
             )
         }
     }

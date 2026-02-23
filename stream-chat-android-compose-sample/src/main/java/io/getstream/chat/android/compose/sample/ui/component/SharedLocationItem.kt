@@ -186,7 +186,7 @@ private fun LiveLocationSharing(
                 )
                 Text(
                     text = "Live location sharing ended",
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }
@@ -205,7 +205,7 @@ private fun LiveLocationSharing(
                     }
                     Text(
                         text = "Sharing live location until ${ChatTheme.dateFormatter.formatDate(location.endAt)}",
-                        style = ChatTheme.typography.footnote,
+                        style = ChatTheme.typography.metadataDefault,
                         color = ChatTheme.colors.textSecondary,
                     )
                 }

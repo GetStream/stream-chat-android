@@ -44,7 +44,7 @@ internal fun PaneTitle(
     Text(
         modifier = Modifier.padding(padding),
         text = text,
-        style = ChatTheme.typography.footnote,
+        style = ChatTheme.typography.metadataDefault,
         color = ChatTheme.colors.textSecondary,
     )
 }

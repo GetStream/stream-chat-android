@@ -92,7 +92,7 @@ public data class AudioRecordingAttachmentPreviewTheme(
                     size = ComponentSize.width(48.dp),
                     padding = ComponentPadding.Zero,
                     backgroundColor = Color.Unspecified,
-                    textStyle = typography.body.copy(
+                    textStyle = typography.bodyDefault.copy(
                         color = colors.textSecondary,
                     ),
                 ),

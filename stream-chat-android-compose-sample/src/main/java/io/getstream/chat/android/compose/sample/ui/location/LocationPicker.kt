@@ -250,14 +250,14 @@ private fun LocationPermissionRequired(
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             text = title,
             textAlign = TextAlign.Center,
             color = ChatTheme.colors.textPrimary,
         )
 
         Text(
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             text = message,
             textAlign = TextAlign.Center,
             color = ChatTheme.colors.textSecondary,
@@ -320,11 +320,11 @@ private fun LocationButton(
             ) {
                 Text(
                     text = label,
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
                     text = description,
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }

@@ -211,7 +211,7 @@ private fun RequestAdditionalAccessButton(
                 .padding(16.dp)
                 .weight(1f),
             text = stringResource(id = textId),
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
 

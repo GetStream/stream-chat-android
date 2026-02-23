@@ -97,7 +97,7 @@ internal fun DefaultMessageComposerFooterInThreadMode(
             text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
             color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }

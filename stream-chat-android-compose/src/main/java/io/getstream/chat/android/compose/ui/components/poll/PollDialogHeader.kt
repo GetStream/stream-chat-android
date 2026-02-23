@@ -52,7 +52,7 @@ public fun PollDialogHeader(
 
         Text(
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,

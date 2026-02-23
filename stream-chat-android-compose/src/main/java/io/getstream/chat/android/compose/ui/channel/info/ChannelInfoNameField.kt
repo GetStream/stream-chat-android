@@ -59,19 +59,19 @@ internal fun ChannelInfoNameField(
             .fillMaxWidth()
             .onFocusChanged { showEditingButtons = it.isFocused && !readOnly },
         readOnly = readOnly,
-        textStyle = ChatTheme.typography.body,
+        textStyle = ChatTheme.typography.bodyDefault,
         prefix = {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
                 text = stringResource(R.string.stream_ui_channel_info_name_field_label),
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = ChatTheme.colors.textSecondary,
             )
         },
         placeholder = {
             Text(
                 text = stringResource(R.string.stream_ui_channel_info_name_field_placeholder),
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
             )
         },
         value = value,

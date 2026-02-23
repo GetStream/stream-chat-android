@@ -61,7 +61,7 @@ public fun MessageInputOptions(
 
         Text(
             text = stringResource(id = R.string.stream_compose_edit_message),
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
 

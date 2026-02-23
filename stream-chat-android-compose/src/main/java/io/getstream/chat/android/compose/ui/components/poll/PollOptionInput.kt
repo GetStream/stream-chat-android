@@ -125,7 +125,7 @@ public fun PollOptionInput(
                 val styledText = buildAnnotatedInputText(
                     text = it.text,
                     textColor = textColor,
-                    textFontStyle = typography.body.fontStyle,
+                    textFontStyle = typography.bodyDefault.fontStyle,
                     linkStyle = TextStyle(
                         color = colors.accentPrimary,
                         textDecoration = TextDecoration.Underline,
@@ -133,8 +133,7 @@ public fun PollOptionInput(
                 )
                 TransformedText(styledText, OffsetMapping.Identity)
             },
-            textStyle = StreamTypography.defaultTypography().body.copy(
-                fontSize = 16.sp,
+            textStyle = StreamTypography.default().bodyDefault.copy(
                 textDirection = TextDirection.Content,
             ),
             cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),
@@ -153,7 +152,7 @@ public fun PollOptionInput(
                     .align(Alignment.CenterStart)
                     .semantics { contentDescription = description },
                 text = description,
-                style = ChatTheme.typography.body.copy(
+                style = ChatTheme.typography.bodyDefault.copy(
                     color = colors.textSecondary,
                     textDirection = TextDirection.Content,
                 ),

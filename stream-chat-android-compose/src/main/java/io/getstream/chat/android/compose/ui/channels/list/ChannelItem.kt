@@ -192,7 +192,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             Text(
                 modifier = it.testTag("Stream_ChannelName"),
                 text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 fontSize = 16.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -235,7 +235,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     text = lastMessageText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     color = ChatTheme.colors.textSecondary,
                     inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
                 )
@@ -267,7 +267,7 @@ private fun UserTypingIndicator(users: List<User>) {
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textSecondary,
         )
     }

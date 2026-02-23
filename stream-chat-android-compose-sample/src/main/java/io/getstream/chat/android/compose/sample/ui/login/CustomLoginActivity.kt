@@ -294,11 +294,11 @@ class CustomLoginActivity : AppCompatActivity() {
             Column {
                 Text(
                     text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
-                    style = ChatTheme.typography.title3,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
                     text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                 )
             }
         }

@@ -150,7 +150,7 @@ private fun MediaGalleryPhotosMenuHeader(onDismiss: () -> Unit) {
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = stringResource(R.string.stream_compose_image_preview_photos),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
         )
     }

@@ -324,7 +324,7 @@ class ChannelsActivity : ComponentActivity() {
             centerContent = {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     color = ChatTheme.colors.textPrimary,
                 )
             },

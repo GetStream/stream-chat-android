@@ -2162,7 +2162,7 @@ public interface ChatComponentFactory {
                 ChannelOptionsItemLeadingIcon(Modifier, option)
             },
             onClick = onClick,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             itemHeight = 56.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
@@ -3316,7 +3316,7 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_files_title),
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.headingMedium,
                     maxLines = 1,
                 )
             },
@@ -3376,7 +3376,7 @@ public interface ChatComponentFactory {
                 .background(ChatTheme.colors.borderCoreDefault.copy(alpha = 0.8f))
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             text = label,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
     }
@@ -3446,7 +3446,7 @@ public interface ChatComponentFactory {
             title = {
                 Text(
                     text = stringResource(R.string.stream_ui_channel_attachments_media_title),
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.headingMedium,
                     maxLines = 1,
                 )
             },
@@ -3510,7 +3510,7 @@ public interface ChatComponentFactory {
                 )
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             text = label,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textOnDark,
         )
     }
@@ -3603,13 +3603,13 @@ public interface ChatComponentFactory {
         ) {
             Text(
                 text = title,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )
             Text(
                 text = subtitle,
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
             )
@@ -3640,7 +3640,7 @@ public interface ChatComponentFactory {
         ) {
             Text(
                 text = text,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
             )

@@ -98,7 +98,7 @@ private object SearchInputCustomizationSnippet {
                 // Customize the hint
                 Text(
                     text = "Search channels",
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     color = ChatTheme.colors.textSecondary,
                 )
             }

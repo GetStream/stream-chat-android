@@ -225,7 +225,7 @@ public fun DefaultMessageListHeaderCenterContent(
         Text(
             modifier = Modifier.testTag("Stream_ChannelName"),
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = ChatTheme.colors.textPrimary,
@@ -244,7 +244,7 @@ public fun DefaultMessageListHeaderCenterContent(
                     modifier = Modifier.wrapContentHeight(),
                     spinnerSize = 12.dp,
                     textColor = ChatTheme.colors.textSecondary,
-                    textStyle = ChatTheme.typography.footnote,
+                    textStyle = ChatTheme.typography.metadataDefault,
                 )
             }
 
@@ -252,7 +252,7 @@ public fun DefaultMessageListHeaderCenterContent(
                 Text(
                     text = stringResource(id = R.string.stream_compose_disconnected),
                     color = ChatTheme.colors.textSecondary,
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -274,7 +274,7 @@ internal fun DefaultMessageListHeaderSubtitle(
     typingUsers: List<User>,
 ) {
     val textColor = ChatTheme.colors.textSecondary
-    val textStyle = ChatTheme.typography.footnote
+    val textStyle = ChatTheme.typography.metadataDefault
 
     if (typingUsers.isEmpty()) {
         Text(

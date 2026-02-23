@@ -22,6 +22,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
@@ -81,6 +82,7 @@ public interface MessagePreviewFormatter {
          *
          * @see [DefaultMessagePreviewFormatter]
          */
+        @Suppress("detekt:ForbiddenComment")
         public fun defaultFormatter(
             context: Context,
             autoTranslationEnabled: Boolean,
@@ -91,10 +93,11 @@ public interface MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.accentPrimary),
-                messageTextStyle = typography.bodyBold,
-                senderNameTextStyle = typography.bodyBold,
-                attachmentTextFontStyle = typography.bodyItalic,
+                draftMessageLabelTextStyle = typography.metadataEmphasis.copy(color = colors.accentPrimary),
+                messageTextStyle = typography.bodyEmphasis,
+                senderNameTextStyle = typography.bodyEmphasis,
+                // TODO: replace with a dedicated italic token once the design system provides one
+                attachmentTextFontStyle = typography.bodyDefault.copy(fontStyle = FontStyle.Italic),
                 attachmentFactories = attachmentFactories,
             )
         }

@@ -100,7 +100,7 @@ public fun PollOptionList(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
         text = title,
         color = ChatTheme.colors.textPrimary,
-        style = ChatTheme.typography.title3,
+        style = ChatTheme.typography.headingMedium,
         fontSize = 16.sp,
     )
 

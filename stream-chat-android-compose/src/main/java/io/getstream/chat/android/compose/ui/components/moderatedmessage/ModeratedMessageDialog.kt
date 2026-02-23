@@ -131,7 +131,7 @@ internal fun DefaultModeratedMessageDialogTitle() {
     Text(
         text = stringResource(id = R.string.stream_ui_moderation_dialog_title),
         textAlign = TextAlign.Center,
-        style = ChatTheme.typography.title3,
+        style = ChatTheme.typography.headingMedium,
         color = ChatTheme.colors.textPrimary,
     )
 }
@@ -149,7 +149,7 @@ internal fun DefaultModeratedMessageDialogDescription() {
             .padding(horizontal = 8.dp),
         text = stringResource(id = R.string.stream_ui_moderation_dialog_description),
         textAlign = TextAlign.Center,
-        style = ChatTheme.typography.body,
+        style = ChatTheme.typography.bodyDefault,
         color = ChatTheme.colors.textSecondary,
     )
 }

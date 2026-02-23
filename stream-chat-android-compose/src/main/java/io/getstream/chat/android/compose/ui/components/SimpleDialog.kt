@@ -50,7 +50,7 @@ public fun SimpleDialog(
         text = {
             Text(
                 text = message,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
             )
         },
         onConfirmClick = onPositiveAction,
@@ -75,7 +75,7 @@ internal fun SimpleDialog(
         title = {
             Text(
                 text = title,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
             )
         },
         text = text,

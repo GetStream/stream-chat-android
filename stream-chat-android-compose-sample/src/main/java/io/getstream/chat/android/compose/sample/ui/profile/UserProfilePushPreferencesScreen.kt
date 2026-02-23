@@ -140,7 +140,7 @@ private fun NotificationLevelSection(
 ) {
     Text(
         text = "NOTIFICATION LEVEL",
-        style = ChatTheme.typography.footnote.copy(
+        style = ChatTheme.typography.metadataDefault.copy(
             color = if (isEnabled) ChatTheme.colors.textSecondary else ChatTheme.colors.textDisabled,
             fontWeight = FontWeight.Medium,
         ),
@@ -185,7 +185,7 @@ private fun TemporaryDisableSection(
 ) {
     Text(
         text = "TEMPORARY DISABLE",
-        style = ChatTheme.typography.footnote.copy(
+        style = ChatTheme.typography.metadataDefault.copy(
             color = ChatTheme.colors.textSecondary,
             fontWeight = FontWeight.Medium,
         ),
@@ -208,7 +208,7 @@ private fun TemporaryDisableSection(
     ) {
         Text(
             text = "Disable notifications temporarily",
-            style = ChatTheme.typography.bodyBold.copy(
+            style = ChatTheme.typography.bodyEmphasis.copy(
                 color = ChatTheme.colors.textPrimary,
             ),
         )
@@ -258,7 +258,7 @@ private fun ActionButtons(
             if (isTemporaryDisabled) {
                 Text(
                     text = "🔔 Snooze Notifications",
-                    style = ChatTheme.typography.bodyBold.copy(
+                    style = ChatTheme.typography.bodyEmphasis.copy(
                         color = Color.White,
                         fontSize = 16.sp,
                     ),
@@ -277,7 +277,7 @@ private fun ActionButtons(
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
                         text = "Save Preferences",
-                        style = ChatTheme.typography.bodyBold.copy(
+                        style = ChatTheme.typography.bodyEmphasis.copy(
                             color = Color.White,
                             fontSize = 16.sp,
                         ),
@@ -317,14 +317,14 @@ private fun DateTimeSelector(
     ) {
         Text(
             text = "Disable until:",
-            style = ChatTheme.typography.bodyBold.copy(
+            style = ChatTheme.typography.bodyEmphasis.copy(
                 color = ChatTheme.colors.textPrimary,
             ),
         )
 
         Text(
             text = displayTime,
-            style = ChatTheme.typography.body.copy(
+            style = ChatTheme.typography.bodyDefault.copy(
                 color = ChatTheme.colors.accentPrimary,
             ),
         )
@@ -450,13 +450,13 @@ private fun NotificationLevelOption(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = ChatTheme.typography.bodyBold.copy(
+                    style = ChatTheme.typography.bodyEmphasis.copy(
                         color = if (isEnabled) ChatTheme.colors.textPrimary else ChatTheme.colors.textDisabled,
                     ),
                 )
                 Text(
                     text = subtitle,
-                    style = ChatTheme.typography.footnote.copy(
+                    style = ChatTheme.typography.metadataDefault.copy(
                         color = if (isEnabled) ChatTheme.colors.textSecondary else ChatTheme.colors.textDisabled,
                     ),
                 )

@@ -76,7 +76,7 @@ internal fun ChannelInfoOptionButton(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -103,7 +103,7 @@ internal fun ChannelInfoOptionNavigationButton(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -136,7 +136,7 @@ internal fun ChannelInfoOptionSwitch(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

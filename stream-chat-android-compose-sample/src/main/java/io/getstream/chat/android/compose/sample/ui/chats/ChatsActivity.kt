@@ -496,12 +496,12 @@ class ChatsActivity : ComponentActivity() {
                     Column {
                         Text(
                             text = stringResource(R.string.stream_ui_channel_info_group_title),
-                            style = ChatTheme.typography.title3Bold,
+                            style = ChatTheme.typography.headingMedium,
                             color = ChatTheme.colors.textPrimary,
                         )
                         Text(
                             text = channelName,
-                            style = ChatTheme.typography.footnote,
+                            style = ChatTheme.typography.metadataDefault,
                             color = ChatTheme.colors.textSecondary,
                         )
                     }

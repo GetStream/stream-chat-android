@@ -156,7 +156,7 @@ private class TextFieldVisualTransformation(
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.body.fontStyle
+        val fontStyle = typography.bodyDefault.fontStyle
         val linkStyle = TextStyle(
             color = colors.accentPrimary,
             textDecoration = TextDecoration.Underline,

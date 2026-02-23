@@ -126,7 +126,7 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
         val username = "@${user.id}"
         Text(
             text = user.name.ifEmpty { username },
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -134,7 +134,7 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
         if (user.name.isNotEmpty()) {
             Text(
                 text = username,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
                 color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

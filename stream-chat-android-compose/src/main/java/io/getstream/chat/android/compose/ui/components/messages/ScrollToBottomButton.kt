@@ -95,7 +95,7 @@ internal fun ScrollToBottomButton(
                     Text(
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = StreamTokens.spacing3xs),
                         text = count.toString(),
-                        style = ChatTheme.typography.footnoteBold,
+                        style = ChatTheme.typography.metadataEmphasis,
                     )
                 }
             }

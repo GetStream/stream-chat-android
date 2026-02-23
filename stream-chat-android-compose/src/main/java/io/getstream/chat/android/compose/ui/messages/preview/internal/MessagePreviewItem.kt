@@ -142,7 +142,7 @@ internal fun RowScope.DefaultMessagePreviewItemCenterContent(
     ) {
         Text(
             text = ChatTheme.messagePreviewFormatter.formatMessageTitle(message),
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -153,7 +153,7 @@ internal fun RowScope.DefaultMessagePreviewItemCenterContent(
             text = ChatTheme.messagePreviewFormatter.formatMessagePreview(message, currentUser),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             color = ChatTheme.colors.textSecondary,
         )
     }

@@ -193,7 +193,7 @@ private class DefaultMessageTextFormatter(
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
-            textFontStyle = typography.body.fontStyle,
+            textFontStyle = typography.bodyDefault.fontStyle,
             linkStyle = linkStyle,
             mentionsColor = mentionColor,
             mentionedUserNames = mentionedUserNames,

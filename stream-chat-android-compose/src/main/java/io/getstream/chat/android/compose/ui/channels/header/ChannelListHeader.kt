@@ -170,7 +170,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                     .wrapContentWidth()
                     .padding(horizontal = 16.dp),
                 text = title,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
                 color = ChatTheme.colors.textPrimary,
             )
@@ -184,7 +184,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                     .wrapContentWidth()
                     .padding(horizontal = 16.dp),
                 text = stringResource(R.string.stream_compose_disconnected),
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
                 color = ChatTheme.colors.textPrimary,
             )

@@ -63,7 +63,7 @@ public fun EmptyContent(
         if (title != null) {
             Text(
                 text = title,
-                style = ChatTheme.typography.title3,
+                style = ChatTheme.typography.headingMedium,
                 color = ChatTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
@@ -72,7 +72,7 @@ public fun EmptyContent(
 
         Text(
             text = text,
-            style = ChatTheme.typography.title3,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )

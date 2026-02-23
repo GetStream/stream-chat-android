@@ -120,17 +120,17 @@ public fun ComposerLinkPreview(
             ) {
                 ComposerLinkPreviewText(
                     text = attachment.title,
-                    style = typography.footnoteBold.copy(color = textColor),
+                    style = typography.metadataEmphasis.copy(color = textColor),
                     testTag = "Stream_LinkPreviewTitle",
                 )
                 ComposerLinkPreviewText(
                     text = attachment.text,
-                    style = typography.footnote.copy(color = textColor),
+                    style = typography.metadataDefault.copy(color = textColor),
                     testTag = "Stream_LinkPreviewDescription",
                 )
                 ComposerLinkPreviewText(
                     text = linkPreview.resolveUrl(),
-                    style = typography.footnote.copy(color = textColor),
+                    style = typography.metadataDefault.copy(color = textColor),
                     testTag = "Stream_LinkPreviewUrl",
                 )
             }

@@ -143,7 +143,7 @@ internal fun DefaultSearchLeadingIcon() {
 internal fun DefaultSearchLabel() {
     Text(
         text = stringResource(id = R.string.stream_compose_search_input_hint),
-        style = ChatTheme.typography.body,
+        style = ChatTheme.typography.bodyDefault,
         color = ChatTheme.colors.textSecondary,
     )
 }

@@ -196,7 +196,7 @@ private fun NavigationDrawerItem(
             text = text,
             color = ChatTheme.colors.textPrimary,
             fontSize = 14.sp,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }

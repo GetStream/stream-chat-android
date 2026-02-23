@@ -252,7 +252,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold,
+            style = ChatTheme.typography.numericMedium,
             color = ChatTheme.colors.textPrimary,
             fontSize = 16.sp,
             maxLines = 1,
@@ -265,7 +265,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
                 .padding(horizontal = 16.dp),
             text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description).parseBoldTags(),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textSecondary,
             fontSize = 16.sp,
         )

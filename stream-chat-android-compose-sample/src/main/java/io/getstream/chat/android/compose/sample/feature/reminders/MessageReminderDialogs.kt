@@ -58,7 +58,7 @@ fun ReminderOptionsDialog(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_options),
                 color = ChatTheme.colors.textPrimary,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
             )
             HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
@@ -93,13 +93,13 @@ fun CreateReminderDialog(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_select_reminder_time_title),
                 color = ChatTheme.colors.textPrimary,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
             )
             Text(
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
                 text = stringResource(R.string.reminders_select_reminder_time_description),
                 color = ChatTheme.colors.textSecondary,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
             )
             HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(
@@ -144,7 +144,7 @@ fun EditReminderDialog(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.reminders_edit_due_date),
                 color = ChatTheme.colors.textPrimary,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
             )
             HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
             ReminderOptionItem(

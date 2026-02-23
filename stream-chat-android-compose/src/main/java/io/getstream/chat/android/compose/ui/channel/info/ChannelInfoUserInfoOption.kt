@@ -39,7 +39,7 @@ internal fun ChannelInfoUserInfoOption(
         Text(
             modifier = Modifier.weight(1f),
             text = "@$username",
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             color = ChatTheme.colors.textPrimary,
         )
         Icon(

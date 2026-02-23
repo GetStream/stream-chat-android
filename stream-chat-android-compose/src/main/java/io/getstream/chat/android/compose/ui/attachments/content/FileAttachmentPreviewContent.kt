@@ -100,7 +100,7 @@ public fun FileAttachmentPreviewContent(
                         Text(
                             modifier = Modifier.testTag("Stream_FileNameInPreview"),
                             text = attachment.title ?: attachment.name ?: "",
-                            style = ChatTheme.typography.bodyBold,
+                            style = ChatTheme.typography.bodyEmphasis,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = ChatTheme.colors.textPrimary,
@@ -113,7 +113,7 @@ public fun FileAttachmentPreviewContent(
                             Text(
                                 modifier = Modifier.testTag("Stream_FileSizeInPreview"),
                                 text = fileSize,
-                                style = ChatTheme.typography.footnote,
+                                style = ChatTheme.typography.metadataDefault,
                                 color = ChatTheme.colors.textSecondary,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,

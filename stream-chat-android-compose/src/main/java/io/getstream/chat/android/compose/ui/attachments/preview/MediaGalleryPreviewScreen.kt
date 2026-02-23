@@ -781,7 +781,7 @@ internal fun MediaGalleryPreviewTitle(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val textStyle = ChatTheme.typography.title3Bold
+        val textStyle = ChatTheme.typography.headingMedium
 
         when (connectionState) {
             is ConnectionState.Connected -> Text(
@@ -899,7 +899,7 @@ internal fun MediaGalleryPreviewPageIndicator(
     val text = stringResource(id = R.string.stream_compose_image_order, currentPage + 1, totalPages)
     Text(
         text = text,
-        style = ChatTheme.typography.title3Bold,
+        style = ChatTheme.typography.headingMedium,
         color = ChatTheme.colors.textPrimary,
         maxLines = 1,
     )
@@ -923,7 +923,7 @@ internal fun MediaGalleryPreviewSharingInProgressIndicator() {
         )
         Text(
             text = stringResource(id = R.string.stream_compose_media_gallery_preview_preparing),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
         )
     }
 }
