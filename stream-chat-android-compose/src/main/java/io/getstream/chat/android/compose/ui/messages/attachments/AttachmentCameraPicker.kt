@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,9 +79,12 @@ internal fun AttachmentCameraPicker(
         null
     }
     var showRequiredCameraPermission by remember { mutableStateOf(false) }
+    var hasLaunched by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(cameraPermissionState?.status) {
+        if (hasLaunched) return@LaunchedEffect
         if (cameraPermissionState == null || cameraPermissionState.status.isGranted) {
             showRequiredCameraPermission = false
+            hasLaunched = true
             captureMediaLauncher.launch(Unit)
         } else if (cameraPermissionState.status.shouldShowRationale) {
             showRequiredCameraPermission = true

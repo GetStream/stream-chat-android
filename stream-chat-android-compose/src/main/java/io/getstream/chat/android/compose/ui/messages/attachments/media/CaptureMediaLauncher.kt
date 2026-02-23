@@ -19,46 +19,53 @@ package io.getstream.chat.android.compose.ui.messages.attachments.media
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.mapSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import java.io.File
 
 /**
  * Creates and remembers a launcher for capturing media (photo and/or video) using the device camera.
  *
+ * The contract's destination file paths are persisted via [rememberSaveable] so that
+ * captured media can be recovered after process death (e.g. "Don't keep activities").
+ *
  * @param mode The capture mode determining what media types can be captured.
  * @param onResult Callback invoked when media capture completes successfully. Receives a [File]
- * representing the captured media. This callback is only invoked if the user successfully captures
- * media; it is not called if the user cancels the capture.
+ * representing the captured media. Not called if the user cancels the capture.
  *
- * @return A [ManagedActivityResultLauncher] that can be used to launch the media capture activity.
- * The launcher accepts `Unit` as input and produces a nullable [File] as output.
+ * @return A [ManagedActivityResultLauncher] to launch the media capture activity.
  *
  * @see CaptureMediaContract
- *
- * Example usage:
- * ```kotlin
- * val captureMediaLauncher = rememberCaptureMediaLauncher(
- *     mode = CaptureMediaContract.Mode.PHOTO_AND_VIDEO,
- *     onResult = { file ->
- *         // Handle captured media file
- *     }
- * )
- *
- * // Launch the camera
- * captureMediaLauncher.launch(Unit)
- * ```
- *
- * Note: This function doesn't check for camera permissions. Ensure that the necessary permissions
- * are granted before invoking the launcher.
  */
 @Composable
 public fun rememberCaptureMediaLauncher(
     mode: CaptureMediaContract.Mode,
     onResult: (File) -> Unit,
 ): ManagedActivityResultLauncher<Unit, File?> {
-    val contract = remember(mode) { CaptureMediaContract(mode) }
+    val contract = rememberSaveable(mode, saver = captureMediaContractSaver(mode)) {
+        CaptureMediaContract(mode)
+    }
     return rememberLauncherForActivityResult(contract) { file ->
         file?.let(onResult)
     }
 }
+
+private fun captureMediaContractSaver(mode: CaptureMediaContract.Mode) = mapSaver(
+    save = { contract ->
+        buildMap {
+            contract.pictureFile?.absolutePath?.let { put(KeyPicturePath, it) }
+            contract.videoFile?.absolutePath?.let { put(KeyVideoPath, it) }
+        }
+    },
+    restore = { map ->
+        CaptureMediaContract(
+            mode = mode,
+            pictureFile = (map[KeyPicturePath] as? String)?.let(::File),
+            videoFile = (map[KeyVideoPath] as? String)?.let(::File),
+        )
+    },
+)
+
+private const val KeyPicturePath = "picture_path"
+private const val KeyVideoPath = "video_path"

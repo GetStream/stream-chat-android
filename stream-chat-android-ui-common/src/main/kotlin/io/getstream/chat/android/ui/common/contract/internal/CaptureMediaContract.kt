@@ -37,17 +37,35 @@ import java.io.File
  * - Videos: `{externalFilesDir}/Movies/`
  * With fallback to cache directories if external storage is unavailable.
  *
- * @param mode The capture mode determining what media types can be captured
- * @param fileManager Manager for creating temporary files in external storage
+ * After [createIntent] the caller should persist [pictureFile] and [videoFile] paths
+ * so they can be restored after process death via the constructor.
+ *
+ * @param mode The capture mode determining what media types can be captured.
+ * @param fileManager Manager for creating temporary files in external storage.
+ * @param pictureFile Previously created photo file to restore after process death.
+ * @param videoFile Previously created video file to restore after process death.
  */
 @InternalStreamChatApi
 public class CaptureMediaContract(
     private val mode: Mode,
     private val fileManager: StreamFileManager = StreamFileManager(),
+    pictureFile: File? = null,
+    videoFile: File? = null,
 ) : ActivityResultContract<Unit, File?>() {
 
-    private var pictureFile: File? = null
-    private var videoFile: File? = null
+    /**
+     * The photo destination file created by [createIntent], or restored via constructor.
+     */
+    @InternalStreamChatApi
+    public var pictureFile: File? = pictureFile
+        private set
+
+    /**
+     * The video destination file created by [createIntent], or restored via constructor.
+     */
+    @InternalStreamChatApi
+    public var videoFile: File? = videoFile
+        private set
 
     override fun createIntent(context: Context, input: Unit): Intent {
         val intents: List<Intent> = mode.intents(context)

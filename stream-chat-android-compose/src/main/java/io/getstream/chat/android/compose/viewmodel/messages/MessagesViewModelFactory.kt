@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.net.toUri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
