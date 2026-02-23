@@ -217,7 +217,7 @@ public class MessageComposerViewModel(
                 storageHelper.resolveAttachmentFiles(message.attachments)
             }
             messageComposerController.sendMessage(
-                message.copy(attachments = resolved.toMutableList()),
+                message.copy(attachments = resolved),
                 callback,
             )
         }
