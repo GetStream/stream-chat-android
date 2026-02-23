@@ -713,51 +713,79 @@ public class MessageComposerController(
      *
      * @param message The message to send.
      */
-    public fun sendMessage(message: Message, callback: Call.Callback<Message>) {
+    public fun sendMessage(
+        message: Message,
+        callback: Call.Callback<Message>,
+        resolveAttachments: (suspend (List<Attachment>) -> List<Attachment>)? = null,
+    ) {
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
         val activeMessage = activeAction?.message ?: message
-
         val currentUserId = chatClient.getCurrentUser()?.id
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
+
+        if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             if (activeMessage.text == message.text) {
                 logger.i { "[sendMessage] No changes in the message text, skipping edit." }
                 clearData()
                 return
             }
-            getEditMessageCall(message)
-        } else {
-            val (channelType, channelId) = message.cid.cidToTypeAndId()
-            if (activeMessage.isModerationError(currentUserId)) {
-                chatClient.deleteMessage(activeMessage.id, true).enqueue()
-            }
-
-            chatClient.sendMessage(
-                channelType,
-                channelId,
-                message.copy(
-                    showInChannel = isInThread && alsoSendToChannel.value,
-                    skipEnrichUrl = linkPreviews.value.isEmpty(),
-                ),
-            )
-                .doOnStart(scope) {
-                    // Optimistically load the latest messages (if not already loaded)
-                    loadLatestMessagesIfNeeded()
-                }
-                .doOnResult(scope) { result ->
-                    result.onSuccessSuspend { resultMessage ->
-                        if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
-                            chatClient.markMessageRead(
-                                channelType = channelType,
-                                channelId = channelId,
-                                messageId = resultMessage.id,
-                            ).await()
-                        }
-                    }
-                }
+            val editCall = getEditMessageCall(message)
+            clearData()
+            editCall.enqueue(callback)
+            return
         }
+
+        val (channelType, channelId) = message.cid.cidToTypeAndId()
+        if (activeMessage.isModerationError(currentUserId)) {
+            chatClient.deleteMessage(activeMessage.id, true).enqueue()
+        }
+        val showInChannel = isInThread && alsoSendToChannel.value
+        val skipEnrichUrl = linkPreviews.value.isEmpty()
         clearData()
-        sendMessageCall.enqueue(callback)
+
+        if (resolveAttachments != null) {
+            scope.launch {
+                val resolved = withContext(DispatcherProvider.IO) {
+                    resolveAttachments(message.attachments)
+                }
+                buildSendMessageCall(channelType, channelId, message, resolved, showInChannel, skipEnrichUrl)
+                    .enqueue(callback)
+            }
+        } else {
+            buildSendMessageCall(channelType, channelId, message, message.attachments, showInChannel, skipEnrichUrl)
+                .enqueue(callback)
+        }
     }
+
+    private fun buildSendMessageCall(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        attachments: List<Attachment>,
+        showInChannel: Boolean,
+        skipEnrichUrl: Boolean,
+    ): Call<Message> = chatClient.sendMessage(
+        channelType,
+        channelId,
+        message.copy(
+            attachments = attachments,
+            showInChannel = showInChannel,
+            skipEnrichUrl = skipEnrichUrl,
+        ),
+    )
+        .doOnStart(scope) {
+            loadLatestMessagesIfNeeded()
+        }
+        .doOnResult(scope) { result ->
+            result.onSuccessSuspend { resultMessage ->
+                if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                    chatClient.markMessageRead(
+                        channelType = channelType,
+                        channelId = channelId,
+                        messageId = resultMessage.id,
+                    ).await()
+                }
+            }
+        }
 
     /**
      * Builds a new [Message] to send to our API. If [isInEditMode] is true, we use the current

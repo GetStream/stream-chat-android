@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
@@ -41,8 +39,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * ViewModel responsible for handling the composing and sending of messages.
@@ -212,15 +208,11 @@ public class MessageComposerViewModel(
         message: Message,
         callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
     ) {
-        viewModelScope.launch {
-            val resolved = withContext(DispatcherProvider.IO) {
-                storageHelper.resolveAttachmentFiles(message.attachments)
-            }
-            messageComposerController.sendMessage(
-                message.copy(attachments = resolved),
-                callback,
-            )
-        }
+        messageComposerController.sendMessage(
+            message = message,
+            callback = callback,
+            resolveAttachments = storageHelper::resolveAttachmentFiles,
+        )
     }
 
     /**
