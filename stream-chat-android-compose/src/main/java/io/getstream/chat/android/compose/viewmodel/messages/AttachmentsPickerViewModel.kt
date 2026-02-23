@@ -18,13 +18,17 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CameraPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.CommandPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.FilePickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.GalleryPickerMode
+import io.getstream.chat.android.compose.state.messages.attachments.PollPickerMode
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
@@ -33,14 +37,14 @@ import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelp
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentStorageHelper.Companion.EXTRA_SOURCE_URI
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -53,16 +57,17 @@ import kotlinx.coroutines.withContext
  * tabs (e.g. an image visible in the gallery and the files list) share selection state
  * automatically — no explicit cross-tab synchronisation is needed.
  *
- * Core state uses [MutableStateFlow] (framework-agnostic) and is bridged to Compose
- * [State][androidx.compose.runtime.State] via [asState], following the controller
- * pattern used by [MessageComposerViewModel] and [MessageListViewModel].
+ * Picker visibility and active tab survive Activity destruction (e.g. "Don't keep
+ * activities") so that pending system picker results are delivered on recreation.
  *
  * @param storageHelper Provides device storage queries and attachment conversion.
  * @param channelState Provides the current [ChannelState] for channel-specific configuration.
+ * @param savedStateHandle Persists picker visibility and mode across Activity recreation.
  */
 public class AttachmentsPickerViewModel(
     private val storageHelper: AttachmentStorageHelper,
     channelState: StateFlow<ChannelState?>,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     /**
@@ -81,11 +86,15 @@ public class AttachmentsPickerViewModel(
         }
         .asState(viewModelScope, Channel())
 
-    private val _pickerMode = MutableStateFlow<AttachmentPickerMode?>(null)
+    private val _pickerMode = MutableStateFlow(
+        savedStateHandle.get<String>(KeyPickerMode)?.toPickerMode(),
+    )
     private val _mediaItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
     private val _fileItems = MutableStateFlow<List<AttachmentMetaData>>(emptyList())
     private val _selectedUris = MutableStateFlow<Set<Uri>>(emptySet())
-    private val _isPickerVisible = MutableStateFlow(false)
+    private val _isPickerVisible = MutableStateFlow(
+        savedStateHandle[KeyPickerVisible] ?: false,
+    )
 
     /**
      * The active picker tab.
@@ -122,6 +131,7 @@ public class AttachmentsPickerViewModel(
      */
     public fun setPickerMode(mode: AttachmentPickerMode) {
         _pickerMode.value = mode
+        savedStateHandle[KeyPickerMode] = mode.toSavedKey()
     }
 
     /**
@@ -134,6 +144,7 @@ public class AttachmentsPickerViewModel(
      */
     public fun setPickerVisible(visible: Boolean) {
         _isPickerVisible.value = visible
+        savedStateHandle[KeyPickerVisible] = visible
         if (!visible) clearCachedData()
     }
 
@@ -268,10 +279,14 @@ public class AttachmentsPickerViewModel(
 
     private fun clearCachedData() {
         _pickerMode.value = null
+        savedStateHandle[KeyPickerMode] = null as String?
         _mediaItems.value = emptyList()
         _fileItems.value = emptyList()
     }
 }
+
+private const val KeyPickerVisible = "stream_picker_visible"
+private const val KeyPickerMode = "stream_picker_mode"
 
 /**
  * Event emitted when system picker URIs have been resolved into [Attachment]s.
@@ -283,3 +298,21 @@ public data class SubmittedAttachments(
     val attachments: List<Attachment>,
     val hasUnsupportedFiles: Boolean,
 )
+
+private fun AttachmentPickerMode.toSavedKey(): String = when (this) {
+    is GalleryPickerMode -> "gallery"
+    is FilePickerMode -> "file"
+    is CameraPickerMode -> "camera"
+    is PollPickerMode -> "poll"
+    is CommandPickerMode -> "command"
+    else -> "unknown"
+}
+
+private fun String.toPickerMode(): AttachmentPickerMode? = when (this) {
+    "gallery" -> GalleryPickerMode()
+    "file" -> FilePickerMode()
+    "camera" -> CameraPickerMode()
+    "poll" -> PollPickerMode()
+    "command" -> CommandPickerMode
+    else -> null
+}

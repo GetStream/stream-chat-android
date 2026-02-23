@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.state.watchChannelAsState
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -167,6 +170,21 @@ public class MessagesViewModelFactory(
             AttachmentsPickerViewModel(storageHelper, channelStateFlow)
         },
     )
+
+    /**
+     * Creates the required [ViewModel] for our use case, based on the [factories] we provided.
+     */
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass == AttachmentsPickerViewModel::class.java) {
+            @Suppress("UNCHECKED_CAST")
+            return AttachmentsPickerViewModel(
+                storageHelper = storageHelper,
+                channelState = channelStateFlow,
+                savedStateHandle = extras.createSavedStateHandle(),
+            ) as T
+        }
+        return create(modelClass)
+    }
 
     /**
      * Creates the required [ViewModel] for our use case, based on the [factories] we provided.
