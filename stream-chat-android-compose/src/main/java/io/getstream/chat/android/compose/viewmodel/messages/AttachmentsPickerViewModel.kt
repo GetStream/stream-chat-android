@@ -20,6 +20,7 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -45,10 +46,17 @@ import kotlinx.coroutines.withContext
  *
  * Used to load file and media images that are then connected to the UI. It also keeps state of the
  * selected items and prepares items before sending them.
+ *
+ * @param storageHelper Wrapper around storage utilities for loading media and files.
+ * @param channelState The state of the channel where attachments are being picked.
+ * @param savedStateHandle Handle for persisting state across process death. When provided by
+ * [MessagesViewModelFactory], it survives activity destruction (e.g. "Don't keep activities" mode),
+ * ensuring the picker UI is restored when the activity recreates.
  */
-public class AttachmentsPickerViewModel(
+public class AttachmentsPickerViewModel @JvmOverloads constructor(
     private val storageHelper: StorageHelperWrapper,
     channelState: StateFlow<ChannelState?>,
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle(),
 ) : ViewModel() {
 
     /**
@@ -105,9 +113,23 @@ public class AttachmentsPickerViewModel(
 
     /**
      * Gives us information if we're showing the attachments picker or not.
+     *
+     * Backed by both [MutableState] (for Compose observation/recomposition) and [SavedStateHandle]
+     * (for persistence across process death). This ensures the picker remains visible after activity
+     * recreation (e.g. when returning from an external activity like the camera or file picker under
+     * "Don't keep activities" mode), which in turn allows `rememberLauncherForActivityResult`
+     * callbacks inside the picker composable tree to re-register and receive the pending result.
      */
-    public var isShowingAttachments: Boolean by mutableStateOf(false)
-        private set
+    public var isShowingAttachments: Boolean
+        get() = _isShowingAttachments.value
+        private set(value) {
+            _isShowingAttachments.value = value
+            savedStateHandle[KEY_IS_SHOWING_ATTACHMENTS] = value
+        }
+
+    private val _isShowingAttachments = mutableStateOf(
+        savedStateHandle.get<Boolean>(KEY_IS_SHOWING_ATTACHMENTS) ?: false,
+    )
 
     /**
      * Loads all the items based on the current type.
@@ -264,5 +286,9 @@ public class AttachmentsPickerViewModel(
         attachmentsPickerMode = Images
         images = emptyList()
         files = emptyList()
+    }
+
+    private companion object {
+        private const val KEY_IS_SHOWING_ATTACHMENTS = "io.getstream.chat.isShowingAttachments"
     }
 }

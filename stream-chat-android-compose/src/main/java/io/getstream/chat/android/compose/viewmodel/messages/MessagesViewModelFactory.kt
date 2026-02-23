@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.viewmodel.messages
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -177,5 +180,25 @@ public class MessagesViewModelFactory(
 
         @Suppress("UNCHECKED_CAST")
         return viewModel as T
+    }
+
+    /**
+     * Creates the required [ViewModel] with access to [CreationExtras], which provides a
+     * [SavedStateHandle] for persisting state across process death.
+     *
+     * Called by Compose's `viewModel()` helper. Falls back to [create] for ViewModels
+     * that do not require a [SavedStateHandle].
+     */
+    override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
+        if (modelClass == AttachmentsPickerViewModel::class.java) {
+            val savedStateHandle = extras.createSavedStateHandle()
+            @Suppress("UNCHECKED_CAST")
+            return AttachmentsPickerViewModel(
+                storageHelper = StorageHelperWrapper(context),
+                channelState = channelStateFlow,
+                savedStateHandle = savedStateHandle,
+            ) as T
+        }
+        return create(modelClass)
     }
 }

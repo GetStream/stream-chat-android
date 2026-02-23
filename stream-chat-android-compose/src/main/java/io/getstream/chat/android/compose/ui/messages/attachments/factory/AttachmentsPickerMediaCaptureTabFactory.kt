@@ -17,13 +17,15 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -36,11 +38,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.ui.messages.attachments.media.rememberCancelAwareCaptureMediaLauncher
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
-import java.io.File
 
 /**
  * Holds the information required to add support for "media capture" tab in the attachment picker.
@@ -101,22 +102,27 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
         val cameraPermissionState =
             if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
-        val contract = remember { CaptureMediaContract(pickerMediaMode.mode) }
-        val mediaCaptureResultLauncher =
-            rememberLauncherForActivityResult(contract = contract) { file: File? ->
-                val attachments = if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(context, file))
-                }
-
-                onAttachmentsSubmitted(attachments)
+        val mediaCaptureResultLauncher = rememberCancelAwareCaptureMediaLauncher(
+            photo = pickerMediaMode == PickerMediaMode.PHOTO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
+            video = pickerMediaMode == PickerMediaMode.VIDEO || pickerMediaMode == PickerMediaMode.PHOTO_AND_VIDEO,
+        ) { file ->
+            val attachments = if (file == null) {
+                emptyList()
+            } else {
+                listOf(AttachmentMetaData(context, file))
             }
+            onAttachmentsSubmitted(attachments)
+        }
+
+        var hasLaunched by rememberSaveable { mutableStateOf(false) }
 
         if (cameraPermissionState == null || cameraPermissionState.status == PermissionStatus.Granted) {
             Box(modifier = Modifier.fillMaxSize()) {
                 LaunchedEffect(Unit) {
-                    mediaCaptureResultLauncher.launch(Unit)
+                    if (!hasLaunched) {
+                        hasLaunched = true
+                        mediaCaptureResultLauncher?.launch(Unit)
+                    }
                 }
             }
         } else if (cameraPermissionState.status is PermissionStatus.Denied) {
@@ -132,14 +138,4 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
         VIDEO,
         PHOTO_AND_VIDEO,
     }
-
-    /**
-     * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
-     */
-    private val PickerMediaMode.mode: CaptureMediaContract.Mode
-        get() = when (this) {
-            PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
-            PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
-            PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
-        }
 }
