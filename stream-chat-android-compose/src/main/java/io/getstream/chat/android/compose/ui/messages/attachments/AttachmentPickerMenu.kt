@@ -95,10 +95,8 @@ public fun AttachmentPickerMenu(
         else -> ChatTheme.dimens.attachmentsPickerHeight
     }
 
-    val baseActions = remember(attachmentsPickerViewModel, composerViewModel) {
-        AttachmentPickerActions.defaultActions(attachmentsPickerViewModel, composerViewModel)
-    }
-    val actions = remember(baseActions) {
+    val actions = remember(attachmentsPickerViewModel, composerViewModel) {
+        val baseActions = AttachmentPickerActions.defaultActions(attachmentsPickerViewModel, composerViewModel)
         baseActions.copy(
             onCreatePollClick = {
                 isShowingDialog = true
