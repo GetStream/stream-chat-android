@@ -62,7 +62,17 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
         scope.launch { coordinator?.closeAll() }
     }
 
-    // Resolve and render the primary action
+    // "More" action — opens the channel options sheet
+    if (moreHandler != null) {
+        SwipeActionItem(
+            icon = painterResource(R.drawable.stream_compose_ic_more_options),
+            label = stringResource(R.string.stream_compose_swipe_action_more),
+            onClick = { onAction { moreHandler(channel) } },
+            style = SwipeActionStyle.Secondary,
+        )
+    }
+
+    // Primary action (rightmost) — resolved by channel type and capabilities
     val primaryAction = resolvePrimaryAction(
         channel = channel,
         isMuted = channelItem.isMuted,
@@ -74,16 +84,6 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
             channel = channel,
             style = SwipeActionStyle.Primary,
             onAction = { onAction { handler(it) } },
-        )
-    }
-
-    // "More" action — opens the channel options sheet
-    if (moreHandler != null) {
-        SwipeActionItem(
-            icon = painterResource(R.drawable.stream_compose_ic_more_options),
-            label = stringResource(R.string.stream_compose_swipe_action_more),
-            onClick = { onAction { moreHandler(channel) } },
-            style = SwipeActionStyle.Secondary,
         )
     }
 }
