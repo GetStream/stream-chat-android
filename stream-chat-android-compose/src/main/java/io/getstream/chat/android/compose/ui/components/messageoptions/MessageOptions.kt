@@ -195,9 +195,7 @@ public fun defaultMessageOptionsState(
             val isSenderMuted = currentUser?.mutes?.any { it.target?.id == selectedMessageUserId } == true
             MessageOptionItemState(
                 title = if (isSenderMuted) R.string.stream_compose_unmute_user else R.string.stream_compose_mute_user,
-                iconPainter = painterResource(
-                    if (isSenderMuted) R.drawable.stream_compose_ic_unmute else R.drawable.stream_compose_ic_mute,
-                ),
+                iconPainter = painterResource(R.drawable.stream_compose_ic_mute),
                 action = if (isSenderMuted) UnmuteUser(selectedMessage) else MuteUser(selectedMessage),
                 destructive = false,
             )
@@ -218,9 +216,9 @@ public fun defaultMessageOptionsState(
             }
             MessageOptionItemState(
                 title = title,
-                iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
+                iconPainter = painterResource(R.drawable.stream_compose_ic_block),
                 action = action,
-                destructive = false,
+                destructive = !isSenderBlocked,
             )
         } else {
             null
