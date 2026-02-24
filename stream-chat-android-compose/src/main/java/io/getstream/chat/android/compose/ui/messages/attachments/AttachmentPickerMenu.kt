@@ -75,9 +75,8 @@ public fun AttachmentPickerMenu(
 
     // Dismiss the keyboard when the attachments picker is shown (if instructed by ChatTheme).
     val focusManager = LocalFocusManager.current
-    val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
     LaunchedEffect(isPickerVisible) {
-        if (shouldCloseKeyboard && isPickerVisible) {
+        if (isPickerVisible) {
             focusManager.clearFocus()
         }
     }

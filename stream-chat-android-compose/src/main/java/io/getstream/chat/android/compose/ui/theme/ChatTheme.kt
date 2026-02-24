@@ -223,9 +223,6 @@ public val LocalComposerLinkPreviewEnabled: ProvidableCompositionLocal<Boolean> 
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
-    error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
     error("No MediaGalleryConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -277,7 +274,6 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param messageComposerTheme Theme of the message composer.
  * @param streamMediaRecorder Used for recording audio messages.
- * @param keyboardBehaviour Configuration for different keyboard behaviours.
  * @param mediaGalleryConfig Configuration for the media gallery screen.
  * @param content The content shown within the theme wrapper.
  */
@@ -343,7 +339,6 @@ public fun ChatTheme(
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
-    keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
     content: @Composable () -> Unit,
 ) {
@@ -391,7 +386,6 @@ public fun ChatTheme(
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalShowOriginalTranslationEnabled provides showOriginalTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
-        LocalKeyboardBehaviour provides keyboardBehaviour,
         LocalMediaGalleryConfig provides mediaGalleryConfig,
     ) {
         if (allowUIAutomationTest) {
@@ -691,14 +685,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamMediaRecorder.current
-
-    /**
-     * Retrieves the current [StreamKeyboardBehaviour] at the call site's position in the hierarchy.
-     */
-    public val keyboardBehaviour: StreamKeyboardBehaviour
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalKeyboardBehaviour.current
 
     /**
      * Retrieves the current [MediaGalleryConfig] at the call site's position in the hierarchy.
