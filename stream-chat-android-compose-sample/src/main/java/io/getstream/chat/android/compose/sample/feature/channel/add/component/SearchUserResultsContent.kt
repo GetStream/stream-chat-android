@@ -106,7 +106,7 @@ private fun SearchUserLoadingContent(padding: PaddingValues) {
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
@@ -124,7 +124,7 @@ private fun SearchUserEmptyContent(padding: PaddingValues) {
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -165,7 +165,7 @@ private fun SearchUserResultList(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         state = listState,
     ) {
         users.forEach { (group, users) ->
@@ -231,7 +231,7 @@ private fun SearchUserResultItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),

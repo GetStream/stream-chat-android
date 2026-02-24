@@ -102,7 +102,7 @@ fun UserProfilePushPreferencesScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         // Notification Level Section
         NotificationLevelSection(
@@ -219,7 +219,7 @@ private fun TemporaryDisableSection(
             colors = SwitchDefaults.colors(
                 checkedTrackColor = ChatTheme.colors.accentSuccess,
                 checkedThumbColor = Color.White,
-                uncheckedTrackColor = ChatTheme.colors.stateBgDisabled,
+                uncheckedTrackColor = ChatTheme.colors.backgroundCoreDisabled,
                 uncheckedThumbColor = Color.White,
             ),
         )

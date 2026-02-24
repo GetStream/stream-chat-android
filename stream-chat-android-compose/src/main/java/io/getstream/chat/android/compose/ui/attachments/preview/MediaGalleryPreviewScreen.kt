@@ -169,7 +169,7 @@ public fun MediaGalleryPreviewScreen(
         MediaGalleryPager(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.appBackground)
+                .background(ChatTheme.colors.backgroundCoreApp)
                 .padding(padding),
             pagerState = pagerState,
             attachments = attachments,
@@ -310,7 +310,7 @@ public fun MediaGalleryPreviewScreen(
         MediaGalleryPager(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.appBackground)
+                .background(ChatTheme.colors.backgroundCoreApp)
                 .padding(padding),
             pagerState = pagerState,
             attachments = attachments,

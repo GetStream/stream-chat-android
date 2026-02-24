@@ -209,7 +209,7 @@ class ChannelsActivity : ComponentActivity() {
                                     onOptionSelected = { selectedTab = it },
                                 )
                             },
-                            containerColor = ChatTheme.colors.appBackground,
+                            containerColor = ChatTheme.colors.backgroundCoreApp,
                         ) { padding ->
                             Box(modifier = Modifier.padding(padding)) {
                                 when (selectedTab) {
@@ -357,7 +357,7 @@ class ChannelsActivity : ComponentActivity() {
 
                 SearchInput(
                     modifier = Modifier
-                        .background(color = ChatTheme.colors.appBackground)
+                        .background(color = ChatTheme.colors.backgroundCoreApp)
                         .fillMaxWidth()
                         .padding(8.dp),
                     query = query,

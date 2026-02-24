@@ -780,7 +780,7 @@ public interface ChatComponentFactory {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
+                .background(ChatTheme.colors.backgroundCoreApp),
         )
     }
 

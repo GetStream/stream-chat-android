@@ -132,7 +132,7 @@ internal fun MediaGalleryImagePage(
             )
             Modifier
                 .aspectRatio(size.width / size.height, true)
-                .background(color = ChatTheme.colors.overlayBackground)
+                .background(color = ChatTheme.colors.backgroundCoreScrim)
         } else {
             Modifier
         }

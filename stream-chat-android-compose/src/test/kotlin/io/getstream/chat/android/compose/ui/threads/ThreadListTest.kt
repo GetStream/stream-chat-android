@@ -39,7 +39,7 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = true,
@@ -59,7 +59,7 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = false,
@@ -79,7 +79,7 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
@@ -99,7 +99,7 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
@@ -119,7 +119,7 @@ internal class ThreadListTest : PaparazziComposeTest {
             ThreadList(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
+                    .background(ChatTheme.colors.backgroundCoreApp),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,

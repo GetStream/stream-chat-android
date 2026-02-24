@@ -47,7 +47,7 @@ public fun EmptyContent(
     title: String? = null,
 ) {
     Column(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        modifier = modifier.background(color = ChatTheme.colors.backgroundCoreApp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

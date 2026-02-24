@@ -64,7 +64,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.appBackground,
+    color: Color = ChatTheme.colors.backgroundCoreApp,
     shape: Shape = RectangleShape,
     elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},

@@ -135,7 +135,7 @@ fun UserProfileScreen(
             }
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { paddingValues ->
         UserProfileScreenContent(
             modifier = Modifier.padding(paddingValues),
@@ -158,7 +158,7 @@ fun UserProfileScreen(
     when (modalSheet) {
         ModalSheet.UnreadCounts -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UnreadCounts(state.unreadCounts)
         }
@@ -166,7 +166,7 @@ fun UserProfileScreen(
         ModalSheet.PushPreferences -> ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UserProfilePushPreferencesScreen(
                 preferences = state.user?.pushPreference ?: PushPreference(PushPreferenceLevel.all, null),
@@ -183,7 +183,7 @@ fun UserProfileScreen(
 
         ModalSheet.UpdateProfilePicture -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             UpdateProfilePicture(
                 onChooseFromLibraryClick = {
@@ -205,7 +205,7 @@ fun UserProfileScreen(
 
         ModalSheet.UpdatePrivacySettings -> ModalBottomSheet(
             onDismissRequest = { modalSheet = null },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) {
             state.user?.let { user ->
                 UserProfilePrivacySettingsScreen(
@@ -259,7 +259,7 @@ private fun TopBar(onNavigationIconClick: () -> Unit) {
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ),
     )
 }

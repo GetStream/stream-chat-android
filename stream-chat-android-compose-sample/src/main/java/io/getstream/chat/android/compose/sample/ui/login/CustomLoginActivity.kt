@@ -109,7 +109,7 @@ class CustomLoginActivity : AppCompatActivity() {
         onLoginButtonClick: (UserCredentials) -> Unit,
     ) {
         Scaffold(
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
             topBar = { CustomLoginToolbar(onClick = onBackButtonClick) },
             content = {
                 Column(
@@ -259,7 +259,7 @@ class CustomLoginActivity : AppCompatActivity() {
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = ChatTheme.colors.accentPrimary,
-                disabledContainerColor = ChatTheme.colors.stateBgDisabled,
+                disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
             ),
             onClick = onClick,
         ) {

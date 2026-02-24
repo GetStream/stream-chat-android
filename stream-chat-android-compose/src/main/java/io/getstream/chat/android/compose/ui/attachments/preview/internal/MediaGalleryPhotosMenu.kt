@@ -91,7 +91,7 @@ internal fun MediaGalleryPhotosMenu(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlayBackground)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
                 indication = null,
                 interactionSource = null,
@@ -204,7 +204,7 @@ private fun MediaGalleryPhotosMenuItem(
             modifier = Modifier
                 .padding(1.dp)
                 .fillMaxSize()
-                .background(color = ChatTheme.colors.appBackground),
+                .background(color = ChatTheme.colors.backgroundCoreApp),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
             imageState = asyncImageState

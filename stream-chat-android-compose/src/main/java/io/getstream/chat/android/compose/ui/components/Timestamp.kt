@@ -45,7 +45,7 @@ public fun Timestamp(
     modifier: Modifier = Modifier,
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
-    textStyle: TextStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.textSecondary),
+    textStyle: TextStyle = ChatTheme.typography.metadataDefault.copy(ChatTheme.colors.chatTextTimestamp),
 ) {
     val timestamp = if (LocalInspectionMode.current) {
         "13:49"

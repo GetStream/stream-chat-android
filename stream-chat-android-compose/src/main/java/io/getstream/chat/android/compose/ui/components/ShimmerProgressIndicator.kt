@@ -35,6 +35,6 @@ internal fun ShimmerProgressIndicator(modifier: Modifier = Modifier) {
         modifier = modifier
             .background(color = ChatTheme.colors.backgroundCoreSurface)
             .shimmer()
-            .background(color = ChatTheme.colors.appBackground),
+            .background(color = ChatTheme.colors.backgroundCoreApp),
     )
 }

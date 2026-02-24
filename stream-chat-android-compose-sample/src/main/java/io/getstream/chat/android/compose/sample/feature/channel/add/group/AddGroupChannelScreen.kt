@@ -233,7 +233,7 @@ private fun EnterNameContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(padding),
     ) {
         val text = if (selectedUsers.isEmpty()) {
@@ -275,7 +275,7 @@ private fun NextFab(onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_right),
             contentDescription = null,
-            tint = ChatTheme.colors.appBackground,
+            tint = ChatTheme.colors.backgroundCoreApp,
         )
     }
 }
@@ -295,7 +295,7 @@ private fun AddGroupChannelFab(onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.ic_check),
             contentDescription = null,
-            tint = ChatTheme.colors.appBackground,
+            tint = ChatTheme.colors.backgroundCoreApp,
         )
     }
 }

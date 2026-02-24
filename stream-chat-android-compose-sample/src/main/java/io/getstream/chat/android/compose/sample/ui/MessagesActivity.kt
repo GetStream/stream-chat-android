@@ -225,7 +225,7 @@ class MessagesActivity : ComponentActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
-                        .background(ChatTheme.colors.appBackground)
+                        .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = listViewModel,
                     reactionSorting = ReactionSortingByFirstReactionAt,

@@ -135,7 +135,7 @@ private fun Content(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         item {
             PollDialogHeader(

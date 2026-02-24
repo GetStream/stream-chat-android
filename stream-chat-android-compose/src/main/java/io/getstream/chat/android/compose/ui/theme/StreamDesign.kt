@@ -69,13 +69,13 @@ public object StreamDesign {
      * sit on top of the default app background.
      * @param backgroundElevationElevation0 Used for base elevation surface backgrounds.
      * @param backgroundElevationElevation1 Slightly elevated surface backgrounds.
-     * @param borderCoreImage Used for image frame border treatment.
+     * @param borderCoreOpacity10 Used for 10% opacity border treatment (e.g. image frames).
      * @param borderCoreDefault Used for default border color.
      * @param borderCoreOnAccent Used for borders on accent backgrounds.
      * @param borderCoreOnDark Used for borders on dark backgrounds.
      * @param borderCoreOpacity25 Used for borders with 25% opacity.
-     * @param borderCoreSurfaceSubtle Used for very light separators.
-     * @param borderCorePrimary Used for selected or active state border.
+     * @param borderCoreSubtle Used for subtle/very light separators.
+     * @param borderUtilitySelected Used for selected or active state border (focus ring).
      * @param borderUtilityDisabled Used for disabled state borders.
      * @param brand50 Brand color at 50 intensity level.
      * @param brand100 Brand color at 100 intensity level.
@@ -94,9 +94,7 @@ public object StreamDesign {
      * @param textSecondary Used for secondary text color with lower emphasis.
      * @param textTertiary Used for tertiary text color with lowest emphasis.
      * @param textDisabled Used for disabled text and icon color.
-     * @param stateBgDisabled Used for disabled state background.
-     * @param stateTextDisabled Used for disabled state text color.
-     * @param appBackground Used for the default app background.
+     * @param backgroundCoreApp Used for the default app background.
      * @param backgroundCoreSelected Used for selected state background.
      * @param backgroundElevationElevation2 Used for elevated surface backgrounds at elevation level 2.
      * @param badgeBgDefault Used for badge background.
@@ -133,6 +131,7 @@ public object StreamDesign {
      * @param chatTextOutgoing Used for outgoing message text color in chat bubbles.
      * @param chatTextLink Used for link text color in chat messages.
      * @param chatTextMention Used for mention text color in chat messages.
+     * @param chatTextSystem Used for system messages like date separators and unread dividers.
      * @param chatTextTimestamp Used for timestamp text color in chat messages.
      * @param chatWaveformBar Used for audio waveform bar color.
      * @param chatWaveformBarPlaying Used for audio waveform bar color when playing.
@@ -148,9 +147,9 @@ public object StreamDesign {
      * @param presenceBgOnline Used for online presence indicator.
      * @param presenceBgOffline Used for offline presence indicator.
      * @param presenceBorder Used for the outline around the presence dot.
-     * @param overlayBackground Used for regular overlay/scrim backgrounds.
-     * @param overlayBackgroundDark Used for darker overlay/scrim backgrounds.
-     * @param highlightBackground Used for highlight backgrounds such as message highlights.
+     * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
+     * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
+     * @param backgroundCoreHighlight Used for highlight backgrounds (e.g. message focus/pin).
      */
     @Immutable
     public data class Colors(
@@ -177,13 +176,13 @@ public object StreamDesign {
         public val backgroundCoreInverse: Color,
         public val backgroundElevationElevation0: Color,
         public val backgroundElevationElevation1: Color,
-        public val borderCoreImage: Color,
+        public val borderCoreOpacity10: Color,
         public val borderCoreDefault: Color,
         public val borderCoreOnAccent: Color,
         public val borderCoreOnDark: Color,
         public val borderCoreOpacity25: Color,
-        public val borderCoreSurfaceSubtle: Color,
-        public val borderCorePrimary: Color,
+        public val borderCoreSubtle: Color,
+        public val borderUtilitySelected: Color,
         public val borderUtilityDisabled: Color,
         public val brand50: Color,
         public val brand100: Color,
@@ -202,9 +201,7 @@ public object StreamDesign {
         public val textSecondary: Color,
         public val textTertiary: Color,
         public val textDisabled: Color,
-        public val stateBgDisabled: Color,
-        public val stateTextDisabled: Color,
-        public val appBackground: Color = backgroundElevationElevation0,
+        public val backgroundCoreApp: Color = backgroundElevationElevation0,
         public val backgroundCoreSelected: Color = textPrimary.copy(alpha = .15f),
         public val backgroundElevationElevation2: Color,
         public val badgeBgDefault: Color = backgroundElevationElevation2,
@@ -241,6 +238,7 @@ public object StreamDesign {
         public val chatTextOutgoing: Color = brand900,
         public val chatTextLink: Color = accentPrimary,
         public val chatTextMention: Color = chatTextLink,
+        public val chatTextSystem: Color = textSecondary,
         public val chatTextTimestamp: Color = textTertiary,
         public val chatWaveformBar: Color = borderCoreOpacity25,
         public val chatWaveformBarPlaying: Color = accentPrimary,
@@ -256,9 +254,9 @@ public object StreamDesign {
         public val presenceBgOnline: Color = accentSuccess,
         public val presenceBgOffline: Color = accentNeutral,
         public val presenceBorder: Color,
-        public val overlayBackground: Color,
-        public val overlayBackgroundDark: Color,
-        public val highlightBackground: Color,
+        public val backgroundCoreScrim: Color,
+        public val backgroundCoreOverlayDark: Color,
+        public val backgroundCoreHighlight: Color,
     ) {
 
         public companion object {
@@ -283,12 +281,12 @@ public object StreamDesign {
                 backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
                 badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
                 borderCoreDefault = StreamPrimitiveColors.slate150,
-                borderCoreImage = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
+                borderCoreOpacity10 = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreOnDark = StreamPrimitiveColors.baseWhite,
                 borderCoreOpacity25 = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
-                borderCorePrimary = StreamPrimitiveColors.blue500,
-                borderCoreSurfaceSubtle = StreamPrimitiveColors.slate100,
+                borderUtilitySelected = StreamPrimitiveColors.blue500,
+                borderCoreSubtle = StreamPrimitiveColors.slate100,
                 borderUtilityDisabled = StreamPrimitiveColors.slate100,
                 brand50 = StreamPrimitiveColors.blue50,
                 brand100 = StreamPrimitiveColors.blue100,
@@ -307,8 +305,6 @@ public object StreamDesign {
                 textPrimary = StreamPrimitiveColors.slate900,
                 textSecondary = StreamPrimitiveColors.slate700,
                 textTertiary = StreamPrimitiveColors.slate500,
-                stateBgDisabled = StreamPrimitiveColors.slate100,
-                stateTextDisabled = StreamPrimitiveColors.slate300,
                 avatarBgPlaceholder = StreamPrimitiveColors.slate100,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue150,
                 avatarPaletteBg2 = StreamPrimitiveColors.cyan150,
@@ -337,9 +333,9 @@ public object StreamDesign {
                 controlRemoveBorder = StreamPrimitiveColors.baseWhite,
                 controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 presenceBorder = StreamPrimitiveColors.baseWhite,
-                overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
-                overlayBackgroundDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
-                highlightBackground = StreamPrimitiveColors.yellow50,
+                backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
+                backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
+                backgroundCoreHighlight = StreamPrimitiveColors.yellow50,
             )
 
             /**
@@ -363,12 +359,12 @@ public object StreamDesign {
                 backgroundElevationElevation1 = StreamPrimitiveColors.neutral900,
                 backgroundElevationElevation2 = StreamPrimitiveColors.neutral800,
                 borderCoreDefault = StreamPrimitiveColors.neutral600,
-                borderCoreImage = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
+                borderCoreOpacity10 = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreOnDark = StreamPrimitiveColors.neutral900,
                 borderCoreOpacity25 = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
-                borderCorePrimary = StreamPrimitiveColors.blue300,
-                borderCoreSurfaceSubtle = StreamPrimitiveColors.neutral800,
+                borderUtilitySelected = StreamPrimitiveColors.blue300,
+                borderCoreSubtle = StreamPrimitiveColors.neutral800,
                 borderUtilityDisabled = StreamPrimitiveColors.neutral700,
                 brand50 = StreamPrimitiveColors.blue900,
                 brand100 = StreamPrimitiveColors.blue800,
@@ -388,8 +384,6 @@ public object StreamDesign {
                 textSecondary = StreamPrimitiveColors.neutral100,
                 textTertiary = StreamPrimitiveColors.neutral300,
                 badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
-                stateBgDisabled = StreamPrimitiveColors.neutral800,
-                stateTextDisabled = StreamPrimitiveColors.neutral500,
                 avatarBgPlaceholder = StreamPrimitiveColors.neutral700,
                 avatarPaletteBg1 = StreamPrimitiveColors.blue600,
                 avatarPaletteBg2 = StreamPrimitiveColors.cyan600,
@@ -417,9 +411,9 @@ public object StreamDesign {
                 controlRemoveBg = StreamPrimitiveColors.neutral50,
                 controlRemoveIcon = StreamPrimitiveColors.neutral900,
                 presenceBorder = StreamPrimitiveColors.neutral900,
-                overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
-                overlayBackgroundDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
-                highlightBackground = StreamPrimitiveColors.yellow900,
+                backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
+                backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
+                backgroundCoreHighlight = StreamPrimitiveColors.yellow900,
             )
         }
     }

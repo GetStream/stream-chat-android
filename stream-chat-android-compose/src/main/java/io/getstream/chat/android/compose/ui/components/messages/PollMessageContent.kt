@@ -494,7 +494,7 @@ private fun PollOptionButton(
 @Composable
 private fun PollMessageContentPreview() {
     ChatTheme {
-        Column(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+        Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
             PollMessageContent(
                 modifier = Modifier
                     .fillMaxWidth()

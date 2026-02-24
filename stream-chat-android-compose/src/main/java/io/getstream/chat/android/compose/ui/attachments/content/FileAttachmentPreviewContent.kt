@@ -75,7 +75,7 @@ public fun FileAttachmentPreviewContent(
                 modifier = Modifier
                     .animateItem()
                     .padding(1.dp),
-                color = ChatTheme.colors.appBackground,
+                color = ChatTheme.colors.backgroundCoreApp,
                 shape = RoundedCornerShape(16.dp),
                 border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
             ) {

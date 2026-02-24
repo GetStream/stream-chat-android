@@ -76,7 +76,7 @@ public fun SelectedChannelMenu(
         ownCapabilities = selectedChannel.ownCapabilities,
     ),
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-    overlayColor: Color = ChatTheme.colors.overlayBackground,
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(

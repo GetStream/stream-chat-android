@@ -67,7 +67,7 @@ private fun PollDialogHeaderPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.appBackground),
+                .background(ChatTheme.colors.backgroundCoreApp),
         ) {
             PollDialogHeader(
                 title = stringResource(id = R.string.stream_compose_poll_results),

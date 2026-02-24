@@ -106,7 +106,7 @@ fun MessageRemindersScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground)
+                    .background(ChatTheme.colors.backgroundCoreApp)
                     .padding(padding),
             ) {
                 MessageRemindersFilterSelection(
@@ -178,7 +178,7 @@ private fun MessageRemindersLoadingContent() {
     LoadingIndicator(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     )
 }
 
@@ -192,7 +192,7 @@ private fun MessageRemindersEmptyContent(filter: MessageRemindersFilter) {
         painter = painterResource(id = R.drawable.ic_bell_24),
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(16.dp),
     )
 }
@@ -220,7 +220,7 @@ private fun MessageRemindersResultList(
         state = lazyListState,
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         items(reminders) {
             MessageReminderItem(
@@ -289,7 +289,7 @@ private fun MessageReminderFilterItem(
     SuggestionChip(
         modifier = Modifier.height(32.dp),
         colors = SuggestionChipDefaults.suggestionChipColors(
-            containerColor = if (isSelected) ChatTheme.colors.accentPrimary else ChatTheme.colors.appBackground,
+            containerColor = if (isSelected) ChatTheme.colors.accentPrimary else ChatTheme.colors.backgroundCoreApp,
         ),
         shape = RoundedCornerShape(16.dp),
         border = if (isSelected) null else BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
@@ -317,7 +317,7 @@ private fun MessageReminderItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(12.dp),
     ) {
         Row(

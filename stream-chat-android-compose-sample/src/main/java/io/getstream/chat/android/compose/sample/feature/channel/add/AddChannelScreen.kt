@@ -282,7 +282,7 @@ private fun SelectedUserChip(
 ) {
     SuggestionChip(
         modifier = Modifier.height(32.dp),
-        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.appBackground),
+        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.backgroundCoreApp),
         shape = RoundedCornerShape(16.dp),
         icon = {
             UserAvatar(

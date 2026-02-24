@@ -156,7 +156,7 @@ public fun PollSwitchList(
                                             color = if (item.enabled) {
                                                 Color.White
                                             } else {
-                                                ChatTheme.colors.stateBgDisabled
+                                                ChatTheme.colors.backgroundCoreDisabled
                                             },
                                         ),
                                 )

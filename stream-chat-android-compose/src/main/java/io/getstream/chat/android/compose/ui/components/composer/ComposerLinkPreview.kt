@@ -156,7 +156,7 @@ private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamDesig
         modifier = Modifier
             .size(width = 40.dp, height = 40.dp)
             .clip(shape)
-            .border(1.dp, colors.borderCoreImage, shape)
+            .border(1.dp, colors.borderCoreOpacity10, shape)
             .testTag("Stream_LinkPreviewImage"),
         contentDescription = null,
         contentScale = ContentScale.Crop,

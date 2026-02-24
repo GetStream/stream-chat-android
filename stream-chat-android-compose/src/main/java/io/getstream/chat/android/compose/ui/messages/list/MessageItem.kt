@@ -201,7 +201,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
     val backgroundGradient = Brush.verticalGradient(
         listOf(
             ChatTheme.colors.backgroundCoreSurface,
-            ChatTheme.colors.appBackground,
+            ChatTheme.colors.backgroundCoreApp,
         ),
     )
     val replyCount = threadSeparator.replyCount

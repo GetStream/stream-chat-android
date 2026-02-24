@@ -45,7 +45,7 @@ public fun ThreadParticipants(
     participants: List<User>,
     alignment: MessageAlignment,
     modifier: Modifier = Modifier,
-    borderStroke: BorderStroke = BorderStroke(width = 1.dp, color = ChatTheme.colors.appBackground),
+    borderStroke: BorderStroke = BorderStroke(width = 1.dp, color = ChatTheme.colors.backgroundCoreApp),
     participantsLimit: Int = DefaultParticipantsLimit,
 ) {
     Box(modifier) {

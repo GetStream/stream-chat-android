@@ -635,7 +635,7 @@ internal fun MediaAttachmentShowMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.overlayBackgroundDark, shape = shape),
+            .background(color = ChatTheme.colors.backgroundCoreOverlayDark, shape = shape),
     ) {
         Text(
             modifier = modifier

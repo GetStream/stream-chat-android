@@ -147,7 +147,7 @@ class MessagesActivity : AppCompatActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
-                        .background(ChatTheme.colors.appBackground)
+                        .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
                     reactionSorting = ReactionSortingByFirstReactionAt,

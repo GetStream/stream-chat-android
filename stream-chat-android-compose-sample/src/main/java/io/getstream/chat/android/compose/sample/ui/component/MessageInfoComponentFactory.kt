@@ -118,7 +118,7 @@ class MessageInfoComponentFactory : ChatComponentFactory {
                     onDismiss()
                     dismissed = true // Mark as dismissed to avoid animating the menu again
                 },
-                containerColor = ChatTheme.colors.appBackground,
+                containerColor = ChatTheme.colors.backgroundCoreApp,
             ) {
                 val coroutineScope = rememberCoroutineScope()
                 val state by remember(message) { readsOf(message, coroutineScope) }.collectAsState(null)

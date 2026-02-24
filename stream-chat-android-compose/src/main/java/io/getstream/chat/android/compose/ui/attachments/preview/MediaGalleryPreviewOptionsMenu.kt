@@ -81,7 +81,7 @@ internal fun MediaGalleryOptionsMenu(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlayBackground)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
                 indication = null,
                 interactionSource = null,

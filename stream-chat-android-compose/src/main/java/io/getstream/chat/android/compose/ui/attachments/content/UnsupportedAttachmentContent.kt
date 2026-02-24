@@ -48,7 +48,7 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(2.dp)
             .fillMaxWidth(),
-        color = ChatTheme.colors.appBackground,
+        color = ChatTheme.colors.backgroundCoreApp,
         shape = RoundedCornerShape(StreamTokens.radiusLg),
     ) {
         Row(

@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -87,10 +86,14 @@ internal fun ScrollToBottomButton(
         ) {
             if (count > 0) {
                 Surface(
-                    modifier = Modifier.border(width = 1.dp, color = Color.White, shape = BadgeShape),
+                    modifier = Modifier.border(
+                        width = 1.dp,
+                        color = ChatTheme.colors.borderCoreOnDark,
+                        shape = BadgeShape,
+                    ),
                     shape = BadgeShape,
                     color = ChatTheme.colors.accentPrimary,
-                    contentColor = Color.White,
+                    contentColor = ChatTheme.colors.badgeTextOnAccent,
                 ) {
                     Text(
                         modifier = Modifier.padding(horizontal = 6.dp, vertical = StreamTokens.spacing3xs),

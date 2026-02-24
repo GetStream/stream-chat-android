@@ -176,7 +176,7 @@ public fun PollOptionInputPreview() {
     ChatTheme {
         Column(
             modifier = Modifier
-                .background(ChatTheme.colors.appBackground)
+                .background(ChatTheme.colors.backgroundCoreApp)
                 .fillMaxWidth()
                 .height(400.dp)
                 .padding(16.dp),

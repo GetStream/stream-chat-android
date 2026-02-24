@@ -81,7 +81,7 @@ public fun SelectedReactionsMenu(
         sheetState = rememberModalBottomSheetState(),
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         containerColor = ChatTheme.colors.backgroundElevationElevation1,
-        scrimColor = ChatTheme.colors.overlayBackground,
+        scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {

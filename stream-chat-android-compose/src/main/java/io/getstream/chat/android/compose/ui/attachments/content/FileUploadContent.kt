@@ -100,7 +100,7 @@ public fun FileUploadItem(
 ) {
     Surface(
         modifier = modifier,
-        color = ChatTheme.colors.appBackground,
+        color = ChatTheme.colors.backgroundCoreApp,
         shape = RoundedCornerShape(StreamTokens.radiusLg),
     ) {
         Row(

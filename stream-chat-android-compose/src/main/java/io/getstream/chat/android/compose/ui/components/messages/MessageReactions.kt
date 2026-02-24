@@ -76,7 +76,7 @@ public fun ClusteredMessageReactions(
                 contentDescription = description
             }
             .background(colors.backgroundElevationElevation1, CircleShape)
-            .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
+            .border(1.dp, color = colors.borderCoreSubtle, shape = CircleShape)
             .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
@@ -175,7 +175,7 @@ private fun ReactionChip(
         modifier = Modifier
             .fillMaxHeight()
             .background(colors.backgroundElevationElevation1, CircleShape)
-            .border(1.dp, color = colors.borderCoreSurfaceSubtle, shape = CircleShape)
+            .border(1.dp, color = colors.borderCoreSubtle, shape = CircleShape)
             .ifNotNull(onClick) { clip(CircleShape).clickable(onClick = it) }
             .padding(horizontal = StreamTokens.spacingXs, vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,

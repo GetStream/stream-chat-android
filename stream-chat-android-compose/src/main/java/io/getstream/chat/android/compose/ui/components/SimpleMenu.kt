@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun SimpleMenu(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-    overlayColor: Color = ChatTheme.colors.overlayBackground,
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {},

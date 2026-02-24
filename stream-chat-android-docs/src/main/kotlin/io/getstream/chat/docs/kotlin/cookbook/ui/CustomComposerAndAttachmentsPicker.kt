@@ -105,7 +105,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                     MessageList(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ChatTheme.colors.appBackground)
+                            .background(ChatTheme.colors.backgroundCoreApp)
                             .padding(it),
                         viewModel = listViewModel,
                     )
@@ -213,7 +213,7 @@ private fun CustomAttachmentsPicker(
         // Gray overlay
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlayBackground)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
                 onClick = actions.onDismiss,
                 indication = null,

@@ -48,7 +48,7 @@ class CustomChatComponentFactory(
                 .run {
                     // Highlight the item background color if it is pinned
                     if (channelItem.channel.isPinned()) {
-                        background(color = ChatTheme.colors.highlightBackground)
+                        background(color = ChatTheme.colors.backgroundCoreHighlight)
                     } else {
                         this
                     }

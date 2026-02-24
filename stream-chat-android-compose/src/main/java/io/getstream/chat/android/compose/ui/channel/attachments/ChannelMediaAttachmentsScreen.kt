@@ -116,7 +116,7 @@ private fun ChannelMediaAttachmentsContent(
                 onNavigationIconClick = onNavigationIconClick,
             )
         },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         ChannelMediaAttachmentsGrid(
             modifier = Modifier
