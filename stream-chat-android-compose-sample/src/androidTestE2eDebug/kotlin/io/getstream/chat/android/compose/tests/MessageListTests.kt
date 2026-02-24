@@ -33,7 +33,6 @@ import io.getstream.chat.android.compose.robots.assertMessageTimestamps
 import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
 import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.robots.assertThreadReplyLabelOnParentMessage
-import io.getstream.chat.android.compose.robots.assertThreadReplyLabelOnThreadMessage
 import io.getstream.chat.android.compose.robots.assertTypingIndicator
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
@@ -509,7 +508,6 @@ class MessageListTests : StreamTestCase() {
             userRobot
                 .assertMessage(sampleText)
                 .assertAlsoInTheChannelLabelInChannel()
-                .assertThreadReplyLabelOnThreadMessage()
         }
         step("WHEN user enters thread") {
             userRobot.openThread(usingContextMenu = false)
@@ -541,7 +539,6 @@ class MessageListTests : StreamTestCase() {
                 .tapOnBackButton()
                 .assertMessage(sampleText)
                 .assertAlsoInTheChannelLabelInChannel()
-                .assertThreadReplyLabelOnThreadMessage()
         }
     }
 
