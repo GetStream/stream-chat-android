@@ -19,12 +19,22 @@ package io.getstream.chat.android.compose.ui.messages.attachments.media
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import java.io.File
 
 /**
- * Creates and remembers a launcher for capturing media (photo and/or video) using the device camera.
+ * Creates and remembers a process-death-safe launcher for capturing media (photo and/or video)
+ * using the device camera.
+ *
+ * Destination file paths are persisted via [rememberSaveable]. When the hosting activity is
+ * destroyed and recreated (e.g. under "Don't keep activities"), the paths are restored on the
+ * [CaptureMediaContract] before the pending result is delivered, ensuring the captured file is
+ * correctly resolved.
  *
  * @param photo If `true`, enables photo capture capability. When both [photo] and [video] are
  * `true`, the user will be able to capture both types of media.
@@ -62,12 +72,52 @@ public fun rememberCaptureMediaLauncher(
     photo: Boolean,
     video: Boolean,
     onResult: (File) -> Unit,
-): ManagedActivityResultLauncher<Unit, File?>? {
-    val contract = remember(photo, video) {
-        resolveMediaPickerMode(photo, video)?.let { CaptureMediaContract(it) }
-    } ?: return null
-    return rememberLauncherForActivityResult(contract) { file ->
+): ManagedActivityResultLauncher<Unit, File?>? =
+    rememberCaptureMediaLauncherInternal(photo, video) { file ->
         file?.let(onResult)
+    }
+
+/**
+ * Internal cancel-aware variant of [rememberCaptureMediaLauncher].
+ *
+ * Unlike the public API, this variant invokes [onResult] with `null` when the user cancels the
+ * capture, allowing callers to react to cancellation (e.g. dismiss the picker).
+ */
+@Composable
+internal fun rememberCancelAwareCaptureMediaLauncher(
+    photo: Boolean,
+    video: Boolean,
+    onResult: (File?) -> Unit,
+): ManagedActivityResultLauncher<Unit, File?>? =
+    rememberCaptureMediaLauncherInternal(photo, video, onResult)
+
+@Composable
+private fun rememberCaptureMediaLauncherInternal(
+    photo: Boolean,
+    video: Boolean,
+    onResult: (File?) -> Unit,
+): ManagedActivityResultLauncher<Unit, File?>? {
+    val mode = resolveMediaPickerMode(photo, video) ?: return null
+
+    var pictureFilePath by rememberSaveable { mutableStateOf<String?>(null) }
+    var videoFilePath by rememberSaveable { mutableStateOf<String?>(null) }
+
+    val contract = remember(mode) {
+        CaptureMediaContract(mode) { createdPicture, createdVideo ->
+            pictureFilePath = createdPicture?.absolutePath
+            videoFilePath = createdVideo?.absolutePath
+        }
+    }
+
+    // Restore file references on the contract after process death.
+    // Runs during composition, before rememberLauncherForActivityResult re-registers
+    // in its DisposableEffect and dispatches pending results.
+    contract.restoreFilePaths(picturePath = pictureFilePath, videoPath = videoFilePath)
+
+    return rememberLauncherForActivityResult(contract) { file ->
+        onResult(file)
+        pictureFilePath = null
+        videoFilePath = null
     }
 }
 

@@ -107,21 +107,14 @@ internal class SocketFactory(
 
     private fun PrivacySettings.reducePrivacySettings(): Map<String, Any> = mutableMapOf<String, Any>()
         .apply {
-            typingIndicators?.also {
-                put(
-                    "typing_indicators",
-                    mapOf<String, Any>(
-                        "enabled" to it.enabled,
-                    ),
-                )
+            typingIndicators?.let {
+                put("typing_indicators", mapOf<String, Any>("enabled" to it.enabled))
             }
-            readReceipts?.also {
-                put(
-                    "read_receipts",
-                    mapOf<String, Any>(
-                        "enabled" to it.enabled,
-                    ),
-                )
+            deliveryReceipts?.let {
+                put("delivery_receipts", mapOf<String, Any>("enabled" to it.enabled))
+            }
+            readReceipts?.let {
+                put("read_receipts", mapOf<String, Any>("enabled" to it.enabled))
             }
         }
 
