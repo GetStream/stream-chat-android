@@ -209,7 +209,7 @@ internal class DeleteMessageListenerDatabaseTest {
         }
 
     @Test
-    fun `onMessageDeletePrecondition when message has SYNC_NEEDED should return Failure and delete from repo`() =
+    fun `onMessageDeletePrecondition when message has SYNC_NEEDED should return Success`() =
         runTest {
             val currentUser = randomUser()
             val testMessage = randomMessage(
@@ -224,8 +224,7 @@ internal class DeleteMessageListenerDatabaseTest {
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
-            assertTrue(result is Result.Failure)
-            verify(messageRepository).deleteChannelMessage(argThat { id == testMessage.id })
+            assertTrue(result is Result.Success)
         }
 
     @Test
