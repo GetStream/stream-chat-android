@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-@file:Suppress("MatchingDeclarationName")
-
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.ui.graphics.Color
-
-/**
- * Use [StreamDesign.Colors] instead.
- */
-@Deprecated("Use StreamDesign.Colors", ReplaceWith("StreamDesign.Colors"))
-public typealias StreamColors = StreamDesign.Colors
 
 @Suppress("MagicNumber")
 internal object StreamPrimitiveColors {

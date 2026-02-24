@@ -23,7 +23,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -64,9 +64,9 @@ public fun interface MessageTextFormatter {
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
                 { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },

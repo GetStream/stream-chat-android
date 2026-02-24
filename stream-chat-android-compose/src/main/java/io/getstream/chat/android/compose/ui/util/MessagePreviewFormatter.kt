@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
@@ -88,7 +88,7 @@ public interface MessagePreviewFormatter {
             autoTranslationEnabled: Boolean,
             typography: StreamTypography,
             attachmentFactories: List<AttachmentFactory>,
-            colors: StreamColors,
+            colors: StreamDesign.Colors,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,

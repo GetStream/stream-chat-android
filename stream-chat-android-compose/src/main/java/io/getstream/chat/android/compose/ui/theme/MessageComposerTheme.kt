@@ -51,9 +51,9 @@ public data class MessageComposerTheme(
         public fun defaultTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
         ): MessageComposerTheme {
             return MessageComposerTheme(
@@ -85,9 +85,9 @@ public data class ComposerInputFieldTheme(
         @Composable
         public fun defaultTheme(
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            colors: StreamDesign.Colors = when (isSystemInDarkTheme()) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
             mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
         ): ComposerInputFieldTheme {
@@ -150,7 +150,7 @@ public data class ComposerActionsTheme(
          * @return A [ComposerActionsTheme] instance holding the default theming.
          */
         @Composable
-        public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
+        public fun defaultTheme(colors: StreamDesign.Colors): ComposerActionsTheme {
             val attachmentsButton = IconContainerStyle(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
                 padding = ComponentPadding(0.dp),

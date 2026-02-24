@@ -75,7 +75,7 @@ import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 /**
  * Local providers for various properties we connect to our components, for styling.
  */
-private val LocalColors = compositionLocalOf<StreamColors> {
+private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
     error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalDimens = compositionLocalOf<StreamDimens> {
@@ -244,7 +244,7 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param attachmentPickerConfig Configuration for the attachment picker modes and settings.
  * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
- * @param colors The set of colors we provide, wrapped in [StreamColors].
+ * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param rippleConfiguration Defines the appearance for ripples.
@@ -291,7 +291,8 @@ public fun ChatTheme(
     isComposerLinkPreviewEnabled: Boolean = false,
     attachmentPickerConfig: AttachmentPickerConfig = AttachmentPickerConfig(),
     messageComposerFloatingStyleEnabled: Boolean = false,
-    colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
+    colors: StreamDesign.Colors =
+        if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
@@ -419,9 +420,9 @@ public object ChatTheme {
         get() = LocalChatConfig.current
 
     /**
-     * Retrieves the current [StreamColors] at the call site's position in the hierarchy.
+     * Retrieves the current [StreamDesign.Colors] at the call site's position in the hierarchy.
      */
-    public val colors: StreamColors
+    public val colors: StreamDesign.Colors
         @Composable
         @ReadOnlyComposable
         get() = LocalColors.current

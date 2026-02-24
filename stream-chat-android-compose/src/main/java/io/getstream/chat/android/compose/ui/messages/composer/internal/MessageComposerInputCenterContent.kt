@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
@@ -151,7 +151,7 @@ private const val TextFieldMaxLines = 5
 private class TextFieldVisualTransformation(
     val inputFieldTheme: ComposerInputFieldTheme,
     val typography: StreamTypography,
-    val colors: StreamColors,
+    val colors: StreamDesign.Colors,
     val mentions: Set<Mention>,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {

@@ -3746,9 +3746,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion {
 	public final fun default ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public final fun defaultColors ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 	public final fun defaultDark ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public final fun defaultDarkColors ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Dimens {

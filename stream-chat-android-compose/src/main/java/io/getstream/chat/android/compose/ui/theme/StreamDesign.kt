@@ -267,15 +267,6 @@ public object StreamDesign {
              *
              * @return A [Colors] instance holding our color palette.
              */
-            @Deprecated("Use default()", ReplaceWith("default()"))
-            @Suppress("LongMethod")
-            public fun defaultColors(): Colors = default()
-
-            /**
-             * Provides the default colors for the light mode of the app.
-             *
-             * @return A [Colors] instance holding our color palette.
-             */
             @Suppress("LongMethod")
             public fun default(): Colors = Colors(
                 accentBlack = StreamPrimitiveColors.baseBlack,
@@ -350,15 +341,6 @@ public object StreamDesign {
                 overlayBackgroundDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.6f),
                 highlightBackground = StreamPrimitiveColors.highlightLight,
             )
-
-            /**
-             * Provides the default colors for the dark mode of the app.
-             *
-             * @return A [Colors] instance holding our color palette.
-             */
-            @Deprecated("Use defaultDark()", ReplaceWith("defaultDark()"))
-            @Suppress("LongMethod")
-            public fun defaultDarkColors(): Colors = defaultDark()
 
             /**
              * Provides the default colors for the dark mode of the app.

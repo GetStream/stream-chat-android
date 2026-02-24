@@ -56,7 +56,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -148,7 +148,7 @@ public fun ComposerLinkPreview(
 }
 
 @Composable
-private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamColors) {
+private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamDesign.Colors) {
     val imagePreviewUrl = attachment.imagePreviewUrl ?: return
     val shape = RoundedCornerShape(StreamTokens.radiusMd)
     StreamAsyncImage(
