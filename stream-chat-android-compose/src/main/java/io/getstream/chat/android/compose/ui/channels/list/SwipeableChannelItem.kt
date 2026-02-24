@@ -21,13 +21,14 @@ import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -72,8 +73,8 @@ public fun SwipeableChannelItem(
 
     var actionsWidthPx by remember { mutableIntStateOf(0) }
 
-    // Update anchors when actions width changes
-    SideEffect {
+    // LaunchedEffect (not SideEffect) so the key triggers recomposition after onSizeChanged.
+    LaunchedEffect(actionsWidthPx) {
         if (actionsWidthPx > 0) {
             val newAnchors = DraggableAnchors {
                 SwipeRevealValue.Closed at 0f
@@ -99,7 +100,9 @@ public fun SwipeableChannelItem(
     }
 
     Box(
-        modifier = modifier.clipToBounds(),
+        modifier = modifier
+            .height(IntrinsicSize.Min)
+            .clipToBounds(),
     ) {
         // Background: action buttons
         Row(
@@ -115,12 +118,8 @@ public fun SwipeableChannelItem(
         Box(
             modifier = Modifier
                 .offset {
-                    val offset = anchoredDraggableState.offset
-                    if (isRtl) {
-                        IntOffset(x = -offset.roundToInt(), y = 0)
-                    } else {
-                        IntOffset(x = offset.roundToInt(), y = 0)
-                    }
+                    val x = anchoredDraggableState.offset.roundToInt()
+                    IntOffset(x = if (isRtl) -x else x, y = 0)
                 }
                 .anchoredDraggable(
                     state = anchoredDraggableState,
