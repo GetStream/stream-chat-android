@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -150,7 +150,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
             .semantics(mergeDescendants = true) {
                 testTag = "Stream_MessageDateSeparator"
             }
-            .padding(vertical = 8.dp)
+            .padding(vertical = StreamTokens.spacingXs)
             .fillMaxWidth(),
     )
 }
@@ -163,13 +163,13 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
 @Composable
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
     MessageDivider(
-        text = LocalResources.current.getString(R.string.stream_compose_message_list_unread_separator),
+        text = stringResource(R.string.stream_compose_message_list_unread_separator),
         modifier = Modifier
             .semantics(mergeDescendants = true) {
                 testTag = "Stream_UnreadMessagesBadge"
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(vertical = StreamTokens.spacingXs)
+            .fillMaxWidth(),
     )
 }
 
