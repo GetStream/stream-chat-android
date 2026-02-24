@@ -42,6 +42,7 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.result.Error
 
@@ -150,8 +151,8 @@ internal fun ChannelMediaAttachmentsGrid(
         LazyVerticalGrid(
             modifier = Modifier.matchParentSize(),
             columns = GridCells.Fixed(gridColumnCount),
-            verticalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
-            horizontalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
             state = gridState,
         ) {
             itemsIndexed(

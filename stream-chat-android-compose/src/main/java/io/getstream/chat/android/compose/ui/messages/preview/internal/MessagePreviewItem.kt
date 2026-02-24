@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
@@ -107,12 +108,12 @@ internal fun DefaultMessagePreviewItemLeadingContent(message: Message, currentUs
         user = message.user,
         modifier = Modifier
             .padding(
-                start = ChatTheme.dimens.channelItemHorizontalPadding,
+                start = StreamTokens.spacingXs,
                 end = 4.dp,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
             )
-            .size(ChatTheme.dimens.channelAvatarSize),
+            .size(40.dp),
         showIndicator = message.user.shouldShowOnlineIndicator(
             userPresence = ChatTheme.userPresence,
             currentUser = currentUser,
@@ -170,9 +171,9 @@ internal fun RowScope.DefaultMessagePreviewItemTrailingContent(message: Message)
         modifier = Modifier
             .padding(
                 start = 4.dp,
-                end = ChatTheme.dimens.channelItemHorizontalPadding,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                end = StreamTokens.spacingXs,
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
             )
             .wrapContentHeight()
             .align(Alignment.Bottom),

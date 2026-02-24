@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
@@ -156,12 +157,12 @@ internal fun DefaultChannelItemLeadingContent(
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .padding(
-                start = ChatTheme.dimens.channelItemHorizontalPadding,
+                start = StreamTokens.spacingXs,
                 end = 4.dp,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                top = StreamTokens.spacingSm,
+                bottom = StreamTokens.spacingSm,
             )
-            .size(ChatTheme.dimens.channelAvatarSize),
+            .size(40.dp),
         channel = channelItem.channel,
         currentUser = currentUser,
         showIndicator = false,
@@ -293,9 +294,9 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
             modifier = Modifier
                 .padding(
                     start = 4.dp,
-                    end = ChatTheme.dimens.channelItemHorizontalPadding,
-                    top = ChatTheme.dimens.channelItemVerticalPadding,
-                    bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                    end = StreamTokens.spacingXs,
+                    top = StreamTokens.spacingSm,
+                    bottom = StreamTokens.spacingSm,
                 )
                 .wrapContentHeight()
                 .align(Alignment.Bottom),

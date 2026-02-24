@@ -62,6 +62,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -354,8 +355,8 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
     val columnSizingModifier = Modifier
         .weight(1f, fill = false)
         .size(
-            width = ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2,
-            height = ChatTheme.dimens.attachmentsContentGroupPreviewHeight,
+            width = 250.dp / 2,
+            height = 196.dp,
         )
 
     Column(
@@ -685,9 +686,9 @@ public data class MediaAttachmentClickData internal constructor(
  */
 @Composable
 private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
-    ChatTheme.dimens.attachmentsContentVideoWidth
+    250.dp
 } else {
-    ChatTheme.dimens.attachmentsContentImageWidth
+    250.dp
 }
 
 /**
@@ -700,9 +701,9 @@ private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
 private fun singleMediaAttachmentHeight(isVideo: Boolean, aspectRatio: Float): Dp {
     val width = singleMediaAttachmentWidth(isVideo)
     val maxHeight = if (isVideo) {
-        ChatTheme.dimens.attachmentsContentVideoMaxHeight
+        400.dp
     } else {
-        ChatTheme.dimens.attachmentsContentImageMaxHeight
+        600.dp
     }
     val heightAccordingAspectRatio = width / aspectRatio
     return minOf(heightAccordingAspectRatio, maxHeight)

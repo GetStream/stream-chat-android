@@ -209,7 +209,7 @@ internal fun ThreadItemLatestReplyContent(
                 .padding(top = 8.dp),
         ) {
             ChatTheme.componentFactory.UserAvatar(
-                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+                modifier = Modifier.size(40.dp),
                 user = latestReply.user,
                 showIndicator = latestReply.user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,

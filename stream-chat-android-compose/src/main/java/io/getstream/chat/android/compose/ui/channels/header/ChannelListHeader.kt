@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -77,7 +78,7 @@ public fun ChannelListHeader(
     connectionState: ConnectionState,
     color: Color = ChatTheme.colors.backgroundElevationElevation1,
     shape: Shape = RectangleShape,
-    elevation: Dp = ChatTheme.dimens.headerElevation,
+    elevation: Dp = StreamTokens.elevation3,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -136,7 +137,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(ChatTheme.dimens.channelAvatarSize)
+    val size = Modifier.size(40.dp)
 
     if (currentUser != null) {
         ChatTheme.componentFactory.UserAvatar(

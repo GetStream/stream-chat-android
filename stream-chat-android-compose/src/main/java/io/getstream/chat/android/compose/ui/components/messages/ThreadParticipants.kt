@@ -60,7 +60,7 @@ public fun ThreadParticipants(
                 it
             }
         }
-        val itemSize = ChatTheme.dimens.threadParticipantItemSize
+        val itemSize = 16.dp
 
         participantsToShow.forEachIndexed { index, user ->
             val itemPadding = Modifier.padding(start = (index * (itemSize.value / 2)).dp)

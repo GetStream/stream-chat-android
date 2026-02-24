@@ -76,7 +76,7 @@ public fun PollSwitchList(
     modifier: Modifier = Modifier,
     pollSwitchItems: List<PollSwitchItem>,
     onSwitchesChanged: (List<PollSwitchItem>) -> Unit,
-    itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
+    itemHeightSize: Dp = 56.dp,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
     @Suppress("SpreadOperator")

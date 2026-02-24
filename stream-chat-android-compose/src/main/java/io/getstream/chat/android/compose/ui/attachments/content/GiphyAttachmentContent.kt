@@ -57,7 +57,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
-import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -82,9 +81,7 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
  * Giphy attachments.
  * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
  * makes the container capable of adaptive resizing and ignore
- * [StreamDesign.Dimens.attachmentsContentGiphyWidth] and [StreamDesign.Dimens.attachmentsContentGiphyHeight]
- * dimensions, however you can still clip maximum dimensions using [StreamDesign.Dimens.attachmentsContentGiphyMaxWidth]
- * and [StreamDesign.Dimens.attachmentsContentGiphyMaxHeight].
+ * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
  * @param onItemClick Lambda called when an item gets clicked.
@@ -141,9 +138,7 @@ public fun GiphyAttachmentContent(
  * Giphy attachments.
  * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
  * makes the container capable of adaptive resizing and ignore
- * [StreamDesign.Dimens.attachmentsContentGiphyWidth] and [StreamDesign.Dimens.attachmentsContentGiphyHeight]
- * dimensions, however you can still clip maximum dimensions using [StreamDesign.Dimens.attachmentsContentGiphyMaxWidth]
- * and [StreamDesign.Dimens.attachmentsContentGiphyMaxHeight].
+ * the default Giphy width and height dimensions, however you can still clip maximum dimensions.
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
  * @param onItemClick Lambda called when an item gets clicked.
@@ -226,11 +221,11 @@ private fun calculateSize(
 ): DpSize {
     val density = LocalDensity.current
 
-    val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
-    val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
+    val maxWidth = 250.dp
+    val maxHeight = 200.dp
 
-    val width = ChatTheme.dimens.attachmentsContentGiphyWidth
-    val height = ChatTheme.dimens.attachmentsContentGiphyHeight
+    val width = 250.dp
+    val height = 200.dp
 
     val giphyDimensions: DpSize = remember(giphyInfo, density, maxWidth, width, maxHeight, height) {
         if (giphyInfo != null) {

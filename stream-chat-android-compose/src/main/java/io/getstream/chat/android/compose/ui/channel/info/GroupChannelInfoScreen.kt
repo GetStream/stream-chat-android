@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -172,7 +173,7 @@ internal fun GroupChannelInfoTopBar(
 ) {
     val elevation by animateDpAsState(
         targetValue = if (listState.canScrollBackward) {
-            ChatTheme.dimens.headerElevation
+            StreamTokens.elevation3
         } else {
             1.dp
         },
@@ -284,7 +285,7 @@ internal fun GroupChannelInfoMemberItem(
     ) {
         val user = member.user
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+            modifier = Modifier.size(40.dp),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,

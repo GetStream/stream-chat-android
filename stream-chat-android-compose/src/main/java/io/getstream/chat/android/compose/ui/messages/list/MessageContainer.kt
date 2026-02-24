@@ -509,7 +509,7 @@ public fun DefaultMessageContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
-    val finalModifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    val finalModifier = modifier.widthIn(max = 250.dp)
     if (messageItem.message.isPoll() && !messageItem.message.isDeleted()) {
         val poll = messageItem.message.poll
         LaunchedEffect(key1 = poll) {

@@ -210,13 +210,13 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
         modifier = Modifier
             .semantics(mergeDescendants = true) {}
             .fillMaxWidth()
-            .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding)
+            .padding(vertical = StreamTokens.spacingXs)
             .background(brush = backgroundGradient),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding)
+                .padding(vertical = StreamTokens.spacing3xs)
                 .testTag("Stream_RepliesCount"),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_separator,

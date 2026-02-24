@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -51,7 +52,7 @@ internal fun ChannelMembersItem(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.selectedChannelMenuUserItemAvatarSize),
+            modifier = Modifier.size(64.dp),
             user = member.user,
             showIndicator = member.user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,

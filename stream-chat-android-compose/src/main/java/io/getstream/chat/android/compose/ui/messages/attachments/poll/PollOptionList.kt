@@ -80,7 +80,7 @@ public fun PollOptionList(
     title: String = stringResource(id = R.string.stream_compose_poll_option_title),
     optionItems: List<PollOptionItem> = emptyList(),
     onQuestionsChanged: (List<PollOptionItem>) -> Unit,
-    itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
+    itemHeightSize: Dp = 56.dp,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
 ) {
     val context = LocalContext.current

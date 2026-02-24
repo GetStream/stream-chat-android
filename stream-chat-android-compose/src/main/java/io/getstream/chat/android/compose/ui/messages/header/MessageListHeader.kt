@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -89,7 +90,7 @@ public fun MessageListHeader(
     messageMode: MessageMode = MessageMode.Normal,
     color: Color = ChatTheme.colors.backgroundElevationElevation1,
     shape: Shape = RectangleShape,
-    elevation: Dp = ChatTheme.dimens.headerElevation,
+    elevation: Dp = StreamTokens.elevation3,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClick: (() -> Unit)? = null,
@@ -328,7 +329,7 @@ internal fun DefaultMessageListHeaderTrailingContent(
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
-            .size(ChatTheme.dimens.channelAvatarSize)
+            .size(40.dp)
             .ifNotNull(onClick) { clickable(onClick = it) },
         channel = channel,
         currentUser = currentUser,

@@ -47,14 +47,14 @@ import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvide
 public fun SuggestionList(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(StreamTokens.radiusXl),
-    contentPadding: PaddingValues = PaddingValues(vertical = ChatTheme.dimens.suggestionListPadding),
+    contentPadding: PaddingValues = PaddingValues(vertical = StreamTokens.spacingXs),
     headerContent: @Composable () -> Unit = {},
     centerContent: @Composable () -> Unit,
 ) {
     Popup(popupPositionProvider = AboveAnchorPopupPositionProvider) {
         Card(
             modifier = modifier.semantics { testTagsAsResourceId = true },
-            elevation = CardDefaults.cardElevation(defaultElevation = ChatTheme.dimens.suggestionListElevation),
+            elevation = CardDefaults.cardElevation(defaultElevation = StreamTokens.elevation3),
             shape = shape,
             colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {

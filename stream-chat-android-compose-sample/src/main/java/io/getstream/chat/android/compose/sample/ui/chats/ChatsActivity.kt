@@ -480,7 +480,7 @@ class ChatsActivity : ComponentActivity() {
     ) {
         val elevation by animateDpAsState(
             targetValue = if (listState.canScrollBackward) {
-                ChatTheme.dimens.headerElevation
+                4.dp
             } else {
                 0.dp
             },

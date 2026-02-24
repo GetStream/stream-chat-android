@@ -108,7 +108,7 @@ public fun PollOptionInput(
         mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
     }
 
-    Box(modifier = modifier.height(ChatTheme.dimens.pollOptionInputHeight)) {
+    Box(modifier = modifier.height(56.dp)) {
         BasicTextField(
             modifier = Modifier
                 .fillMaxSize()
