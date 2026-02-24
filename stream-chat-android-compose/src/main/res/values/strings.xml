@@ -33,6 +33,13 @@
         <item quantity="other">%d people are typing</item>
     </plurals>
     <string name="stream_compose_channel_list_empty_channels">No channels available</string>
+
+    <!-- Channel List Swipe Actions -->
+    <string name="stream_compose_swipe_action_pin">Pin</string>
+    <string name="stream_compose_swipe_action_unpin">Unpin</string>
+    <string name="stream_compose_swipe_action_mute">Mute</string>
+    <string name="stream_compose_swipe_action_unmute">Unmute</string>
+    <string name="stream_compose_swipe_action_delete">Delete</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 
     <!-- Selected Channel Menu -->

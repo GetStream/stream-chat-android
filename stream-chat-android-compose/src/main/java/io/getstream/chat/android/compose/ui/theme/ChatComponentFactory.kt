@@ -101,11 +101,14 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemTrai
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListEmptyContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListLoadingIndicator
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelSearchEmptyContent
+import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelSwipeActions
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelsLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemCenterContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemLeadingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemTrailingContent
+import io.getstream.chat.android.compose.ui.channels.list.LocalSwipeRevealCoordinator
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
+import io.getstream.chat.android.compose.ui.channels.list.SwipeableChannelItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchClearButton
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
@@ -401,6 +404,8 @@ public interface ChatComponentFactory {
 
     /**
      * The default channel list item content.
+     * When swipe actions are enabled and a [SwipeRevealCoordinator][LocalSwipeRevealCoordinator]
+     * is provided, wraps the item in [SwipeableChannelItem].
      */
     @Composable
     public fun LazyItemScope.ChannelListItemContent(
@@ -409,13 +414,42 @@ public interface ChatComponentFactory {
         onChannelClick: (Channel) -> Unit,
         onChannelLongClick: (Channel) -> Unit,
     ) {
-        ChannelItem(
-            modifier = Modifier.animateItem(),
-            channelItem = channelItem,
-            currentUser = currentUser,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
+        val coordinator = LocalSwipeRevealCoordinator.current
+        val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
+
+        if (swipeEnabled) {
+            SwipeableChannelItem(
+                channelCid = channelItem.channel.cid,
+                swipeActions = { Row { ChannelSwipeActions(channelItem) } },
+            ) {
+                ChannelItem(
+                    modifier = Modifier.animateItem(),
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                    onChannelClick = onChannelClick,
+                    onChannelLongClick = onChannelLongClick,
+                )
+            }
+        } else {
+            ChannelItem(
+                modifier = Modifier.animateItem(),
+                channelItem = channelItem,
+                currentUser = currentUser,
+                onChannelClick = onChannelClick,
+                onChannelLongClick = onChannelLongClick,
+            )
+        }
+    }
+
+    /**
+     * The swipe actions revealed when swiping a channel list item.
+     * Override this to provide custom swipe actions.
+     *
+     * @param channelItem The channel item to build actions for.
+     */
+    @Composable
+    public fun RowScope.ChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
+        DefaultChannelSwipeActions(channelItem)
     }
 
     /**

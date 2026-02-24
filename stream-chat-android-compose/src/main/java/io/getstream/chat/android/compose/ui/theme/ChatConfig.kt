@@ -31,9 +31,11 @@ public enum class MuteIndicatorPosition {
  * Behavioral configuration for the channel list.
  *
  * @param muteIndicatorPosition Where the mute icon is placed in the channel list item.
+ * @param swipeActionsEnabled Whether swipe-to-reveal actions are enabled on channel list items.
  */
 public data class ChannelListConfig(
     val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.INLINE_TITLE,
+    val swipeActionsEnabled: Boolean = true,
 )
 
 /**

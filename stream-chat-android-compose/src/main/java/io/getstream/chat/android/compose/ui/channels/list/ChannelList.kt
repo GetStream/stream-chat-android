@@ -23,9 +23,11 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +52,13 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
+import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
+import kotlinx.coroutines.launch
 
 /**
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and
@@ -150,25 +159,46 @@ public fun ChannelList(
     },
 ) {
     val user by viewModel.user.collectAsState()
+    val scope = rememberCoroutineScope()
+    val swipeCoordinator = remember { SwipeRevealCoordinator() }
+    val swipeActionHandler: (ChannelAction) -> Unit = remember(viewModel) {
+        {
+                action ->
+            scope.launch { swipeCoordinator.closeAll() }
+            when (action) {
+                is PinChannel -> viewModel.pinChannel(action.channel)
+                is UnpinChannel -> viewModel.unpinChannel(action.channel)
+                is MuteChannel -> viewModel.muteChannel(action.channel)
+                is UnmuteChannel -> viewModel.unmuteChannel(action.channel)
+                is DeleteConversation -> viewModel.performChannelAction(action)
+                else -> {}
+            }
+        }
+    }
 
-    ChannelList(
-        modifier = modifier,
-        contentPadding = contentPadding,
-        channelsState = viewModel.channelsState,
-        currentUser = user,
-        lazyListState = lazyListState,
-        onLastItemReached = onLastItemReached,
-        onChannelClick = onChannelClick,
-        onChannelLongClick = onChannelLongClick,
-        loadingContent = loadingContent,
-        emptyContent = emptyContent,
-        emptySearchContent = emptySearchContent,
-        helperContent = helperContent,
-        loadingMoreContent = loadingMoreContent,
-        channelContent = channelContent,
-        searchResultContent = searchResultContent,
-        divider = divider,
-    )
+    CompositionLocalProvider(
+        LocalSwipeRevealCoordinator provides swipeCoordinator,
+        LocalSwipeActionHandler provides swipeActionHandler,
+    ) {
+        ChannelList(
+            modifier = modifier,
+            contentPadding = contentPadding,
+            channelsState = viewModel.channelsState,
+            currentUser = user,
+            lazyListState = lazyListState,
+            onLastItemReached = onLastItemReached,
+            onChannelClick = onChannelClick,
+            onChannelLongClick = onChannelLongClick,
+            loadingContent = loadingContent,
+            emptyContent = emptyContent,
+            emptySearchContent = emptySearchContent,
+            helperContent = helperContent,
+            loadingMoreContent = loadingMoreContent,
+            channelContent = channelContent,
+            searchResultContent = searchResultContent,
+            divider = divider,
+        )
+    }
 }
 
 /**

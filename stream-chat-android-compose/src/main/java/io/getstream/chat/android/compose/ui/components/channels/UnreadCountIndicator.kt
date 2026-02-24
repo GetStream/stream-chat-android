@@ -47,6 +47,7 @@ public fun UnreadCountIndicator(
     color: Color = ChatTheme.colors.accentPrimary, // was errorAccent (red #FF3742) → accentPrimary (blue #005FFF)
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
+
     @Suppress("MagicNumber")
     val shape = RoundedCornerShape(50) // pill shape
 
