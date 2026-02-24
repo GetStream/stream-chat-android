@@ -158,6 +158,7 @@ private class DefaultMessagePreviewFormatter(
      * @param currentUser The currently logged in user.
      * @return The formatted text representation for the given message.
      */
+    @Suppress("LongMethod")
     override fun formatMessagePreview(
         message: Message,
         currentUser: User?,
@@ -439,5 +440,4 @@ private class DefaultMessagePreviewFormatter(
                 }
         }
     }
-
 }

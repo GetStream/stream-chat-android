@@ -105,9 +105,9 @@ public fun buildDefaultChannelOptionsState(
         if (optionVisibility.isViewInfoVisible) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
-                titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+                titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
-                iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+                iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
                 action = ViewInfo(selectedChannel),
             )
         } else {
@@ -116,9 +116,9 @@ public fun buildDefaultChannelOptionsState(
         if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
-                titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+                titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
-                iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+                iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
                 action = LeaveGroup(selectedChannel),
             )
         } else {
@@ -150,9 +150,9 @@ public fun buildDefaultChannelOptionsState(
         },
         ChannelOptionState(
             title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
-            titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+            titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
-            iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+            iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
             action = Cancel,
         ),
     )
@@ -185,9 +185,9 @@ private fun buildPinOption(
 }?.let {
     ChannelOptionState(
         title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
         iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
         action = it.third,
     )
 }
@@ -219,9 +219,9 @@ private fun buildArchiveOption(
 }?.let {
     ChannelOptionState(
         title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
         iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
         action = it.third,
     )
 }
@@ -248,9 +248,9 @@ private fun buildMuteOption(
 
     ChannelOptionState(
         title = stringResource(id = uiData.first),
-        titleColor = ChatTheme.colors.textPrimary,          // was textHighEmphasis
+        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
         iconPainter = painterResource(id = uiData.second),
-        iconColor = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
         action = uiData.third,
     )
 } else {

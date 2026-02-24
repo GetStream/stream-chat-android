@@ -98,7 +98,8 @@ public data class StreamDimens(
     public val channelItemVerticalPadding: Dp,
     public val channelItemHorizontalPadding: Dp,
     public val channelAvatarSize: Dp,
-    public val channelListItemAvatarSize: Dp,   // Size of channel avatar in list items (48dp). channelAvatarSize (40dp) is used for header avatar.
+    /** Size of channel avatar in list items (48dp). [channelAvatarSize] (40dp) is for header. */
+    public val channelListItemAvatarSize: Dp,
     public val selectedChannelMenuUserItemWidth: Dp,
     public val selectedChannelMenuUserItemHorizontalPadding: Dp,
     public val selectedChannelMenuUserItemAvatarSize: Dp,

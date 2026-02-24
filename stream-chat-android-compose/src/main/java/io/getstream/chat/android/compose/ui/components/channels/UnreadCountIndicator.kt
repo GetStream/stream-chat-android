@@ -45,29 +45,31 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 public fun UnreadCountIndicator(
     unreadCount: Int,
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.accentPrimary,   // was errorAccent (red #FF3742) → accentPrimary (blue #005FFF)
+    color: Color = ChatTheme.colors.accentPrimary, // was errorAccent (red #FF3742) → accentPrimary (blue #005FFF)
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
-    val shape = RoundedCornerShape(50)               // was RoundedCornerShape(9.dp) → pill/circle shape
+    @Suppress("MagicNumber")
+    val shape = RoundedCornerShape(50) // pill shape
 
     Box(
         modifier = modifier
-            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)  // was 18.dp → 20.dp
+            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp) // was 18.dp → 20.dp
             .border(
                 width = 2.dp,
-                color = ChatTheme.colors.presenceBorder,           // white (#FFFFFF) -- reuses presence border token
+                color = ChatTheme.colors.presenceBorder, // white (#FFFFFF) -- reuses presence border token
                 shape = shape,
             )
             .background(shape = shape, color = color)
-            .padding(horizontal = StreamTokens.spacing2xs),       // 4dp horizontal content padding
+            .padding(horizontal = StreamTokens.spacing2xs), // 4dp horizontal content padding
         contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier.testTag("Stream_UnreadCountIndicator"),
             text = displayText,
-            color = ChatTheme.colors.badgeTextOnAccent,           // was Color.White (now uses semantic token)
+            color = ChatTheme.colors.badgeTextOnAccent, // was Color.White (now uses semantic token)
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.numericExtraLarge,        // was captionBold (10sp Bold) → numericExtraLarge (14sp Bold)
+            // was captionBold (10sp Bold) → numericExtraLarge (14sp Bold)
+            style = ChatTheme.typography.numericExtraLarge,
         )
     }
 }

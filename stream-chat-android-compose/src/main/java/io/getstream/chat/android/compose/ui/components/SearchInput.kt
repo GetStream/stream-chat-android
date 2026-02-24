@@ -22,7 +22,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -72,6 +71,7 @@ import io.getstream.chat.android.compose.ui.util.padding
  * @param label The label shown in the search component, when there's no input.
  * @param clearButton The clear button shown when the search is focused and not empty.
  */
+@Suppress("LongMethod")
 @Composable
 public fun SearchInput(
     query: String,
@@ -182,7 +182,7 @@ internal fun DefaultSearchLeadingIcon() {
         modifier = Modifier
             .padding(
                 start = StreamTokens.spacingSm,
-                end = StreamTokens.spacingXs
+                end = StreamTokens.spacingXs,
             )
             .size(16.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),

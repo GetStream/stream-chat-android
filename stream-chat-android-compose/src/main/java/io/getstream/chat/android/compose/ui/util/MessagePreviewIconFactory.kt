@@ -64,6 +64,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
         internal const val POLL = "poll"
     }
 
+    @Suppress("LongMethod")
     override fun createPreviewIcons(): Map<String, InlineTextContent> {
         val placeholder = Placeholder(
             width = 14.sp,

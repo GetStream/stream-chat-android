@@ -19,10 +19,6 @@ package io.getstream.chat.android.compose.ui.channels
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.theme.ChatConfig
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
-import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemDraftMessage
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessageDeliveredStatus
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemLastMessagePendingStatus
@@ -32,6 +28,10 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMuted
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemMutedTrailingBottom
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemNoMessages
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItemUnreadMessages
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
+import io.getstream.chat.android.compose.ui.theme.ChatConfig
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import org.junit.Rule
 import org.junit.Test
 

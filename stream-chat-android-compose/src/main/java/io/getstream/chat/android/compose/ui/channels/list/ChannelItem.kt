@@ -50,16 +50,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.ChannelListConfig
 import io.getstream.chat.android.compose.ui.theme.MuteIndicatorPosition
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.compose.ui.util.getLastMessageIncludingDeleted
 import io.getstream.chat.android.compose.ui.util.isOneToOne
@@ -163,12 +163,13 @@ internal fun DefaultChannelItemLeadingContent(
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .padding(
-                start = StreamTokens.spacingMd,   // 16dp (was channelItemHorizontalPadding = 8dp)
-                end = StreamTokens.spacingMd,     // 16dp gap between avatar and content column
-                top = StreamTokens.spacingMd,     // 16dp (was channelItemVerticalPadding = 12dp)
-                bottom = StreamTokens.spacingMd,  // 16dp (was channelItemVerticalPadding = 12dp)
+                start = StreamTokens.spacingMd, // 16dp (was channelItemHorizontalPadding = 8dp)
+                end = StreamTokens.spacingMd, // 16dp gap between avatar and content column
+                top = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp)
+                bottom = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp)
             )
-            .size(ChatTheme.dimens.channelListItemAvatarSize), // 48dp (new dimen, NOT channelAvatarSize which = 40dp for header)
+            // 48dp (new dimen, NOT channelAvatarSize which = 40dp for header)
+            .size(ChatTheme.dimens.channelListItemAvatarSize),
         channel = channelItem.channel,
         currentUser = currentUser,
         showIndicator = false,
@@ -183,6 +184,7 @@ internal fun DefaultChannelItemLeadingContent(
  * @param channelItemState The channel to show the info for.
  * @param currentUser The currently logged in user, used for data handling.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun RowScope.DefaultChannelItemCenterContent(
     channelItemState: ItemState.ChannelItemState,
@@ -202,14 +204,14 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     Column(
         modifier = Modifier
             .weight(1f)
-            .padding(vertical = StreamTokens.spacing3xs),   // 2dp vertical padding
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp gap between title and message rows
+            .padding(vertical = StreamTokens.spacing3xs), // 2dp vertical padding
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp gap between title and message rows
     ) {
         // ── Title Row: [Name] [MuteIcon?] [Timestamp] [Badge?] ──────────────
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp default gap
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp default gap
         ) {
             // Channel name + optional inline mute icon (flex-1)
             Row(
@@ -244,7 +246,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             // Trailing: Timestamp + Badge (gap = spacing/xs = 8dp between them)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),  // 8dp between timestamp and badge
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs), // 8dp between timestamp and badge
             ) {
                 // Timestamp
                 if (lastMessage != null) {
@@ -270,7 +272,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp gap
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp gap
         ) {
             if (channelItemState.typingUsers.isNotEmpty()) {
                 // Typing indicator replaces message preview when active
@@ -349,7 +351,7 @@ private fun UserTypingIndicator(users: List<User>, isDirectMessaging: Boolean) {
     }
     Row(
         modifier = Modifier,
-        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),  // 4dp (was 6dp)
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp (was 6dp)
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TypingIndicator()
@@ -379,7 +381,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 ) {
     // Timestamp, badge, and delivery status have moved to DefaultChannelItemCenterContent.
     // This slot remains for API compatibility and provides the trailing end padding.
-    Spacer(modifier = Modifier.width(StreamTokens.spacingMd))  // 16dp end padding
+    Spacer(modifier = Modifier.width(StreamTokens.spacingMd)) // 16dp end padding
 }
 
 @Preview(showBackground = true)
@@ -419,7 +421,9 @@ internal fun ChannelItemMuted() {
 @Composable
 private fun ChannelItemMutedTrailingBottomPreview() {
     ChatTheme(
-        config = ChatConfig(channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM)),
+        config = ChatConfig(
+            channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM),
+        ),
     ) {
         ChannelItemMutedTrailingBottom()
     }

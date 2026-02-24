@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
@@ -149,7 +148,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     onAvatarClick: (User?) -> Unit,
 ) {
     val hitTargetSize = 48.dp
-    val avatarSize = ChatTheme.dimens.channelAvatarSize  // 40dp
+    val avatarSize = ChatTheme.dimens.channelAvatarSize // 40dp
 
     if (currentUser != null) {
         Box(

@@ -205,7 +205,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
                 }
             }
 
-            override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
+            override fun formatMessagePreview(message: Message, currentUser: User?, isDirectMessaging: Boolean): AnnotatedString {
                 return buildAnnotatedString {
                     append(message.text)
                     // add your custom styling here

@@ -129,14 +129,14 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = StreamTokens.spacingMd,     // 16dp (was 16.dp, now token-aligned)
-                end = StreamTokens.spacingMd,       // 16dp (was 16.dp)
-                top = StreamTokens.spacingMd,       // 16dp (was 16.dp)
+                start = StreamTokens.spacingMd, // 16dp (was 16.dp, now token-aligned)
+                end = StreamTokens.spacingMd, // 16dp (was 16.dp)
+                top = StreamTokens.spacingMd, // 16dp (was 16.dp)
             ),
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.headingSmall,      // was title3Bold (18sp/W500)
-        color = ChatTheme.colors.textPrimary,            // was textHighEmphasis
+        style = ChatTheme.typography.headingSmall, // was title3Bold (18sp/W500)
+        color = ChatTheme.colors.textPrimary, // was textHighEmphasis
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -148,8 +148,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         ),
-        style = ChatTheme.typography.captionDefault,    // was footnoteBold
-        color = ChatTheme.colors.textSecondary,          // was textLowEmphasis
+        style = ChatTheme.typography.captionDefault, // was footnoteBold
+        color = ChatTheme.colors.textSecondary, // was textLowEmphasis
     )
 
     ChannelMembers(

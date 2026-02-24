@@ -22,6 +22,7 @@ package io.getstream.chat.android.compose.ui.theme
 public enum class MuteIndicatorPosition {
     /** Icon appears inline after the channel name in the title row. */
     INLINE_TITLE,
+
     /** Icon appears at the trailing end of the message/preview row. */
     TRAILING_BOTTOM,
 }
