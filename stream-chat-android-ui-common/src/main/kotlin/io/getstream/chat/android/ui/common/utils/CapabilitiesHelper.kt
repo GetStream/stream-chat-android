@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -189,6 +190,27 @@ public fun canPinMessage(
     message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = pinMessageEnabled && message.isSynced() && ownCapabilities.canPinMessage()
+
+/**
+ * Determines whether the user who sent the given message can be muted.
+ *
+ * A user can be muted when:
+ * - Mute user functionality is enabled in the UI configuration
+ * - Muting is enabled in the channel configuration
+ * - The message was not sent by the current user (users cannot mute themselves)
+ *
+ * @param muteUserEnabled Whether the mute user feature is enabled in the UI.
+ * @param currentUser The currently authenticated user.
+ * @param message The message whose sender to check for mute eligibility.
+ * @param channel The channel where the message was sent.
+ * @return `true` if the message sender can be muted, `false` otherwise.
+ */
+public fun canMuteUser(
+    muteUserEnabled: Boolean,
+    currentUser: User?,
+    message: Message,
+    channel: Channel,
+): Boolean = muteUserEnabled && channel.config.muteEnabled && !message.isOwnMessage(currentUser)
 
 /**
  * Determines whether the user who sent the given message can be blocked.

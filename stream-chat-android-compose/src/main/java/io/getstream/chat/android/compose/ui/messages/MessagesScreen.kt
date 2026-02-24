@@ -441,7 +441,8 @@ private fun BoxScope.MessagesScreenMenus(
 ) {
     val user by listViewModel.user.collectAsState()
 
-    val ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
+    val channel = selectedMessageState?.channel ?: Channel()
+    val ownCapabilities = channel.ownCapabilities
 
     val isInThread = listViewModel.isInThread
 
@@ -449,7 +450,7 @@ private fun BoxScope.MessagesScreenMenus(
         selectedMessage = selectedMessage,
         currentUser = user,
         isInThread = isInThread,
-        ownCapabilities = ownCapabilities,
+        channel = channel,
     )
 
     var messageOptions by remember {

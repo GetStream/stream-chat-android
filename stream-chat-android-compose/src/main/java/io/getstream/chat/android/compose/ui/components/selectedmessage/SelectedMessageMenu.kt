@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.messages.list.LocalSelectedMessageBo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -340,7 +341,7 @@ private fun SelectedMessageMenuPreview(selectedMessage: Message) {
         selectedMessage = selectedMessage,
         currentUser = PreviewUserData.user1,
         isInThread = false,
-        ownCapabilities = ChannelCapabilities.toSet(),
+        channel = Channel(ownCapabilities = ChannelCapabilities.toSet()),
     )
 
     SelectedMessageMenu(
