@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -618,16 +619,31 @@ public object StreamDesign {
              */
             public fun default(): Shapes = Shapes(
                 avatar = CircleShape,
-                myMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomStart = 20.dp),
-                otherMessageBubble = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp, bottomEnd = 20.dp),
-                inputField = RoundedCornerShape(24.dp),
+                myMessageBubble = RoundedCornerShape(
+                    topStart = StreamTokens.radius2xl,
+                    topEnd = StreamTokens.radius2xl,
+                    bottomEnd = CornerSize(0.dp),
+                    bottomStart = StreamTokens.radius2xl,
+                ),
+                otherMessageBubble = RoundedCornerShape(
+                    topStart = StreamTokens.radius2xl,
+                    topEnd = StreamTokens.radius2xl,
+                    bottomEnd = StreamTokens.radius2xl,
+                    bottomStart = CornerSize(0.dp),
+                ),
+                inputField = RoundedCornerShape(StreamTokens.radius3xl),
                 attachment = RoundedCornerShape(StreamTokens.radiusLg),
-                imageThumbnail = RoundedCornerShape(8.dp),
-                bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                suggestionList = RoundedCornerShape(16.dp),
+                imageThumbnail = RoundedCornerShape(StreamTokens.radiusMd),
+                bottomSheet = RoundedCornerShape(
+                    topStart = StreamTokens.radiusXl,
+                    topEnd = StreamTokens.radiusXl,
+                    bottomEnd = CornerSize(0.dp),
+                    bottomStart = CornerSize(0.dp),
+                ),
+                suggestionList = RoundedCornerShape(StreamTokens.radiusXl),
                 header = RectangleShape,
-                quotedAttachment = RoundedCornerShape(4.dp),
-                pollOptionInput = RoundedCornerShape(16.dp),
+                quotedAttachment = RoundedCornerShape(StreamTokens.radiusXs),
+                pollOptionInput = RoundedCornerShape(StreamTokens.radiusXl),
             )
         }
     }
