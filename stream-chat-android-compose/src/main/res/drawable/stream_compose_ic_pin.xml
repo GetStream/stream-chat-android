@@ -15,11 +15,15 @@
     limitations under the License.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="24dp"
-    android:height="24dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
   <path
-      android:pathData="M14,4V9C14,10.12 14.37,11.16 15,12H9C9.65,11.14 10,10.1 10,9V4H14ZM17,2H7C6.45,2 6,2.45 6,3C6,3.55 6.45,4 7,4H8V9C8,10.66 6.66,12 5,12V14H10.97V21L11.97,22L12.97,21V14H19V12C17.34,12 16,10.66 16,9V4H17C17.55,4 18,3.55 18,3C18,2.45 17.55,2 17,2Z"
-      android:fillColor="#000000"/>
+      android:pathData="M6.979,13.021L10.174,16.216C11.14,17.182 12.792,16.641 13,15.291L13.616,11.286C13.7,10.742 14.047,10.275 14.542,10.037L16.838,8.935C17.874,8.438 18.108,7.066 17.295,6.254L13.747,2.705C12.934,1.893 11.563,2.127 11.066,3.163L9.964,5.458C9.726,5.954 9.258,6.3 8.715,6.384L4.709,7C3.36,7.208 2.819,8.861 3.784,9.826L6.979,13.021ZM6.979,13.021L6.985,13.015M6.979,13.021L3.125,16.875"
+      android:strokeLineJoin="round"
+      android:strokeWidth="1.5"
+      android:fillColor="#00000000"
+      android:strokeColor="#000000"
+      android:strokeLineCap="round"/>
 </vector>
