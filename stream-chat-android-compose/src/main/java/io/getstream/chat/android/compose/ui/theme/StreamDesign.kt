@@ -65,12 +65,14 @@ public object StreamDesign {
      * @param backgroundCoreDisabled Used for disabled background in components like buttons.
      * @param backgroundCoreSurface Used for surface background in components like buttons.
      * @param backgroundCoreSurfaceSubtle Used for subtle surface backgrounds.
+     * @param backgroundCoreSurfaceStrong Stronger section background for prominent surface areas.
      * @param backgroundCoreInverse Used for elevated, transient, or high-attention UI surfaces that
      * sit on top of the default app background.
      * @param backgroundElevationElevation0 Used for base elevation surface backgrounds.
      * @param backgroundElevationElevation1 Slightly elevated surface backgrounds.
      * @param borderCoreOpacity10 Used for 10% opacity border treatment (e.g. image frames).
      * @param borderCoreDefault Used for default border color.
+     * @param borderCoreStrong Stronger surface border with higher contrast.
      * @param borderCoreOnAccent Used for borders on accent backgrounds.
      * @param borderCoreOnDark Used for borders on dark backgrounds.
      * @param borderCoreOpacity25 Used for borders with 25% opacity.
@@ -97,6 +99,8 @@ public object StreamDesign {
      * @param backgroundCoreApp Used for the default app background.
      * @param backgroundCoreSelected Used for selected state background.
      * @param backgroundElevationElevation2 Used for elevated surface backgrounds at elevation level 2.
+     * @param backgroundElevationElevation3 Popover surface backgrounds.
+     * @param backgroundElevationElevation4 Dialog and modal surface backgrounds.
      * @param badgeBgDefault Used for badge background.
      * @param badgeBgInverse Used for badge background with inverse color scheme.
      * @param badgeBgOverlay Used for badge background when displayed as an overlay.
@@ -150,6 +154,7 @@ public object StreamDesign {
      * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
      * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
      * @param backgroundCoreHighlight Used for highlight backgrounds (e.g. message focus/pin).
+     * @param skeletonLoadingHighlight Shimmer highlight color for skeleton loading gradients.
      */
     @Immutable
     public data class Colors(
@@ -173,11 +178,13 @@ public object StreamDesign {
         public val backgroundCoreDisabled: Color,
         public val backgroundCoreSurface: Color,
         public val backgroundCoreSurfaceSubtle: Color,
+        public val backgroundCoreSurfaceStrong: Color,
         public val backgroundCoreInverse: Color,
         public val backgroundElevationElevation0: Color,
         public val backgroundElevationElevation1: Color,
         public val borderCoreOpacity10: Color,
         public val borderCoreDefault: Color,
+        public val borderCoreStrong: Color,
         public val borderCoreOnAccent: Color,
         public val borderCoreOnDark: Color,
         public val borderCoreOpacity25: Color,
@@ -204,6 +211,8 @@ public object StreamDesign {
         public val backgroundCoreApp: Color = backgroundElevationElevation0,
         public val backgroundCoreSelected: Color = textPrimary.copy(alpha = .15f),
         public val backgroundElevationElevation2: Color,
+        public val backgroundElevationElevation3: Color,
+        public val backgroundElevationElevation4: Color,
         public val badgeBgDefault: Color = backgroundElevationElevation2,
         public val badgeBgInverse: Color = backgroundCoreInverse,
         public val badgeBgOverlay: Color,
@@ -257,7 +266,119 @@ public object StreamDesign {
         public val backgroundCoreScrim: Color,
         public val backgroundCoreOverlayDark: Color,
         public val backgroundCoreHighlight: Color,
+        public val skeletonLoadingHighlight: Color,
     ) {
+
+        /** Badge background for error states. */
+        public val badgeBgError: Color = accentError
+
+        /** Badge background for neutral states. */
+        public val badgeBgNeutral: Color = accentNeutral
+
+        /** Badge background for primary brand states. */
+        public val badgeBgPrimary: Color = accentPrimary
+
+        /** Badge outer border. */
+        public val badgeBorder: Color = borderCoreOnDark
+
+        /** Typing indicator background. */
+        public val chatBgTypingIndicator: Color = accentNeutral
+
+        /** Border for incoming message bubbles. */
+        public val chatBorderIncoming: Color = borderCoreSubtle
+
+        /** Border for outgoing message bubbles. */
+        public val chatBorderOutgoing: Color = brand100
+
+        /** Reaction text color in chat. */
+        public val chatTextReaction: Color = textSecondary
+
+        /** Read receipt text color. */
+        public val chatTextRead: Color = accentPrimary
+
+        /** Username text color in chat. */
+        public val chatTextUsername: Color = textSecondary
+
+        /** Thread connector line for incoming messages. */
+        public val chatThreadConnectorIncoming: Color = borderCoreDefault
+
+        /** Thread connector line for outgoing messages. */
+        public val chatThreadConnectorOutgoing: Color = brand150
+
+        /** Chip background color. */
+        public val chipBg: Color = brand100
+
+        /** Composer background color. */
+        public val composerBg: Color = backgroundElevationElevation1
+
+        /** Playback toggle border color. */
+        public val controlPlaybackToggleBorder: Color = borderCoreDefault
+
+        /** Playback toggle text color. */
+        public val controlPlaybackToggleText: Color = textPrimary
+
+        /** Progress bar fill color. */
+        public val controlProgressBarFill: Color = accentNeutral
+
+        /** Progress bar track color. */
+        public val controlProgressBarTrack: Color = backgroundCoreSurfaceStrong
+
+        /** Radio/check background (unselected). */
+        public val controlRadioCheckBg: Color = Color.Transparent
+
+        /** Toggle switch track background. */
+        public val controlToggleSwitchBg: Color = backgroundCoreSurfaceStrong
+
+        /** Toggle switch track background when disabled. */
+        public val controlToggleSwitchBgDisabled: Color = backgroundCoreDisabled
+
+        /** Toggle switch track background when selected. */
+        public val controlToggleSwitchBgSelected: Color = accentPrimary
+
+        /** Toggle switch knob color. */
+        public val controlToggleSwitchKnob: Color = backgroundElevationElevation4
+
+        /** Input field default border. */
+        public val inputBorderDefault: Color = borderCoreDefault
+
+        /** Input field border on hover. */
+        public val inputBorderHover: Color = borderCoreStrong
+
+        /** Input field border when selected/focused. */
+        public val inputBorderSelected: Color = borderUtilitySelected
+
+        /** Send icon color. */
+        public val inputSendIcon: Color = accentPrimary
+
+        /** Send icon color when disabled. */
+        public val inputSendIconDisabled: Color = textDisabled
+
+        /** Input field default text color. */
+        public val inputTextDefault: Color = textPrimary
+
+        /** Input field disabled text color. */
+        public val inputTextDisabled: Color = textDisabled
+
+        /** Input field icon color. */
+        public val inputTextIcon: Color = textTertiary
+
+        /** Input field placeholder text color. */
+        public val inputTextPlaceholder: Color = textTertiary
+
+        /** Reaction background color. */
+        public val reactionBg: Color = backgroundElevationElevation3
+
+        /** Reaction border color. */
+        public val reactionBorder: Color = borderCoreDefault
+
+        /** Reaction emoji color. */
+        public val reactionEmoji: Color = textPrimary
+
+        /** Reaction text color. */
+        public val reactionText: Color = textPrimary
+
+        /** Skeleton loading gradient base color. */
+        public val skeletonLoadingBase: Color = Color.Transparent
 
         public companion object {
             /**
@@ -275,12 +396,16 @@ public object StreamDesign {
                 backgroundCoreDisabled = StreamPrimitiveColors.slate100,
                 backgroundCoreSurface = StreamPrimitiveColors.slate100,
                 backgroundCoreSurfaceSubtle = StreamPrimitiveColors.slate50,
+                backgroundCoreSurfaceStrong = StreamPrimitiveColors.slate150,
                 backgroundCoreInverse = StreamPrimitiveColors.slate900,
                 backgroundElevationElevation0 = StreamPrimitiveColors.baseWhite,
                 backgroundElevationElevation1 = StreamPrimitiveColors.baseWhite,
                 backgroundElevationElevation2 = StreamPrimitiveColors.baseWhite,
+                backgroundElevationElevation3 = StreamPrimitiveColors.baseWhite,
+                backgroundElevationElevation4 = StreamPrimitiveColors.baseWhite,
                 badgeBgOverlay = StreamPrimitiveColors.baseBlack.copy(alpha = .75f),
                 borderCoreDefault = StreamPrimitiveColors.slate150,
+                borderCoreStrong = StreamPrimitiveColors.slate300,
                 borderCoreOpacity10 = StreamPrimitiveColors.baseBlack.copy(alpha = .1f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreOnDark = StreamPrimitiveColors.baseWhite,
@@ -336,6 +461,7 @@ public object StreamDesign {
                 backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
                 backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
                 backgroundCoreHighlight = StreamPrimitiveColors.yellow50,
+                skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite,
             )
 
             /**
@@ -353,12 +479,16 @@ public object StreamDesign {
                 backgroundCoreDisabled = StreamPrimitiveColors.neutral800,
                 backgroundCoreSurface = StreamPrimitiveColors.neutral800,
                 backgroundCoreSurfaceSubtle = StreamPrimitiveColors.neutral900,
+                backgroundCoreSurfaceStrong = StreamPrimitiveColors.neutral700,
                 backgroundCoreInverse = StreamPrimitiveColors.neutral50,
                 backgroundCoreSelected = StreamPrimitiveColors.baseWhite.copy(alpha = 0.25f),
                 backgroundElevationElevation0 = StreamPrimitiveColors.baseBlack,
                 backgroundElevationElevation1 = StreamPrimitiveColors.neutral900,
                 backgroundElevationElevation2 = StreamPrimitiveColors.neutral800,
+                backgroundElevationElevation3 = StreamPrimitiveColors.neutral700,
+                backgroundElevationElevation4 = StreamPrimitiveColors.neutral600,
                 borderCoreDefault = StreamPrimitiveColors.neutral600,
+                borderCoreStrong = StreamPrimitiveColors.neutral400,
                 borderCoreOpacity10 = StreamPrimitiveColors.baseWhite.copy(alpha = .2f),
                 borderCoreOnAccent = StreamPrimitiveColors.baseWhite,
                 borderCoreOnDark = StreamPrimitiveColors.neutral900,
@@ -414,6 +544,7 @@ public object StreamDesign {
                 backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.75f),
                 backgroundCoreOverlayDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
                 backgroundCoreHighlight = StreamPrimitiveColors.yellow900,
+                skeletonLoadingHighlight = StreamPrimitiveColors.baseWhite.copy(alpha = 0.2f),
             )
         }
     }

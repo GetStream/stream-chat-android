@@ -2605,8 +2605,8 @@ public final class io/getstream/chat/android/compose/ui/messages/header/MessageL
 	public static final fun MessageListHeader-LIL5028 (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Landroidx/compose/ui/Modifier;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageMode;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt;
+public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageDividerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageDividerKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -3531,14 +3531,20 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign {
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Colors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors$Companion;
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component10-0d7_KjU ()J
 	public final fun component100-0d7_KjU ()J
 	public final fun component101-0d7_KjU ()J
 	public final fun component102-0d7_KjU ()J
 	public final fun component103-0d7_KjU ()J
+	public final fun component104-0d7_KjU ()J
+	public final fun component105-0d7_KjU ()J
+	public final fun component106-0d7_KjU ()J
+	public final fun component107-0d7_KjU ()J
+	public final fun component108-0d7_KjU ()J
+	public final fun component109-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
 	public final fun component12-0d7_KjU ()J
 	public final fun component13-0d7_KjU ()J
@@ -3636,8 +3642,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun component97-0d7_KjU ()J
 	public final fun component98-0d7_KjU ()J
 	public final fun component99-0d7_KjU ()J
-	public final fun copy-oW0-hVU (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
-	public static synthetic fun copy-oW0-hVU$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public final fun copy-HhgsYS8 (JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
+	public static synthetic fun copy-HhgsYS8$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccentBlack-0d7_KjU ()J
 	public final fun getAccentError-0d7_KjU ()J
@@ -3664,13 +3670,20 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBackgroundCoreScrim-0d7_KjU ()J
 	public final fun getBackgroundCoreSelected-0d7_KjU ()J
 	public final fun getBackgroundCoreSurface-0d7_KjU ()J
+	public final fun getBackgroundCoreSurfaceStrong-0d7_KjU ()J
 	public final fun getBackgroundCoreSurfaceSubtle-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation0-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation1-0d7_KjU ()J
 	public final fun getBackgroundElevationElevation2-0d7_KjU ()J
+	public final fun getBackgroundElevationElevation3-0d7_KjU ()J
+	public final fun getBackgroundElevationElevation4-0d7_KjU ()J
 	public final fun getBadgeBgDefault-0d7_KjU ()J
+	public final fun getBadgeBgError-0d7_KjU ()J
 	public final fun getBadgeBgInverse-0d7_KjU ()J
+	public final fun getBadgeBgNeutral-0d7_KjU ()J
 	public final fun getBadgeBgOverlay-0d7_KjU ()J
+	public final fun getBadgeBgPrimary-0d7_KjU ()J
+	public final fun getBadgeBorder-0d7_KjU ()J
 	public final fun getBadgeText-0d7_KjU ()J
 	public final fun getBadgeTextInverse-0d7_KjU ()J
 	public final fun getBadgeTextOnAccent-0d7_KjU ()J
@@ -3679,6 +3692,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getBorderCoreOnDark-0d7_KjU ()J
 	public final fun getBorderCoreOpacity10-0d7_KjU ()J
 	public final fun getBorderCoreOpacity25-0d7_KjU ()J
+	public final fun getBorderCoreStrong-0d7_KjU ()J
 	public final fun getBorderCoreSubtle-0d7_KjU ()J
 	public final fun getBorderUtilityDisabled-0d7_KjU ()J
 	public final fun getBorderUtilitySelected-0d7_KjU ()J
@@ -3709,8 +3723,11 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getChatBgAttachmentOutgoing-0d7_KjU ()J
 	public final fun getChatBgIncoming-0d7_KjU ()J
 	public final fun getChatBgOutgoing-0d7_KjU ()J
+	public final fun getChatBgTypingIndicator-0d7_KjU ()J
+	public final fun getChatBorderIncoming-0d7_KjU ()J
 	public final fun getChatBorderOnChatIncoming-0d7_KjU ()J
 	public final fun getChatBorderOnChatOutgoing-0d7_KjU ()J
+	public final fun getChatBorderOutgoing-0d7_KjU ()J
 	public final fun getChatPollProgressFillIncoming-0d7_KjU ()J
 	public final fun getChatPollProgressFillOutgoing-0d7_KjU ()J
 	public final fun getChatPollProgressTrackIncoming-0d7_KjU ()J
@@ -3721,21 +3738,53 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Color
 	public final fun getChatTextLink-0d7_KjU ()J
 	public final fun getChatTextMention-0d7_KjU ()J
 	public final fun getChatTextOutgoing-0d7_KjU ()J
+	public final fun getChatTextReaction-0d7_KjU ()J
+	public final fun getChatTextRead-0d7_KjU ()J
+	public final fun getChatTextSystem-0d7_KjU ()J
 	public final fun getChatTextTimestamp-0d7_KjU ()J
+	public final fun getChatTextUsername-0d7_KjU ()J
+	public final fun getChatThreadConnectorIncoming-0d7_KjU ()J
+	public final fun getChatThreadConnectorOutgoing-0d7_KjU ()J
 	public final fun getChatWaveformBar-0d7_KjU ()J
 	public final fun getChatWaveformBarPlaying-0d7_KjU ()J
+	public final fun getChipBg-0d7_KjU ()J
 	public final fun getChipText-0d7_KjU ()J
+	public final fun getComposerBg-0d7_KjU ()J
 	public final fun getControlPlayControlBg-0d7_KjU ()J
 	public final fun getControlPlayControlIcon-0d7_KjU ()J
+	public final fun getControlPlaybackToggleBorder-0d7_KjU ()J
+	public final fun getControlPlaybackToggleText-0d7_KjU ()J
+	public final fun getControlProgressBarFill-0d7_KjU ()J
+	public final fun getControlProgressBarTrack-0d7_KjU ()J
+	public final fun getControlRadioCheckBg-0d7_KjU ()J
 	public final fun getControlRadioCheckBgSelected-0d7_KjU ()J
 	public final fun getControlRadioCheckBorder-0d7_KjU ()J
 	public final fun getControlRadioCheckIconSelected-0d7_KjU ()J
 	public final fun getControlRemoveBg-0d7_KjU ()J
 	public final fun getControlRemoveBorder-0d7_KjU ()J
 	public final fun getControlRemoveIcon-0d7_KjU ()J
+	public final fun getControlToggleSwitchBg-0d7_KjU ()J
+	public final fun getControlToggleSwitchBgDisabled-0d7_KjU ()J
+	public final fun getControlToggleSwitchBgSelected-0d7_KjU ()J
+	public final fun getControlToggleSwitchKnob-0d7_KjU ()J
+	public final fun getInputBorderDefault-0d7_KjU ()J
+	public final fun getInputBorderHover-0d7_KjU ()J
+	public final fun getInputBorderSelected-0d7_KjU ()J
+	public final fun getInputSendIcon-0d7_KjU ()J
+	public final fun getInputSendIconDisabled-0d7_KjU ()J
+	public final fun getInputTextDefault-0d7_KjU ()J
+	public final fun getInputTextDisabled-0d7_KjU ()J
+	public final fun getInputTextIcon-0d7_KjU ()J
+	public final fun getInputTextPlaceholder-0d7_KjU ()J
 	public final fun getPresenceBgOffline-0d7_KjU ()J
 	public final fun getPresenceBgOnline-0d7_KjU ()J
 	public final fun getPresenceBorder-0d7_KjU ()J
+	public final fun getReactionBg-0d7_KjU ()J
+	public final fun getReactionBorder-0d7_KjU ()J
+	public final fun getReactionEmoji-0d7_KjU ()J
+	public final fun getReactionText-0d7_KjU ()J
+	public final fun getSkeletonLoadingBase-0d7_KjU ()J
+	public final fun getSkeletonLoadingHighlight-0d7_KjU ()J
 	public final fun getTextDisabled-0d7_KjU ()J
 	public final fun getTextOnAccent-0d7_KjU ()J
 	public final fun getTextOnDark-0d7_KjU ()J
