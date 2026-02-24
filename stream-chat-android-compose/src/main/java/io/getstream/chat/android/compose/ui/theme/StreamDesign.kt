@@ -339,7 +339,7 @@ public object StreamDesign {
                 presenceBorder = StreamPrimitiveColors.baseWhite,
                 overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.5f),
                 overlayBackgroundDark = StreamPrimitiveColors.baseBlack.copy(alpha = 0.6f),
-                highlightBackground = StreamPrimitiveColors.highlightLight,
+                highlightBackground = StreamPrimitiveColors.yellow50,
             )
 
             /**
@@ -418,7 +418,7 @@ public object StreamDesign {
                 presenceBorder = StreamPrimitiveColors.baseBlack,
                 overlayBackground = StreamPrimitiveColors.baseBlack.copy(alpha = 0.2f),
                 overlayBackgroundDark = StreamPrimitiveColors.baseWhite.copy(alpha = 0.6f),
-                highlightBackground = StreamPrimitiveColors.highlightDark,
+                highlightBackground = StreamPrimitiveColors.yellow900,
             )
         }
     }
