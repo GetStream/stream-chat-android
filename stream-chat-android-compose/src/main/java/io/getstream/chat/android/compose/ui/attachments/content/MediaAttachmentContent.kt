@@ -304,7 +304,7 @@ internal fun SingleMediaAttachment(
         modifier = modifier
             .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
             .size(
-                width = singleMediaAttachmentWidth(isVideo),
+                width = 250.dp,
                 height = singleMediaAttachmentHeight(isVideo, ratio),
             ),
         shape = if (shouldBeFullSize) null else RoundedCornerShape(StreamTokens.radiusLg),
@@ -680,18 +680,6 @@ public data class MediaAttachmentClickData internal constructor(
 )
 
 /**
- * Retrieves the width for a single-media attachment.
- *
- * @param isVideo true if "video", false if "image".
- */
-@Composable
-private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
-    250.dp
-} else {
-    250.dp
-}
-
-/**
  * Calculates the actual single-media attachment height, based on the configurable width, maxHeight and the aspectRatio.
  *
  * @param isVideo true if "video", false if "image".
@@ -699,13 +687,12 @@ private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
  */
 @Composable
 private fun singleMediaAttachmentHeight(isVideo: Boolean, aspectRatio: Float): Dp {
-    val width = singleMediaAttachmentWidth(isVideo)
     val maxHeight = if (isVideo) {
         400.dp
     } else {
         600.dp
     }
-    val heightAccordingAspectRatio = width / aspectRatio
+    val heightAccordingAspectRatio = 250.dp / aspectRatio
     return minOf(heightAccordingAspectRatio, maxHeight)
 }
 
