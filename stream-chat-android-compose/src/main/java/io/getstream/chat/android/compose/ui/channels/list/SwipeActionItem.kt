@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,6 +57,7 @@ public fun SwipeActionItem(
         modifier = modifier
             .width(80.dp)
             .fillMaxHeight()
+            .background(backgroundColor)
             .clickable(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -74,4 +76,37 @@ public fun SwipeActionItem(
             overflow = TextOverflow.Ellipsis,
         )
     }
+}
+
+/**
+ * A single swipe action button using [SwipeActionStyle] for slot-based coloring.
+ *
+ * @param icon The icon to display.
+ * @param label The label text below the icon.
+ * @param onClick Called when this action is tapped.
+ * @param style The visual style determining background and content colors.
+ * @param modifier Modifier for styling.
+ */
+@Composable
+public fun SwipeActionItem(
+    icon: Painter,
+    label: String,
+    onClick: () -> Unit,
+    style: SwipeActionStyle,
+    modifier: Modifier = Modifier,
+) {
+    val colors = ChatTheme.colors
+    val (bg, content) = when (style) {
+        SwipeActionStyle.Primary -> colors.accentPrimary to Color.White
+        SwipeActionStyle.Secondary -> colors.accentNeutral to Color.White
+        SwipeActionStyle.Destructive -> colors.accentError to Color.White
+    }
+    SwipeActionItem(
+        icon = icon,
+        label = label,
+        onClick = onClick,
+        backgroundColor = bg,
+        contentColor = content,
+        modifier = modifier,
+    )
 }

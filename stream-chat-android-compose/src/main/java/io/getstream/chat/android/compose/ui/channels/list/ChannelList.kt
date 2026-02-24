@@ -52,10 +52,12 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import kotlinx.coroutines.launch
@@ -170,15 +172,25 @@ public fun ChannelList(
                 is UnpinChannel -> viewModel.unpinChannel(action.channel)
                 is MuteChannel -> viewModel.muteChannel(action.channel)
                 is UnmuteChannel -> viewModel.unmuteChannel(action.channel)
+                is ArchiveChannel -> viewModel.archiveChannel(action.channel)
+                is UnarchiveChannel -> viewModel.unarchiveChannel(action.channel)
                 is DeleteConversation -> viewModel.performChannelAction(action)
                 else -> {}
             }
+        }
+    }
+    val moreClickHandler: (Channel) -> Unit = remember(viewModel) {
+        {
+                channel ->
+            scope.launch { swipeCoordinator.closeAll() }
+            viewModel.selectChannel(channel)
         }
     }
 
     CompositionLocalProvider(
         LocalSwipeRevealCoordinator provides swipeCoordinator,
         LocalSwipeActionHandler provides swipeActionHandler,
+        LocalChannelMoreClickHandler provides moreClickHandler,
     ) {
         ChannelList(
             modifier = modifier,

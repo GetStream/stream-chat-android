@@ -40,6 +40,9 @@
     <string name="stream_compose_swipe_action_mute">Mute</string>
     <string name="stream_compose_swipe_action_unmute">Unmute</string>
     <string name="stream_compose_swipe_action_delete">Delete</string>
+    <string name="stream_compose_swipe_action_more">More</string>
+    <string name="stream_compose_swipe_action_archive">Archive</string>
+    <string name="stream_compose_swipe_action_unarchive">Unarchive</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>
 
     <!-- Selected Channel Menu -->

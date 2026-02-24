@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.channels.list
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.runtime.compositionLocalOf
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 
 /**
@@ -76,7 +77,14 @@ public class SwipeRevealCoordinator {
 internal val LocalSwipeRevealCoordinator = compositionLocalOf<SwipeRevealCoordinator?> { null }
 
 /**
- * Provides a handler for swipe channel actions (pin, mute, delete, etc.).
+ * Provides a handler for swipe channel actions (pin, mute, archive, etc.).
  * `null` means no handler is available.
  */
 internal val LocalSwipeActionHandler = compositionLocalOf<((ChannelAction) -> Unit)?> { null }
+
+/**
+ * Provides a handler for the "More" swipe action that opens the channel options sheet.
+ * Maps to the same flow as long-press: selecting the channel to show [SelectedChannelMenu].
+ * `null` means no handler is available.
+ */
+internal val LocalChannelMoreClickHandler = compositionLocalOf<((Channel) -> Unit)?> { null }

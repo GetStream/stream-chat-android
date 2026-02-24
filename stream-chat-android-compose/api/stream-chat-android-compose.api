@@ -1320,7 +1320,17 @@ public final class io/getstream/chat/android/compose/ui/channels/list/SearchResu
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/SwipeActionItemKt {
+	public static final fun SwipeActionItem (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun SwipeActionItem-jB83MbM (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;Lkotlin/jvm/functions/Function0;JJLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle : java/lang/Enum {
+	public static final field Destructive Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;
+	public static final field Primary Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;
+	public static final field Secondary Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/channels/list/SwipeActionStyle;
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/SwipeRevealCoordinator {
