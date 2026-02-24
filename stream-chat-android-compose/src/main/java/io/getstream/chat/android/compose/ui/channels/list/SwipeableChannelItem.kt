@@ -118,7 +118,8 @@ public fun SwipeableChannelItem(
         Box(
             modifier = Modifier
                 .offset {
-                    val x = anchoredDraggableState.offset.roundToInt()
+                    val raw = anchoredDraggableState.offset
+                    val x = if (raw.isNaN()) 0 else raw.roundToInt()
                     IntOffset(x = if (isRtl) -x else x, y = 0)
                 }
                 .anchoredDraggable(
