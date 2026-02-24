@@ -68,8 +68,7 @@ public fun UnreadCountIndicator(
             text = displayText,
             color = ChatTheme.colors.badgeTextOnAccent, // was Color.White (now uses semantic token)
             textAlign = TextAlign.Center,
-            // was captionBold (10sp Bold) → numericExtraLarge (14sp Bold)
-            style = ChatTheme.typography.numericExtraLarge,
+            style = ChatTheme.typography.numericLarge, // 12sp Bold
         )
     }
 }
