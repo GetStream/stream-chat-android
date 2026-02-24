@@ -201,9 +201,6 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
 private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
     error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalAttachmentPickerTheme = compositionLocalOf<AttachmentPickerTheme> {
-    error("No AttachmentPickerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -283,7 +280,6 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param messageComposerTheme Theme of the message composer.
- * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param keyboardBehaviour Configuration for different keyboard behaviours.
  * @param mediaGalleryConfig Configuration for the media gallery screen.
@@ -346,7 +342,6 @@ public fun ChatTheme(
         shapes = shapes,
         colors = colors,
     ),
-    attachmentPickerTheme: AttachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
@@ -388,7 +383,6 @@ public fun ChatTheme(
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalMessageComposerTheme provides messageComposerTheme,
-        LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
@@ -654,14 +648,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageComposerTheme.current
-
-    /**
-     * Retrieves the current [AttachmentPickerTheme] at the call site's position in the hierarchy.
-     */
-    public val attachmentPickerTheme: AttachmentPickerTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAttachmentPickerTheme.current
 
     /**
      * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.

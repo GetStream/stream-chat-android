@@ -27,19 +27,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
  * Represents the theming for the message composer.
  * @param inputField The theming for the input field in the message composer.
  * @param actionsTheme The theming for the different composer actions.
- * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
 public data class MessageComposerTheme(
     val inputField: ComposerInputFieldTheme,
     val actionsTheme: ComposerActionsTheme,
-    val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
 
     public companion object {
@@ -62,7 +59,6 @@ public data class MessageComposerTheme(
             return MessageComposerTheme(
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
-                attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }
     }
