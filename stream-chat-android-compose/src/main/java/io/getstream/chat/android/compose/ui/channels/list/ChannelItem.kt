@@ -19,8 +19,11 @@
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,13 +34,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -47,6 +53,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -123,17 +130,37 @@ public fun ChannelItem(
     val channel = channelItem.channel
     val description = stringResource(id = R.string.stream_compose_cd_channel_item)
 
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val shape = RoundedCornerShape(StreamTokens.radiusLg)
+
+    val focusBorderModifier = if (isFocused) {
+        Modifier.border(2.dp, ChatTheme.colors.borderCorePrimary, shape)
+    } else {
+        Modifier
+    }
+
+    val selectedBackgroundModifier = if (channelItem.isSelected) {
+        Modifier.background(ChatTheme.colors.backgroundCoreSelected, shape)
+    } else {
+        Modifier
+    }
+
     Column(
         modifier = modifier
             .testTag("Stream_ChannelItem")
             .fillMaxWidth()
             .wrapContentHeight()
             .semantics { contentDescription = description }
+            .then(focusBorderModifier)
+            .clip(shape)
+            .then(selectedBackgroundModifier)
             .combinedClickable(
                 onClick = { onChannelClick(channel) },
                 onLongClick = { onChannelLongClick(channel) },
                 indication = ripple(),
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = interactionSource,
             ),
     ) {
         Row(
@@ -566,15 +593,34 @@ private fun ChannelItem(
     channel: Channel,
     isMuted: Boolean = false,
     draftMessage: DraftMessage? = null,
+    isSelected: Boolean = false,
 ) {
     ChannelItem(
         channelItem = ItemState.ChannelItemState(
             channel = channel,
             isMuted = isMuted,
             draftMessage = draftMessage,
+            isSelected = isSelected,
         ),
         currentUser = currentUser,
         onChannelClick = {},
         onChannelLongClick = {},
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemSelectedPreview() {
+    ChatTheme {
+        ChannelItemSelected()
+    }
+}
+
+@Composable
+internal fun ChannelItemSelected() {
+    ChannelItem(
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        isSelected = true,
     )
 }

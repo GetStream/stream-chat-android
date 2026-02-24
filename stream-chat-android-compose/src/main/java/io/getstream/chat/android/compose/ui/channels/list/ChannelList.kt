@@ -118,9 +118,15 @@ public fun ChannelList(
     },
     channelContent: @Composable LazyItemScope.(ItemState.ChannelItemState) -> Unit = { itemState ->
         val user by viewModel.user.collectAsState()
+        val selectedCid = viewModel.selectedChannel.value?.cid
+        val enrichedItemState = if (selectedCid != null && itemState.channel.cid == selectedCid) {
+            itemState.copy(isSelected = true)
+        } else {
+            itemState
+        }
         with(ChatTheme.componentFactory) {
             ChannelListItemContent(
-                channelItem = itemState,
+                channelItem = enrichedItemState,
                 currentUser = user,
                 onChannelClick = onChannelClick,
                 onChannelLongClick = onChannelLongClick,

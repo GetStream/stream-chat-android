@@ -89,14 +89,15 @@ public abstract class io/getstream/chat/android/compose/state/channels/list/Item
 
 public final class io/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Lio/getstream/chat/android/models/DraftMessage;
-	public final fun copy (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
+	public final fun component5 ()Z
+	public final fun copy (Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;Z)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/Channel;ZLjava/util/List;Lio/getstream/chat/android/models/DraftMessage;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getDraftMessage ()Lio/getstream/chat/android/models/DraftMessage;
@@ -104,6 +105,7 @@ public final class io/getstream/chat/android/compose/state/channels/list/ItemSta
 	public final fun getTypingUsers ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isMuted ()Z
+	public final fun isSelected ()Z
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1250,6 +1252,7 @@ public final class io/getstream/chat/android/compose/ui/channels/list/ChannelsKt
 public final class io/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$ChannelItemKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$ChannelItemKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-10 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public static field lambda-3 Lkotlin/jvm/functions/Function2;
 	public static field lambda-4 Lkotlin/jvm/functions/Function2;
@@ -1260,6 +1263,7 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 	public static field lambda-9 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-10$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
@@ -3617,14 +3621,15 @@ public final class io/getstream/chat/android/compose/ui/theme/ReactionOptionsThe
 public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamColors$Companion;
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;
 	public final fun component10-0d7_KjU ()J
 	public final fun component100-0d7_KjU ()J
 	public final fun component101-0d7_KjU ()J
 	public final fun component102-0d7_KjU ()J
 	public final fun component103-0d7_KjU ()J
+	public final fun component104-0d7_KjU ()J
 	public final fun component11-0d7_KjU ()J
 	public final fun component12-0d7_KjU ()J
 	public final fun component13-0d7_KjU ()J
@@ -3722,8 +3727,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun component97-0d7_KjU ()J
 	public final fun component98-0d7_KjU ()J
 	public final fun component99-0d7_KjU ()J
-	public final fun copy-Oxz7aI8 (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
-	public static synthetic fun copy-Oxz7aI8$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public final fun copy-wfSMY9o (Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
+	public static synthetic fun copy-wfSMY9o$default (Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamLegacyColors;JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJIIIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamColors;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAccentBlack-0d7_KjU ()J
 	public final fun getAccentError-0d7_KjU ()J
@@ -3806,6 +3811,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors {
 	public final fun getChatTextLink-0d7_KjU ()J
 	public final fun getChatTextMention-0d7_KjU ()J
 	public final fun getChatTextOutgoing-0d7_KjU ()J
+	public final fun getChatTextRead-0d7_KjU ()J
 	public final fun getChatTextTimestamp-0d7_KjU ()J
 	public final fun getChatWaveformBar-0d7_KjU ()J
 	public final fun getChatWaveformBarPlaying-0d7_KjU ()J
