@@ -93,60 +93,25 @@ public object StreamDesign {
      * @param textSecondary Used for secondary text color with lower emphasis.
      * @param textTertiary Used for tertiary text color with lowest emphasis.
      * @param textDisabled Used for disabled text and icon color.
-     * @param backgroundCoreApp Used for the default app background.
      * @param backgroundCoreSelected Used for selected state background.
      * @param backgroundElevationElevation2 Used for elevated surface backgrounds at elevation level 2.
      * @param backgroundElevationElevation3 Popover surface backgrounds.
      * @param backgroundElevationElevation4 Dialog and modal surface backgrounds.
-     * @param badgeBgDefault Used for badge background.
-     * @param badgeBgInverse Used for badge background with inverse color scheme.
      * @param badgeBgOverlay Used for badge background when displayed as an overlay.
-     * @param badgeText Used for badge text color.
-     * @param badgeTextOnAccent Used for badge text color on accent backgrounds.
-     * @param badgeTextInverse Used for badge text color on inverse backgrounds.
-     * @param buttonDestructiveBg Used for destructive button background.
-     * @param buttonDestructiveBorder Used for destructive button border.
-     * @param buttonDestructiveText Used for destructive button text.
-     * @param buttonDestructiveTextOnAccent Used for destructive button text on accent backgrounds.
-     * @param buttonPrimaryBg Used for primary button background.
-     * @param buttonPrimaryBorder Used for primary button border.
-     * @param buttonPrimaryText Used for primary button text.
-     * @param buttonPrimaryTextOnAccent Used for primary button text on accent backgrounds.
-     * @param buttonSecondaryBg Used for secondary button background.
-     * @param buttonSecondaryBorder Used for secondary button border.
-     * @param buttonSecondaryText Used for secondary button text.
-     * @param buttonSecondaryTextOnAccent Used for secondary button text on accent backgrounds.
      * @param chatBgIncoming Used for incoming message bubble background.
-     * @param chatBgOutgoing Used for outgoing message bubble background.
      * @param chatBgAttachmentIncoming Used for incoming message attachment background.
      * @param chatBgAttachmentOutgoing Used for outgoing message attachment background.
      * @param chatBorderOnChatIncoming Used for border on incoming message bubbles.
-     * @param chatBorderOnChatOutgoing Used for border on outgoing message bubbles.
      * @param chatPollProgressFillIncoming Used for incoming poll progress fill color.
      * @param chatPollProgressTrackIncoming Used for incoming poll progress track color.
      * @param chatPollProgressFillOutgoing Used for outgoing poll progress fill color.
      * @param chatPollProgressTrackOutgoing Used for outgoing poll progress track color.
      * @param chatReplyIndicatorIncoming Used for the reply indicator color in incoming messages.
      * @param chatReplyIndicatorOutgoing Used for the reply indicator color in outgoing messages.
-     * @param chatTextIncoming Used for incoming message text color in chat bubbles.
-     * @param chatTextOutgoing Used for outgoing message text color in chat bubbles.
-     * @param chatTextLink Used for link text color in chat messages.
-     * @param chatTextMention Used for mention text color in chat messages.
-     * @param chatTextSystem Used for system messages like date separators and unread dividers.
-     * @param chatTextTimestamp Used for timestamp text color in chat messages.
-     * @param chatWaveformBar Used for audio waveform bar color.
-     * @param chatWaveformBarPlaying Used for audio waveform bar color when playing.
-     * @param chipText Used for chip text color.
-     * @param controlPlayControlBg Used for play control button background.
-     * @param controlPlayControlIcon Used for play control button icon.
      * @param controlRadioCheckBgSelected Used for selected radio/check background.
-     * @param controlRadioCheckBorder Used for radio/check border.
      * @param controlRadioCheckIconSelected Used for selected radio/check icon.
      * @param controlRemoveBg Used for remove control background.
-     * @param controlRemoveBorder Used for remove control border.
      * @param controlRemoveIcon Used for remove control icon.
-     * @param presenceBgOnline Used for online presence indicator.
-     * @param presenceBgOffline Used for offline presence indicator.
      * @param presenceBorder Used for the outline around the presence dot.
      * @param backgroundCoreScrim Used for dimmed scrim backgrounds (e.g. behind modals).
      * @param backgroundCoreOverlayDark Used for dark overlay backgrounds on media/badges.
@@ -205,60 +170,25 @@ public object StreamDesign {
         public val textSecondary: Color,
         public val textTertiary: Color,
         public val textDisabled: Color,
-        public val backgroundCoreApp: Color = backgroundElevationElevation0,
         public val backgroundCoreSelected: Color = textPrimary.copy(alpha = .15f),
         public val backgroundElevationElevation2: Color,
         public val backgroundElevationElevation3: Color,
         public val backgroundElevationElevation4: Color,
-        public val badgeBgDefault: Color = backgroundElevationElevation2,
-        public val badgeBgInverse: Color = backgroundCoreInverse,
         public val badgeBgOverlay: Color,
-        public val badgeText: Color = textPrimary,
-        public val badgeTextOnAccent: Color = textOnAccent,
-        public val badgeTextInverse: Color = textOnDark,
-        public val buttonDestructiveBg: Color = accentError,
-        public val buttonDestructiveBorder: Color = accentError,
-        public val buttonDestructiveText: Color = accentError,
-        public val buttonDestructiveTextOnAccent: Color = textOnAccent,
-        public val buttonPrimaryBg: Color = accentPrimary,
-        public val buttonPrimaryBorder: Color = brand200,
-        public val buttonPrimaryText: Color = accentPrimary,
-        public val buttonPrimaryTextOnAccent: Color = textOnAccent,
-        public val buttonSecondaryBg: Color = backgroundCoreSurface,
-        public val buttonSecondaryBorder: Color = borderCoreDefault,
-        public val buttonSecondaryText: Color = textPrimary,
-        public val buttonSecondaryTextOnAccent: Color = textPrimary,
         public val chatBgIncoming: Color,
-        public val chatBgOutgoing: Color = brand100,
         public val chatBgAttachmentIncoming: Color,
         public val chatBgAttachmentOutgoing: Color,
         public val chatBorderOnChatIncoming: Color,
-        public val chatBorderOnChatOutgoing: Color = brand300,
         public val chatPollProgressFillIncoming: Color,
         public val chatPollProgressTrackIncoming: Color,
         public val chatPollProgressFillOutgoing: Color,
         public val chatPollProgressTrackOutgoing: Color,
         public val chatReplyIndicatorIncoming: Color,
         public val chatReplyIndicatorOutgoing: Color,
-        public val chatTextIncoming: Color = textPrimary,
-        public val chatTextOutgoing: Color = brand900,
-        public val chatTextLink: Color = accentPrimary,
-        public val chatTextMention: Color = chatTextLink,
-        public val chatTextSystem: Color = textSecondary,
-        public val chatTextTimestamp: Color = textTertiary,
-        public val chatWaveformBar: Color = borderCoreOpacity25,
-        public val chatWaveformBarPlaying: Color = accentPrimary,
-        public val chipText: Color = brand900,
-        public val controlPlayControlBg: Color = accentBlack,
-        public val controlPlayControlIcon: Color = textOnAccent,
         public val controlRadioCheckBgSelected: Color,
-        public val controlRadioCheckBorder: Color = borderCoreDefault,
         public val controlRadioCheckIconSelected: Color,
         public val controlRemoveBg: Color,
-        public val controlRemoveBorder: Color = borderCoreOnDark,
         public val controlRemoveIcon: Color,
-        public val presenceBgOnline: Color = accentSuccess,
-        public val presenceBgOffline: Color = accentNeutral,
         public val presenceBorder: Color,
         public val backgroundCoreScrim: Color,
         public val backgroundCoreOverlayDark: Color,
@@ -377,6 +307,111 @@ public object StreamDesign {
         /** Skeleton loading gradient base color. */
         public val skeletonLoadingBase: Color = Color.Transparent
 
+        /** Default app background color. */
+        public val backgroundCoreApp: Color = backgroundElevationElevation0
+
+        /** Default badge background. */
+        public val badgeBgDefault: Color = backgroundElevationElevation2
+
+        /** Badge background with inverse color scheme. */
+        public val badgeBgInverse: Color = backgroundCoreInverse
+
+        /** Badge text color. */
+        public val badgeText: Color = textPrimary
+
+        /** Badge text color on accent backgrounds. */
+        public val badgeTextOnAccent: Color = textOnAccent
+
+        /** Badge text color on inverse backgrounds. */
+        public val badgeTextInverse: Color = textOnDark
+
+        /** Destructive button background. */
+        public val buttonDestructiveBg: Color = accentError
+
+        /** Destructive button border. */
+        public val buttonDestructiveBorder: Color = accentError
+
+        /** Destructive button text. */
+        public val buttonDestructiveText: Color = accentError
+
+        /** Destructive button text on accent backgrounds. */
+        public val buttonDestructiveTextOnAccent: Color = textOnAccent
+
+        /** Primary button background. */
+        public val buttonPrimaryBg: Color = accentPrimary
+
+        /** Primary button border. */
+        public val buttonPrimaryBorder: Color = brand200
+
+        /** Primary button text. */
+        public val buttonPrimaryText: Color = accentPrimary
+
+        /** Primary button text on accent backgrounds. */
+        public val buttonPrimaryTextOnAccent: Color = textOnAccent
+
+        /** Secondary button background. */
+        public val buttonSecondaryBg: Color = backgroundCoreSurface
+
+        /** Secondary button border. */
+        public val buttonSecondaryBorder: Color = borderCoreDefault
+
+        /** Secondary button text. */
+        public val buttonSecondaryText: Color = textPrimary
+
+        /** Secondary button text on accent backgrounds. */
+        public val buttonSecondaryTextOnAccent: Color = textPrimary
+
+        /** Outgoing message bubble background. */
+        public val chatBgOutgoing: Color = brand100
+
+        /** Border on outgoing message bubbles. */
+        public val chatBorderOnChatOutgoing: Color = brand300
+
+        /** Incoming message text color. */
+        public val chatTextIncoming: Color = textPrimary
+
+        /** Outgoing message text color. */
+        public val chatTextOutgoing: Color = brand900
+
+        /** Link text color in chat messages. */
+        public val chatTextLink: Color = accentPrimary
+
+        /** Mention text color in chat messages. */
+        public val chatTextMention: Color = chatTextLink
+
+        /** System messages like date separators and unread dividers. */
+        public val chatTextSystem: Color = textSecondary
+
+        /** Timestamp text color in chat messages. */
+        public val chatTextTimestamp: Color = textTertiary
+
+        /** Audio waveform bar color. */
+        public val chatWaveformBar: Color = borderCoreOpacity25
+
+        /** Audio waveform bar color when playing. */
+        public val chatWaveformBarPlaying: Color = accentPrimary
+
+        /** Chip text color. */
+        public val chipText: Color = brand900
+
+        /** Play control button background. */
+        public val controlPlayControlBg: Color = accentBlack
+
+        /** Play control button icon. */
+        public val controlPlayControlIcon: Color = textOnAccent
+
+        /** Radio/check border. */
+        public val controlRadioCheckBorder: Color = borderCoreDefault
+
+        /** Remove control border. */
+        public val controlRemoveBorder: Color = borderCoreOnDark
+
+        /** Online presence indicator. */
+        public val presenceBgOnline: Color = accentSuccess
+
+        /** Offline presence indicator. */
+        public val presenceBgOffline: Color = accentNeutral
+
         public companion object {
             /**
              * Provides the default colors for the light mode of the app.
@@ -452,7 +487,6 @@ public object StreamDesign {
                 controlRadioCheckBgSelected = StreamPrimitiveColors.blue500,
                 controlRadioCheckIconSelected = StreamPrimitiveColors.baseWhite,
                 controlRemoveBg = StreamPrimitiveColors.slate900,
-                controlRemoveBorder = StreamPrimitiveColors.baseWhite,
                 controlRemoveIcon = StreamPrimitiveColors.baseWhite,
                 presenceBorder = StreamPrimitiveColors.baseWhite,
                 backgroundCoreScrim = StreamPrimitiveColors.baseBlack.copy(alpha = 0.25f),
