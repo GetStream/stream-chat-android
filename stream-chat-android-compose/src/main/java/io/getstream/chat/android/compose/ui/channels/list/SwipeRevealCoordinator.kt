@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.animateTo
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
@@ -74,7 +75,8 @@ public class SwipeRevealCoordinator {
  * Provides the [SwipeRevealCoordinator] to child composables.
  * `null` means swipe actions are not available in the current composition tree.
  */
-internal val LocalSwipeRevealCoordinator = compositionLocalOf<SwipeRevealCoordinator?> { null }
+public val LocalSwipeRevealCoordinator: ProvidableCompositionLocal<SwipeRevealCoordinator?> =
+    compositionLocalOf { null }
 
 /**
  * Provides a handler for swipe channel actions (pin, mute, archive, etc.).

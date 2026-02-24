@@ -1342,6 +1342,10 @@ public final class io/getstream/chat/android/compose/ui/channels/list/SwipeRevea
 	public final fun unregister (Ljava/lang/String;)V
 }
 
+public final class io/getstream/chat/android/compose/ui/channels/list/SwipeRevealCoordinatorKt {
+	public static final fun getLocalSwipeRevealCoordinator ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
 public final class io/getstream/chat/android/compose/ui/channels/list/SwipeRevealValue : java/lang/Enum {
 	public static final field Closed Lio/getstream/chat/android/compose/ui/channels/list/SwipeRevealValue;
 	public static final field Open Lio/getstream/chat/android/compose/ui/channels/list/SwipeRevealValue;
