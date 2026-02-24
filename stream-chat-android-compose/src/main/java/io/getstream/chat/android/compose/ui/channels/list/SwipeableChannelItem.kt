@@ -121,12 +121,12 @@ public fun SwipeableChannelItem(
         // Foreground: channel item content (opaque bg hides actions when closed)
         Box(
             modifier = Modifier
-                .background(backgroundColor)
                 .offset {
                     val raw = anchoredDraggableState.offset
                     val x = if (raw.isNaN()) 0 else raw.roundToInt()
                     IntOffset(x = if (isRtl) -x else x, y = 0)
                 }
+                .background(backgroundColor)
                 .anchoredDraggable(
                     state = anchoredDraggableState,
                     orientation = Orientation.Horizontal,
