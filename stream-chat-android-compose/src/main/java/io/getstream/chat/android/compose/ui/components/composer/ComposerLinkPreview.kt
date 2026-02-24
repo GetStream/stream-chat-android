@@ -103,7 +103,7 @@ public fun ComposerLinkPreview(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = { handleLinkPreviewClick(onContentClick, context, linkPreview) },
                 )
-                .background(colors.chatBgOutgoing, ChatTheme.shapes.attachment)
+                .background(colors.chatBgOutgoing, RoundedCornerShape(StreamTokens.radiusLg))
                 .padding(
                     start = StreamTokens.spacingXs,
                     end = StreamTokens.spacingMd,

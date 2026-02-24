@@ -16,12 +16,13 @@
 
 package io.getstream.chat.android.compose.ui.components.attachments.files
 
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 
@@ -41,7 +42,7 @@ public fun FilesPickerItemImage(
 
     if (isImage) {
         StreamAsyncImage(
-            modifier = modifier.clip(ChatTheme.shapes.imageThumbnail),
+            modifier = modifier.clip(RoundedCornerShape(StreamTokens.radiusMd)),
             data = attachment.uri ?: attachment.file,
             contentScale = ContentScale.Crop,
             contentDescription = null,

@@ -35,6 +35,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -126,9 +128,9 @@ public fun PollOptionList(
                             } else {
                                 ChatTheme.colors.accentError
                             },
-                            shape = ChatTheme.shapes.pollOptionInput,
+                            shape = RoundedCornerShape(StreamTokens.radiusXl),
                         )
-                        .clip(shape = ChatTheme.shapes.pollOptionInput)
+                        .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
                         .background(ChatTheme.colors.backgroundCoreSurface),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -202,7 +204,7 @@ public fun PollOptionList(
             .fillMaxWidth()
             .height(itemHeightSize)
             .padding(horizontal = 16.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
             .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
             .clickable {
                 optionItemList = optionItemList

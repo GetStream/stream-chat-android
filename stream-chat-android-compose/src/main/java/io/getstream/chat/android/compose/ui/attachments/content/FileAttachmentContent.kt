@@ -221,7 +221,7 @@ public fun FileAttachmentImage(
     if (data != null) {
         val showThumbnail = attachment.isImage() || attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
         val imageModifier = if (showThumbnail) {
-            baseModifier.clip(ChatTheme.shapes.imageThumbnail)
+            baseModifier.clip(RoundedCornerShape(StreamTokens.radiusMd))
         } else {
             baseModifier
         }

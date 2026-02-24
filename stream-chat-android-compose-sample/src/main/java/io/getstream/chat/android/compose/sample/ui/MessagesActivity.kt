@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -79,7 +80,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -140,9 +140,8 @@ class MessagesActivity : ComponentActivity() {
         val isInDarkMode = isSystemInDarkTheme()
         val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
         val messageComposerTheme = MessageComposerTheme
-            .defaultTheme(isInDarkMode, typography, shapes, colors)
+            .defaultTheme(isInDarkMode, typography, colors)
             .copy(
                 inputField = ComposerInputFieldTheme.defaultTheme(
                     mentionStyleFactory = CustomMentionStyleFactory(colors.accentPrimary),
@@ -152,7 +151,6 @@ class MessagesActivity : ComponentActivity() {
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
-            shapes = shapes,
             typography = typography,
             attachmentPickerConfig = AttachmentPickerConfig(useSystemPicker = false),
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
@@ -313,7 +311,7 @@ class MessagesActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 20.dp)
                                 .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
+                            shape = RoundedCornerShape(12.dp),
                             message = selectedMessage,
                             onMessageAction = { action ->
                                 composerViewModel.performMessageAction(action)

@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollOptionVotesViewModel
 import io.getstream.chat.android.models.Option
@@ -164,7 +165,7 @@ private fun Content(
             LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .clip(shape = ChatTheme.shapes.pollOptionInput)
+                    .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
                     .background(ChatTheme.colors.backgroundCoreSurface)
                     .padding(16.dp),
                 state = listState,

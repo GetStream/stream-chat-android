@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -64,7 +65,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,
     color: Color = ChatTheme.colors.appBackground,
-    shape: Shape = ChatTheme.shapes.header,
+    shape: Shape = RectangleShape,
     elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},
     enabledCreation: Boolean,

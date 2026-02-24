@@ -21,6 +21,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -80,7 +81,7 @@ public fun ThreadParticipants(
                 modifier = itemPadding
                     .zIndex(itemPosition)
                     .size(itemSize)
-                    .border(border = borderStroke, shape = ChatTheme.shapes.avatar)
+                    .border(border = borderStroke, shape = CircleShape)
                     .testTag("Stream_ThreadParticipantAvatar"),
                 user = user,
                 showIndicator = false,

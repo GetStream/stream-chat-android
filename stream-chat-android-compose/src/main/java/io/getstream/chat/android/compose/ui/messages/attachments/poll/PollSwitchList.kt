@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
@@ -110,9 +111,9 @@ public fun PollSwitchList(
                         } else {
                             ChatTheme.colors.accentError
                         },
-                        shape = ChatTheme.shapes.pollOptionInput,
+                        shape = RoundedCornerShape(StreamTokens.radiusXl),
                     )
-                    .clip(shape = ChatTheme.shapes.pollOptionInput)
+                    .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
                     .background(ChatTheme.colors.backgroundCoreSurface),
             ) {
                 val layoutDirection = LocalLayoutDirection.current

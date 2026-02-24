@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -74,7 +76,7 @@ public fun ChannelListHeader(
     currentUser: User? = null,
     connectionState: ConnectionState,
     color: Color = ChatTheme.colors.backgroundElevationElevation1,
-    shape: Shape = ChatTheme.shapes.header,
+    shape: Shape = RectangleShape,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
@@ -205,7 +207,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
         modifier = Modifier.size(40.dp),
         onClick = onHeaderActionClick,
         color = ChatTheme.colors.accentPrimary,
-        shape = ChatTheme.shapes.avatar,
+        shape = CircleShape,
         shadowElevation = 4.dp,
     ) {
         Icon(

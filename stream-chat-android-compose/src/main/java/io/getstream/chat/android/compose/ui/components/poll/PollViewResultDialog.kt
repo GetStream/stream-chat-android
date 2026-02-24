@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonym
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
@@ -178,7 +179,7 @@ private fun PollViewResultItem(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .fillMaxWidth()
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
             .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -242,7 +243,7 @@ private fun PollViewResultTitle(
             .padding(16.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
             .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
     ) {

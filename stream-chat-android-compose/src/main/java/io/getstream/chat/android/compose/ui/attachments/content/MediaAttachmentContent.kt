@@ -306,7 +306,7 @@ internal fun SingleMediaAttachment(
                 width = singleMediaAttachmentWidth(isVideo),
                 height = singleMediaAttachmentHeight(isVideo, ratio),
             ),
-        shape = if (shouldBeFullSize) null else ChatTheme.shapes.attachment,
+        shape = if (shouldBeFullSize) null else RoundedCornerShape(StreamTokens.radiusLg),
         message = message,
         attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,

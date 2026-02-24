@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
 import androidx.compose.material.icons.rounded.NearMe
@@ -130,7 +132,7 @@ private fun LiveLocationSharing(
     val isLiveLocationEnded = !endAt.after(Date())
     Column(
         modifier = modifier
-            .clip(ChatTheme.shapes.attachment)
+            .clip(RoundedCornerShape(12.dp))
             .background(
                 color = if (isOwnMessage) {
                     ChatTheme.colors.chatBgOutgoing
@@ -165,7 +167,7 @@ private fun LiveLocationSharing(
                     .align(Alignment.Center)
                     .background(
                         color = animatedColor,
-                        shape = ChatTheme.shapes.avatar,
+                        shape = CircleShape,
                     )
                     .padding(animatedPadding.dp)
                     .size(AvatarSize.Medium),

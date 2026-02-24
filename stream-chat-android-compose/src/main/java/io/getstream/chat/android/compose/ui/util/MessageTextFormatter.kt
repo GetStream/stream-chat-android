@@ -24,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -81,41 +80,6 @@ public fun interface MessageTextFormatter {
                 textStyle = textStyle,
                 linkStyle = linkStyle,
                 mentionColor = mentionColor,
-                builder = builder,
-            )
-        }
-
-        /**
-         * Builds the default message text formatter.
-         *
-         * @param autoTranslationEnabled Whether the auto-translation is enabled.
-         * @param typography The typography to use for styling.
-         * @param colors The colors to use for styling.
-         * @param builder The builder to use for customizing the text.
-         * @return The default implementation of [MessageTextFormatter].
-         *
-         * @see [DefaultMessageTextFormatter]
-         */
-        @Composable
-        public fun defaultFormatter(
-            autoTranslationEnabled: Boolean,
-            isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
-            },
-            builder: AnnotatedMessageTextBuilder? = null,
-        ): MessageTextFormatter {
-            return defaultFormatter(
-                autoTranslationEnabled = autoTranslationEnabled,
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-                textStyle = { isMine, _ -> MessageStyling.textStyle(outgoing = isMine, typography, colors) },
-                linkStyle = { MessageStyling.linkStyle(typography, colors) },
-                mentionColor = { colors.chatTextMention },
                 builder = builder,
             )
         }

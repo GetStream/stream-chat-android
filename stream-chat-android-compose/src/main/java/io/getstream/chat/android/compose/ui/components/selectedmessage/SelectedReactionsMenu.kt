@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,7 +79,7 @@ public fun SelectedReactionsMenu(
     ModalBottomSheet(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(),
-        shape = ChatTheme.shapes.bottomSheet,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         containerColor = ChatTheme.colors.backgroundElevationElevation1,
         scrimColor = ChatTheme.colors.overlayBackground,
         onDismissRequest = onDismiss,

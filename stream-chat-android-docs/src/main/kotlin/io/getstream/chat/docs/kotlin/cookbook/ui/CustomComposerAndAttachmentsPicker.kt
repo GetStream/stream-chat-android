@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AddCircle
@@ -229,7 +230,7 @@ private fun CustomAttachmentsPicker(
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = ChatTheme.shapes.bottomSheet,
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
             colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
         ) {
             Box(modifier = Modifier.padding(vertical = 24.dp)) {

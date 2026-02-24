@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.suggestions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 
 /**
@@ -44,7 +46,7 @@ import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvide
 @Composable
 public fun SuggestionList(
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.suggestionList,
+    shape: Shape = RoundedCornerShape(StreamTokens.radiusXl),
     contentPadding: PaddingValues = PaddingValues(vertical = ChatTheme.dimens.suggestionListPadding),
     headerContent: @Composable () -> Unit = {},
     centerContent: @Composable () -> Unit,

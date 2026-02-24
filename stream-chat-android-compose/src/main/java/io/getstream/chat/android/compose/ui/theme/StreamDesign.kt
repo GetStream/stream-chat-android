@@ -16,13 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
@@ -34,7 +29,6 @@ import androidx.compose.ui.unit.dp
  * Provides all design tokens for theming Chat SDK components:
  * - [Colors] -- semantic color tokens
  * - [Typography] -- text styles
- * - [Shapes] -- component shapes
  * - [Dimens] -- component dimensions
  *
  * Use via [ChatTheme]:
@@ -570,80 +564,6 @@ public object StreamDesign {
                     fontSize = StreamTokens.fontSizeSm,
                     lineHeight = StreamTokens.lineHeightTighter,
                 ),
-            )
-        }
-    }
-
-    /**
-     * Contains all the shapes we provide for our components.
-     *
-     * @param avatar The avatar shape.
-     * @param myMessageBubble The bubble that wraps my message content.
-     * @param otherMessageBubble The bubble that wraps other people's message content.
-     * @param inputField The shape of the input field.
-     * @param attachment The shape of attachments.
-     * @param imageThumbnail The shape of image thumbnails.
-     * @param bottomSheet The shape of components used as bottom sheets.
-     * @param suggestionList The shape of suggestion list popup.
-     * @param header The shape of the headers.
-     * @param quotedAttachment The shape of quoted attachments.
-     * @param pollOptionInput The shape of poll option input fields.
-     */
-    @Immutable
-    public data class Shapes(
-        public val avatar: Shape,
-        public val myMessageBubble: Shape,
-        public val otherMessageBubble: Shape,
-        public val inputField: Shape,
-        public val attachment: Shape,
-        public val imageThumbnail: Shape,
-        public val bottomSheet: Shape,
-        public val suggestionList: Shape,
-        public val header: Shape,
-        public val quotedAttachment: Shape,
-        public val pollOptionInput: Shape,
-    ) {
-        public companion object {
-            /**
-             * Builds the default shapes for our theme.
-             *
-             * @return A [Shapes] that holds our default shapes.
-             */
-            @Deprecated("Use default()", ReplaceWith("default()"))
-            public fun defaultShapes(): Shapes = default()
-
-            /**
-             * Builds the default shapes for our theme.
-             *
-             * @return A [Shapes] that holds our default shapes.
-             */
-            public fun default(): Shapes = Shapes(
-                avatar = CircleShape,
-                myMessageBubble = RoundedCornerShape(
-                    topStart = StreamTokens.radius2xl,
-                    topEnd = StreamTokens.radius2xl,
-                    bottomEnd = CornerSize(0.dp),
-                    bottomStart = StreamTokens.radius2xl,
-                ),
-                otherMessageBubble = RoundedCornerShape(
-                    topStart = StreamTokens.radius2xl,
-                    topEnd = StreamTokens.radius2xl,
-                    bottomEnd = StreamTokens.radius2xl,
-                    bottomStart = CornerSize(0.dp),
-                ),
-                inputField = RoundedCornerShape(StreamTokens.radius3xl),
-                attachment = RoundedCornerShape(StreamTokens.radiusLg),
-                imageThumbnail = RoundedCornerShape(StreamTokens.radiusMd),
-                bottomSheet = RoundedCornerShape(
-                    topStart = StreamTokens.radiusXl,
-                    topEnd = StreamTokens.radiusXl,
-                    bottomEnd = CornerSize(0.dp),
-                    bottomStart = CornerSize(0.dp),
-                ),
-                suggestionList = RoundedCornerShape(StreamTokens.radiusXl),
-                header = RectangleShape,
-                quotedAttachment = RoundedCornerShape(StreamTokens.radiusXs),
-                pollOptionInput = RoundedCornerShape(StreamTokens.radiusXl),
             )
         }
     }

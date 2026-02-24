@@ -231,7 +231,7 @@ class CustomLoginActivity : AppCompatActivity() {
             onValueChange = { onValueChange(it) },
             singleLine = true,
             label = { Text(hint) },
-            shape = ChatTheme.shapes.inputField,
+            shape = RoundedCornerShape(24.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = ChatTheme.colors.textPrimary,
                 unfocusedTextColor = ChatTheme.colors.textPrimary,

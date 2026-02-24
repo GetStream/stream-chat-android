@@ -53,6 +53,7 @@ import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -164,7 +165,7 @@ internal fun PollMoreOptionsTitle(title: String) {
             .padding(16.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
             .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
     ) {

@@ -7,18 +7,14 @@ import android.text.format.DateUtils
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
@@ -84,16 +80,7 @@ private object ChatThemeCustomizationSnippet {
             super.onCreate(savedInstanceState)
 
             setContent {
-                ChatTheme(
-                    shapes = StreamShapes.defaultShapes().copy( // Customizing the shapes
-                        avatar = RoundedCornerShape(8.dp),
-                        attachment = RoundedCornerShape(16.dp),
-                        inputField = RectangleShape,
-                        myMessageBubble = RoundedCornerShape(16.dp),
-                        otherMessageBubble = RoundedCornerShape(16.dp),
-                        bottomSheet = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                    )
-                ) {
+                ChatTheme {
                     MessagesScreen(
                         viewModelFactory = MessagesViewModelFactory(
                             context = this,
@@ -164,12 +151,10 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
     override val content: @Composable () -> Unit get() = {
         val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
         ChatTheme(
             colors = colors,
             typography = typography,
-            shapes = shapes,
-            messageTextFormatter = buildMessageTextFormatter(typography, colors, shapes)
+            messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
             MessagesScreen(
                 viewModelFactory = viewModelFactory,
@@ -186,7 +171,6 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
     private fun buildMessageTextFormatter(
         typography: StreamTypography,
         colors: StreamColors,
-        shapes: StreamShapes,
     ): MessageTextFormatter {
         val formatter = object : MessageTextFormatter {
             override fun format(message: Message, currentUser: User?): AnnotatedString {
@@ -223,7 +207,6 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             autoTranslationEnabled = autoTranslationEnabled,
             typography = typography,
             colors = colors,
-            shapes = shapes,
         ) { message, currentUser ->
             addStyle(
                 SpanStyle(
@@ -240,11 +223,10 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     override val content: @Composable () -> Unit get() = {
         val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
         ChatTheme(
             colors = colors,
             typography = typography,
-            messageTextFormatter = buildMessageTextFormatter(typography, colors, shapes)
+            messageTextFormatter = buildMessageTextFormatter(typography, colors)
         ) {
             MessagesScreen(
                 viewModelFactory = viewModelFactory,
@@ -258,14 +240,12 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     private fun buildMessageTextFormatter(
         typography: StreamTypography,
         colors: StreamColors,
-        shapes: StreamShapes,
     ): MessageTextFormatter {
         return MessageTextFormatter.composite(
             MessageTextFormatter.defaultFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 typography = typography,
                 colors = colors,
-                shapes = shapes,
             ),
             blueLettersMessageTextFormatter()
         )

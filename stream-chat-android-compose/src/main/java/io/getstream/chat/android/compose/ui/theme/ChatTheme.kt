@@ -84,9 +84,6 @@ private val LocalDimens = compositionLocalOf<StreamDimens> {
 private val LocalTypography = compositionLocalOf<StreamTypography> {
     error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalShapes = compositionLocalOf<StreamShapes> {
-    error("No shapes provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalUserPresence = compositionLocalOf<UserPresence> {
     error("No UserPresence provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -250,7 +247,6 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
- * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
@@ -298,7 +294,6 @@ public fun ChatTheme(
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
-    shapes: StreamShapes = StreamShapes.defaultShapes(),
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
@@ -339,13 +334,11 @@ public fun ChatTheme(
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
-        shapes = shapes,
         colors = colors,
     ),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
-        shapes = shapes,
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
@@ -362,7 +355,6 @@ public fun ChatTheme(
         LocalColors provides colors,
         LocalDimens provides dimens,
         LocalTypography provides typography,
-        LocalShapes provides shapes,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalShimmerTheme provides StreamShimmerTheme,
         LocalAttachmentPickerConfig provides attachmentPickerConfig,
@@ -449,14 +441,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
-
-    /**
-     * Retrieves the current [StreamShapes] at the call site's position in the hierarchy.
-     */
-    public val shapes: StreamShapes
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalShapes.current
 
     /**
      * Retrieves the current [AttachmentPickerConfig] at the call site's position in the hierarchy.

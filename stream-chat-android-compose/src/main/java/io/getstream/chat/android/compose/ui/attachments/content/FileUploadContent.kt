@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.models.Attachment.UploadState.InProgress
@@ -99,7 +101,7 @@ public fun FileUploadItem(
     Surface(
         modifier = modifier,
         color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment,
+        shape = RoundedCornerShape(StreamTokens.radiusLg),
     ) {
         Row(
             Modifier

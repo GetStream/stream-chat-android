@@ -203,7 +203,7 @@ fun DateAttachmentContent(
         modifier = modifier
             .fillMaxWidth()
             .padding(4.dp)
-            .clip(ChatTheme.shapes.attachment)
+            .clip(RoundedCornerShape(12.dp))
             .background(ChatTheme.colors.accentSuccess)
             .padding(8.dp)
     ) {

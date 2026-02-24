@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -50,14 +51,13 @@ public data class MessageComposerTheme(
         public fun defaultTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
         ): MessageComposerTheme {
             return MessageComposerTheme(
-                inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+                inputField = ComposerInputFieldTheme.defaultTheme(typography, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
             )
         }
@@ -85,7 +85,6 @@ public data class ComposerInputFieldTheme(
         @Composable
         public fun defaultTheme(
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
@@ -93,7 +92,7 @@ public data class ComposerInputFieldTheme(
             mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
         ): ComposerInputFieldTheme {
             return ComposerInputFieldTheme(
-                borderShape = shapes.inputField,
+                borderShape = RoundedCornerShape(StreamTokens.radius3xl),
                 backgroundColor = colors.backgroundCoreSurface,
                 textStyle = typography.bodyDefault.copy(
                     color = colors.textPrimary,

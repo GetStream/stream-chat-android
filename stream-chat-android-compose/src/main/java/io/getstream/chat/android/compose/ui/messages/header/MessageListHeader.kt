@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -87,7 +88,7 @@ public fun MessageListHeader(
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
     color: Color = ChatTheme.colors.backgroundElevationElevation1,
-    shape: Shape = ChatTheme.shapes.header,
+    shape: Shape = RectangleShape,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,

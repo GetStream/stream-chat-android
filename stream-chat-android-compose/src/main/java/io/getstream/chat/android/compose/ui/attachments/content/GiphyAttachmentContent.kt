@@ -186,7 +186,7 @@ public fun GiphyAttachmentContent(
             .size(giphyDimensions)
             .applyIf(!shouldBeFullSize) {
                 padding(MessageStyling.messageSectionPadding)
-                    .clip(ChatTheme.shapes.attachment)
+                    .clip(RoundedCornerShape(StreamTokens.radiusLg))
             }
             .combinedClickable(
                 indication = null,

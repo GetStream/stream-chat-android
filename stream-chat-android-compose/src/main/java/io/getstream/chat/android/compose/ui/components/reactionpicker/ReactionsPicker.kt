@@ -19,11 +19,13 @@ package io.getstream.chat.android.compose.ui.components.reactionpicker
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -55,7 +57,7 @@ public fun ReactionsPicker(
     message: Message,
     onMessageAction: (MessageAction) -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.bottomSheet,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
     overlayColor: Color = ChatTheme.colors.overlayBackground,
     cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
