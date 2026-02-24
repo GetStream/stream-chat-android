@@ -24,7 +24,6 @@ import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -63,7 +62,7 @@ public fun interface MessageTextFormatter {
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
             colors: StreamDesign.Colors = when (isInDarkMode) {
                 true -> StreamDesign.Colors.defaultDark()
                 else -> StreamDesign.Colors.default()
@@ -124,7 +123,7 @@ private class CompositeMessageTextFormatter(
  */
 private class DefaultMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
-    private val typography: StreamTypography,
+    private val typography: StreamDesign.Typography,
     private val textStyle: (isMine: Boolean, message: Message) -> TextStyle,
     private val linkStyle: (isMine: Boolean) -> TextStyle,
     private val mentionColor: (isMine: Boolean) -> Color,

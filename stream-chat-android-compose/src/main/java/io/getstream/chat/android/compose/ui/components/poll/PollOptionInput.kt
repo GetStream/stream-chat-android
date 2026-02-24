@@ -59,8 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -135,7 +135,7 @@ public fun PollOptionInput(
                 )
                 TransformedText(styledText, OffsetMapping.Identity)
             },
-            textStyle = StreamTypography.default().bodyDefault.copy(
+            textStyle = StreamDesign.Typography.default().bodyDefault.copy(
                 textDirection = TextDirection.Content,
             ),
             cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),

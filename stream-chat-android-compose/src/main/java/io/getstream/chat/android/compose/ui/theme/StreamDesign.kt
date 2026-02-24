@@ -463,16 +463,6 @@ public object StreamDesign {
              * @param fontFamily The font that the users want to use for the app.
              * @return [Typography] that holds all the default text styles that we support.
              */
-            @Deprecated("Use default()", ReplaceWith("default(fontFamily)"))
-            public fun defaultTypography(fontFamily: FontFamily? = null): Typography = default(fontFamily)
-
-            /**
-             * Builds the default typography set for our theme, with the ability to customize the
-             * font family.
-             *
-             * @param fontFamily The font that the users want to use for the app.
-             * @return [Typography] that holds all the default text styles that we support.
-             */
             @Suppress("LongMethod")
             public fun default(fontFamily: FontFamily? = null): Typography = Typography(
                 bodyDefault = TextStyle(

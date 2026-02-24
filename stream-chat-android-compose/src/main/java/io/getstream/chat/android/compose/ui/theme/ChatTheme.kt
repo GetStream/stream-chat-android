@@ -81,7 +81,7 @@ private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
 private val LocalDimens = compositionLocalOf<StreamDimens> {
     error("No dimens provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalTypography = compositionLocalOf<StreamTypography> {
+private val LocalTypography = compositionLocalOf<StreamDesign.Typography> {
     error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalUserPresence = compositionLocalOf<UserPresence> {
@@ -246,7 +246,7 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
- * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
+ * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
@@ -294,7 +294,7 @@ public fun ChatTheme(
     colors: StreamDesign.Colors =
         if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
-    typography: StreamTypography = StreamTypography.defaultTypography(),
+    typography: StreamDesign.Typography = StreamDesign.Typography.default(),
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
@@ -436,9 +436,9 @@ public object ChatTheme {
         get() = LocalDimens.current
 
     /**
-     * Retrieves the current [StreamTypography] at the call site's position in the hierarchy.
+     * Retrieves the current [StreamDesign.Typography] at the call site's position in the hierarchy.
      */
-    public val typography: StreamTypography
+    public val typography: StreamDesign.Typography
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current

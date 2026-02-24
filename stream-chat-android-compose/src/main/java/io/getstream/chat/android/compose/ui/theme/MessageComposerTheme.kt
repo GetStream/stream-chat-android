@@ -50,7 +50,7 @@ public data class MessageComposerTheme(
         @Composable
         public fun defaultTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
             colors: StreamDesign.Colors = when (isInDarkMode) {
                 true -> StreamDesign.Colors.defaultDark()
                 else -> StreamDesign.Colors.default()
@@ -84,7 +84,7 @@ public data class ComposerInputFieldTheme(
     public companion object {
         @Composable
         public fun defaultTheme(
-            typography: StreamTypography = StreamTypography.defaultTypography(),
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
             colors: StreamDesign.Colors = when (isSystemInDarkTheme()) {
                 true -> StreamDesign.Colors.defaultDark()
                 else -> StreamDesign.Colors.default()

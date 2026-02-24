@@ -54,11 +54,11 @@ internal object MessageStyling {
     fun textStyle(outgoing: Boolean): TextStyle =
         textStyle(outgoing, ChatTheme.typography, ChatTheme.colors)
 
-    fun textStyle(outgoing: Boolean, typography: StreamTypography, colors: StreamDesign.Colors): TextStyle {
+    fun textStyle(outgoing: Boolean, typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle {
         return typography.bodyDefault.copy(color = textColor(outgoing, colors))
     }
 
-    fun linkStyle(typography: StreamTypography, colors: StreamDesign.Colors): TextStyle =
+    fun linkStyle(typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextLink)
 
     @Composable

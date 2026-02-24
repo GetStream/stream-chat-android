@@ -48,7 +48,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
@@ -150,7 +149,7 @@ private const val TextFieldMaxLines = 5
 
 private class TextFieldVisualTransformation(
     val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
+    val typography: StreamDesign.Typography,
     val colors: StreamDesign.Colors,
     val mentions: Set<Mention>,
 ) : VisualTransformation {

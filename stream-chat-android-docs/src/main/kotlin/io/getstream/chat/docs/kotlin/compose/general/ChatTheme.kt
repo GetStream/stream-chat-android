@@ -15,7 +15,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
@@ -150,7 +149,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
 
     override val content: @Composable () -> Unit get() = {
         val colors = if (isSystemInDarkTheme()) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
-        val typography = StreamTypography.defaultTypography()
+        val typography = StreamDesign.Typography.default()
         ChatTheme(
             colors = colors,
             typography = typography,
@@ -169,7 +168,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
      */
     @Composable
     private fun buildMessageTextFormatter(
-        typography: StreamTypography,
+        typography: StreamDesign.Typography,
         colors: StreamDesign.Colors,
     ): MessageTextFormatter {
         val formatter = object : MessageTextFormatter {
@@ -222,7 +221,7 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
 private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
     override val content: @Composable () -> Unit get() = {
         val colors = if (isSystemInDarkTheme()) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
-        val typography = StreamTypography.defaultTypography()
+        val typography = StreamDesign.Typography.default()
         ChatTheme(
             colors = colors,
             typography = typography,
@@ -238,7 +237,7 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
 
     @Composable
     private fun buildMessageTextFormatter(
-        typography: StreamTypography,
+        typography: StreamDesign.Typography,
         colors: StreamDesign.Colors,
     ): MessageTextFormatter {
         return MessageTextFormatter.composite(

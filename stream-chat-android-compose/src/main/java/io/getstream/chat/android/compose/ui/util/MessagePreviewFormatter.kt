@@ -33,7 +33,6 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
@@ -86,7 +85,7 @@ public interface MessagePreviewFormatter {
         public fun defaultFormatter(
             context: Context,
             autoTranslationEnabled: Boolean,
-            typography: StreamTypography,
+            typography: StreamDesign.Typography,
             attachmentFactories: List<AttachmentFactory>,
             colors: StreamDesign.Colors,
         ): MessagePreviewFormatter {

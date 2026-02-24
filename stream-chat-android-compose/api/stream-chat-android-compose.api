@@ -3912,8 +3912,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Typog
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Typography$Companion {
 	public final fun default (Landroidx/compose/ui/text/font/FontFamily;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;
 	public static synthetic fun default$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography$Companion;Landroidx/compose/ui/text/font/FontFamily;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;
-	public final fun defaultTypography (Landroidx/compose/ui/text/font/FontFamily;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;
-	public static synthetic fun defaultTypography$default (Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography$Companion;Landroidx/compose/ui/text/font/FontFamily;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamKeyboardBehaviour {

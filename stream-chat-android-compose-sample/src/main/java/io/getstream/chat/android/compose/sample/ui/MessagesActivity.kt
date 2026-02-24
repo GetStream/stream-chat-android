@@ -80,7 +80,6 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -139,7 +138,7 @@ class MessagesActivity : ComponentActivity() {
     private fun SetupChatTheme() {
         val isInDarkMode = isSystemInDarkTheme()
         val colors = if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
-        val typography = StreamTypography.defaultTypography()
+        val typography = StreamDesign.Typography.default()
         val messageComposerTheme = MessageComposerTheme
             .defaultTheme(isInDarkMode, typography, colors)
             .copy(

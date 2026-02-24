@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 
 @Composable
 internal fun CountBadge(
@@ -67,10 +67,26 @@ internal fun CountBadge(
     )
 }
 
-internal enum class CountBadgeSize(val minSize: Dp, val spacing: Dp, val textStyle: (StreamTypography) -> TextStyle) {
-    Large(minSize = 32.dp, spacing = StreamTokens.spacingXs, textStyle = StreamTypography::numericLarge),
-    Medium(minSize = 24.dp, spacing = StreamTokens.spacingXs, textStyle = StreamTypography::numericLarge),
-    Small(minSize = 20.dp, spacing = StreamTokens.spacing2xs, textStyle = StreamTypography::numericMedium),
+internal enum class CountBadgeSize(
+    val minSize: Dp,
+    val spacing: Dp,
+    val textStyle: (StreamDesign.Typography) -> TextStyle,
+) {
+    Large(
+        minSize = 32.dp,
+        spacing = StreamTokens.spacingXs,
+        textStyle = StreamDesign.Typography::numericLarge,
+    ),
+    Medium(
+        minSize = 24.dp,
+        spacing = StreamTokens.spacingXs,
+        textStyle = StreamDesign.Typography::numericLarge,
+    ),
+    Small(
+        minSize = 20.dp,
+        spacing = StreamTokens.spacing2xs,
+        textStyle = StreamDesign.Typography::numericMedium,
+    ),
 }
 
 @Preview

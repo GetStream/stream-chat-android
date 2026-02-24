@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -136,7 +135,7 @@ public fun InputField(
  */
 private class DefaultInputFieldVisualTransformation(
     val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
+    val typography: StreamDesign.Typography,
     val colors: StreamDesign.Colors,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
