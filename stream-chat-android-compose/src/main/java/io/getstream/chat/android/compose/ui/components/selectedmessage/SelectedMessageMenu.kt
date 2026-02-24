@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.components.selectedmessage
 import android.os.Build
 import android.view.WindowManager
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +37,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -70,8 +71,10 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Represents the options user can take after selecting a message.
@@ -114,8 +117,25 @@ public fun SelectedMessageMenu(
         MessageAlignment.End -> Modifier.padding(end = 8.dp)
     }
 
+    val isInspection = LocalInspectionMode.current
+    val animation = rememberMenuAnimation(
+        sourceBounds = LocalSelectedMessageBounds.current?.value,
+        messageAlignment = messageAlignment,
+    )
+    val scope = rememberCoroutineScope()
+    val animatedDismiss: () -> Unit = remember(animation, onDismiss, scope) {
+        {
+            scope.launch {
+                withContext(NonCancellable) {
+                    animation.animateOut()
+                    onDismiss()
+                }
+            }
+        }
+    }
+
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = animatedDismiss,
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             decorFitsSystemWindows = false,
@@ -129,13 +149,8 @@ public fun SelectedMessageMenu(
                 }
             }
             window.setDimAmount(DimAmount)
+            window.setWindowAnimations(0)
         }
-
-        val isInspection = LocalInspectionMode.current
-        val animation = rememberMenuAnimation(
-            sourceBounds = LocalSelectedMessageBounds.current?.value,
-            messageAlignment = messageAlignment,
-        )
 
         LaunchedEffect(Unit) {
             if (isInspection) animation.snapIn() else animation.animateIn()
@@ -145,7 +160,7 @@ public fun SelectedMessageMenu(
             modifier = modifier
                 .semantics { testTagsAsResourceId = true }
                 .fillMaxSize()
-                .clickable(onClick = onDismiss, indication = null, interactionSource = null)
+                .clickable(onClick = animatedDismiss, indication = null, interactionSource = null)
                 .verticalScroll(rememberScrollState())
                 .systemBarsPadding()
                 .padding(StreamTokens.spacingXs),
@@ -193,7 +208,7 @@ public fun SelectedMessageMenu(
                 Spacer(
                     modifier = Modifier
                         .matchParentSize()
-                        .clickable(onClick = onDismiss, indication = null, interactionSource = null),
+                        .clickable(onClick = animatedDismiss, indication = null, interactionSource = null),
                 )
             }
 
@@ -233,7 +248,7 @@ private class MenuAnimationState(
     val messageModifier: Modifier
         get() = Modifier
             .onGloballyPositioned { coords ->
-                if (coords.isAttached && targetBounds == null) {
+                if (coords.isAttached) {
                     targetBounds = coords.boundsInWindow()
                 }
             }
@@ -258,8 +273,17 @@ private class MenuAnimationState(
 
     suspend fun animateIn() {
         coroutineScope {
-            launch { message.animateTo(1f, tween(durationMillis = 300, easing = EaseOutCubic)) }
-            launch { peripheral.animateTo(1f, tween(durationMillis = 200, delayMillis = 150)) }
+            launch { message.animateTo(1f, tween(durationMillis = 250, easing = FastOutSlowInEasing)) }
+            launch { peripheral.animateTo(1f, tween(durationMillis = 150, delayMillis = 120)) }
+        }
+    }
+
+    suspend fun animateOut() {
+        coroutineScope {
+            launch { peripheral.animateTo(0f, tween(durationMillis = 100)) }
+            launch {
+                message.animateTo(0f, tween(durationMillis = 250, delayMillis = 60, easing = FastOutSlowInEasing))
+            }
         }
     }
 
