@@ -3871,7 +3871,6 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Dimen
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Dimens$Companion {
 	public final fun default ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Dimens;
-	public final fun defaultDimens ()Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Dimens;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/StreamDesign$Typography {

@@ -24,7 +24,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
-import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -38,9 +38,9 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  * Giphy attachments.
  * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
  * makes the container capable of adaptive resizing and ignore
- * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
- * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
- * and [StreamDimens.attachmentsContentGiphyMaxHeight].
+ * [StreamDesign.Dimens.attachmentsContentGiphyWidth] and [StreamDesign.Dimens.attachmentsContentGiphyHeight]
+ * dimensions, however you can still clip maximum dimensions using [StreamDesign.Dimens.attachmentsContentGiphyMaxWidth]
+ * and [StreamDesign.Dimens.attachmentsContentGiphyMaxHeight].
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
  * @param onContentItemClick Lambda called when an item gets clicked.

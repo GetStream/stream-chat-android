@@ -78,7 +78,7 @@ import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
     error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalDimens = compositionLocalOf<StreamDimens> {
+private val LocalDimens = compositionLocalOf<StreamDesign.Dimens> {
     error("No dimens provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalTypography = compositionLocalOf<StreamDesign.Typography> {
@@ -245,7 +245,7 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param attachmentPickerConfig Configuration for the attachment picker modes and settings.
  * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
- * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
+ * @param dimens The set of dimens we provide, wrapped in [StreamDesign.Dimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param userPresence The user presence display configuration.
@@ -293,7 +293,7 @@ public fun ChatTheme(
     messageComposerFloatingStyleEnabled: Boolean = false,
     colors: StreamDesign.Colors =
         if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
-    dimens: StreamDimens = StreamDimens.defaultDimens(),
+    dimens: StreamDesign.Dimens = StreamDesign.Dimens.default(),
     typography: StreamDesign.Typography = StreamDesign.Typography.default(),
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
         contentColor = LocalContentColor.current,
@@ -428,9 +428,9 @@ public object ChatTheme {
         get() = LocalColors.current
 
     /**
-     * Retrieves the current [StreamDimens] at the call site's position in the hierarchy.
+     * Retrieves the current [StreamDesign.Dimens] at the call site's position in the hierarchy.
      */
-    public val dimens: StreamDimens
+    public val dimens: StreamDesign.Dimens
         @Composable
         @ReadOnlyComposable
         get() = LocalDimens.current

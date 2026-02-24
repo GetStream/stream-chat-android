@@ -683,14 +683,6 @@ public object StreamDesign {
              *
              * @return A [Dimens] instance holding our default dimensions.
              */
-            @Deprecated("Use default()", ReplaceWith("default()"))
-            public fun defaultDimens(): Dimens = default()
-
-            /**
-             * Builds the default dimensions for our theme.
-             *
-             * @return A [Dimens] instance holding our default dimensions.
-             */
             public fun default(): Dimens = Dimens(
                 channelItemVerticalPadding = 12.dp,
                 channelItemHorizontalPadding = 8.dp,

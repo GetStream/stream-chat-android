@@ -38,7 +38,7 @@ import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttac
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
@@ -68,9 +68,9 @@ public object StreamAttachmentFactories {
      * Giphy attachments.
      * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
      * makes the container capable of adaptive resizing and ignore
-     * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
+     * [StreamDesign.Dimens.attachmentsContentGiphyWidth] and [StreamDesign.Dimens.attachmentsContentGiphyHeight]
      * dimensions, however you can still clip maximum dimensions using
-     * [StreamDimens.attachmentsContentGiphyMaxWidth] and [StreamDimens.attachmentsContentGiphyMaxHeight].
+     * [StreamDesign.Dimens.attachmentsContentGiphyMaxWidth] and [StreamDesign.Dimens.attachmentsContentGiphyMaxHeight].
      * Setting it to fixed size mode will make it respect all given dimensions.
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
      * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the
