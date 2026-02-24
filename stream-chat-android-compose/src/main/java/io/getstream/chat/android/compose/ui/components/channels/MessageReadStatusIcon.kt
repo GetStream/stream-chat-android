@@ -139,7 +139,7 @@ private fun IsReadCount(
             modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
             painter = painterResource(id = R.drawable.stream_compose_message_seen),
             contentDescription = null,
-            tint = ChatTheme.colors.accentPrimary,
+            tint = ChatTheme.colors.chatTextRead,
         )
     }
 }

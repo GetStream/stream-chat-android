@@ -103,6 +103,7 @@ import io.getstream.chat.android.compose.R
  * @param chatTextLink Used for link text color in chat messages.
  * @param chatTextMention Used for mention text color in chat messages.
  * @param chatTextTimestamp Used for timestamp text color in chat messages.
+ * @param chatTextRead Used for read status icon tint in chat messages.
  * @param controlPlayControlBg Used for play control button background.
  * @param controlPlayControlIcon Used for play control button icon.
  * @param controlRemoveBg Used for remove control background.
@@ -206,6 +207,7 @@ public data class StreamColors(
     public val chatTextLink: Color = accentPrimary,
     public val chatTextMention: Color = chatTextLink,
     public val chatTextTimestamp: Color = textTertiary,
+    public val chatTextRead: Color = accentPrimary,
     public val chatWaveformBar: Color = borderCoreOpacity25,
     public val chatWaveformBarPlaying: Color = accentPrimary,
     public val chipText: Color = brand900,

@@ -197,6 +197,7 @@ private class DefaultMessagePreviewFormatter(
                 }
 
                 message.isPoll() -> {
+                    appendSenderName(message, currentUser, senderNameTextStyle, isDirectMessaging)
                     appendInlineContent(DefaultMessagePreviewIconFactory.POLL)
                     append(SPACE)
                     if (message.isPollClosed()) {
