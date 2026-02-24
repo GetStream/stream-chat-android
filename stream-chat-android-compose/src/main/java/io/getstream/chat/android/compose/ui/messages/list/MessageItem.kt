@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -45,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -162,27 +161,15 @@ public fun LazyItemScope.MessageItem(
  */
 @Composable
 internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
-    Box(
+    MessageDivider(
+        text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
         modifier = Modifier
-            .semantics(mergeDescendants = true) {}
+            .semantics(mergeDescendants = true) {
+                testTag = "Stream_MessageDateSeparator"
+            }
+            .padding(vertical = StreamTokens.spacingXs)
             .fillMaxWidth(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            modifier = Modifier
-                .padding(vertical = 8.dp),
-            color = ChatTheme.messageDateSeparatorTheme.backgroundColor,
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Text(
-                modifier = Modifier
-                    .padding(vertical = 2.dp, horizontal = 16.dp)
-                    .testTag("Stream_MessageDateSeparator"),
-                text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
-                style = ChatTheme.messageDateSeparatorTheme.textStyle,
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -192,24 +179,15 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
  */
 @Composable
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
-    Box(
+    MessageDivider(
+        text = stringResource(R.string.stream_compose_message_list_unread_separator),
         modifier = Modifier
             .semantics(mergeDescendants = true) {
                 testTag = "Stream_UnreadMessagesBadge"
             }
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)
-            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
-            text = LocalContext.current.resources.getString(
-                R.string.stream_compose_message_list_unread_separator,
-            ),
-            style = ChatTheme.messageUnreadSeparatorTheme.textStyle,
-        )
-    }
+            .padding(vertical = StreamTokens.spacingXs)
+            .fillMaxWidth(),
+    )
 }
 
 /**
