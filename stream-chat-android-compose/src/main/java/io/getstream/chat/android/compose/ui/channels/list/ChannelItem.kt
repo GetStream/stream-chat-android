@@ -152,6 +152,7 @@ public fun ChannelItem(
             .testTag("Stream_ChannelItem")
             .fillMaxWidth()
             .wrapContentHeight()
+            .padding(horizontal = StreamTokens.spacing2xs)
             .semantics { contentDescription = description }
             .then(focusBorderModifier)
             .clip(shape)

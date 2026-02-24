@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.channels
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -53,12 +52,7 @@ public fun UnreadCountIndicator(
 
     Box(
         modifier = modifier
-            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp) // was 18.dp → 20.dp
-            .border(
-                width = 2.dp,
-                color = ChatTheme.colors.presenceBorder, // white (#FFFFFF) -- reuses presence border token
-                shape = shape,
-            )
+            .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
             .background(shape = shape, color = color)
             .padding(horizontal = StreamTokens.spacing2xs), // 4dp horizontal content padding
         contentAlignment = Alignment.Center,
@@ -66,9 +60,9 @@ public fun UnreadCountIndicator(
         Text(
             modifier = Modifier.testTag("Stream_UnreadCountIndicator"),
             text = displayText,
-            color = ChatTheme.colors.badgeTextOnAccent, // was Color.White (now uses semantic token)
+            color = ChatTheme.colors.badgeTextOnAccent,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.numericLarge, // 12sp Bold
+            style = ChatTheme.typography.numericMedium, // 10sp Bold
         )
     }
 }
