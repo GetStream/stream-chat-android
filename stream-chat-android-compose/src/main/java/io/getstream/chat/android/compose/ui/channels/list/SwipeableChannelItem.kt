@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
@@ -37,6 +38,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.IntOffset
@@ -53,6 +55,7 @@ import kotlin.math.roundToInt
  * @param channelCid The channel CID used for coordinator registration.
  * @param modifier Modifier for styling.
  * @param enabled Whether swiping is enabled.
+ * @param backgroundColor Opaque background for the foreground layer, hiding actions when closed.
  * @param swipeActions Composable content for the action buttons revealed by swiping.
  * @param content The channel item content displayed on top.
  */
@@ -61,6 +64,7 @@ public fun SwipeableChannelItem(
     channelCid: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    backgroundColor: Color = Color.Unspecified,
     swipeActions: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -114,9 +118,10 @@ public fun SwipeableChannelItem(
             swipeActions()
         }
 
-        // Foreground: channel item content
+        // Foreground: channel item content (opaque bg hides actions when closed)
         Box(
             modifier = Modifier
+                .background(backgroundColor)
                 .offset {
                     val raw = anchoredDraggableState.offset
                     val x = if (raw.isNaN()) 0 else raw.roundToInt()

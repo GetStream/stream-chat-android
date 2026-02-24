@@ -60,6 +60,7 @@ class CustomChatComponentFactory(
         if (swipeEnabled) {
             SwipeableChannelItem(
                 channelCid = channelItem.channel.cid,
+                backgroundColor = ChatTheme.colors.appBackground,
                 swipeActions = { Row { ChannelSwipeActions(channelItem) } },
             ) {
                 ChannelItem(

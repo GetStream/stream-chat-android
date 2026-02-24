@@ -1355,7 +1355,7 @@ public final class io/getstream/chat/android/compose/ui/channels/list/SwipeRevea
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/SwipeableChannelItemKt {
-	public static final fun SwipeableChannelItem (Ljava/lang/String;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SwipeableChannelItem-fWhpE4E (Ljava/lang/String;Landroidx/compose/ui/Modifier;ZJLkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ChatListContentMode : java/lang/Enum {
