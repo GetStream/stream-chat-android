@@ -256,13 +256,6 @@ private fun buildMuteAction(
 }
 
 /**
- * Checks if the given channel is a 1-on-1 conversation.
- */
-private fun Channel.isOneToOne(currentUser: io.getstream.chat.android.models.User?): Boolean {
-    return members.size == 2 && members.any { it.user.id == currentUser?.id }
-}
-
-/**
  * Preview of [ChannelOptions].
  *
  * Should show a list of available actions for the channel.
