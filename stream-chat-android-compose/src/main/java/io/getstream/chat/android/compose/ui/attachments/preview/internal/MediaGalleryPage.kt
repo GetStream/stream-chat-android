@@ -321,7 +321,7 @@ internal fun MediaGalleryVideoPage(
                         showThumbnail = false
                         player.play()
                     },
-                thumbnailUrl = if (ChatTheme.videoThumbnailsEnabled) thumbnailUrl else null,
+                thumbnailUrl = if (ChatTheme.config.messageList.videoThumbnailsEnabled) thumbnailUrl else null,
             )
         }
         // Buffering indicator

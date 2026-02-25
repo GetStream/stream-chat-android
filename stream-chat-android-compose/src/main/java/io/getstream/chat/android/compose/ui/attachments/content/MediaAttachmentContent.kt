@@ -508,13 +508,13 @@ internal fun MediaAttachmentContentItem(
             .build()
     }
 
-    val config = ChatTheme.mediaGalleryConfig
+    val config = ChatTheme.config.mediaGallery
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(config),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 
-    val areVideosEnabled = ChatTheme.videoThumbnailsEnabled
+    val videoThumbnailsEnabled = ChatTheme.config.messageList.videoThumbnailsEnabled
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
 
     val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
@@ -548,7 +548,7 @@ internal fun MediaAttachmentContentItem(
                                 mixedMediaPreviewLauncher,
                                 message,
                                 attachmentPosition,
-                                areVideosEnabled,
+                                videoThumbnailsEnabled,
                                 downloadAttachmentUriGenerator,
                                 downloadRequestInterceptor,
                                 streamCdnImageResizing,

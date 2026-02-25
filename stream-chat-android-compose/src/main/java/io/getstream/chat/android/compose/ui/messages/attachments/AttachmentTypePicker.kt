@@ -61,7 +61,7 @@ internal fun AttachmentTypePicker(
     onModeSelected: (AttachmentPickerMode) -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
+    val modes = ChatTheme.config.attachmentPicker.modes.filterByCapabilities(
         channel = channel,
         messageMode = messageMode,
     )
@@ -99,7 +99,7 @@ internal fun AttachmentTypeSystemPicker(
     onModeSelected: (AttachmentPickerMode) -> Unit = {},
     trailingContent: @Composable RowScope.() -> Unit = {},
 ) {
-    val modes = ChatTheme.attachmentPickerConfig.modes.filterByCapabilities(
+    val modes = ChatTheme.config.attachmentPicker.modes.filterByCapabilities(
         channel = channel,
         messageMode = messageMode,
     )

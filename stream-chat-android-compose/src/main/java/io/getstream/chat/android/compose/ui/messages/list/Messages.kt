@@ -364,7 +364,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                 .align(Alignment.BottomEnd)
                 .padding(contentPadding)
                 .then(
-                    if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                    if (ChatTheme.config.composer.floatingStyleEnabled) {
                         Modifier.padding(horizontal = StreamTokens.spacingMd)
                     } else {
                         Modifier.padding(StreamTokens.spacingMd)

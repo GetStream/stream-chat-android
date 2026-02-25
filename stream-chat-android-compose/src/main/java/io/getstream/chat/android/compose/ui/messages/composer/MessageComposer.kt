@@ -45,7 +45,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.LocalMessageComposerFloatingStyleEnabled
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
+import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.SnackbarPopup
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -362,7 +363,7 @@ public fun MessageComposer(
 
     MessageComposerSurface(
         modifier = modifier,
-        floatingStyleEnabled = ChatTheme.messageComposerFloatingStyleEnabled,
+        floatingStyleEnabled = ChatTheme.config.composer.floatingStyleEnabled,
     ) {
         Column(Modifier.padding(vertical = 4.dp)) {
             headerContent(messageComposerState)
@@ -373,7 +374,7 @@ public fun MessageComposer(
                     .padding(
                         start = StreamTokens.spacingMd,
                         end = StreamTokens.spacingMd,
-                        top = if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                        top = if (ChatTheme.config.composer.floatingStyleEnabled) {
                             0.dp
                         } else {
                             StreamTokens.spacingMd
@@ -533,7 +534,8 @@ private fun MessageComposerFloatingStylePreview() {
 
 @Composable
 internal fun MessageComposerFloatingStyle() {
-    CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             onSendMessage = { _, _ -> },
@@ -551,7 +553,8 @@ private fun MessageComposerFloatingStyleWithVisibleAttachmentPickerPreview() {
 
 @Composable
 internal fun MessageComposerFloatingStyleWithVisibleAttachmentPicker() {
-    CompositionLocalProvider(LocalMessageComposerFloatingStyleEnabled provides true) {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(floatingStyleEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
         MessageComposer(
             messageComposerState = PreviewMessageComposerState,
             isAttachmentPickerVisible = true,

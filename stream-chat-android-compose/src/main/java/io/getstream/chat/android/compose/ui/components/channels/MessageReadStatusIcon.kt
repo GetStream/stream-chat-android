@@ -114,7 +114,7 @@ private fun IsReadCount(
     modifier: Modifier,
     readCount: Int,
 ) {
-    val showReadCount = readCount > 1 && ChatTheme.readCountEnabled
+    val showReadCount = readCount > 1 && ChatTheme.config.messageList.readCountEnabled
     val description = if (showReadCount) {
         stringResource(R.string.stream_ui_message_list_semantics_message_status_read_by, readCount)
     } else {

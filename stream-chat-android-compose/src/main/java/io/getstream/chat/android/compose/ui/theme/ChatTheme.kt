@@ -38,14 +38,9 @@ import coil3.ImageLoader
 import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
-import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
-import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -73,6 +68,13 @@ import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
+ * The local composition containing the current [ChatConfig].
+ */
+public val LocalChatConfig: ProvidableCompositionLocal<ChatConfig> = compositionLocalOf {
+    error("No ChatConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+
+/**
  * Local providers for various properties we connect to our components, for styling.
  */
 private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
@@ -95,22 +97,6 @@ private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
-/**
- * CompositionLocal for providing [AttachmentPickerConfig] to the composition tree.
- */
-public val LocalAttachmentPickerConfig: ProvidableCompositionLocal<AttachmentPickerConfig> = compositionLocalOf {
-    error("No AttachmentPickerConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-
-/**
- * The local composition containing the current "Message Composer Floating Style Enabled" flag.
- */
-public val LocalMessageComposerFloatingStyleEnabled: ProvidableCompositionLocal<Boolean> = compositionLocalOf {
-    error(
-        "No message composer floating style enabled provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -174,57 +160,17 @@ private val LocalChannelOptionsTheme = compositionLocalOf<ChannelOptionsTheme> {
     error("No ChannelOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
-private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
-    error(
-        "No videoThumbnailsEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
 private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResizing> {
     error(
         "No StreamCdnImageResizing provided! " +
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
-private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
-    error(
-        "No readCountEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
 private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
     error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
-    error(
-        "No AutoTranslationEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
-private val LocalShowOriginalTranslationEnabled = compositionLocalOf<Boolean> {
-    error(
-        "No ShowOriginalTranslationEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
-
-/**
- * The local composition containing the current "Composer Link Preview Enabled" flag.
- */
-public val LocalComposerLinkPreviewEnabled: ProvidableCompositionLocal<Boolean> = compositionLocalOf {
-    error(
-        "No ComposerLinkPreviewEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme.",
-    )
-}
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
-    error("No MediaGalleryConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalChatConfig = compositionLocalOf<ChatConfig> {
-    error("No ChatConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
@@ -233,11 +179,6 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param config Central behavioral configuration for the Chat SDK. See [ChatConfig].
- * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
- * @param showOriginalTranslationEnabled Whether the option to show the original translation is enabled or not.
- * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
- * @param attachmentPickerConfig Configuration for the attachment picker modes and settings.
- * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
  * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
  * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
@@ -249,12 +190,14 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
+ * @param pollSwitchItemFactory Factory for creating poll switch items in the poll creation screen.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
  * @param durationFormatter [DurationFormatter] Used to format durations in the app.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
+ * @param searchResultNameFormatter [SearchResultNameFormatter] Used to format names in search results.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
  * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
@@ -264,13 +207,13 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
- * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
+ * @param channelOptionsTheme [ChannelOptionsTheme] Theme for the channel option list in the channel info screen.
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param messageComposerTheme Theme of the message composer.
+ * @param messageTextFormatter [MessageTextFormatter] Used to format message text for display.
  * @param streamMediaRecorder Used for recording audio messages.
- * @param mediaGalleryConfig Configuration for the media gallery screen.
  * @param content The content shown within the theme wrapper.
  */
 @Suppress("LongMethod")
@@ -278,11 +221,6 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     config: ChatConfig = ChatConfig(),
-    autoTranslationEnabled: Boolean = false,
-    showOriginalTranslationEnabled: Boolean = false,
-    isComposerLinkPreviewEnabled: Boolean = false,
-    attachmentPickerConfig: AttachmentPickerConfig = AttachmentPickerConfig(),
-    messageComposerFloatingStyleEnabled: Boolean = false,
     colors: StreamDesign.Colors =
         if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
     typography: StreamDesign.Typography = StreamDesign.Typography.default(),
@@ -308,7 +246,7 @@ public fun ChatTheme(
         context = LocalContext.current,
         typography = typography,
         attachmentFactories = attachmentFactories,
-        autoTranslationEnabled = autoTranslationEnabled,
+        autoTranslationEnabled = config.translation.enabled,
         colors = colors,
     ),
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
@@ -320,21 +258,18 @@ public fun ChatTheme(
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
-    videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
-    readCountEnabled: Boolean = true,
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
         colors = colors,
     ),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
-        autoTranslationEnabled = autoTranslationEnabled,
+        autoTranslationEnabled = config.translation.enabled,
         typography = typography,
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
-    mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -347,8 +282,6 @@ public fun ChatTheme(
         LocalTypography provides typography,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalShimmerTheme provides StreamShimmerTheme,
-        LocalAttachmentPickerConfig provides attachmentPickerConfig,
-        LocalMessageComposerFloatingStyleEnabled provides messageComposerFloatingStyleEnabled,
         LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
@@ -373,14 +306,8 @@ public fun ChatTheme(
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalChannelOptionsTheme provides channelOptionsTheme,
-        LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
-        LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
-        LocalAutoTranslationEnabled provides autoTranslationEnabled,
-        LocalShowOriginalTranslationEnabled provides showOriginalTranslationEnabled,
-        LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
-        LocalMediaGalleryConfig provides mediaGalleryConfig,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -422,23 +349,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
-
-    /**
-     * Retrieves the current [AttachmentPickerConfig] at the call site's position in the hierarchy.
-     */
-    public val attachmentPickerConfig: AttachmentPickerConfig
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAttachmentPickerConfig.current
-
-    /**
-     * Retrieves the current flag for the "Message Composer Floating Style Enabled"
-     * at the call site's position in the hierarchy.
-     */
-    public val messageComposerFloatingStyleEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMessageComposerFloatingStyleEnabled.current
 
     /**
      * Retrieves the current [UserPresence] at the call site's position in the hierarchy.
@@ -585,26 +495,12 @@ public object ChatTheme {
         get() = LocalChannelOptionsTheme.current
 
     /**
-     * Retrieves the value of [Boolean] dictating whether video thumbnails are enabled at the call site's
-     * position in the hierarchy.
-     */
-    public val videoThumbnailsEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalVideoThumbnailsEnabled.current
-
-    /**
      * Retrieves the value of [StreamCdnImageResizing] at the call site's position in the hierarchy.
      */
     public val streamCdnImageResizing: StreamCdnImageResizing
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamCdnImageResizing.current
-
-    public val readCountEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalReadCountEnabled.current
 
     /**
      * Retrieves the current [MessageComposerTheme] at the call site's position in the hierarchy.
@@ -622,11 +518,17 @@ public object ChatTheme {
         @ReadOnlyComposable
         get() = LocalStreamImageHeadersProvider.current
 
+    /**
+     * Retrieves the current [DownloadAttachmentUriGenerator] at the call site's position in the hierarchy.
+     */
     public val streamDownloadAttachmentUriGenerator: DownloadAttachmentUriGenerator
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamDownloadAttachmentUriGenerator.current
 
+    /**
+     * Retrieves the current [DownloadRequestInterceptor] at the call site's position in the hierarchy.
+     */
     public val streamDownloadRequestInterceptor: DownloadRequestInterceptor
         @Composable
         @ReadOnlyComposable
@@ -641,42 +543,10 @@ public object ChatTheme {
         get() = LocalStreamImageAssetTransformer.current
 
     /**
-     * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
-     */
-    public val autoTranslationEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAutoTranslationEnabled.current
-
-    /**
-     * Retrieves the current [showOriginalTranslationEnabled] value at the call site's position in the hierarchy.
-     */
-    public val showOriginalTranslationEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalShowOriginalTranslationEnabled.current
-
-    /**
-     * Retrieves the current [isComposerLinkPreviewEnabled] value at the call site's position in the hierarchy.
-     */
-    public val isComposerLinkPreviewEnabled: Boolean
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalComposerLinkPreviewEnabled.current
-
-    /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.
      */
     public val streamMediaRecorder: StreamMediaRecorder
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamMediaRecorder.current
-
-    /**
-     * Retrieves the current [MediaGalleryConfig] at the call site's position in the hierarchy.
-     */
-    public val mediaGalleryConfig: MediaGalleryConfig
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalMediaGalleryConfig.current
 }

@@ -84,6 +84,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.util.StreamSnackbarHost
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.models.Attachment
@@ -142,7 +143,7 @@ public fun MediaGalleryPreviewScreen(
     onRequestShareAttachment: (Attachment) -> Unit,
     onConfirmShareAttachment: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
+    config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     onHeaderTrailingContentClick: () -> Unit = { viewModel.toggleMediaOptions(true) },
     onFooterLeadingContentClick: (Attachment) -> Unit = onRequestShareAttachment,
     onFooterTrailingContentClick: (Attachment) -> Unit = { viewModel.toggleGallery(true) },
@@ -281,7 +282,7 @@ public fun MediaGalleryPreviewScreen(
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
     onRequestShareAttachment: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
+    config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     onHeaderLeadingContentClick: () -> Unit = {},
     onHeaderTrailingContentClick: () -> Unit = {},
     onFooterLeadingContentClick: (Attachment) -> Unit = onRequestShareAttachment,
@@ -478,7 +479,7 @@ internal fun MediaGalleryPreviewHeader(
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
-    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
+    config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isCloseVisible) {
             MediaGalleryPreviewCloseIcon(
@@ -678,7 +679,7 @@ internal fun MediaGalleryPreviewFooter(
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.backgroundElevationElevation1,
     contentColor: Color = ChatTheme.colors.textPrimary,
-    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
+    config: MediaGalleryConfig = ChatTheme.config.mediaGallery,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isShareVisible) {
             MediaGalleryPreviewShareIcon(
