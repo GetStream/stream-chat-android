@@ -78,10 +78,6 @@
     <string name="navigation_drawer_sign_out">Sign out</string>
 
     <!--  Message reminders  -->
-    <string name="message_menu_add_reminder">Remind me</string>
-    <string name="message_menu_update_reminder">Update reminder</string>
-    <string name="message_menu_save_for_later">Save for later</string>
-    <string name="message_menu_remove_reminder">Remove reminder</string>
     <string name="reminders_select_reminder_time_title">Select reminder time</string>
     <string name="reminders_select_reminder_time_description">When would you like to be reminded?</string>
     <string name="reminders_remind_in_2_minutes">In 2 minutes</string>
@@ -121,15 +117,9 @@
         <item quantity="other">%d seconds</item>
     </plurals>
 
-    <string name="message_option_delete_for_me">Delete Message For Me</string>
-    <string name="message_option_message_info">Message Info</string>
-
     <!-- Channel Attachments -->
     <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
     <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
 
-    <!-- Message Info -->
-    <string name="message_info_read_by">READ BY (%d)</string>
-    <string name="message_info_delivered_to">DELIVERED TO (%d)</string>
 
 </resources>
