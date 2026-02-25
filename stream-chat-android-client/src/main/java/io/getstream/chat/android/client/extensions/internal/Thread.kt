@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.utils.message.MessageSortComparator
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
@@ -64,9 +65,7 @@ public fun Thread.upsertReply(reply: Message): Thread {
     if (this.parentMessageId != reply.parentId) return this
     val newReplies = upsertMessageInList(reply, this.latestReplies)
     val isInsert = newReplies.size > this.latestReplies.size
-    val sortedNewReplies = newReplies.sortedBy {
-        it.getCreatedAtOrNull()
-    }
+    val sortedNewReplies = newReplies.sortedWith(MessageSortComparator)
     val lastMessageAt = sortedNewReplies.lastOrNull()?.getCreatedAtOrNull()
     // The new message could be from a new thread participant
     val threadParticipants = if (isInsert) {
