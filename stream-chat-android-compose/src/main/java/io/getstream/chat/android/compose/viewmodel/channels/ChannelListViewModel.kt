@@ -369,15 +369,15 @@ public class ChannelListViewModel(
         currentState: SearchMessageState,
         channelFilter: FilterObject,
     ): SearchMessageState {
-        val offset = currentState.messages.size
         val limit = channelLimit
-        logger.v { "[searchMessages] #$src; query: '${currentState.query}', offset: $offset, limit: $limit" }
+        val next = currentState.next
+        logger.v { "[searchMessages] #$src; query: '${currentState.query}', next: $next, limit: $limit" }
         val result = chatClient.searchMessages(
             channelFilter = channelFilter,
             messageFilter = Filters.autocomplete("text", currentState.query),
-            offset = offset,
-            limit = limit,
             sort = messageSearchSort,
+            limit = limit,
+            next = next,
         ).await()
         return when (result) {
             is io.getstream.result.Result.Success -> {
@@ -386,7 +386,8 @@ public class ChannelListViewModel(
                     messages = currentState.messages + result.value.messages,
                     isLoading = false,
                     isLoadingMore = false,
-                    canLoadMore = result.value.messages.size >= limit,
+                    canLoadMore = !result.value.next.isNullOrEmpty(),
+                    next = result.value.next,
                 )
             }
             is io.getstream.result.Result.Failure -> {
@@ -394,7 +395,6 @@ public class ChannelListViewModel(
                 currentState.copy(
                     isLoading = false,
                     isLoadingMore = false,
-                    canLoadMore = true,
                 )
             }
         }
@@ -776,6 +776,7 @@ public class ChannelListViewModel(
     private data class SearchMessageState(
         val query: String = "",
         val canLoadMore: Boolean = true,
+        val next: String? = null,
         val messages: List<Message> = emptyList(),
         val isLoading: Boolean = false,
         val isLoadingMore: Boolean = false,
@@ -787,7 +788,8 @@ public class ChannelListViewModel(
                 "messages.size=${messages.size}, " +
                 "isLoading=$isLoading, " +
                 "isLoadingMore=$isLoadingMore, " +
-                "canLoadMore=$canLoadMore)"
+                "canLoadMore=$canLoadMore, " +
+                "next=$next)"
         }
     }
 }
