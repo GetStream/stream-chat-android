@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMembersData
@@ -55,8 +56,8 @@ public fun ChannelMembers(
         items(members) { member ->
             ChannelMembersItem(
                 modifier = Modifier
-                    .width(ChatTheme.dimens.selectedChannelMenuUserItemWidth)
-                    .padding(horizontal = ChatTheme.dimens.selectedChannelMenuUserItemHorizontalPadding),
+                    .width(80.dp)
+                    .padding(horizontal = StreamTokens.spacingXs),
                 member = member,
                 currentUser = currentUser,
             )

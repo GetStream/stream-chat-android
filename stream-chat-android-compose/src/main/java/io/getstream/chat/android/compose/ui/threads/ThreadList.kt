@@ -164,7 +164,7 @@ public fun ThreadList(
     },
 ) {
     Scaffold(
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
         topBar = {
             unreadThreadsBanner(state.unseenThreadsCount)
         },
@@ -252,7 +252,7 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.stream_compose_thread_list_empty_title),
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontSize = 20.sp,
             lineHeight = 25.sp,
             maxLines = 1,
@@ -268,7 +268,7 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
  */
 @Composable
 internal fun DefaultThreadListLoadingContent(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
+    Box(modifier = modifier.background(ChatTheme.colors.backgroundCoreApp)) {
         LoadingIndicator(modifier)
     }
 }
@@ -281,7 +281,7 @@ internal fun DefaultThreadListLoadingMoreContent() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
         contentAlignment = Alignment.Center,
     ) {

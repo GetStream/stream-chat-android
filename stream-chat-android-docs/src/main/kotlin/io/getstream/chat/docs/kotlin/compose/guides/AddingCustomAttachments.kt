@@ -148,7 +148,7 @@ private object AddingCustomAttachmentsSnippet {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = ChatTheme.colors.textLowEmphasis
+                            tint = ChatTheme.colors.textSecondary
                         )
                     },
                     onClick = {
@@ -203,8 +203,8 @@ fun DateAttachmentContent(
         modifier = modifier
             .fillMaxWidth()
             .padding(4.dp)
-            .clip(ChatTheme.shapes.attachment)
-            .background(ChatTheme.colors.infoAccent)
+            .clip(RoundedCornerShape(12.dp))
+            .background(ChatTheme.colors.accentSuccess)
             .padding(8.dp)
     ) {
         Row(
@@ -215,14 +215,14 @@ fun DateAttachmentContent(
                 modifier = Modifier.size(16.dp),
                 painter = painterResource(id = R.drawable.ic_calendar),
                 contentDescription = null,
-                tint = ChatTheme.colors.textHighEmphasis,
+                tint = ChatTheme.colors.textPrimary,
             )
 
             Text(
                 text = formattedDate,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textPrimary
             )
         }
     }
@@ -241,7 +241,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.barsBackground)
+            .background(color = ChatTheme.colors.backgroundElevationElevation1)
     ) {
         Text(
             modifier = Modifier
@@ -249,9 +249,9 @@ fun DateAttachmentPreviewContent(
                 .padding(16.dp)
                 .fillMaxWidth(),
             text = formattedDate,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textPrimary
         )
 
         ComposerCancelIcon(

@@ -63,7 +63,7 @@ fun AppToolbar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.barsBackground)
+                .background(ChatTheme.colors.backgroundElevationElevation1)
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -73,14 +73,14 @@ fun AppToolbar(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                     contentDescription = "Back",
-                    tint = ChatTheme.colors.textHighEmphasis,
+                    tint = ChatTheme.colors.textPrimary,
                 )
             }
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.width(44.dp))

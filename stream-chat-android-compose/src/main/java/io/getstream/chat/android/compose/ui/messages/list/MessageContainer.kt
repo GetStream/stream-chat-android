@@ -171,8 +171,8 @@ public fun MessageContainer(
     )
 
     val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
-        true -> ChatTheme.colors.highlight
-        else -> ChatTheme.colors.highlight.copy(alpha = 0f) // Ensures a smooth fade-out without unwanted color shifts.
+        true -> ChatTheme.colors.backgroundCoreHighlight
+        else -> ChatTheme.colors.backgroundCoreHighlight.copy(alpha = 0f)
     }
 
     val color by animateColorAsState(
@@ -509,7 +509,7 @@ public fun DefaultMessageContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
-    val finalModifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    val finalModifier = modifier.widthIn(max = 250.dp)
     if (messageItem.message.isPoll() && !messageItem.message.isDeleted()) {
         val poll = messageItem.message.poll
         LaunchedEffect(key1 = poll) {

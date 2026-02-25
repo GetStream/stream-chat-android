@@ -75,17 +75,11 @@ import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 /**
  * Local providers for various properties we connect to our components, for styling.
  */
-private val LocalColors = compositionLocalOf<StreamColors> {
+private val LocalColors = compositionLocalOf<StreamDesign.Colors> {
     error("No colors provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalDimens = compositionLocalOf<StreamDimens> {
-    error("No dimens provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalTypography = compositionLocalOf<StreamTypography> {
+private val LocalTypography = compositionLocalOf<StreamDesign.Typography> {
     error("No typography provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
-private val LocalShapes = compositionLocalOf<StreamShapes> {
-    error("No shapes provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalUserPresence = compositionLocalOf<UserPresence> {
     error("No UserPresence provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -201,9 +195,6 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
 private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
     error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalAttachmentPickerTheme = compositionLocalOf<AttachmentPickerTheme> {
-    error("No AttachmentPickerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -229,9 +220,6 @@ public val LocalComposerLinkPreviewEnabled: ProvidableCompositionLocal<Boolean> 
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
-    error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
-}
 private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
     error("No MediaGalleryConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -250,10 +238,8 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param attachmentPickerConfig Configuration for the attachment picker modes and settings.
  * @param messageComposerFloatingStyleEnabled Whether the message composer should use the floating style or not.
- * @param colors The set of colors we provide, wrapped in [StreamColors].
- * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
- * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
- * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
+ * @param colors The set of colors we provide, wrapped in [StreamDesign.Colors].
+ * @param typography The set of typography styles we provide, wrapped in [StreamDesign.Typography].
  * @param rippleConfiguration Defines the appearance for ripples.
  * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
@@ -283,9 +269,7 @@ private val LocalChatConfig = compositionLocalOf<ChatConfig> {
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param messageComposerTheme Theme of the message composer.
- * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
- * @param keyboardBehaviour Configuration for different keyboard behaviours.
  * @param mediaGalleryConfig Configuration for the media gallery screen.
  * @param content The content shown within the theme wrapper.
  */
@@ -299,10 +283,9 @@ public fun ChatTheme(
     isComposerLinkPreviewEnabled: Boolean = false,
     attachmentPickerConfig: AttachmentPickerConfig = AttachmentPickerConfig(),
     messageComposerFloatingStyleEnabled: Boolean = false,
-    colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
-    dimens: StreamDimens = StreamDimens.defaultDimens(),
-    typography: StreamTypography = StreamTypography.defaultTypography(),
-    shapes: StreamShapes = StreamShapes.defaultShapes(),
+    colors: StreamDesign.Colors =
+        if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default(),
+    typography: StreamDesign.Typography = StreamDesign.Typography.default(),
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
@@ -343,18 +326,14 @@ public fun ChatTheme(
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
-        shapes = shapes,
         colors = colors,
     ),
-    attachmentPickerTheme: AttachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
-        shapes = shapes,
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
-    keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
     content: @Composable () -> Unit,
 ) {
@@ -365,9 +344,7 @@ public fun ChatTheme(
     CompositionLocalProvider(
         LocalChatConfig provides config,
         LocalColors provides colors,
-        LocalDimens provides dimens,
         LocalTypography provides typography,
-        LocalShapes provides shapes,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalShimmerTheme provides StreamShimmerTheme,
         LocalAttachmentPickerConfig provides attachmentPickerConfig,
@@ -388,7 +365,6 @@ public fun ChatTheme(
         LocalMessageTextFormatter provides messageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalMessageComposerTheme provides messageComposerTheme,
-        LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
@@ -404,7 +380,6 @@ public fun ChatTheme(
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalShowOriginalTranslationEnabled provides showOriginalTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
-        LocalKeyboardBehaviour provides keyboardBehaviour,
         LocalMediaGalleryConfig provides mediaGalleryConfig,
     ) {
         if (allowUIAutomationTest) {
@@ -433,36 +408,20 @@ public object ChatTheme {
         get() = LocalChatConfig.current
 
     /**
-     * Retrieves the current [StreamColors] at the call site's position in the hierarchy.
+     * Retrieves the current [StreamDesign.Colors] at the call site's position in the hierarchy.
      */
-    public val colors: StreamColors
+    public val colors: StreamDesign.Colors
         @Composable
         @ReadOnlyComposable
         get() = LocalColors.current
 
     /**
-     * Retrieves the current [StreamDimens] at the call site's position in the hierarchy.
+     * Retrieves the current [StreamDesign.Typography] at the call site's position in the hierarchy.
      */
-    public val dimens: StreamDimens
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalDimens.current
-
-    /**
-     * Retrieves the current [StreamTypography] at the call site's position in the hierarchy.
-     */
-    public val typography: StreamTypography
+    public val typography: StreamDesign.Typography
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
-
-    /**
-     * Retrieves the current [StreamShapes] at the call site's position in the hierarchy.
-     */
-    public val shapes: StreamShapes
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalShapes.current
 
     /**
      * Retrieves the current [AttachmentPickerConfig] at the call site's position in the hierarchy.
@@ -656,14 +615,6 @@ public object ChatTheme {
         get() = LocalMessageComposerTheme.current
 
     /**
-     * Retrieves the current [AttachmentPickerTheme] at the call site's position in the hierarchy.
-     */
-    public val attachmentPickerTheme: AttachmentPickerTheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalAttachmentPickerTheme.current
-
-    /**
      * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.
      */
     public val streamImageHeadersProvider: ImageHeadersProvider
@@ -720,14 +671,6 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamMediaRecorder.current
-
-    /**
-     * Retrieves the current [StreamKeyboardBehaviour] at the call site's position in the hierarchy.
-     */
-    public val keyboardBehaviour: StreamKeyboardBehaviour
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalKeyboardBehaviour.current
 
     /**
      * Retrieves the current [MediaGalleryConfig] at the call site's position in the hierarchy.

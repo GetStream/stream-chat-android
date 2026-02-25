@@ -32,7 +32,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
 @Suppress("TooManyFunctions")
 internal object MessageStyling {
     @Composable
-    fun backgroundColor(outgoing: Boolean, colors: StreamColors = ChatTheme.colors) = when {
+    fun backgroundColor(outgoing: Boolean, colors: StreamDesign.Colors = ChatTheme.colors) = when {
         outgoing -> colors.chatBgOutgoing
         else -> colors.chatBgIncoming
     }
@@ -42,7 +42,7 @@ internal object MessageStyling {
         return textColor(outgoing, ChatTheme.colors)
     }
 
-    fun textColor(outgoing: Boolean, colors: StreamColors): Color {
+    fun textColor(outgoing: Boolean, colors: StreamDesign.Colors): Color {
         return if (outgoing) {
             colors.chatTextOutgoing
         } else {
@@ -54,11 +54,11 @@ internal object MessageStyling {
     fun textStyle(outgoing: Boolean): TextStyle =
         textStyle(outgoing, ChatTheme.typography, ChatTheme.colors)
 
-    fun textStyle(outgoing: Boolean, typography: StreamTypography, colors: StreamColors): TextStyle {
+    fun textStyle(outgoing: Boolean, typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle {
         return typography.bodyDefault.copy(color = textColor(outgoing, colors))
     }
 
-    fun linkStyle(typography: StreamTypography, colors: StreamColors): TextStyle =
+    fun linkStyle(typography: StreamDesign.Typography, colors: StreamDesign.Colors): TextStyle =
         typography.bodyDefault.copy(color = colors.chatTextLink)
 
     @Composable

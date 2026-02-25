@@ -208,7 +208,7 @@ private fun PinnedMessages(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         LazyColumn(state = listState) {
             itemsIndexed(messages) { index, pinnedMessage ->
@@ -238,7 +238,7 @@ private fun PinnedMessages(
 @Composable
 internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.background(ChatTheme.colors.appBackground),
+        modifier = modifier.background(ChatTheme.colors.backgroundCoreApp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -252,8 +252,8 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
             modifier = Modifier.fillMaxWidth(),
             text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_title),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.numericMedium,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 16.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -265,8 +265,8 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
                 .padding(horizontal = 16.dp),
             text = stringResource(id = R.string.stream_compose_pinned_message_list_empty_description).parseBoldTags(),
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textSecondary,
             fontSize = 16.sp,
         )
     }
@@ -279,7 +279,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
  */
 @Composable
 internal fun DefaultPinnedMessageListLoadingContent(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.background(ChatTheme.colors.appBackground)) {
+    Box(modifier = modifier.background(ChatTheme.colors.backgroundCoreApp)) {
         LoadingIndicator(modifier)
     }
 }
@@ -292,7 +292,7 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
         contentAlignment = Alignment.Center,
     ) {

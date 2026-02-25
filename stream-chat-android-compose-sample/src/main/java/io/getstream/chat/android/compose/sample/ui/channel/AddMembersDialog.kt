@@ -91,7 +91,7 @@ fun AddMembersDialog(
         },
         confirmButton = {
             TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
                 onClick = { viewModel.onViewAction(AddMembersViewAction.ConfirmClick) },
             ) {
                 Text(text = stringResource(id = io.getstream.chat.android.compose.R.string.stream_compose_ok))
@@ -99,13 +99,13 @@ fun AddMembersDialog(
         },
         dismissButton = {
             TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.textLowEmphasis),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.textSecondary),
                 onClick = onDismiss,
             ) {
                 Text(text = stringResource(id = io.getstream.chat.android.compose.R.string.stream_compose_cancel))
             }
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     )
     LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
@@ -190,7 +190,7 @@ private fun SearchResultItem(
             )
             Text(
                 text = user.name,
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
             )
@@ -201,8 +201,8 @@ private fun SearchResultItem(
             exit = shrinkOut(targetSize = { fullSize -> fullSize }) + fadeOut(),
         ) {
             Icon(
-                modifier = Modifier.background(ChatTheme.colors.barsBackground, CircleShape),
-                tint = ChatTheme.colors.primaryAccent,
+                modifier = Modifier.background(ChatTheme.colors.backgroundElevationElevation1, CircleShape),
+                tint = ChatTheme.colors.accentPrimary,
                 painter = painterResource(id = R.drawable.ic_check_filled),
                 contentDescription = null,
             )
@@ -225,7 +225,7 @@ private fun SearchResultEmpty(
         )
         Text(
             text = stringResource(id = R.string.add_channel_no_matches),
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )
     }

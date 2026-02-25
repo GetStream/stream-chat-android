@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -73,9 +76,9 @@ public fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState: ConnectionState,
-    color: Color = ChatTheme.colors.barsBackground,
-    shape: Shape = ChatTheme.shapes.header,
-    elevation: Dp = ChatTheme.dimens.headerElevation,
+    color: Color = ChatTheme.colors.backgroundElevationElevation1,
+    shape: Shape = RectangleShape,
+    elevation: Dp = StreamTokens.elevation3,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
@@ -134,7 +137,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(ChatTheme.dimens.channelAvatarSize)
+    val size = Modifier.size(40.dp)
 
     if (currentUser != null) {
         ChatTheme.componentFactory.UserAvatar(
@@ -170,9 +173,9 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                     .wrapContentWidth()
                     .padding(horizontal = 16.dp),
                 text = title,
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
 
@@ -184,9 +187,9 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                     .wrapContentWidth()
                     .padding(horizontal = 16.dp),
                 text = stringResource(R.string.stream_compose_disconnected),
-                style = ChatTheme.typography.title3Bold,
+                style = ChatTheme.typography.headingMedium,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }
@@ -204,8 +207,8 @@ internal fun DefaultChannelListHeaderTrailingContent(
     Surface(
         modifier = Modifier.size(40.dp),
         onClick = onHeaderActionClick,
-        color = ChatTheme.colors.primaryAccent,
-        shape = ChatTheme.shapes.avatar,
+        color = ChatTheme.colors.accentPrimary,
+        shape = CircleShape,
         shadowElevation = 4.dp,
     ) {
         Icon(

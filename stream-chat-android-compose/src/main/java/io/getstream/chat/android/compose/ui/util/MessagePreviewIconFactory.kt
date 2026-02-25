@@ -70,7 +70,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
         )

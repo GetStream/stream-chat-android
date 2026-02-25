@@ -140,7 +140,7 @@ class LocationComponentFactory(
         if (message.hasSharedLocation() && !message.isDeleted()) {
             val location = requireNotNull(message.sharedLocation)
             SharedLocationItem(
-                modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth),
+                modifier = Modifier.widthIn(max = 250.dp),
                 message = message,
                 location = location,
                 onMapClick = { url -> onLinkClick?.invoke(message, url) },

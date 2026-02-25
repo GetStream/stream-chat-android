@@ -78,7 +78,7 @@ private fun DraftChannelContent(
                     onMessageSent = { onViewAction(DraftChannelViewAction.MessageSent) },
                 )
             },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { padding ->
             ChatTheme.componentFactory.MessageListEmptyContent(
                 modifier = Modifier

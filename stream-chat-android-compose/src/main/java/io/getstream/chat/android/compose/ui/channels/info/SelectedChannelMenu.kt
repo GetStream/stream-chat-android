@@ -75,8 +75,8 @@ public fun SelectedChannelMenu(
         isMuted = isMuted,
         ownCapabilities = selectedChannel.ownCapabilities,
     ),
-    shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
@@ -130,8 +130,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
+        style = ChatTheme.typography.headingMedium,
+        color = ChatTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -143,8 +143,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         ),
-        style = ChatTheme.typography.footnoteBold,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.metadataEmphasis,
+        color = ChatTheme.colors.textSecondary,
     )
 
     ChannelMembers(
@@ -195,7 +195,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                shape = ChatTheme.shapes.bottomSheet,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 selectedChannel = PreviewChannelData.channelWithManyMembers,
                 isMuted = false,
                 currentUser = PreviewUserData.user1,

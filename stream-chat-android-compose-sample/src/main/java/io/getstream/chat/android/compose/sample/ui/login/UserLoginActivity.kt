@@ -120,7 +120,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.size(width = 80.dp, height = 40.dp),
                 painter = painterResource(id = R.drawable.ic_stream),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
             )
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -130,7 +130,7 @@ class UserLoginActivity : AppCompatActivity() {
                 text = stringResource(R.string.user_login_screen_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -139,7 +139,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.user_login_screen_subtitle),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -169,7 +169,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.sdk_version_template, STREAM_CHAT_VERSION),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         }
     }
@@ -210,13 +210,13 @@ class UserLoginActivity : AppCompatActivity() {
                     text = userCredentials.user.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_user_subtitle),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
 
@@ -224,7 +224,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
             )
         }
     }
@@ -250,7 +250,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(40.dp)
-                    .background(ChatTheme.colors.disabled)
+                    .background(ChatTheme.colors.backgroundCoreDisabled)
                     .padding(8.dp),
                 painter = painterResource(id = R.drawable.ic_settings),
                 contentDescription = null,
@@ -267,13 +267,13 @@ class UserLoginActivity : AppCompatActivity() {
                     text = stringResource(id = R.string.user_login_advanced_options),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_custom_settings),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
 
@@ -281,7 +281,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
             )
         }
     }
@@ -292,7 +292,7 @@ class UserLoginActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders),
+                .background(color = ChatTheme.colors.borderCoreDefault),
         )
     }
 

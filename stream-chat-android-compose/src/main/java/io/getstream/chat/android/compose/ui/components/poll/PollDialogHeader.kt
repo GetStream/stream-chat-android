@@ -52,10 +52,10 @@ public fun PollDialogHeader(
 
         Text(
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -67,7 +67,7 @@ private fun PollDialogHeaderPreview() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.appBackground),
+                .background(ChatTheme.colors.backgroundCoreApp),
         ) {
             PollDialogHeader(
                 title = stringResource(id = R.string.stream_compose_poll_results),

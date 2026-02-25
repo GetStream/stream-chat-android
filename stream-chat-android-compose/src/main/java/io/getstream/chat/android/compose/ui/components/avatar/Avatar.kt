@@ -48,7 +48,7 @@ internal fun Avatar(
         data = data,
         modifier = modifier
             .clip(CircleShape)
-            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreImage, CircleShape) },
+            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) },
         contentScale = ContentScale.Crop,
         content = { state ->
             val painter = (state as? AsyncImagePainter.State.Success)?.painter

@@ -51,8 +51,8 @@ public fun PollQuestionInput(
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.title3,
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.headingMedium,
             fontSize = 16.sp,
         )
 
@@ -74,7 +74,7 @@ private fun PollOptionQuestionsPreview() {
         PollQuestionInput(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ChatTheme.colors.appBackground),
+                .background(ChatTheme.colors.backgroundCoreApp),
             question = "This is an amazing question!",
             onQuestionChanged = {},
         )

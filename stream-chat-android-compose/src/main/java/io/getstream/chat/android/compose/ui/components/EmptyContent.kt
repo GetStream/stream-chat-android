@@ -47,14 +47,14 @@ public fun EmptyContent(
     title: String? = null,
 ) {
     Column(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        modifier = modifier.background(color = ChatTheme.colors.backgroundCoreApp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.disabled,
+            tint = ChatTheme.colors.textDisabled,
             modifier = Modifier.size(96.dp),
         )
 
@@ -63,8 +63,8 @@ public fun EmptyContent(
         if (title != null) {
             Text(
                 text = title,
-                style = ChatTheme.typography.title3,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.headingMedium,
+                color = ChatTheme.colors.textPrimary,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.size(8.dp))
@@ -72,8 +72,8 @@ public fun EmptyContent(
 
         Text(
             text = text,
-            style = ChatTheme.typography.title3,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )
     }

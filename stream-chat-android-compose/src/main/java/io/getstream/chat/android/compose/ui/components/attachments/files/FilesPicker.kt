@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -91,8 +90,8 @@ public fun FilesPicker(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(id = R.string.stream_compose_recent_files),
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.weight(6f))
@@ -103,7 +102,7 @@ public fun FilesPicker(
                         modifier = Modifier.testTag("Stream_FindFilesButton"),
                         painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
                         contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                        tint = ChatTheme.colors.primaryAccent,
+                        tint = ChatTheme.colors.accentPrimary,
                     )
                 },
                 onClick = { fileSelectContract.launch(allowMultipleSelection) },
@@ -143,12 +142,12 @@ internal fun DefaultFilesPickerItem(
                     checked = fileItem.isSelected,
                     onCheckedChange = null,
                     colors = CheckboxDefaults.colors(
-                        checkedColor = ChatTheme.colors.primaryAccent,
-                        uncheckedColor = ChatTheme.colors.disabled,
-                        checkmarkColor = Color.White,
-                        disabledCheckedColor = ChatTheme.colors.disabled,
-                        disabledUncheckedColor = ChatTheme.colors.disabled,
-                        disabledIndeterminateColor = ChatTheme.colors.disabled,
+                        checkedColor = ChatTheme.colors.accentPrimary,
+                        uncheckedColor = ChatTheme.colors.textDisabled,
+                        checkmarkColor = ChatTheme.colors.controlRadioCheckIconSelected,
+                        disabledCheckedColor = ChatTheme.colors.textDisabled,
+                        disabledUncheckedColor = ChatTheme.colors.textDisabled,
+                        disabledIndeterminateColor = ChatTheme.colors.textDisabled,
                     ),
                 )
             } else {
@@ -156,10 +155,10 @@ internal fun DefaultFilesPickerItem(
                     selected = fileItem.isSelected,
                     onClick = null,
                     colors = RadioButtonDefaults.colors(
-                        selectedColor = ChatTheme.colors.primaryAccent,
-                        unselectedColor = ChatTheme.colors.disabled,
-                        disabledSelectedColor = ChatTheme.colors.disabled,
-                        disabledUnselectedColor = ChatTheme.colors.disabled,
+                        selectedColor = ChatTheme.colors.accentPrimary,
+                        unselectedColor = ChatTheme.colors.textDisabled,
+                        disabledSelectedColor = ChatTheme.colors.textDisabled,
+                        disabledUnselectedColor = ChatTheme.colors.textDisabled,
                     ),
                 )
             }
@@ -179,14 +178,14 @@ internal fun DefaultFilesPickerItem(
         ) {
             Text(
                 text = fileItem.attachmentMetaData.title ?: "",
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
 
             Text(
                 text = MediaStringUtil.convertFileSizeByteCount(fileItem.attachmentMetaData.size),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.metadataDefault,
+                color = ChatTheme.colors.textSecondary,
             )
         }
     }

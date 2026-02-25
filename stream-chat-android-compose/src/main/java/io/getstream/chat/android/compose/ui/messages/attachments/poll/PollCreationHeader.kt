@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,8 +64,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.appBackground,
-    shape: Shape = ChatTheme.shapes.header,
+    color: Color = ChatTheme.colors.backgroundCoreApp,
+    shape: Shape = RectangleShape,
     elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},
     enabledCreation: Boolean,
@@ -117,10 +118,10 @@ internal fun DefaultPollOptionsHeaderCenterContent(modifier: Modifier, title: St
     ) {
         Text(
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 }
@@ -133,8 +134,8 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     IconButton(
         enabled = enabled,
         colors = IconButtonDefaults.iconButtonColors(
-            contentColor = ChatTheme.colors.primaryAccent,
-            disabledContentColor = ChatTheme.colors.textLowEmphasis,
+            contentColor = ChatTheme.colors.accentPrimary,
+            disabledContentColor = ChatTheme.colors.textSecondary,
         ),
         onClick = onPollCreateClicked,
     ) {

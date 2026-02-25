@@ -20,12 +20,13 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList")
@@ -34,7 +35,7 @@ internal fun MapBox(
     modifier: Modifier,
     latitude: Double,
     longitude: Double,
-    shape: Shape = ChatTheme.shapes.attachment,
+    shape: Shape = RoundedCornerShape(12.dp),
     onClick: ((url: String) -> Unit)? = null,
     onLongClick: ((url: String) -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,

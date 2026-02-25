@@ -46,8 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -76,7 +75,7 @@ public fun InputField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borders),
+    border: BorderStroke = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     visualTransformation: VisualTransformation = DefaultInputFieldVisualTransformation(
@@ -136,14 +135,14 @@ public fun InputField(
  */
 private class DefaultInputFieldVisualTransformation(
     val inputFieldTheme: ComposerInputFieldTheme,
-    val typography: StreamTypography,
-    val colors: StreamColors,
+    val typography: StreamDesign.Typography,
+    val colors: StreamDesign.Colors,
 ) : VisualTransformation {
     override fun filter(text: AnnotatedString): TransformedText {
         val textColor = inputFieldTheme.textStyle.color
-        val fontStyle = typography.body.fontStyle
+        val fontStyle = typography.bodyDefault.fontStyle
         val linkStyle = TextStyle(
-            color = colors.primaryAccent,
+            color = colors.accentPrimary,
             textDecoration = TextDecoration.Underline,
         )
         val transformed = buildAnnotatedInputText(

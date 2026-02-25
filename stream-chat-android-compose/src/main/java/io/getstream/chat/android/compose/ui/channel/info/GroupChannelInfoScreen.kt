@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
@@ -129,7 +130,7 @@ private fun GroupChannelInfoScaffold(
                 onAddMembersClick = onAddMembersClick,
             )
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
@@ -172,7 +173,7 @@ internal fun GroupChannelInfoTopBar(
 ) {
     val elevation by animateDpAsState(
         targetValue = if (listState.canScrollBackward) {
-            ChatTheme.dimens.headerElevation
+            StreamTokens.elevation3
         } else {
             1.dp
         },
@@ -284,7 +285,7 @@ internal fun GroupChannelInfoMemberItem(
     ) {
         val user = member.user
         ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+            modifier = Modifier.size(40.dp),
             user = user,
             showIndicator = user.shouldShowOnlineIndicator(
                 userPresence = ChatTheme.userPresence,
@@ -295,22 +296,22 @@ internal fun GroupChannelInfoMemberItem(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 color = if (member.banned) {
-                    ChatTheme.colors.errorAccent
+                    ChatTheme.colors.accentError
                 } else {
-                    ChatTheme.colors.textHighEmphasis
+                    ChatTheme.colors.textPrimary
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
-                style = ChatTheme.typography.footnote,
+                style = ChatTheme.typography.metadataDefault,
                 color = if (member.banned) {
-                    ChatTheme.colors.errorAccent
+                    ChatTheme.colors.accentError
                 } else {
-                    ChatTheme.colors.textLowEmphasis
+                    ChatTheme.colors.textSecondary
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -327,8 +328,8 @@ internal fun GroupChannelInfoMemberItem(
         }
         Text(
             text = role,
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.metadataDefault,
+            color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -340,7 +341,7 @@ internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
-    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textLowEmphasis)) {
+    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textSecondary)) {
         ChannelInfoOption(
             modifier = Modifier.fillMaxWidth(),
             onClick = onClick,

@@ -355,7 +355,7 @@ class ChatsActivity : ComponentActivity() {
                                 title = {},
                                 navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
                                 colors = TopAppBarDefaults.topAppBarColors(
-                                    containerColor = ChatTheme.colors.barsBackground,
+                                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
                                 ),
                             )
                         }
@@ -480,7 +480,7 @@ class ChatsActivity : ComponentActivity() {
     ) {
         val elevation by animateDpAsState(
             targetValue = if (listState.canScrollBackward) {
-                ChatTheme.dimens.headerElevation
+                4.dp
             } else {
                 0.dp
             },
@@ -496,19 +496,21 @@ class ChatsActivity : ComponentActivity() {
                     Column {
                         Text(
                             text = stringResource(R.string.stream_ui_channel_info_group_title),
-                            style = ChatTheme.typography.title3Bold,
-                            color = ChatTheme.colors.textHighEmphasis,
+                            style = ChatTheme.typography.headingMedium,
+                            color = ChatTheme.colors.textPrimary,
                         )
                         Text(
                             text = channelName,
-                            style = ChatTheme.typography.footnote,
-                            color = ChatTheme.colors.textLowEmphasis,
+                            style = ChatTheme.typography.metadataDefault,
+                            color = ChatTheme.colors.textSecondary,
                         )
                     }
                 },
                 navigationIcon = navigationIcon,
                 expandedHeight = 56.dp,
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                ),
                 actions = {
                     if (infoState is ChannelInfoViewState.Content &&
                         infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
@@ -644,7 +646,7 @@ private fun CloseButton(onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
     }
 }

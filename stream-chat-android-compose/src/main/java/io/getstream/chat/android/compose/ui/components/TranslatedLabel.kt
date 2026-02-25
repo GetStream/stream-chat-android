@@ -47,7 +47,7 @@ public fun TranslatedLabel(
     Text(
         modifier = modifier,
         text = textLanguageMetaInfo,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.metadataDefault,
+        color = ChatTheme.colors.textSecondary,
     )
 }

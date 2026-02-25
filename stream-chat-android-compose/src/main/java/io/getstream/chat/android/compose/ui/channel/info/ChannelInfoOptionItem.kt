@@ -134,7 +134,7 @@ internal fun LazyItemScope.ChannelInfoOptionItem(
         }
 
         is ChannelInfoViewState.Content.Option.LeaveChannel -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
                     text = if (isGroupChannel) {
@@ -148,7 +148,7 @@ internal fun LazyItemScope.ChannelInfoOptionItem(
         }
 
         is ChannelInfoViewState.Content.Option.DeleteChannel -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_delete,
                     text = if (isGroupChannel) {

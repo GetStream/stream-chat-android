@@ -35,6 +35,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -78,9 +79,7 @@ import io.getstream.chat.android.compose.ui.theme.ComposerInputFieldTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamShapes
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -138,21 +137,19 @@ class MessagesActivity : ComponentActivity() {
     @Composable
     private fun SetupChatTheme() {
         val isInDarkMode = isSystemInDarkTheme()
-        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-        val typography = StreamTypography.defaultTypography()
-        val shapes = StreamShapes.defaultShapes()
+        val colors = if (isInDarkMode) StreamDesign.Colors.defaultDark() else StreamDesign.Colors.default()
+        val typography = StreamDesign.Typography.default()
         val messageComposerTheme = MessageComposerTheme
-            .defaultTheme(isInDarkMode, typography, shapes, colors)
+            .defaultTheme(isInDarkMode, typography, colors)
             .copy(
                 inputField = ComposerInputFieldTheme.defaultTheme(
-                    mentionStyleFactory = CustomMentionStyleFactory(colors.primaryAccent),
+                    mentionStyleFactory = CustomMentionStyleFactory(colors.accentPrimary),
                 ),
             )
         val locationViewModelFactory = SharedLocationViewModelFactory(cid)
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
-            shapes = shapes,
             typography = typography,
             attachmentPickerConfig = AttachmentPickerConfig(useSystemPicker = false),
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
@@ -228,7 +225,7 @@ class MessagesActivity : ComponentActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
-                        .background(ChatTheme.colors.appBackground)
+                        .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = listViewModel,
                     reactionSorting = ReactionSortingByFirstReactionAt,
@@ -313,7 +310,7 @@ class MessagesActivity : ComponentActivity() {
                                 .align(Alignment.Center)
                                 .padding(horizontal = 20.dp)
                                 .wrapContentSize(),
-                            shape = ChatTheme.shapes.attachment,
+                            shape = RoundedCornerShape(12.dp),
                             message = selectedMessage,
                             onMessageAction = { action ->
                                 composerViewModel.performMessageAction(action)
@@ -377,12 +374,12 @@ class MessagesActivity : ComponentActivity() {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
                         contentDescription = null,
-                        tint = ChatTheme.colors.textLowEmphasis,
+                        tint = ChatTheme.colors.textSecondary,
                     )
                     Text(
                         modifier = Modifier.padding(start = 4.dp),
                         text = "Type something",
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 }
             },
@@ -409,7 +406,7 @@ class MessagesActivity : ComponentActivity() {
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
                 contentDescription = null,
             )
         }

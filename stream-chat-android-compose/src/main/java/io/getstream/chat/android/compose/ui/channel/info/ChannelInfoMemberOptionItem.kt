@@ -40,7 +40,7 @@ internal fun ChannelInfoMemberOptionItem(
         }
 
         is ChannelInfoMemberViewState.Content.Option.BanMember -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
                     text = stringResource(R.string.stream_ui_channel_info_member_modal_option_ban_member),
@@ -50,7 +50,7 @@ internal fun ChannelInfoMemberOptionItem(
         }
 
         is ChannelInfoMemberViewState.Content.Option.UnbanMember -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
                     text = stringResource(R.string.stream_ui_channel_info_member_modal_option_unban_member),
@@ -60,7 +60,7 @@ internal fun ChannelInfoMemberOptionItem(
         }
 
         is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {
-            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.accentError)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
                     text = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),

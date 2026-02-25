@@ -76,7 +76,7 @@ internal fun ChannelInfoOptionButton(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -98,20 +98,20 @@ internal fun ChannelInfoOptionNavigationButton(
             modifier = Modifier.size(24.dp),
             painter = painterResource(icon),
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Icon(
             imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -131,13 +131,13 @@ internal fun ChannelInfoOptionSwitch(
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

@@ -58,7 +58,7 @@ internal fun ContextualMenu(
         shape = RoundedCornerShape(StreamTokens.radiusMd),
         color = colors.backgroundElevationElevation2,
         shadowElevation = StreamTokens.elevation3,
-        border = BorderStroke(StreamTokens.borderStrokeSubtle, colors.borderCoreSurfaceSubtle),
+        border = BorderStroke(StreamTokens.borderStrokeSubtle, colors.borderCoreSubtle),
     ) {
         Column(content = content)
     }
@@ -126,7 +126,7 @@ internal fun ContextualMenuDivider(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth(1f)
             .padding(vertical = StreamTokens.spacing2xs),
-        color = ChatTheme.colors.borderCoreSurfaceSubtle,
+        color = ChatTheme.colors.borderCoreSubtle,
     )
 }
 

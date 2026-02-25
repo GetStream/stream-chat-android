@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -60,7 +61,7 @@ public fun CommandSuggestionList(
     SuggestionList(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
+            .heightIn(max = 256.dp)
             .testTag("Stream_SuggestionList"),
         headerContent = { DefaultCommandSuggestionListHeader() },
     ) {

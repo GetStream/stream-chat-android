@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -44,6 +45,7 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
         }
     }
 
+    @Suppress("detekt:ForbiddenComment")
     @Test
     fun `Reaction picker with header`() {
         snapshotWithDarkMode {
@@ -56,16 +58,17 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
                             .align(CenterHorizontally)
                             .padding(8.dp),
                         text = "My custom header",
-                        style = ChatTheme.typography.title1,
-                        color = ChatTheme.colors.textHighEmphasis,
+                        style = ChatTheme.typography.headingLarge,
+                        color = ChatTheme.colors.textPrimary,
                     )
                     Text(
                         modifier = Modifier
                             .align(CenterHorizontally)
                             .padding(8.dp),
                         text = "Our reactions often reveal truths that actions alone can hide.",
-                        style = ChatTheme.typography.footnoteItalic,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        // TODO: replace with a dedicated italic token once the design system provides one
+                        style = ChatTheme.typography.metadataDefault.copy(fontStyle = FontStyle.Italic),
+                        color = ChatTheme.colors.textSecondary,
                     )
                 },
             )

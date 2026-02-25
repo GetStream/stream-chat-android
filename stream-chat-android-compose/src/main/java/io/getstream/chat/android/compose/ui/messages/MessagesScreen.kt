@@ -207,7 +207,7 @@ public fun MessagesScreen(
             bottomBar = {
                 bottomBarContent()
             },
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
         ) { contentPadding ->
             val currentState by listViewModel.currentMessagesState
 
@@ -618,7 +618,7 @@ public fun MessageModerationDialog(
             message = selectedMessage,
             modifier = Modifier.background(
                 shape = MaterialTheme.shapes.medium,
-                color = ChatTheme.colors.inputBackground,
+                color = ChatTheme.colors.backgroundCoreSurface,
             ),
             onDismissRequest = remember(listViewModel) { { listViewModel.removeOverlay() } },
             onDialogOptionInteraction = remember(listViewModel, composerViewModel) {

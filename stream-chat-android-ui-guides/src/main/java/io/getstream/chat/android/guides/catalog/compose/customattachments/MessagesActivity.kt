@@ -147,7 +147,7 @@ class MessagesActivity : AppCompatActivity() {
                 MessageList(
                     modifier = Modifier
                         .padding(it)
-                        .background(ChatTheme.colors.appBackground)
+                        .background(ChatTheme.colors.backgroundCoreApp)
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
                     reactionSorting = ReactionSortingByFirstReactionAt,
@@ -191,7 +191,7 @@ class MessagesActivity : AppCompatActivity() {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = ChatTheme.colors.textLowEmphasis,
+                            tint = ChatTheme.colors.textSecondary,
                         )
                     },
                     onClick = {

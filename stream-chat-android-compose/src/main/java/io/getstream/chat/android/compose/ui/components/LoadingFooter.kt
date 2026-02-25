@@ -35,7 +35,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun LoadingFooter(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .background(color = ChatTheme.colors.appBackground)
+            .background(color = ChatTheme.colors.backgroundCoreApp)
             .padding(top = 8.dp, bottom = 48.dp),
     ) {
         LoadingIndicator(

@@ -37,14 +37,14 @@ fun DurationDropdownMenu(
 ) {
     DropdownMenu(
         expanded = expanded,
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
         onDismissRequest = onDismiss,
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
             text = "Select a duration for sharing",
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
         )
         Duration.entries.forEach { duration ->
             val label = when (duration) {
@@ -54,7 +54,7 @@ fun DurationDropdownMenu(
             }
             DropdownMenuItem(
                 text = { Text(text = label) },
-                colors = MenuDefaults.itemColors(textColor = ChatTheme.colors.textLowEmphasis),
+                colors = MenuDefaults.itemColors(textColor = ChatTheme.colors.textSecondary),
                 onClick = { onSelect(duration) },
             )
         }

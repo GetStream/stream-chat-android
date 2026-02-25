@@ -106,10 +106,10 @@ private fun SearchUserLoadingContent(padding: PaddingValues) {
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
+        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
     }
 }
 
@@ -124,7 +124,7 @@ private fun SearchUserEmptyContent(padding: PaddingValues) {
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -135,7 +135,7 @@ private fun SearchUserEmptyContent(padding: PaddingValues) {
         Text(
             text = stringResource(id = R.string.add_channel_no_matches),
             fontSize = 14.sp,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -165,7 +165,7 @@ private fun SearchUserResultList(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
         state = listState,
     ) {
         users.forEach { (group, users) ->
@@ -178,7 +178,7 @@ private fun SearchUserResultList(
                     isSelected = selectedUsers.contains(user),
                     onUserClick = onUserClick,
                 )
-                HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
+                HorizontalDivider(color = ChatTheme.colors.borderCoreDefault, thickness = 1.dp)
             }
         }
         if (isLoadingMore) {
@@ -208,7 +208,7 @@ private fun GroupingItem(group: Char) {
         },
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         modifier = Modifier.padding(8.dp),
     )
 }
@@ -231,7 +231,7 @@ private fun SearchUserResultItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.backgroundCoreApp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
@@ -253,17 +253,17 @@ private fun SearchUserResultItem(
                 text = user.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
             Text(
                 text = user.getLastSeenText(context),
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         }
         if (isSelected) {
             Icon(
-                tint = ChatTheme.colors.primaryAccent,
+                tint = ChatTheme.colors.accentPrimary,
                 painter = painterResource(id = R.drawable.ic_check_filled),
                 contentDescription = null,
             )
@@ -282,6 +282,6 @@ private fun LoadingMoreItem() {
             .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
+        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
     }
 }

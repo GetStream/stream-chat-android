@@ -174,7 +174,7 @@ class ChannelsActivity : ComponentActivity() {
                     drawerContent = {
                         ModalDrawerSheet(
                             modifier = Modifier.width(300.dp),
-                            drawerContainerColor = ChatTheme.colors.barsBackground,
+                            drawerContainerColor = ChatTheme.colors.backgroundElevationElevation1,
                         ) {
                             ChannelsScreenNavigationDrawer(
                                 currentUser = user,
@@ -209,7 +209,7 @@ class ChannelsActivity : ComponentActivity() {
                                     onOptionSelected = { selectedTab = it },
                                 )
                             },
-                            containerColor = ChatTheme.colors.appBackground,
+                            containerColor = ChatTheme.colors.backgroundCoreApp,
                         ) { padding ->
                             Box(modifier = Modifier.padding(padding)) {
                                 when (selectedTab) {
@@ -301,7 +301,7 @@ class ChannelsActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .background(color = ChatTheme.colors.textLowEmphasis),
+                            .background(color = ChatTheme.colors.textSecondary),
                     )
                 },
             )
@@ -324,8 +324,8 @@ class ChannelsActivity : ComponentActivity() {
             centerContent = {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                    style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.bodyEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
             },
         )
@@ -357,7 +357,7 @@ class ChannelsActivity : ComponentActivity() {
 
                 SearchInput(
                     modifier = Modifier
-                        .background(color = ChatTheme.colors.appBackground)
+                        .background(color = ChatTheme.colors.backgroundCoreApp)
                         .fillMaxWidth()
                         .padding(8.dp),
                     query = query,

@@ -237,7 +237,7 @@ private object MessageComposerCustomizationSnippet {
                                         Text(
                                             modifier = Modifier.padding(start = 4.dp),
                                             text = "Type something",
-                                            color = ChatTheme.colors.textLowEmphasis
+                                            color = ChatTheme.colors.textSecondary
                                         )
                                     }
                                 },
@@ -260,7 +260,7 @@ private object MessageComposerCustomizationSnippet {
                                         onSendClick(state.inputValue, state.attachments)
                                     },
                                 painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                                tint = ChatTheme.colors.primaryAccent,
+                                tint = ChatTheme.colors.accentPrimary,
                                 contentDescription = null
                             )
                         },

@@ -250,21 +250,21 @@ private fun LocationPermissionRequired(
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             text = title,
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             text = message,
             textAlign = TextAlign.Center,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
         )
 
         TextButton(
-            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
             onClick = onClick,
         ) {
             Text(stringResource(id = R.string.stream_ui_message_composer_grant_permission_button))
@@ -290,15 +290,15 @@ private fun LocationButton(
             width = 1.dp,
             color = if (isPrimary) {
                 if (enabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.disabled
+                    ChatTheme.colors.textDisabled
                 }
             } else {
-                ChatTheme.colors.borders
+                ChatTheme.colors.borderCoreDefault
             },
         ),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = ChatTheme.colors.textHighEmphasis),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = ChatTheme.colors.textPrimary),
         onClick = onClick,
     ) {
         Row(
@@ -310,9 +310,9 @@ private fun LocationButton(
                 imageVector = icon,
                 contentDescription = null,
                 tint = if (enabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.disabled
+                    ChatTheme.colors.textDisabled
                 },
             )
             Column(
@@ -320,12 +320,12 @@ private fun LocationButton(
             ) {
                 Text(
                     text = label,
-                    style = ChatTheme.typography.title3Bold,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
                     text = description,
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textSecondary,
                 )
             }
         }

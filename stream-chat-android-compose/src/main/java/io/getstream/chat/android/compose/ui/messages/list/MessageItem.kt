@@ -200,8 +200,8 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
 internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSeparatorItemState) {
     val backgroundGradient = Brush.verticalGradient(
         listOf(
-            ChatTheme.colors.threadSeparatorGradientStart,
-            ChatTheme.colors.threadSeparatorGradientEnd,
+            ChatTheme.colors.backgroundCoreSurface,
+            ChatTheme.colors.backgroundCoreApp,
         ),
     )
     val replyCount = threadSeparator.replyCount
@@ -210,21 +210,21 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
         modifier = Modifier
             .semantics(mergeDescendants = true) {}
             .fillMaxWidth()
-            .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding)
+            .padding(vertical = StreamTokens.spacingXs)
             .background(brush = backgroundGradient),
         contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier
-                .padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding)
+                .padding(vertical = StreamTokens.spacing3xs)
                 .testTag("Stream_RepliesCount"),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_separator,
                 replyCount,
                 replyCount,
             ),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }
@@ -243,8 +243,8 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp),
         text = systemMessageState.message.text,
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.footnoteBold,
+        color = ChatTheme.colors.textSecondary,
+        style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
     )
 }
@@ -263,8 +263,8 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
         text = moderatedMessageItemState.message.text
             .takeUnless { it.isBlank() }
             ?: stringResource(id = R.string.stream_compose_message_moderated),
-        color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.footnoteBold,
+        color = ChatTheme.colors.textSecondary,
+        style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
     )
 }

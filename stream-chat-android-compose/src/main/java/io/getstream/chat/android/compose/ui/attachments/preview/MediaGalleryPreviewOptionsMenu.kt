@@ -81,7 +81,7 @@ internal fun MediaGalleryOptionsMenu(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
                 indication = null,
                 interactionSource = null,
@@ -96,7 +96,7 @@ internal fun MediaGalleryOptionsMenu(
                 .align(Alignment.TopEnd),
             shape = RoundedCornerShape(16.dp),
             shadowElevation = 4.dp,
-            color = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.backgroundElevationElevation1,
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 options.forEachIndexed { index, option ->
@@ -137,7 +137,7 @@ internal fun MediaGalleryOptionItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundElevationElevation1)
             .clickable(
                 interactionSource = null,
                 indication = ripple(),
@@ -157,7 +157,7 @@ internal fun MediaGalleryOptionItem(
         Text(
             text = option.title,
             color = option.titleColor,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -198,9 +198,9 @@ internal fun defaultMediaOptions(
     if (config.isReplyVisible) {
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_reply),
-            titleColor = ChatTheme.colors.textHighEmphasis,
+            titleColor = ChatTheme.colors.textPrimary,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_reply),
-            iconColor = ChatTheme.colors.textHighEmphasis,
+            iconColor = ChatTheme.colors.textPrimary,
             action = Reply(message),
             isEnabled = true,
         )
@@ -209,16 +209,16 @@ internal fun defaultMediaOptions(
     if (config.isShowInChatVisible) {
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_show_in_chat),
-            titleColor = ChatTheme.colors.textHighEmphasis,
+            titleColor = ChatTheme.colors.textPrimary,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_show_in_chat),
-            iconColor = ChatTheme.colors.textHighEmphasis,
+            iconColor = ChatTheme.colors.textPrimary,
             action = ShowInChat(message),
             isEnabled = true,
         )
         options.add(option)
     }
     if (config.isSaveMediaVisible) {
-        val color = if (isConnected) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled
+        val color = if (isConnected) ChatTheme.colors.textPrimary else ChatTheme.colors.textDisabled
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_save_image),
             titleColor = color,
@@ -230,7 +230,7 @@ internal fun defaultMediaOptions(
         options.add(option)
     }
     if (config.isDeleteVisible && message.user.id == currentUser?.id) {
-        val color = if (isConnected) ChatTheme.colors.errorAccent else ChatTheme.colors.disabled
+        val color = if (isConnected) ChatTheme.colors.accentError else ChatTheme.colors.textDisabled
         val option = MediaGalleryPreviewOption(
             title = stringResource(id = R.string.stream_compose_media_gallery_preview_delete),
             titleColor = color,

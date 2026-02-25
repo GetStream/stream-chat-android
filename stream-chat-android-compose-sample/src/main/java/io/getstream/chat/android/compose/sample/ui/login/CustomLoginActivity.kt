@@ -109,7 +109,7 @@ class CustomLoginActivity : AppCompatActivity() {
         onLoginButtonClick: (UserCredentials) -> Unit,
     ) {
         Scaffold(
-            containerColor = ChatTheme.colors.appBackground,
+            containerColor = ChatTheme.colors.backgroundCoreApp,
             topBar = { CustomLoginToolbar(onClick = onBackButtonClick) },
             content = {
                 Column(
@@ -187,7 +187,7 @@ class CustomLoginActivity : AppCompatActivity() {
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_VERSION),
                         fontSize = 14.sp,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        color = ChatTheme.colors.textSecondary,
                     )
                 }
             },
@@ -212,7 +212,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         )
     }
 
@@ -231,17 +231,17 @@ class CustomLoginActivity : AppCompatActivity() {
             onValueChange = { onValueChange(it) },
             singleLine = true,
             label = { Text(hint) },
-            shape = ChatTheme.shapes.inputField,
+            shape = RoundedCornerShape(24.dp),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = ChatTheme.colors.textHighEmphasis,
-                unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
-                focusedContainerColor = ChatTheme.colors.inputBackground,
-                unfocusedContainerColor = ChatTheme.colors.inputBackground,
-                cursorColor = ChatTheme.colors.primaryAccent,
+                focusedTextColor = ChatTheme.colors.textPrimary,
+                unfocusedTextColor = ChatTheme.colors.textPrimary,
+                focusedContainerColor = ChatTheme.colors.backgroundCoreSurface,
+                unfocusedContainerColor = ChatTheme.colors.backgroundCoreSurface,
+                cursorColor = ChatTheme.colors.accentPrimary,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedLabelColor = ChatTheme.colors.primaryAccent,
-                unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
+                focusedLabelColor = ChatTheme.colors.accentPrimary,
+                unfocusedLabelColor = ChatTheme.colors.textSecondary,
             ),
         )
     }
@@ -258,8 +258,8 @@ class CustomLoginActivity : AppCompatActivity() {
             enabled = enabled,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = ChatTheme.colors.primaryAccent,
-                disabledContainerColor = ChatTheme.colors.disabled,
+                containerColor = ChatTheme.colors.accentPrimary,
+                disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
             ),
             onClick = onClick,
         ) {
@@ -285,20 +285,20 @@ class CustomLoginActivity : AppCompatActivity() {
                 checked = value,
                 onCheckedChange = onValueChange,
                 colors = SwitchDefaults.colors(
-                    checkedThumbColor = ChatTheme.colors.primaryAccent,
-                    checkedTrackColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
-                    uncheckedThumbColor = ChatTheme.colors.textLowEmphasis,
-                    uncheckedTrackColor = ChatTheme.colors.textLowEmphasis.copy(alpha = 0.5f),
+                    checkedThumbColor = ChatTheme.colors.accentPrimary,
+                    checkedTrackColor = ChatTheme.colors.accentPrimary.copy(alpha = 0.5f),
+                    uncheckedThumbColor = ChatTheme.colors.textSecondary,
+                    uncheckedTrackColor = ChatTheme.colors.textSecondary.copy(alpha = 0.5f),
                 ),
             )
             Column {
                 Text(
                     text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
-                    style = ChatTheme.typography.title3,
+                    style = ChatTheme.typography.headingMedium,
                 )
                 Text(
                     text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
-                    style = ChatTheme.typography.footnote,
+                    style = ChatTheme.typography.metadataDefault,
                 )
             }
         }
