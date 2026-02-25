@@ -734,11 +734,18 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Cache of previous channel items by CID. Used to preserve referential identity
+     * for unchanged items, allowing Compose to skip recomposition via === check.
+     */
+    private var previousChannelItems: Map<String, ItemState.ChannelItemState> = emptyMap()
+
+    /**
      * Creates a list of [ItemState.ChannelItemState] that represents channel items we show in the list of channels.
+     * Reuses previous instances when the item hasn't changed, so Compose can skip recomposition
+     * via referential equality (===) instead of running deep equals() on [Channel].
      *
      * @param channels The channels to show.
      * @param channelMutes The list of channels muted for the current user.
-     *
      */
     private fun createChannelItems(
         channels: List<Channel>,
@@ -748,13 +755,17 @@ public class ChannelListViewModel(
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
         return channels.map {
-            ItemState.ChannelItemState(
+            val newItem = ItemState.ChannelItemState(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
                 isPinned = it.isPinned(),
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )
+            val previous = previousChannelItems[it.cid]
+            if (previous == newItem) previous else newItem
+        }.also { items ->
+            previousChannelItems = items.associateBy { it.key }
         }
     }
 
