@@ -54,6 +54,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -64,6 +65,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -453,7 +455,8 @@ public class ChannelListViewModel(
                             )
                         }
                     }
-                }.collectLatest { newState -> channelsState = newState }
+                }.flowOn(Dispatchers.Default)
+                    .collectLatest { newState -> channelsState = newState }
             }
         }
     }.onFailure {
