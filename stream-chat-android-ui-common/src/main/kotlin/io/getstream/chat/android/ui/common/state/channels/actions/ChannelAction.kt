@@ -69,6 +69,7 @@ public class LeaveGroup(
     @DrawableRes
     override val icon: Int = R.drawable.stream_ic_action_leave
     override val requiredCapability: String = ChannelCapabilities.LEAVE_CHANNEL
+    override val isDestructive: Boolean = true
 }
 
 /**

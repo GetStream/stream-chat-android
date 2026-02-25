@@ -118,6 +118,22 @@ public fun buildDefaultChannelActions(
         } else {
             null
         },
+        buildMuteAction(
+            canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
+            isMuted = isMuted,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
+        buildPinAction(
+            canPinChannel = optionVisibility.isPinChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
+        buildArchiveAction(
+            canArchiveChannel = optionVisibility.isArchiveChannelVisible,
+            selectedChannel = selectedChannel,
+            viewModel = viewModel,
+        ),
         if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
             LeaveGroup(
                 channel = selectedChannel,
@@ -139,22 +155,6 @@ public fun buildDefaultChannelActions(
         } else {
             null
         },
-        buildMuteAction(
-            canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
-            isMuted = isMuted,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
-        buildPinAction(
-            canPinChannel = optionVisibility.isPinChannelVisible,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
-        buildArchiveAction(
-            canArchiveChannel = optionVisibility.isArchiveChannelVisible,
-            selectedChannel = selectedChannel,
-            viewModel = viewModel,
-        ),
         if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
             DeleteConversation(
                 channel = selectedChannel,
