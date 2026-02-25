@@ -159,7 +159,7 @@ private fun ChannelMediaAttachmentsPreviewContent(
             )
         },
         snackbarHost = { StreamSnackbarHost(hostState = snackbarHostState) },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         MediaGalleryPager(
             modifier = Modifier

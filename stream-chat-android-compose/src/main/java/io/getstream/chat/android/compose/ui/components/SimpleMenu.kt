@@ -23,12 +23,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -44,8 +46,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 public fun SimpleMenu(
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {},
     centerContent: @Composable ColumnScope.() -> Unit = {},
@@ -68,7 +70,7 @@ public fun SimpleMenu(
                     interactionSource = null,
                 ),
             shape = shape,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {
             Column {
                 headerContent()

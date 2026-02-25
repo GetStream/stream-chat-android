@@ -63,6 +63,7 @@ import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonym
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
 import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
@@ -96,7 +97,7 @@ public fun PollViewResultDialog(
         sheetMaxWidth = Dp.Unspecified,
         shape = RoundedCornerShape(0.dp),
         dragHandle = {},
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     ) {
         var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
 
@@ -178,8 +179,8 @@ private fun PollViewResultItem(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 4.dp)
             .fillMaxWidth()
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
-            .background(ChatTheme.colors.inputBackground)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -189,7 +190,7 @@ private fun PollViewResultItem(
                     .fillMaxWidth()
                     .weight(1f),
                 text = item.option.text,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
             )
@@ -198,14 +199,14 @@ private fun PollViewResultItem(
                 Icon(
                     modifier = Modifier.padding(end = 8.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_award),
-                    tint = ChatTheme.colors.textHighEmphasis,
+                    tint = ChatTheme.colors.textPrimary,
                     contentDescription = null,
                 )
             }
 
             Text(
                 text = pluralStringResource(stream_compose_poll_vote_counts, item.voteCount, item.voteCount),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 fontSize = 16.sp,
             )
         }
@@ -224,7 +225,7 @@ private fun PollViewResultItem(
         if (item.showAllButton) {
             TextButton(
                 onClick = { onShowAllClick(item.option) },
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
             ) {
                 Text(text = stringResource(R.string.stream_compose_poll_show_all_votes))
             }
@@ -242,8 +243,8 @@ private fun PollViewResultTitle(
             .padding(16.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
-            .background(ChatTheme.colors.inputBackground)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
     ) {
         Text(
@@ -251,7 +252,7 @@ private fun PollViewResultTitle(
                 .fillMaxWidth()
                 .align(Alignment.CenterStart),
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
         )

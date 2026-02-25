@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
@@ -75,7 +76,7 @@ public fun PollSwitchList(
     modifier: Modifier = Modifier,
     pollSwitchItems: List<PollSwitchItem>,
     onSwitchesChanged: (List<PollSwitchItem>) -> Unit,
-    itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
+    itemHeightSize: Dp = 56.dp,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
     @Suppress("SpreadOperator")
@@ -106,14 +107,14 @@ public fun PollSwitchList(
                     .border(
                         width = 1.dp,
                         color = if (item.pollOptionError == null) {
-                            ChatTheme.colors.inputBackground
+                            ChatTheme.colors.backgroundCoreSurface
                         } else {
-                            ChatTheme.colors.errorAccent
+                            ChatTheme.colors.accentError
                         },
-                        shape = ChatTheme.shapes.pollOptionInput,
+                        shape = RoundedCornerShape(StreamTokens.radiusXl),
                     )
-                    .clip(shape = ChatTheme.shapes.pollOptionInput)
-                    .background(ChatTheme.colors.inputBackground),
+                    .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+                    .background(ChatTheme.colors.backgroundCoreSurface),
             ) {
                 val layoutDirection = LocalLayoutDirection.current
                 Column(
@@ -135,16 +136,16 @@ public fun PollSwitchList(
                                 .fillMaxWidth()
                                 .weight(1f),
                             text = item.title,
-                            color = ChatTheme.colors.textHighEmphasis,
+                            color = ChatTheme.colors.textPrimary,
                             fontSize = 16.sp,
                         )
 
                         Switch(
                             colors = SwitchDefaults.colors().copy(
-                                checkedTrackColor = ChatTheme.colors.infoAccent,
-                                checkedBorderColor = ChatTheme.colors.infoAccent,
-                                uncheckedTrackColor = ChatTheme.colors.textLowEmphasis,
-                                uncheckedBorderColor = ChatTheme.colors.textLowEmphasis,
+                                checkedTrackColor = ChatTheme.colors.accentSuccess,
+                                checkedBorderColor = ChatTheme.colors.accentSuccess,
+                                uncheckedTrackColor = ChatTheme.colors.textSecondary,
+                                uncheckedBorderColor = ChatTheme.colors.textSecondary,
                             ),
                             thumbContent = {
                                 Box(
@@ -155,7 +156,7 @@ public fun PollSwitchList(
                                             color = if (item.enabled) {
                                                 Color.White
                                             } else {
-                                                ChatTheme.colors.disabled
+                                                ChatTheme.colors.backgroundCoreDisabled
                                             },
                                         ),
                                 )
@@ -206,7 +207,7 @@ public fun PollSwitchList(
                                                 .fillMaxWidth()
                                                 .padding(bottom = 4.dp),
                                             text = item.pollOptionError.message,
-                                            color = ChatTheme.colors.errorAccent,
+                                            color = ChatTheme.colors.accentError,
                                             fontSize = 12.sp,
                                         )
                                         innerTextField.invoke()

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * Represents fallback content for unsupported attachments.
@@ -46,8 +48,8 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
         modifier = modifier
             .padding(2.dp)
             .fillMaxWidth(),
-        color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment,
+        color = ChatTheme.colors.backgroundCoreApp,
+        shape = RoundedCornerShape(StreamTokens.radiusLg),
     ) {
         Row(
             modifier = Modifier
@@ -68,9 +70,9 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 8.dp),
                 text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
-                style = ChatTheme.typography.bodyBold,
+                style = ChatTheme.typography.bodyEmphasis,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         }
     }

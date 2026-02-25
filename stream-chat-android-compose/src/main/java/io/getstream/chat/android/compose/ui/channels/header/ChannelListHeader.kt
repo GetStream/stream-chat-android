@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -78,8 +79,8 @@ public fun ChannelListHeader(
     title: String = "",
     currentUser: User? = null,
     connectionState: ConnectionState,
-    color: Color = ChatTheme.colors.barsBackground,
-    shape: Shape = ChatTheme.shapes.header,
+    color: Color = ChatTheme.colors.backgroundElevationElevation1,
+    shape: Shape = RectangleShape,
     elevation: Dp = 0.dp,
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
@@ -148,7 +149,7 @@ internal fun DefaultChannelHeaderLeadingContent(
     onAvatarClick: (User?) -> Unit,
 ) {
     val hitTargetSize = 48.dp
-    val avatarSize = ChatTheme.dimens.channelAvatarSize // 40dp
+    val avatarSize = 40.dp
 
     if (currentUser != null) {
         Box(

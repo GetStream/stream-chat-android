@@ -211,8 +211,8 @@ private fun RequestAdditionalAccessButton(
                 .padding(16.dp)
                 .weight(1f),
             text = stringResource(id = textId),
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         IconButton(
@@ -220,7 +220,7 @@ private fun RequestAdditionalAccessButton(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
                     contentDescription = stringResource(id = contentDescriptionId),
-                    tint = ChatTheme.colors.primaryAccent,
+                    tint = ChatTheme.colors.accentPrimary,
                 )
             },
             onClick = onClick,

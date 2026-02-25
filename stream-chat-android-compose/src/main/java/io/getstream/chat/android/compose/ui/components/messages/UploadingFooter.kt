@@ -55,7 +55,7 @@ public fun UploadingFooter(
                 uploadedCount + 1,
                 totalCount,
             ),
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
             textAlign = TextAlign.End,
         )
     }

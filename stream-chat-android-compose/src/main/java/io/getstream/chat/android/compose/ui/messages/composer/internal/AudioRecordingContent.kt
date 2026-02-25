@@ -135,7 +135,7 @@ internal fun MessageComposerAudioRecordingHoldContent(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                     contentDescription = null,
-                    tint = ChatTheme.colors.errorAccent,
+                    tint = ChatTheme.colors.accentError,
                 )
             }
 
@@ -169,7 +169,7 @@ internal fun MessageComposerAudioRecordingLockedContent(
                 Icon(
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                     contentDescription = null,
-                    tint = ChatTheme.colors.errorAccent,
+                    tint = ChatTheme.colors.accentError,
                 )
             }
 
@@ -323,7 +323,7 @@ private fun MessageComposerAudioRecordingControlsContent(
                 testTag = "Stream_ComposerStopAudioRecordingButton",
                 circleModifier = Modifier.border(1.dp, ChatTheme.colors.buttonDestructiveBorder, CircleShape),
                 iconRes = R.drawable.stream_compose_ic_stop,
-                iconTint = ChatTheme.colors.errorAccent,
+                iconTint = ChatTheme.colors.accentError,
                 iconModifier = Modifier.size(ControlIconSize),
             )
         }

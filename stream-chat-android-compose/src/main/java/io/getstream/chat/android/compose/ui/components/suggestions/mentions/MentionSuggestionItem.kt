@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
@@ -76,8 +77,8 @@ public fun MentionSuggestionItem(
             .wrapContentHeight()
             .clickable { onMentionSelected(user) }
             .padding(
-                vertical = ChatTheme.dimens.mentionSuggestionItemVerticalPadding,
-                horizontal = ChatTheme.dimens.mentionSuggestionItemHorizontalPadding,
+                vertical = StreamTokens.spacingXs,
+                horizontal = StreamTokens.spacingMd,
             )
             .testTag("Stream_MentionSuggestionItem"),
         verticalAlignment = Alignment.CenterVertically,
@@ -100,7 +101,7 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
     ChatTheme.componentFactory.UserAvatar(
         modifier = Modifier
             .padding(end = 8.dp)
-            .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize),
+            .size(40.dp),
         user = user,
         showIndicator = user.shouldShowOnlineIndicator(
             userPresence = ChatTheme.userPresence,
@@ -126,16 +127,16 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
         val username = "@${user.id}"
         Text(
             text = user.name.ifEmpty { username },
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         if (user.name.isNotEmpty()) {
             Text(
                 text = username,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.bodyDefault,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -154,6 +155,6 @@ internal fun DefaultMentionSuggestionItemTrailingContent() {
             .size(24.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_mentions),
         contentDescription = null,
-        tint = ChatTheme.colors.primaryAccent,
+        tint = ChatTheme.colors.accentPrimary,
     )
 }

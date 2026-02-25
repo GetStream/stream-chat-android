@@ -55,8 +55,8 @@ public fun MessageThreadFooter(
         Text(
             modifier = Modifier.testTag("Stream_ThreadRepliesLabel"),
             text = text,
-            style = ChatTheme.typography.footnoteBold,
-            color = ChatTheme.colors.primaryAccent,
+            style = ChatTheme.typography.metadataEmphasis,
+            color = ChatTheme.colors.accentPrimary,
         )
 
         if (messageAlignment == MessageAlignment.End) {

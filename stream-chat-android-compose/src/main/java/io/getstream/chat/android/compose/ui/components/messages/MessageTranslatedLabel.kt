@@ -89,8 +89,8 @@ private fun ShowTranslationLabel(onToggleOriginalText: () -> Unit) {
     Text(
         modifier = Modifier.clickable { onToggleOriginalText() },
         text = stringResource(R.string.stream_compose_message_list_show_translation),
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.metadataDefault,
+        color = ChatTheme.colors.textSecondary,
     )
 }
 
@@ -103,7 +103,7 @@ private fun ShowOriginalLabel(onToggleOriginalText: () -> Unit) {
             onClick = onToggleOriginalText,
         ),
         text = stringResource(R.string.stream_compose_message_list_show_original),
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.metadataDefault,
+        color = ChatTheme.colors.textSecondary,
     )
 }

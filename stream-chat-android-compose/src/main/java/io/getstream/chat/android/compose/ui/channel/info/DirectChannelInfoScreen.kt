@@ -112,7 +112,7 @@ private fun DirectChannelInfoScaffold(
                 onNavigationIconClick = onNavigationIconClick,
             )
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     ) { padding ->
         DirectChannelInfoContent(
             state = infoState,
@@ -158,7 +158,7 @@ internal fun DirectChannelInfoTopBar(
                 onClick = onNavigationIconClick,
             )
         },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
     )
 }
 
@@ -215,15 +215,15 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         )
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = user.getLastSeenText(LocalContext.current),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.metadataDefault,
+            color = ChatTheme.colors.textSecondary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

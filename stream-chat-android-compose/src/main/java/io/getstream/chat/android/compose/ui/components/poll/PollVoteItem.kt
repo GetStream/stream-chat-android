@@ -50,20 +50,20 @@ internal fun PollVoteItem(
         Text(
             modifier = Modifier.weight(1f),
             text = user.name,
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.bodyDefault,
         )
 
         Text(
             text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.bodyEmphasis,
         )
 
         Text(
             text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
-            color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textSecondary,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }

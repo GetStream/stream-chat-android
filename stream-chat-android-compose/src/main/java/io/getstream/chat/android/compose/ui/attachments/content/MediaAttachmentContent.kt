@@ -62,6 +62,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil3.ColorImage
 import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.AsyncImagePainter
@@ -303,10 +304,10 @@ internal fun SingleMediaAttachment(
         modifier = modifier
             .applyIf(!shouldBeFullSize) { padding(MessageStyling.messageSectionPadding) }
             .size(
-                width = singleMediaAttachmentWidth(isVideo),
+                width = 250.dp,
                 height = singleMediaAttachmentHeight(isVideo, ratio),
             ),
-        shape = if (shouldBeFullSize) null else ChatTheme.shapes.attachment,
+        shape = if (shouldBeFullSize) null else RoundedCornerShape(StreamTokens.radiusLg),
         message = message,
         attachmentPosition = 0,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -354,8 +355,8 @@ internal fun RowScope.MultipleMediaAttachmentsColumns(
     val columnSizingModifier = Modifier
         .weight(1f, fill = false)
         .size(
-            width = ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2,
-            height = ChatTheme.dimens.attachmentsContentGroupPreviewHeight,
+            width = 250.dp / 2,
+            height = 196.dp,
         )
 
     Column(
@@ -562,18 +563,11 @@ internal fun MediaAttachmentContentItem(
             ),
         contentAlignment = Alignment.Center,
     ) {
-        val backgroundColor =
-            if (isImage) {
-                ChatTheme.colors.imageBackgroundMessageList
-            } else {
-                ChatTheme.colors.videoBackgroundMessageList
-            }
-
         StreamAsyncImage(
             imageRequest = imageRequest,
             modifier = Modifier
                 .fillMaxSize()
-                .background(backgroundColor),
+                .background(ChatTheme.colors.backgroundCoreSurface),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
             Crossfade(targetState = asyncImageState) { state ->
@@ -605,7 +599,7 @@ internal fun MediaAttachmentContentItem(
                             contentAlignment = Alignment.Center,
                         ) {
                             Icon(
-                                tint = ChatTheme.colors.disabled,
+                                tint = ChatTheme.colors.textDisabled,
                                 modifier = Modifier.fillMaxSize(0.4f),
                                 painter = painterResource(R.drawable.stream_compose_ic_image_picker),
                                 contentDescription = stringResource(
@@ -642,7 +636,7 @@ internal fun MediaAttachmentShowMoreOverlay(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = ChatTheme.colors.showMoreOverlay, shape = shape),
+            .background(color = ChatTheme.colors.backgroundCoreOverlayDark, shape = shape),
     ) {
         Text(
             modifier = modifier
@@ -651,8 +645,8 @@ internal fun MediaAttachmentShowMoreOverlay(
                 id = R.string.stream_compose_remaining_media_attachments_count,
                 remainingMediaCount,
             ),
-            color = ChatTheme.colors.showMoreCountText,
-            style = ChatTheme.typography.title1,
+            color = ChatTheme.colors.textOnAccent,
+            style = ChatTheme.typography.headingLarge,
             textAlign = TextAlign.Center,
         )
     }
@@ -686,18 +680,6 @@ public data class MediaAttachmentClickData internal constructor(
 )
 
 /**
- * Retrieves the width for a single-media attachment.
- *
- * @param isVideo true if "video", false if "image".
- */
-@Composable
-private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
-    ChatTheme.dimens.attachmentsContentVideoWidth
-} else {
-    ChatTheme.dimens.attachmentsContentImageWidth
-}
-
-/**
  * Calculates the actual single-media attachment height, based on the configurable width, maxHeight and the aspectRatio.
  *
  * @param isVideo true if "video", false if "image".
@@ -705,13 +687,12 @@ private fun singleMediaAttachmentWidth(isVideo: Boolean): Dp = if (isVideo) {
  */
 @Composable
 private fun singleMediaAttachmentHeight(isVideo: Boolean, aspectRatio: Float): Dp {
-    val width = singleMediaAttachmentWidth(isVideo)
     val maxHeight = if (isVideo) {
-        ChatTheme.dimens.attachmentsContentVideoMaxHeight
+        400.dp
     } else {
-        ChatTheme.dimens.attachmentsContentImageMaxHeight
+        600.dp
     }
-    val heightAccordingAspectRatio = width / aspectRatio
+    val heightAccordingAspectRatio = 250.dp / aspectRatio
     return minOf(heightAccordingAspectRatio, maxHeight)
 }
 

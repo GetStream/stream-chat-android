@@ -47,21 +47,21 @@ fun SearchUserTextField(
         singleLine = true,
         maxLines = 1,
         colors = TextFieldDefaults.colors(
-            focusedContainerColor = ChatTheme.colors.barsBackground,
-            unfocusedContainerColor = ChatTheme.colors.barsBackground,
+            focusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
+            unfocusedContainerColor = ChatTheme.colors.backgroundElevationElevation1,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
-            focusedTextColor = ChatTheme.colors.textHighEmphasis,
-            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
-            cursorColor = ChatTheme.colors.primaryAccent,
+            focusedTextColor = ChatTheme.colors.textPrimary,
+            unfocusedTextColor = ChatTheme.colors.textPrimary,
+            cursorColor = ChatTheme.colors.accentPrimary,
         ),
         onValueChange = onQueryChanged,
         placeholder = {
             Text(
                 text = stringResource(id = R.string.add_channel_type_name),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         },
         leadingIcon = leadingContent,

@@ -123,12 +123,12 @@ internal fun DefaultSearchResultItemLeadingContent(
                 user = user,
                 modifier = Modifier
                     .padding(
-                        start = StreamTokens.spacingMd, // 16dp (was channelItemHorizontalPadding = 8dp)
-                        end = 0.dp, // gap handled by Row's horizontalArrangement
-                        top = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp)
-                        bottom = StreamTokens.spacingMd, // 16dp
+                        start = StreamTokens.spacingMd,
+                        end = 0.dp,
+                        top = StreamTokens.spacingMd,
+                        bottom = StreamTokens.spacingMd,
                     )
-                    .size(48.dp), // 48dp (was channelAvatarSize = 40dp; Figma: 48dp)
+                    .size(48.dp),
                 showIndicator = user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,
                     currentUser = currentUser,
@@ -164,10 +164,10 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
-            style = ChatTheme.typography.bodyDefault, // was bodyBold + fontSize override
+            style = ChatTheme.typography.bodyDefault,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textPrimary, // was textHighEmphasis
+            color = ChatTheme.colors.textPrimary,
         )
 
         Text(
@@ -177,8 +177,8 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.captionDefault, // was body
-            color = ChatTheme.colors.textSecondary, // was textLowEmphasis
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
         )
     }
 }
@@ -195,10 +195,10 @@ internal fun RowScope.DefaultSearchResultItemTrailingContent(
     Column(
         modifier = Modifier
             .padding(
-                start = StreamTokens.spacing2xs, // 4dp (was 4.dp)
-                end = StreamTokens.spacingMd, // 16dp (was channelItemHorizontalPadding = 8dp; Figma: spacing/md)
-                top = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp; Figma: spacing/md)
-                bottom = StreamTokens.spacingMd, // 16dp
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingMd,
             )
             .wrapContentHeight()
             .align(Alignment.CenterVertically), // was Alignment.Bottom; center-align with Figma layout

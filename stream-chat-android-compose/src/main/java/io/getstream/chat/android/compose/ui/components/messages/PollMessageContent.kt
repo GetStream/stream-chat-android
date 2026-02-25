@@ -149,7 +149,7 @@ public fun PollMessageContent(
                 message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
                 content = {
                     MessageContent(
                         message = message,
@@ -337,7 +337,7 @@ private fun NewOptionDialog(
         title = {
             Text(
                 text = stringResource(R.string.stream_compose_suggest_an_option),
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
             )
         },
         text = {
@@ -362,8 +362,8 @@ private fun NewOptionDialog(
             TextButton(
                 enabled = newOption.value.isNotBlank(),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = ChatTheme.colors.primaryAccent,
-                    disabledContentColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
+                    contentColor = ChatTheme.colors.accentPrimary,
+                    disabledContentColor = ChatTheme.colors.accentPrimary.copy(alpha = 0.5f),
                 ),
                 onClick = {
                     onNewOption.invoke(newOption.value)
@@ -375,13 +375,13 @@ private fun NewOptionDialog(
         },
         dismissButton = {
             TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
                 onClick = { onDismiss.invoke() },
             ) {
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
-        containerColor = ChatTheme.colors.barsBackground,
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
     )
 }
 
@@ -494,7 +494,7 @@ private fun PollOptionButton(
 @Composable
 private fun PollMessageContentPreview() {
     ChatTheme {
-        Column(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+        Column(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
             PollMessageContent(
                 modifier = Modifier
                     .fillMaxWidth()

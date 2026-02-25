@@ -53,6 +53,7 @@ import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.common.RadioCheck
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -134,7 +135,7 @@ private fun Content(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         item {
             PollDialogHeader(
@@ -164,8 +165,8 @@ internal fun PollMoreOptionsTitle(title: String) {
             .padding(16.dp)
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
-            .background(ChatTheme.colors.inputBackground)
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .background(ChatTheme.colors.backgroundCoreSurface)
             .padding(16.dp),
     ) {
         Text(
@@ -173,7 +174,7 @@ internal fun PollMoreOptionsTitle(title: String) {
                 .fillMaxWidth()
                 .align(Alignment.CenterStart),
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
         )
@@ -232,7 +233,7 @@ private fun PollMoreOptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .background(color = ChatTheme.colors.inputBackground, shape = shape)
+            .background(color = ChatTheme.colors.backgroundCoreSurface, shape = shape)
             .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -253,7 +254,7 @@ private fun PollMoreOptionItem(
         Text(
             modifier = Modifier.weight(1f),
             text = option.text,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             fontSize = 16.sp,
@@ -262,7 +263,7 @@ private fun PollMoreOptionItem(
         Text(
             modifier = Modifier.padding(bottom = 2.dp),
             text = voteCount.toString(),
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 16.sp,
         )
     }

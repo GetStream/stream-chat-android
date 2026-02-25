@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
@@ -27,19 +28,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.Mention
 
 /**
  * Represents the theming for the message composer.
  * @param inputField The theming for the input field in the message composer.
  * @param actionsTheme The theming for the different composer actions.
- * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
 public data class MessageComposerTheme(
     val inputField: ComposerInputFieldTheme,
     val actionsTheme: ComposerActionsTheme,
-    val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
 
     public companion object {
@@ -52,17 +50,15 @@ public data class MessageComposerTheme(
         @Composable
         public fun defaultTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isInDarkMode) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
+            colors: StreamDesign.Colors = when (isInDarkMode) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
         ): MessageComposerTheme {
             return MessageComposerTheme(
-                inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+                inputField = ComposerInputFieldTheme.defaultTheme(typography, colors),
                 actionsTheme = ComposerActionsTheme.defaultTheme(colors),
-                attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }
     }
@@ -88,22 +84,21 @@ public data class ComposerInputFieldTheme(
     public companion object {
         @Composable
         public fun defaultTheme(
-            typography: StreamTypography = StreamTypography.defaultTypography(),
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
-                true -> StreamColors.defaultDarkColors()
-                else -> StreamColors.defaultColors()
+            typography: StreamDesign.Typography = StreamDesign.Typography.default(),
+            colors: StreamDesign.Colors = when (isSystemInDarkTheme()) {
+                true -> StreamDesign.Colors.defaultDark()
+                else -> StreamDesign.Colors.default()
             },
             mentionStyleFactory: MentionStyleFactory = MentionStyleFactory.NoStyle,
         ): ComposerInputFieldTheme {
             return ComposerInputFieldTheme(
-                borderShape = shapes.inputField,
-                backgroundColor = colors.inputBackground,
-                textStyle = typography.body.copy(
-                    color = colors.textHighEmphasis,
+                borderShape = RoundedCornerShape(StreamTokens.radius3xl),
+                backgroundColor = colors.backgroundCoreSurface,
+                textStyle = typography.bodyDefault.copy(
+                    color = colors.textPrimary,
                     textDirection = TextDirection.Content,
                 ),
-                cursorBrushColor = colors.primaryAccent,
+                cursorBrushColor = colors.accentPrimary,
                 mentionStyleFactory = mentionStyleFactory,
             )
         }
@@ -155,13 +150,13 @@ public data class ComposerActionsTheme(
          * @return A [ComposerActionsTheme] instance holding the default theming.
          */
         @Composable
-        public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
+        public fun defaultTheme(colors: StreamDesign.Colors): ComposerActionsTheme {
             val attachmentsButton = IconContainerStyle(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
                 padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                    tint = colors.textHighEmphasis,
+                    tint = colors.textPrimary,
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )
@@ -170,7 +165,7 @@ public data class ComposerActionsTheme(
                 padding = ComponentPadding(start = 8.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    tint = colors.textHighEmphasis,
+                    tint = colors.textPrimary,
                     size = ComponentSize(width = 20.dp, height = 20.dp),
                 ),
             )

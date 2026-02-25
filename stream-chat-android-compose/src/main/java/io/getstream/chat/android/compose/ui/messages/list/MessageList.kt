@@ -331,8 +331,8 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
     ) {
         Text(
             text = stringResource(R.string.stream_compose_message_list_empty_messages),
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.textLowEmphasis,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
         )
     }

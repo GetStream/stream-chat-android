@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -167,7 +168,7 @@ private object ReactionsPickerCustomizationSnippet {
                                         .align(Alignment.Center)
                                         .padding(horizontal = 20.dp)
                                         .wrapContentSize(),
-                                    shape = ChatTheme.shapes.attachment,
+                                    shape = RoundedCornerShape(12.dp),
                                     message = selectedMessage,
                                     onMessageAction = { action ->
                                         composerViewModel.performMessageAction(action)
@@ -189,8 +190,8 @@ private object ReactionsPickerCustomizationSnippet {
             Text(
                 modifier = Modifier.padding(start = 20.dp, top = 12.dp),
                 text = "Available reactions",
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                style = ChatTheme.typography.headingMedium,
+                color = ChatTheme.colors.textPrimary
             )
         }
     }

@@ -90,7 +90,7 @@ class CatalogActivity : AppCompatActivity() {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_logout),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textHighEmphasis,
+                    tint = ChatTheme.colors.textPrimary,
                 )
             }
 
@@ -167,8 +167,8 @@ class CatalogActivity : AppCompatActivity() {
         Text(
             text = text,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-            style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
         )
     }
 
@@ -188,24 +188,24 @@ class CatalogActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.inputBackground),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
             ) {
                 Text(
                     text = titleText,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     fontSize = 16.sp,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = descriptionText,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.bodyDefault,
+                    color = ChatTheme.colors.textPrimary,
                 )
             }
         }

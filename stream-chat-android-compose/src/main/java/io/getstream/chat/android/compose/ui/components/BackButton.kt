@@ -46,7 +46,7 @@ public fun BackButton(
         Icon(
             painter = painter,
             contentDescription = stringResource(R.string.stream_ui_back_button),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
     }
 }

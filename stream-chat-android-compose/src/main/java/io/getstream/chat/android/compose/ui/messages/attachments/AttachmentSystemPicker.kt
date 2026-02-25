@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -246,8 +247,8 @@ private fun CameraPermissionDialog(
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            modifier = Modifier.height(ChatTheme.dimens.attachmentsPickerHeight),
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
+            modifier = Modifier.height(350.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundElevationElevation1),
         ) {
             RequiredCameraPermission()
         }

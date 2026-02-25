@@ -99,7 +99,7 @@ public fun CreatePollScreen(
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
             .verticalScroll(rememberScrollState())
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.backgroundCoreApp),
     ) {
         // Header
         PollCreationHeader(

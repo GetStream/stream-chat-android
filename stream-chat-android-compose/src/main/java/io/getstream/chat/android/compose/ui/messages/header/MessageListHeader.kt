@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -46,6 +47,7 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.ifNotNull
@@ -86,9 +88,9 @@ public fun MessageListHeader(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    color: Color = ChatTheme.colors.barsBackground,
-    shape: Shape = ChatTheme.shapes.header,
-    elevation: Dp = ChatTheme.dimens.headerElevation,
+    color: Color = ChatTheme.colors.backgroundElevationElevation1,
+    shape: Shape = RectangleShape,
+    elevation: Dp = StreamTokens.elevation3,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClick: (() -> Unit)? = null,
@@ -225,10 +227,10 @@ public fun DefaultMessageListHeaderCenterContent(
         Text(
             modifier = Modifier.testTag("Stream_ChannelName"),
             text = title,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         when (connectionState) {
@@ -243,16 +245,16 @@ public fun DefaultMessageListHeaderCenterContent(
                 NetworkLoadingIndicator(
                     modifier = Modifier.wrapContentHeight(),
                     spinnerSize = 12.dp,
-                    textColor = ChatTheme.colors.textLowEmphasis,
-                    textStyle = ChatTheme.typography.footnote,
+                    textColor = ChatTheme.colors.textSecondary,
+                    textStyle = ChatTheme.typography.metadataDefault,
                 )
             }
 
             is ConnectionState.Offline -> {
                 Text(
                     text = stringResource(id = R.string.stream_compose_disconnected),
-                    color = ChatTheme.colors.textLowEmphasis,
-                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textSecondary,
+                    style = ChatTheme.typography.metadataDefault,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -273,8 +275,8 @@ internal fun DefaultMessageListHeaderSubtitle(
     subtitle: String,
     typingUsers: List<User>,
 ) {
-    val textColor = ChatTheme.colors.textLowEmphasis
-    val textStyle = ChatTheme.typography.footnote
+    val textColor = ChatTheme.colors.textSecondary
+    val textStyle = ChatTheme.typography.metadataDefault
 
     if (typingUsers.isEmpty()) {
         Text(
@@ -327,7 +329,7 @@ internal fun DefaultMessageListHeaderTrailingContent(
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
-            .size(ChatTheme.dimens.channelAvatarSize)
+            .size(40.dp)
             .ifNotNull(onClick) { clickable(onClick = it) },
         channel = channel,
         currentUser = currentUser,

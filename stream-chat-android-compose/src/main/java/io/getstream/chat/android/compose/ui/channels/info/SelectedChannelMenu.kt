@@ -76,8 +76,8 @@ public fun SelectedChannelMenu(
         isMuted = isMuted,
         ownCapabilities = selectedChannel.ownCapabilities,
     ),
-    shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
@@ -135,8 +135,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             ),
         textAlign = TextAlign.Center,
         text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.headingSmall, // was title3Bold (18sp/W500)
-        color = ChatTheme.colors.textPrimary, // was textHighEmphasis
+        style = ChatTheme.typography.headingSmall,
+        color = ChatTheme.colors.textPrimary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
@@ -148,8 +148,8 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         ),
-        style = ChatTheme.typography.captionDefault, // was footnoteBold
-        color = ChatTheme.colors.textSecondary, // was textLowEmphasis
+        style = ChatTheme.typography.captionDefault,
+        color = ChatTheme.colors.textSecondary,
     )
 
     ChannelMembers(
@@ -200,7 +200,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                shape = ChatTheme.shapes.bottomSheet,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 selectedChannel = PreviewChannelData.channelWithManyMembers,
                 isMuted = false,
                 currentUser = PreviewUserData.user1,

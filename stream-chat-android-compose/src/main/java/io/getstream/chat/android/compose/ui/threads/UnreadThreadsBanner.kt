@@ -67,7 +67,7 @@ public fun UnreadThreadsBanner(
                 .fillMaxWidth()
                 .heightIn(min = 52.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .background(ChatTheme.colors.textHighEmphasis)
+                .background(ChatTheme.colors.textPrimary)
                 .then(clickableModifier)
                 .padding(start = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -79,7 +79,7 @@ public fun UnreadThreadsBanner(
                 modifier = Modifier.weight(1f),
                 text = text,
                 fontSize = 16.sp,
-                color = ChatTheme.colors.barsBackground,
+                color = ChatTheme.colors.backgroundElevationElevation1,
                 lineHeight = 20.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -88,7 +88,7 @@ public fun UnreadThreadsBanner(
                 modifier = Modifier.minimumInteractiveComponentSize(),
                 painter = painterResource(id = R.drawable.stream_compose_ic_union),
                 contentDescription = "Reload threads",
-                tint = ChatTheme.colors.barsBackground,
+                tint = ChatTheme.colors.backgroundElevationElevation1,
             )
         }
     }

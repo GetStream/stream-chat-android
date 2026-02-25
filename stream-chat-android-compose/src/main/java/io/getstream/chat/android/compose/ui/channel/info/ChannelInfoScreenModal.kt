@@ -194,8 +194,8 @@ private fun HideChannelModalText(
             } else {
                 stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_message)
             },
-            color = ChatTheme.colors.textHighEmphasis,
-            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.bodyDefault,
         )
         Row(
             modifier = Modifier
@@ -214,8 +214,8 @@ private fun HideChannelModalText(
                 } else {
                     stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_clear_history)
                 },
-                color = ChatTheme.colors.textLowEmphasis,
-                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textSecondary,
+                style = ChatTheme.typography.bodyDefault,
             )
         }
     }

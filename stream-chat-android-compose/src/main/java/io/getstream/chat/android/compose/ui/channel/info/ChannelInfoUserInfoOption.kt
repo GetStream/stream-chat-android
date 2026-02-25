@@ -34,18 +34,18 @@ internal fun ChannelInfoUserInfoOption(
         Icon(
             painter = painterResource(R.drawable.stream_compose_ic_person),
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
         Text(
             modifier = Modifier.weight(1f),
             text = "@$username",
-            style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            style = ChatTheme.typography.bodyEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
         Icon(
             painter = painterResource(R.drawable.stream_compose_ic_copy),
             contentDescription = stringResource(R.string.stream_ui_channel_info_copy_user_handle),
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
     }
 }

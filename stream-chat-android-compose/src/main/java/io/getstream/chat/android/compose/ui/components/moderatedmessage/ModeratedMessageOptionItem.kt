@@ -38,15 +38,15 @@ public fun ModeratedMessageOptionItem(
     option: ModeratedMessageOption,
     modifier: Modifier = Modifier,
 ) {
-    HorizontalDivider(color = ChatTheme.colors.borders)
+    HorizontalDivider(color = ChatTheme.colors.borderCoreDefault)
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(id = option.text),
-            style = ChatTheme.typography.body,
-            color = ChatTheme.colors.primaryAccent,
+            style = ChatTheme.typography.bodyDefault,
+            color = ChatTheme.colors.accentPrimary,
         )
     }
 }

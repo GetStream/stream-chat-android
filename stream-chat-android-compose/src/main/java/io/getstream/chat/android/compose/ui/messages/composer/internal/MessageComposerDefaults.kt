@@ -35,7 +35,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -86,8 +85,8 @@ internal fun DefaultMessageComposerFooterInThreadMode(
             checked = alsoSendToChannel,
             onCheckedChange = onAlsoSendToChannelChanged,
             colors = CheckboxDefaults.colors(
-                ChatTheme.colors.primaryAccent,
-                ChatTheme.colors.textLowEmphasis,
+                ChatTheme.colors.accentPrimary,
+                ChatTheme.colors.textSecondary,
             ),
         )
 
@@ -95,9 +94,9 @@ internal fun DefaultMessageComposerFooterInThreadMode(
 
         Text(
             text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-            color = ChatTheme.colors.textLowEmphasis,
+            color = ChatTheme.colors.textSecondary,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.body,
+            style = ChatTheme.typography.bodyDefault,
         )
     }
 }
@@ -131,7 +130,7 @@ internal fun DefaultMessageComposerLeadingContent(
                 .padding(end = 8.dp)
                 .border(
                     width = 1.dp,
-                    color = ChatTheme.colors.borders,
+                    color = ChatTheme.colors.borderCoreDefault,
                     shape = CircleShape,
                 )
                 .then(
@@ -145,10 +144,10 @@ internal fun DefaultMessageComposerLeadingContent(
                 .padding(attachmentsButtonStyle.padding)
                 .testTag("Stream_ComposerAttachmentsButton"),
             colors = IconButtonDefaults.filledIconButtonColors(
-                containerColor = ChatTheme.colors.barsBackground,
-                disabledContainerColor = ChatTheme.colors.barsBackground,
+                containerColor = ChatTheme.colors.backgroundElevationElevation1,
+                disabledContainerColor = ChatTheme.colors.backgroundElevationElevation1,
                 contentColor = attachmentsButtonStyle.icon.tint,
-                disabledContentColor = ChatTheme.colors.disabled,
+                disabledContentColor = ChatTheme.colors.textDisabled,
             ),
             onClick = onAttachmentsClick,
         ) {
@@ -186,8 +185,8 @@ internal fun SendButton(
             )
         },
         colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = ChatTheme.colors.primaryAccent,
-            contentColor = Color.White,
+            containerColor = ChatTheme.colors.accentPrimary,
+            contentColor = ChatTheme.colors.textOnAccent,
         ),
         onClick = onClick,
     )

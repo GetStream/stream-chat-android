@@ -142,8 +142,8 @@ class DeleteMessageForMeComponentFactory(
                 Text(
                     modifier = Modifier.padding(vertical = 4.dp),
                     text = "Deleted only for me",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    style = ChatTheme.typography.metadataDefault,
+                    color = ChatTheme.colors.textPrimary,
                 )
             }
             super.MessageFooterContent(messageItem)

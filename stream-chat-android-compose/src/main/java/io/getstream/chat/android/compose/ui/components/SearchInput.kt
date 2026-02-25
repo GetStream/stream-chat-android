@@ -217,7 +217,7 @@ internal fun DefaultSearchClearButton(onClick: () -> Unit) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_clear),
             contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textTertiary,
         )
     }
 }
@@ -230,7 +230,7 @@ private fun SearchInputPreview() {
 
         SearchInput(
             modifier = Modifier
-                .background(color = ChatTheme.colors.appBackground)
+                .background(color = ChatTheme.colors.backgroundCoreApp)
                 .padding(horizontal = 12.dp, vertical = 8.dp)
                 .fillMaxWidth(),
             query = searchQuery,

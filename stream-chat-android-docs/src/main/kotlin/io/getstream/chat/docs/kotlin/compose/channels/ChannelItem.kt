@@ -140,8 +140,8 @@ private object ChannelItemCustomizationSnippet {
                 centerContent = { // Replace the details content with a simple Text
                     Text(
                         text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                        style = ChatTheme.typography.bodyBold,
-                        color = ChatTheme.colors.textHighEmphasis
+                        style = ChatTheme.typography.bodyEmphasis,
+                        color = ChatTheme.colors.textPrimary
                     )
                 }
             )

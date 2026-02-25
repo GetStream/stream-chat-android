@@ -94,7 +94,7 @@ private object ChannelListHeaderCustomizationSnippet {
                                 },
                                 imageVector = Icons.Default.Add,
                                 contentDescription = "Add",
-                                tint = ChatTheme.colors.textHighEmphasis
+                                tint = ChatTheme.colors.textPrimary
                             )
                         }
                     )
