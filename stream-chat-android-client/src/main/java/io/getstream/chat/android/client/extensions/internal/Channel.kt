@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.extensions.userRead
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.MessageSortComparator
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
@@ -81,7 +82,7 @@ public fun Channel.updateLastMessage(
         )
         .values
         .filterNot { it.isDeleted() }
-        .sortedBy { it.getCreatedAtOrNull() }
+        .sortedWith(MessageSortComparator)
 
     val newReads = read.map { read ->
         read.takeUnless { it.user.id == currentUserId }

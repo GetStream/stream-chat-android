@@ -18,10 +18,10 @@ package io.getstream.chat.android.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
-import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.utils.message.MessageSortComparator
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.extensions.lastMessageAt
@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState.Companion.LIMIT_MULTIPLIER
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
@@ -170,7 +171,7 @@ internal class ChannelMutableState(
                 .filter { it.user.id == user?.id || !it.shadowed }
                 .filter(this::isMessageVisible)
                 .filter(extraPredicate)
-                .sortedBy { it.getCreatedAtOrNull() }
+                .sortedWith(MessageSortComparator)
                 .toList()
         }
     }
@@ -191,12 +192,12 @@ internal class ChannelMutableState(
 
     /** Sorted version of messages. */
     val sortedMessages: StateFlow<List<Message>> = visibleMessages.mapState { messagesMap ->
-        messagesMap.values.sortedBy { message -> message.getCreatedAtOrNull() }
+        messagesMap.values.sortedWith(MessageSortComparator)
     }
 
     /** Sorted version of messages. */
     val sortedPinnedMessages: StateFlow<List<Message>> = visiblePinnedMessages.mapState { messagesMap ->
-        messagesMap.values.sortedBy { message -> message.getCreatedAtOrNull() }
+        messagesMap.values.sortedWith(MessageSortComparator)
     }
 
     override val repliedMessage: StateFlow<Message?> = _repliedMessage!!
@@ -725,7 +726,7 @@ internal class ChannelMutableState(
         // Add buffer to avoid trimming too often
         return if (messages.size > messageLimit!! + TRIM_BUFFER) {
             val trimmedMessages = messages
-                .sortedBy { it.getCreatedAtOrNull() }
+                .sortedWith(MessageSortComparator)
                 .takeLast(messageLimit!!)
             // Set end of older messages to false, as we trimmed the messages
             setEndOfOlderMessages(false)
