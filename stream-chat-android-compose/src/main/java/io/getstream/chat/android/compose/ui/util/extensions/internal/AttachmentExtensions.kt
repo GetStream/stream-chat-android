@@ -58,7 +58,7 @@ internal val Attachment.localPreviewData: Any?
  */
 @get:Composable
 internal val Attachment.imagePreviewData: Any?
-    get() = if (isImage() || (isVideo() && ChatTheme.videoThumbnailsEnabled)) {
+    get() = if (isImage() || (isVideo() && ChatTheme.config.messageList.videoThumbnailsEnabled)) {
         imagePreviewUrl
             ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
             ?: upload

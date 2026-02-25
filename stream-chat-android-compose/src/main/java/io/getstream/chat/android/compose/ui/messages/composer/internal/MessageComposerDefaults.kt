@@ -134,7 +134,7 @@ internal fun DefaultMessageComposerLeadingContent(
                     shape = CircleShape,
                 )
                 .then(
-                    if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                    if (ChatTheme.config.composer.floatingStyleEnabled) {
                         Modifier.shadow(6.dp, shape = CircleShape)
                     } else {
                         Modifier

@@ -253,7 +253,7 @@ internal class QuotedMessageBodyBuilder(
 @Composable
 internal fun rememberBodyBuilder(): QuotedMessageBodyBuilder {
     val resources = LocalContext.current.resources
-    val autoTranslationEnabled = ChatTheme.autoTranslationEnabled
+    val autoTranslationEnabled = ChatTheme.config.translation.enabled
     val durationFormatter = ChatTheme.durationFormatter
     val streamCdnImageResizing: StreamCdnImageResizing = ChatTheme.streamCdnImageResizing
 

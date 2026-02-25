@@ -44,7 +44,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
  * and the corresponding content for the selected tab. It is typically wrapped by [AttachmentPickerMenu]
  * which handles the animated expand/collapse behavior and positioning.
  *
- * The picker behavior is configured through [ChatTheme.attachmentPickerConfig]:
+ * The picker behavior is configured through [ChatTheme.config.attachmentPicker]:
  * - When `useSystemPicker` is `true`, shows buttons that launch system pickers (no permissions required)
  * - When `useSystemPicker` is `false`, shows an in-app grid picker (requires storage permissions)
  *
@@ -95,7 +95,7 @@ public fun AttachmentPicker(
         modifier = modifier.testTag("Stream_AttachmentsPicker"),
         color = ChatTheme.colors.backgroundElevationElevation1,
     ) {
-        if (ChatTheme.attachmentPickerConfig.useSystemPicker) {
+        if (ChatTheme.config.attachmentPicker.useSystemPicker) {
             ChatTheme.componentFactory.AttachmentSystemPicker(
                 channel = attachmentsPickerViewModel.channel,
                 messageMode = messageMode,

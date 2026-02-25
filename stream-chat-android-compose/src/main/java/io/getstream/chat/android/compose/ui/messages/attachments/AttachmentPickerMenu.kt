@@ -91,7 +91,7 @@ public fun AttachmentPickerMenu(
     }
 
     val menuHeight = when {
-        ChatTheme.attachmentPickerConfig.useSystemPicker -> 72.dp
+        ChatTheme.config.attachmentPicker.useSystemPicker -> 72.dp
         else -> 350.dp
     }
 

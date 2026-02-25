@@ -35,7 +35,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -60,7 +59,6 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.component.CustomMentionStyleFactory
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -72,6 +70,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
 import io.getstream.chat.android.compose.ui.theme.ChatConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComposerConfig
@@ -80,6 +79,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -151,15 +151,17 @@ class MessagesActivity : ComponentActivity() {
             isInDarkMode = isInDarkMode,
             colors = colors,
             typography = typography,
-            attachmentPickerConfig = AttachmentPickerConfig(useSystemPicker = false),
             componentFactory = CustomChatComponentFactory(locationViewModelFactory = locationViewModelFactory),
             dateFormatter = ChatApp.dateFormatter,
-            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
-            isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
-            allowUIAutomationTest = true,
             config = ChatConfig(
-                composer = ComposerConfig(audioRecordingEnabled = true),
+                composer = ComposerConfig(
+                    audioRecordingEnabled = true,
+                    linkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+                ),
+                translation = TranslationConfig(enabled = ChatApp.autoTranslationEnabled),
+                attachmentPicker = AttachmentPickerConfig(useSystemPicker = false),
             ),
+            allowUIAutomationTest = true,
             messageComposerTheme = messageComposerTheme,
             reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
             messageOptionsTheme = MessageOptionsTheme.defaultTheme(
@@ -306,11 +308,6 @@ class MessagesActivity : ComponentActivity() {
 
                     is SelectedMessageReactionsPickerState -> {
                         ReactionsPicker(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(horizontal = 20.dp)
-                                .wrapContentSize(),
-                            shape = RoundedCornerShape(12.dp),
                             message = selectedMessage,
                             onMessageAction = { action ->
                                 composerViewModel.performMessageAction(action)

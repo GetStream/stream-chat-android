@@ -40,7 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.LocalComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ComposerConfig
+import io.getstream.chat.android.compose.ui.theme.LocalChatConfig
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Attachment
@@ -110,7 +111,7 @@ public fun MessageInput(
                 shape = MessageInputShape,
             )
             .then(
-                if (ChatTheme.messageComposerFloatingStyleEnabled) {
+                if (ChatTheme.config.composer.floatingStyleEnabled) {
                     Modifier.shadow(6.dp, shape = MessageInputShape)
                 } else {
                     Modifier
@@ -165,7 +166,7 @@ private fun MessageInputHeader(
     val linkPreviews = messageComposerState.linkPreviews
     val showQuoted = activeAction is Reply
     val showAttachments = attachments.isNotEmpty() && activeAction !is Edit
-    val showLinkPreview = ChatTheme.isComposerLinkPreviewEnabled && linkPreviews.isNotEmpty()
+    val showLinkPreview = ChatTheme.config.composer.linkPreviewEnabled && linkPreviews.isNotEmpty()
 
     if (showQuoted || showAttachments || showLinkPreview) {
         Column(
@@ -314,7 +315,8 @@ private fun MessageComposerInputLinkPreview() {
 
 @Composable
 internal fun MessageComposerInputLink() {
-    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 linkPreviews = listOf(PreviewLinkData.link1),
@@ -351,7 +353,8 @@ private fun MessageComposerInputAttachmentsAndLinkPreview() {
 
 @Composable
 internal fun MessageComposerInputAttachmentsAndLink() {
-    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 attachments = listOf(
@@ -374,7 +377,8 @@ private fun MessageComposerInputReplyAttachmentsAndLinkPreview() {
 
 @Composable
 internal fun MessageComposerInputReplyAttachmentsAndLink() {
-    CompositionLocalProvider(LocalComposerLinkPreviewEnabled provides true) {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 action = Reply(PreviewMessageData.message1),

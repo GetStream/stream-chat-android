@@ -187,7 +187,7 @@ private fun ChannelMediaAttachmentsPreviewBottomBar(
     pagerState: PagerState,
     onShareClick: (Attachment) -> Unit,
 ) {
-    val config = ChatTheme.mediaGalleryConfig
+    val config = ChatTheme.config.mediaGallery
 
     ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
         params = ChannelMediaAttachmentsPreviewBottomBarParams(

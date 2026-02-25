@@ -78,7 +78,7 @@ public fun MessageText(
     val context = LocalContext.current
 
     val formatter = ChatTheme.messageTextFormatter
-    val styledText = if (ChatTheme.autoTranslationEnabled) {
+    val styledText = if (ChatTheme.config.translation.enabled) {
         val showOriginalText by showOriginalTextAsState(message.cid, message.id)
         remember(message, currentUser, showOriginalText) {
             formatter.format(message, currentUser)
