@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import android.text.format.DateUtils
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -56,7 +57,6 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -65,14 +65,15 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.HapticFeedbackConstantsCompat
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.state.messages.MessageReactionItemState
+import io.getstream.chat.android.compose.ui.components.messages.MessageAnnotation
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
-import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageReactionsParams
@@ -90,6 +91,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -324,47 +326,115 @@ internal fun RowScope.DefaultMessageAuthor(
  * @param reactionSorting The sorting for the reactions, if we have any.
  * @param onReactionsClick Handler when the user taps on message reactions.
  */
-@Suppress("LongMethod")
 @Composable
 internal fun DefaultMessageTop(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
     onReactionsClick: (Message) -> Unit = {},
 ) {
-    val message = messageItem.message
-    val currentUser = messageItem.currentUser
+    Column(Modifier.padding(vertical = StreamTokens.spacing2xs)) {
+        SavedForLaterAnnotation(messageItem)
+        PinnedAnnotation(messageItem)
+        ShowInChannelAnnotation(messageItem)
+        ReminderAnnotation(messageItem)
+        TranslationAnnotation(messageItem)
+    }
+}
 
-    if (message.isPinned(ChatTheme.timeProvider)) {
-        val pinnedByUser = if (message.pinnedBy?.id == currentUser?.id) {
-            stringResource(id = R.string.stream_compose_message_list_you)
+@Composable
+private fun SavedForLaterAnnotation(item: MessageItemState) {
+    val reminder = item.message.reminder
+    if (reminder != null && reminder.remindAt == null) {
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_bookmark,
+            text = stringResource(R.string.stream_compose_message_list_saved_for_later),
+            contentColor = ChatTheme.colors.accentPrimary,
+        )
+    }
+}
+
+@Composable
+private fun PinnedAnnotation(item: MessageItemState) {
+    val message = item.message
+    val timeProvider = ChatTheme.timeProvider
+    if (message.isPinned(timeProvider)) {
+        val pinnedByUser = if (message.pinnedBy?.id == item.currentUser?.id) {
+            stringResource(R.string.stream_compose_message_list_you)
         } else {
             message.pinnedBy?.name
         }
-
-        val pinnedByText = if (pinnedByUser != null) {
-            stringResource(id = R.string.stream_compose_pinned_to_channel_by, pinnedByUser)
-        } else {
-            null
-        }
-
-        MessageHeaderLabel(
-            painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
-            text = pinnedByText,
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_pin,
+            text = pinnedByUser?.let { stringResource(R.string.stream_compose_pinned_to_channel_by, it) },
         )
     }
+}
 
-    if (message.showInChannel) {
-        val alsoSendToChannelTextRes = if (messageItem.isInThread) {
+@Composable
+private fun ShowInChannelAnnotation(item: MessageItemState) {
+    if (item.message.showInChannel) {
+        val alsoSendToChannelTextRes = if (item.isInThread) {
             R.string.stream_compose_also_sent_to_channel
         } else {
             R.string.stream_compose_replied_to_thread
         }
-
-        MessageHeaderLabel(
-            painter = painterResource(id = R.drawable.stream_compose_ic_thread),
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_arrow_up_right,
             text = stringResource(alsoSendToChannelTextRes),
+            trailingText = stringResource(R.string.stream_compose_message_list_view),
+            trailingTextColor = ChatTheme.colors.chatTextLink,
         )
     }
+}
+
+@Composable
+private fun ReminderAnnotation(item: MessageItemState) {
+    val remindAt = item.message.reminder?.remindAt
+    if (remindAt != null) {
+        val timeProvider = ChatTheme.timeProvider
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_reminder,
+            text = stringResource(R.string.stream_compose_message_list_remind_me),
+            trailingText = formatReminderDuration(remindAt.time, timeProvider()),
+        )
+    }
+}
+
+@Composable
+private fun TranslationAnnotation(item: MessageItemState) {
+    // TODO [G.] showoriginalenabled
+    if (!ChatTheme.config.translation.enabled) return
+
+    val message = item.message
+    val userLanguage = item.currentUser?.language.orEmpty()
+    val isTranslatable = !message.isGiphy() && !message.isDeleted()
+    val shouldBeTranslated = userLanguage != message.originalLanguage
+    val translatedText = message.getTranslation(userLanguage).ifEmpty { message.text }
+
+    if (isTranslatable && shouldBeTranslated && translatedText != message.text) {
+        MessageAnnotation(
+            iconId = R.drawable.stream_compose_ic_annotation_translated,
+            text = stringResource(R.string.stream_compose_message_list_auto_translated),
+            trailingText = if (item.showOriginalText) {
+                stringResource(R.string.stream_compose_message_list_show_translation)
+            } else {
+                stringResource(R.string.stream_compose_message_list_view_original)
+            },
+            onClick = {
+                MessageOriginalTranslationsStore.forChannel(message.cid)
+                    .toggleOriginalText(message.id)
+            },
+        )
+    }
+}
+
+private fun formatReminderDuration(time: Long, now: Long): String {
+    return DateUtils.getRelativeTimeSpanString(
+        time,
+        now,
+        DateUtils.MINUTE_IN_MILLIS,
+        DateUtils.FORMAT_ABBREV_RELATIVE,
+    ).toString()
 }
 
 /**

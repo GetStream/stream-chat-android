@@ -29,12 +29,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
-import io.getstream.chat.android.client.utils.message.belongsToThread
+import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -53,22 +55,19 @@ import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageSta
  * holds the sender name and the timestamp.
  *
  * @param messageItem Message to show.
- * @param onToggleOriginalText Called when the user taps on the "Show Original" or "Show Translation" label.
- *
  */
 @Composable
 @Suppress("LongMethod")
 public fun MessageFooter(
     messageItem: MessageItemState,
-    onToggleOriginalText: () -> Unit = {},
 ) {
     val message = messageItem.message
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
-    if (message.belongsToThread() && !messageItem.isInThread) {
+    if (message.isThreadStart() && !messageItem.isInThread) {
         val threadFooterText = when (message.replyCount) {
-            0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
-            else -> LocalContext.current.resources.getQuantityString(
+            0 -> stringResource(R.string.stream_compose_thread_reply)
+            else -> pluralStringResource(
                 R.plurals.stream_compose_message_list_thread_footnote,
                 message.replyCount,
                 message.replyCount,
@@ -82,7 +81,6 @@ public fun MessageFooter(
     }
 
     Column(horizontalAlignment = alignment.contentAlignment) {
-        MessageTranslatedLabel(messageItem, onToggleOriginalText)
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }

@@ -87,8 +87,6 @@
     <string name="stream_compose_message_list_empty_messages">No messages</string>
     <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
-    <string name="stream_compose_message_list_translated">Translated to %s</string>
-    <string name="stream_compose_message_list_show_original">&#160;· Show original</string>
     <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
@@ -219,6 +217,11 @@
     <string name="stream_compose_message_list_you">You</string>
     <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>
     <string name="stream_compose_replied_to_thread">Replied to a thread</string>
+    <string name="stream_compose_message_list_saved_for_later">Saved for later</string>
+    <string name="stream_compose_message_list_remind_me">Remind me</string>
+    <string name="stream_compose_message_list_auto_translated">Translated</string>
+    <string name="stream_compose_message_list_view_original">View original</string>
+    <string name="stream_compose_message_list_view">View</string>
     <string name="stream_compose_replied_to">replied to:&#160;</string>
 
     <!--  Image Preview  -->

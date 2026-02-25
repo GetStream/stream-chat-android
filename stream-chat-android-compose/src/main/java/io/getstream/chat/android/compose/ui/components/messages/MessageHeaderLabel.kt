@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,45 +27,68 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.ifNotNull
 
 /**
- * Represents a meta information about the message that is shown above the message bubble.
+ * Represents meta information about the message that is shown above the message bubble.
  *
- * @param painter The icon to be shown.
- * @param text The text to be shown.
- * @param modifier Modifier for styling.
- * @param contentPadding The inner padding inside the component.
+ * @param iconId The drawable resource ID for the annotation icon.
+ * @param text The main annotation text. If null, only the icon is shown.
+ * @param trailingText Optional trailing text shown after a separator dot.
+ * @param contentColor The color for the icon and main text.
+ * @param trailingTextColor The color for the trailing text.
+ * @param onClick Optional click handler for the annotation row.
  */
 @Composable
-public fun MessageHeaderLabel(
-    painter: Painter,
-    modifier: Modifier = Modifier,
+internal fun MessageAnnotation(
+    @DrawableRes iconId: Int,
     text: String? = null,
-    contentPadding: PaddingValues = PaddingValues(vertical = 2.dp, horizontal = 4.dp),
+    trailingText: String? = null,
+    contentColor: Color = ChatTheme.colors.textPrimary,
+    trailingTextColor: Color = ChatTheme.colors.textPrimary,
+    onClick: (() -> Unit)? = null,
 ) {
+    val typography = ChatTheme.typography
+
     Row(
-        modifier = modifier.padding(contentPadding),
+        modifier = Modifier
+            .ifNotNull(onClick) { clickable(interactionSource = null, indication = null, onClick = it) }
+            .padding(vertical = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Icon(
-            modifier = Modifier
-                .padding(end = 2.dp)
-                .size(14.dp),
-            painter = painter,
+            modifier = Modifier.size(16.dp),
+            painter = painterResource(iconId),
             contentDescription = null,
-            tint = ChatTheme.colors.textSecondary,
+            tint = contentColor,
         )
 
         if (text != null) {
             Text(
                 modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
                 text = text,
-                style = ChatTheme.typography.metadataDefault,
-                color = ChatTheme.colors.textSecondary,
+                style = typography.metadataEmphasis,
+                color = contentColor,
+            )
+        }
+
+        if (trailingText != null) {
+            Text(
+                text = "·",
+                style = typography.metadataEmphasis,
+                color = contentColor,
+            )
+            Text(
+                text = trailingText,
+                style = typography.metadataDefault,
+                color = trailingTextColor,
             )
         }
     }
