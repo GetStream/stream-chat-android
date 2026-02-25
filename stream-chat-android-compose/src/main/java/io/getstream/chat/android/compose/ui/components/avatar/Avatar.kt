@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
@@ -48,7 +49,8 @@ internal fun Avatar(
         data = data,
         modifier = modifier
             .clip(CircleShape)
-            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) },
+            .applyIf(showBorder) { border(1.dp, ChatTheme.colors.borderCoreOpacity10, CircleShape) }
+            .background(ChatTheme.colors.backgroundElevationElevation0, CircleShape),
         contentScale = ContentScale.Crop,
         content = { state ->
             val painter = (state as? AsyncImagePainter.State.Success)?.painter
