@@ -17,10 +17,13 @@
 package io.getstream.chat.android.compose.ui.channels.info
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -30,16 +33,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
-import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
-import io.getstream.chat.android.compose.ui.util.isOneToOne
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
@@ -112,44 +113,52 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     selectedChannel: Channel,
     currentUser: User?,
 ) {
-    val channelMembers = selectedChannel.members
-    val membersToDisplay = if (selectedChannel.isOneToOne(currentUser)) {
-        channelMembers.filter { it.user.id != currentUser?.id }
-    } else {
-        channelMembers
-    }
-
-    Text(
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = StreamTokens.spacingMd, // 16dp (was 16.dp, now token-aligned)
-                end = StreamTokens.spacingMd, // 16dp (was 16.dp)
-                top = StreamTokens.spacingMd, // 16dp (was 16.dp)
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingSm,
             ),
-        textAlign = TextAlign.Center,
-        text = ChatTheme.channelNameFormatter.formatChannelName(selectedChannel, currentUser),
-        style = ChatTheme.typography.headingSmall, // was title3Bold (18sp/W500)
-        color = ChatTheme.colors.textPrimary, // was textHighEmphasis
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        text = selectedChannel.getMembersStatusText(
-            context = LocalContext.current,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        ChatTheme.componentFactory.ChannelAvatar(
+            modifier = Modifier.size(AvatarSize.ExtraLarge),
+            channel = selectedChannel,
             currentUser = currentUser,
-            userPresence = ChatTheme.userPresence,
-        ),
-        style = ChatTheme.typography.captionDefault, // was footnoteBold
-        color = ChatTheme.colors.textSecondary, // was textLowEmphasis
-    )
+            showIndicator = true,
+            showBorder = false,
+        )
 
-    ChannelMembers(
-        members = membersToDisplay,
-        currentUser = currentUser,
-    )
+        Column(
+            modifier = Modifier
+                .padding(start = StreamTokens.spacingSm)
+                .weight(1f),
+        ) {
+            Text(
+                text = ChatTheme.channelNameFormatter.formatChannelName(
+                    selectedChannel,
+                    currentUser,
+                ),
+                style = ChatTheme.typography.headingSmall,
+                color = ChatTheme.colors.textPrimary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = selectedChannel.getMembersStatusText(
+                    context = LocalContext.current,
+                    currentUser = currentUser,
+                    userPresence = ChatTheme.userPresence,
+                ),
+                style = ChatTheme.typography.captionDefault,
+                color = ChatTheme.colors.textSecondary,
+                maxLines = 1,
+            )
+        }
+    }
 }
 
 /**
