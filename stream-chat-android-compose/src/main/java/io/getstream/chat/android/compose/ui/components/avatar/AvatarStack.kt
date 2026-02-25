@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -34,7 +35,9 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param overlap The amount of overlap between avatars.
  * @param users The list of users to display avatars for.
  * @param avatarSize The size of each avatar.
+ * @param modifier Modifier for styling.
  * @param showBorder Whether to show a border around each avatar.
+ * @param trailingContent Optional composable rendered after the avatars.
  */
 @Composable
 public fun UserAvatarStack(
@@ -43,9 +46,10 @@ public fun UserAvatarStack(
     avatarSize: Dp,
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
+    trailingContent: @Composable (() -> Unit)? = null,
 ) {
     val componentFactory = ChatTheme.componentFactory
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(-overlap)) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(-overlap)) {
         for (user in users) {
             componentFactory.UserAvatar(
                 modifier = Modifier.size(avatarSize),
@@ -54,6 +58,7 @@ public fun UserAvatarStack(
                 showIndicator = false,
             )
         }
+        trailingContent?.invoke()
     }
 }
 

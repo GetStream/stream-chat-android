@@ -168,6 +168,7 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoad
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTop
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTypingIndicatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
@@ -968,6 +969,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.MessageListTypingIndicatorItemContent(typingItem: TypingItemState) {
+        DefaultMessageTypingIndicatorContent(state = typingItem)
     }
 
     /**

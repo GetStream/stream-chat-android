@@ -435,7 +435,7 @@ private fun PollOptionItem(
                 if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
                     UserAvatarStack(
                         overlap = StreamTokens.spacingXs,
-                        users = users.take(MaxStackedAvatars),
+                        users = users,
                         avatarSize = AvatarSize.ExtraSmall,
                         showBorder = true,
                         modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
@@ -473,8 +473,6 @@ private fun PollOptionItem(
         }
     }
 }
-
-private const val MaxStackedAvatars = 3
 
 @Composable
 private fun PollOptionButton(

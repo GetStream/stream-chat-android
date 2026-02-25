@@ -17,9 +17,6 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -33,7 +30,6 @@ import androidx.compose.ui.graphics.Shape
  * @param shape The shape of the bubble.
  * @param modifier Modifier for styling.
  * @param border The optional border of the bubble.
- * @param contentPadding Padding values to be applied to the content inside the bubble.
  * @param content The content of the message.
  */
 @Composable
@@ -42,7 +38,6 @@ public fun MessageBubble(
     shape: Shape,
     modifier: Modifier = Modifier,
     border: BorderStroke? = null,
-    contentPadding: PaddingValues = PaddingValues(),
     content: @Composable () -> Unit,
 ) {
     Surface(
@@ -50,9 +45,6 @@ public fun MessageBubble(
         shape = shape,
         color = color,
         border = border,
-    ) {
-        Box(modifier = Modifier.padding(contentPadding)) {
-            content()
-        }
-    }
+        content = content
+    )
 }

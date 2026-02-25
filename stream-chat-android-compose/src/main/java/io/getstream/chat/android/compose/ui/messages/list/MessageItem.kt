@@ -16,8 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -42,7 +46,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.components.TypingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
+import io.getstream.chat.android.compose.ui.components.common.CountBadge
+import io.getstream.chat.android.compose.ui.components.common.CountBadgeSize
+import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
@@ -55,6 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceh
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
@@ -267,4 +279,53 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
         style = ChatTheme.typography.metadataEmphasis,
         textAlign = TextAlign.Center,
     )
+}
+
+/**
+ * The default typing indicator content shown as a message bubble in the message list.
+ *
+ * @param state The typing item state containing the list of typing users.
+ */
+@Composable
+internal fun DefaultMessageTypingIndicatorContent(state: TypingItemState) {
+    Row(
+        modifier = Modifier.padding(StreamTokens.spacingXs),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        // TODO [G.] fix
+        val users = buildList {
+            repeat(10) {
+                addAll(state.typingUsers)
+            }
+        }
+        val overflowCount = users.size - 3
+        UserAvatarStack(
+            overlap = StreamTokens.spacingXs,
+            users = users.take(3),
+            avatarSize = AvatarSize.Small,
+            showBorder = true,
+            trailingContent = if (overflowCount > 0) {
+                { CountBadge(text = "+$overflowCount", size = CountBadgeSize.Medium) }
+            } else {
+                null
+            },
+        )
+
+        val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(state)
+        MessageBubble(
+            color = MessageStyling.backgroundColor(outgoing = false),
+            shape = MessageStyling.shape(MessagePosition.BOTTOM, messageAlignment = messageAlignment),
+            border = BorderStroke(1.dp, ChatTheme.colors.chatBorderIncoming),
+        ) {
+            Box(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 36.dp, minHeight = 36.dp)
+                    .padding(vertical = StreamTokens.spacingXs, horizontal = StreamTokens.spacingMd),
+                contentAlignment = Alignment.Center,
+            ) {
+                TypingIndicator()
+            }
+        }
+    }
 }
