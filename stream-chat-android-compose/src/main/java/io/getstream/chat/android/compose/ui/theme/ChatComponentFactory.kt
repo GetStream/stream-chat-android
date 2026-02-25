@@ -2224,8 +2224,8 @@ public interface ChatComponentFactory {
         }
         Icon(
             modifier = modifier
-                .size(48.dp)
-                .padding(12.dp),
+                .padding(horizontal = StreamTokens.spacingSm) // 12dp
+                .size(StreamTokens.spacingXl), // 24dp
             painter = painterResource(id = action.icon),
             tint = iconColor,
             contentDescription = null,
