@@ -2196,7 +2196,7 @@ public interface ChatComponentFactory {
             ChatTheme.colors.textPrimary
         }
         MenuOptionItem(
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = StreamTokens.spacing2xs),
             title = action.label,
             titleColor = titleColor,
             leadingIcon = {
@@ -2204,7 +2204,7 @@ public interface ChatComponentFactory {
             },
             onClick = onClick,
             style = ChatTheme.typography.bodyDefault,
-            itemHeight = 48.dp,
+            itemHeight = 44.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
@@ -2224,7 +2224,7 @@ public interface ChatComponentFactory {
         }
         Icon(
             modifier = modifier
-                .padding(horizontal = StreamTokens.spacingSm) // 12dp
+                .padding(end = StreamTokens.spacingXs) // 8dp gap to text
                 .size(StreamTokens.spacingXl), // 24dp
             painter = painterResource(id = action.icon),
             tint = iconColor,
