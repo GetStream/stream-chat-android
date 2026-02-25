@@ -66,8 +66,6 @@ public fun ChannelOptions(
             .wrapContentHeight(),
     ) {
         items(actions) { action ->
-            StreamHorizontalDivider()
-
             with(ChatTheme.componentFactory) {
                 ChannelOptionsItem(
                     modifier = Modifier,
