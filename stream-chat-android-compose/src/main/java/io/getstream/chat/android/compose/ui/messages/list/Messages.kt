@@ -95,6 +95,8 @@ import kotlin.math.abs
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
  * @param itemModifier Modifier for styling the message item container.
  * @param itemContent Composable that represents the item that displays each message.
+ * @param headerContent The content shown at the top of the list of message items.
+ * @param footerContent The content shown at the bottom of the list of message items.
  */
 @Composable
 @Suppress("LongParameterList", "LongMethod", "ComplexMethod")
@@ -131,6 +133,8 @@ public fun Messages(
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
+    headerContent: (@Composable () -> Unit)? = null,
+    footerContent: (@Composable () -> Unit)? = null,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
@@ -170,6 +174,12 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
+            footerContent?.let { content ->
+                item {
+                    content.invoke()
+                }
+            }
+
             if (isLoadingMoreNewMessages && !endOfNewMessages) {
                 item {
                     loadingMoreContent()
@@ -199,6 +209,12 @@ public fun Messages(
             if (isLoadingMoreOldMessages && !endOfOldMessages) {
                 item {
                     loadingMoreContent()
+                }
+            }
+
+            headerContent?.let { content ->
+                item {
+                    content.invoke()
                 }
             }
         }
