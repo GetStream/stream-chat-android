@@ -48,6 +48,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -247,7 +248,7 @@ internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(StreamTokens.spacingXs))
         Text(
             modifier = Modifier.width(160.dp),
             text = stringResource(id = R.string.stream_compose_thread_list_empty_title),

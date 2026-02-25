@@ -40,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import com.valentinilk.shimmer.ShimmerBounds
 import com.valentinilk.shimmer.rememberShimmer
 import com.valentinilk.shimmer.shimmer
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 
 /**
  * A skeleton loading placeholder that mirrors the layout of a [ThreadItem].
@@ -74,14 +76,14 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                     strokeWidth = strokeWidth,
                 )
             }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+            .padding(StreamTokens.spacingMd),
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingSm),
         verticalAlignment = Alignment.Top,
     ) {
         // Avatar
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(AvatarSize.ExtraLarge)
                 .clip(CircleShape)
                 .skeleton(),
         )
@@ -89,21 +91,21 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
         // Content
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
         ) {
             // Channel title + message preview
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(vertical = StreamTokens.spacing2xs),
+                verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
             ) {
                 // Channel / thread title
                 Box(
                     modifier = Modifier
                         .width(120.dp)
-                        .height(12.dp)
-                        .clip(RoundedCornerShape(percent = 50))
+                        .height(StreamTokens.size12)
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
                         .skeleton(),
                 )
                 // Message preview
@@ -111,20 +113,20 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(20.dp)
-                        .clip(RoundedCornerShape(percent = 50))
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
                         .skeleton(),
                 )
             }
 
             // Reply footer
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // Reply author avatar
                 Box(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(AvatarSize.Small)
                         .clip(CircleShape)
                         .skeleton(),
                 )
@@ -132,16 +134,16 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
                 Box(
                     modifier = Modifier
                         .width(64.dp)
-                        .height(12.dp)
-                        .clip(RoundedCornerShape(percent = 50))
+                        .height(StreamTokens.size12)
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
                         .skeleton(),
                 )
                 // Reply preview text
                 Box(
                     modifier = Modifier
                         .width(64.dp)
-                        .height(12.dp)
-                        .clip(RoundedCornerShape(percent = 50))
+                        .height(StreamTokens.size12)
+                        .clip(RoundedCornerShape(StreamTokens.radiusFull))
                         .skeleton(),
                 )
             }
@@ -151,8 +153,8 @@ internal fun ThreadListLoadingItem(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier
                 .width(48.dp)
-                .height(16.dp)
-                .clip(RoundedCornerShape(percent = 50))
+                .height(StreamTokens.size16)
+                .clip(RoundedCornerShape(StreamTokens.radiusFull))
                 .skeleton(),
         )
     }
