@@ -556,8 +556,8 @@ private fun MessagesScreenReactionsPicker(
                             skipEnrichUrl = skipEnrichUrl,
                         ),
                     ).let {
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
+                        composerViewModel.performMessageAction(it)
+                        listViewModel.performMessageAction(it)
                     }
                 }
             },
