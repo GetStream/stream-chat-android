@@ -16,15 +16,26 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.painterResource
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarStack
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+import io.getstream.chat.android.compose.ui.util.applyIf
 import io.getstream.chat.android.models.User
 
 /**
@@ -42,30 +53,56 @@ public fun MessageThreadFooter(
     messageAlignment: MessageAlignment,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier.padding(top = 4.dp)) {
+    Row(
+        modifier = modifier.clipToBounds(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs)
+    ) {
         if (messageAlignment == MessageAlignment.Start) {
-            ThreadParticipants(
-                modifier = Modifier
-                    .padding(end = 4.dp),
-                participants = participants,
-                alignment = messageAlignment,
-            )
+            ThreadConnector(messageAlignment)
+            ThreadParticipants(participants)
         }
 
         Text(
             modifier = Modifier.testTag("Stream_ThreadRepliesLabel"),
             text = text,
-            style = ChatTheme.typography.metadataEmphasis,
-            color = ChatTheme.colors.accentPrimary,
+            style = ChatTheme.typography.captionEmphasis,
+            color = ChatTheme.colors.chatTextLink,
         )
 
         if (messageAlignment == MessageAlignment.End) {
-            ThreadParticipants(
-                modifier = Modifier
-                    .padding(start = 4.dp),
-                participants = participants,
-                alignment = messageAlignment,
-            )
+            ThreadParticipants(participants)
+            ThreadConnector(messageAlignment)
         }
     }
 }
+
+@Composable
+private fun ThreadConnector(alignment: MessageAlignment) {
+    val mirrored = alignment == MessageAlignment.End
+    val tint = if (mirrored) {
+        ChatTheme.colors.chatThreadConnectorOutgoing
+    } else {
+        ChatTheme.colors.chatThreadConnectorIncoming
+    }
+    Image(
+        modifier = Modifier
+            .offset(y = -StreamTokens.spacingSm)
+            .applyIf(mirrored) { Modifier.graphicsLayer(scaleX = -1f) },
+        painter = painterResource(id = R.drawable.stream_compose_thread_connector),
+        contentDescription = null,
+        colorFilter = ColorFilter.tint(tint),
+    )
+}
+
+@Composable
+private fun ThreadParticipants(participants: List<User>) {
+    UserAvatarStack(
+        overlap = StreamTokens.spacingXs,
+        users = participants.take(MaxThreadParticipants),
+        avatarSize = AvatarSize.Small,
+        showBorder = true,
+    )
+}
+
+private const val MaxThreadParticipants = 3

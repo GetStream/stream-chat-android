@@ -73,8 +73,8 @@
     <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
     <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
     <string name="stream_compose_message_list_footnote_edited">Edited</string>
-    <string name="stream_compose_message_list_thread_footnote_thread_reply">Thread Reply</string>
-    <string name="stream_compose_message_list_thread_footnote_thread_replies">%d Thread Replies</string>
+    <string name="stream_compose_message_list_thread_footnote_thread_reply">%d reply</string>
+    <string name="stream_compose_message_list_thread_footnote_thread_replies">%d replies</string>
     <plurals name="stream_compose_message_list_thread_footnote" translatable="false">
         <item quantity="one">@string/stream_compose_message_list_thread_footnote_thread_reply</item>
         <item quantity="other">@string/stream_compose_message_list_thread_footnote_thread_replies</item>

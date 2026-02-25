@@ -64,23 +64,23 @@ public fun MessageFooter(
     val message = messageItem.message
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
-    if (message.isThreadStart() && !messageItem.isInThread) {
-        val threadFooterText = when (message.replyCount) {
-            0 -> stringResource(R.string.stream_compose_thread_reply)
-            else -> pluralStringResource(
-                R.plurals.stream_compose_message_list_thread_footnote,
-                message.replyCount,
-                message.replyCount,
+    Column(horizontalAlignment = alignment.contentAlignment) {
+        if (message.isThreadStart() && !messageItem.isInThread) {
+            val threadFooterText = when (message.replyCount) {
+                0 -> stringResource(R.string.stream_compose_thread_reply)
+                else -> pluralStringResource(
+                    R.plurals.stream_compose_message_list_thread_footnote,
+                    message.replyCount,
+                    message.replyCount,
+                )
+            }
+            MessageThreadFooter(
+                participants = message.threadParticipants,
+                messageAlignment = alignment,
+                text = threadFooterText,
             )
         }
-        MessageThreadFooter(
-            participants = message.threadParticipants,
-            messageAlignment = alignment,
-            text = threadFooterText,
-        )
-    }
 
-    Column(horizontalAlignment = alignment.contentAlignment) {
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }

@@ -45,6 +45,6 @@ public fun MessageBubble(
         shape = shape,
         color = color,
         border = border,
-        content = content
+        content = content,
     )
 }
