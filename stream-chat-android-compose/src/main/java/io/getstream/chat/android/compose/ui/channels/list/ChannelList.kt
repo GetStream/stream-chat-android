@@ -117,22 +117,20 @@ public fun ChannelList(
         }
     },
     channelContent: @Composable LazyItemScope.(ItemState.ChannelItemState) -> Unit = { itemState ->
-        val user by viewModel.user.collectAsState()
         with(ChatTheme.componentFactory) {
             ChannelListItemContent(
                 channelItem = itemState,
-                currentUser = user,
+                currentUser = viewModel.user.value,
                 onChannelClick = onChannelClick,
                 onChannelLongClick = onChannelLongClick,
             )
         }
     },
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { itemState ->
-        val user by viewModel.user.collectAsState()
         with(ChatTheme.componentFactory) {
             SearchResultItemContent(
                 searchResultItem = itemState,
-                currentUser = user,
+                currentUser = viewModel.user.value,
                 onSearchResultClick = onSearchResultClick,
             )
         }

@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
@@ -48,10 +49,12 @@ public fun Timestamp(
     val timestamp = if (LocalInspectionMode.current) {
         "13:49"
     } else {
-        when (formatType) {
-            TIME -> formatter.formatTime(date)
-            DATE -> formatter.formatDate(date)
-            RELATIVE -> formatter.formatRelativeTime(date)
+        remember(date, formatType) {
+            when (formatType) {
+                TIME -> formatter.formatTime(date)
+                DATE -> formatter.formatDate(date)
+                RELATIVE -> formatter.formatRelativeTime(date)
+            }
         }
     }
 

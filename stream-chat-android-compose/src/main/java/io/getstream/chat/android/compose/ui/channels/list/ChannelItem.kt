@@ -187,10 +187,14 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             .wrapContentHeight(),
         verticalArrangement = Arrangement.Center,
     ) {
+        val channelNameFormatter = ChatTheme.channelNameFormatter
+        val formattedChannelName = remember(channelItemState.channel, currentUser, channelNameFormatter) {
+            channelNameFormatter.formatChannelName(channelItemState.channel, currentUser)
+        }
         val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
             Text(
                 modifier = it.testTag("Stream_ChannelName"),
-                text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
+                text = formattedChannelName,
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -220,13 +224,15 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         if (channelItemState.typingUsers.isNotEmpty()) {
             UserTypingIndicator(channelItemState.typingUsers)
         } else {
-            val lastMessageText =
+            val messagePreviewFormatter = ChatTheme.messagePreviewFormatter
+            val lastMessageText = remember(channelItemState, currentUser, messagePreviewFormatter) {
                 channelItemState.draftMessage
-                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
+                    ?.let { messagePreviewFormatter.formatDraftMessagePreview(it) }
                     ?: channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
-                        ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
+                        messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
                     }
                     ?: AnnotatedString("")
+            }
 
             if (lastMessageText.isNotEmpty()) {
                 Text(
