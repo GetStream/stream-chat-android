@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,8 +28,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -64,6 +65,7 @@ public fun ChannelOptions(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
+        contentPadding = PaddingValues(bottom = StreamTokens.spacingXs),
     ) {
         items(actions) { action ->
             with(ChatTheme.componentFactory) {
