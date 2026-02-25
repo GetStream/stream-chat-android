@@ -35,6 +35,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastAny
 import androidx.core.net.toUri
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -65,7 +66,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * @param onLinkClick Handler used for clicking on a link in the message.
  */
 @Composable
-@Suppress("LongMethod")
+@Suppress("LongMethod", "detekt:ForbiddenComment")
 public fun MessageText(
     message: Message,
     currentUser: User?,
@@ -89,9 +90,10 @@ public fun MessageText(
     }
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
+    // TODO: introduce dedicated emoji text style tokens in the design system
     val style = when {
-        message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
-        message.isFewEmoji() -> ChatTheme.typography.emojiOnly
+        message.isSingleEmoji() -> TextStyle(fontSize = 64.sp)
+        message.isFewEmoji() -> TextStyle(fontSize = 64.sp)
         else -> MessageStyling.textStyle(outgoing = message.isMine(currentUser))
     }
 

@@ -46,7 +46,7 @@ internal fun MapWebView(
     var htmlContent by remember { mutableStateOf<String?>(null) }
     var viewSize by remember { mutableStateOf<IntSize?>(null) }
     val density = LocalDensity.current
-    val markerColor = ChatTheme.colors.primaryAccent.toHexString()
+    val markerColor = ChatTheme.colors.accentPrimary.toHexString()
 
     LaunchedEffect(viewSize) {
         // Ensure the HTML content is updated when the view size changes

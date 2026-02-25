@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.outlined.AddCircle
@@ -104,7 +105,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                     MessageList(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ChatTheme.colors.appBackground)
+                            .background(ChatTheme.colors.backgroundCoreApp)
                             .padding(it),
                         viewModel = listViewModel,
                     )
@@ -212,7 +213,7 @@ private fun CustomAttachmentsPicker(
         // Gray overlay
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.colors.backgroundCoreScrim)
             .clickable(
                 onClick = actions.onDismiss,
                 indication = null,
@@ -229,8 +230,8 @@ private fun CustomAttachmentsPicker(
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = ChatTheme.shapes.bottomSheet,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.inputBackground),
+            shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.backgroundCoreSurface),
         ) {
             Box(modifier = Modifier.padding(vertical = 24.dp)) {
                 if (shouldShowMenu) {
@@ -390,9 +391,9 @@ private fun AttachmentsPickerToolbar(
                 contentDescription = "Submit Attachments",
                 modifier = Modifier.size(24.dp),
                 tint = if (isSubmitEnabled) {
-                    ChatTheme.colors.primaryAccent
+                    ChatTheme.colors.accentPrimary
                 } else {
-                    ChatTheme.colors.textLowEmphasis
+                    ChatTheme.colors.textSecondary
                 },
             )
         }

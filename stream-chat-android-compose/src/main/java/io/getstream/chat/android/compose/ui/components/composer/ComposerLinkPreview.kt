@@ -56,7 +56,7 @@ import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ComposerCancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -91,7 +91,7 @@ public fun ComposerLinkPreview(
     val attachment = linkPreview.attachment
     val colors = ChatTheme.colors
     val typography = ChatTheme.typography
-    val textColor = colors.textHighEmphasis
+    val textColor = colors.textPrimary
 
     Box(
         modifier = modifier,
@@ -103,7 +103,7 @@ public fun ComposerLinkPreview(
                     interactionSource = remember { MutableInteractionSource() },
                     onClick = { handleLinkPreviewClick(onContentClick, context, linkPreview) },
                 )
-                .background(colors.chatBgOutgoing, ChatTheme.shapes.attachment)
+                .background(colors.chatBgOutgoing, RoundedCornerShape(StreamTokens.radiusLg))
                 .padding(
                     start = StreamTokens.spacingXs,
                     end = StreamTokens.spacingMd,
@@ -120,17 +120,17 @@ public fun ComposerLinkPreview(
             ) {
                 ComposerLinkPreviewText(
                     text = attachment.title,
-                    style = typography.footnoteBold.copy(color = textColor),
+                    style = typography.metadataEmphasis.copy(color = textColor),
                     testTag = "Stream_LinkPreviewTitle",
                 )
                 ComposerLinkPreviewText(
                     text = attachment.text,
-                    style = typography.footnote.copy(color = textColor),
+                    style = typography.metadataDefault.copy(color = textColor),
                     testTag = "Stream_LinkPreviewDescription",
                 )
                 ComposerLinkPreviewText(
                     text = linkPreview.resolveUrl(),
-                    style = typography.footnote.copy(color = textColor),
+                    style = typography.metadataDefault.copy(color = textColor),
                     testTag = "Stream_LinkPreviewUrl",
                 )
             }
@@ -148,7 +148,7 @@ public fun ComposerLinkPreview(
 }
 
 @Composable
-private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamColors) {
+private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamDesign.Colors) {
     val imagePreviewUrl = attachment.imagePreviewUrl ?: return
     val shape = RoundedCornerShape(StreamTokens.radiusMd)
     StreamAsyncImage(
@@ -156,7 +156,7 @@ private fun ComposerLinkImagePreview(attachment: Attachment, colors: StreamColor
         modifier = Modifier
             .size(width = 40.dp, height = 40.dp)
             .clip(shape)
-            .border(1.dp, colors.borderCoreImage, shape)
+            .border(1.dp, colors.borderCoreOpacity10, shape)
             .testTag("Stream_LinkPreviewImage"),
         contentDescription = null,
         contentScale = ContentScale.Crop,

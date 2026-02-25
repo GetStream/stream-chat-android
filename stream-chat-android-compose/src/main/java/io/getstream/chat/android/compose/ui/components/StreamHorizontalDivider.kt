@@ -26,6 +26,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 internal fun StreamHorizontalDivider(thickness: Dp = .5.dp) {
     HorizontalDivider(
         thickness = thickness,
-        color = ChatTheme.colors.borderCoreSurfaceSubtle, // was borders (legacy token)
+        color = ChatTheme.colors.borderCoreSubtle,
     )
 }

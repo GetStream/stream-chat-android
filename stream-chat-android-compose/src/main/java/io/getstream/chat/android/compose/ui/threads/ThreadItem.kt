@@ -144,15 +144,15 @@ internal fun ThreadItemTitle(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread),
             contentDescription = null,
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = title,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }
@@ -170,10 +170,10 @@ internal fun RowScope.ThreadItemReplyToContent(parentMessage: Message) {
         modifier = Modifier.weight(1f),
         text = "$prefix$text",
         fontSize = 12.sp,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        style = ChatTheme.typography.body,
+        style = ChatTheme.typography.bodyDefault,
     )
 }
 
@@ -209,7 +209,7 @@ internal fun ThreadItemLatestReplyContent(
                 .padding(top = 8.dp),
         ) {
             ChatTheme.componentFactory.UserAvatar(
-                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+                modifier = Modifier.size(40.dp),
                 user = latestReply.user,
                 showIndicator = latestReply.user.shouldShowOnlineIndicator(
                     userPresence = ChatTheme.userPresence,
@@ -224,10 +224,10 @@ internal fun ThreadItemLatestReplyContent(
             ) {
                 Text(
                     text = latestReply.user.name,
-                    style = ChatTheme.typography.bodyBold,
+                    style = ChatTheme.typography.bodyEmphasis,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis,
+                    color = ChatTheme.colors.textPrimary,
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -240,8 +240,8 @@ internal fun ThreadItemLatestReplyContent(
                         maxLines = 1,
                         fontSize = 14.sp,
                         overflow = TextOverflow.Ellipsis,
-                        style = ChatTheme.typography.body,
-                        color = ChatTheme.colors.textLowEmphasis,
+                        style = ChatTheme.typography.bodyDefault,
+                        color = ChatTheme.colors.textSecondary,
                     )
                     Timestamp(
                         modifier = Modifier.padding(start = 8.dp),

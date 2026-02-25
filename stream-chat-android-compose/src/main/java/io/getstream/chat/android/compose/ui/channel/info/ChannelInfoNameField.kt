@@ -59,19 +59,19 @@ internal fun ChannelInfoNameField(
             .fillMaxWidth()
             .onFocusChanged { showEditingButtons = it.isFocused && !readOnly },
         readOnly = readOnly,
-        textStyle = ChatTheme.typography.body,
+        textStyle = ChatTheme.typography.bodyDefault,
         prefix = {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
                 text = stringResource(R.string.stream_ui_channel_info_name_field_label),
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.bodyEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         },
         placeholder = {
             Text(
                 text = stringResource(R.string.stream_ui_channel_info_name_field_placeholder),
-                style = ChatTheme.typography.body,
+                style = ChatTheme.typography.bodyDefault,
             )
         },
         value = value,
@@ -88,7 +88,7 @@ internal fun ChannelInfoNameField(
                             focusManager.clearFocus()
                         },
                         imageVector = Icons.Rounded.Close,
-                        tint = ChatTheme.colors.textLowEmphasis,
+                        tint = ChatTheme.colors.textSecondary,
                         contentDescription = null,
                     )
                     Icon(
@@ -97,7 +97,7 @@ internal fun ChannelInfoNameField(
                             focusManager.clearFocus()
                         },
                         imageVector = Icons.Rounded.Done,
-                        tint = ChatTheme.colors.primaryAccent,
+                        tint = ChatTheme.colors.accentPrimary,
                         contentDescription = null,
                     )
                 }
@@ -106,8 +106,8 @@ internal fun ChannelInfoNameField(
         singleLine = true,
         onValueChange = { value = it },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedTextColor = ChatTheme.colors.textHighEmphasis,
-            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
+            focusedTextColor = ChatTheme.colors.textPrimary,
+            unfocusedTextColor = ChatTheme.colors.textPrimary,
             unfocusedBorderColor = Color.Transparent,
             focusedBorderColor = Color.Transparent,
         ),

@@ -104,7 +104,7 @@ private fun ChannelFilesAttachmentsContent(
                 onNavigationIconClick = onNavigationIconClick,
             )
         },
-        containerColor = ChatTheme.colors.appBackground,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) { padding ->
         ChannelFilesAttachmentsList(
             modifier = Modifier

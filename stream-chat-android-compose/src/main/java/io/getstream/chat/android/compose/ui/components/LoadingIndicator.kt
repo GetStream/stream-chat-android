@@ -35,6 +35,6 @@ public fun LoadingIndicator(modifier: Modifier = Modifier) {
         modifier,
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
+        CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.accentPrimary)
     }
 }

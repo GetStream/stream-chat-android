@@ -70,7 +70,7 @@ public fun SwipeActionItem(
         )
         Text(
             text = label,
-            style = ChatTheme.typography.footnoteBold,
+            style = ChatTheme.typography.captionEmphasis,
             color = contentColor,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

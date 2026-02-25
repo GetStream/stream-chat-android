@@ -64,7 +64,7 @@ internal fun StreamSnackbar(
             modifier = modifier.shadow(4.dp, shape = SnackbarShape),
             shape = SnackbarShape,
             color = ChatTheme.colors.backgroundCoreInverse,
-            contentColor = ChatTheme.colors.textOnAccent,
+            contentColor = ChatTheme.colors.textOnDark,
         ) {
             Row(
                 modifier = Modifier.padding(
@@ -88,7 +88,7 @@ internal fun StreamSnackbar(
                     StreamTextButton(
                         onClick = snackbarData::performAction,
                         style = StreamButtonStyleDefaults.secondaryOutline.copy(
-                            contentColor = ChatTheme.colors.textOnAccent,
+                            contentColor = ChatTheme.colors.textOnDark,
                         ),
                         size = StreamButtonSize.Small,
                         text = actionLabel,

@@ -161,7 +161,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     text = title,
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Start,
-                    style = ChatTheme.typography.body,
+                    style = ChatTheme.typography.bodyDefault,
                     maxLines = 1,
                     color = Color.White,
                 )

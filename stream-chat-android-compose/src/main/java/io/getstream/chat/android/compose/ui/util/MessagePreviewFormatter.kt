@@ -22,6 +22,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
@@ -32,8 +33,7 @@ import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
-import io.getstream.chat.android.compose.ui.theme.StreamColors
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.DraftMessage
@@ -87,20 +87,22 @@ public interface MessagePreviewFormatter {
          *
          * @see [DefaultMessagePreviewFormatter]
          */
+        @Suppress("detekt:ForbiddenComment")
         public fun defaultFormatter(
             context: Context,
             autoTranslationEnabled: Boolean,
-            typography: StreamTypography,
+            typography: StreamDesign.Typography,
             attachmentFactories: List<AttachmentFactory>,
-            colors: StreamColors,
+            colors: StreamDesign.Colors,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
-                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
-                messageTextStyle = typography.bodyBold,
-                senderNameTextStyle = typography.bodyBold,
-                attachmentTextFontStyle = typography.bodyItalic,
+                draftMessageLabelTextStyle = typography.metadataEmphasis.copy(color = colors.accentPrimary),
+                messageTextStyle = typography.bodyEmphasis,
+                senderNameTextStyle = typography.bodyEmphasis,
+                // TODO: replace with a dedicated italic token once the design system provides one
+                attachmentTextFontStyle = typography.bodyDefault.copy(fontStyle = FontStyle.Italic),
                 attachmentFactories = attachmentFactories,
             )
         }

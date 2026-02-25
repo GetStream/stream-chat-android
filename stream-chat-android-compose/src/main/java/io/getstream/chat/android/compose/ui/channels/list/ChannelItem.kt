@@ -136,7 +136,7 @@ public fun ChannelItem(
     val shape = RoundedCornerShape(StreamTokens.radiusLg)
 
     val focusBorderModifier = if (isFocused) {
-        Modifier.border(2.dp, ChatTheme.colors.borderCorePrimary, shape)
+        Modifier.border(2.dp, ChatTheme.colors.borderUtilitySelected, shape)
     } else {
         Modifier
     }
@@ -191,13 +191,12 @@ internal fun DefaultChannelItemLeadingContent(
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .padding(
-                start = StreamTokens.spacingMd, // 16dp (was channelItemHorizontalPadding = 8dp)
-                end = StreamTokens.spacingMd, // 16dp gap between avatar and content column
-                top = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp)
-                bottom = StreamTokens.spacingMd, // 16dp (was channelItemVerticalPadding = 12dp)
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                top = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingMd,
             )
-            // 48dp (new dimen, NOT channelAvatarSize which = 40dp for header)
-            .size(ChatTheme.dimens.channelListItemAvatarSize),
+            .size(48.dp),
         channel = channelItem.channel,
         currentUser = currentUser,
         showIndicator = false,
@@ -239,7 +238,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp default gap
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         ) {
             // Channel name + optional inline mute icon (flex-1)
             Row(
@@ -263,7 +262,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     Icon(
                         modifier = Modifier
                             .testTag("Stream_ChannelMutedIcon")
-                            .size(StreamTokens.size16),
+                            .size(16.dp),
                         painter = painterResource(id = R.drawable.stream_compose_ic_muted),
                         contentDescription = null,
                         tint = ChatTheme.colors.textTertiary,
@@ -274,7 +273,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             // Trailing: Timestamp + Badge (gap = spacing/xs = 8dp between them)
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs), // 8dp between timestamp and badge
+                horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
             ) {
                 // Timestamp
                 if (lastMessage != null) {
@@ -345,7 +344,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                 Icon(
                     modifier = Modifier
                         .testTag("Stream_ChannelMutedIcon")
-                        .size(StreamTokens.size16),
+                        .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_muted),
                     contentDescription = null,
                     tint = ChatTheme.colors.textTertiary,
@@ -409,7 +408,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 ) {
     // Timestamp, badge, and delivery status have moved to DefaultChannelItemCenterContent.
     // This slot remains for API compatibility and provides the trailing end padding.
-    Spacer(modifier = Modifier.width(StreamTokens.spacingMd)) // 16dp end padding
+    Spacer(modifier = Modifier.width(StreamTokens.spacingMd))
 }
 
 @Preview(showBackground = true)

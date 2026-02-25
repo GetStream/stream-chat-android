@@ -44,7 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTokens
 public fun UnreadCountIndicator(
     unreadCount: Int,
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.accentPrimary, // was errorAccent (red #FF3742) → accentPrimary (blue #005FFF)
+    color: Color = ChatTheme.colors.accentPrimary,
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
 
@@ -63,7 +63,7 @@ public fun UnreadCountIndicator(
             text = displayText,
             color = ChatTheme.colors.badgeTextOnAccent,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.numericMedium, // 10sp Bold
+            style = ChatTheme.typography.numericMedium,
         )
     }
 }

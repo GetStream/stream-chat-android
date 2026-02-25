@@ -177,7 +177,7 @@ public fun ChatsScreen(
         movableContentOf { modifier: Modifier ->
             Scaffold(
                 modifier = modifier.safeDrawingPadding(),
-                containerColor = ChatTheme.colors.appBackground,
+                containerColor = ChatTheme.colors.backgroundCoreApp,
                 topBar = { listTopBarContent() },
                 bottomBar = { listBottomBarContent() },
             ) { padding ->

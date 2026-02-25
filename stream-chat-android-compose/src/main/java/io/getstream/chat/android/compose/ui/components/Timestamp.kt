@@ -46,9 +46,9 @@ public fun Timestamp(
     modifier: Modifier = Modifier,
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
-    textStyle: TextStyle = ChatTheme.typography.captionDefault.copy( // was footnote (12sp)
-        color = ChatTheme.colors.textTertiary, // was textLowEmphasis
-        lineHeight = StreamTokens.lineHeightNormal, // 20sp
+    textStyle: TextStyle = ChatTheme.typography.captionDefault.copy(
+        color = ChatTheme.colors.textTertiary,
+        lineHeight = StreamTokens.lineHeightNormal,
     ),
 ) {
     val timestamp = if (LocalInspectionMode.current) {

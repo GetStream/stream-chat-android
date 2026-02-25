@@ -70,8 +70,8 @@ public fun SelectedChannelMenu(
     onChannelOptionClick: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: Shape = ChatTheme.shapes.bottomSheet,
-    overlayColor: Color = ChatTheme.colors.overlay,
+    shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+    overlayColor: Color = ChatTheme.colors.backgroundCoreScrim,
     headerContent: @Composable ColumnScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMenuHeaderContent(
@@ -198,7 +198,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
-                shape = ChatTheme.shapes.bottomSheet,
+                shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 selectedChannel = channel,
                 currentUser = PreviewUserData.user1,
                 channelActions = listOf(

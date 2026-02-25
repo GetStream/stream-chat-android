@@ -63,7 +63,7 @@ fun AppBottomBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground),
+            .background(ChatTheme.colors.backgroundElevationElevation1),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
@@ -116,7 +116,7 @@ private fun AppBottomBarOptionTile(
     decorationBadge: (@Composable () -> Unit)? = null,
 ) {
     val contentColor by animateColorAsState(
-        targetValue = if (isSelected) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis,
+        targetValue = if (isSelected) ChatTheme.colors.textPrimary else ChatTheme.colors.textSecondary,
     )
     Box(
         modifier = Modifier

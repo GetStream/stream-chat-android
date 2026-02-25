@@ -55,15 +55,15 @@ public fun MessageHeaderLabel(
                 .size(14.dp),
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis,
+            tint = ChatTheme.colors.textSecondary,
         )
 
         if (text != null) {
             Text(
                 modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
                 text = text,
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.metadataDefault,
+                color = ChatTheme.colors.textSecondary,
             )
         }
     }

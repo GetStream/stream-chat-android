@@ -423,8 +423,8 @@ private fun MessageComposerSurface(
     } else {
         Surface(
             modifier = modifier,
-            shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
-            color = ChatTheme.colors.barsBackground,
+            shadowElevation = 24.dp,
+            color = ChatTheme.colors.backgroundElevationElevation1,
             content = content,
         )
     }

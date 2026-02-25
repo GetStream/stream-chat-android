@@ -186,7 +186,7 @@ private object ChannelListCustomizationSnippet {
 
                         Text(
                             text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                            style = ChatTheme.typography.bodyBold,
+                            style = ChatTheme.typography.bodyEmphasis,
                             maxLines = 1,
                         )
                     }

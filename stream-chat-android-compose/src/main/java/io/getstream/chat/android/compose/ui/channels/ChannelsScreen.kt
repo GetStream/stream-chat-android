@@ -131,7 +131,7 @@ public fun ChannelsScreen(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize()
-                    .background(color = ChatTheme.colors.appBackground),
+                    .background(color = ChatTheme.colors.backgroundCoreApp),
             ) {
                 if (searchMode != SearchMode.None) {
                     ChatTheme.componentFactory.ChannelListSearchInput(

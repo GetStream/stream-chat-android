@@ -78,7 +78,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             PHOTO to InlineTextContent(placeholder) {
@@ -86,7 +86,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_camera),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             VIDEO to InlineTextContent(placeholder) {
@@ -94,7 +94,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_video),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             FILE to InlineTextContent(placeholder) {
@@ -102,7 +102,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_file),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             LINK to InlineTextContent(placeholder) {
@@ -110,7 +110,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_link),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             LOCATION to InlineTextContent(placeholder) {
@@ -118,7 +118,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_map_pin),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
             POLL to InlineTextContent(placeholder) {
@@ -126,7 +126,7 @@ internal class DefaultMessagePreviewIconFactory : MessagePreviewIconFactory {
                     modifier = iconModifier,
                     painter = painterResource(id = R.drawable.stream_compose_ic_poll),
                     contentDescription = null,
-                    tint = ChatTheme.colors.textLowEmphasis,
+                    tint = ChatTheme.colors.textSecondary,
                 )
             },
         )

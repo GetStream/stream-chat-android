@@ -57,7 +57,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                 LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
             ) {
                 ChatTheme(isInDarkMode = isInDarkMode) {
-                    Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                    Box(modifier = Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
                         composable.invoke()
                     }
                 }
@@ -80,7 +80,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
                             composable()
@@ -90,7 +90,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
                             composable()
@@ -116,7 +116,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
                             composable()
@@ -126,7 +126,7 @@ internal interface PaparazziComposeTest : MockedChatClientTest {
                         Box(
                             modifier = Modifier
                                 .weight(.5f)
-                                .background(ChatTheme.colors.appBackground),
+                                .background(ChatTheme.colors.backgroundCoreApp),
                             contentAlignment = contentAlignment,
                         ) {
                             composable()

@@ -33,7 +33,7 @@ internal fun EmphasisBox(
     isEmphasized: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val color = ChatTheme.colors.textLowEmphasis
+    val color = ChatTheme.colors.textSecondary
     val alpha by animateFloatAsState(targetValue = if (isEmphasized) EmphasisTransparency else 0f)
     Box(
         modifier = modifier.drawWithContent {

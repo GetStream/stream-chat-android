@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
@@ -58,7 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedInputText
 
 /**
@@ -90,14 +92,14 @@ public fun PollOptionInput(
     enabled: Boolean = true,
     maxLines: Int = 1,
     maxLength: Int = 80,
-    shape: Shape = ChatTheme.shapes.pollOptionInput,
+    shape: Shape = RoundedCornerShape(StreamTokens.radiusXl),
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
     val typography = ChatTheme.typography
     val colors = ChatTheme.colors
-    val textColor = ChatTheme.colors.textHighEmphasis
+    val textColor = ChatTheme.colors.textPrimary
     val focusRequester = remember { FocusRequester() }
     // Using TextFieldValue to manage the text input state,
     // which allows us to set the cursor position to the end of the text
@@ -106,12 +108,12 @@ public fun PollOptionInput(
         mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
     }
 
-    Box(modifier = modifier.height(ChatTheme.dimens.pollOptionInputHeight)) {
+    Box(modifier = modifier.height(56.dp)) {
         BasicTextField(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(shape = shape)
-                .background(ChatTheme.colors.inputBackground)
+                .background(ChatTheme.colors.backgroundCoreSurface)
                 .padding(innerPadding)
                 .focusRequester(focusRequester)
                 .semantics { contentDescription = description },
@@ -125,19 +127,18 @@ public fun PollOptionInput(
                 val styledText = buildAnnotatedInputText(
                     text = it.text,
                     textColor = textColor,
-                    textFontStyle = typography.body.fontStyle,
+                    textFontStyle = typography.bodyDefault.fontStyle,
                     linkStyle = TextStyle(
-                        color = colors.primaryAccent,
+                        color = colors.accentPrimary,
                         textDecoration = TextDecoration.Underline,
                     ),
                 )
                 TransformedText(styledText, OffsetMapping.Identity)
             },
-            textStyle = StreamTypography.defaultTypography().body.copy(
-                fontSize = 16.sp,
+            textStyle = StreamDesign.Typography.default().bodyDefault.copy(
                 textDirection = TextDirection.Content,
             ),
-            cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
+            cursorBrush = SolidColor(ChatTheme.colors.accentPrimary),
             decorationBox = { innerTextField -> decorationBox(innerTextField) },
             maxLines = maxLines,
             singleLine = maxLines == 1,
@@ -153,8 +154,8 @@ public fun PollOptionInput(
                     .align(Alignment.CenterStart)
                     .semantics { contentDescription = description },
                 text = description,
-                style = ChatTheme.typography.body.copy(
-                    color = colors.textLowEmphasis,
+                style = ChatTheme.typography.bodyDefault.copy(
+                    color = colors.textSecondary,
                     textDirection = TextDirection.Content,
                 ),
                 fontSize = 16.sp,
@@ -175,7 +176,7 @@ public fun PollOptionInputPreview() {
     ChatTheme {
         Column(
             modifier = Modifier
-                .background(ChatTheme.colors.appBackground)
+                .background(ChatTheme.colors.backgroundCoreApp)
                 .fillMaxWidth()
                 .height(400.dp)
                 .padding(16.dp),

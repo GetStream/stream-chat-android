@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -75,9 +76,8 @@ public fun AttachmentPickerMenu(
 
     // Dismiss the keyboard when the attachments picker is shown (if instructed by ChatTheme).
     val focusManager = LocalFocusManager.current
-    val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
     LaunchedEffect(isPickerVisible) {
-        if (shouldCloseKeyboard && isPickerVisible) {
+        if (isPickerVisible) {
             focusManager.clearFocus()
         }
     }
@@ -91,8 +91,8 @@ public fun AttachmentPickerMenu(
     }
 
     val menuHeight = when {
-        ChatTheme.attachmentPickerConfig.useSystemPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
-        else -> ChatTheme.dimens.attachmentsPickerHeight
+        ChatTheme.attachmentPickerConfig.useSystemPicker -> 72.dp
+        else -> 350.dp
     }
 
     val actions = remember(attachmentsPickerViewModel, composerViewModel) {

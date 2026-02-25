@@ -109,7 +109,7 @@ public fun LinkAttachmentContent(
     val baseModifier = modifier
         .padding(MessageStyling.messageSectionPadding)
         .fillMaxWidth()
-        .clip(ChatTheme.shapes.attachment)
+        .clip(RoundedCornerShape(StreamTokens.radiusLg))
         .background(MessageStyling.attachmentBackgroundColor(state.isMine))
         .combinedClickable(
             indication = null,

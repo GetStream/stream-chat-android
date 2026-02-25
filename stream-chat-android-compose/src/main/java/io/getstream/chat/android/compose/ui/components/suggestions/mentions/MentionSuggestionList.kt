@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -53,7 +54,7 @@ public fun MentionSuggestionList(
     SuggestionList(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight),
+            .heightIn(max = 256.dp),
     ) {
         MentionSuggestionLazyList(
             users = users,

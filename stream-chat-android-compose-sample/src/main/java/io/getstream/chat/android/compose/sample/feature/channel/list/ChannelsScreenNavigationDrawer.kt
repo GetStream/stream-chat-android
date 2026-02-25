@@ -131,7 +131,7 @@ private fun LoggedInUserHeader(
                 text = user.name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis,
+                color = ChatTheme.colors.textPrimary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -155,13 +155,13 @@ private fun LoggedInUserHeader(
             Text(
                 text = text,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
             )
         } else {
             Text(
                 text = "No teams",
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -188,15 +188,15 @@ private fun NavigationDrawerItem(
     ) {
         Icon(
             painter = painterResource(icon),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = ChatTheme.colors.textPrimary,
             contentDescription = text,
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = text,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
             fontSize = 14.sp,
-            style = ChatTheme.typography.bodyBold,
+            style = ChatTheme.typography.bodyEmphasis,
         )
     }
 }
@@ -209,7 +209,7 @@ private fun VersionFooter() {
             .padding(vertical = 8.dp),
         textAlign = TextAlign.Center,
         text = BuildConfig.VERSION_NAME,
-        color = ChatTheme.colors.textLowEmphasis,
+        color = ChatTheme.colors.textSecondary,
         fontSize = 12.sp,
     )
 }

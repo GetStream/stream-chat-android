@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -78,9 +79,9 @@ public fun SelectedReactionsMenu(
     ModalBottomSheet(
         modifier = modifier,
         sheetState = rememberModalBottomSheetState(),
-        shape = ChatTheme.shapes.bottomSheet,
-        containerColor = ChatTheme.colors.barsBackground,
-        scrimColor = ChatTheme.colors.overlay,
+        shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        scrimColor = ChatTheme.colors.backgroundCoreScrim,
         onDismissRequest = onDismiss,
         dragHandle = { BottomSheetDefaults.DragHandle() },
     ) {
@@ -149,15 +150,15 @@ internal fun ReactionsMenuContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .fillMaxWidth()
-            .background(ChatTheme.colors.barsBackground)
+            .background(ChatTheme.colors.backgroundElevationElevation1)
             .verticalScroll(rememberScrollState()),
     ) {
         Text(
             text = reactionCountText,
-            style = ChatTheme.typography.title3Bold,
+            style = ChatTheme.typography.headingMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textPrimary,
         )
 
         ReactionCountRow(

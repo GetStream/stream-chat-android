@@ -51,7 +51,7 @@ class CustomChatComponentFactory(
             .animateItem()
             .run {
                 if (channelItem.channel.isPinned()) {
-                    background(color = ChatTheme.colors.highlight)
+                    background(color = ChatTheme.colors.backgroundCoreHighlight)
                 } else {
                     this
                 }
@@ -60,7 +60,7 @@ class CustomChatComponentFactory(
         if (swipeEnabled) {
             SwipeableChannelItem(
                 channelCid = channelItem.channel.cid,
-                backgroundColor = ChatTheme.colors.appBackground,
+                backgroundColor = ChatTheme.colors.backgroundCoreApp,
                 swipeActions = { Row { ChannelSwipeActions(channelItem) } },
             ) {
                 ChannelItem(

@@ -161,7 +161,7 @@ private object MessageListCustomizationSnippet {
                         viewModel = listViewModel,
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(ChatTheme.colors.appBackground),
+                            .background(ChatTheme.colors.backgroundCoreApp),
                         itemContent = { item ->
                             if (item is MessageItemState) { // we check against other subclasses of 'MessageListItemState'
                                 val message = item.message
@@ -180,14 +180,14 @@ private object MessageListCustomizationSnippet {
                                         Text(
                                             modifier = Modifier.padding(start = 8.dp),
                                             text = message.user.name,
-                                            style = ChatTheme.typography.bodyBold,
+                                            style = ChatTheme.typography.bodyEmphasis,
                                             fontSize = 14.sp,
-                                            color = ChatTheme.colors.textHighEmphasis
+                                            color = ChatTheme.colors.textPrimary
                                         )
                                     }
 
                                     MessageBubble(
-                                        color = ChatTheme.colors.barsBackground,
+                                        color = ChatTheme.colors.backgroundElevationElevation1,
                                         modifier = Modifier.padding(top = 4.dp),
                                         shape = RoundedCornerShape(
                                             topEnd = 16.dp,
@@ -199,7 +199,7 @@ private object MessageListCustomizationSnippet {
                                             Text(
                                                 modifier = Modifier.padding(8.dp),
                                                 text = message.text,
-                                                color = ChatTheme.colors.textHighEmphasis
+                                                color = ChatTheme.colors.textPrimary
                                             )
                                         }
                                     )
