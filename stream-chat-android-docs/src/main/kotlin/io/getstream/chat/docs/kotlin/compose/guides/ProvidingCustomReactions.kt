@@ -74,6 +74,9 @@ private object ProvidingCustomReactionsSnippet {
             HAHA,
         )
 
+        // Here we return only the reactions that should show up in quick access
+        override val defaultReactions: List<String> = listOf(THUMBS_UP, THUMBS_DOWN, HAHA)
+
         override fun emojiCode(type: String): String? = when (type) {
             THUMBS_UP -> "👍"
             THUMBS_DOWN -> "👎"

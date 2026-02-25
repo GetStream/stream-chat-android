@@ -16,16 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.reactionpicker
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.PaparazziComposeTest
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import org.junit.Rule
 import org.junit.Test
@@ -36,41 +29,11 @@ internal class ReactionsPickerTest : PaparazziComposeTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `Default reaction picker`() {
+    fun `Default reaction picker content`() {
         snapshotWithDarkMode {
-            ReactionsPicker(
+            ReactionsPickerContent(
                 message = PreviewMessageData.message1,
                 onMessageAction = { },
-            )
-        }
-    }
-
-    @Suppress("detekt:ForbiddenComment")
-    @Test
-    fun `Reaction picker with header`() {
-        snapshotWithDarkMode {
-            ReactionsPicker(
-                message = PreviewMessageData.message1,
-                onMessageAction = { },
-                headerContent = {
-                    Text(
-                        modifier = Modifier
-                            .align(CenterHorizontally)
-                            .padding(8.dp),
-                        text = "My custom header",
-                        style = ChatTheme.typography.headingLarge,
-                        color = ChatTheme.colors.textPrimary,
-                    )
-                    Text(
-                        modifier = Modifier
-                            .align(CenterHorizontally)
-                            .padding(8.dp),
-                        text = "Our reactions often reveal truths that actions alone can hide.",
-                        // TODO: replace with a dedicated italic token once the design system provides one
-                        style = ChatTheme.typography.metadataDefault.copy(fontStyle = FontStyle.Italic),
-                        color = ChatTheme.colors.textSecondary,
-                    )
-                },
             )
         }
     }

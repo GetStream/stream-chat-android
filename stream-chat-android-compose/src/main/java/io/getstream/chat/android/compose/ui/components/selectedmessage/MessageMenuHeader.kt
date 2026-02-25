@@ -22,14 +22,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggle
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -53,7 +59,7 @@ public fun MessageMenuHeader(
     val componentFactory = ChatTheme.componentFactory
     val colors = ChatTheme.colors
     val resolver = ChatTheme.reactionResolver
-    val options = resolver.supportedReactions.map { type ->
+    val options = resolver.defaultReactions.map { type ->
         ReactionOptionItemState(
             type = type,
             isSelected = ownReactions.any { ownReaction -> ownReaction.type == type },
@@ -69,8 +75,8 @@ public fun MessageMenuHeader(
         horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing3xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        options.take(MaxDisplayedReactions).forEach { option ->
-            ReactionToggle(
+        options.forEach { option ->
+            componentFactory.ReactionToggle(
                 type = option.type,
                 emoji = option.emojiCode,
                 size = ReactionToggleSize.Large,
@@ -80,11 +86,18 @@ public fun MessageMenuHeader(
             )
         }
 
-        if (options.size > MaxDisplayedReactions) {
-            componentFactory.ReactionMenuShowMore(
-                modifier = Modifier.padding(StreamTokens.spacing2xs),
-                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            )
+        if (options.size < resolver.supportedReactions.size) {
+            StreamButton(
+                onClick = onShowMoreReactionsSelected,
+                style = StreamButtonStyleDefaults.secondaryOutline,
+                size = StreamButtonSize.Small,
+                modifier = Modifier,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.stream_compose_ic_plus),
+                    contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
+                )
+            }
         }
     }
 }
@@ -104,8 +117,3 @@ private fun MessageMenuHeaderPreview() {
         }
     }
 }
-
-/**
- * The default maximum number of reactions shown before the show more button.
- */
-private const val MaxDisplayedReactions = 5

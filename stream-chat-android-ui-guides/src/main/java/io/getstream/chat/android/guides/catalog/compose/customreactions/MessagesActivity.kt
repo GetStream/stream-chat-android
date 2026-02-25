@@ -78,12 +78,15 @@ class MessagesActivity : AppCompatActivity() {
  */
 class CustomReactionResolver : ReactionResolver {
 
-    override val supportedReactions: Set<String> = setOf(
+    override val supportedReactions: Set<String> = linkedSetOf(
         THUMBS_UP,
         THUMBS_DOWN,
         MOOD_GOOD,
         MOOD_BAD,
     )
+
+    // Here we return only the reactions that should show up in quick access
+    override val defaultReactions: List<String> = listOf(THUMBS_UP, THUMBS_DOWN)
 
     override fun emojiCode(type: String): String? = when (type) {
         THUMBS_UP -> "👍"

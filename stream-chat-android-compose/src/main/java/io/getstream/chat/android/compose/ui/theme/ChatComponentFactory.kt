@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.theme
 import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
@@ -60,7 +58,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -115,9 +112,6 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
-import io.getstream.chat.android.compose.ui.components.button.StreamButton
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonSize
-import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -140,7 +134,6 @@ import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.SegmentedMessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
-import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionIconSize
 import io.getstream.chat.android.compose.ui.components.reactions.ReactionToggleSize
@@ -2409,10 +2402,10 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the header content of the SelectedReactionsMenu.
+     * Factory method for creating a single reaction option item in the reactions menu.
      *
-     * @param modifier The modifier for the header.
-     * @param option the reaction option.
+     * @param modifier The modifier for the item.
+     * @param option The reaction option state.
      * @param onReactionOptionSelected Callback for when a reaction option is clicked.
      */
     @Composable
@@ -2421,92 +2414,25 @@ public interface ChatComponentFactory {
         option: ReactionOptionItemState,
         onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     ) {
-        ReactionToggle(
-            type = option.type,
-            emoji = option.emojiCode,
-            size = ReactionToggleSize.Medium,
-            checked = option.isSelected,
-            onCheckedChange = { onReactionOptionSelected(option) },
+        Box(
             modifier = modifier.testTag("Stream_Reaction_${option.type}"),
-        )
-    }
-
-    /**
-     * Factory method for creating the reactions menu more option.
-     *
-     * @param onShowMoreReactionsSelected Callback for when the show more reactions option is clicked.
-     */
-    @Composable
-    public fun ReactionMenuShowMore(
-        modifier: Modifier,
-        onShowMoreReactionsSelected: () -> Unit,
-    ) {
-        StreamButton(
-            onClick = onShowMoreReactionsSelected,
-            style = StreamButtonStyleDefaults.secondaryOutline,
-            size = StreamButtonSize.Small,
-            modifier = modifier,
+            contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                painter = painterResource(R.drawable.stream_compose_ic_plus),
-                contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
+            ReactionToggle(
+                type = option.type,
+                emoji = option.emojiCode,
+                size = ReactionToggleSize.ExtraLarge,
+                checked = option.isSelected,
+                onCheckedChange = { onReactionOptionSelected(option) },
+                modifier = Modifier,
             )
         }
     }
 
     /**
-     * Factory method for creating the center content of the reactions menu.
+     * Factory method for creating the reaction picker bottom sheet.
      *
-     * @param modifier The modifier for the center content.
-     * @param message The selected message.
-     */
-    @OptIn(ExperimentalFoundationApi::class)
-    @Composable
-    public fun ExtendedReactionsMenuOptions(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-    ) {
-        ExtendedReactionsOptions(
-            modifier = modifier
-                .fillMaxWidth(),
-            onReactionOptionSelected = {
-                onMessageAction(
-                    React(
-                        reaction = Reaction(messageId = message.id, type = it.type, emojiCode = it.emojiCode),
-                        message = message,
-                    ),
-                )
-            },
-            cells = GridCells.Fixed(DefaultCellsCount),
-            ownReactions = message.ownReactions,
-        )
-    }
-
-    /**
-     * Factory method for creating the header content of the SelectedReactionsMenu.
-     *
-     * @param modifier The modifier for the header.
-     * @param option the reaction option.
-     * @param onReactionOptionSelected Callback for when a reaction option is clicked.
-     */
-    @Composable
-    public fun ExtendedReactionMenuOptionItem(
-        modifier: Modifier,
-        option: ReactionOptionItemState,
-        onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
-    ) {
-        ReactionMenuOptionItem(
-            modifier = modifier,
-            onReactionOptionSelected = onReactionOptionSelected,
-            option = option,
-        )
-    }
-
-    /**
-     * Factory method for creating the reactions menu more option.
-     *
-     * @param modifier The modifier
+     * @param modifier The modifier.
      * @param message The selected message.
      * @param onMessageAction Callback for when a message action is clicked.
      * @param onDismiss Callback for when the menu is dismissed.
@@ -2527,40 +2453,20 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the header content of the reaction picker.
+     * Factory method for creating the content of the reaction picker bottom sheet.
      *
-     * * @param modifier The modifier
+     * @param modifier The modifier.
      * @param message The selected message.
      * @param onMessageAction Callback for when a message action is clicked.
-     * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
-    public fun MessageReactionPickerHeaderContent(
+    public fun MessageReactionsPickerContent(
         modifier: Modifier,
         message: Message,
         onMessageAction: (MessageAction) -> Unit,
-        onDismiss: () -> Unit,
     ) {
-        // This composable is empty on purpose. By default we don't have a header to the picker.
-    }
-
-    /**
-     * Factory method for creating the center content of the reaction picker.
-     *
-     * @param modifier The modifier
-     * @param message The selected message.
-     * @param onMessageAction Callback for when a message action is clicked.
-     * @param onDismiss Callback for when the menu is dismissed.
-     */
-    @Composable
-    public fun MessageReactionPickerCenterContent(
-        modifier: Modifier,
-        message: Message,
-        onMessageAction: (MessageAction) -> Unit,
-        onDismiss: () -> Unit,
-    ) {
-        ExtendedReactionsMenuOptions(
-            modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+        io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPickerContent(
+            modifier = modifier,
             message = message,
             onMessageAction = onMessageAction,
         )

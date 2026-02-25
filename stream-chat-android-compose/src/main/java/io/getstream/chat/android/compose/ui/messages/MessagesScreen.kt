@@ -17,13 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.AnimationConstants
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +27,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -48,7 +40,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.testTag
@@ -530,8 +521,7 @@ private fun BoxScope.MessagesScreenMenus(
 }
 
 /**
- * Contains the reactions picker wrapped inside
- * of an animated composable.
+ * Contains the reactions picker as a bottom sheet.
  *
  * @param listViewModel The [MessageListViewModel] used to read state and
  * perform actions.
@@ -545,7 +535,7 @@ private fun BoxScope.MessagesScreenMenus(
  * displayed as a link attachment. False by default.
  */
 @Composable
-private fun BoxScope.MessagesScreenReactionsPicker(
+private fun MessagesScreenReactionsPicker(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     selectedMessageState: SelectedMessageState?,
@@ -553,26 +543,9 @@ private fun BoxScope.MessagesScreenReactionsPicker(
     skipPushNotification: Boolean,
     skipEnrichUrl: Boolean,
 ) {
-    AnimatedVisibility(
-        visible = selectedMessageState is SelectedMessageReactionsPickerState && selectedMessage.id.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
-    ) {
+    if (selectedMessageState is SelectedMessageReactionsPickerState && selectedMessage.id.isNotEmpty()) {
         ChatTheme.componentFactory.MessageReactionPicker(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .heightIn(max = 400.dp)
-                .wrapContentHeight()
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween(),
-                    ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
-                    ),
-                ),
+            modifier = Modifier,
             message = selectedMessage,
             onMessageAction = remember(composerViewModel, listViewModel) {
                 {
@@ -583,8 +556,8 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                             skipEnrichUrl = skipEnrichUrl,
                         ),
                     ).let {
-                        composerViewModel.performMessageAction(action)
-                        listViewModel.performMessageAction(action)
+                        composerViewModel.performMessageAction(it)
+                        listViewModel.performMessageAction(it)
                     }
                 }
             },
