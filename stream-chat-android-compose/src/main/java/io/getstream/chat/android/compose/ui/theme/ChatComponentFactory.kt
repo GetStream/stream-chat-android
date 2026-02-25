@@ -2196,7 +2196,7 @@ public interface ChatComponentFactory {
             ChatTheme.colors.textPrimary
         }
         MenuOptionItem(
-            modifier = modifier.padding(horizontal = StreamTokens.spacing2xs),
+            modifier = modifier.padding(horizontal = StreamTokens.spacingMd),
             title = action.label,
             titleColor = titleColor,
             leadingIcon = {
