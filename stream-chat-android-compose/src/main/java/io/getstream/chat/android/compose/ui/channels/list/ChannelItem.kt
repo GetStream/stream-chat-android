@@ -251,7 +251,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                         .testTag("Stream_ChannelName")
                         .weight(1f, fill = false),
                     text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
-                    style = ChatTheme.typography.bodyDefault,
+                    style = ChatTheme.typography.headingSmall,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     color = ChatTheme.colors.textPrimary,
