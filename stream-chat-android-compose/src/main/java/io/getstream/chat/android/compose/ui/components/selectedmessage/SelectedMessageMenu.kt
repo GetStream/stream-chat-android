@@ -90,7 +90,7 @@ import kotlinx.coroutines.withContext
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
  * @param currentUser The currently logged-in user, used to build the message preview.
- * @param onDismiss Handler called when the menu is dismissed.
+ * @param onDismiss Handler invoked asynchronously once after the exit animation completes.
  */
 @Suppress("LongMethod")
 @Composable
@@ -124,11 +124,16 @@ public fun SelectedMessageMenu(
     )
     val scope = rememberCoroutineScope()
     val animatedDismiss: () -> Unit = remember(animation, onDismiss, scope) {
-        {
-            scope.launch {
-                withContext(NonCancellable) {
-                    animation.animateOut()
-                    onDismiss()
+        var dismissed = false
+
+        block@{
+            if (!dismissed) {
+                dismissed = true
+                scope.launch {
+                    withContext(NonCancellable) {
+                        animation.animateOut()
+                        onDismiss()
+                    }
                 }
             }
         }
