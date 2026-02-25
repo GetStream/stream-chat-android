@@ -64,6 +64,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.first
@@ -456,6 +457,7 @@ public class ChannelListViewModel(
                         }
                     }
                 }.flowOn(Dispatchers.Default)
+                    .debounce(CHANNEL_LIST_DEBOUNCE_MS)
                     .collectLatest { newState -> channelsState = newState }
             }
         }
@@ -787,6 +789,12 @@ public class ChannelListViewModel(
          * Minimum length of the search query to start searching for channels.
          */
         private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
+
+        /**
+         * Debounce time for channel list state updates. Collapses rapid-fire emissions
+         * (e.g. 30 user.watching.start events) into a single UI update.
+         */
+        private const val CHANNEL_LIST_DEBOUNCE_MS = 100L
     }
 
     private data class SearchMessageState(
