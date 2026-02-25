@@ -101,8 +101,8 @@ public class ChannelListViewModel(
     initialSort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
     initialFilters: FilterObject? = null,
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
-    private val memberLimit: Int? = null,
-    private val messageLimit: Int? = null,
+    private val memberLimit: Int? = DEFAULT_MEMBER_LIMIT,
+    private val messageLimit: Int? = DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
     private val isDraftMessageEnabled: Boolean = false,
@@ -779,6 +779,16 @@ public class ChannelListViewModel(
          * Default value of number of channels to return when querying channels.
          */
         internal const val DEFAULT_CHANNEL_LIMIT = 30
+
+        /**
+         * Default value of number of messages to return per channel.
+         */
+        internal const val DEFAULT_MESSAGE_LIMIT = 1
+
+        /**
+         * Default value of number of members to return per channel.
+         */
+        internal const val DEFAULT_MEMBER_LIMIT = 5
 
         /**
          * Debounce time for search queries.
