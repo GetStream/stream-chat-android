@@ -40,12 +40,15 @@ import kotlinx.coroutines.launch
  * Default swipe actions for a channel list item.
  *
  * Shows two actions:
- * - **Primary action** (blue): Archive for DMs, Mute for groups — with fallback priority.
- * - **More** (gray): Opens the channel options bottom sheet.
+ * - **More** (gray, left): Opens the channel options bottom sheet.
+ * - **Primary action** (blue, right): Archive for DMs, Mute for groups — with fallback priority.
  *
  * The primary action is resolved via a priority list:
  * - DM: Archive → Mute → Pin
  * - Group: Mute → Archive → Pin
+ *
+ * Each action is a self-executing [ChannelAction] that invokes its handler via
+ * [LocalSwipeActionHandler].
  *
  * @param channelItem The channel item state to build actions for.
  */
@@ -57,8 +60,8 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
     val scope = rememberCoroutineScope()
     val channel = channelItem.channel
 
-    fun onAction(block: () -> Unit) {
-        block()
+    fun onAction(action: ChannelAction) {
+        handler(action)
         scope.launch { coordinator?.closeAll() }
     }
 
@@ -67,23 +70,26 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
         SwipeActionItem(
             icon = painterResource(R.drawable.stream_compose_ic_more_options),
             label = stringResource(R.string.stream_compose_swipe_action_more),
-            onClick = { onAction { moreHandler(channel) } },
+            onClick = {
+                scope.launch { coordinator?.closeAll() }
+                moreHandler(channel)
+            },
             style = SwipeActionStyle.Secondary,
         )
     }
 
     // Primary action (rightmost) — resolved by channel type and capabilities
-    val primaryAction = resolvePrimaryAction(
+    val primaryAction = resolvePrimarySwipeAction(
         channel = channel,
         isMuted = channelItem.isMuted,
         isPinned = channelItem.isPinned,
     )
     if (primaryAction != null) {
-        RenderSwipeAction(
-            action = primaryAction,
-            channel = channel,
+        SwipeActionItem(
+            icon = painterResource(primaryAction.icon),
+            label = primaryAction.label,
+            onClick = { onAction(primaryAction) },
             style = SwipeActionStyle.Primary,
-            onAction = { onAction { handler(it) } },
         )
     }
 }
@@ -97,110 +103,69 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
  * Archive and Pin are always available (membership operations, no capability gate).
  * Mute requires [ChannelCapabilities.MUTE_CHANNEL].
  */
-private fun resolvePrimaryAction(
+@Composable
+private fun resolvePrimarySwipeAction(
     channel: Channel,
     isMuted: Boolean,
     isPinned: Boolean,
-): ResolvedSwipeAction? {
+): ChannelAction? {
     val capabilities = channel.ownCapabilities
     val isArchived = channel.isArchive()
     val canMute = capabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
     val isDM = channel.isDistinct() && channel.members.size == 2
 
-    val candidates: List<ResolvedSwipeAction?> = if (isDM) {
-        listOf(
-            ResolvedSwipeAction.Archive(isArchived),
-            ResolvedSwipeAction.Mute(isMuted).takeIf { canMute },
-            ResolvedSwipeAction.Pin(isPinned),
+    // Build candidate actions with resolved labels
+    val archiveAction: ChannelAction = if (isArchived) {
+        UnarchiveChannel(
+            channel = channel,
+            label = stringResource(R.string.stream_compose_swipe_action_unarchive),
+            onAction = {},
         )
     } else {
-        listOf(
-            ResolvedSwipeAction.Mute(isMuted).takeIf { canMute },
-            ResolvedSwipeAction.Archive(isArchived),
-            ResolvedSwipeAction.Pin(isPinned),
+        ArchiveChannel(
+            channel = channel,
+            label = stringResource(R.string.stream_compose_swipe_action_archive),
+            onAction = {},
         )
+    }
+
+    val muteAction: ChannelAction? = if (canMute) {
+        if (isMuted) {
+            UnmuteChannel(
+                channel = channel,
+                label = stringResource(R.string.stream_compose_swipe_action_unmute),
+                onAction = {},
+            )
+        } else {
+            MuteChannel(
+                channel = channel,
+                label = stringResource(R.string.stream_compose_swipe_action_mute),
+                onAction = {},
+            )
+        }
+    } else {
+        null
+    }
+
+    val pinAction: ChannelAction = if (isPinned) {
+        UnpinChannel(
+            channel = channel,
+            label = stringResource(R.string.stream_compose_swipe_action_unpin),
+            onAction = {},
+        )
+    } else {
+        PinChannel(
+            channel = channel,
+            label = stringResource(R.string.stream_compose_swipe_action_pin),
+            onAction = {},
+        )
+    }
+
+    val candidates: List<ChannelAction?> = if (isDM) {
+        listOf(archiveAction, muteAction, pinAction)
+    } else {
+        listOf(muteAction, archiveAction, pinAction)
     }
 
     return candidates.firstOrNull { it != null }
-}
-
-/**
- * Renders a resolved swipe action as a [SwipeActionItem].
- */
-@Composable
-private fun RenderSwipeAction(
-    action: ResolvedSwipeAction,
-    channel: Channel,
-    style: SwipeActionStyle,
-    onAction: (ChannelAction) -> Unit,
-) {
-    when (action) {
-        is ResolvedSwipeAction.Archive -> {
-            if (action.isArchived) {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_unarchive),
-                    label = stringResource(R.string.stream_compose_swipe_action_unarchive),
-                    onClick = { onAction(UnarchiveChannel(channel)) },
-                    style = style,
-                )
-            } else {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_archive),
-                    label = stringResource(R.string.stream_compose_swipe_action_archive),
-                    onClick = { onAction(ArchiveChannel(channel)) },
-                    style = style,
-                )
-            }
-        }
-        is ResolvedSwipeAction.Mute -> {
-            if (action.isMuted) {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_unmute),
-                    label = stringResource(R.string.stream_compose_swipe_action_unmute),
-                    onClick = { onAction(UnmuteChannel(channel)) },
-                    style = style,
-                )
-            } else {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_mute),
-                    label = stringResource(R.string.stream_compose_swipe_action_mute),
-                    onClick = { onAction(MuteChannel(channel)) },
-                    style = style,
-                )
-            }
-        }
-        is ResolvedSwipeAction.Pin -> {
-            if (action.isPinned) {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_unpin),
-                    label = stringResource(R.string.stream_compose_swipe_action_unpin),
-                    onClick = { onAction(UnpinChannel(channel)) },
-                    style = style,
-                )
-            } else {
-                SwipeActionItem(
-                    icon = painterResource(R.drawable.stream_compose_ic_pin),
-                    label = stringResource(R.string.stream_compose_swipe_action_pin),
-                    onClick = { onAction(PinChannel(channel)) },
-                    style = style,
-                )
-            }
-        }
-    }
-}
-
-/**
- * Internal representation of a resolved swipe action, used by [resolvePrimaryAction]
- * to select the best action based on channel type and capabilities.
- *
- * This only carries the toggle state needed for icon/label selection.
- * The actual [Channel] is passed separately when constructing [ChannelAction]s.
- */
-private sealed interface ResolvedSwipeAction {
-
-    data class Archive(val isArchived: Boolean) : ResolvedSwipeAction
-
-    data class Mute(val isMuted: Boolean) : ResolvedSwipeAction
-
-    data class Pin(val isPinned: Boolean) : ResolvedSwipeAction
 }

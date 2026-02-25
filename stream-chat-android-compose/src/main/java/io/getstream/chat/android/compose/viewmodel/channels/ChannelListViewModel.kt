@@ -50,7 +50,6 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.utils.extensions.defaultChannelListFilter
 import io.getstream.log.taggedLogger
@@ -619,23 +618,27 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Clears the active action if we've chosen [Cancel], otherwise, stores the selected action as
-     * the currently active action, in [activeChannelAction].
+     * Executes the given [ChannelAction] immediately if it doesn't require confirmation,
+     * or stores it as [activeChannelAction] to show a confirmation dialog.
      *
-     * It also removes the [selectedChannel] if the action is [Cancel].
-     *
-     * @param channelAction The selected action.
+     * @param action The action to execute or confirm.
      */
-    public fun performChannelAction(channelAction: ChannelAction) {
-        if (channelAction is Cancel) {
-            selectedChannel.value = null
-        }
-
-        activeChannelAction = if (channelAction == Cancel) {
-            null
+    public fun executeOrConfirm(action: ChannelAction) {
+        if (action.confirmationPopup != null) {
+            activeChannelAction = action
         } else {
-            channelAction
+            action.onAction()
+            dismissChannelAction()
         }
+    }
+
+    /**
+     * Executes the currently pending [activeChannelAction] after user confirmation
+     * and dismisses it from the UI.
+     */
+    public fun confirmPendingAction() {
+        activeChannelAction?.onAction?.invoke()
+        dismissChannelAction()
     }
 
     /**

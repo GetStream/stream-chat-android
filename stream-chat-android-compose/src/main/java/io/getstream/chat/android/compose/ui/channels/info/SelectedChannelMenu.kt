@@ -34,10 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
-import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -47,17 +45,18 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
 /**
  * Shows special UI when an item is selected.
  * It also prepares the available options for the channel, based on if we're an admin or not.
  *
  * @param selectedChannel The channel the user selected.
- * @param isMuted If the channel is muted for the current user.
+ * @param currentUser The currently logged-in user data.
+ * @param channelActions The list of actions to show in the menu.
  * @param onChannelOptionClick Handler for when the user selects a channel option.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
- * @param channelOptions The list of options to show in the UI, according to user permissions.
  * @param shape The shape of the component.
  * @param overlayColor The color applied to the overlay.
  * @param headerContent The content shown at the top of the dialog.
@@ -66,16 +65,11 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 @Composable
 public fun SelectedChannelMenu(
     selectedChannel: Channel,
-    isMuted: Boolean,
     currentUser: User?,
+    channelActions: List<ChannelAction>,
     onChannelOptionClick: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
-    channelOptions: List<ChannelOptionState> = buildDefaultChannelOptionsState(
-        selectedChannel = selectedChannel,
-        isMuted = isMuted,
-        ownCapabilities = selectedChannel.ownCapabilities,
-    ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
@@ -92,7 +86,7 @@ public fun SelectedChannelMenu(
             ChannelMenuCenterContent(
                 modifier = Modifier,
                 onChannelOptionClick = onChannelOptionClick,
-                channelOptions = channelOptions,
+                channelActions = channelActions,
             )
         }
     },
@@ -168,6 +162,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
 private fun SelectedChannelMenuCenteredDialogPreview() {
     ChatTheme {
         Box(modifier = Modifier.fillMaxSize()) {
+            val channel = PreviewChannelData.channelWithManyMembers
             SelectedChannelMenu(
                 modifier = Modifier
                     .padding(16.dp)
@@ -175,9 +170,11 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
                     .wrapContentHeight()
                     .align(Alignment.Center),
                 shape = RoundedCornerShape(16.dp),
-                selectedChannel = PreviewChannelData.channelWithManyMembers,
-                isMuted = false,
+                selectedChannel = channel,
                 currentUser = PreviewUserData.user1,
+                channelActions = listOf(
+                    ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
+                ),
                 onChannelOptionClick = {},
                 onDismiss = {},
             )
@@ -195,15 +192,18 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
 private fun SelectedChannelMenuBottomSheetDialogPreview() {
     ChatTheme {
         Box(modifier = Modifier.fillMaxSize()) {
+            val channel = PreviewChannelData.channelWithManyMembers
             SelectedChannelMenu(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.BottomCenter),
                 shape = ChatTheme.shapes.bottomSheet,
-                selectedChannel = PreviewChannelData.channelWithManyMembers,
-                isMuted = false,
+                selectedChannel = channel,
                 currentUser = PreviewUserData.user1,
+                channelActions = listOf(
+                    ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
+                ),
                 onChannelOptionClick = {},
                 onDismiss = {},
             )

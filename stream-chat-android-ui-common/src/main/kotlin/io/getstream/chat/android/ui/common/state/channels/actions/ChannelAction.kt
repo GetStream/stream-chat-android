@@ -16,66 +16,146 @@
 
 package io.getstream.chat.android.ui.common.state.channels.actions
 
+import androidx.annotation.DrawableRes
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.ui.common.R
 
 /**
- * Represents the list of actions users can take with selected channels.
+ * A self-describing channel action that carries display info, capability requirements, and an
+ * execution handler. Works for swipe actions, options menus, and any future action surface.
  *
- * @property channel The selected channel.
+ * @property channel The channel this action targets.
+ * @property icon Drawable resource for the action icon.
+ * @property label Human-readable label for the action.
+ * @property requiredCapability Optional channel capability required to show this action.
+ * @property confirmationPopup Optional confirmation dialog to show before executing.
+ * @property isDestructive Whether this action is destructive (e.g. delete).
+ * @property onAction The handler to execute when the action is confirmed.
  */
-public sealed class ChannelAction {
-    public abstract val channel: Channel
+public interface ChannelAction {
+    public val channel: Channel
+
+    @get:DrawableRes
+    public val icon: Int
+    public val label: String
+    public val requiredCapability: String? get() = null
+    public val confirmationPopup: ConfirmationPopup? get() = null
+    public val isDestructive: Boolean get() = false
+    public val onAction: () -> Unit
 }
 
 /**
  * Show more info about the channel.
  */
-public data class ViewInfo(override val channel: Channel) : ChannelAction()
+public class ViewInfo(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_view_info
+}
 
 /**
- * Shows a dialog to leave the group.
+ * Leave the group channel.
  */
-public data class LeaveGroup(override val channel: Channel) : ChannelAction()
+public class LeaveGroup(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+    override val confirmationPopup: ConfirmationPopup? = null,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_leave
+    override val requiredCapability: String = ChannelCapabilities.LEAVE_CHANNEL
+}
 
 /**
- * Mutes the channel.
+ * Mute the channel.
  */
-public data class MuteChannel(override val channel: Channel) : ChannelAction()
+public class MuteChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_mute
+    override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
+}
 
 /**
- * Unmutes the channel.
+ * Unmute the channel.
  */
-public data class UnmuteChannel(override val channel: Channel) : ChannelAction()
+public class UnmuteChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_unmute
+    override val requiredCapability: String = ChannelCapabilities.MUTE_CHANNEL
+}
 
 /**
- * Shows a dialog to delete the conversation, if we have the permission.
+ * Delete the conversation.
  */
-public data class DeleteConversation(override val channel: Channel) : ChannelAction()
+public class DeleteConversation(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+    override val confirmationPopup: ConfirmationPopup? = null,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_delete
+    override val requiredCapability: String = ChannelCapabilities.DELETE_CHANNEL
+    override val isDestructive: Boolean = true
+}
 
 /**
- * Shows a dialog to pin the channel.
+ * Pin the channel.
  */
-public data class PinChannel(override val channel: Channel) : ChannelAction()
+public class PinChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_pin
+}
 
 /**
- * Shows a dialog to unpin the channel.
+ * Unpin the channel.
  */
-public data class UnpinChannel(override val channel: Channel) : ChannelAction()
+public class UnpinChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_unpin
+}
 
 /**
- * Shows a dialog to archive the channel.
+ * Archive the channel.
  */
-public data class ArchiveChannel(override val channel: Channel) : ChannelAction()
+public class ArchiveChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_archive
+}
 
 /**
- * Shows a dialog to unarchive the channel.
+ * Unarchive the channel.
  */
-public data class UnarchiveChannel(override val channel: Channel) : ChannelAction()
-
-/**
- * Dismisses the actions.
- */
-public object Cancel : ChannelAction() {
-    override val channel: Channel = Channel()
-    override fun toString(): String = "Cancel"
+public class UnarchiveChannel(
+    override val channel: Channel,
+    override val label: String,
+    override val onAction: () -> Unit,
+) : ChannelAction {
+    @DrawableRes
+    override val icon: Int = R.drawable.stream_ic_action_unarchive
 }

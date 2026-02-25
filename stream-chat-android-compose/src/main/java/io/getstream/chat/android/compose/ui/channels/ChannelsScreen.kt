@@ -41,27 +41,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
-import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
-import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
 /**
@@ -191,6 +182,17 @@ public fun ChannelsScreen(
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
         ) {
+            val channelActions = buildDefaultChannelActions(
+                selectedChannel = channel,
+                isMuted = listViewModel.isChannelMuted(channel.cid),
+                ownCapabilities = channel.ownCapabilities,
+                viewModel = listViewModel,
+                onViewInfoAction = { ch ->
+                    listViewModel.dismissChannelAction()
+                    onViewChannelInfoAction(ch)
+                },
+            )
+
             ChatTheme.componentFactory.ChannelMenu(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -206,23 +208,11 @@ public fun ChannelsScreen(
                     ),
                 selectedChannel = channel,
                 currentUser = user,
-                isMuted = listViewModel.isChannelMuted(channel.cid),
+                channelActions = channelActions,
                 onChannelOptionClick = remember(listViewModel) {
                     {
                             action ->
-                        when (action) {
-                            is ViewInfo -> {
-                                listViewModel.dismissChannelAction()
-                                onViewChannelInfoAction(action.channel)
-                            }
-                            is MuteChannel -> listViewModel.muteChannel(action.channel)
-                            is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
-                            is PinChannel -> listViewModel.pinChannel(action.channel)
-                            is UnpinChannel -> listViewModel.unpinChannel(action.channel)
-                            is ArchiveChannel -> listViewModel.archiveChannel(action.channel)
-                            is UnarchiveChannel -> listViewModel.unarchiveChannel(action.channel)
-                            else -> listViewModel.performChannelAction(action)
-                        }
+                        listViewModel.executeOrConfirm(action)
                     }
                 },
                 onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
@@ -230,32 +220,14 @@ public fun ChannelsScreen(
         }
 
         val activeAction = listViewModel.activeChannelAction
+        val popup = activeAction?.confirmationPopup
 
-        if (activeAction is LeaveGroup) {
+        if (popup != null) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
-                title = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title,
-                ),
-                message = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
-                ),
-                onPositiveAction = remember(listViewModel) { { listViewModel.leaveGroup(activeAction.channel) } },
-                onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
-            )
-        } else if (activeAction is DeleteConversation) {
-            SimpleDialog(
-                modifier = Modifier.padding(16.dp),
-                title = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title,
-                ),
-                message = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
-                ),
-                onPositiveAction =
-                remember(listViewModel) { { listViewModel.deleteConversation(activeAction.channel) } },
+                title = popup.title,
+                message = popup.message,
+                onPositiveAction = remember(listViewModel) { { listViewModel.confirmPendingAction() } },
                 onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
             )
         }

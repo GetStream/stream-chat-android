@@ -72,7 +72,6 @@ import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -2098,25 +2097,25 @@ public interface ChatComponentFactory {
      *
      * @param modifier The modifier for the menu.
      * @param selectedChannel The selected channel.
-     * @param isMuted Whether the channel is muted.
      * @param currentUser The current user.
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
+     * @param channelActions The list of channel actions to show in the menu.
+     * @param onChannelOptionClick Callback for when a channel action is clicked.
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
     public fun ChannelMenu(
         modifier: Modifier,
         selectedChannel: Channel,
-        isMuted: Boolean,
         currentUser: User?,
+        channelActions: List<ChannelAction>,
         onChannelOptionClick: (ChannelAction) -> Unit,
         onDismiss: () -> Unit,
     ) {
         SelectedChannelMenu(
             modifier = modifier,
             selectedChannel = selectedChannel,
-            isMuted = isMuted,
             currentUser = currentUser,
+            channelActions = channelActions,
             onChannelOptionClick = onChannelOptionClick,
             onDismiss = onDismiss,
         )
@@ -2143,17 +2142,17 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the center content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
-     * @param channelOptions List of channel options.
+     * @param onChannelOptionClick Callback for when a channel action is clicked.
+     * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuCenterContent(
         modifier: Modifier,
         onChannelOptionClick: (ChannelAction) -> Unit,
-        channelOptions: List<ChannelOptionState>,
+        channelActions: List<ChannelAction>,
     ) {
         ChannelMenuOptions(
-            channelOptions = channelOptions,
+            channelActions = channelActions,
             onChannelOptionClick = onChannelOptionClick,
             modifier = modifier,
         )
@@ -2162,42 +2161,49 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the options content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel option is clicked.
-     * @param channelOptions List of channel options.
+     * @param onChannelOptionClick Callback for when a channel action is clicked.
+     * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuOptions(
         modifier: Modifier,
         onChannelOptionClick: (ChannelAction) -> Unit,
-        channelOptions: List<ChannelOptionState>,
+        channelActions: List<ChannelAction>,
     ) {
         ChannelOptions(
-            options = channelOptions,
+            actions = channelActions,
             onChannelOptionClick = onChannelOptionClick,
             modifier = modifier,
         )
     }
 
     /**
-     * Factory method for creating the footer content of the SelectedChannelMenu.
+     * Factory method for creating a single channel option item.
      *
-     * @param modifier The modifier for the footer.
+     * @param modifier The modifier for the item.
+     * @param action The channel action to render.
+     * @param onClick Callback for when the item is clicked.
      */
     @Composable
     public fun ChannelOptionsItem(
         modifier: Modifier,
-        option: ChannelOptionState,
+        action: ChannelAction,
         onClick: () -> Unit,
     ) {
+        val titleColor = if (action.isDestructive) {
+            ChatTheme.colors.errorAccent
+        } else {
+            ChatTheme.colors.textPrimary
+        }
         MenuOptionItem(
             modifier = modifier,
-            title = option.title,
-            titleColor = option.titleColor,
+            title = action.label,
+            titleColor = titleColor,
             leadingIcon = {
-                ChannelOptionsItemLeadingIcon(Modifier, option)
+                ChannelOptionsItemLeadingIcon(Modifier, action)
             },
             onClick = onClick,
-            style = ChatTheme.typography.bodyDefault, // was bodyBold (14sp/W500); Figma: body/default (16sp/Regular)
+            style = ChatTheme.typography.bodyDefault,
             itemHeight = 56.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
@@ -2207,16 +2213,21 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the leading icon of the Channel options menu item.
      *
-     * @param option The channel option state.
+     * @param action The channel action.
      */
     @Composable
-    public fun ChannelOptionsItemLeadingIcon(modifier: Modifier, option: ChannelOptionState) {
+    public fun ChannelOptionsItemLeadingIcon(modifier: Modifier, action: ChannelAction) {
+        val iconColor = if (action.isDestructive) {
+            ChatTheme.colors.errorAccent
+        } else {
+            ChatTheme.colors.textSecondary
+        }
         Icon(
             modifier = modifier
                 .size(56.dp)
                 .padding(16.dp),
-            painter = option.iconPainter,
-            tint = option.iconColor,
+            painter = painterResource(id = action.icon),
+            tint = iconColor,
             contentDescription = null,
         )
     }

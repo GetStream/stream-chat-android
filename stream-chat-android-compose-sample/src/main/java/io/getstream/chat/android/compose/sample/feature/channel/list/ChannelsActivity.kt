@@ -84,6 +84,7 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
+import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelActions
 import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -377,6 +378,13 @@ class ChannelsActivity : ComponentActivity() {
 
             val selectedChannel = delegatedSelectedChannel
             if (selectedChannel != null) {
+                val channelActions = buildDefaultChannelActions(
+                    selectedChannel = selectedChannel,
+                    isMuted = channelsViewModel.isChannelMuted(selectedChannel.cid),
+                    ownCapabilities = selectedChannel.ownCapabilities,
+                    viewModel = channelsViewModel,
+                    onViewInfoAction = ::viewChannelInfo,
+                )
                 SelectedChannelMenu(
                     modifier = Modifier
                         .padding(16.dp)
@@ -384,10 +392,10 @@ class ChannelsActivity : ComponentActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    isMuted = channelsViewModel.isChannelMuted(selectedChannel.cid),
                     selectedChannel = selectedChannel,
                     currentUser = user,
-                    onChannelOptionClick = { action -> channelsViewModel.performChannelAction(action) },
+                    channelActions = channelActions,
+                    onChannelOptionClick = { action -> channelsViewModel.executeOrConfirm(action) },
                     onDismiss = { channelsViewModel.dismissChannelAction() },
                 )
             }

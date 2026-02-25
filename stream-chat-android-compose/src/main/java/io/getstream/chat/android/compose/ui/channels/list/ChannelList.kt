@@ -54,7 +54,6 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
-import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
@@ -168,14 +167,13 @@ public fun ChannelList(
                 action ->
             scope.launch { swipeCoordinator.closeAll() }
             when (action) {
-                is PinChannel -> viewModel.pinChannel(action.channel)
-                is UnpinChannel -> viewModel.unpinChannel(action.channel)
                 is MuteChannel -> viewModel.muteChannel(action.channel)
                 is UnmuteChannel -> viewModel.unmuteChannel(action.channel)
+                is PinChannel -> viewModel.pinChannel(action.channel)
+                is UnpinChannel -> viewModel.unpinChannel(action.channel)
                 is ArchiveChannel -> viewModel.archiveChannel(action.channel)
                 is UnarchiveChannel -> viewModel.unarchiveChannel(action.channel)
-                is DeleteConversation -> viewModel.performChannelAction(action)
-                else -> {}
+                else -> viewModel.executeOrConfirm(action)
             }
         }
     }

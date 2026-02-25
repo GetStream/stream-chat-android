@@ -22,22 +22,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
-import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
+import io.getstream.chat.android.ui.common.state.channels.actions.ConfirmationPopup
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
@@ -52,13 +50,13 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  *
  * It sets up different actions that we provide, based on user permissions.
  *
- * @param options The list of options to show in the UI, according to user permissions.
+ * @param actions The list of channel actions to show in the UI.
  * @param onChannelOptionClick Handler for when the user selects a channel action.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun ChannelOptions(
-    options: List<ChannelOptionState>,
+    actions: List<ChannelAction>,
     onChannelOptionClick: (ChannelAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,14 +65,14 @@ public fun ChannelOptions(
             .fillMaxWidth()
             .wrapContentHeight(),
     ) {
-        items(options) { option ->
+        items(actions) { action ->
             StreamHorizontalDivider()
 
             with(ChatTheme.componentFactory) {
                 ChannelOptionsItem(
                     modifier = Modifier,
-                    option = option,
-                    onClick = { onChannelOptionClick(option.action) },
+                    action = action,
+                    onClick = { onChannelOptionClick(action) },
                 )
             }
         }
@@ -82,179 +80,186 @@ public fun ChannelOptions(
 }
 
 /**
- * Builds the default list of channel options, based on the current user and the state of the channel.
+ * Builds the default list of channel actions, based on the current user permissions and channel state.
+ * Each action is self-describing and carries its icon, label, and execution handler.
  *
  * @param selectedChannel The currently selected channel.
  * @param isMuted If the channel is muted or not.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * @return The list of channel option items to display.
+ * @param viewModel The [ChannelListViewModel] to bind action handlers to.
+ * @param onViewInfoAction Handler invoked when the user selects the "View Info" action.
+ * @return The list of channel actions to display.
  */
-@Suppress("LongMethod")
+@Suppress("LongMethod", "LongParameterList")
 @Composable
-public fun buildDefaultChannelOptionsState(
+public fun buildDefaultChannelActions(
     selectedChannel: Channel,
     isMuted: Boolean,
     ownCapabilities: Set<String>,
-): List<ChannelOptionState> {
+    viewModel: ChannelListViewModel,
+    onViewInfoAction: (Channel) -> Unit,
+): List<ChannelAction> {
     val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
     val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
     val optionVisibility = ChatTheme.channelOptionsTheme.optionVisibility
+    val channelName = ChatTheme.channelNameFormatter.formatChannelName(
+        selectedChannel,
+        viewModel.user.value,
+    )
     return listOfNotNull(
         if (optionVisibility.isViewInfoVisible) {
-            ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
-                titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
-                iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-                action = ViewInfo(selectedChannel),
+            ViewInfo(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
+                onAction = { onViewInfoAction(selectedChannel) },
             )
         } else {
             null
         },
         if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
-            ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
-                titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
-                iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-                action = LeaveGroup(selectedChannel),
+            LeaveGroup(
+                channel = selectedChannel,
+                label = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
+                onAction = { viewModel.leaveGroup(selectedChannel) },
+                confirmationPopup = ConfirmationPopup(
+                    title = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title,
+                    ),
+                    message = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
+                        channelName,
+                    ),
+                    confirmButtonText = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_leave_group,
+                    ),
+                ),
             )
         } else {
             null
         },
-        buildMuteOption(
+        buildMuteAction(
             canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
             isMuted = isMuted,
             selectedChannel = selectedChannel,
+            viewModel = viewModel,
         ),
-        buildPinOption(
+        buildPinAction(
             canPinChannel = optionVisibility.isPinChannelVisible,
             selectedChannel = selectedChannel,
+            viewModel = viewModel,
         ),
-        buildArchiveOption(
+        buildArchiveAction(
             canArchiveChannel = optionVisibility.isArchiveChannelVisible,
             selectedChannel = selectedChannel,
+            viewModel = viewModel,
         ),
         if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
-            ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
-                titleColor = ChatTheme.colors.errorAccent,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
-                iconColor = ChatTheme.colors.errorAccent,
-                action = DeleteConversation(selectedChannel),
+            DeleteConversation(
+                channel = selectedChannel,
+                label = stringResource(
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation,
+                ),
+                onAction = { viewModel.deleteConversation(selectedChannel) },
+                confirmationPopup = ConfirmationPopup(
+                    title = stringResource(
+                        id = R.string
+                            .stream_compose_selected_channel_menu_delete_conversation_confirmation_title,
+                    ),
+                    message = stringResource(
+                        id = R.string
+                            .stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
+                        channelName,
+                    ),
+                    confirmButtonText = stringResource(
+                        id = R.string.stream_compose_selected_channel_menu_delete_conversation,
+                    ),
+                ),
             )
         } else {
             null
         },
-        ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
-            titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
-            iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-            action = Cancel,
-        ),
     )
 }
 
 /**
- * Builds the pin option for the channel, based on the current state.
- *
- * @param canPinChannel If the user can pin the channel.
- * @param selectedChannel The currently selected channel.
+ * Builds the pin action for the channel, based on the current state.
  */
 @Composable
-private fun buildPinOption(
+private fun buildPinAction(
     canPinChannel: Boolean,
     selectedChannel: Channel,
-) = when (selectedChannel.isPinned().takeIf { canPinChannel }) {
-    false -> Triple(
-        R.string.stream_compose_selected_channel_menu_pin_channel,
-        R.drawable.stream_compose_ic_pin,
-        PinChannel(selectedChannel),
+    viewModel: ChannelListViewModel,
+): ChannelAction? = when (selectedChannel.isPinned().takeIf { canPinChannel }) {
+    false -> PinChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_pin_channel),
+        onAction = { viewModel.pinChannel(selectedChannel) },
     )
 
-    true -> Triple(
-        R.string.stream_compose_selected_channel_menu_unpin_channel,
-        R.drawable.stream_compose_ic_unpin,
-        UnpinChannel(selectedChannel),
+    true -> UnpinChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unpin_channel),
+        onAction = { viewModel.unpinChannel(selectedChannel) },
     )
 
     null -> null
-}?.let {
-    ChannelOptionState(
-        title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-        iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-        action = it.third,
-    )
 }
 
 /**
- * Builds the archive option for the channel, based on the current state.
- *
- * @param canArchiveChannel If the user can archive the channel.
- * @param selectedChannel The currently selected channel.
+ * Builds the archive action for the channel, based on the current state.
  */
 @Composable
-private fun buildArchiveOption(
+private fun buildArchiveAction(
     canArchiveChannel: Boolean,
     selectedChannel: Channel,
-) = when (selectedChannel.isArchive().takeIf { canArchiveChannel }) {
-    false -> Triple(
-        R.string.stream_compose_selected_channel_menu_archive_channel,
-        R.drawable.stream_compose_ic_archive,
-        ArchiveChannel(selectedChannel),
+    viewModel: ChannelListViewModel,
+): ChannelAction? = when (selectedChannel.isArchive().takeIf { canArchiveChannel }) {
+    false -> ArchiveChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_archive_channel),
+        onAction = { viewModel.archiveChannel(selectedChannel) },
     )
 
-    true -> Triple(
-        R.string.stream_compose_selected_channel_menu_unarchive_channel,
-        R.drawable.stream_compose_ic_unarchive,
-        UnarchiveChannel(selectedChannel),
+    true -> UnarchiveChannel(
+        channel = selectedChannel,
+        label = stringResource(id = R.string.stream_compose_selected_channel_menu_unarchive_channel),
+        onAction = { viewModel.unarchiveChannel(selectedChannel) },
     )
 
     null -> null
-}?.let {
-    ChannelOptionState(
-        title = stringResource(id = it.first),
-        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-        iconPainter = painterResource(id = it.second),
-        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-        action = it.third,
-    )
 }
 
 @Composable
-private fun buildMuteOption(
+private fun buildMuteAction(
     canMuteChannel: Boolean,
     isMuted: Boolean,
     selectedChannel: Channel,
-) = if (canMuteChannel) {
-    val uiData = when (isMuted) {
-        true -> Triple(
-            R.string.stream_compose_selected_channel_menu_unmute_channel,
-            R.drawable.stream_compose_ic_unmute,
-            UnmuteChannel(selectedChannel),
+    viewModel: ChannelListViewModel,
+): ChannelAction? = if (canMuteChannel) {
+    when (isMuted) {
+        true -> UnmuteChannel(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
+            onAction = { viewModel.unmuteChannel(selectedChannel) },
         )
 
-        false -> Triple(
-            R.string.stream_compose_selected_channel_menu_mute_channel,
-            R.drawable.stream_compose_ic_mute,
-            MuteChannel(selectedChannel),
+        false -> MuteChannel(
+            channel = selectedChannel,
+            label = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_channel),
+            onAction = { viewModel.muteChannel(selectedChannel) },
         )
     }
-
-    ChannelOptionState(
-        title = stringResource(id = uiData.first),
-        titleColor = ChatTheme.colors.textPrimary, // was textHighEmphasis
-        iconPainter = painterResource(id = uiData.second),
-        iconColor = ChatTheme.colors.textSecondary, // was textLowEmphasis
-        action = uiData.third,
-    )
 } else {
     null
+}
+
+/**
+ * Checks if the given channel is a 1-on-1 conversation.
+ */
+private fun Channel.isOneToOne(currentUser: io.getstream.chat.android.models.User?): Boolean {
+    return members.size == 2 && members.any { it.user.id == currentUser?.id }
 }
 
 /**
@@ -266,11 +271,24 @@ private fun buildMuteOption(
 @Composable
 private fun ChannelOptionsPreview() {
     ChatTheme {
+        val channel = PreviewChannelData.channelWithMessages
         ChannelOptions(
-            options = buildDefaultChannelOptionsState(
-                selectedChannel = PreviewChannelData.channelWithMessages,
-                isMuted = false,
-                ownCapabilities = ChannelCapabilities.toSet(),
+            actions = listOf(
+                ViewInfo(
+                    channel = channel,
+                    label = "Channel Info",
+                    onAction = {},
+                ),
+                MuteChannel(
+                    channel = channel,
+                    label = "Mute Channel",
+                    onAction = {},
+                ),
+                DeleteConversation(
+                    channel = channel,
+                    label = "Delete Conversation",
+                    onAction = {},
+                ),
             ),
             onChannelOptionClick = {},
         )

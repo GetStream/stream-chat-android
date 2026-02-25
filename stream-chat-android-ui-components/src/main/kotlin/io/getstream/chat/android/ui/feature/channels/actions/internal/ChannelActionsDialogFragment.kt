@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelActionsBinding
 import io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.getMembersStatusText
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
@@ -155,20 +156,22 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 selectedChannel = channel,
                 ownCapabilities = channel.ownCapabilities,
                 style = style,
-            ).forEach { option ->
+            ).forEach { action ->
                 val channelOptionTextView = requireContext().streamThemeInflater.inflate(
                     R.layout.stream_ui_channel_option_item,
                     binding.optionsContainer,
                     false,
                 ) as TextView
-                channelOptionTextView.text = option.optionText
-                channelOptionTextView.setStartDrawable(option.optionIcon)
+                channelOptionTextView.text = action.label
+                channelOptionTextView.setStartDrawable(
+                    requireContext().getDrawableCompat(action.icon)!!,
+                )
                 channelOptionTextView.setOnClickListener {
-                    channelOptionClickListener?.onChannelOptionClick(option.channelAction)
+                    channelOptionClickListener?.onChannelOptionClick(action)
                     dismiss()
                 }
                 channelOptionTextView.setTextStyle(
-                    if (option.isWarningItem) {
+                    if (action.isDestructive) {
                         style.warningItemTextStyle
                     } else {
                         style.itemTextStyle
