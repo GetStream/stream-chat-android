@@ -2204,7 +2204,7 @@ public interface ChatComponentFactory {
             },
             onClick = onClick,
             style = ChatTheme.typography.bodyDefault,
-            itemHeight = 56.dp,
+            itemHeight = 48.dp,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         )
@@ -2224,8 +2224,8 @@ public interface ChatComponentFactory {
         }
         Icon(
             modifier = modifier
-                .size(56.dp)
-                .padding(16.dp),
+                .size(48.dp)
+                .padding(12.dp),
             painter = painterResource(id = action.icon),
             tint = iconColor,
             contentDescription = null,
