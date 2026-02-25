@@ -76,7 +76,7 @@ internal fun AttachmentSystemPicker(
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit = {},
 ) {
     val context = LocalContext.current
-    val pickerModes = ChatTheme.attachmentPickerConfig.modes
+    val pickerModes = ChatTheme.config.attachmentPicker.modes
 
     val filePickerMode = remember(pickerModes) {
         pickerModes.filterIsInstance<FilePickerMode>().firstOrNull()

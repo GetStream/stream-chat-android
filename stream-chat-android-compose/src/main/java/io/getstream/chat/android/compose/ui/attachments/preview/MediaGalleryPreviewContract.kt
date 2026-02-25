@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.theme.MediaGalleryConfig
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor

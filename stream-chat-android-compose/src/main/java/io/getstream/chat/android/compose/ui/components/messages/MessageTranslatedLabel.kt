@@ -45,7 +45,7 @@ public fun MessageTranslatedLabel(
     messageItem: MessageItemState,
     onToggleOriginalText: () -> Unit = {},
 ) {
-    if (!ChatTheme.autoTranslationEnabled) {
+    if (!ChatTheme.config.translation.enabled) {
         return
     }
     val userLanguage = messageItem.currentUser?.language.orEmpty()
@@ -54,7 +54,7 @@ public fun MessageTranslatedLabel(
     val isDeleted = messageItem.message.isDeleted()
     val translatedText = messageItem.message.getTranslation(userLanguage).ifEmpty { messageItem.message.text }
     if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != messageItem.message.text) {
-        if (ChatTheme.showOriginalTranslationEnabled) {
+        if (ChatTheme.config.translation.showOriginalEnabled) {
             // Toggle-able label to show original text or translated text
             ToggleableTranslatedLabel(
                 messageItem = messageItem,

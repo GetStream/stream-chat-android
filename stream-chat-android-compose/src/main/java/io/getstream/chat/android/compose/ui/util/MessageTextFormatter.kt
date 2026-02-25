@@ -24,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageStyling
 import io.getstream.chat.android.compose.ui.theme.StreamDesign
+import io.getstream.chat.android.compose.ui.theme.TranslationConfig
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
@@ -118,7 +119,7 @@ private class CompositeMessageTextFormatter(
 /**
  * Default implementation of [MessageTextFormatter].
  *
- * The default implementation automatically supports the [ChatTheme.autoTranslationEnabled] feature.
+ * The default implementation automatically supports the [TranslationConfig] auto-translation feature.
  * It also uses the [ChatTheme] to style the text including links highlighting.
  */
 private class DefaultMessageTextFormatter(

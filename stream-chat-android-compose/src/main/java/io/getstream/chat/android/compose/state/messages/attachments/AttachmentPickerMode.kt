@@ -27,7 +27,7 @@ package io.getstream.chat.android.compose.state.messages.attachments
  * - [PollPickerMode] - Create a poll
  * - [CommandPickerMode] - Select a slash command
  *
- * @see AttachmentPickerConfig for configuring which modes are available
+ * @see io.getstream.chat.android.compose.ui.theme.AttachmentPickerConfig
  */
 public interface AttachmentPickerMode
 

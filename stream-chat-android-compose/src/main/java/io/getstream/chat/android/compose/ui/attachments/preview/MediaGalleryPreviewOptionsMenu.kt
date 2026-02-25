@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MediaGalleryOptionsConfig
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
