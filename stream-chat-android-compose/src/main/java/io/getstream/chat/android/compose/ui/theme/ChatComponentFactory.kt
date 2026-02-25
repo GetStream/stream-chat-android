@@ -386,11 +386,18 @@ public interface ChatComponentFactory {
 
     /**
      * The default empty content of the channel list.
+     *
+     * @param modifier Modifier for styling.
+     * @param onStartChatClick Optional callback for the "Start a chat" button.
      */
     @Composable
-    public fun ChannelListEmptyContent(modifier: Modifier) {
+    public fun ChannelListEmptyContent(
+        modifier: Modifier,
+        onStartChatClick: (() -> Unit)?,
+    ) {
         DefaultChannelListEmptyContent(
             modifier = modifier,
+            onStartChatClick = onStartChatClick,
         )
     }
 

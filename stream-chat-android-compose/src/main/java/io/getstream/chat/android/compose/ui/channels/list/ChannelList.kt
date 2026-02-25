@@ -16,9 +16,20 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,9 +39,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,10 +52,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -108,7 +121,7 @@ public fun ChannelList(
         ChatTheme.componentFactory.ChannelListLoadingIndicator(modifier = modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier, onStartChatClick = null)
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
         ChatTheme.componentFactory.ChannelListEmptySearchContent(
@@ -262,7 +275,7 @@ public fun ChannelList(
         ChatTheme.componentFactory.ChannelListLoadingIndicator(modifier = modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier, onStartChatClick = null)
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
         ChatTheme.componentFactory.ChannelListEmptySearchContent(
@@ -354,27 +367,64 @@ internal fun LazyItemScope.WrapperItemContent(
 }
 
 /**
- * Default loading indicator.
+ * Default loading indicator showing skeleton shimmer items.
  *
  * @param modifier Modifier for styling.
  */
 @Composable
 internal fun DefaultChannelListLoadingIndicator(modifier: Modifier) {
-    LoadingIndicator(modifier)
+    LazyColumn(
+        modifier = modifier.background(ChatTheme.colors.backgroundCoreApp),
+        userScrollEnabled = false,
+    ) {
+        items(count = 8) { ChannelListLoadingItem() }
+    }
 }
 
 /**
  * The default empty placeholder for the case when there are no channels available to the user.
  *
  * @param modifier Modifier for styling.
+ * @param onStartChatClick Optional callback for the "Start a chat" button. If null, the button is hidden.
  */
 @Composable
-internal fun DefaultChannelListEmptyContent(modifier: Modifier = Modifier) {
-    EmptyContent(
-        modifier = modifier,
-        painter = painterResource(id = R.drawable.stream_compose_empty_channels),
-        text = stringResource(R.string.stream_compose_channel_list_empty_channels),
-    )
+internal fun DefaultChannelListEmptyContent(
+    modifier: Modifier = Modifier,
+    onStartChatClick: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier.background(color = ChatTheme.colors.backgroundCoreApp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_empty_channels),
+            contentDescription = null,
+            tint = ChatTheme.colors.textTertiary,
+            modifier = Modifier.size(32.dp),
+        )
+        Spacer(Modifier.size(8.dp))
+        Text(
+            text = stringResource(R.string.stream_compose_channel_list_empty_channels),
+            style = ChatTheme.typography.captionDefault,
+            color = ChatTheme.colors.textSecondary,
+            textAlign = TextAlign.Center,
+        )
+        if (onStartChatClick != null) {
+            Spacer(Modifier.size(16.dp))
+            OutlinedButton(
+                onClick = onStartChatClick,
+                shape = RoundedCornerShape(StreamTokens.radiusMd),
+                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
+            ) {
+                Text(
+                    text = stringResource(R.string.stream_compose_channel_list_start_chat),
+                    style = ChatTheme.typography.captionDefault,
+                    color = ChatTheme.colors.textPrimary,
+                )
+            }
+        }
+    }
 }
 
 /**

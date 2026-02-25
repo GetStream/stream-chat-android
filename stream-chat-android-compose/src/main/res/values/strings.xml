@@ -32,7 +32,8 @@
         <item quantity="one">%d person is typing</item>
         <item quantity="other">%d people are typing</item>
     </plurals>
-    <string name="stream_compose_channel_list_empty_channels">No channels available</string>
+    <string name="stream_compose_channel_list_empty_channels">No conversations yet</string>
+    <string name="stream_compose_channel_list_start_chat">Start a chat</string>
 
     <!-- Channel List Swipe Actions -->
     <string name="stream_compose_swipe_action_pin">Pin</string>

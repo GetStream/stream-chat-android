@@ -172,16 +172,27 @@ public fun ChannelsScreen(
                             listViewModel.selectChannel(it)
                         }
                     },
+                    emptyContent = {
+                        ChatTheme.componentFactory.ChannelListEmptyContent(
+                            modifier = Modifier.fillMaxSize(),
+                            onStartChatClick = onHeaderActionClick,
+                        )
+                    },
                 )
             }
         }
 
-        val channel = selectedChannel ?: Channel()
+        val isMenuVisible = selectedChannel != null
+        val lastChannel = remember { mutableStateOf(Channel()) }
+        if (selectedChannel != null) {
+            lastChannel.value = selectedChannel!!
+        }
         AnimatedVisibility(
-            visible = channel.cid.isNotEmpty(),
+            visible = isMenuVisible,
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
         ) {
+            val channel = lastChannel.value
             val channelActions = buildDefaultChannelActions(
                 selectedChannel = channel,
                 isMuted = listViewModel.isChannelMuted(channel.cid),
