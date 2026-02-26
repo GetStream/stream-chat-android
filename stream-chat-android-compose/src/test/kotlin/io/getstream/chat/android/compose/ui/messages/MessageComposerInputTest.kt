@@ -96,6 +96,13 @@ internal class MessageComposerInputTest : PaparazziComposeTest {
     }
 
     @Test
+    fun `edit empty`() {
+        snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
+            MessageComposerInputEdit()
+        }
+    }
+
+    @Test
     fun `attachments and link`() {
         snapshotWithDarkMode(contentAlignment = Alignment.BottomCenter) {
             MessageComposerInputAttachmentsAndLink()

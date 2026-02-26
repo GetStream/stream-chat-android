@@ -374,6 +374,23 @@ internal fun MessageComposerInputEdit() {
 
 @Preview
 @Composable
+private fun MessageComposerInputEditEmptyPreview() {
+    ChatTheme {
+        MessageComposerInputEditEmpty()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEditEmpty() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            action = Edit(PreviewMessageData.message1),
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputAttachmentsAndLinkPreview() {
     ChatTheme {
         MessageComposerInputAttachmentsAndLink()
