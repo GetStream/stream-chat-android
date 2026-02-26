@@ -31,7 +31,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isDeleted
-import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersComponentFactory
 import io.getstream.chat.android.compose.sample.ui.component.SharedLocationItem
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -58,8 +57,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  */
 class LocationComponentFactory(
     private val locationViewModelFactory: SharedLocationViewModelFactory?,
-    private val delegate: ChatComponentFactory = MessageRemindersComponentFactory(),
-) : ChatComponentFactory by delegate {
+) : ChatComponentFactory {
 
     @Composable
     override fun AttachmentTypePicker(
@@ -147,24 +145,22 @@ class LocationComponentFactory(
                 onMapLongClick = { onLongItemClick(message) },
             )
         } else {
-            with(delegate) {
-                MessageContent(
-                    messageItem = messageItem,
-                    onLongItemClick = onLongItemClick,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onPollUpdated = onPollUpdated,
-                    onCastVote = onCastVote,
-                    onRemoveVote = onRemoveVote,
-                    selectPoll = selectPoll,
-                    onAddAnswer = onAddAnswer,
-                    onClosePoll = onClosePoll,
-                    onAddPollOption = onAddPollOption,
-                )
-            }
+            super.MessageContent(
+                messageItem = messageItem,
+                onLongItemClick = onLongItemClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onAddAnswer = onAddAnswer,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+            )
         }
     }
 }
