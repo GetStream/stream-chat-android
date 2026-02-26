@@ -629,16 +629,6 @@ internal class MessageUtilsTest {
     }
 
     @Test
-    fun `shouldDeleteRemote should return Failure for SYNC_NEEDED sync status`() {
-        val message = randomMessage(
-            type = MessageType.REGULAR,
-            syncStatus = SyncStatus.SYNC_NEEDED,
-        )
-        val result = message.shouldDeleteRemote(randomString())
-        assertTrue(result is Result.Failure)
-    }
-
-    @Test
     fun `shouldDeleteRemote should return Failure for FAILED_PERMANENTLY sync status`() {
         val message = randomMessage(
             type = MessageType.REGULAR,
@@ -663,6 +653,16 @@ internal class MessageUtilsTest {
         val message = randomMessage(
             type = MessageType.REGULAR,
             syncStatus = SyncStatus.AWAITING_ATTACHMENTS,
+        )
+        val result = message.shouldDeleteRemote(randomString())
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `shouldDeleteRemote should return Success for SYNC_NEEDED sync status`() {
+        val message = randomMessage(
+            type = MessageType.REGULAR,
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
         val result = message.shouldDeleteRemote(randomString())
         assertTrue(result is Result.Success)

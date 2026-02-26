@@ -252,7 +252,7 @@ internal class DeleteMessageListenerStateTest {
         }
 
     @Test
-    fun `onMessageDeletePrecondition when message has SYNC_NEEDED should return Failure and delete locally`() =
+    fun `onMessageDeletePrecondition when message has SYNC_NEEDED should return Success`() =
         runTest {
             val testMessage = randomMessage(
                 id = "msg-1",
@@ -262,15 +262,11 @@ internal class DeleteMessageListenerStateTest {
             )
 
             whenever(logicRegistry.channelFromMessageId(any())) doReturn channelLogic
-            whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-            whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
-            whenever(logicRegistry.threadFromMessage(any())) doReturn null
             whenever(channelLogic.getMessage(any())) doReturn testMessage
 
             val result = deleteMessageListenerState.onMessageDeletePrecondition(testMessage.id)
 
-            assertTrue(result is Result.Failure)
-            verify(channelLogic).deleteMessage(argThat { id == testMessage.id })
+            assertTrue(result is Result.Success)
         }
 
     @Test
