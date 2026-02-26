@@ -332,6 +332,7 @@ internal fun MessageComposerInputLink() {
     CompositionLocalProvider(LocalChatConfig provides config) {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
+                inputValue = PreviewLinkData.link1.originUrl,
                 linkPreviews = listOf(PreviewLinkData.link1),
             ),
             onCancelLinkPreviewClick = {},
@@ -405,6 +406,7 @@ internal fun MessageComposerInputAttachmentsAndLink() {
     CompositionLocalProvider(LocalChatConfig provides config) {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
+                inputValue = PreviewLinkData.link1.originUrl,
                 attachments = listOf(
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
@@ -430,6 +432,7 @@ internal fun MessageComposerInputReplyAttachmentsAndLink() {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 action = Reply(PreviewMessageData.message1),
+                inputValue = PreviewLinkData.link1.originUrl,
                 attachments = listOf(
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
@@ -455,6 +458,7 @@ internal fun MessageComposerInputEditAttachmentsAndLink() {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 action = Edit(PreviewMessageData.message1),
+                inputValue = PreviewLinkData.link1.originUrl,
                 attachments = listOf(
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
