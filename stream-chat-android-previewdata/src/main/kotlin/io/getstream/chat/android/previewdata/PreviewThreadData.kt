@@ -55,8 +55,14 @@ public object PreviewThreadData {
         createdBy = participant2,
         participantCount = 2,
         threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
+            ThreadParticipant(
+                user = participant1,
+                lastThreadMessageAt = null,
+            ),
+            ThreadParticipant(
+                user = participant2,
+                lastThreadMessageAt = null,
+            ),
         ),
         lastMessageAt = Date(),
         createdAt = Date(),
@@ -94,8 +100,14 @@ public object PreviewThreadData {
         createdBy = participant1,
         participantCount = 2,
         threadParticipants = listOf(
-            ThreadParticipant(participant1),
-            ThreadParticipant(participant2),
+            ThreadParticipant(
+                user = participant1,
+                lastThreadMessageAt = null,
+            ),
+            ThreadParticipant(
+                user = participant2,
+                lastThreadMessageAt = null,
+            ),
         ),
         lastMessageAt = Date(),
         createdAt = Date(),

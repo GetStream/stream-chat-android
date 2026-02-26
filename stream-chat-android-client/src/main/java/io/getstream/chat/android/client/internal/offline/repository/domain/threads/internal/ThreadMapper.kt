@@ -80,6 +80,7 @@ internal suspend fun ThreadEntity.toModel(
  */
 internal fun ThreadParticipant.toEntity() = ThreadParticipantEntity(
     userId = user.id,
+    lastThreadMessageAt = lastThreadMessageAt,
 )
 
 /**
@@ -89,4 +90,5 @@ internal suspend fun ThreadParticipantEntity.toModel(
     getUser: suspend (userId: String) -> User,
 ) = ThreadParticipant(
     user = getUser(userId),
+    lastThreadMessageAt = lastThreadMessageAt,
 )

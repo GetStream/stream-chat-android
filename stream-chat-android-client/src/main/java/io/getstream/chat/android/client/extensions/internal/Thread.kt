@@ -71,7 +71,10 @@ public fun Thread.upsertReply(reply: Message): Thread {
     // The new message could be from a new thread participant
     val threadParticipants = if (isInsert) {
         upsertThreadParticipantInList(
-            newParticipant = ThreadParticipant(user = reply.user),
+            newParticipant = ThreadParticipant(
+                user = reply.user,
+                lastThreadMessageAt = reply.createdAt ?: reply.createdLocallyAt,
+            ),
             participants = this.threadParticipants,
         )
     } else {

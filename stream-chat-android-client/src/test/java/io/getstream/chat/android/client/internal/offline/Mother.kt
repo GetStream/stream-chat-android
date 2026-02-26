@@ -274,6 +274,14 @@ internal fun randomLocationEntity(): LocationEntity =
         deviceId = randomString(),
     )
 
+internal fun randomThreadParticipantEntity(
+    userId: String = randomString(),
+    lastThreadMessageAt: Date? = randomDateOrNull(),
+): ThreadParticipantEntity = ThreadParticipantEntity(
+    userId = userId,
+    lastThreadMessageAt = lastThreadMessageAt,
+)
+
 internal fun randomThreadEntity(
     parentMessageId: String = randomString(),
     cid: String = randomCID(),

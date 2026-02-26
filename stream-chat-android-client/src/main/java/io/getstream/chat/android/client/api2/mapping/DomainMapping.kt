@@ -809,6 +809,7 @@ internal class DomainMapping(
      */
     internal fun DownstreamThreadParticipantDto.toDomain(): ThreadParticipant = ThreadParticipant(
         user = user?.toDomain() ?: User(id = user_id),
+        lastThreadMessageAt = last_thread_message_at,
     )
 
     /**

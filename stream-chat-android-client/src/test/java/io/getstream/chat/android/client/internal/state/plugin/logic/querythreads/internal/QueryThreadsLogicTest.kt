@@ -37,8 +37,8 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomThreadParticipant
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
@@ -71,8 +71,8 @@ internal class QueryThreadsLogicTest {
             createdBy = null,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1")),
-                ThreadParticipant(User(id = "usrId2")),
+                randomThreadParticipant(user = User(id = "usrId1")),
+                randomThreadParticipant(user = User(id = "usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),

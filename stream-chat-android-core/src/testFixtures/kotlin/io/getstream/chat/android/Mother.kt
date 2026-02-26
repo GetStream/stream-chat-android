@@ -1043,8 +1043,10 @@ public fun randomThreadInfo(
 
 public fun randomThreadParticipant(
     user: User = randomUser(),
+    lastThreadMessageAt: Date? = randomDateOrNull(),
 ): ThreadParticipant = ThreadParticipant(
     user = user,
+    lastThreadMessageAt = lastThreadMessageAt,
 )
 
 public fun randomAppSettings(
