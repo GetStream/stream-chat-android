@@ -225,6 +225,7 @@
     <string name="stream_compose_message_label">Message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
+    <string name="stream_compose_save_message">Save</string>
 
 
     <string name="stream_compose_attachments">Attachments</string>
