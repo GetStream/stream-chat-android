@@ -17,9 +17,8 @@
 package io.getstream.chat.android.compose.ui.channels
 
 import androidx.annotation.UiThread
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.test.MockedChatClientTest
@@ -58,8 +57,7 @@ internal class ChannelsScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Stream Chat").assertExists()
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
+        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 
     @Test
@@ -72,8 +70,7 @@ internal class ChannelsScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Search").assertExists()
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
+        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 
     @Test
@@ -86,7 +83,6 @@ internal class ChannelsScreenTest : MockedChatClientTest {
         }
 
         composeTestRule.onNodeWithText("Search").assertExists()
-        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
-            .assertExists()
+        composeTestRule.onNodeWithTag("Stream_ChannelListLoading").assertExists()
     }
 }
