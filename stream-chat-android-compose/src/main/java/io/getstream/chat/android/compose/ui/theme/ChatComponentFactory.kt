@@ -2099,7 +2099,7 @@ public interface ChatComponentFactory {
      * @param selectedChannel The selected channel.
      * @param currentUser The current user.
      * @param channelActions The list of channel actions to show in the menu.
-     * @param onChannelOptionClick Callback for when a channel action is clicked.
+     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
@@ -2108,7 +2108,7 @@ public interface ChatComponentFactory {
         selectedChannel: Channel,
         currentUser: User?,
         channelActions: List<ChannelAction>,
-        onChannelOptionClick: (ChannelAction) -> Unit,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
         onDismiss: () -> Unit,
     ) {
         SelectedChannelMenu(
@@ -2116,7 +2116,7 @@ public interface ChatComponentFactory {
             selectedChannel = selectedChannel,
             currentUser = currentUser,
             channelActions = channelActions,
-            onChannelOptionClick = onChannelOptionClick,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             onDismiss = onDismiss,
         )
     }
@@ -2142,18 +2142,18 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the center content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel action is clicked.
+     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
      * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuCenterContent(
         modifier: Modifier,
-        onChannelOptionClick: (ChannelAction) -> Unit,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
         channelActions: List<ChannelAction>,
     ) {
         ChannelMenuOptions(
             channelActions = channelActions,
-            onChannelOptionClick = onChannelOptionClick,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             modifier = modifier,
         )
     }
@@ -2161,18 +2161,18 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the options content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionClick Callback for when a channel action is clicked.
+     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
      * @param channelActions List of channel actions.
      */
     @Composable
     public fun ChannelMenuOptions(
         modifier: Modifier,
-        onChannelOptionClick: (ChannelAction) -> Unit,
+        onChannelOptionConfirm: (ChannelAction) -> Unit,
         channelActions: List<ChannelAction>,
     ) {
         ChannelOptions(
             actions = channelActions,
-            onChannelOptionClick = onChannelOptionClick,
+            onChannelOptionConfirm = onChannelOptionConfirm,
             modifier = modifier,
         )
     }

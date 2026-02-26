@@ -51,7 +51,7 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
                     channelActions = listOf(
                         ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
                     ),
-                    onChannelOptionClick = {},
+                    onChannelOptionConfirm = {},
                     onDismiss = {},
                 )
             }
@@ -72,7 +72,7 @@ internal class SelectedChannelMenuTest : PaparazziComposeTest {
                     channelActions = listOf(
                         ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
                     ),
-                    onChannelOptionClick = {},
+                    onChannelOptionConfirm = {},
                     onDismiss = {},
                 )
             }

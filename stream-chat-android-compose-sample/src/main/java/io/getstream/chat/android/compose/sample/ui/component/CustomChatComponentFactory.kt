@@ -47,24 +47,21 @@ class CustomChatComponentFactory(
     ) {
         val coordinator = LocalSwipeRevealCoordinator.current
         val swipeEnabled = ChatTheme.config.channelList.swipeActionsEnabled && coordinator != null
-        val itemModifier = Modifier
-            .animateItem()
-            .run {
-                if (channelItem.channel.isPinned()) {
-                    background(color = ChatTheme.colors.backgroundCoreHighlight)
-                } else {
-                    this
-                }
-            }
+        val pinnedModifier = if (channelItem.channel.isPinned()) {
+            Modifier.background(color = ChatTheme.colors.backgroundCoreHighlight)
+        } else {
+            Modifier
+        }
 
         if (swipeEnabled) {
             SwipeableChannelItem(
+                modifier = Modifier.animateItem(),
                 channelCid = channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
                 swipeActions = { Row { ChannelSwipeActions(channelItem) } },
             ) {
                 ChannelItem(
-                    modifier = itemModifier,
+                    modifier = pinnedModifier,
                     channelItem = channelItem,
                     currentUser = currentUser,
                     onChannelClick = onChannelClick,
@@ -73,7 +70,7 @@ class CustomChatComponentFactory(
             }
         } else {
             ChannelItem(
-                modifier = itemModifier,
+                modifier = Modifier.animateItem().then(pinnedModifier),
                 channelItem = channelItem,
                 currentUser = currentUser,
                 onChannelClick = onChannelClick,

@@ -58,12 +58,14 @@ public interface MessagePreviewFormatter {
      *
      * @param message The message whose data is used to generate the preview text.
      * @param currentUser The currently logged in user.
+     * @param isDirectMessaging Whether the channel is a direct message conversation.
+     * Used to determine sender prefix behavior.
      * @return The formatted text representation for the given message.
      */
     public fun formatMessagePreview(
         message: Message,
         currentUser: User?,
-        isDirectMessaging: Boolean = false,
+        isDirectMessaging: Boolean,
     ): AnnotatedString
 
     /**

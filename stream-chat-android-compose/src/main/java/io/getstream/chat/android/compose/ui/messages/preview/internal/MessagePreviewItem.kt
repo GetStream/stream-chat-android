@@ -151,7 +151,7 @@ internal fun RowScope.DefaultMessagePreviewItemCenterContent(
         )
 
         Text(
-            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(message, currentUser),
+            text = ChatTheme.messagePreviewFormatter.formatMessagePreview(message, currentUser, false),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = ChatTheme.typography.bodyDefault,

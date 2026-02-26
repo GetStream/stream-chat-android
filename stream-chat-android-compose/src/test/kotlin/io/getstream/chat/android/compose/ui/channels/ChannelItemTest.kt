@@ -56,7 +56,7 @@ internal class ChannelItemTest : PaparazziComposeTest {
 
     @Test
     fun `muted channel trailing bottom`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChatTheme(
                 config = ChatConfig(
                     channelList = ChannelListConfig(

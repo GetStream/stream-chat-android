@@ -60,7 +60,7 @@ private object SelectedChannelMenuUsageSnippet {
                                 selectedChannel = currentlySelectedChannel,
                                 currentUser = user,
                                 channelActions = channelActions,
-                                onChannelOptionClick = { listViewModel.executeOrConfirm(it) },
+                                onChannelOptionConfirm = { listViewModel.executeOrConfirm(it) },
                                 onDismiss = { listViewModel.dismissChannelAction() }
                             )
                         }
@@ -110,7 +110,7 @@ private object SelectedChannelMenuHandlingActionsSnippet {
                                 selectedChannel = currentlySelectedChannel,
                                 currentUser = user,
                                 channelActions = channelActions,
-                                onChannelOptionClick = { action ->
+                                onChannelOptionConfirm = { action ->
                                     listViewModel.executeOrConfirm(action)
                                 },
                                 onDismiss = { listViewModel.dismissChannelAction() }
@@ -162,7 +162,7 @@ private object SelectedChannelMenuCustomizationSnippet {
                                 selectedChannel = currentlySelectedChannel,
                                 currentUser = user,
                                 channelActions = channelActions,
-                                onChannelOptionClick = { listViewModel.executeOrConfirm(it) },
+                                onChannelOptionConfirm = { listViewModel.executeOrConfirm(it) },
                                 onDismiss = { listViewModel.dismissChannelAction() }
                             )
                         }

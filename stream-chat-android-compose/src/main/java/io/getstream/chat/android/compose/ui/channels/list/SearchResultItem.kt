@@ -174,6 +174,7 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
             text = ChatTheme.messagePreviewFormatter.formatMessagePreview(
                 searchResultItemState.message,
                 currentUser,
+                false,
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

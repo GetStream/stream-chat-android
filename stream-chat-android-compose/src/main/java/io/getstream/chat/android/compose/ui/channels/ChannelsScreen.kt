@@ -68,6 +68,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param searchMode The search mode for the screen.
  * @param onHeaderActionClick Handler for the default header action.
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
+ * @param onStartChatClick Handler for the "Start a chat" button in the empty state.
+ * If null, the button is hidden. Defaults to null.
  * @param onChannelClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
@@ -82,6 +84,7 @@ public fun ChannelsScreen(
     searchMode: SearchMode = SearchMode.None,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
+    onStartChatClick: (() -> Unit)? = null,
     onChannelClick: (Channel) -> Unit = {},
     onSearchMessageItemClick: (Message) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
@@ -175,7 +178,7 @@ public fun ChannelsScreen(
                     emptyContent = {
                         ChatTheme.componentFactory.ChannelListEmptyContent(
                             modifier = Modifier.fillMaxSize(),
-                            onStartChatClick = onHeaderActionClick,
+                            onStartChatClick = onStartChatClick,
                         )
                     },
                 )
@@ -220,7 +223,7 @@ public fun ChannelsScreen(
                 selectedChannel = channel,
                 currentUser = user,
                 channelActions = channelActions,
-                onChannelOptionClick = remember(listViewModel) {
+                onChannelOptionConfirm = remember(listViewModel) {
                     {
                             action ->
                         listViewModel.executeOrConfirm(action)

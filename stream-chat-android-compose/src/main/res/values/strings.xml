@@ -320,8 +320,8 @@
         <item quantity="other">%d votes</item>
     </plurals>
 
-    <string name="stream_compose_poll_created_preview" translatable="false">Poll created: %s</string>
-    <string name="stream_compose_poll_closed_preview" translatable="false">Poll closed: %s</string>
+    <string name="stream_compose_poll_created_preview">Poll created: %s</string>
+    <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>
 
     <!--  Pinned message list  -->
     <string name="stream_compose_pinned_message_list_empty_title">No pinned messages</string>

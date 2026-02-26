@@ -55,7 +55,8 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param selectedChannel The channel the user selected.
  * @param currentUser The currently logged-in user data.
  * @param channelActions The list of actions to show in the menu.
- * @param onChannelOptionClick Handler for when the user selects a channel option.
+ * @param onChannelOptionConfirm Handler for when the user selects a channel option.
+ * Routes through confirmation dialogs for destructive actions before executing.
  * @param onDismiss Handler called when the dialog is dismissed.
  * @param modifier Modifier for styling.
  * @param shape The shape of the component.
@@ -68,7 +69,7 @@ public fun SelectedChannelMenu(
     selectedChannel: Channel,
     currentUser: User?,
     channelActions: List<ChannelAction>,
-    onChannelOptionClick: (ChannelAction) -> Unit,
+    onChannelOptionConfirm: (ChannelAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -86,7 +87,7 @@ public fun SelectedChannelMenu(
         with(ChatTheme.componentFactory) {
             ChannelMenuCenterContent(
                 modifier = Modifier,
-                onChannelOptionClick = onChannelOptionClick,
+                onChannelOptionConfirm = onChannelOptionConfirm,
                 channelActions = channelActions,
             )
         }
@@ -185,7 +186,7 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
                 channelActions = listOf(
                     ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
                 ),
-                onChannelOptionClick = {},
+                onChannelOptionConfirm = {},
                 onDismiss = {},
             )
         }
@@ -214,7 +215,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                 channelActions = listOf(
                     ViewInfo(channel = channel, label = "Channel Info", onAction = {}),
                 ),
-                onChannelOptionClick = {},
+                onChannelOptionConfirm = {},
                 onDismiss = {},
             )
         }

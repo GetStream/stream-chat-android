@@ -1097,7 +1097,7 @@ public final class io/getstream/chat/android/compose/ui/channel/info/GroupChanne
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenKt {
-	public static final fun ChannelsScreen (Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/compose/ui/channels/SearchMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChannelsScreen (Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/compose/ui/channels/SearchMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/SearchMode : java/lang/Enum {
@@ -4054,10 +4054,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/util/Messag
 
 public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$Companion {
 	public final fun defaultFormatter (Landroid/content/Context;ZLio/getstream/chat/android/compose/ui/theme/StreamDesign$Typography;Ljava/util/List;Lio/getstream/chat/android/compose/ui/theme/StreamDesign$Colors;)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
-}
-
-public final class io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter$DefaultImpls {
-	public static synthetic fun formatMessagePreview$default (Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZILjava/lang/Object;)Landroidx/compose/ui/text/AnnotatedString;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/MessagePreviewIconFactory {

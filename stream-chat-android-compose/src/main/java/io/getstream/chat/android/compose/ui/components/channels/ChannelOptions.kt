@@ -54,13 +54,14 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * It sets up different actions that we provide, based on user permissions.
  *
  * @param actions The list of channel actions to show in the UI.
- * @param onChannelOptionClick Handler for when the user selects a channel action.
+ * @param onChannelOptionConfirm Handler for when the user selects a channel action.
+ * Routes through confirmation dialogs for destructive actions before executing.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun ChannelOptions(
     actions: List<ChannelAction>,
-    onChannelOptionClick: (ChannelAction) -> Unit,
+    onChannelOptionConfirm: (ChannelAction) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -74,7 +75,7 @@ public fun ChannelOptions(
                 ChannelOptionsItem(
                     modifier = Modifier,
                     action = action,
-                    onClick = { onChannelOptionClick(action) },
+                    onClick = { onChannelOptionConfirm(action) },
                 )
             }
         }
@@ -286,7 +287,7 @@ private fun ChannelOptionsPreview() {
                     onAction = {},
                 ),
             ),
-            onChannelOptionClick = {},
+            onChannelOptionConfirm = {},
         )
     }
 }

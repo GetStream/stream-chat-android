@@ -399,7 +399,7 @@ class ChannelsActivity : ComponentActivity() {
                     selectedChannel = selectedChannel,
                     currentUser = user,
                     channelActions = channelActions,
-                    onChannelOptionClick = { action -> channelsViewModel.executeOrConfirm(action) },
+                    onChannelOptionConfirm = { action -> channelsViewModel.executeOrConfirm(action) },
                     onDismiss = { channelsViewModel.dismissChannelAction() },
                 )
             }
