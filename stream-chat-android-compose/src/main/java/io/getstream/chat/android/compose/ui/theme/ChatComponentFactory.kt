@@ -120,6 +120,7 @@ import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndic
 import io.getstream.chat.android.compose.ui.components.common.ContextualMenuItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.MessageComposerEditIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
@@ -1768,6 +1769,31 @@ public interface ChatComponentFactory {
             modifier = modifier,
             message = quotedMessage,
             currentUser = state.currentUser,
+            onCancelClick = onCancelClick,
+        )
+    }
+
+    /**
+     * The edit indicator shown inside the composer's header when the user edits a message.
+     * Previews the original message text and attachment type.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param state The current state of the message composer.
+     * @param editMessage The message being edited.
+     * @param onCancelClick The action to perform when the cancel button is clicked.
+     */
+    @Composable
+    public fun MessageComposerEditIndicator(
+        modifier: Modifier,
+        state: MessageComposerState,
+        editMessage: Message,
+        onCancelClick: () -> Unit,
+    ) {
+        MessageComposerEditIndicator(
+            modifier = modifier.padding(horizontal = StreamTokens.spacingSm),
+            message = editMessage,
             onCancelClick = onCancelClick,
         )
     }
