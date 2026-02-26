@@ -62,50 +62,43 @@ internal fun MessageComposerInputTrailingContent(
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
+    val hasValidContent = canSendMessage && isInputValid && !isRecording
 
-    val shouldShowSendButton = canSendMessage && isInputValid && !isRecording
-
-    if (isInEditMode) {
-        ChatTheme.componentFactory.MessageComposerSaveButton(
-            enabled = shouldShowSendButton,
-            onClick = { onSendClick(inputText, attachments) },
-        )
-    } else {
-        ComposeModeTrailingContent(state, recordingActions, shouldShowSendButton) {
-            onSendClick(inputText, attachments)
-        }
-    }
-}
-
-@Composable
-private fun ComposeModeTrailingContent(
-    state: MessageComposerState,
-    recordingActions: AudioRecordingActions,
-    shouldShowSendButton: Boolean,
-    onSendClick: () -> Unit,
-) {
     val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
-    val shouldShowRecordButton = isRecordingEnabled && !shouldShowSendButton
 
     val actionButton = when {
-        shouldShowSendButton -> "send"
-        shouldShowRecordButton -> "record"
+        isInEditMode -> ActionButton.Save(enabled = hasValidContent)
+        hasValidContent -> ActionButton.Send
+        isRecordingEnabled -> ActionButton.Record
         else -> null
     }
 
     Crossfade(targetState = actionButton) { button ->
         when (button) {
-            "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
-                onClick = onSendClick,
+            is ActionButton.Save -> ChatTheme.componentFactory.MessageComposerSaveButton(
+                enabled = button.enabled,
+                onClick = { onSendClick(inputText, attachments) },
             )
 
-            "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
+            ActionButton.Send -> ChatTheme.componentFactory.MessageComposerSendButton(
+                onClick = { onSendClick(inputText, attachments) },
+            )
+
+            ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
                 state = state.recording,
                 recordingActions = recordingActions,
             )
+
+            null -> Unit
         }
     }
+}
+
+private sealed interface ActionButton {
+    data class Save(val enabled: Boolean) : ActionButton
+    data object Send : ActionButton
+    data object Record : ActionButton
 }
 
 /**
