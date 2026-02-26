@@ -154,7 +154,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SaveButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
@@ -1661,6 +1660,7 @@ public interface ChatComponentFactory {
      * The default leading content of the message composer, which includes an add attachment button by default.
      *
      * @param state The current state of the message composer.
+     * @param isAttachmentPickerVisible Whether the attachment picker is visible.
      * @param onAttachmentsClick The action to perform when the attachments button is clicked.
      */
     @Composable
@@ -1669,7 +1669,7 @@ public interface ChatComponentFactory {
         isAttachmentPickerVisible: Boolean,
         onAttachmentsClick: () -> Unit,
     ) {
-        DefaultMessageComposerLeadingContent(
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerLeadingContent(
             messageInputState = state,
             isAttachmentPickerVisible = isAttachmentPickerVisible,
             onAttachmentsClick = onAttachmentsClick,
