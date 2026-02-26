@@ -2099,7 +2099,8 @@ public interface ChatComponentFactory {
      * @param selectedChannel The selected channel.
      * @param currentUser The current user.
      * @param channelActions The list of channel actions to show in the menu.
-     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
      * @param onDismiss Callback for when the menu is dismissed.
      */
     @Composable
@@ -2142,7 +2143,8 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the center content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
      * @param channelActions List of channel actions.
      */
     @Composable
@@ -2161,7 +2163,8 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the options content of the SelectedChannelMenu.
      *
-     * @param onChannelOptionConfirm Callback for confirming a channel action. Routes through confirmation dialogs for destructive actions.
+     * @param onChannelOptionConfirm Callback for confirming a channel action.
+     * Routes through confirmation dialogs for destructive actions.
      * @param channelActions List of channel actions.
      */
     @Composable

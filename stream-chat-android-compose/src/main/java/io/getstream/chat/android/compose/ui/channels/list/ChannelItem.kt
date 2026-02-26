@@ -225,36 +225,31 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         TitleRow(
-            channel = channel,
+            channelItemState = channelItemState,
             currentUser = currentUser,
-            isMuted = channelItemState.isMuted,
-            mutePosition = mutePosition,
             lastMessage = lastMessage,
             unreadCount = unreadCount,
         )
 
         MessageRow(
             channelItemState = channelItemState,
-            channel = channel,
             currentUser = currentUser,
-            isDirectMessaging = isDirectMessaging,
             lastMessage = lastMessage,
             isLastMessageDeleted = isLastMessageDeleted,
-            isLastMessageFromCurrentUser = isLastMessageFromCurrentUser,
-            mutePosition = mutePosition,
         )
     }
 }
 
 @Composable
 private fun TitleRow(
-    channel: Channel,
+    channelItemState: ItemState.ChannelItemState,
     currentUser: User?,
-    isMuted: Boolean,
-    mutePosition: MuteIndicatorPosition,
     lastMessage: Message?,
     unreadCount: Int,
 ) {
+    val channel = channelItemState.channel
+    val isMuted = channelItemState.isMuted
+    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -314,14 +309,14 @@ private fun TitleRow(
 @Composable
 private fun MessageRow(
     channelItemState: ItemState.ChannelItemState,
-    channel: Channel,
     currentUser: User?,
-    isDirectMessaging: Boolean,
     lastMessage: Message?,
     isLastMessageDeleted: Boolean,
-    isLastMessageFromCurrentUser: Boolean,
-    mutePosition: MuteIndicatorPosition,
 ) {
+    val channel = channelItemState.channel
+    val isDirectMessaging = channel.isOneToOne(currentUser)
+    val isLastMessageFromCurrentUser = lastMessage?.user?.id == currentUser?.id
+    val mutePosition = ChatTheme.config.channelList.muteIndicatorPosition
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

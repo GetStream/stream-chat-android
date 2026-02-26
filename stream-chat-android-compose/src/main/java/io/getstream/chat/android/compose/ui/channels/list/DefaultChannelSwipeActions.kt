@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
+import android.content.res.Resources
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -115,51 +116,9 @@ private fun rememberPrimarySwipeAction(
         var resolved: ChannelAction? = null
         val onAction: () -> Unit = { resolved?.let { handlerState.value(it) } }
 
-        val archiveAction: ChannelAction = if (isArchived) {
-            UnarchiveChannel(
-                channel = channel,
-                label = resources.getString(R.string.stream_compose_swipe_action_unarchive),
-                onAction = onAction,
-            )
-        } else {
-            ArchiveChannel(
-                channel = channel,
-                label = resources.getString(R.string.stream_compose_swipe_action_archive),
-                onAction = onAction,
-            )
-        }
-
-        val muteAction: ChannelAction? = if (canMute) {
-            if (isMuted) {
-                UnmuteChannel(
-                    channel = channel,
-                    label = resources.getString(R.string.stream_compose_swipe_action_unmute),
-                    onAction = onAction,
-                )
-            } else {
-                MuteChannel(
-                    channel = channel,
-                    label = resources.getString(R.string.stream_compose_swipe_action_mute),
-                    onAction = onAction,
-                )
-            }
-        } else {
-            null
-        }
-
-        val pinAction: ChannelAction = if (isPinned) {
-            UnpinChannel(
-                channel = channel,
-                label = resources.getString(R.string.stream_compose_swipe_action_unpin),
-                onAction = onAction,
-            )
-        } else {
-            PinChannel(
-                channel = channel,
-                label = resources.getString(R.string.stream_compose_swipe_action_pin),
-                onAction = onAction,
-            )
-        }
+        val archiveAction = archiveAction(channel, isArchived, resources, onAction)
+        val muteAction = muteAction(channel, isMuted, canMute, resources, onAction)
+        val pinAction = pinAction(channel, isPinned, resources, onAction)
 
         val candidates: List<ChannelAction?> = if (isDM) {
             listOf(archiveAction, muteAction, pinAction)
@@ -170,4 +129,38 @@ private fun rememberPrimarySwipeAction(
         resolved = candidates.firstOrNull { it != null }
         resolved
     }
+}
+
+private fun archiveAction(
+    channel: Channel,
+    isArchived: Boolean,
+    resources: Resources,
+    onAction: () -> Unit,
+): ChannelAction = if (isArchived) {
+    UnarchiveChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unarchive), onAction)
+} else {
+    ArchiveChannel(channel, resources.getString(R.string.stream_compose_swipe_action_archive), onAction)
+}
+
+private fun muteAction(
+    channel: Channel,
+    isMuted: Boolean,
+    canMute: Boolean,
+    resources: Resources,
+    onAction: () -> Unit,
+): ChannelAction? = when {
+    !canMute -> null
+    isMuted -> UnmuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unmute), onAction)
+    else -> MuteChannel(channel, resources.getString(R.string.stream_compose_swipe_action_mute), onAction)
+}
+
+private fun pinAction(
+    channel: Channel,
+    isPinned: Boolean,
+    resources: Resources,
+    onAction: () -> Unit,
+): ChannelAction = if (isPinned) {
+    UnpinChannel(channel, resources.getString(R.string.stream_compose_swipe_action_unpin), onAction)
+} else {
+    PinChannel(channel, resources.getString(R.string.stream_compose_swipe_action_pin), onAction)
 }
