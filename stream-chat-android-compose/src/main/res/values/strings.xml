@@ -318,6 +318,13 @@
         <item quantity="one">%d vote</item>
         <item quantity="other">%d votes</item>
     </plurals>
+    <plurals name="stream_compose_poll_total_vote_counts">
+        <item quantity="one">%d vote total</item>
+        <item quantity="other">%d votes total</item>
+    </plurals>
+    <string name="stream_compose_poll_question_label">Question</string>
+    <string name="stream_compose_poll_option_label">Option %d</string>
+    <string name="stream_compose_poll_view_more">View all</string>
 
     <string name="stream_compose_poll_created_preview">Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview">Poll closed: %s</string>

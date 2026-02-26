@@ -20,48 +20,50 @@ import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.R.plurals.stream_compose_poll_vote_counts
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.ViewModelStore
@@ -69,6 +71,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.PollResultsViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollResultsViewState.ResultItem
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
@@ -95,9 +98,9 @@ public fun PollViewResultDialog(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         sheetMaxWidth = Dp.Unspecified,
-        shape = RoundedCornerShape(0.dp),
-        dragHandle = {},
-        containerColor = ChatTheme.colors.backgroundElevationElevation1,
+        shape = RectangleShape,
+        dragHandle = null,
+        containerColor = ChatTheme.colors.backgroundCoreApp,
     ) {
         var showAllOptionVotes by rememberSaveable(stateSaver = NullableOptionSaver) { mutableStateOf(null) }
 
@@ -139,97 +142,167 @@ private fun Content(
 ) {
     BackHandler(onBack = onBackPressed)
 
-    LazyColumn(
+    Column(
         modifier = Modifier
             .systemBarsPadding()
             .fillMaxSize(),
     ) {
-        item {
-            PollDialogHeader(
-                title = stringResource(id = R.string.stream_compose_poll_results),
-                onBackPressed = onBackPressed,
-            )
-        }
+        PollDialogHeader(
+            title = stringResource(id = R.string.stream_compose_poll_results),
+            onBackPressed = onBackPressed,
+        )
 
-        item {
-            PollViewResultTitle(
-                title = state.pollName,
-                modifier = Modifier.padding(bottom = 16.dp),
-            )
-        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = StreamTokens.spacingMd),
+        ) {
+            item {
+                PollViewResultTitle(
+                    title = state.pollName,
+                    modifier = Modifier.padding(bottom = StreamTokens.spacing2xl),
+                )
+            }
 
-        items(
-            items = state.results,
-            key = { item -> item.option.id },
-        ) { item ->
-            PollViewResultItem(
-                item,
-                onShowAllClick = onShowAllClick,
-            )
+            itemsIndexed(
+                items = state.results,
+                key = { _, item -> item.option.id },
+            ) { index, item ->
+                PollViewResultItem(
+                    item = item,
+                    index = index,
+                    onShowAllClick = onShowAllClick,
+                )
+            }
+
+            item {
+                val totalVotes = remember(state.results) { state.results.sumOf(ResultItem::voteCount) }
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = StreamTokens.spacing2xl),
+                    text = pluralStringResource(
+                        R.plurals.stream_compose_poll_total_vote_counts,
+                        totalVotes,
+                        totalVotes,
+                    ),
+                    color = ChatTheme.colors.textPrimary,
+                    style = ChatTheme.typography.bodyDefault,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun PollViewResultItem(
-    item: PollResultsViewState.ResultItem,
+    item: ResultItem,
+    index: Int,
     onShowAllClick: (option: Option) -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurface)
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                text = item.option.text,
-                color = ChatTheme.colors.textPrimary,
-                fontWeight = FontWeight.Medium,
-                fontSize = 16.sp,
-            )
+    PollResultSection(modifier = Modifier.padding(top = StreamTokens.spacingMd)) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    start = StreamTokens.spacingMd,
+                    end = StreamTokens.spacingMd,
+                    top = StreamTokens.spacingMd,
+                    bottom = StreamTokens.spacing2xs,
+                ),
+            text = stringResource(R.string.stream_compose_poll_option_label, index + 1),
+            color = ChatTheme.colors.textTertiary,
+            style = ChatTheme.typography.headingExtraSmall,
+        )
 
-            if (item.isWinner) {
-                Icon(
-                    modifier = Modifier.padding(end = 8.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_award),
-                    tint = ChatTheme.colors.textPrimary,
-                    contentDescription = null,
-                )
-            }
-
-            Text(
-                text = pluralStringResource(stream_compose_poll_vote_counts, item.voteCount, item.voteCount),
-                color = ChatTheme.colors.textPrimary,
-                fontSize = 16.sp,
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
+        PollResultOptionInfo(item)
 
         item.votes.forEach { vote ->
             PollVoteItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                    .padding(
+                        horizontal = StreamTokens.spacingSm,
+                        vertical = StreamTokens.spacingXs,
+                    ),
                 vote = vote,
             )
         }
 
-        if (item.showAllButton) {
-            TextButton(
-                onClick = { onShowAllClick(item.option) },
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.accentPrimary),
-            ) {
-                Text(text = stringResource(R.string.stream_compose_poll_show_all_votes))
-            }
+        PollViewResultItemFooter(
+            showAllButton = item.showAllButton,
+            onShowAllClick = { onShowAllClick(item.option) },
+        )
+    }
+}
+
+@Composable
+private fun PollResultOptionInfo(item: ResultItem) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = StreamTokens.spacingMd,
+                end = StreamTokens.spacingMd,
+                bottom = StreamTokens.spacingXs,
+            ),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            text = item.option.text,
+            style = ChatTheme.typography.headingMedium,
+            color = ChatTheme.colors.textPrimary,
+        )
+
+        if (item.isWinner) {
+            Icon(
+                modifier = Modifier.padding(end = StreamTokens.spacingXs),
+                painter = painterResource(id = R.drawable.stream_compose_ic_trophy),
+                tint = ChatTheme.colors.textPrimary,
+                contentDescription = null,
+            )
         }
+
+        Text(
+            pluralStringResource(
+                R.plurals.stream_compose_poll_vote_counts,
+                item.voteCount,
+                item.voteCount,
+            ),
+            color = ChatTheme.colors.textPrimary,
+            style = ChatTheme.typography.bodyEmphasis,
+        )
+    }
+}
+
+@Composable
+private fun PollViewResultItemFooter(
+    showAllButton: Boolean,
+    onShowAllClick: () -> Unit,
+) {
+    if (showAllButton) {
+        HorizontalDivider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = StreamTokens.spacingXs),
+            thickness = 1.dp,
+            color = ChatTheme.colors.borderCoreDefault,
+        )
+        StreamTextButton(
+            onClick = onShowAllClick,
+            style = StreamButtonStyleDefaults.secondaryGhost,
+            text = stringResource(R.string.stream_compose_poll_view_more),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    vertical = StreamTokens.spacingXs,
+                    horizontal = StreamTokens.spacingMd,
+                ),
+        )
+    } else {
+        Spacer(modifier = Modifier.height(StreamTokens.spacingMd))
     }
 }
 
@@ -238,25 +311,43 @@ private fun PollViewResultTitle(
     title: String,
     modifier: Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
-            .background(ChatTheme.colors.backgroundCoreSurface)
-            .padding(16.dp),
+    PollResultSection(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+        contentPadding = PaddingValues(StreamTokens.spacingMd),
     ) {
         Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterStart),
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(R.string.stream_compose_poll_question_label),
+            color = ChatTheme.colors.textTertiary,
+            style = ChatTheme.typography.headingExtraSmall,
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
             text = title,
+            style = ChatTheme.typography.headingMedium,
             color = ChatTheme.colors.textPrimary,
-            fontWeight = FontWeight.Medium,
-            fontSize = 16.sp,
         )
     }
+}
+
+@Composable
+private fun PollResultSection(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(shape = RoundedCornerShape(StreamTokens.radiusXl))
+            .background(ChatTheme.colors.backgroundCoreSurfaceSubtle)
+            .padding(contentPadding),
+        verticalArrangement = verticalArrangement,
+        content = content,
+    )
 }
 
 private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
@@ -275,11 +366,13 @@ private val NullableOptionSaver: Saver<Option?, Bundle> = Saver(
     },
 )
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun PollResultsContentPreview() {
     ChatTheme {
-        PollResultsContent()
+        Box(Modifier.background(ChatTheme.colors.backgroundCoreApp)) {
+            PollResultsContent()
+        }
     }
 }
 
@@ -290,7 +383,7 @@ internal fun PollResultsContent() {
         state = PollResultsViewState(
             pollName = poll.name,
             results = poll.options.mapIndexed { index, option ->
-                PollResultsViewState.ResultItem(
+                ResultItem(
                     option = option,
                     isWinner = option == poll.options.first(),
                     voteCount = poll.voteCountsByOption[option.id] ?: 0,
