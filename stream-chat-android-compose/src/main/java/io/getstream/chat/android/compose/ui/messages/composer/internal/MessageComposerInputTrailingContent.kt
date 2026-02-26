@@ -18,11 +18,20 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import androidx.compose.animation.Crossfade
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -42,7 +51,6 @@ internal fun MessageComposerInputTrailingContent(
     val attachments = state.attachments
     val isInEditMode = state.action is Edit
 
-    // Show cooldown indicator if applicable
     if (coolDownTime > 0 && !isInEditMode) {
         ChatTheme.componentFactory.MessageComposerCoolDownIndicator(
             modifier = Modifier.Companion,
@@ -51,13 +59,33 @@ internal fun MessageComposerInputTrailingContent(
         return
     }
 
-    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
-    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
     val canSendMessage = state.canSendMessage()
     val isInputValid = (inputText.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty()
     val isRecording = state.recording !is RecordingState.Idle
 
     val shouldShowSendButton = canSendMessage && isInputValid && !isRecording
+
+    if (isInEditMode) {
+        ChatTheme.componentFactory.MessageComposerSaveButton(
+            enabled = shouldShowSendButton,
+            onClick = { onSendClick(inputText, attachments) },
+        )
+    } else {
+        ComposeModeTrailingContent(state, recordingActions, shouldShowSendButton) {
+            onSendClick(inputText, attachments)
+        }
+    }
+}
+
+@Composable
+private fun ComposeModeTrailingContent(
+    state: MessageComposerState,
+    recordingActions: AudioRecordingActions,
+    shouldShowSendButton: Boolean,
+    onSendClick: () -> Unit,
+) {
+    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.config.composer.audioRecordingEnabled
     val shouldShowRecordButton = isRecordingEnabled && !shouldShowSendButton
 
     val actionButton = when {
@@ -69,7 +97,7 @@ internal fun MessageComposerInputTrailingContent(
     Crossfade(targetState = actionButton) { button ->
         when (button) {
             "send" -> ChatTheme.componentFactory.MessageComposerSendButton(
-                onClick = { onSendClick(inputText, attachments) },
+                onClick = onSendClick,
             )
 
             "record" -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
@@ -78,4 +106,62 @@ internal fun MessageComposerInputTrailingContent(
             )
         }
     }
+}
+
+/**
+ * Default implementation of the "Send" button.
+ */
+@Composable
+internal fun SendButton(
+    onClick: () -> Unit,
+) {
+    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
+    FilledIconButton(
+        modifier = Modifier
+            .size(sendButtonStyle.size)
+            .padding(sendButtonStyle.padding)
+            .testTag("Stream_ComposerSendButton"),
+        content = {
+            Icon(
+                painter = sendButtonStyle.icon.painter,
+                contentDescription = stringResource(id = R.string.stream_compose_send_message),
+            )
+        },
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = ChatTheme.colors.accentPrimary,
+            contentColor = ChatTheme.colors.textOnAccent,
+        ),
+        onClick = onClick,
+    )
+}
+
+/**
+ * Default implementation of the "Save" button.
+ */
+@Composable
+internal fun SaveButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
+    FilledIconButton(
+        enabled = enabled,
+        modifier = Modifier
+            .size(sendButtonStyle.size)
+            .padding(sendButtonStyle.padding)
+            .testTag("Stream_ComposerSaveButton"),
+        content = {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                contentDescription = stringResource(id = R.string.stream_compose_save_message),
+            )
+        },
+        colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = ChatTheme.colors.accentPrimary,
+            contentColor = ChatTheme.colors.textOnAccent,
+            disabledContainerColor = ChatTheme.colors.backgroundCoreDisabled,
+            disabledContentColor = ChatTheme.colors.textDisabled,
+        ),
+        onClick = onClick,
+    )
 }

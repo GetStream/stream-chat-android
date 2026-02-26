@@ -44,30 +44,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
-import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canUploadFile
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
-
-@Composable
-internal fun DefaultMessageComposerHeaderContent(
-    messageComposerState: MessageComposerState,
-    onCancelAction: () -> Unit,
-    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
-) {
-    val activeAction = messageComposerState.action
-
-    if (activeAction != null) {
-        ChatTheme.componentFactory.MessageComposerMessageInputOptions(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 12.dp),
-            activeAction = activeAction,
-            onCancel = onCancelAction,
-        )
-    }
-}
 
 @Composable
 internal fun DefaultMessageComposerFooterInThreadMode(
@@ -163,31 +143,3 @@ internal fun DefaultMessageComposerLeadingContent(
 }
 
 private const val OpenAttachmentPickerButtonRotation = 225f
-
-/**
- * Default implementation of the "Send" button.
- */
-@Composable
-internal fun SendButton(
-    onClick: () -> Unit,
-) {
-    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
-    FilledIconButton(
-        modifier = Modifier
-            .size(sendButtonStyle.size)
-            .padding(sendButtonStyle.padding)
-            .testTag("Stream_ComposerSendButton"),
-        content = {
-            Icon(
-                modifier = Modifier.size(sendButtonStyle.icon.size),
-                painter = sendButtonStyle.icon.painter,
-                contentDescription = stringResource(id = R.string.stream_compose_send_message),
-            )
-        },
-        colors = IconButtonDefaults.filledIconButtonColors(
-            containerColor = ChatTheme.colors.accentPrimary,
-            contentColor = ChatTheme.colors.textOnAccent,
-        ),
-        onClick = onClick,
-    )
-}

@@ -125,7 +125,7 @@ public fun MessageInput(
             .animateContentSize(alignment = Alignment.BottomStart),
         verticalArrangement = Arrangement.Bottom,
     ) {
-        MessageInputHeader(
+        MessageInputTop(
             messageComposerState = messageComposerState,
             onAttachmentRemoved = onAttachmentRemoved,
             onLinkPreviewClick = onLinkPreviewClick,
@@ -154,7 +154,7 @@ public fun MessageInput(
 private val MessageInputShape = RoundedCornerShape(StreamTokens.radius3xl)
 
 @Composable
-private fun MessageInputHeader(
+private fun MessageInputTop(
     messageComposerState: MessageComposerState,
     onAttachmentRemoved: (Attachment) -> Unit,
     onCancelActionClick: () -> Unit,
@@ -165,20 +165,31 @@ private fun MessageInputHeader(
     val attachments = messageComposerState.attachments
     val linkPreviews = messageComposerState.linkPreviews
     val showQuoted = activeAction is Reply
-    val showAttachments = attachments.isNotEmpty() && activeAction !is Edit
+    val showEdit = activeAction is Edit
+    val showAttachments = attachments.isNotEmpty()
     val showLinkPreview = ChatTheme.config.composer.linkPreviewEnabled && linkPreviews.isNotEmpty()
+    val isVisible = showQuoted || showEdit || showAttachments || showLinkPreview
 
-    if (showQuoted || showAttachments || showLinkPreview) {
+    if (isVisible) {
         Column(
             modifier = Modifier.padding(
                 top = StreamTokens.spacingSm,
                 bottom = StreamTokens.spacing2xs,
             ),
-            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacingXs),
+            verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         ) {
+            if (showEdit) {
+                ChatTheme.componentFactory.MessageComposerEditIndicator(
+                    modifier = Modifier,
+                    state = messageComposerState,
+                    editMessage = activeAction.message,
+                    onCancelClick = onCancelActionClick,
+                )
+            }
+
             if (showQuoted) {
                 ChatTheme.componentFactory.MessageComposerQuotedMessage(
-                    modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
+                    modifier = Modifier,
                     state = messageComposerState,
                     quotedMessage = activeAction.message,
                     onCancelClick = onCancelActionClick,
@@ -199,7 +210,7 @@ private fun MessageInputHeader(
 
             if (showLinkPreview) {
                 ChatTheme.componentFactory.MessageComposerLinkPreview(
-                    modifier = Modifier.padding(horizontal = StreamTokens.spacingSm),
+                    modifier = Modifier,
                     linkPreview = linkPreviews.first(),
                     onContentClick = onLinkPreviewClick,
                     onCancelClick = onCancelLinkPreviewClick,
@@ -345,6 +356,24 @@ internal fun MessageComposerInputReply() {
 
 @Preview
 @Composable
+private fun MessageComposerInputEditPreview() {
+    ChatTheme {
+        MessageComposerInputEdit()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEdit() {
+    MessageInput(
+        messageComposerState = PreviewMessageComposerState.copy(
+            inputValue = "I think this could work",
+            action = Edit(PreviewMessageData.message1),
+        ),
+    )
+}
+
+@Preview
+@Composable
 private fun MessageComposerInputAttachmentsAndLinkPreview() {
     ChatTheme {
         MessageComposerInputAttachmentsAndLink()
@@ -382,6 +411,31 @@ internal fun MessageComposerInputReplyAttachmentsAndLink() {
         MessageInput(
             messageComposerState = PreviewMessageComposerState.copy(
                 action = Reply(PreviewMessageData.message1),
+                attachments = listOf(
+                    PreviewAttachmentData.attachmentImage1,
+                    PreviewAttachmentData.attachmentVideo1,
+                ),
+                linkPreviews = listOf(PreviewLinkData.link1),
+            ),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MessageComposerInputEditAttachmentsAndLinkPreview() {
+    ChatTheme {
+        MessageComposerInputEditAttachmentsAndLink()
+    }
+}
+
+@Composable
+internal fun MessageComposerInputEditAttachmentsAndLink() {
+    val config = ChatTheme.config.copy(composer = ComposerConfig(linkPreviewEnabled = true))
+    CompositionLocalProvider(LocalChatConfig provides config) {
+        MessageInput(
+            messageComposerState = PreviewMessageComposerState.copy(
+                action = Edit(PreviewMessageData.message1),
                 attachments = listOf(
                     PreviewAttachmentData.attachmentImage1,
                     PreviewAttachmentData.attachmentVideo1,
