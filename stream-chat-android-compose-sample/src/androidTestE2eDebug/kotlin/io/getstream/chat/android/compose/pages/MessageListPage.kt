@@ -62,6 +62,7 @@ open class MessageListPage {
         companion object {
             val inputField get() = By.res("Stream_ComposerInputField")
             val sendButton get() = By.res("Stream_ComposerSendButton")
+            val saveButton get() = By.res("Stream_ComposerSaveButton")
             val recordAudioButton get() = By.res("Stream_ComposerAudioRecordingButton")
             val commandsButton get() = By.res("Stream_ComposerCommandsButton")
             val suggestionList get() = By.res("Stream_SuggestionList")

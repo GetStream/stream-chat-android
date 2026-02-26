@@ -148,7 +148,8 @@ class UserRobot {
     fun editMessage(newText: String, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
         ContextMenu.edit.waitToAppear().click()
-        sendMessage(newText)
+        typeText(newText)
+        Composer.saveButton.waitToAppear().click()
         return this
     }
 
