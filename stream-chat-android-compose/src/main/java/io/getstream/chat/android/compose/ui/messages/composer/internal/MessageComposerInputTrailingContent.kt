@@ -101,11 +101,8 @@ private sealed interface ActionButton {
     data object Record : ActionButton
 }
 
-/**
- * Default implementation of the "Send" button.
- */
 @Composable
-internal fun SendButton(
+internal fun MessageComposerSendButton(
     onClick: () -> Unit,
 ) {
     val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
@@ -114,25 +111,21 @@ internal fun SendButton(
             .size(sendButtonStyle.size)
             .padding(sendButtonStyle.padding)
             .testTag("Stream_ComposerSendButton"),
-        content = {
-            Icon(
-                painter = sendButtonStyle.icon.painter,
-                contentDescription = stringResource(id = R.string.stream_compose_send_message),
-            )
-        },
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
             contentColor = ChatTheme.colors.textOnAccent,
         ),
         onClick = onClick,
-    )
+    ) {
+        Icon(
+            painter = sendButtonStyle.icon.painter,
+            contentDescription = stringResource(id = R.string.stream_compose_send_message),
+        )
+    }
 }
 
-/**
- * Default implementation of the "Save" button.
- */
 @Composable
-internal fun SaveButton(
+internal fun MessageComposerSaveButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
@@ -143,12 +136,6 @@ internal fun SaveButton(
             .size(sendButtonStyle.size)
             .padding(sendButtonStyle.padding)
             .testTag("Stream_ComposerSaveButton"),
-        content = {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
-                contentDescription = stringResource(id = R.string.stream_compose_save_message),
-            )
-        },
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
             contentColor = ChatTheme.colors.textOnAccent,
@@ -156,5 +143,10 @@ internal fun SaveButton(
             disabledContentColor = ChatTheme.colors.textDisabled,
         ),
         onClick = onClick,
-    )
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+            contentDescription = stringResource(id = R.string.stream_compose_save_message),
+        )
+    }
 }

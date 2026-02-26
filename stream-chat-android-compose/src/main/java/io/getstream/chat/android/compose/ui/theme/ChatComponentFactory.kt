@@ -154,8 +154,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentPicke
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.AudioRecordingButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerFooterInThreadMode
-import io.getstream.chat.android.compose.ui.messages.composer.internal.SaveButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.SendButton
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -1874,7 +1872,9 @@ public interface ChatComponentFactory {
     public fun MessageComposerSendButton(
         onClick: () -> Unit,
     ) {
-        SendButton(onClick = onClick)
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSendButton(
+            onClick = onClick,
+        )
     }
 
     /**
@@ -1891,7 +1891,10 @@ public interface ChatComponentFactory {
         enabled: Boolean,
         onClick: () -> Unit,
     ) {
-        SaveButton(enabled = enabled, onClick = onClick)
+        io.getstream.chat.android.compose.ui.messages.composer.internal.MessageComposerSaveButton(
+            enabled = enabled,
+            onClick = onClick,
+        )
     }
 
     /**
