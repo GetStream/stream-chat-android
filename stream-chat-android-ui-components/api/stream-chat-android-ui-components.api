@@ -5216,12 +5216,10 @@ public final class io/getstream/chat/android/ui/viewmodel/search/SearchViewModel
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun component6 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;ZLjava/util/List;ZZLjava/lang/String;)Lio/getstream/chat/android/ui/viewmodel/search/SearchViewModel$State;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/search/SearchViewModel$State;Ljava/lang/String;ZLjava/util/List;ZZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/search/SearchViewModel$State;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
-	public final fun getNext ()Ljava/lang/String;
 	public final fun getQuery ()Ljava/lang/String;
 	public final fun getResults ()Ljava/util/List;
 	public fun hashCode ()I

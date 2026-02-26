@@ -201,7 +201,7 @@ public class SearchViewModel(
         val results: List<MessageResult> = emptyList(),
         val isLoading: Boolean = false,
         val isLoadingMore: Boolean = false,
-        val next: String? = null,
+        internal val next: String? = null,
     )
 
     private companion object {
