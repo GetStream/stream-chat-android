@@ -422,7 +422,10 @@ private fun PollOptionItem(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs)) {
-            Row(Modifier.heightIn(min = AvatarSize.ExtraSmall)) {
+            Row(
+                Modifier.heightIn(min = AvatarSize.ExtraSmall),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     modifier = Modifier.weight(1f),
                     text = option.text,
@@ -437,13 +440,11 @@ private fun PollOptionItem(
                         overlap = StreamTokens.spacingXs,
                         users = users,
                         avatarSize = AvatarSize.ExtraSmall,
-                        showBorder = true,
                         modifier = Modifier.padding(start = StreamTokens.spacingXs, end = StreamTokens.spacing2xs),
                     )
                 }
 
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
                     text = voteCount.toString(),
                     style = typography.metadataDefault,
                     color = style.textColor,
