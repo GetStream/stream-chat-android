@@ -24,7 +24,6 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.randomThreadParticipant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
@@ -58,8 +57,9 @@ internal class QueryThreadsStateLogicTest {
             createdBy = null,
             participantCount = 2,
             threadParticipants = listOf(
-                randomThreadParticipant(user = User(id = "usrId1")),
-                randomThreadParticipant(user = User(id = "usrId2")),
+                // Sorted descending by lastThreadMessageAt (most recent first)
+                ThreadParticipant(user = User(id = "usrId2"), lastThreadMessageAt = Date(2000)),
+                ThreadParticipant(user = User(id = "usrId1"), lastThreadMessageAt = Date(1000)),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -463,7 +463,8 @@ internal class QueryThreadsStateLogicTest {
             lastMessageAt = replyCreatedAt,
             updatedAt = replyCreatedAt,
             participantCount = 3,
-            threadParticipants = threadList[0].threadParticipants + listOf(expectedNewParticipant),
+            // New participant has the most recent lastThreadMessageAt, so it sorts to the front
+            threadParticipants = listOf(expectedNewParticipant) + threadList[0].threadParticipants,
             read = threadList[0].read.map { read ->
                 read.copy(unreadMessages = read.unreadMessages + 1)
             },

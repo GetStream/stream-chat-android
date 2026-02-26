@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.internal.offline.repository.domain.threads.internal
 
+import io.getstream.chat.android.client.extensions.internal.sortedByLastReply
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.client.internal.offline.repository.domain.channel.userread.internal.toModel
 import io.getstream.chat.android.models.Channel
@@ -63,7 +64,7 @@ internal suspend fun ThreadEntity.toModel(
     createdBy = getUser(createdByUserId),
     activeParticipantCount = activeParticipantCount,
     participantCount = participantCount,
-    threadParticipants = threadParticipants.map { it.toModel(getUser) },
+    threadParticipants = threadParticipants.map { it.toModel(getUser) }.sortedByLastReply(),
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,

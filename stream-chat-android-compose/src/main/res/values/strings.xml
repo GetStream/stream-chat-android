@@ -303,4 +303,13 @@
         <item quantity="one">%d new thread</item>
         <item quantity="other">%d new threads</item>
     </plurals>
+    <plurals name="stream_compose_thread_list_item_reply_count">
+        <item quantity="one">1 reply</item>
+        <item quantity="other">%d replies</item>
+    </plurals>
+    <string name="stream_compose_thread_timestamp_just_now">Just now</string>
+    <string name="stream_compose_thread_timestamp_today">Today at %1$s</string>
+    <string name="stream_compose_thread_timestamp_yesterday">Yesterday at %1$s</string>
+    <string name="stream_compose_thread_timestamp_day_of_week">%1$s at %2$s</string>
+    <string name="stream_compose_thread_timestamp_date">%1$s at %2$s</string>
 </resources>
