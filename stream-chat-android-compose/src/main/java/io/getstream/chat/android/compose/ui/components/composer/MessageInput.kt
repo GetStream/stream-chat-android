@@ -134,7 +134,9 @@ public fun MessageInput(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .defaultMinSize(minHeight = 48.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
             leadingContent()
