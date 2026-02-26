@@ -85,7 +85,7 @@ internal fun MessageComposerInputTrailingContent(
                 onClick = { onSendClick(inputText, attachments) },
             )
 
-            ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordButton(
+            ActionButton.Record -> ChatTheme.componentFactory.MessageComposerAudioRecordingButton(
                 state = state.recording,
                 recordingActions = recordingActions,
             )

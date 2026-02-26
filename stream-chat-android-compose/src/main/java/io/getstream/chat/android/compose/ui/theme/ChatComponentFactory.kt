@@ -1898,7 +1898,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default "Audio record (voice message)" button of the message composer.
+     * The default "Audio recording (voice message)" button of the message composer.
      *
      * Used as part of [MessageComposerTrailingContent].
      *
@@ -1906,7 +1906,7 @@ public interface ChatComponentFactory {
      * @param recordingActions The actions to control the audio recording.
      */
     @Composable
-    public fun MessageComposerAudioRecordButton(
+    public fun MessageComposerAudioRecordingButton(
         state: RecordingState,
         recordingActions: AudioRecordingActions,
     ) {
