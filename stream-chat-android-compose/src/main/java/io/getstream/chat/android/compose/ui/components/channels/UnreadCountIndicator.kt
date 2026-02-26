@@ -20,7 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,13 +48,10 @@ public fun UnreadCountIndicator(
 ) {
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
 
-    @Suppress("MagicNumber")
-    val shape = RoundedCornerShape(50) // pill shape
-
     Box(
         modifier = modifier
             .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
-            .background(shape = shape, color = color)
+            .background(shape = CircleShape, color = color)
             .padding(horizontal = StreamTokens.spacing2xs), // 4dp horizontal content padding
         contentAlignment = Alignment.Center,
     ) {

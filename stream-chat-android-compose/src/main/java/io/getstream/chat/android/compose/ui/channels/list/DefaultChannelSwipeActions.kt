@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
@@ -54,23 +55,17 @@ import kotlinx.coroutines.launch
  * @param channelItem The channel item state to build actions for.
  */
 @Composable
-public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
+public fun DefaultChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
     val handler = LocalSwipeActionHandler.current ?: return
     val coordinator = LocalSwipeRevealCoordinator.current
     val moreHandler = LocalChannelMoreClickHandler.current
     val scope = rememberCoroutineScope()
     val channel = channelItem.channel
 
-    fun onAction(action: ChannelAction) {
-        handler(action)
-        scope.launch { coordinator?.closeAll() }
-    }
-
-    // "More" action — opens the channel options sheet
     if (moreHandler != null) {
         SwipeActionItem(
             icon = painterResource(R.drawable.stream_compose_ic_more_options),
-            label = stringResource(R.string.stream_compose_swipe_action_more),
+            label = LocalContext.current.resources.getString(R.string.stream_compose_swipe_action_more),
             onClick = {
                 scope.launch { coordinator?.closeAll() }
                 moreHandler(channel)
@@ -79,23 +74,23 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
         )
     }
 
-    // Primary action (rightmost) — resolved by channel type and capabilities
-    val primaryAction = resolvePrimarySwipeAction(
+    val primaryAction = rememberPrimarySwipeAction(
         channel = channel,
         isMuted = channelItem.isMuted,
+        handler = handler,
     )
     if (primaryAction != null) {
         SwipeActionItem(
             icon = painterResource(primaryAction.icon),
             label = primaryAction.label,
-            onClick = { onAction(primaryAction) },
+            onClick = { primaryAction.onAction() },
             style = SwipeActionStyle.Primary,
         )
     }
 }
 
 /**
- * Resolves the primary swipe action based on channel type and capabilities.
+ * Resolves and remembers the primary swipe action based on channel type and capabilities.
  *
  * DM priority: Archive → Mute → Pin.
  * Group priority: Mute → Archive → Pin.
@@ -104,68 +99,75 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
  * Mute requires [ChannelCapabilities.MUTE_CHANNEL].
  */
 @Composable
-private fun resolvePrimarySwipeAction(
+private fun rememberPrimarySwipeAction(
     channel: Channel,
     isMuted: Boolean,
+    handler: (ChannelAction) -> Unit,
 ): ChannelAction? {
+    val resources = LocalContext.current.resources
+    val handlerState = rememberUpdatedState(handler)
     val isPinned = channel.isPinned()
-    val capabilities = channel.ownCapabilities
     val isArchived = channel.isArchive()
-    val canMute = capabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
+    val canMute = channel.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
     val isDM = channel.isDistinct() && channel.members.size == 2
 
-    // Build candidate actions with resolved labels
-    val archiveAction: ChannelAction = if (isArchived) {
-        UnarchiveChannel(
-            channel = channel,
-            label = stringResource(R.string.stream_compose_swipe_action_unarchive),
-            onAction = {},
-        )
-    } else {
-        ArchiveChannel(
-            channel = channel,
-            label = stringResource(R.string.stream_compose_swipe_action_archive),
-            onAction = {},
-        )
-    }
+    return remember(channel.cid, isMuted, isPinned, isArchived, canMute, isDM) {
+        var resolved: ChannelAction? = null
+        val onAction: () -> Unit = { resolved?.let { handlerState.value(it) } }
 
-    val muteAction: ChannelAction? = if (canMute) {
-        if (isMuted) {
-            UnmuteChannel(
+        val archiveAction: ChannelAction = if (isArchived) {
+            UnarchiveChannel(
                 channel = channel,
-                label = stringResource(R.string.stream_compose_swipe_action_unmute),
-                onAction = {},
+                label = resources.getString(R.string.stream_compose_swipe_action_unarchive),
+                onAction = onAction,
             )
         } else {
-            MuteChannel(
+            ArchiveChannel(
                 channel = channel,
-                label = stringResource(R.string.stream_compose_swipe_action_mute),
-                onAction = {},
+                label = resources.getString(R.string.stream_compose_swipe_action_archive),
+                onAction = onAction,
             )
         }
-    } else {
-        null
-    }
 
-    val pinAction: ChannelAction = if (isPinned) {
-        UnpinChannel(
-            channel = channel,
-            label = stringResource(R.string.stream_compose_swipe_action_unpin),
-            onAction = {},
-        )
-    } else {
-        PinChannel(
-            channel = channel,
-            label = stringResource(R.string.stream_compose_swipe_action_pin),
-            onAction = {},
-        )
-    }
+        val muteAction: ChannelAction? = if (canMute) {
+            if (isMuted) {
+                UnmuteChannel(
+                    channel = channel,
+                    label = resources.getString(R.string.stream_compose_swipe_action_unmute),
+                    onAction = onAction,
+                )
+            } else {
+                MuteChannel(
+                    channel = channel,
+                    label = resources.getString(R.string.stream_compose_swipe_action_mute),
+                    onAction = onAction,
+                )
+            }
+        } else {
+            null
+        }
 
-    val candidates: List<ChannelAction?> = if (isDM) {
-        listOf(archiveAction, muteAction, pinAction)
-    } else {
-        listOf(muteAction, archiveAction, pinAction)
-    }
+        val pinAction: ChannelAction = if (isPinned) {
+            UnpinChannel(
+                channel = channel,
+                label = resources.getString(R.string.stream_compose_swipe_action_unpin),
+                onAction = onAction,
+            )
+        } else {
+            PinChannel(
+                channel = channel,
+                label = resources.getString(R.string.stream_compose_swipe_action_pin),
+                onAction = onAction,
+            )
+        }
 
-    return candidates.firstOrNull { it != null }
+        val candidates: List<ChannelAction?> = if (isDM) {
+            listOf(archiveAction, muteAction, pinAction)
+        } else {
+            listOf(muteAction, archiveAction, pinAction)
+        }
+
+        resolved = candidates.firstOrNull { it != null }
+        resolved
+    }
 }

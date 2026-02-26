@@ -1193,7 +1193,6 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 	public static field lambda-5 Lkotlin/jvm/functions/Function3;
 	public static field lambda-6 Lkotlin/jvm/functions/Function3;
 	public static field lambda-7 Lkotlin/jvm/functions/Function4;
-	public static field lambda-8 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
@@ -1202,7 +1201,6 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-7$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
-	public final fun getLambda-8$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$ChannelsKt {
@@ -1224,7 +1222,7 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/DefaultChannelSwipeActionsKt {
-	public static final fun DefaultChannelSwipeActions (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
+	public static final fun DefaultChannelSwipeActions (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/SearchResultItemKt {
@@ -2827,7 +2825,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun ChannelMenuOptions (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Ljava/util/List;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelOptionsItem (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelOptionsItemLeadingIcon (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun ChannelSwipeActions (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelSwipeActions (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun CustomAttachmentContent (Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun DirectChannelInfoAvatarContainer (Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun DirectChannelInfoTopBar (Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;Landroidx/compose/foundation/lazy/LazyListState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
@@ -3019,7 +3017,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ChannelMenuOptions (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Ljava/util/List;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelOptionsItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelOptionsItemLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;Landroidx/compose/runtime/Composer;I)V
-	public static fun ChannelSwipeActions (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelSwipeActions (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Landroidx/compose/runtime/Composer;I)V
 	public static fun CustomAttachmentContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun DirectChannelInfoAvatarContainer (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public static fun DirectChannelInfoTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;Landroidx/compose/foundation/lazy/LazyListState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V

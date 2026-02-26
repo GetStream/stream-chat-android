@@ -421,7 +421,7 @@ public interface ChatComponentFactory {
                 modifier = Modifier.animateItem(),
                 channelCid = channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
-                swipeActions = { Row { ChannelSwipeActions(channelItem) } },
+                swipeActions = { ChannelSwipeActions(channelItem) },
             ) {
                 ChannelItem(
                     channelItem = channelItem,
@@ -448,7 +448,7 @@ public interface ChatComponentFactory {
      * @param channelItem The channel item to build actions for.
      */
     @Composable
-    public fun RowScope.ChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
+    public fun ChannelSwipeActions(channelItem: ItemState.ChannelItemState) {
         DefaultChannelSwipeActions(channelItem)
     }
 

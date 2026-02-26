@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.channels.header
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -131,7 +131,6 @@ public fun ChannelListHeader(
 
                 trailingContent()
             }
-            // Bottom border (replaces drop shadow per Figma spec)
             HorizontalDivider(
                 thickness = 1.dp,
                 color = ChatTheme.colors.borderCoreDefault,
@@ -229,18 +228,14 @@ internal fun DefaultChannelListHeaderTrailingContent(
         color = ChatTheme.colors.accentPrimary,
         shape = CircleShape,
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(20.dp)
-                    .testTag("Stream_CreateChannelIcon"),
-                painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
-                tint = Color.White,
-            )
-        }
+        Icon(
+            modifier = Modifier
+                .size(20.dp)
+                .testTag("Stream_CreateChannelIcon"),
+            painter = painterResource(id = R.drawable.stream_compose_ic_add),
+            contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
+            tint = Color.White,
+        )
     }
 }
 

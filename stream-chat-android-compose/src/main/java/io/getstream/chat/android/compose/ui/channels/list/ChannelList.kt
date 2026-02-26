@@ -16,23 +16,20 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -53,6 +50,8 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.button.StreamButtonStyleDefaults
+import io.getstream.chat.android.compose.ui.components.button.StreamTextButton
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -401,9 +400,9 @@ internal fun DefaultChannelListEmptyContent(
             painter = painterResource(id = R.drawable.stream_compose_empty_channels),
             contentDescription = null,
             tint = ChatTheme.colors.textTertiary,
-            modifier = Modifier.size(32.dp),
+            modifier = Modifier.size(StreamTokens.spacing2xl),
         )
-        Spacer(Modifier.size(8.dp))
+        Spacer(Modifier.size(StreamTokens.spacingXs))
         Text(
             text = stringResource(R.string.stream_compose_channel_list_empty_channels),
             style = ChatTheme.typography.captionDefault,
@@ -411,18 +410,12 @@ internal fun DefaultChannelListEmptyContent(
             textAlign = TextAlign.Center,
         )
         if (onStartChatClick != null) {
-            Spacer(Modifier.size(16.dp))
-            OutlinedButton(
+            Spacer(Modifier.size(StreamTokens.spacingMd))
+            StreamTextButton(
                 onClick = onStartChatClick,
-                shape = RoundedCornerShape(StreamTokens.radiusMd),
-                border = BorderStroke(1.dp, ChatTheme.colors.borderCoreDefault),
-            ) {
-                Text(
-                    text = stringResource(R.string.stream_compose_channel_list_start_chat),
-                    style = ChatTheme.typography.captionDefault,
-                    color = ChatTheme.colors.textPrimary,
-                )
-            }
+                text = stringResource(R.string.stream_compose_channel_list_start_chat),
+                style = StreamButtonStyleDefaults.secondaryOutline,
+            )
         }
     }
 }

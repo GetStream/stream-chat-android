@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.sample.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -58,7 +57,7 @@ class CustomChatComponentFactory(
                 modifier = Modifier.animateItem(),
                 channelCid = channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
-                swipeActions = { Row { ChannelSwipeActions(channelItem) } },
+                swipeActions = { ChannelSwipeActions(channelItem) },
             ) {
                 ChannelItem(
                     modifier = pinnedModifier,

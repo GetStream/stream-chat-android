@@ -86,9 +86,9 @@ public fun SwipeActionItem(
 ) {
     val colors = ChatTheme.colors
     val (bg, content) = when (style) {
-        SwipeActionStyle.Primary -> colors.accentPrimary to Color.White
+        SwipeActionStyle.Primary -> colors.accentPrimary to colors.buttonPrimaryTextOnAccent
         SwipeActionStyle.Secondary -> colors.backgroundCoreSurface to colors.textPrimary
-        SwipeActionStyle.Destructive -> colors.accentError to Color.White
+        SwipeActionStyle.Destructive -> colors.accentError to colors.buttonDestructiveTextOnAccent
     }
     SwipeActionItem(
         icon = icon,
