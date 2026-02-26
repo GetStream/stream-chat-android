@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * Controller responsible for managing the state and events related to poll results.
  *
- * This controller processes poll data to create a view state that displays all poll options
- * sorted by vote count (descending), with each option showing up to [MAX_VOTES_TO_SHOW] votes
- * and a "Show All" button when there are more votes available. The controller does not fetch
- * votes from the API; it uses votes already present in the poll object.
+ * This controller processes poll data to create a view state that displays all poll options, with
+ * each option showing up to [MAX_VOTES_TO_SHOW] votes and a "Show All" button when there are more
+ * votes available. The controller does not fetch votes from the API; it uses votes already present
+ * in the poll object.
  *
  * @param poll The poll containing the votes to display.
  */
@@ -44,13 +44,10 @@ public class PollResultsViewController(
 
     private val _state = MutableStateFlow(
         run {
-            val options = poll.options.sortedByDescending { option ->
-                poll.voteCountsByOption[option.id] ?: 0
-            }
             val winner = poll.getWinner()
             PollResultsViewState(
                 pollName = poll.name,
-                results = options.map { option ->
+                results = poll.options.map { option ->
                     val votes = poll.getVotesUnlessAnonymous(option)
                         .take(MAX_VOTES_TO_SHOW)
                     val voteCount = poll.voteCountsByOption[option.id] ?: 0

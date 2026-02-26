@@ -29,10 +29,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
+
 @Composable
 public fun PollDialogHeader(
     title: String,
@@ -41,11 +42,10 @@ public fun PollDialogHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(vertical = StreamTokens.spacingXs, horizontal = StreamTokens.spacing2xs),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         BackButton(
-            modifier = Modifier.padding(end = 32.dp),
             painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
             onBackPressed = onBackPressed,
         )

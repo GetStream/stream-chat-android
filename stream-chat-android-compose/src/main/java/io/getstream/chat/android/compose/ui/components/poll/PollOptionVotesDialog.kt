@@ -179,7 +179,7 @@ private fun Content(
                         if (state.isWinner) {
                             Icon(
                                 modifier = Modifier.padding(end = 8.dp),
-                                painter = painterResource(id = R.drawable.stream_compose_ic_award),
+                                painter = painterResource(id = R.drawable.stream_compose_ic_trophy),
                                 tint = ChatTheme.colors.textPrimary,
                                 contentDescription = null,
                             )

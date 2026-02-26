@@ -587,6 +587,7 @@ public object StreamDesign {
      * @param bodyEmphasis Used for emphasized body text requiring visual prominence.
      * @param captionDefault Style for captions and supplementary information.
      * @param captionEmphasis Style for emphasized captions that require attention.
+     * @param headingExtraSmall Style for extra-small headings and section labels.
      * @param headingSmall Style for small headings.
      * @param headingMedium Style for medium headings.
      * @param headingLarge Style for large, prominent headings.
@@ -602,6 +603,7 @@ public object StreamDesign {
         public val bodyEmphasis: TextStyle,
         public val captionDefault: TextStyle,
         public val captionEmphasis: TextStyle,
+        public val headingExtraSmall: TextStyle,
         public val headingSmall: TextStyle,
         public val headingMedium: TextStyle,
         public val headingLarge: TextStyle,
@@ -645,6 +647,12 @@ public object StreamDesign {
                     fontWeight = StreamTokens.fontWeightSemiBold,
                     fontSize = StreamTokens.fontSizeSm,
                     lineHeight = StreamTokens.lineHeightTight,
+                ),
+                headingExtraSmall = TextStyle(
+                    fontFamily = fontFamily,
+                    fontWeight = StreamTokens.fontWeightMedium,
+                    fontSize = StreamTokens.fontSizeSm,
+                    lineHeight = StreamTokens.lineHeightNormal,
                 ),
                 headingSmall = TextStyle(
                     fontFamily = fontFamily,
