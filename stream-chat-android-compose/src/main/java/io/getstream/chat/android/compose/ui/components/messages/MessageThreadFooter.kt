@@ -87,8 +87,8 @@ private fun ThreadConnector(alignment: MessageAlignment) {
     }
     Image(
         modifier = Modifier
-            .offset(y = -StreamTokens.spacingSm)
-            .applyIf(mirrored) { Modifier.graphicsLayer(scaleX = -1f) },
+            .offset(y = -StreamTokens.spacingXs)
+            .applyIf(mirrored) { graphicsLayer(scaleX = -1f) },
         painter = painterResource(id = R.drawable.stream_compose_thread_connector),
         contentDescription = null,
         colorFilter = ColorFilter.tint(tint),

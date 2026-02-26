@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +39,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param users The list of users to display avatars for.
  * @param avatarSize The size of each avatar.
  * @param modifier Modifier for styling.
- * @param showBorder Whether to show a border around each avatar.
+ * @param showBorder Whether to show a border around the first avatar.
  * @param trailingContent Optional composable rendered after the avatars.
  */
 @Composable
@@ -49,12 +52,22 @@ public fun UserAvatarStack(
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     val componentFactory = ChatTheme.componentFactory
-    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(-overlap)) {
-        for (user in users) {
+    val colors = ChatTheme.colors
+    val borderSize = 2.dp
+
+    Row(
+        modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(-overlap)
+    ) {
+        users.forEachIndexed { index, user ->
             componentFactory.UserAvatar(
-                modifier = Modifier.size(avatarSize),
+                modifier = Modifier
+                    .size(avatarSize + borderSize)
+                    .background(colors.borderCoreOnDark, CircleShape)
+                    .padding(borderSize),
                 user = user,
-                showBorder = showBorder,
+                showBorder = showBorder && index == 0,
                 showIndicator = false,
             )
         }
