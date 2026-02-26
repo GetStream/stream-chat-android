@@ -46,7 +46,7 @@ internal class ThreadListTest : PaparazziComposeTest {
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -66,7 +66,7 @@ internal class ThreadListTest : PaparazziComposeTest {
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -86,7 +86,7 @@ internal class ThreadListTest : PaparazziComposeTest {
                     isLoadingMore = false,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -106,7 +106,7 @@ internal class ThreadListTest : PaparazziComposeTest {
                     isLoadingMore = false,
                     unseenThreadsCount = 1,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )
@@ -126,7 +126,7 @@ internal class ThreadListTest : PaparazziComposeTest {
                     isLoadingMore = true,
                     unseenThreadsCount = 0,
                 ),
-                onUnreadThreadsBannerClick = {},
+                onBannerClick = {},
                 onThreadClick = { },
                 onLoadMore = {},
             )

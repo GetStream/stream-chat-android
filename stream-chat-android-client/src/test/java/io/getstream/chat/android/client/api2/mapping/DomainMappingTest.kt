@@ -119,6 +119,7 @@ import io.getstream.chat.android.randomUser
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.sql.Date
 
 @Suppress("LargeClass")
 internal class DomainMappingTest {
@@ -743,8 +744,16 @@ internal class DomainMappingTest {
     fun `DownstreamThreadDto is correctly mapped to Thread`() {
         val user1 = randomDownstreamUserDto(id = "user1")
         val user2 = randomDownstreamUserDto(id = "user2")
-        val participant1Dto = randomDownstreamThreadParticipantDto(userId = user1.id, user = user1)
-        val participant2Dto = randomDownstreamThreadParticipantDto(userId = user2.id, user = user2)
+        val participant1Dto = randomDownstreamThreadParticipantDto(
+            userId = user1.id,
+            user = user1,
+            lastThreadMessageAt = Date(2000),
+        )
+        val participant2Dto = randomDownstreamThreadParticipantDto(
+            userId = user2.id,
+            user = user2,
+            lastThreadMessageAt = Date(1000),
+        )
         val downstreamThreadDto = randomDownstreamThreadDto(
             createdByUserId = user1.id,
             createdBy = user1,

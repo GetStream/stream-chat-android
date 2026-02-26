@@ -185,7 +185,7 @@ import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyConten
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.threads.ThreadItem
-import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
+import io.getstream.chat.android.compose.ui.threads.ThreadListBannerState
 import io.getstream.chat.android.compose.ui.util.ReactionResolver
 import io.getstream.chat.android.compose.ui.util.StreamSnackbar
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -2504,20 +2504,19 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default "Unread threads" banner.
-     * Shows the number of unread threads in the "ThreadList".
+     * The default thread list banner.
+     * Shows unread thread count, a loading indicator during refresh, or an error prompt.
      *
-     * @param unreadThreads The number of unread threads.
+     * @param state The current [ThreadListBannerState] to render.
      * @param onClick Action invoked when the user clicks on the banner.
      */
     @Composable
-    public fun ThreadListUnreadThreadsBanner(
-        unreadThreads: Int,
+    public fun ThreadListBanner(
+        state: ThreadListBannerState,
         onClick: () -> Unit,
     ) {
-        UnreadThreadsBanner(
-            unreadThreads = unreadThreads,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+        io.getstream.chat.android.compose.ui.threads.ThreadListBanner(
+            state = state,
             onClick = onClick,
         )
     }

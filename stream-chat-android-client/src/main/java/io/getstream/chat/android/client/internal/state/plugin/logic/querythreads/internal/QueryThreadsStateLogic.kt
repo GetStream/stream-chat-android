@@ -143,6 +143,14 @@ internal class QueryThreadsStateLogic(
         mutableState.clearUnseenThreadIds()
 
     /**
+     * Updates the loading error state of the [mutableState].
+     *
+     * @param error Whether a non-pagination load has failed.
+     */
+    internal fun setLoadingError(error: Boolean) =
+        mutableState.setLoadingError(error)
+
+    /**
      * Retrieves a message from the [mutableState] if it exists.
      */
     internal fun getMessage(messageId: String): Message? {

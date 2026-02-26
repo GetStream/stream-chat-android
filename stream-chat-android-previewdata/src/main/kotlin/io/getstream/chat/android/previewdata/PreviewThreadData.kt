@@ -50,6 +50,7 @@ public object PreviewThreadData {
         parentMessage = Message(
             id = "pmid1",
             text = "Hey everyone, who's up for a group ride this Saturday morning?",
+            replyCount = 1,
         ),
         createdByUserId = "uid2",
         createdBy = participant2,
@@ -95,6 +96,7 @@ public object PreviewThreadData {
         parentMessage = Message(
             id = "pmid2",
             text = "Hello hello!",
+            replyCount = 1,
         ),
         createdByUserId = "uid2",
         createdBy = participant1,

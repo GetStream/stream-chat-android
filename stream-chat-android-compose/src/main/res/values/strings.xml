@@ -303,6 +303,8 @@
         <item quantity="one">%d new thread</item>
         <item quantity="other">%d new threads</item>
     </plurals>
+    <string name="stream_compose_thread_list_banner_loading">Loading…</string>
+    <string name="stream_compose_thread_list_banner_error">Couldn\'t load new threads. Tap to retry</string>
     <plurals name="stream_compose_thread_list_item_reply_count">
         <item quantity="one">1 reply</item>
         <item quantity="other">%d replies</item>

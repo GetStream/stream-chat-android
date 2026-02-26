@@ -61,13 +61,13 @@ import io.getstream.chat.android.ui.common.state.threads.ThreadListState
  * @param viewModel The [ThreadListViewModel] handling the loading of the threads.
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
- * @param onUnreadThreadsBannerClick Action invoked when the user clicks on the "Unread threads" banner. By default, it
+ * @param onBannerClick Action invoked when the user clicks on the banner. By default, it
  * calls [ThreadListViewModel.load] to force reload the list of threads, loading the newly created/updated threads.
  * @param onThreadClick Action invoked when the usr clicks on a thread item in the list. No-op by default.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
  * loaded. By default, it calls [ThreadListViewModel.loadNextPage] to load the next page of threads.
- * @param unreadThreadsBanner Composable rendering the "Unread threads" banner on the top of the list. Override it to
- * provide a custom component to be rendered for displaying the number of new unread threads.
+ * @param banner Composable rendering the banner on the top of the list. Receives the current [ThreadListBannerState]
+ * (or null when no banner should be shown). Override to provide a custom banner component.
  * @param itemContent Composable rendering each [Thread] item in the list. Override this to provide a custom component
  * for rendering the items.
  * @param emptyContent Composable shown when there are no threads to display. Override this to provide custom component
@@ -82,11 +82,11 @@ public fun ThreadList(
     viewModel: ThreadListViewModel,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onUnreadThreadsBannerClick: () -> Unit = { viewModel.load() },
+    onBannerClick: () -> Unit = { viewModel.load() },
     onThreadClick: (Thread) -> Unit = {},
     onLoadMore: () -> Unit = { viewModel.loadNextPage() },
-    unreadThreadsBanner: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
+    banner: @Composable (ThreadListBannerState?) -> Unit = { state ->
+        state?.let { ChatTheme.componentFactory.ThreadListBanner(it, onBannerClick) }
     },
     itemContent: @Composable (Thread) -> Unit = {
         ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
@@ -106,10 +106,10 @@ public fun ThreadList(
         state = state,
         modifier = modifier,
         currentUser = currentUser,
-        onUnreadThreadsBannerClick = onUnreadThreadsBannerClick,
+        onBannerClick = onBannerClick,
         onThreadClick = onThreadClick,
         onLoadMore = onLoadMore,
-        unreadThreadsBanner = unreadThreadsBanner,
+        banner = banner,
         itemContent = itemContent,
         emptyContent = emptyContent,
         loadingContent = loadingContent,
@@ -124,12 +124,12 @@ public fun ThreadList(
  * @param state The [ThreadListState] holding the current thread list state.
  * @param modifier [Modifier] instance for general styling.
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
- * @param onUnreadThreadsBannerClick Action invoked when the user clicks on the "Unread threads" banner.
+ * @param onBannerClick Action invoked when the user clicks on the banner.
  * @param onThreadClick Action invoked when the usr clicks on a thread item in the list.
  * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
  * loaded.
- * @param unreadThreadsBanner Composable rendering the "Unread threads" banner on the top of the list. Override it to
- * provide a custom component to be rendered for displaying the number of new unread threads.
+ * @param banner Composable rendering the banner on the top of the list. Receives the current [ThreadListBannerState]
+ * (or null when no banner should be shown). Override to provide a custom banner component.
  * @param itemContent Composable rendering each [Thread] item in the list. Override this to provide a custom component
  * for rendering the items.
  * @param emptyContent Composable shown when there are no threads to display. Override this to provide custom component
@@ -144,11 +144,11 @@ public fun ThreadList(
     state: ThreadListState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onUnreadThreadsBannerClick: () -> Unit,
+    onBannerClick: () -> Unit,
     onThreadClick: (Thread) -> Unit,
     onLoadMore: () -> Unit,
-    unreadThreadsBanner: @Composable (Int) -> Unit = {
-        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
+    banner: @Composable (ThreadListBannerState?) -> Unit = { bannerState ->
+        bannerState?.let { ChatTheme.componentFactory.ThreadListBanner(it, onBannerClick) }
     },
     itemContent: @Composable (Thread) -> Unit = {
         ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
@@ -163,10 +163,17 @@ public fun ThreadList(
         ChatTheme.componentFactory.ThreadListLoadingMoreContent()
     },
 ) {
+    val bannerState: ThreadListBannerState? = when {
+        state.isLoading && state.threads.isNotEmpty() -> ThreadListBannerState.Loading
+        state.loadingError -> ThreadListBannerState.Error
+        state.unseenThreadsCount > 0 ->
+            ThreadListBannerState.UnreadThreads(state.unseenThreadsCount)
+        else -> null
+    }
     Scaffold(
         containerColor = ChatTheme.colors.backgroundCoreApp,
         topBar = {
-            unreadThreadsBanner(state.unseenThreadsCount)
+            banner(bannerState)
         },
         content = { padding ->
             Box(modifier = modifier.padding(padding)) {
