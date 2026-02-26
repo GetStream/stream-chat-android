@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.extensions.isArchive
+import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.util.isDistinct
@@ -82,7 +83,6 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
     val primaryAction = resolvePrimarySwipeAction(
         channel = channel,
         isMuted = channelItem.isMuted,
-        isPinned = channelItem.isPinned,
     )
     if (primaryAction != null) {
         SwipeActionItem(
@@ -107,8 +107,8 @@ public fun RowScope.DefaultChannelSwipeActions(channelItem: ItemState.ChannelIte
 private fun resolvePrimarySwipeAction(
     channel: Channel,
     isMuted: Boolean,
-    isPinned: Boolean,
 ): ChannelAction? {
+    val isPinned = channel.isPinned()
     val capabilities = channel.ownCapabilities
     val isArchived = channel.isArchive()
     val canMute = capabilities.contains(ChannelCapabilities.MUTE_CHANNEL)

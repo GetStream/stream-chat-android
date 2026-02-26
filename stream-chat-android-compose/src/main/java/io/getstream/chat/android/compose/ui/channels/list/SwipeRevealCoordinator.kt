@@ -52,7 +52,7 @@ public class SwipeRevealCoordinator {
      * All other open items will be animated to [SwipeRevealValue.Closed].
      */
     public suspend fun onItemOpened(cid: String) {
-        registry.forEach { (key, state) ->
+        registry.toMap().forEach { (key, state) ->
             if (key != cid && state.currentValue == SwipeRevealValue.Open) {
                 state.animateTo(SwipeRevealValue.Closed)
             }
@@ -63,7 +63,7 @@ public class SwipeRevealCoordinator {
      * Closes all currently open items.
      */
     public suspend fun closeAll() {
-        registry.forEach { (_, state) ->
+        registry.toMap().forEach { (_, state) ->
             if (state.currentValue == SwipeRevealValue.Open) {
                 state.animateTo(SwipeRevealValue.Closed)
             }

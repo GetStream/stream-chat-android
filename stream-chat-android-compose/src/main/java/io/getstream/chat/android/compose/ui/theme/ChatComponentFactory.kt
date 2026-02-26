@@ -418,12 +418,12 @@ public interface ChatComponentFactory {
 
         if (swipeEnabled) {
             SwipeableChannelItem(
+                modifier = Modifier.animateItem(),
                 channelCid = channelItem.channel.cid,
                 backgroundColor = ChatTheme.colors.backgroundCoreApp,
                 swipeActions = { Row { ChannelSwipeActions(channelItem) } },
             ) {
                 ChannelItem(
-                    modifier = Modifier.animateItem(),
                     channelItem = channelItem,
                     currentUser = currentUser,
                     onChannelClick = onChannelClick,

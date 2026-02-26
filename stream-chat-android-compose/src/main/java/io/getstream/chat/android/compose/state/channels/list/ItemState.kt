@@ -32,7 +32,6 @@ public sealed class ItemState {
      *
      * @param channel The channel to show.
      * @param isMuted If the channel is muted for the current user.
-     * @param isPinned If the channel is pinned for the current user.
      * @param typingUsers The list of users currently typing in the channel.
      * @param draftMessage The draft message for the current user in the channel.
      * @param isSelected Whether this channel is currently selected (e.g. via long-press context menu).
@@ -40,7 +39,6 @@ public sealed class ItemState {
     public data class ChannelItemState(
         val channel: Channel,
         val isMuted: Boolean = false,
-        val isPinned: Boolean = false,
         val typingUsers: List<User> = emptyList(),
         val draftMessage: DraftMessage? = null,
         val isSelected: Boolean = false,

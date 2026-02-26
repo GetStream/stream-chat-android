@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.api.state.GlobalState
 import io.getstream.chat.android.client.api.state.QueryChannelsState
 import io.getstream.chat.android.client.api.state.globalStateFlow
 import io.getstream.chat.android.client.api.state.queryChannelsAsState
-import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -751,7 +750,6 @@ public class ChannelListViewModel(
             ItemState.ChannelItemState(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
-                isPinned = it.isPinned(),
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
                 draftMessage = draftMessages[it.cid],
             )

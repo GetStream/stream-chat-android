@@ -35,7 +35,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * A single swipe action button displayed behind a channel list item.
  *
  * @param icon The icon to display.
- * @param label The label text below the icon.
+ * @param label Accessibility label used as the icon's content description.
  * @param onClick Called when this action is tapped.
  * @param backgroundColor The background color of this action.
  * @param contentColor The color for the icon and label.
@@ -71,7 +71,7 @@ public fun SwipeActionItem(
  * A single swipe action button using [SwipeActionStyle] for slot-based coloring.
  *
  * @param icon The icon to display.
- * @param label The label text below the icon.
+ * @param label Accessibility label used as the icon's content description.
  * @param onClick Called when this action is tapped.
  * @param style The visual style determining background and content colors.
  * @param modifier Modifier for styling.

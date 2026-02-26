@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.channels.header
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -148,19 +150,17 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val hitTargetSize = 48.dp
-    val avatarSize = 40.dp
-
     if (currentUser != null) {
         Box(
             modifier = Modifier
-                .size(hitTargetSize)
+                .size(AvatarSize.ExtraLarge)
+                .clip(CircleShape)
                 .clickable { onAvatarClick(currentUser) },
             contentAlignment = Alignment.Center,
         ) {
             ChatTheme.componentFactory.UserAvatar(
                 modifier = Modifier
-                    .size(avatarSize)
+                    .size(AvatarSize.Large)
                     .testTag("Stream_UserAvatar"),
                 user = currentUser,
                 showIndicator = false,
@@ -168,7 +168,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             )
         }
     } else {
-        Spacer(modifier = Modifier.size(hitTargetSize))
+        Spacer(modifier = Modifier.size(AvatarSize.ExtraLarge))
     }
 }
 
@@ -223,32 +223,23 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
 internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .size(48.dp)
-            .clickable(onClick = onHeaderActionClick),
-        contentAlignment = Alignment.Center,
+    Surface(
+        modifier = Modifier.size(40.dp),
+        onClick = onHeaderActionClick,
+        color = ChatTheme.colors.accentPrimary,
+        shape = CircleShape,
     ) {
-        Surface(
-            modifier = Modifier.size(40.dp),
-            onClick = onHeaderActionClick,
-            color = ChatTheme.colors.accentPrimary,
-            shape = CircleShape,
-            shadowElevation = 0.dp,
+        Box(
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier.padding(10.dp),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .size(20.dp)
-                        .testTag("Stream_CreateChannelIcon"),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                    contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
-                    tint = Color.White,
-                )
-            }
+            Icon(
+                modifier = Modifier
+                    .size(20.dp)
+                    .testTag("Stream_CreateChannelIcon"),
+                painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
+                tint = Color.White,
+            )
         }
     }
 }

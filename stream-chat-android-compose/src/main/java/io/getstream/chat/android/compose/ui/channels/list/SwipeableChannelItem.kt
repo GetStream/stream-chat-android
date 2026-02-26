@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -59,6 +60,7 @@ import kotlin.math.roundToInt
  * @param swipeActions Composable content for the action buttons revealed by swiping.
  * @param content The channel item content displayed on top.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun SwipeableChannelItem(
     channelCid: String,

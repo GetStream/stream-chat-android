@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
@@ -46,7 +47,7 @@ internal fun Channel.getLastMessageIncludingDeleted(currentUser: User?): Message
     messages.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { it.isRegular() || it.isSystem() }
+        .filter { it.isRegular() || it.isSystem() || it.isDeleted() }
         .maxByOrNull { it.getCreatedAtOrDefault(NEVER) }
 
 /**

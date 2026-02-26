@@ -162,21 +162,23 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                     binding.optionsContainer,
                     false,
                 ) as TextView
+                val textStyle = if (action.isDestructive) {
+                    style.warningItemTextStyle
+                } else {
+                    style.itemTextStyle
+                }
                 channelOptionTextView.text = action.label
                 channelOptionTextView.setStartDrawable(
-                    requireContext().getDrawableCompat(action.icon)!!,
+                    requireContext().getDrawableCompat(action.icon)?.apply {
+                        mutate()
+                        setTint(textStyle.color)
+                    },
                 )
                 channelOptionTextView.setOnClickListener {
                     channelOptionClickListener?.onChannelOptionClick(action)
                     dismiss()
                 }
-                channelOptionTextView.setTextStyle(
-                    if (action.isDestructive) {
-                        style.warningItemTextStyle
-                    } else {
-                        style.itemTextStyle
-                    },
-                )
+                channelOptionTextView.setTextStyle(textStyle)
 
                 binding.optionsContainer.addView(channelOptionTextView)
             }

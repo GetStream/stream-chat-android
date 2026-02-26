@@ -156,6 +156,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
                 style = ChatTheme.typography.captionDefault,
                 color = ChatTheme.colors.textSecondary,
                 maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

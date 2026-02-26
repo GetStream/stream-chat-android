@@ -90,7 +90,7 @@ public fun SearchResultItem(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd), // 16dp avatar-to-content gap
+            horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacingMd),
         ) {
             leadingContent(searchResultItemState)
             centerContent(searchResultItemState)
@@ -153,14 +153,14 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
     Column(
         modifier = Modifier
             .padding(
-                start = StreamTokens.spacing2xs, // 4dp (was 4.dp, same value but token-aligned)
-                end = StreamTokens.spacing2xs, // 4dp (was 4.dp)
-                top = StreamTokens.spacing3xs, // 2dp vertical padding
-                bottom = StreamTokens.spacing3xs, // 2dp
+                start = StreamTokens.spacing2xs,
+                end = StreamTokens.spacing2xs,
+                top = StreamTokens.spacing3xs,
+                bottom = StreamTokens.spacing3xs,
             )
             .weight(1f)
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs), // 4dp gap
+        verticalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
     ) {
         Text(
             text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
@@ -201,14 +201,14 @@ internal fun RowScope.DefaultSearchResultItemTrailingContent(
                 bottom = StreamTokens.spacingMd,
             )
             .wrapContentHeight()
-            .align(Alignment.CenterVertically), // was Alignment.Bottom; center-align with Figma layout
+            .align(Alignment.CenterVertically),
         horizontalAlignment = Alignment.End,
     ) {
         Timestamp(
             date = searchResultItemState.message.createdAt,
-            textStyle = ChatTheme.typography.captionDefault.copy( // was default footnote
-                color = ChatTheme.colors.textTertiary, // was textLowEmphasis
-                lineHeight = 20.sp, // Figma: line-height/normal = 20sp
+            textStyle = ChatTheme.typography.captionDefault.copy(
+                color = ChatTheme.colors.textTertiary,
+                lineHeight = 20.sp,
             ),
         )
     }
