@@ -35,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
@@ -46,6 +45,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.button.StreamButton
 import io.getstream.chat.android.compose.ui.components.avatar.AvatarSize
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamTokens
@@ -222,19 +222,13 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
 internal fun DefaultChannelListHeaderTrailingContent(
     onHeaderActionClick: () -> Unit,
 ) {
-    Surface(
-        modifier = Modifier.size(40.dp),
+    StreamButton(
         onClick = onHeaderActionClick,
-        color = ChatTheme.colors.accentPrimary,
-        shape = CircleShape,
     ) {
         Icon(
-            modifier = Modifier
-                .size(20.dp)
-                .testTag("Stream_CreateChannelIcon"),
+            modifier = Modifier.testTag("Stream_CreateChannelIcon"),
             painter = painterResource(id = R.drawable.stream_compose_ic_add),
             contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
-            tint = Color.White,
         )
     }
 }

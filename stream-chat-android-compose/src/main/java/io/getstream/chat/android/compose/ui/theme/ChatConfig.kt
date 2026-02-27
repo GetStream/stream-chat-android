@@ -30,10 +30,10 @@ import kotlinx.parcelize.Parcelize
  */
 public enum class MuteIndicatorPosition {
     /** Icon appears inline after the channel name in the title row. */
-    INLINE_TITLE,
+    InlineTitle,
 
     /** Icon appears at the trailing end of the message/preview row. */
-    TRAILING_BOTTOM,
+    TrailingBottom,
 }
 
 /**
@@ -43,7 +43,7 @@ public enum class MuteIndicatorPosition {
  * @param swipeActionsEnabled Whether swipe-to-reveal actions are enabled on channel list items.
  */
 public data class ChannelListConfig(
-    val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.INLINE_TITLE,
+    val muteIndicatorPosition: MuteIndicatorPosition = MuteIndicatorPosition.InlineTitle,
     val swipeActionsEnabled: Boolean = true,
 )
 

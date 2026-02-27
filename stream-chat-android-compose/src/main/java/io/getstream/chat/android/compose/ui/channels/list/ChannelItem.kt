@@ -271,7 +271,7 @@ private fun TitleRow(
                 color = ChatTheme.colors.textPrimary,
             )
 
-            if (isMuted && mutePosition == MuteIndicatorPosition.INLINE_TITLE) {
+            if (isMuted && mutePosition == MuteIndicatorPosition.InlineTitle) {
                 Icon(
                     modifier = Modifier
                         .testTag("Stream_ChannelMutedIcon")
@@ -357,7 +357,7 @@ private fun MessageRow(
             )
         }
 
-        if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TRAILING_BOTTOM) {
+        if (channelItemState.isMuted && mutePosition == MuteIndicatorPosition.TrailingBottom) {
             Icon(
                 modifier = Modifier
                     .testTag("Stream_ChannelMutedIcon")
@@ -465,7 +465,7 @@ internal fun ChannelItemMuted() {
 private fun ChannelItemMutedTrailingBottomPreview() {
     ChatTheme(
         config = ChatConfig(
-            channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM),
+            channelList = ChannelListConfig(muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom),
         ),
     ) {
         ChannelItemMutedTrailingBottom()

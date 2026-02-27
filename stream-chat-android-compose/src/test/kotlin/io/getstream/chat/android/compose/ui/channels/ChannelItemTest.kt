@@ -60,7 +60,7 @@ internal class ChannelItemTest : PaparazziComposeTest {
             ChatTheme(
                 config = ChatConfig(
                     channelList = ChannelListConfig(
-                        muteIndicatorPosition = MuteIndicatorPosition.TRAILING_BOTTOM,
+                        muteIndicatorPosition = MuteIndicatorPosition.TrailingBottom,
                     ),
                 ),
             ) {

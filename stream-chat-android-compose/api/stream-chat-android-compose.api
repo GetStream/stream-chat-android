@@ -3566,8 +3566,8 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageReactionsPa
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition : java/lang/Enum {
-	public static final field INLINE_TITLE Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
-	public static final field TRAILING_BOTTOM Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
+	public static final field InlineTitle Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
+	public static final field TrailingBottom Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
 	public static fun values ()[Lio/getstream/chat/android/compose/ui/theme/MuteIndicatorPosition;
