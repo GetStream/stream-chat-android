@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -27,11 +29,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
+import io.getstream.chat.android.compose.ui.theme.StreamTokens
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.composer.capabilities.canSendMessage
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -104,11 +106,10 @@ private sealed interface ActionButton {
 internal fun MessageComposerSendButton(
     onClick: () -> Unit,
 ) {
-    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
     FilledIconButton(
         modifier = Modifier
-            .size(sendButtonStyle.size)
-            .padding(sendButtonStyle.padding)
+            .size(48.dp)
+            .padding(StreamTokens.spacingXs)
             .testTag("Stream_ComposerSendButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
@@ -117,7 +118,7 @@ internal fun MessageComposerSendButton(
         onClick = onClick,
     ) {
         Icon(
-            painter = sendButtonStyle.icon.painter,
+            painter = painterResource(id = R.drawable.stream_compose_ic_send),
             contentDescription = stringResource(id = R.string.stream_compose_send_message),
         )
     }
@@ -128,12 +129,11 @@ internal fun MessageComposerSaveButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
     FilledIconButton(
         enabled = enabled,
         modifier = Modifier
-            .size(sendButtonStyle.size)
-            .padding(sendButtonStyle.padding)
+            .size(48.dp)
+            .padding(StreamTokens.spacingXs)
             .testTag("Stream_ComposerSaveButton"),
         colors = IconButtonDefaults.filledIconButtonColors(
             containerColor = ChatTheme.colors.accentPrimary,
