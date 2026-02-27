@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,17 +54,15 @@ internal fun Avatar(
         content = { state ->
             val painter = (state as? AsyncImagePainter.State.Success)?.painter
 
-            Crossfade(targetState = painter) { painter ->
-                if (painter == null) {
-                    fallback()
-                } else {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        painter = painter,
-                        contentDescription = null,
-                    )
-                }
+            if (painter == null) {
+                fallback()
+            } else {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    painter = painter,
+                    contentDescription = null,
+                )
             }
         },
     )

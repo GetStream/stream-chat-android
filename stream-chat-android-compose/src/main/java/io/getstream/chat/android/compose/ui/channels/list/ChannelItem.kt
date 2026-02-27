@@ -240,6 +240,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun TitleRow(
     channelItemState: ItemState.ChannelItemState,
@@ -260,11 +261,15 @@ private fun TitleRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(StreamTokens.spacing2xs),
         ) {
+            val channelNameFormatter = ChatTheme.channelNameFormatter
+            val formattedChannelName = remember(channel, currentUser, channelNameFormatter) {
+                channelNameFormatter.formatChannelName(channel, currentUser)
+            }
             Text(
                 modifier = Modifier
                     .testTag("Stream_ChannelName")
                     .weight(1f, fill = false),
-                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+                text = formattedChannelName,
                 style = ChatTheme.typography.headingSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -306,6 +311,7 @@ private fun TitleRow(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun MessageRow(
     channelItemState: ItemState.ChannelItemState,
@@ -334,14 +340,22 @@ private fun MessageRow(
                 )
             }
 
-            val lastMessageText =
+            val messagePreviewFormatter = ChatTheme.messagePreviewFormatter
+            val lastMessageText = remember(
+                channelItemState.draftMessage,
+                lastMessage,
+                currentUser,
+                isDirectMessaging,
+                messagePreviewFormatter,
+            ) {
                 channelItemState.draftMessage
-                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
+                    ?.let { messagePreviewFormatter.formatDraftMessagePreview(it) }
                     ?: lastMessage?.let {
-                        ChatTheme.messagePreviewFormatter.formatMessagePreview(
+                        messagePreviewFormatter.formatMessagePreview(
                             it, currentUser, isDirectMessaging,
                         )
                     }
+            }
 
             Text(
                 modifier = Modifier
